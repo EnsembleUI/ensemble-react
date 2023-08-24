@@ -1,0 +1,20 @@
+{
+  "name": "framework",
+  "version": "0.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "private": true,
+  "scripts": {
+    "dev": "tsup src/index.ts --format cjs --watch --dts --external react",
+    "build": "tsup src/index.ts --format cjs --dts --external react",
+    "test": "echo 'Add test script here'",
+    "lint": "echo 'Add lint script here'"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.21",
+    "eslint-config-custom": "workspace:*",
+    "react": "^18.2.0",
+    "tsconfig": "workspace:*",
+    "tsup": "^7.2.0"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "runtime",
+  "version": "0.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "private": true,
+  "scripts": {
+    "dev": "tsup src/index.tsx --format cjs --watch --dts --external react",
+    "build": "tsup src/index.tsx --format cjs --dts --external react",
+    "test": "echo 'Add test script here'",
+    "lint": "echo 'Add lint script here'"
+  },
+  "devDependencies": {
+    "@turbo/gen": "^1.10.12",
+    "@types/react": "^18.2.21",
+    "@types/react-dom": "^18.2.0",
+    "eslint-config-custom": "workspace:*",
+    "framework": "workspace:*",
+    "react": "^18.2.0",
+    "tsconfig": "workspace:*",
+    "tsup": "^7.2.0"
+  }
+}
