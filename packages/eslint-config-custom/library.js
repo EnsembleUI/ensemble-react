@@ -15,7 +15,9 @@ module.exports = {
   extends: [
     "@vercel/style-guide/eslint/node",
     "@vercel/style-guide/eslint/typescript",
+    "plugin:prettier/recommended"
   ].map(require.resolve),
+  plugins: ["prettier"],
   parserOptions: {
     project,
   },
@@ -31,4 +33,7 @@ module.exports = {
     },
   },
   ignorePatterns: ["node_modules/", "dist/"],
+  rules: {
+    "prettier/prettier": "error"
+  }
 };

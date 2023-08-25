@@ -7,8 +7,8 @@
   "scripts": {
     "dev": "tsup src/index.ts --format cjs --watch --dts --external react",
     "build": "tsup src/index.ts --format cjs --dts --external react",
-    "test": "echo 'Add test script here'",
-    "lint": "echo 'Add lint script here'"
+    "test": "jest",
+    "lint": "eslint ."
   },
   "devDependencies": {
     "@types/react": "^18.2.21",

@@ -8,6 +8,6 @@ const App: React.FC = () => {
       <EnsembleApp appId="test" />
     </div>
   );
-}
+};
 
 export default App;

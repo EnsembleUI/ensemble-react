@@ -17,7 +17,9 @@ module.exports = {
     "@vercel/style-guide/eslint/browser",
     "@vercel/style-guide/eslint/typescript",
     "@vercel/style-guide/eslint/react",
-  ].map(require.resolve),
+  ].map(require.resolve)
+    .concat(["plugin:prettier/recommended"]),
+  plugins: ["prettier"],
   parserOptions: {
     project,
   },
@@ -34,6 +36,7 @@ module.exports = {
   ignorePatterns: ["node_modules/", "dist/", ".eslintrc.js"],
   // add rules configurations here
   rules: {
+    "prettier/prettier": "error",
     "import/no-default-export": "off",
     "react/function-component-definition": [
       2,
