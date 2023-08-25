@@ -1,0 +1,8 @@
+View:
+  header:
+    title: Welcome
+  body:
+    Column:
+      children:
+        - Text:
+            text: Peter Parker

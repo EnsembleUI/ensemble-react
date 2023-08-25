@@ -11,11 +11,13 @@
     "lint": "eslint ."
   },
   "devDependencies": {
+    "@testing-library/react": "^13.4.0",
     "@turbo/gen": "^1.10.12",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.0",
     "eslint-config-custom": "workspace:*",
     "framework": "workspace:*",
+    "jest": "27.5.1",
     "react": "^18.2.0",
     "tsconfig": "workspace:*",
     "tsup": "^7.2.0"

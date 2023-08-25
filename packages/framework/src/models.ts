@@ -12,11 +12,10 @@ export interface Screen {
 
 export interface EnsembleScreen {
   name: string;
-  root: Widget;
+  header?: Widget;
+  body: Widget;
 }
 
-export interface Widget {
+export type Widget = {
   name: string;
-  properties: Record<string, unknown>;
-  children: Widget[];
-}
+} & Record<string, unknown>;
