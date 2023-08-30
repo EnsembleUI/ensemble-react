@@ -9,10 +9,12 @@ test("parses simple view widget", () => {
 
   expect(screen.name).toEqual("test");
   expect(screen.body).toMatchObject({
-    Column: {
+    name: "Column",
+    properties: {
       children: [
         {
-          Text: {
+          name: "Text",
+          properties: {
             text: "Peter Parker",
           },
         },

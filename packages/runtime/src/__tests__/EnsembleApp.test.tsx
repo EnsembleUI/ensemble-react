@@ -19,9 +19,30 @@ test("Renders error page", () => {
   parseScreenMock.mockReturnValue({});
   render(<EnsembleApp appId="test" />);
 
-  expect(screen.getByText("test")).not.toBeNull();
+  expect(screen.getByText("Something went wrong:")).not.toBeNull();
 });
 
-test.todo("Renders view widget of home screen");
+test("Renders view widget of home screen", () => {
+  loadAppMock.mockReturnValue({ screens: [{ content: "" }] });
+  parseScreenMock.mockReturnValue({
+    name: "test",
+    body: {
+      name: "Column",
+      properties: {
+        children: [
+          {
+            name: "Text",
+            properties: {
+              text: "Peter Parker",
+            },
+          },
+        ],
+      },
+    },
+  });
+  render(<EnsembleApp appId="test" />);
+
+  expect(screen.getByText("Peter Parker")).not.toBeNull();
+});
 
 test.todo("Renders remaining widgets");

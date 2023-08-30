@@ -16,6 +16,7 @@ export interface EnsembleScreen {
   body: Widget;
 }
 
-export type Widget = {
+export interface Widget {
   name: string;
-} & Record<string, unknown>;
+  properties: Record<string, unknown>;
+}
