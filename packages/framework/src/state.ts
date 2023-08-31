@@ -36,7 +36,7 @@ interface WidgetState {
 export interface Invokable {
   id: string;
   // eslint-disable-next-line @typescript-eslint/ban-types
-  methods: Record<string, Function> | undefined;
+  methods?: Record<string, Function>;
 }
 
 const createApplicationContext: StateCreator<
