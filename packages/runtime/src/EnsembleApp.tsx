@@ -1,6 +1,10 @@
-import { ApplicationLoader, EnsembleParser } from "framework";
+import {
+  ApplicationContextProvider,
+  ApplicationLoader,
+  EnsembleParser,
+  ScreenContextProvider,
+} from "framework";
 import { EnsembleRuntime } from "./runtime";
-
 // Register built in widgets;
 import "./widgets";
 
@@ -15,7 +19,13 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({ appId }) => {
       "Home",
       application.screens[0].content,
     );
-    return <>{EnsembleRuntime.execute(screen)}</>;
+    return (
+      <ApplicationContextProvider app={application}>
+        <ScreenContextProvider screen={screen}>
+          {EnsembleRuntime.execute(screen)}
+        </ScreenContextProvider>
+      </ApplicationContextProvider>
+    );
   } catch (e) {
     return (
       <>

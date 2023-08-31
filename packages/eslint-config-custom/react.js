@@ -18,7 +18,7 @@ module.exports = {
     "@vercel/style-guide/eslint/typescript",
     "@vercel/style-guide/eslint/react",
   ].map(require.resolve)
-    .concat(["plugin:prettier/recommended"]),
+    .concat(["plugin:prettier/recommended", "plugin:react-hooks/recommended"]),
   plugins: ["prettier"],
   parserOptions: {
     project,

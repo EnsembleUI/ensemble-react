@@ -7,10 +7,8 @@ export const EnsembleRuntime = {
     const rootWidget: Widget = application.body;
     const WidgetFn = WidgetRegistry.find(rootWidget.name);
     if (!WidgetFn) {
-      // eslint-disable-next-line no-console
-      console.log("blah");
       throw new Error(`Unknown widget: ${rootWidget.name}`);
     }
-    return WidgetFn(rootWidget.properties);
+    return <WidgetFn {...rootWidget.properties} />;
   },
 };
