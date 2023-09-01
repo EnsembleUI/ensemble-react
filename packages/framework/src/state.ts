@@ -17,7 +17,7 @@ export interface ApplicationContextMutator {
 
 export interface ScreenContext {
   data: unknown;
-  widgets: Record<string, WidgetState>;
+  widgets: Record<string, WidgetState | undefined>;
 }
 
 export interface ScreenContextMutator {
@@ -28,8 +28,8 @@ export type IEnsembleContext = ApplicationContext & ScreenContext;
 
 export type ContextMutator = ApplicationContextMutator & ScreenContextMutator;
 
-interface WidgetState {
-  values: Record<string, unknown>;
+interface WidgetState<T = Record<string, unknown>> {
+  values: T;
   invokable: Invokable;
 }
 
@@ -66,8 +66,9 @@ const createScreenContext: StateCreator<
 
   setWidget: (id: string, widgetState: WidgetState) =>
     set((state) => {
-      state.widgets[id] = widgetState;
-      return state;
+      const nextWidgetsState = { ...state.widgets };
+      nextWidgetsState[id] = widgetState;
+      return { widgets: nextWidgetsState };
     }),
 });
 

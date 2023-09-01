@@ -1,5 +1,5 @@
 import type { EnsembleScreen, Widget } from "framework";
-import { WidgetRegistry } from "./registry";
+import { WidgetRegistry } from "../registry";
 
 export const EnsembleRuntime = {
   execute: (application: EnsembleScreen): React.ReactNode => {
