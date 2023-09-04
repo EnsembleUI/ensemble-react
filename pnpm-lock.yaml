@@ -99,6 +99,9 @@ importers:
 
   packages/framework:
     devDependencies:
+      '@testing-library/react':
+        specifier: ^13.4.0
+        version: 13.4.0(react-dom@18.2.0)(react@18.2.0)
       '@types/lodash-es':
         specifier: ^4.17.8
         version: 4.17.8
@@ -108,6 +111,9 @@ importers:
       eslint-config-custom:
         specifier: workspace:*
         version: link:../eslint-config-custom
+      immer:
+        specifier: 9.0.21
+        version: 9.0.21
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
@@ -125,7 +131,7 @@ importers:
         version: 2.3.2
       zustand:
         specifier: ^4.4.1
-        version: 4.4.1(@types/react@18.2.21)(react@18.2.0)
+        version: 4.4.1(@types/react@18.2.21)(immer@9.0.21)(react@18.2.0)
 
   packages/runtime:
     devDependencies:
@@ -12628,7 +12634,7 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /zustand@4.4.1(@types/react@18.2.21)(react@18.2.0):
+  /zustand@4.4.1(@types/react@18.2.21)(immer@9.0.21)(react@18.2.0):
     resolution: {integrity: sha512-QCPfstAS4EBiTQzlaGP1gmorkh/UL1Leaj2tdj+zZCZ/9bm0WS7sI2wnfD5lpOszFqWJ1DcPnGoY8RDL61uokw==}
     engines: {node: '>=12.7.0'}
     peerDependencies:
@@ -12644,6 +12650,7 @@ packages:
         optional: true
     dependencies:
       '@types/react': 18.2.21
+      immer: 9.0.21
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: true

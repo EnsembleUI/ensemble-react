@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 import type { Application } from "../models";
-import type { ApplicationContext as IApplicationContext } from "../state";
+import type { ApplicationContextDefinition } from "../state";
 
 interface ApplicationContextProps {
   app: Application;
@@ -9,9 +9,8 @@ interface ApplicationContextProps {
 type ApplicationContextProviderProps =
   React.PropsWithChildren<ApplicationContextProps>;
 
-export const ApplicationContext = createContext<IApplicationContext | null>(
-  null,
-);
+export const ApplicationContext =
+  createContext<ApplicationContextDefinition | null>(null);
 
 export const ApplicationContextProvider: React.FC<
   ApplicationContextProviderProps
@@ -32,7 +31,8 @@ export const ApplicationContextProvider: React.FC<
   );
 };
 
-export const useApplicationContext = (): IApplicationContext | null => {
-  const appContext = useContext(ApplicationContext);
-  return appContext;
-};
+export const useApplicationContext =
+  (): ApplicationContextDefinition | null => {
+    const appContext = useContext(ApplicationContext);
+    return appContext;
+  };

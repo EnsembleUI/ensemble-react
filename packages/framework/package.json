@@ -11,9 +11,11 @@
     "lint": "eslint ."
   },
   "devDependencies": {
+    "@testing-library/react": "^13.4.0",
     "@types/lodash-es": "^4.17.8",
     "@types/react": "^18.2.21",
     "eslint-config-custom": "workspace:*",
+    "immer": "9.0.21",
     "lodash-es": "^4.17.21",
     "react": "^18.2.0",
     "tsconfig": "workspace:*",

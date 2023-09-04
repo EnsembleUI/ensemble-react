@@ -1,13 +1,15 @@
 import { createContext, useContext } from "react";
 import type { EnsembleScreen } from "../models";
-import type { ScreenContext as IScreenContext } from "../state";
+import type { ScreenContextDefinition } from "../state";
 
 interface ScreenContextProps {
   screen: EnsembleScreen;
 }
 type ScreenContextProviderProps = React.PropsWithChildren<ScreenContextProps>;
 
-export const ScreenContext = createContext<IScreenContext | null>(null);
+export const ScreenContext = createContext<ScreenContextDefinition | null>(
+  null,
+);
 
 export const ScreenContextProvider: React.FC<ScreenContextProviderProps> = ({
   children,
@@ -19,7 +21,7 @@ export const ScreenContextProvider: React.FC<ScreenContextProviderProps> = ({
   );
 };
 
-export const useScreenContext = (): IScreenContext | null => {
+export const useScreenContext = (): ScreenContextDefinition | null => {
   const screenContext = useContext(ScreenContext);
   return screenContext;
 };

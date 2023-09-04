@@ -1,6 +1,6 @@
 import { useEnsembleState } from "framework";
+import { useState } from "react";
 import { WidgetRegistry } from "../registry";
-import { useWidgetId } from "../runtime";
 import type { EnsembleWidgetProps } from ".";
 
 // FIXME: refactor common props into re-usable interface
@@ -11,10 +11,11 @@ export type TextProps = {
 } & EnsembleWidgetProps;
 
 export const Text: React.FC<TextProps> = (props) => {
-  const { id } = props;
-  const resolvedWidgetId = useWidgetId(id);
-  const bindings = useEnsembleState<TextProps>({ id: resolvedWidgetId }, props);
-  return <span>{bindings?.text}</span>;
+  const [text, setText] = useState(props.text);
+  const { values } = useEnsembleState({ ...props, text }, props.id, {
+    setText,
+  });
+  return <span>{values.text}</span>;
 };
 
 WidgetRegistry.register("Text", Text);

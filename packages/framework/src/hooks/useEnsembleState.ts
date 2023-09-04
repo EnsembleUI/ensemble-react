@@ -1,20 +1,33 @@
 import { useEffect } from "react";
-import type { Invokable } from "../state";
+import type { InvokableMethods } from "../state";
 import { useEnsembleStore } from "../state";
+import { useWidgetId } from "./useWidgetId";
+
+export interface EnsembleWidgetState<T> {
+  id: string;
+  values: T;
+}
 
 export const useEnsembleState = <T extends Record<string, unknown>>(
-  invokable: Invokable,
   values: T,
-): T | null => {
+  id?: string,
+  methods?: InvokableMethods,
+): EnsembleWidgetState<T> => {
+  const resolvedWidgetId = useWidgetId(id);
   const { bindings, setWidget } = useEnsembleStore((state) => ({
-    bindings: state.widgets[invokable.id],
-    setWidget: state.setWidget,
+    bindings: state.screen.widgets[resolvedWidgetId],
+    setWidget: state.screen.setWidget,
   }));
 
   useEffect(() => {
-    setWidget(invokable.id, { values, invokable });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    setWidget(resolvedWidgetId, {
+      values,
+      invokable: { id: resolvedWidgetId, methods },
+    });
+  }, [values, methods, setWidget, resolvedWidgetId]);
 
-  return bindings?.values as T;
+  return {
+    id: resolvedWidgetId,
+    values: (bindings?.values ?? {}) as T,
+  };
 };

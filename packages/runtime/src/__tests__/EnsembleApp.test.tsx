@@ -5,7 +5,7 @@ const parseScreenMock = jest.fn();
 const frameworkActual = jest.requireActual("framework");
 
 import crypto from "node:crypto";
-import { render, screen } from "@testing-library/react";
+import { render, screen, act } from "@testing-library/react";
 import { EnsembleApp } from "../EnsembleApp";
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -56,7 +56,7 @@ test("Renders view widget of home screen", () => {
   expect(screen.getByText("Peter Parker")).not.toBeNull();
 });
 
-test("Updates values through Ensemble state", () => {
+test("Updates values through Ensemble state", async () => {
   loadAppMock.mockReturnValue({ screens: [{ content: "" }] });
   parseScreenMock.mockReturnValue({
     name: "test",
@@ -67,6 +67,7 @@ test("Updates values through Ensemble state", () => {
           {
             name: "Text",
             properties: {
+              id: "myText",
               text: "Peter Parker",
             },
           },
@@ -74,6 +75,10 @@ test("Updates values through Ensemble state", () => {
             name: "Button",
             properties: {
               label: "Click Me",
+              onTap: {
+                executeCode:
+                  "console.log(store.screen.widgets.myText.invokable.methods.setText('Spiderman'))",
+              },
             },
           },
         ],
@@ -82,5 +87,12 @@ test("Updates values through Ensemble state", () => {
   });
   render(<EnsembleApp appId="test" />);
 
-  expect(screen.getByText("Click Me")).not.toBeNull();
+  const button = screen.getByText("Click Me");
+  expect(button).not.toBeNull();
+  act(() => {
+    button.click();
+  });
+
+  const updatedText = await screen.findByText("Spiderman");
+  expect(updatedText).not.toBeNull();
 });

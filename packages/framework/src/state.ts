@@ -1,8 +1,19 @@
-import type { StateCreator } from "zustand";
+import type { Mutate, StateCreator, StoreApi, UseBoundStore } from "zustand";
 import { create } from "zustand";
+import { immer } from "zustand/middleware/immer";
+import { merge } from "lodash-es";
 import type { Application } from "./models";
 
-export interface ApplicationContext {
+export interface ScreenContextDefinition {
+  data: unknown;
+  widgets: Record<string, WidgetState | undefined>;
+}
+
+export interface ScreenContextActions {
+  setWidget: (id: string, state: WidgetState) => void;
+}
+
+export interface ApplicationContextDefinition {
   application: Application | null;
   storage: unknown;
   secrets: unknown;
@@ -11,40 +22,38 @@ export interface ApplicationContext {
   user: unknown;
 }
 
-export interface ApplicationContextMutator {
+export interface ApplicationContextActions {
   setApplication: (app: Application) => void;
 }
 
-export interface ScreenContext {
-  data: unknown;
-  widgets: Record<string, WidgetState | undefined>;
+export type ScreenContextType = ScreenContextActions & ScreenContextDefinition;
+export type ApplicationContextType = ApplicationContextActions &
+  ApplicationContextDefinition;
+
+export interface EnsembleDataContext {
+  screen: ScreenContextType;
+  app: ApplicationContextType;
 }
 
-export interface ScreenContextMutator {
-  setWidget: (id: string, state: WidgetState) => void;
-}
-
-export type IEnsembleContext = ApplicationContext & ScreenContext;
-
-export type ContextMutator = ApplicationContextMutator & ScreenContextMutator;
+export type StateSlice<T> = StateCreator<
+  EnsembleDataContext,
+  [["zustand/immer", never]],
+  [],
+  T
+>;
 
 interface WidgetState<T = Record<string, unknown>> {
   values: T;
   invokable: Invokable;
 }
-
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type InvokableMethods = Record<string, Function>;
 export interface Invokable {
   id: string;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  methods?: Record<string, Function>;
+  methods?: InvokableMethods;
 }
 
-const createApplicationContext: StateCreator<
-  ApplicationContext,
-  [],
-  [],
-  ApplicationContext & ApplicationContextMutator
-> = (set) => ({
+const createApplicationContext: StateSlice<ApplicationContextType> = (set) => ({
   application: null,
   storage: null,
   env: null,
@@ -55,26 +64,26 @@ const createApplicationContext: StateCreator<
   setApplication: (application: Application) => set(() => ({ application })),
 });
 
-const createScreenContext: StateCreator<
-  ScreenContext,
-  [],
-  [],
-  ScreenContext & ScreenContextMutator
-> = (set) => ({
+const createScreenContext: StateSlice<ScreenContextType> = (set) => ({
   data: null,
   widgets: {},
 
   setWidget: (id: string, widgetState: WidgetState) =>
     set((state) => {
-      const nextWidgetsState = { ...state.widgets };
-      nextWidgetsState[id] = widgetState;
-      return { widgets: nextWidgetsState };
+      const prevState = state.screen.widgets[id];
+      if (prevState) {
+        merge(prevState, widgetState);
+      } else {
+        state.screen.widgets[id] = widgetState;
+      }
     }),
 });
 
-export const useEnsembleStore = create<IEnsembleContext & ContextMutator>()(
-  (...a) => ({
-    ...createApplicationContext(...a),
-    ...createScreenContext(...a),
-  }),
+export const useEnsembleStore: UseBoundStore<
+  Mutate<StoreApi<EnsembleDataContext>, []>
+> = create<EnsembleDataContext>()(
+  immer((...a) => ({
+    app: createApplicationContext(...a),
+    screen: createScreenContext(...a),
+  })),
 );

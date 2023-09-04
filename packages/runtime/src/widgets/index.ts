@@ -6,6 +6,5 @@ export * from "./Text";
 
 export interface EnsembleWidgetProps {
   id?: string;
-  key?: string | number;
   [key: string]: unknown;
 }
