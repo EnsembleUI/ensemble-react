@@ -76,8 +76,7 @@ test("Updates values through Ensemble state", async () => {
             properties: {
               label: "Click Me",
               onTap: {
-                executeCode:
-                  "console.log(store.screen.widgets.myText.invokable.methods.setText('Spiderman'))",
+                executeCode: "myText.setText('Spiderman')",
               },
             },
           },
