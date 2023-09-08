@@ -4,7 +4,6 @@ const parseScreenMock = jest.fn();
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const frameworkActual = jest.requireActual("framework");
 
-import crypto from "node:crypto";
 import { render, screen, act } from "@testing-library/react";
 import { EnsembleApp } from "../EnsembleApp";
 
@@ -19,11 +18,20 @@ jest.mock("framework", () => ({
   },
 }));
 
-window.crypto = {
-  randomUUID: () => {
-    return crypto.randomUUID() as `${string}-${string}-${string}-${string}-${string}`;
-  },
-} as Crypto;
+Object.defineProperty(window, "matchMedia", {
+  writable: true,
+  value: jest.fn().mockImplementation((query) => ({
+    matches: false,
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    media: query,
+    onchange: null,
+    addListener: jest.fn(), // deprecated
+    removeListener: jest.fn(), // deprecated
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+});
 
 test("Renders error page", () => {
   loadAppMock.mockReturnValue({});
