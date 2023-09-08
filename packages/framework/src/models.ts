@@ -21,4 +21,4 @@ export interface Widget {
   properties: Record<string, unknown>;
 }
 
-export type Expression = string;
+export type Expression<T> = string | T;

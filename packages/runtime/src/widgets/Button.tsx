@@ -1,9 +1,10 @@
+import type { Expression } from "framework";
 import { useEnsembleState, useEvaluate } from "framework";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from ".";
 
 export type ButtonProps = {
-  label: string;
+  label: Expression<string>;
   onTap?: {
     executeCode: string;
   };

@@ -1,12 +1,11 @@
+import type { Expression } from "framework";
 import { useEnsembleState } from "framework";
 import { useState } from "react";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from ".";
 
-// FIXME: refactor common props into re-usable interface
 export type TextProps = {
-  text: string;
-  key?: string | number;
+  text: Expression<string>;
   [key: string]: unknown;
 } & EnsembleWidgetProps;
 

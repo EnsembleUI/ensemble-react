@@ -8,17 +8,19 @@ jest.mock("../../state", () => ({
   useEnsembleStore: mockUseEnsembleStore,
 }));
 
+const mockInvokable = {
+  id: "test",
+  methods: {},
+};
+
+const mockValues = {
+  foo: "bar",
+  baz: "deadbeef",
+};
+
 test("instantiates state from props", () => {
-  const mockInvokable = {
-    id: "test",
-    methods: {},
-  };
-  const mockValues = {
-    foo: "bar",
-    baz: "deadbeef",
-  };
   mockUseEnsembleStore.mockReturnValue({
-    bindings: {
+    state: {
       values: mockValues,
     },
     setWidget: jest.fn(),
@@ -37,33 +39,33 @@ test("instantiates state from props", () => {
   });
 });
 
-test("updates bindings when values update", () => {
-  const mockInvokable = {
-    id: "test",
-    methods: {},
-  };
-  let mockValues = {
+test("updates bindings when incoming values update", () => {
+  let mockMutableValues = {
     foo: "bar",
     baz: "deadbeef",
   };
   const mockSetWidget = jest.fn();
   mockUseEnsembleStore.mockReturnValue({
-    bindings: {
-      values: mockValues,
+    state: {
+      values: mockMutableValues,
     },
     setWidget: mockSetWidget,
   });
   const { result, rerender } = renderHook(() =>
-    useEnsembleState(mockValues, mockInvokable.id, mockInvokable.methods),
+    useEnsembleState(
+      mockMutableValues,
+      mockInvokable.id,
+      mockInvokable.methods,
+    ),
   );
 
-  mockValues = {
+  mockMutableValues = {
     foo: "deadbeef",
     baz: "bar",
   };
   mockUseEnsembleStore.mockReturnValue({
-    bindings: {
-      values: mockValues,
+    state: {
+      values: mockMutableValues,
     },
     setWidget: mockSetWidget,
   });
@@ -80,26 +82,26 @@ test("updates bindings when values update", () => {
 });
 
 test("updates bindings when invokable updates", () => {
-  let mockInvokable = {
+  let mockMutableInvokable = {
     id: "test",
     methods: {},
   };
-  const mockValues = {
-    foo: "bar",
-    baz: "deadbeef",
-  };
   const mockSetWidget = jest.fn();
   mockUseEnsembleStore.mockReturnValue({
-    bindings: {
+    state: {
       values: mockValues,
     },
     setWidget: mockSetWidget,
   });
   const { result, rerender } = renderHook(() =>
-    useEnsembleState(mockValues, mockInvokable.id, mockInvokable.methods),
+    useEnsembleState(
+      mockValues,
+      mockMutableInvokable.id,
+      mockMutableInvokable.methods,
+    ),
   );
 
-  mockInvokable = {
+  mockMutableInvokable = {
     id: "test2",
     methods: {
       // eslint-disable-next-line @typescript-eslint/no-empty-function

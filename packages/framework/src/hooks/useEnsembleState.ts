@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { compact, get, map, merge } from "lodash-es";
 import type { InvokableMethods } from "../state";
 import { useEnsembleStore } from "../state";
 import { useWidgetId } from "./useWidgetId";
@@ -14,9 +15,29 @@ export const useEnsembleState = <T extends Record<string, unknown>>(
   methods?: InvokableMethods,
 ): EnsembleWidgetState<T> => {
   const resolvedWidgetId = useWidgetId(id);
-  const { bindings, setWidget } = useEnsembleStore((state) => ({
-    bindings: state.screen.widgets[resolvedWidgetId],
-    setWidget: state.screen.setWidget,
+
+  const expressions = compact(
+    map(Object.entries(values), ([key, value]) => {
+      if (
+        typeof value === "string" &&
+        value.startsWith("${") &&
+        value.endsWith("}")
+      ) {
+        return [key, value.slice(2, value.length - 1)];
+      }
+    }),
+  );
+
+  const { state, setWidget, ...bindings } = useEnsembleStore((store) => ({
+    state: store.screen.widgets[resolvedWidgetId],
+    setWidget: store.screen.setWidget,
+    ...Object.fromEntries(
+      expressions.map(([key, expression]) => {
+        const tokens = expression.split(".");
+        tokens.splice(1, 0, "values");
+        return [key, get(store.screen.widgets, tokens)];
+      }),
+    ),
   }));
 
   useEffect(() => {
@@ -24,10 +45,10 @@ export const useEnsembleState = <T extends Record<string, unknown>>(
       values,
       invokable: { id: resolvedWidgetId, methods },
     });
-  }, [values, methods, setWidget, resolvedWidgetId]);
+  }, [values, methods, resolvedWidgetId, setWidget]);
 
   return {
     id: resolvedWidgetId,
-    values: (bindings?.values ?? {}) as T,
+    values: merge({}, state?.values, bindings) as T,
   };
 };
