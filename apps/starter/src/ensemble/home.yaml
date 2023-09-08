@@ -2,14 +2,16 @@ View:
   body:
     Column:
       children:
-        - Text:
-            id: myText
-            text: Peter Parker
-        - Button:
-            label: Click Me
-            onTap:
-              executeCode: myText.setText("Spiderman")
-        - Text:
-            text: ${myText.text}
-        - Grid:
-            test: value
+        - Row:
+            children:
+              - Text:
+                  id: myText
+                  text: Peter Parker
+              - Button:
+                  label: Click Me
+                  onTap:
+                    executeCode: myText.setText("Spiderman")
+              - Text:
+                  text: ${myText.text}
+              - Grid:
+                  test: value
