@@ -1,5 +1,5 @@
 import { parse } from "yaml";
-import { get, head, isArray, map, set } from "lodash-es";
+import { get, head, isArray, isEmpty, map, set } from "lodash-es";
 import type { EnsembleScreen, Widget } from "./models";
 
 export const EnsembleParser = {
@@ -8,7 +8,11 @@ export const EnsembleParser = {
     const view = get(screen, "View");
     const viewNode = get(view, "body");
     if (!viewNode) {
-      throw new Error("Invalid screen: missing view widget");
+      throw new Error(
+        `Invalid screen: missing view widget:\n${
+          isEmpty(yaml) ? "Bad YAML" : yaml
+        }`,
+      );
     }
     const viewWidget = unwrapWidget(viewNode);
     return {

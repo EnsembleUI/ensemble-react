@@ -1,4 +1,5 @@
 import type { Expression } from "framework";
+import { Button as AntButton } from "antd";
 import { useEnsembleState, useEvaluate } from "framework";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from ".";
@@ -15,9 +16,9 @@ export const Button: React.FC<ButtonProps> = (props) => {
   const { values } = useEnsembleState(props, props.id);
   const onTapCallback = useEvaluate(onTap, values);
   return (
-    <button onClick={onTapCallback} type="button">
+    <AntButton onClick={onTapCallback} type="primary">
       {values.label}
-    </button>
+    </AntButton>
   );
 };
 

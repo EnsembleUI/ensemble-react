@@ -1,23 +1,19 @@
 import { useMemo } from "react";
 import type { Widget } from "framework";
-import { Col } from "antd";
+import { Row as AntRow } from "antd";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import type { EnsembleWidgetProps } from ".";
 
-export type ColumnProps = {
+export type RowProps = {
   children: Widget[];
 } & EnsembleWidgetProps;
 
-export const Column: React.FC<ColumnProps> = ({ children }) => {
+export const Row: React.FC<RowProps> = ({ children }) => {
   const renderedChildren = useMemo(() => {
     return EnsembleRuntime.render(children);
   }, [children]);
-  return (
-    <Col style={{ flexDirection: "column", display: "flex" }}>
-      {renderedChildren}
-    </Col>
-  );
+  return <AntRow>{renderedChildren}</AntRow>;
 };
 
-WidgetRegistry.register("Column", Column);
+WidgetRegistry.register("Row", Row);

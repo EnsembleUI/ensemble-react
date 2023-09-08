@@ -1,6 +1,7 @@
 import type { Expression } from "framework";
 import { useEnsembleState } from "framework";
 import { useState } from "react";
+import { Typography } from "antd";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from ".";
 
@@ -14,7 +15,7 @@ export const Text: React.FC<TextProps> = (props) => {
   const { values } = useEnsembleState({ ...props, text }, props.id, {
     setText,
   });
-  return <span>{values.text}</span>;
+  return <Typography.Text>{values.text}</Typography.Text>;
 };
 
 WidgetRegistry.register("Text", Text);
