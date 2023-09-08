@@ -1,3 +1,4 @@
+import type { Application } from "framework";
 import {
   ApplicationContextProvider,
   ApplicationLoader,
@@ -5,25 +6,32 @@ import {
   ScreenContextProvider,
 } from "framework";
 import { EnsembleRuntime } from "./runtime";
+import { ThemeProvider } from "./ThemeProvider";
 // Register built in widgets;
 import "./widgets";
 
 export interface EnsembleAppProps {
   appId: string;
+  application?: Application;
 }
 
-export const EnsembleApp: React.FC<EnsembleAppProps> = ({ appId }) => {
+export const EnsembleApp: React.FC<EnsembleAppProps> = ({
+  appId,
+  application,
+}) => {
   try {
-    const application = ApplicationLoader.load(appId);
+    const resolvedApp = application ?? ApplicationLoader.load(appId);
     const screen = EnsembleParser.parseScreen(
       "Home",
-      application.screens[0].content,
+      resolvedApp.screens[0].content,
     );
     return (
-      <ApplicationContextProvider app={application}>
-        <ScreenContextProvider screen={screen}>
-          {EnsembleRuntime.execute(screen)}
-        </ScreenContextProvider>
+      <ApplicationContextProvider app={resolvedApp}>
+        <ThemeProvider>
+          <ScreenContextProvider screen={screen}>
+            {EnsembleRuntime.execute(screen)}
+          </ScreenContextProvider>
+        </ThemeProvider>
       </ApplicationContextProvider>
     );
   } catch (e) {

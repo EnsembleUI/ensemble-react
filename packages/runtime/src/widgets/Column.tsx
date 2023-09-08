@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import type { Widget } from "framework";
+import { Col, Row } from "antd";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from ".";
 
@@ -17,7 +18,13 @@ export const Column: React.FC<ColumnProps> = ({ children }) => {
       return <WidgetFn {...child.properties} key={index} />;
     });
   }, [children]);
-  return <div>{renderedChildren}</div>;
+  return (
+    <Row>
+      <Col style={{ flexDirection: "column", display: "flex" }}>
+        {renderedChildren}
+      </Col>
+    </Row>
+  );
 };
 
 WidgetRegistry.register("Column", Column);
