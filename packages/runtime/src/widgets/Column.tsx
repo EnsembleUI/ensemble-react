@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { isValidElement, useMemo } from "react";
 import type { Widget } from "framework";
 import { Col, Row } from "antd";
 import { WidgetRegistry } from "../registry";
@@ -11,10 +11,11 @@ export type ColumnProps = {
 export const Column: React.FC<ColumnProps> = ({ children }) => {
   const renderedChildren = useMemo(() => {
     return children.map((child, index) => {
-      const WidgetFn = WidgetRegistry.find(child.name);
-      if (!WidgetFn) {
-        return null;
+      const result = WidgetRegistry.find(child.name);
+      if (isValidElement(result)) {
+        return result;
       }
+      const WidgetFn = result as React.FC<unknown>;
       return <WidgetFn {...child.properties} key={index} />;
     });
   }, [children]);

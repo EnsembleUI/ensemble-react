@@ -11,3 +11,5 @@ View:
               executeCode: myText.setText("Spiderman")
         - Text:
             text: ${myText.text}
+        - Grid:
+            test: value
