@@ -14,10 +14,10 @@
     "prettier": "^3.0.2",
     "ts-jest": "27.1.5",
     "tsconfig": "workspace:*",
-    "turbo": "latest"
+    "turbo": "1.9.9"
   },
   "name": "ensemble-react",
-  "packageManager": "npm@9.5.1",
+  "packageManager": "pnpm@6.32.2",
   "workspaces": [
     "apps/*",
     "packages/*"
