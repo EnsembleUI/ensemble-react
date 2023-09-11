@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "framework": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "runtime": "workspace:*",
-    "framework": "workspace:*",
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {

@@ -4,17 +4,19 @@ This is a monorepo containing the React elements for Ensemble, built with Turbor
 
 ## Getting Started
 
-Install `pnpm` with brew:
+Activate `pnpm` with node's corepack:
 
 ```sh
-brew install pnpm
+corepack prepare pnpm@6.32.2 --activate
 ```
+
+[pnpm docs](https://pnpm.io/installation#using-corepack)
 
 Run the following commands:
 
 ```sh
 pnpm install
-pnpm run build
+pnpm build
 ```
 
 ## What's inside?
