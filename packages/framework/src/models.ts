@@ -11,10 +11,31 @@ export interface Screen {
   content: string;
 }
 
-export interface EnsembleScreen {
+export interface EnsembleScreenModel {
   name: string;
   header?: Widget;
   body: Widget;
+  onLoad?: InvokeAPIAction;
+  apis?: APIModel[];
+}
+
+export interface APIModel {
+  name: string;
+  inputs?: string[];
+  uri: string;
+  method: "GET" | "POST" | "PUT" | "PATCH";
+  onResponse?: ExecuteCodeAction;
+}
+
+export type ExecuteCodeAction =
+  | string
+  | {
+      body: string;
+    };
+
+export interface InvokeAPIAction {
+  name: string;
+  inputs: Record<string, unknown>;
 }
 
 export interface Widget {

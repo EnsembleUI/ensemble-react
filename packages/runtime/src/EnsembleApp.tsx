@@ -29,7 +29,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
       <ApplicationContextProvider app={resolvedApp}>
         <ThemeProvider>
           <ScreenContextProvider screen={screen}>
-            {EnsembleRuntime.execute(screen)}
+            <EnsembleRuntime.Screen screen={screen} />
           </ScreenContextProvider>
         </ThemeProvider>
       </ApplicationContextProvider>

@@ -1,17 +1,23 @@
 View:
+  onLoad:
+    name: getData
+    
   body:
     Column:
       children:
-        - Row:
-            children:
-              - Text:
-                  id: myText
-                  text: Peter Parker
-              - Button:
-                  label: Click Me
-                  onTap:
-                    executeCode: myText.setText("Spiderman")
-              - Text:
-                  text: ${myText.text}
-              - Grid:
-                  test: value
+        - Text:
+            id: myText
+            text: Peter Parker
+        - Button:
+            label: Click Me
+            onTap:
+              executeCode: myText.setText("Spiderman")
+        - Text:
+            text: ${myText.text}
+        - Grid:
+            test: value
+
+API:
+  getData:
+    method: GET
+    uri: https://dummyjson.com/products
