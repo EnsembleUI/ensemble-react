@@ -1,9 +1,9 @@
 import { createContext, useContext } from "react";
-import type { EnsembleScreen } from "../models";
+import type { EnsembleScreenModel } from "../models";
 import type { ScreenContextDefinition } from "../state";
 
 interface ScreenContextProps {
-  screen: EnsembleScreen;
+  screen: EnsembleScreenModel;
 }
 type ScreenContextProviderProps = React.PropsWithChildren<ScreenContextProps>;
 
@@ -15,7 +15,7 @@ export const ScreenContextProvider: React.FC<ScreenContextProviderProps> = ({
   children,
 }) => {
   return (
-    <ScreenContext.Provider value={{ data: null, widgets: {} }}>
+    <ScreenContext.Provider value={{ data: {}, widgets: {} }}>
       {children}
     </ScreenContext.Provider>
   );
