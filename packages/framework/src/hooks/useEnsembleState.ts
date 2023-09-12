@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { compact, get, map, merge } from "lodash-es";
+import { compact, get, head, map, merge } from "lodash-es";
 import type { InvokableMethods } from "../state";
 import { useEnsembleStore } from "../state";
 import { useWidgetId } from "./useWidgetId";
@@ -34,6 +34,9 @@ export const useEnsembleState = <T extends Record<string, unknown>>(
     ...Object.fromEntries(
       expressions.map(([key, expression]) => {
         const tokens = expression.split(".");
+        if (head(tokens) === "data") {
+          return [key, get(store.screen, tokens)];
+        }
         tokens.splice(1, 0, "values");
         return [key, get(store.screen.widgets, tokens)];
       }),

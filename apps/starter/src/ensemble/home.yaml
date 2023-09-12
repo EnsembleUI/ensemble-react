@@ -1,7 +1,7 @@
 View:
   onLoad:
     name: getData
-    
+
   body:
     Column:
       children:
@@ -14,6 +14,8 @@ View:
               executeCode: myText.setText("Spiderman")
         - Text:
             text: ${myText.text}
+        - Text:
+            text: ${data.getData.body.total}
         - Grid:
             test: value
 

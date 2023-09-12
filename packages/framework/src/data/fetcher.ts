@@ -25,7 +25,8 @@ class EnsembleResponse implements Response {
     const response = new EnsembleResponse();
     response.statusCode = axRes.status;
     response.headers = axRes.headers;
-    response.body = String(axRes.data);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    response.body = axRes.data;
     return response;
   }
 }
