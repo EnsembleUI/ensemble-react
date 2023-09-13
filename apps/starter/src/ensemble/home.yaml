@@ -1,22 +1,9 @@
-View:
+View: 
   body:
     Column:
       children:
-        - Column:
+        - Row:
             children:
-              - Text:
-                  id: myText
-                  text: Peter Parker
-              - Button:
-                  label: Click Me
-                  onTap:
-                    executeCode: myText.setText("Spiderman")
-              - Text:
-                  text: ${myText.text}
-              - Grid:
-                  test: value
-              - DataGrid:
-                  DataColumns: [{label : "col1", type: "string"}, {label: "col2", type: "string"}]
               - SideBarMenu:
                   logo:
                     collapsedSource: https://i.imgur.com/peprs0j.png
@@ -64,5 +51,21 @@ View:
                     selectedColor: white
                     labelFontSize: 16
                     searchBoxColor: "#3e5975"
+              - Column:
+                  children:
+                    - Text:
+                        id: myText
+                        text: Peter Parker
+                    - Button:
+                        label: Click Me
+                        onTap:
+                          executeCode: myText.setText("Spiderman")
+                    - Text:
+                        text: ${myText.text}
+                    - Grid:
+                        test: value
+                    - DataGrid:
+                        DataColumns: [{label : "col1", type: "string"}, {label: "col2", type: "string"}]
+              
               
 

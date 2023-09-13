@@ -6,6 +6,8 @@ export const EnsembleParser = {
   parseScreen: (name: string, yaml: string): EnsembleScreen => {
     const screen: unknown = parse(yaml);
     const view = get(screen, "View");
+    const menu= get(view, "menu" )
+    const menuBar = get(menu, "MenuBar");
     const viewNode = get(view, "body");
     if (!viewNode) {
       throw new Error(
@@ -19,6 +21,7 @@ export const EnsembleParser = {
       name,
       header: get(view, "header"),
       body: viewWidget,
+      menu,
     };
   },
 };

@@ -15,6 +15,7 @@ export interface EnsembleScreen {
   name: string;
   header?: Widget;
   body: Widget;
+  menu?: Widget;
 }
 
 export interface Widget {
