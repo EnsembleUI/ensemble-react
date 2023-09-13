@@ -63,7 +63,7 @@ interface MenuBaseProps {
 export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
   const [collapsed, setCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-    const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
   library.add(fab, faCheckSquare, faCoffee);
   const toggleCollapsed = () => {
@@ -77,7 +77,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
       setSelectedItem(initiallySelectedItem.label);
     }
   }, [props.items]);
-  const { items } = props;
+
   const filteredItems = props.items.filter((item) =>
     item.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -87,7 +87,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
     //window.location.href = page;
   };
 
-  console.log(selectedItem)
+  console.log(selectedItem);
   return (
     <Row style={{ height: "100vh" }}>
       <Col
@@ -112,7 +112,15 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
           />
         </Col>
         {!!!collapsed && props.enableSearch && (
-          <Col span={24} style={{display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "10px"}}>
+          <Col
+            span={24}
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: "10px",
+            }}
+          >
             <div
               style={{
                 display: "flex",
@@ -123,7 +131,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
                 borderRadius: "5px",
               }}
             >
-              <SearchOutlined color="grey" style={{marginLeft: "4px"}} />
+              <SearchOutlined color="grey" style={{ marginLeft: "4px" }} />
               <Input
                 type="text"
                 placeholder="Search..."
@@ -190,7 +198,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
                         marginLeft: "2px",
                         width: "8px",
                         height: "8px",
-                        backgroundColor: "red", // Customize the color as needed
+                        backgroundColor: "#e07407",
                         borderRadius: "50%",
                       }}
                     ></div>
