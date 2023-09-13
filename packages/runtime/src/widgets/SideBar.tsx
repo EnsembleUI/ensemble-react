@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import type { Expression } from "framework";
 import { Menu as AntMenu, Col, Divider, Image, Input, Row } from "antd";
 import { useEnsembleState, useEvaluate } from "framework";
@@ -60,21 +60,31 @@ interface MenuBaseProps {
 export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
   const [collapsed, setCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+    const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
   library.add(fab, faCheckSquare, faCoffee);
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   };
+
+  useEffect(() => {
+    // Find the initially selected item and set it as selectedItem
+    const initiallySelectedItem = props.items.find((item) => item.selected);
+    if (initiallySelectedItem) {
+      setSelectedItem(initiallySelectedItem.label);
+    }
+  }, [props.items]);
   const { items } = props;
   const filteredItems = props.items.filter((item) =>
     item.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleClick = (page: string) => {
-    window.location.href = page;
+  const handleClick = (page: string, label: string) => {
+    setSelectedItem(label);
+    //window.location.href = page;
   };
 
-  console.log(`${parseInt(`${props.styles?.labelFontSize}` || "16") + 2}`);
+  console.log(selectedItem)
   return (
     <Row style={{ height: "100vh" }}>
       <Col
@@ -117,7 +127,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
           mode="inline"
           style={{
             width: collapsed ? 56 : 256,
-            height: "100%",
+            height: "70vh",
             backgroundColor: `${props.styles?.backgroundColor}`,
           }}
           inlineCollapsed={collapsed}
@@ -127,22 +137,26 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
               <AntMenu.Item
                 key={index}
                 icon={<FontAwesomeIcon icon={item.icon as IconProp} />}
-                onClick={() => handleClick(item.page)}
+                onClick={() => handleClick(item.page, item.label)}
                 style={{
-                  color: item.selected
-                    ? `${props.styles?.selectedColor}`
-                    : `${props.styles?.labelColor}`,
+                  color:
+                    selectedItem === item.label
+                      ? `${props.styles?.selectedColor}`
+                      : `${props.styles?.labelColor}`,
                   display: "flex",
                   justifyContent: "start",
-                  borderLeft: item.selected ? "4px solid orange" : "",
+                  borderLeft:
+                    selectedItem === item.label ? "4px solid orange" : "",
                   borderRadius: 0,
                   alignItems: "center",
                   paddingLeft: "20px",
-                  fontSize: item.selected
-                    ? `${
-                        parseInt(`${props.styles?.labelFontSize}` || "16") + 2
-                      }px`
-                    : `${props.styles?.labelFontSize}px`,
+                  fontSize:
+                    selectedItem === item.label
+                      ? `${
+                          parseInt(`${props.styles?.labelFontSize}` || "16") + 2
+                        }px`
+                      : `${props.styles?.labelFontSize}px`,
+                  backgroundColor: `${props.styles?.backgroundColor}`,
                 }}
               >
                 <span
@@ -178,6 +192,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
             padding: "20px",
             display: "flex",
             justifyContent: "flex-end",
+            backgroundColor: `${props.styles?.backgroundColor}`,
           }}
         >
           <Image
