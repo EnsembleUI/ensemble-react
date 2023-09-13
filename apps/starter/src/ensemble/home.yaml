@@ -24,6 +24,18 @@ View:
               - label: Progress
             item-template:
               data: data.getData.body.users
+              name: user
+              template:
+                DataRow:
+                  children:
+                    - Text:
+                        text: ${user.firstName}
+                    - Text:
+                        text: ${user.age}
+                    - Text:
+                        text: ${user.height}
+                    - Text:
+                        text: ${user.weight}
 
 API:
   getData:

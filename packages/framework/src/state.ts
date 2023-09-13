@@ -3,16 +3,18 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { merge } from "lodash-es";
 import type { Application } from "./models";
-import { Response } from "./data";
+import type { Response } from "./data";
 
 export interface ScreenContextDefinition {
   data: Record<string, Response | undefined>;
   widgets: Record<string, WidgetState | undefined>;
+  [key: string]: unknown;
 }
 
 export interface ScreenContextActions {
   setWidget: (id: string, state: WidgetState) => void;
   setData: (name: string, response: Response) => void;
+  setCustom: (id: string, data: unknown) => void;
 }
 
 export interface ApplicationContextDefinition {
@@ -87,6 +89,10 @@ const createScreenContext: StateSlice<ScreenContextType> = (set) => ({
       } else {
         state.screen.data[name] = response;
       }
+    }),
+  setCustom: (id: string, data: unknown) =>
+    set((state) => {
+      state.screen[id] = data;
     }),
 });
 
