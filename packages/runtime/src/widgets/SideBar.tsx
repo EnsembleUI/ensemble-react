@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp, library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { faCheckSquare, faCoffee } from "@fortawesome/free-solid-svg-icons";
-import { fa0, fa1 } from "@fortawesome/free-solid-svg-icons";
+import { SearchOutlined } from "@ant-design/icons";
 type TypeColors =
   | number
   | "transparent"
@@ -112,20 +112,31 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
           />
         </Col>
         {!!!collapsed && props.enableSearch && (
-          <Col span={24}>
-            <Input
-              type="text"
-              placeholder="Search..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+          <Col span={24} style={{display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "10px"}}>
+            <div
               style={{
-                width: "90%",
-                padding: "8px",
-                marginBottom: "10px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
                 backgroundColor: `${props.styles?.searchBoxColor}`,
-                border: `1px solid ${props.styles?.searchBoxColor}`,
+                width: "80%",
+                borderRadius: "5px",
               }}
-            />
+            >
+              <SearchOutlined color="grey" style={{marginLeft: "4px"}} />
+              <Input
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{
+                  width: "80%",
+                  padding: "8px",
+                  backgroundColor: `${props.styles?.searchBoxColor}`,
+                  border: `1px solid ${props.styles?.searchBoxColor}`,
+                }}
+              />
+            </div>
           </Col>
         )}
         <AntMenu
