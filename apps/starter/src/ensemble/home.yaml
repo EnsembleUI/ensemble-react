@@ -83,6 +83,48 @@ View:
               selectedColor: white
               labelFontSize: 16
               searchBoxColor: "#3e5975"
+        - Chart:
+            type: bar
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']
+            datasets: [
+              {
+                label: 'Matched',
+                data: [190, 200, 210, 145, 230, 240, 220, 190, 120],
+                backgroundColor: "#5542f6",
+                barPercentage: 0.8,
+                borderRadius: 3,
+              },
+              {
+                label: 'Enrolled',
+                data: [160, 170, 170, 105, 190, 170, 155, 160, 110],
+                backgroundColor: "#01a4ff",
+                barPercentage: 0.8,
+                borderRadius: 3
+              },
+              {
+                label: 'Award',
+                data: [140, 130, 90, 90, 150, 170, 140, 80, 110],
+                backgroundColor: "#22c9ac",
+                barPercentage: 0.8,
+                borderRadius: 3,
+              },
+            ]
+        - Chart:
+            type: doughnut
+            labels: ['Red', 'Blue', 'Yellow']
+            datasets: [
+              {
+                label: '',
+                data: [300, 50, 100],
+                backgroundColor: [
+                  'rgb(255, 99, 132)',
+                  'rgb(54, 162, 235)',
+                  'rgb(255, 205, 86)'
+                ],
+                hoverOffset: 4,
+                borderWidth: 1
+              }
+            ]
 
 API:
   getData:

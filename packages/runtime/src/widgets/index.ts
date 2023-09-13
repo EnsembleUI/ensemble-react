@@ -5,6 +5,7 @@ export * from "./Text";
 export * from "./Row";
 export * from "./DataGrid";
 export * from "./SideBar";
+export * from "./Charts";
 
 export interface EnsembleWidgetProps {
   id?: string;
