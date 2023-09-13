@@ -24,6 +24,7 @@ View:
                     styles:
                       width: 15
                       height: 15
+                  enableSearch: true
                   items:
                     - label: Teams
                       icon: coffee
@@ -45,6 +46,7 @@ View:
                     - label: Reminders
                       icon: coffee
                       page: reminders
+                      hasNotifications: true
                     - label: Starred
                       icon: coffee
                       page: reminders
@@ -61,5 +63,6 @@ View:
                     labelColor: grey
                     selectedColor: white
                     labelFontSize: 16
+                    searchBoxColor: "#3e5975"
               
 

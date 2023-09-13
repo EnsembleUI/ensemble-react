@@ -37,6 +37,7 @@ interface MenuItem {
   page: string;
   selected?: boolean;
   divider?: boolean;
+  hasNotifications?: boolean;
 }
 
 interface MenuBaseProps {
@@ -46,6 +47,7 @@ interface MenuBaseProps {
     labelColor?: TypeColors;
     selectedColor?: TypeColors;
     labelFontSize?: number;
+    searchBoxColor?: TypeColors;
   };
   logo: {
     uncollapsedSource: string;
@@ -55,6 +57,7 @@ interface MenuBaseProps {
       height?: number;
     };
   };
+  enableSearch: boolean;
 }
 
 export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
@@ -108,7 +111,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
             preview={false}
           />
         </Col>
-        {!!!collapsed && (
+        {!!!collapsed && props.enableSearch && (
           <Col span={24}>
             <Input
               type="text"
@@ -119,6 +122,8 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
                 width: "90%",
                 padding: "8px",
                 marginBottom: "10px",
+                backgroundColor: `${props.styles?.searchBoxColor}`,
+                border: `1px solid ${props.styles?.searchBoxColor}`,
               }}
             />
           </Col>
@@ -146,7 +151,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
                   display: "flex",
                   justifyContent: "start",
                   borderLeft:
-                    selectedItem === item.label ? "4px solid orange" : "",
+                    selectedItem === item.label ? "4px solid #e07407" : "",
                   borderRadius: 0,
                   alignItems: "center",
                   paddingLeft: "20px",
@@ -167,6 +172,18 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
                   }}
                 >
                   {item.label}
+                  {item.hasNotifications && (
+                    <div
+                      style={{
+                        marginTop: "8px",
+                        marginLeft: "2px",
+                        width: "8px",
+                        height: "8px",
+                        backgroundColor: "red", // Customize the color as needed
+                        borderRadius: "50%",
+                      }}
+                    ></div>
+                  )}
                 </span>
               </AntMenu.Item>
               {item.divider && (
