@@ -1,4 +1,4 @@
-const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 module.exports = {
   // ...
@@ -14,16 +14,21 @@ module.exports = {
       },
       resolve: {
         fallback: {
-          fs: false
-        }
+          fs: false,
+        },
       },
     },
     plugins: {
       add: [
         new NodePolyfillPlugin({
-          excludeAliases: ['console']
-        })
-      ]
-    }
+          excludeAliases: ["console"],
+        }),
+      ],
+    },
+  },
+  jest: {
+    moduleNameMapper: {
+      "^lodash-es$": "lodash",
+    },
   },
 };

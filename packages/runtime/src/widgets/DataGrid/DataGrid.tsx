@@ -1,7 +1,6 @@
 import { Table } from "antd";
 import { type Expression, type Widget, useEnsembleStore } from "framework";
 import { get, map } from "lodash-es";
-import Column from "antd/es/table/Column";
 import type { ReactElement } from "react";
 import { WidgetRegistry } from "../../registry";
 import { DataCell } from "./DataCell";
@@ -46,7 +45,7 @@ export const DataGrid: React.FC<GridProps> = ({
     <Table dataSource={namedData}>
       {DataColumns.map((col, index) => {
         return (
-          <Column
+          <Table.Column
             dataIndex={itemTemplate.name}
             key={col.label}
             render={(_: unknown, record: unknown): ReactElement => {
