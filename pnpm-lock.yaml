@@ -123,6 +123,7 @@ importers:
       eslint-config-custom: workspace:*
       framework: workspace:*
       jest: 27.5.1
+      lodash-es: ^4.17.21
       react: ^18.2.0
       tsconfig: workspace:*
       tsup: ^7.2.0
@@ -135,6 +136,7 @@ importers:
       eslint-config-custom: link:../eslint-config-custom
       framework: link:../framework
       jest: 27.5.1
+      lodash-es: 4.17.21
       react: 18.2.0
       tsconfig: link:../tsconfig
       tsup: 7.2.0

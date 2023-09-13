@@ -9,17 +9,20 @@ export const useEvaluate = (
 ): (() => unknown) => {
   const store = useEnsembleStore();
 
-  const screenInvokables: [string, InvokableMethods | undefined][] =
-    Object.entries(store.screen.widgets).map(([id, state]) => {
-      const methods = state?.invokable.methods;
-      const values = state?.values;
-      return [id, merge({}, values, methods)];
-    });
+  const widgets: [string, InvokableMethods | undefined][] = Object.entries(
+    store.screen.widgets,
+  ).map(([id, state]) => {
+    const methods = state?.invokable.methods;
+    const values = state?.values;
+    return [id, merge({}, values, methods)];
+  });
 
   const invokableObj = Object.fromEntries([
-    ...screenInvokables,
+    ...widgets,
     ...Object.entries(context ?? {}),
   ]);
+  invokableObj.data = store.screen.data;
+
   const execute = useCallback((): unknown => {
     // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
     const jsFunc = new Function(
