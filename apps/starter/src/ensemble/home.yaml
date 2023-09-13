@@ -16,10 +16,28 @@ View:
             text: ${myText.text}
         - Text:
             text: ${data.getData.body.total}
-        - Grid:
-            test: value
+        - DataGrid:
+            DataColumns:
+              - label: Name
+              - label: Performance
+              - label: MoM
+              - label: Progress
+            item-template:
+              data: data.getData.body.users
+              name: user
+              template:
+                DataRow:
+                  children:
+                    - Text:
+                        text: ${user.firstName}
+                    - Text:
+                        text: ${user.age}
+                    - Text:
+                        text: ${user.height}
+                    - Text:
+                        text: ${user.weight}
 
 API:
   getData:
     method: GET
-    uri: https://dummyjson.com/products
+    uri: https://dummyjson.com/users

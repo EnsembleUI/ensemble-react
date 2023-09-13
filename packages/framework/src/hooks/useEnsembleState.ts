@@ -3,6 +3,7 @@ import { compact, get, head, map, merge } from "lodash-es";
 import type { InvokableMethods } from "../state";
 import { useEnsembleStore } from "../state";
 import { useWidgetId } from "./useWidgetId";
+import { useCustomScope } from "./useCustomScope";
 
 export interface EnsembleWidgetState<T> {
   id: string;
@@ -28,13 +29,14 @@ export const useEnsembleState = <T extends Record<string, unknown>>(
     }),
   );
 
-  const { state, setWidget, ...bindings } = useEnsembleStore((store) => ({
+  const { state, setWidget, ...screenValues } = useEnsembleStore((store) => ({
     state: store.screen.widgets[resolvedWidgetId],
     setWidget: store.screen.setWidget,
     ...Object.fromEntries(
       expressions.map(([key, expression]) => {
         const tokens = expression.split(".");
-        if (head(tokens) === "data") {
+        const identifier = head(tokens);
+        if (identifier === "data") {
           return [key, get(store.screen, tokens)];
         }
         tokens.splice(1, 0, "values");
@@ -42,6 +44,23 @@ export const useEnsembleState = <T extends Record<string, unknown>>(
       }),
     ),
   }));
+
+  const customScope = useCustomScope();
+  const customScopeValues = Object.fromEntries(
+    compact(
+      expressions.map(([key, expression]) => {
+        const value = get(customScope, expression);
+        if (value === undefined) {
+          return;
+        }
+        return [key, value];
+      }),
+    ),
+  );
+  const bindings = {
+    ...screenValues,
+    ...customScopeValues,
+  };
 
   useEffect(() => {
     setWidget(resolvedWidgetId, {

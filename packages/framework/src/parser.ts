@@ -55,9 +55,14 @@ export const unwrapWidget = (obj: Record<string, unknown>): Widget => {
   }
   const properties = get(obj, name);
   const children = get(properties, "children");
+  const template = get(properties, ["item-template", "template"]) as unknown;
   if (isArray(children)) {
     const unwrappedChildren = map(children, unwrapWidget);
     set(properties as object, "children", unwrappedChildren);
+  }
+  if (isObject(template)) {
+    const unwrappedTemplate = unwrapWidget(template as Record<string, unknown>);
+    set(properties as object, ["item-template", "template"], unwrappedTemplate);
   }
   return {
     name,
