@@ -2,7 +2,7 @@ View:
   body:
     Column:
       children:
-        - Row:
+        - Column:
             children:
               - Text:
                   id: myText
@@ -15,3 +15,51 @@ View:
                   text: ${myText.text}
               - Grid:
                   test: value
+              - DataGrid:
+                  DataColumns: [{label : "col1", type: "string"}, {label: "col2", type: "string"}]
+              - SideBarMenu:
+                  logo:
+                    collapsedSource: https://i.imgur.com/peprs0j.png
+                    uncollapsedSource: https://i.imgur.com/sH3zCi6.png
+                    styles:
+                      width: 15
+                      height: 15
+                  items:
+                    - label: Teams
+                      icon: coffee
+                      page: apple
+                      selected: true
+                    - label: Patients
+                      icon: coffee
+                      page: banana
+                    - label: Programs
+                      icon: coffee
+                      page: banana
+                    - label: Claims
+                      icon: coffee
+                      page: banana
+                    - label: Awards
+                      icon: coffee
+                      page: banana
+                      divider: true
+                    - label: Reminders
+                      icon: coffee
+                      page: reminders
+                    - label: Starred
+                      icon: coffee
+                      page: reminders
+                    - label: Help
+                      icon: coffee
+                      page: reminders
+                      divider: true
+                    - label: Account
+                      icon: coffee
+                      page: profile
+                    
+                  styles:
+                    backgroundColor: "#1A2A4C"
+                    labelColor: grey
+                    selectedColor: white
+                    labelFontSize: 16
+              
+
