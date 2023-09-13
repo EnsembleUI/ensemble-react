@@ -36,6 +36,53 @@ View:
                         text: ${user.height}
                     - Text:
                         text: ${user.weight}
+        - SideBarMenu:
+            logo:
+              collapsedSource: https://i.imgur.com/peprs0j.png
+              uncollapsedSource: https://i.imgur.com/sH3zCi6.png
+              styles:
+                width: 15
+                height: 15
+            enableSearch: true
+            items:
+              - label: Teams
+                icon: coffee
+                page: apple
+                selected: true
+              - label: Patients
+                icon: coffee
+                page: banana
+              - label: Programs
+                icon: coffee
+                page: banana
+              - label: Claims
+                icon: coffee
+                page: banana
+              - label: Awards
+                icon: coffee
+                page: banana
+                divider: true
+              - label: Reminders
+                icon: coffee
+                page: reminders
+                hasNotifications: true
+              - label: Starred
+                icon: coffee
+                page: reminders
+              - label: Help
+                icon: coffee
+                page: reminders
+                divider: true
+              - label: Account
+                icon: coffee
+                page: profile
+              
+            styles:
+              backgroundColor: "#1A2A4C"
+              labelColor: grey
+              selectedColor: white
+              labelFontSize: 16
+              searchBoxColor: "#3e5975"
 
 API:
   getData:
