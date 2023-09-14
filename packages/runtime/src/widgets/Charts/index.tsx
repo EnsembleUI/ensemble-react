@@ -1,5 +1,3 @@
-import { WidgetRegistry } from "../../registry";
-import type { EnsembleWidgetProps } from "..";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -8,10 +6,12 @@ import {
   Title,
   Tooltip,
   Legend,
-  ArcElement
+  ArcElement,
 } from "chart.js";
-import { BarChart } from "./BarChart";
 import React from "react";
+import { WidgetRegistry } from "../../registry";
+import type { EnsembleWidgetProps } from "../../util/types";
+import { BarChart } from "./BarChart";
 import { DoughnutChart } from "./DoughnutChart";
 
 ChartJS.register(
@@ -21,21 +21,21 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  ArcElement
+  ArcElement,
 );
 
-type ChartDataSets = {
+interface ChartDataSets {
   label?: string;
   data: number[];
-  backgroundColor?: string[] | string,
-  barPercentage?: number,
-  borderRadius?: number,
-  borderColor?: string[] | string,
-  borderWidth?: number,
+  backgroundColor?: string[] | string;
+  barPercentage?: number;
+  borderRadius?: number;
+  borderColor?: string[] | string;
+  borderWidth?: number;
 }
 
 export type ChartProps = {
-  type: 'bar' | 'doughnut';
+  type: "bar" | "doughnut";
   labels: string[] | undefined;
   datasets: ChartDataSets[];
   [key: string]: unknown;
@@ -43,17 +43,17 @@ export type ChartProps = {
 
 const tabsConfig = {
   bar: <BarChart />,
-  doughnut: <DoughnutChart />
-}
+  doughnut: <DoughnutChart />,
+};
 
 export const Chart: React.FC<ChartProps> = (props) => {
   const { labels, datasets, type } = props;
 
-  if(!type) {
-    return <b>{`Chart type missing`}</b>;
+  if (!type) {
+    return <b>Chart type missing</b>;
   }
 
-  return React.cloneElement(tabsConfig[type], { labels, datasets })
+  return React.cloneElement(tabsConfig[type], { labels, datasets });
 };
 
 WidgetRegistry.register("Chart", Chart);
