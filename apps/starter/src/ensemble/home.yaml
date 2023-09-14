@@ -62,7 +62,7 @@ View:
                     backgroundColor: "#1A2A4C"
                     labelColor: grey
                     selectedColor: white
-                    labelFontSize: 16
+                    labelFontSize: 1
                     searchBoxColor: "#3e5975"
               
 

@@ -160,7 +160,11 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
             <>
               <AntMenu.Item
                 key={index}
-                icon={<FontAwesomeIcon icon={item.icon as IconProp} />}
+                icon={
+                  <FontAwesomeIcon
+                    icon={item.icon as IconProp}
+                  />
+                }
                 onClick={() => handleClick(item.page, item.label)}
                 style={{
                   color:
@@ -177,9 +181,9 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
                   fontSize:
                     selectedItem === item.label
                       ? `${
-                          parseInt(`${props.styles?.labelFontSize}` || "16") + 2
-                        }px`
-                      : `${props.styles?.labelFontSize}px`,
+                          parseInt(`${props.styles?.labelFontSize}` || "1") + 0.2
+                        }rem`
+                      : `${props.styles?.labelFontSize}rem`,
                   backgroundColor: `${props.styles?.backgroundColor}`,
                 }}
               >
@@ -229,6 +233,9 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
             display: "flex",
             justifyContent: "flex-end",
             backgroundColor: `${props.styles?.backgroundColor}`,
+            position: "absolute",
+            bottom: 0,
+            right: 0,
           }}
         >
           <Image
