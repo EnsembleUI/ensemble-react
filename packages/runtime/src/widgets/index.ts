@@ -2,12 +2,10 @@
 export * from "./Button";
 export * from "./Column";
 export * from "./Text";
+export * from "./Card";
+export * from "./Image";
+export * from "./Icon";
 export * from "./Row";
 export * from "./DataGrid";
 export * from "./SideBar";
 export * from "./Charts";
-
-export interface EnsembleWidgetProps {
-  id?: string;
-  [key: string]: unknown;
-}

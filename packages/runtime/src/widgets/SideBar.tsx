@@ -9,7 +9,6 @@ import { fab } from "@fortawesome/free-brands-svg-icons";
 import { faCheckSquare, faCoffee } from "@fortawesome/free-solid-svg-icons";
 import { SearchOutlined } from "@ant-design/icons";
 import { WidgetRegistry } from "../registry";
-import type { EnsembleWidgetProps } from ".";
 
 type TypeColors =
   | number

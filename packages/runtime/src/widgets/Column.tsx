@@ -1,23 +1,23 @@
 import { useMemo } from "react";
-import type { Widget } from "framework";
 import { Col } from "antd";
 import { get } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
-import type { EnsembleWidgetProps } from ".";
+import type { FlexboxProps } from "../util/types";
+import { getCrossAxis, getMainAxis } from "../util/utils";
 
-export type ColumnProps = {
-  children: Widget[];
-} & EnsembleWidgetProps;
-
-export const Column: React.FC<ColumnProps> = ({ children, ...props }) => {
+export const Column: React.FC<FlexboxProps> = (props) => {
   const renderedChildren = useMemo(() => {
-    return EnsembleRuntime.render(children);
-  }, [children]);
+    return EnsembleRuntime.render(props.children);
+  }, [props.children]);
+
   return (
     <Col
       style={{
         flexDirection: "column",
+        justifyContent: props.mainAxis && getMainAxis(props.mainAxis),
+        alignItems: props.crossAxis && getCrossAxis(props.crossAxis),
+        gap: props.gap,
         display: "flex",
         flexGrow: 1,
         ...(get(props, "styles") as object),
