@@ -50,8 +50,8 @@ interface MenuBaseProps {
     uncollapsedSource: string;
     collapsedSource: string;
     styles?: {
-      width?: string;
-      height?: string;
+      width?: number;
+      height?: number;
     };
   };
   enableSearch: boolean;
@@ -111,8 +111,8 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
               : props.logo.collapsedSource
           }
           style={{
-            width: props.logo.styles?.width! ?? "15px",
-            height: props.logo.styles?.height! ?? "15px",
+            width: `${props.logo.styles?.width}` ?? "15",
+            height: `${props.logo.styles?.height}` ?? "15",
             marginTop: "20px",
             marginBottom: "20px",
           }}
@@ -164,7 +164,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
         inlineCollapsed={collapsed}
         mode="inline"
         style={{
-          //width: collapsed ? 56 : 256,
+          width: collapsed ? 56 : 256,
           //minHeight: "70vh",
           marginBottom: "80px",
           flex: "1",
@@ -190,22 +190,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
                 borderRadius: 0,
                 alignItems: "center",
                 //paddingLeft: "20px",
-                fontSize:
-                  selectedItem === item.label
-                    ? `${
-                        parseInt(
-                          `${
-                            props.styles?.labelFontSize
-                              ? props.styles.labelFontSize
-                              : 1
-                          }` || "1",
-                        ) + 0.2
-                      }rem`
-                    : `${
-                        props.styles?.labelFontSize
-                          ? props.styles.labelFontSize
-                          : 1
-                      }rem`,
+                fontSize: `${props.styles?.labelFontSize ?? 1}rem`,
                 backgroundColor:
                   (props.styles?.backgroundColor as string) ?? "#1A2A4C",
               }}
