@@ -16,6 +16,51 @@ View:
             text: ${myText.text}
         - Text:
             text: ${data.getData.body.total}
+
+        ## Grid widgets
+        - Row:
+            crossAxis: center
+            gap: 50
+            children:
+              # Person
+              - Row:
+                  crossAxis: center
+                  gap: 5
+                  children:
+                    - Image:
+                        source: https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=248&fit=crop&auto=format&dpr=2
+                        width: 40
+                        height: 40
+                        fit: cover
+                        borderRadius: 100
+                    - Column:
+                        crossAxis: start
+                        children:
+                          - Text:
+                              text: Peter Gibbon
+                          - Text:
+                              text: peter@atlas.health
+
+              # Icons
+              - Row:
+                  children:
+                    - Icon:
+                        name: NorthEast
+                        color: green
+                    - Text:
+                        text: 20%
+              - Row:
+                  children:
+                    - Icon:
+                        name: SouthEast
+                        color: red
+                        #size: 50
+                    - Text:
+                        text: 5%
+
+
+
+
         - Grid:
             test: value
 

@@ -3,7 +3,7 @@ import { useEnsembleState } from "framework";
 import { useState } from "react";
 import { Typography } from "antd";
 import { WidgetRegistry } from "../registry";
-import type { EnsembleWidgetProps } from ".";
+import {EnsembleWidgetProps} from "../util/types";
 
 export type TextProps = {
   text: Expression<string>;
