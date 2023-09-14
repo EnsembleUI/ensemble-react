@@ -55,7 +55,11 @@ View:
                     labelFontSize: 16
                     searchBoxColor: "#3e5975"
               - Column:
+                  crossAxis: stretch
                   children:
+                    - Markdown:
+                        text: '# Team Dashboard'
+
                     - Row:
                         children:
                           - Column:

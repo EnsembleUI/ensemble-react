@@ -40,6 +40,25 @@ export const getColor = (color: number | string): string => {
   return color.toString();
 };
 
+/// same common properties as with Flutter
+export const getTextAlign = (value: string | undefined): string => {
+  switch (value) {
+    case "left":
+      return "left";
+    case "right":
+      return "right";
+    case "center":
+      return "center";
+    case "justify":
+      return "justify";
+    case "end":
+      return "end";
+    case "start":
+    default:
+      return "start";
+  }
+};
+
 export const getMainAxis = (mainAxis: string): string | undefined => {
   switch (mainAxis) {
     case "start":

@@ -1,9 +1,16 @@
 import type { Widget } from "framework";
+import {Expression} from "framework";
 
 export interface EnsembleWidgetProps {
   id?: string;
   [key: string]: unknown;
 }
+
+export type BaseTextProps = {
+  [key: string]: unknown;
+  text?: Expression<string>;
+  textAlign?: string;
+} & EnsembleWidgetProps;
 
 export type FlexboxProps = {
   children: Widget[];
