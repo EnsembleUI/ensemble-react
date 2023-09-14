@@ -15,8 +15,6 @@ View:
                   text: ${myText.text}
               - Grid:
                   test: value
-              - DataGrid:
-                  DataColumns: [{label : "col1", type: "string"}, {label: "col2", type: "string"}]
               - SideBarMenu:
                   logo:
                     collapsedSource: https://i.imgur.com/peprs0j.png
