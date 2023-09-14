@@ -37,6 +37,9 @@
     "test": "craco test --watchAll=false",
     "eject": "react-scripts eject"
   },
+  "lint-staged": {
+    "*.{ts,tsx}": "eslint --fix"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
