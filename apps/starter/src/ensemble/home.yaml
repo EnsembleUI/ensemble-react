@@ -12,47 +12,47 @@ View:
                     collapsedSource: https://i.imgur.com/peprs0j.png
                     uncollapsedSource: https://i.imgur.com/sH3zCi6.png
                     styles:
-                      width: 15
-                      height: 15
+                      width: 80px
+                      height: 20px
                   enableSearch: true
                   items:
                     - label: Teams
-                      icon: coffee
+                      icon: PieChartOutlineOutlined
                       page: apple
                       selected: true
                     - label: Patients
-                      icon: coffee
+                      icon: SickOutlined
                       page: banana
                     - label: Programs
-                      icon: coffee
+                      icon: VolunteerActivismOutlined
                       page: banana
                     - label: Claims
-                      icon: coffee
+                      icon: BusinessCenterOutlined
                       page: banana
                     - label: Awards
-                      icon: coffee
+                      icon: CardGiftcardOutlined
                       page: banana
                       divider: true
                     - label: Reminders
-                      icon: coffee
+                      icon: NotificationAddOutlined
                       page: reminders
                       hasNotifications: true
                     - label: Starred
-                      icon: coffee
+                      icon: StarBorderOutlined
                       page: reminders
                     - label: Help
-                      icon: coffee
+                      icon: HelpOutlineOutlined
                       page: reminders
                       divider: true
                     - label: Account
-                      icon: coffee
+                      icon: AccountCircleOutlined
                       page: profile
                     
                   styles:
                     backgroundColor: "#1A2A4C"
                     labelColor: grey
                     selectedColor: white
-                    labelFontSize: 16
+                    labelFontSize: 1
                     searchBoxColor: "#3e5975"
               - Column:
                   crossAxis: stretch

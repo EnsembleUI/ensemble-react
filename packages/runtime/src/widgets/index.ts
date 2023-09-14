@@ -7,6 +7,6 @@ export * from "./Card";
 export * from "./Image";
 export * from "./Icon";
 export * from "./Row";
-export * from "./DataGrid";
 export * from "./SideBar";
 export * from "./Charts";
+export * from "./DataGrid";

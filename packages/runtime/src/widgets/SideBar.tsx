@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from "react";
-import type { Expression } from "framework";
-import { Menu as AntMenu, Col, Divider, Image, Input, Row } from "antd";
-import { useEnsembleState, useEvaluate } from "framework";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import type { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { fab } from "@fortawesome/free-brands-svg-icons";
-import { faCheckSquare, faCoffee } from "@fortawesome/free-solid-svg-icons";
+import { Menu as AntMenu, Col, Divider, Image, Input, Layout } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
+import * as MuiIcons from "@mui/icons-material";
 import { WidgetRegistry } from "../registry";
 
 type TypeColors =
@@ -32,7 +26,7 @@ type TypeColors =
   | string;
 
 interface MenuItem {
-  icon: string;
+  icon: keyof typeof MuiIcons;
   iconLibrary?: "default" | "fontAwesome";
   label: string;
   page: string;
@@ -49,30 +43,44 @@ interface MenuBaseProps {
     selectedColor?: TypeColors;
     labelFontSize?: number;
     searchBoxColor?: TypeColors;
+    iconWidth?: string;
+    iconHeight?: string;
   };
   logo: {
     uncollapsedSource: string;
     collapsedSource: string;
     styles?: {
-      width?: number;
-      height?: number;
+      width?: string;
+      height?: string;
     };
   };
   enableSearch: boolean;
 }
 
 export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(!(window.innerWidth > 768));
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const renderMuiIcon = (iconName: keyof typeof MuiIcons) => {
+    const MuiIconComponent = MuiIcons[iconName];
+    if (MuiIconComponent) {
+      return (
+        <MuiIconComponent
+          style={{
+            width: props.styles?.iconWidth! ?? "15px",
+            height: props.styles?.iconHeight! ?? "15px",
+          }}
+        />
+      );
+    }
+    return null;
+  };
 
-  library.add(fab, faCheckSquare, faCoffee);
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   };
 
   useEffect(() => {
-    // Find the initially selected item and set it as selectedItem
     const initiallySelectedItem = props.items.find((item) => item.selected);
     if (initiallySelectedItem) {
       setSelectedItem(initiallySelectedItem.label);
@@ -88,11 +96,10 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
     //window.location.href = page;
   };
 
-  console.log(selectedItem);
   return (
     <Col
       style={{
-        backgroundColor: `${props.styles?.backgroundColor}`,
+        backgroundColor: (props.styles?.backgroundColor as string) ?? "#1A2A4C",
       }}
     >
       <Col span={24}>
@@ -104,8 +111,8 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
               : props.logo.collapsedSource
           }
           style={{
-            width: `${props.logo.styles?.width}`,
-            height: `${props.logo.styles?.height}`,
+            width: props.logo.styles?.width! ?? "15px",
+            height: props.logo.styles?.height! ?? "15px",
             marginTop: "20px",
             marginBottom: "20px",
           }}
@@ -126,7 +133,8 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              backgroundColor: `${props.styles?.searchBoxColor}`,
+              backgroundColor:
+                (props.styles?.searchBoxColor as string) ?? "#3e5975",
               width: "80%",
               borderRadius: "5px",
             }}
@@ -138,8 +146,13 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
               style={{
                 width: "80%",
                 padding: "8px",
-                backgroundColor: `${props.styles?.searchBoxColor}`,
-                border: `1px solid ${props.styles?.searchBoxColor}`,
+                backgroundColor:
+                  (props.styles?.searchBoxColor as string) ?? "#3e5975",
+                border: `1px solid ${
+                  props.styles?.searchBoxColor
+                    ? `${props.styles.searchBoxColor}`
+                    : "#3e5975"
+                }`,
               }}
               type="text"
               value={searchQuery}
@@ -151,43 +164,57 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
         inlineCollapsed={collapsed}
         mode="inline"
         style={{
-          width: collapsed ? 56 : 256,
-          height: "70vh",
-          backgroundColor: `${props.styles?.backgroundColor}`,
+          //width: collapsed ? 56 : 256,
+          //minHeight: "70vh",
+          marginBottom: "80px",
+          flex: "1",
+          backgroundColor:
+            (props.styles?.backgroundColor as string) ?? "#1A2A4C",
         }}
       >
         {filteredItems.map((item, index) => (
           <>
             <AntMenu.Item
-              icon={<FontAwesomeIcon icon={item.icon as IconProp} />}
+              icon={renderMuiIcon(item.icon)}
               key={index}
               onClick={() => handleClick(item.page, item.label)}
               style={{
                 color:
                   selectedItem === item.label
-                    ? `${props.styles?.selectedColor}`
-                    : `${props.styles?.labelColor}`,
+                    ? (props.styles?.selectedColor as string) ?? "white"
+                    : (props.styles?.labelColor as string) ?? "grey",
                 display: "flex",
                 justifyContent: "start",
                 borderLeft:
                   selectedItem === item.label ? "4px solid #e07407" : "",
                 borderRadius: 0,
                 alignItems: "center",
-                paddingLeft: "20px",
+                //paddingLeft: "20px",
                 fontSize:
                   selectedItem === item.label
                     ? `${
-                        parseInt(`${props.styles?.labelFontSize}` || "16") + 2
-                      }px`
-                    : `${props.styles?.labelFontSize}px`,
-                backgroundColor: `${props.styles?.backgroundColor}`,
+                        parseInt(
+                          `${
+                            props.styles?.labelFontSize
+                              ? props.styles.labelFontSize
+                              : 1
+                          }` || "1",
+                        ) + 0.2
+                      }rem`
+                    : `${
+                        props.styles?.labelFontSize
+                          ? props.styles.labelFontSize
+                          : 1
+                      }rem`,
+                backgroundColor:
+                  (props.styles?.backgroundColor as string) ?? "#1A2A4C",
               }}
             >
               <span
                 style={{
                   display: "flex",
                   justifyContent: "left",
-                  marginLeft: "15px",
+                  //marginLeft: "15px",
                 }}
               >
                 {item.label}
@@ -228,7 +255,12 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
           padding: "20px",
           display: "flex",
           justifyContent: "flex-end",
-          backgroundColor: `${props.styles?.backgroundColor}`,
+          backgroundColor:
+            (props.styles?.backgroundColor as string) ?? "#1A2A4C",
+          position: "absolute",
+          //marginTop: "20px",
+          bottom: 0,
+          right: 0,
         }}
       >
         <Image
