@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Menu as AntMenu, Col, Divider, Image, Input, Row, Layout } from "antd";
-import { WidgetRegistry } from "../registry";
+import { Menu as AntMenu, Col, Divider, Image, Input, Layout } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import * as MuiIcons from "@mui/icons-material";
+import { WidgetRegistry } from "../registry";
+
 type TypeColors =
   | number
   | "transparent"
@@ -42,31 +43,38 @@ interface MenuBaseProps {
     selectedColor?: TypeColors;
     labelFontSize?: number;
     searchBoxColor?: TypeColors;
-    iconWidth: string;
-    iconHeight: string;
+    iconWidth?: string;
+    iconHeight?: string;
   };
   logo: {
     uncollapsedSource: string;
     collapsedSource: string;
     styles?: {
-      width?: number;
-      height?: number;
+      width?: string;
+      height?: string;
     };
   };
   enableSearch: boolean;
 }
 
 export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
-  const [collapsed, setCollapsed] = useState(window.innerWidth >768 ? false : true);
+  const [collapsed, setCollapsed] = useState(!(window.innerWidth > 768));
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
-const renderMuiIcon = (iconName: keyof typeof MuiIcons) => {
-  const MuiIconComponent = MuiIcons[iconName];
-  if (MuiIconComponent) {
-    return <MuiIconComponent style={{width: `${props.styles?.iconWidth}`, height: `${props.styles?.iconHeight}`}} />;
-  }
-  return null;
-};
+  const renderMuiIcon = (iconName: keyof typeof MuiIcons) => {
+    const MuiIconComponent = MuiIcons[iconName];
+    if (MuiIconComponent) {
+      return (
+        <MuiIconComponent
+          style={{
+            width: (props.styles?.iconWidth as string) ?? "15px",
+            height: (props.styles?.iconHeight as string) ?? "15px",
+          }}
+        />
+      );
+    }
+    return null;
+  };
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -80,7 +88,7 @@ const renderMuiIcon = (iconName: keyof typeof MuiIcons) => {
   }, [props.items]);
 
   const filteredItems = props.items.filter((item) =>
-    item.label.toLowerCase().includes(searchQuery.toLowerCase())
+    item.label.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleClick = (page: string, label: string) => {
@@ -92,7 +100,8 @@ const renderMuiIcon = (iconName: keyof typeof MuiIcons) => {
     <Layout style={{ minHeight: "100vh" }} hasSider>
       <Col
         style={{
-          backgroundColor: `${props.styles?.backgroundColor}`,
+          backgroundColor:
+            (props.styles?.backgroundColor as string) ?? "#1A2A4C",
         }}
       >
         <Col span={24}>
@@ -103,15 +112,15 @@ const renderMuiIcon = (iconName: keyof typeof MuiIcons) => {
                 : props.logo.collapsedSource
             }
             style={{
-              width: `${props.logo.styles?.width}`,
-              height: `${props.logo.styles?.height}`,
+              width: (props.logo.styles?.width as string) ?? "15px",
+              height: (props.logo.styles?.height as string) ?? "15px",
               marginTop: "20px",
               marginBottom: "20px",
             }}
             preview={false}
           />
         </Col>
-        {!!!collapsed && props.enableSearch && (
+        {Boolean(!collapsed) && props.enableSearch && (
           <Col
             span={24}
             style={{
@@ -126,7 +135,8 @@ const renderMuiIcon = (iconName: keyof typeof MuiIcons) => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                backgroundColor: `${props.styles?.searchBoxColor}`,
+                backgroundColor:
+                  (props.styles?.searchBoxColor as string) ?? "#3e5975",
                 width: "80%",
                 borderRadius: "5px",
               }}
@@ -140,8 +150,13 @@ const renderMuiIcon = (iconName: keyof typeof MuiIcons) => {
                 style={{
                   width: "80%",
                   padding: "8px",
-                  backgroundColor: `${props.styles?.searchBoxColor}`,
-                  border: `1px solid ${props.styles?.searchBoxColor}`,
+                  backgroundColor:
+                    (props.styles?.searchBoxColor as string) ?? "#3e5975",
+                  border: `1px solid ${
+                    props.styles?.searchBoxColor
+                      ? `${props.styles?.searchBoxColor}`
+                      : "#3e5975"
+                  }`,
                 }}
               />
             </div>
@@ -154,7 +169,8 @@ const renderMuiIcon = (iconName: keyof typeof MuiIcons) => {
             //minHeight: "70vh",
             marginBottom: "80px",
             flex: "1",
-            backgroundColor: `${props.styles?.backgroundColor}`,
+            backgroundColor:
+              (props.styles?.backgroundColor as string) ?? "#1A2A4C",
           }}
           inlineCollapsed={collapsed}
         >
@@ -167,8 +183,8 @@ const renderMuiIcon = (iconName: keyof typeof MuiIcons) => {
                 style={{
                   color:
                     selectedItem === item.label
-                      ? `${props.styles?.selectedColor}`
-                      : `${props.styles?.labelColor}`,
+                      ? (props.styles?.selectedColor as string) ?? "white"
+                      : (props.styles?.labelColor as string) ?? "grey",
                   display: "flex",
                   justifyContent: "start",
                   borderLeft:
@@ -177,13 +193,23 @@ const renderMuiIcon = (iconName: keyof typeof MuiIcons) => {
                   alignItems: "center",
                   //paddingLeft: "20px",
                   fontSize:
-                    selectedItem === item.label
+                    selectedItem === item?.label
                       ? `${
-                          parseInt(`${props.styles?.labelFontSize}` || "1") +
-                          0.2
+                          parseInt(
+                            `${
+                              props.styles?.labelFontSize
+                                ? props.styles?.labelFontSize
+                                : 1
+                            }` || "1",
+                          ) + 0.2
                         }rem`
-                      : `${props.styles?.labelFontSize}rem`,
-                  backgroundColor: `${props.styles?.backgroundColor}`,
+                      : `${
+                          props.styles?.labelFontSize
+                            ? props.styles?.labelFontSize
+                            : 1
+                        }rem`,
+                  backgroundColor:
+                    (props.styles?.backgroundColor as string) ?? "#1A2A4C",
                 }}
               >
                 <span
@@ -231,7 +257,8 @@ const renderMuiIcon = (iconName: keyof typeof MuiIcons) => {
             padding: "20px",
             display: "flex",
             justifyContent: "flex-end",
-            backgroundColor: `${props.styles?.backgroundColor}`,
+            backgroundColor:
+              (props.styles?.backgroundColor as string) ?? "#1A2A4C",
             position: "absolute",
             //marginTop: "20px",
             bottom: 0,

@@ -20,8 +20,8 @@ View:
                     collapsedSource: https://i.imgur.com/peprs0j.png
                     uncollapsedSource: https://i.imgur.com/sH3zCi6.png
                     styles:
-                      width: 15
-                      height: 15
+                      width: 15px
+                      height: 15px
                   enableSearch: true
                   items:
                     - label: Teams
