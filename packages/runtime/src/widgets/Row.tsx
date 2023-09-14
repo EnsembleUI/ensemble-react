@@ -14,6 +14,8 @@ export const Row: React.FC<FlexboxProps> = (props) => {
       style={{
         justifyContent: props.mainAxis && getMainAxis(props.mainAxis),
         alignItems: props.crossAxis && getCrossAxis(props.crossAxis),
+        margin: props.margin,
+        padding: props.padding,
         gap: props.gap,
       }}
     >

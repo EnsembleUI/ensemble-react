@@ -56,6 +56,7 @@ View:
                     searchBoxColor: "#3e5975"
               - Column:
                   crossAxis: stretch
+                  margin: 0 20px
                   children:
                     - Markdown:
                         text: '# Team Dashboard'
@@ -63,9 +64,13 @@ View:
                     - Row:
                         children:
                           - Column:
+#                              borderColor: #EBEAED
+#                              borderRadius: 10
+#                              borderWidth: 1px
                               styles:
                                 width: 400px
                                 height: 300px
+
                               children:
                                 - Chart:
                                     type: bar
@@ -141,6 +146,8 @@ View:
                                                       height: 40
                                                       fit: cover
                                                       borderRadius: 100
+#                                                      borderColor: grey
+#                                                      borderWidth: 1px
                                                   - Column:
                                                       crossAxis: start
                                                       children:

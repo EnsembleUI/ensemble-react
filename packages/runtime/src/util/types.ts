@@ -17,10 +17,20 @@ export type FlexboxProps = {
   mainAxis?: string;
   crossAxis?: string;
   gap?: number;
-} & EnsembleWidgetProps;
+  margin?: number | string;
+  padding?: number | string;
+} & HasBorder &
+  EnsembleWidgetProps;
 
 export type IconProps = {
   name: string;
   size?: number;
   color?: string;
 } & EnsembleWidgetProps;
+
+// composable types
+export type HasBorder = {
+  borderRadius?: number;
+  borderWidth?: number;
+  borderColor?: number | string;
+};
