@@ -34,7 +34,9 @@ export const getColor = (color: number | string): string => {
     const g = parseInt(myColor.slice(6, 8), 16);
     const b = parseInt(myColor.slice(8, 10), 16);
 
-    return `rgba(${r}, ${g}, ${b}, ${alpha.toFixed(2)})`;
+    const rgba = `rgba(${r}, ${g}, ${b}, ${alpha.toFixed(2)})`;
+    console.log(rgba);
+    return rgba;
   }
 
   return color.toString();

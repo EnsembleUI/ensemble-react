@@ -62,14 +62,20 @@ View:
                         text: '# Team Dashboard'
 
                     - Row:
+                        styles:
+                          crossAxis: center
+                          gap: 20
+                          margin: 0 0 20px 0
                         children:
                           - Column:
-#                              borderColor: #EBEAED
-#                              borderRadius: 10
-#                              borderWidth: 1px
+
                               styles:
                                 width: 400px
                                 height: 300px
+                                borderColor: '#EBEAED'
+                                borderRadius: 10
+                                borderWidth: 1px
+                                padding: 10px 20px
 
                               children:
                                 - Chart:
@@ -98,10 +104,16 @@ View:
                                         borderRadius: 3,
                                       },
                                     ]
-                          - Column:
+                          - Row:
                               styles:
+                                #crossAxis: end
                                 width: 300px
                                 height: 300px
+                                borderColor: '#EBEAED'
+                                borderRadius: 10
+                                borderWidth: 1px
+                                padding: 10px 20px 30px 20px
+
                               children:
                                 - Chart:
                                     type: doughnut

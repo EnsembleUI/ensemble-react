@@ -2,8 +2,9 @@ import { useMemo } from "react";
 import { Row as AntRow } from "antd";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
-import { getCrossAxis, getMainAxis } from "../util/utils";
+import {getColor, getCrossAxis, getMainAxis} from "../util/utils";
 import type { FlexboxProps } from "../util/types";
+import {get} from "lodash-es";
 
 export const Row: React.FC<FlexboxProps> = (props) => {
   const renderedChildren = useMemo(() => {
@@ -17,6 +18,13 @@ export const Row: React.FC<FlexboxProps> = (props) => {
         margin: props.margin,
         padding: props.padding,
         gap: props.gap,
+        borderRadius: props.styles?.borderRadius,
+        borderWidth: props.styles?.borderWidth,
+        borderColor: props.styles?.borderColor
+          ? getColor(props.styles?.borderColor)
+          : undefined,
+        borderStyle: props.styles?.borderWidth ? "solid" : undefined,
+        ...(get(props, "styles") as object),
       }}
     >
       {renderedChildren}
