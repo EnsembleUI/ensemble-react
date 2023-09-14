@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import type { Expression } from "framework";
-import { Menu as AntMenu, Col, Divider, Image, Input, Row } from "antd";
+import { Menu as AntMenu, Col, Divider, Image, Input, Row, Layout } from "antd";
 import { useEnsembleState, useEvaluate } from "framework";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from ".";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IconProp, library } from "@fortawesome/fontawesome-svg-core";
+import { IconProp, SizeProp, library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { faCheckSquare, faCoffee } from "@fortawesome/free-solid-svg-icons";
 import { SearchOutlined } from "@ant-design/icons";
@@ -61,7 +61,7 @@ interface MenuBaseProps {
 }
 
 export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(window.innerWidth >768 ? false : true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
@@ -87,9 +87,9 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
     //window.location.href = page;
   };
 
-  console.log(selectedItem);
   return (
-    <Row style={{ height: "100vh" }}>
+    
+    <Layout style={{ minHeight: "100vh" }} hasSider>
       <Col
         style={{
           backgroundColor: `${props.styles?.backgroundColor}`,
@@ -150,8 +150,9 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
         <AntMenu
           mode="inline"
           style={{
-            width: collapsed ? 56 : 256,
+            //width: collapsed ? 56 : 256,
             height: "70vh",
+            overflow: "scroll",
             backgroundColor: `${props.styles?.backgroundColor}`,
           }}
           inlineCollapsed={collapsed}
@@ -177,7 +178,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
                     selectedItem === item.label ? "4px solid #e07407" : "",
                   borderRadius: 0,
                   alignItems: "center",
-                  paddingLeft: "20px",
+                  //paddingLeft: "20px",
                   fontSize:
                     selectedItem === item.label
                       ? `${
@@ -191,7 +192,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
                   style={{
                     display: "flex",
                     justifyContent: "left",
-                    marginLeft: "15px",
+                    //marginLeft: "15px",
                   }}
                 >
                   {item.label}
@@ -253,7 +254,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
           />
         </Col>
       </Col>
-    </Row>
+    </Layout>
   );
 };
 
