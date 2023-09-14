@@ -65,7 +65,6 @@ const renderMuiIcon = (iconName: keyof typeof MuiIcons) => {
   if (MuiIconComponent) {
     return <MuiIconComponent style={{width: `${props.styles?.iconWidth}`, height: `${props.styles?.iconHeight}`}} />;
   }
-  // Return a default icon or handle the case when the icon is not found
   return null;
 };
 
@@ -74,7 +73,6 @@ const renderMuiIcon = (iconName: keyof typeof MuiIcons) => {
   };
 
   useEffect(() => {
-    // Find the initially selected item and set it as selectedItem
     const initiallySelectedItem = props.items.find((item) => item.selected);
     if (initiallySelectedItem) {
       setSelectedItem(initiallySelectedItem.label);
