@@ -13,7 +13,7 @@ export const Row: React.FC<RowProps> = ({ children }) => {
   const renderedChildren = useMemo(() => {
     return EnsembleRuntime.render(children);
   }, [children]);
-  return <AntRow>{renderedChildren}</AntRow>;
+  return <AntRow style={{ flexGrow: 1 }}>{renderedChildren}</AntRow>;
 };
 
 WidgetRegistry.register("Row", Row);

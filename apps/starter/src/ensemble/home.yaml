@@ -5,126 +5,147 @@ View:
   body:
     Column:
       children:
-        - Text:
-            id: myText
-            text: Peter Parker
-        - Button:
-            label: Click Me
-            onTap:
-              executeCode: myText.setText("Spiderman")
-        - Text:
-            text: ${myText.text}
-        - Text:
-            text: ${data.getData.body.total}
-        - DataGrid:
-            DataColumns:
-              - label: Name
-              - label: Performance
-              - label: MoM
-              - label: Progress
-            item-template:
-              data: data.getData.body.users
-              name: user
-              template:
-                DataRow:
+        - Row:
+            children:
+              - SideBarMenu:
+                  logo:
+                    collapsedSource: https://i.imgur.com/peprs0j.png
+                    uncollapsedSource: https://i.imgur.com/sH3zCi6.png
+                    styles:
+                      width: 15
+                      height: 15
+                  enableSearch: true
+                  items:
+                    - label: Teams
+                      icon: coffee
+                      page: apple
+                      selected: true
+                    - label: Patients
+                      icon: coffee
+                      page: banana
+                    - label: Programs
+                      icon: coffee
+                      page: banana
+                    - label: Claims
+                      icon: coffee
+                      page: banana
+                    - label: Awards
+                      icon: coffee
+                      page: banana
+                      divider: true
+                    - label: Reminders
+                      icon: coffee
+                      page: reminders
+                      hasNotifications: true
+                    - label: Starred
+                      icon: coffee
+                      page: reminders
+                    - label: Help
+                      icon: coffee
+                      page: reminders
+                      divider: true
+                    - label: Account
+                      icon: coffee
+                      page: profile
+                    
+                  styles:
+                    backgroundColor: "#1A2A4C"
+                    labelColor: grey
+                    selectedColor: white
+                    labelFontSize: 16
+                    searchBoxColor: "#3e5975"
+              - Column:
                   children:
+                    - Row:
+                        children:
+                          - Column:
+                              styles:
+                                width: 400px
+                                height: 300px
+                              children:
+                                - Chart:
+                                    type: bar
+                                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']
+                                    datasets: [
+                                      {
+                                        label: 'Matched',
+                                        data: [190, 200, 210, 145, 230, 240, 220, 190, 120],
+                                        backgroundColor: "#5542f6",
+                                        barPercentage: 0.8,
+                                        borderRadius: 3,
+                                      },
+                                      {
+                                        label: 'Enrolled',
+                                        data: [160, 170, 170, 105, 190, 170, 155, 160, 110],
+                                        backgroundColor: "#01a4ff",
+                                        barPercentage: 0.8,
+                                        borderRadius: 3
+                                      },
+                                      {
+                                        label: 'Award',
+                                        data: [140, 130, 90, 90, 150, 170, 140, 80, 110],
+                                        backgroundColor: "#22c9ac",
+                                        barPercentage: 0.8,
+                                        borderRadius: 3,
+                                      },
+                                    ]
+                          - Column:
+                              styles:
+                                width: 300px
+                                height: 300px
+                              children:
+                                - Chart:
+                                    type: doughnut
+                                    labels: ['Red', 'Blue', 'Yellow']
+                                    datasets: [
+                                      {
+                                        label: '',
+                                        data: [300, 50, 100],
+                                        backgroundColor: [
+                                          'rgb(255, 99, 132)',
+                                          'rgb(54, 162, 235)',
+                                          'rgb(255, 205, 86)'
+                                        ],
+                                        hoverOffset: 4,
+                                        borderWidth: 1
+                                      }
+                                    ]
+                    - Row:
+                        children:
+                          - Column:
+                              children:
+                                - DataGrid:
+                                    DataColumns:
+                                      - label: Name
+                                      - label: Performance
+                                      - label: MoM
+                                      - label: Progress
+                                    item-template:
+                                      data: data.getData.body.users
+                                      name: user
+                                      template:
+                                        DataRow:
+                                          children:
+                                            - Text:
+                                                text: ${user.firstName}
+                                            - Text:
+                                                text: ${user.age}
+                                            - Text:
+                                                text: ${user.height}
+                                            - Text:
+                                                text: ${user.weight}
                     - Text:
-                        text: ${user.firstName}
+                        id: myText
+                        text: Peter Parker
+                    - Button:
+                        label: Click Me
+                        onTap:
+                          executeCode: myText.setText("Spiderman")
                     - Text:
-                        text: ${user.age}
+                        text: ${myText.text}
                     - Text:
-                        text: ${user.height}
-                    - Text:
-                        text: ${user.weight}
-        - SideBarMenu:
-            logo:
-              collapsedSource: https://i.imgur.com/peprs0j.png
-              uncollapsedSource: https://i.imgur.com/sH3zCi6.png
-              styles:
-                width: 15
-                height: 15
-            enableSearch: true
-            items:
-              - label: Teams
-                icon: coffee
-                page: apple
-                selected: true
-              - label: Patients
-                icon: coffee
-                page: banana
-              - label: Programs
-                icon: coffee
-                page: banana
-              - label: Claims
-                icon: coffee
-                page: banana
-              - label: Awards
-                icon: coffee
-                page: banana
-                divider: true
-              - label: Reminders
-                icon: coffee
-                page: reminders
-                hasNotifications: true
-              - label: Starred
-                icon: coffee
-                page: reminders
-              - label: Help
-                icon: coffee
-                page: reminders
-                divider: true
-              - label: Account
-                icon: coffee
-                page: profile
-              
-            styles:
-              backgroundColor: "#1A2A4C"
-              labelColor: grey
-              selectedColor: white
-              labelFontSize: 16
-              searchBoxColor: "#3e5975"
-        - Chart:
-            type: bar
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']
-            datasets: [
-              {
-                label: 'Matched',
-                data: [190, 200, 210, 145, 230, 240, 220, 190, 120],
-                backgroundColor: "#5542f6",
-                barPercentage: 0.8,
-                borderRadius: 3,
-              },
-              {
-                label: 'Enrolled',
-                data: [160, 170, 170, 105, 190, 170, 155, 160, 110],
-                backgroundColor: "#01a4ff",
-                barPercentage: 0.8,
-                borderRadius: 3
-              },
-              {
-                label: 'Award',
-                data: [140, 130, 90, 90, 150, 170, 140, 80, 110],
-                backgroundColor: "#22c9ac",
-                barPercentage: 0.8,
-                borderRadius: 3,
-              },
-            ]
-        - Chart:
-            type: doughnut
-            labels: ['Red', 'Blue', 'Yellow']
-            datasets: [
-              {
-                label: '',
-                data: [300, 50, 100],
-                backgroundColor: [
-                  'rgb(255, 99, 132)',
-                  'rgb(54, 162, 235)',
-                  'rgb(255, 205, 86)'
-                ],
-                hoverOffset: 4,
-                borderWidth: 1
-              }
-            ]
+                        text: ${data.getData.body.total}
+
 
 API:
   getData:

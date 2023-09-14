@@ -1,17 +1,15 @@
+import { Doughnut } from "react-chartjs-2";
+import type { ChartOptions } from "chart.js";
 import type { EnsembleWidgetProps } from "..";
-import { Doughnut } from 'react-chartjs-2';
-import {
-  ChartOptions
-} from "chart.js";
 
-const options: ChartOptions<'doughnut'> = {
-  cutout: '90%'
-}
+const options: ChartOptions<"doughnut"> = {
+  cutout: "90%",
+};
 
-type ChartDataSets = {
+interface ChartDataSets {
   label?: string;
   data: number[];
-  backgroundColor?: string,
+  backgroundColor?: string;
 }
 
 export type DoughnutChartProps = {
@@ -25,10 +23,12 @@ export const DoughnutChart: React.FC<DoughnutChartProps> = (props) => {
 
   return (
     <Doughnut
-      options={options}
       data={{
         labels,
         datasets: datasets!,
       }}
-    />);
+      options={options}
+      width="100px"
+    />
+  );
 };

@@ -2,13 +2,15 @@ import React, { useState, useEffect } from "react";
 import type { Expression } from "framework";
 import { Menu as AntMenu, Col, Divider, Image, Input, Row } from "antd";
 import { useEnsembleState, useEvaluate } from "framework";
-import { WidgetRegistry } from "../registry";
-import type { EnsembleWidgetProps } from ".";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IconProp, library } from "@fortawesome/fontawesome-svg-core";
+import type { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { faCheckSquare, faCoffee } from "@fortawesome/free-solid-svg-icons";
 import { SearchOutlined } from "@ant-design/icons";
+import { WidgetRegistry } from "../registry";
+import type { EnsembleWidgetProps } from ".";
+
 type TypeColors =
   | number
   | "transparent"
@@ -79,7 +81,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
   }, [props.items]);
 
   const filteredItems = props.items.filter((item) =>
-    item.label.toLowerCase().includes(searchQuery.toLowerCase())
+    item.label.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleClick = (page: string, label: string) => {
@@ -89,164 +91,162 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
 
   console.log(selectedItem);
   return (
-    <Row style={{ height: "100vh" }}>
-      <Col
-        style={{
-          backgroundColor: `${props.styles?.backgroundColor}`,
-        }}
-      >
-        <Col span={24}>
-          <Image
-            src={
-              collapsed
-                ? props.logo.uncollapsedSource
-                : props.logo.collapsedSource
-            }
-            style={{
-              width: `${props.logo.styles?.width}`,
-              height: `${props.logo.styles?.height}`,
-              marginTop: "20px",
-              marginBottom: "20px",
-            }}
-            preview={false}
-          />
-        </Col>
-        {!!!collapsed && props.enableSearch && (
-          <Col
-            span={24}
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: "10px",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                backgroundColor: `${props.styles?.searchBoxColor}`,
-                width: "80%",
-                borderRadius: "5px",
-              }}
-            >
-              <SearchOutlined color="grey" style={{ marginLeft: "4px" }} />
-              <Input
-                type="text"
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                style={{
-                  width: "80%",
-                  padding: "8px",
-                  backgroundColor: `${props.styles?.searchBoxColor}`,
-                  border: `1px solid ${props.styles?.searchBoxColor}`,
-                }}
-              />
-            </div>
-          </Col>
-        )}
-        <AntMenu
-          mode="inline"
+    <Col
+      style={{
+        backgroundColor: `${props.styles?.backgroundColor}`,
+      }}
+    >
+      <Col span={24}>
+        <Image
+          preview={false}
+          src={
+            collapsed
+              ? props.logo.uncollapsedSource
+              : props.logo.collapsedSource
+          }
           style={{
-            width: collapsed ? 56 : 256,
-            height: "70vh",
-            backgroundColor: `${props.styles?.backgroundColor}`,
+            width: `${props.logo.styles?.width}`,
+            height: `${props.logo.styles?.height}`,
+            marginTop: "20px",
+            marginBottom: "20px",
           }}
-          inlineCollapsed={collapsed}
-        >
-          {filteredItems.map((item, index) => (
-            <>
-              <AntMenu.Item
-                key={index}
-                icon={<FontAwesomeIcon icon={item.icon as IconProp} />}
-                onClick={() => handleClick(item.page, item.label)}
-                style={{
-                  color:
-                    selectedItem === item.label
-                      ? `${props.styles?.selectedColor}`
-                      : `${props.styles?.labelColor}`,
-                  display: "flex",
-                  justifyContent: "start",
-                  borderLeft:
-                    selectedItem === item.label ? "4px solid #e07407" : "",
-                  borderRadius: 0,
-                  alignItems: "center",
-                  paddingLeft: "20px",
-                  fontSize:
-                    selectedItem === item.label
-                      ? `${
-                          parseInt(`${props.styles?.labelFontSize}` || "16") + 2
-                        }px`
-                      : `${props.styles?.labelFontSize}px`,
-                  backgroundColor: `${props.styles?.backgroundColor}`,
-                }}
-              >
-                <span
-                  style={{
-                    display: "flex",
-                    justifyContent: "left",
-                    marginLeft: "15px",
-                  }}
-                >
-                  {item.label}
-                  {item.hasNotifications && (
-                    <div
-                      style={{
-                        marginTop: "8px",
-                        marginLeft: "2px",
-                        width: "8px",
-                        height: "8px",
-                        backgroundColor: "#e07407",
-                        borderRadius: "50%",
-                      }}
-                    ></div>
-                  )}
-                </span>
-              </AntMenu.Item>
-              {item.divider && (
-                <Col
-                  span={24}
-                  style={{ display: "flex", justifyContent: "center" }}
-                >
-                  <Divider
-                    style={{
-                      backgroundColor: "grey",
-                      width: "70%",
-                      minWidth: "70%",
-                    }}
-                  />
-                </Col>
-              )}
-            </>
-          ))}
-        </AntMenu>
+        />
+      </Col>
+      {Boolean(!collapsed) && props.enableSearch ? (
         <Col
           span={24}
           style={{
-            padding: "20px",
             display: "flex",
-            justifyContent: "flex-end",
-            backgroundColor: `${props.styles?.backgroundColor}`,
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom: "10px",
           }}
         >
-          <Image
-            src={
-              collapsed
-                ? "https://i.imgur.com/2N3m1lj.png"
-                : "https://i.imgur.com/PASy9A1.png"
-            }
-            onClick={toggleCollapsed}
+          <div
             style={{
-              width: 25,
-              height: 25,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              backgroundColor: `${props.styles?.searchBoxColor}`,
+              width: "80%",
+              borderRadius: "5px",
             }}
-            preview={false}
-          />
+          >
+            <SearchOutlined color="grey" style={{ marginLeft: "4px" }} />
+            <Input
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search..."
+              style={{
+                width: "80%",
+                padding: "8px",
+                backgroundColor: `${props.styles?.searchBoxColor}`,
+                border: `1px solid ${props.styles?.searchBoxColor}`,
+              }}
+              type="text"
+              value={searchQuery}
+            />
+          </div>
         </Col>
+      ) : null}
+      <AntMenu
+        inlineCollapsed={collapsed}
+        mode="inline"
+        style={{
+          width: collapsed ? 56 : 256,
+          height: "70vh",
+          backgroundColor: `${props.styles?.backgroundColor}`,
+        }}
+      >
+        {filteredItems.map((item, index) => (
+          <>
+            <AntMenu.Item
+              icon={<FontAwesomeIcon icon={item.icon as IconProp} />}
+              key={index}
+              onClick={() => handleClick(item.page, item.label)}
+              style={{
+                color:
+                  selectedItem === item.label
+                    ? `${props.styles?.selectedColor}`
+                    : `${props.styles?.labelColor}`,
+                display: "flex",
+                justifyContent: "start",
+                borderLeft:
+                  selectedItem === item.label ? "4px solid #e07407" : "",
+                borderRadius: 0,
+                alignItems: "center",
+                paddingLeft: "20px",
+                fontSize:
+                  selectedItem === item.label
+                    ? `${
+                        parseInt(`${props.styles?.labelFontSize}` || "16") + 2
+                      }px`
+                    : `${props.styles?.labelFontSize}px`,
+                backgroundColor: `${props.styles?.backgroundColor}`,
+              }}
+            >
+              <span
+                style={{
+                  display: "flex",
+                  justifyContent: "left",
+                  marginLeft: "15px",
+                }}
+              >
+                {item.label}
+                {item.hasNotifications ? (
+                  <div
+                    style={{
+                      marginTop: "8px",
+                      marginLeft: "2px",
+                      width: "8px",
+                      height: "8px",
+                      backgroundColor: "#e07407",
+                      borderRadius: "50%",
+                    }}
+                  />
+                ) : null}
+              </span>
+            </AntMenu.Item>
+            {item.divider ? (
+              <Col
+                span={24}
+                style={{ display: "flex", justifyContent: "center" }}
+              >
+                <Divider
+                  style={{
+                    backgroundColor: "grey",
+                    width: "70%",
+                    minWidth: "70%",
+                  }}
+                />
+              </Col>
+            ) : null}
+          </>
+        ))}
+      </AntMenu>
+      <Col
+        span={24}
+        style={{
+          padding: "20px",
+          display: "flex",
+          justifyContent: "flex-end",
+          backgroundColor: `${props.styles?.backgroundColor}`,
+        }}
+      >
+        <Image
+          onClick={toggleCollapsed}
+          preview={false}
+          src={
+            collapsed
+              ? "https://i.imgur.com/2N3m1lj.png"
+              : "https://i.imgur.com/PASy9A1.png"
+          }
+          style={{
+            width: 25,
+            height: 25,
+          }}
+        />
       </Col>
-    </Row>
+    </Col>
   );
 };
 
