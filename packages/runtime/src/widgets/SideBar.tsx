@@ -88,7 +88,6 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
   };
 
   return (
-    
     <Layout style={{ minHeight: "100vh" }} hasSider>
       <Col
         style={{
@@ -151,8 +150,9 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
           mode="inline"
           style={{
             //width: collapsed ? 56 : 256,
-            height: "70vh",
-            overflow: "scroll",
+            //minHeight: "70vh",
+            marginBottom: "80px",
+            flex: "1",
             backgroundColor: `${props.styles?.backgroundColor}`,
           }}
           inlineCollapsed={collapsed}
@@ -161,11 +161,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
             <>
               <AntMenu.Item
                 key={index}
-                icon={
-                  <FontAwesomeIcon
-                    icon={item.icon as IconProp}
-                  />
-                }
+                icon={<FontAwesomeIcon icon={item.icon as IconProp} />}
                 onClick={() => handleClick(item.page, item.label)}
                 style={{
                   color:
@@ -182,7 +178,8 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
                   fontSize:
                     selectedItem === item.label
                       ? `${
-                          parseInt(`${props.styles?.labelFontSize}` || "1") + 0.2
+                          parseInt(`${props.styles?.labelFontSize}` || "1") +
+                          0.2
                         }rem`
                       : `${props.styles?.labelFontSize}rem`,
                   backgroundColor: `${props.styles?.backgroundColor}`,
@@ -235,6 +232,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
             justifyContent: "flex-end",
             backgroundColor: `${props.styles?.backgroundColor}`,
             position: "absolute",
+            //marginTop: "20px",
             bottom: 0,
             right: 0,
           }}

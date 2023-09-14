@@ -9,6 +9,7 @@ importers:
       '@fortawesome/free-brands-svg-icons': ^6.4.2
       '@fortawesome/free-solid-svg-icons': ^6.4.2
       '@fortawesome/react-fontawesome': ^0.2.0
+      '@mui/icons-material': ^5.14.9
       eslint: ^8.47.0
       eslint-plugin-react-hooks: ^4.6.0
       jest: ^27.5.1
@@ -22,6 +23,7 @@ importers:
       '@fortawesome/free-brands-svg-icons': 6.4.2
       '@fortawesome/free-solid-svg-icons': 6.4.2
       '@fortawesome/react-fontawesome': 0.2.0_3ead4acbd624b8fe0e7f656c5b8fcdf4
+      '@mui/icons-material': 5.14.9
     devDependencies:
       eslint: 8.49.0
       eslint-plugin-react-hooks: 4.6.0_eslint@8.49.0
@@ -2467,6 +2469,20 @@ packages:
   /@microsoft/tsdoc/0.14.2:
     resolution: {integrity: sha512-9b8mPpKrfeGRuhFH5iO1iwCLeIIsV6+H1sRfxbkoGXIyQE2BTsPd9zqSqQJ+pv5sJ/hT5M1zvOFL02MnEezFug==}
     dev: true
+
+  /@mui/icons-material/5.14.9:
+    resolution: {integrity: sha512-xTRQbDsogsJo7tY5Og8R9zbuG2q+KIPVIM6JQoKxtJlz9DPOw1u0T2fGrvwD+XAOVifQf6epNMcGCDLfJAz4Nw==}
+    engines: {node: '>=12.0.0'}
+    peerDependencies:
+      '@mui/material': ^5.0.0
+      '@types/react': ^17.0.0 || ^18.0.0
+      react: ^17.0.0 || ^18.0.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.22.15
+    dev: false
 
   /@nicolo-ribaudo/eslint-scope-5-internals/5.1.1-v1:
     resolution: {integrity: sha512-54/JRvkLIzzDWshCWfuhadfrfZVPiElY8Fcgmg1HroEly/EDSszzhBAsarCux+D/kOslTRquNzuyGSmUSTTHGg==}
