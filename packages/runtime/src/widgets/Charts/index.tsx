@@ -1,5 +1,5 @@
 import { WidgetRegistry } from "../../registry";
-import type { EnsembleWidgetProps } from "..";
+import type { EnsembleWidgetProps } from "../../util/types";
 import {
   Chart as ChartJS,
   CategoryScale,
