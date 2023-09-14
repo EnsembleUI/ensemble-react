@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from "react";
-import type { Expression } from "framework";
 import { Menu as AntMenu, Col, Divider, Image, Input, Row, Layout } from "antd";
-import { useEnsembleState, useEvaluate } from "framework";
 import { WidgetRegistry } from "../registry";
-import type { EnsembleWidgetProps } from ".";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IconProp, SizeProp, library } from "@fortawesome/fontawesome-svg-core";
-import { fab } from "@fortawesome/free-brands-svg-icons";
-import { faCheckSquare, faCoffee } from "@fortawesome/free-solid-svg-icons";
 import { SearchOutlined } from "@ant-design/icons";
+import * as MuiIcons from "@mui/icons-material";
 type TypeColors =
   | number
   | "transparent"
@@ -31,7 +25,7 @@ type TypeColors =
   | string;
 
 interface MenuItem {
-  icon: string;
+  icon: keyof typeof MuiIcons;
   iconLibrary?: "default" | "fontAwesome";
   label: string;
   page: string;
@@ -48,6 +42,8 @@ interface MenuBaseProps {
     selectedColor?: TypeColors;
     labelFontSize?: number;
     searchBoxColor?: TypeColors;
+    iconWidth: string;
+    iconHeight: string;
   };
   logo: {
     uncollapsedSource: string;
@@ -64,8 +60,15 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
   const [collapsed, setCollapsed] = useState(window.innerWidth >768 ? false : true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
+const renderMuiIcon = (iconName: keyof typeof MuiIcons) => {
+  const MuiIconComponent = MuiIcons[iconName];
+  if (MuiIconComponent) {
+    return <MuiIconComponent style={{width: `${props.styles?.iconWidth}`, height: `${props.styles?.iconHeight}`}} />;
+  }
+  // Return a default icon or handle the case when the icon is not found
+  return null;
+};
 
-  library.add(fab, faCheckSquare, faCoffee);
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   };
@@ -161,7 +164,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
             <>
               <AntMenu.Item
                 key={index}
-                icon={<FontAwesomeIcon icon={item.icon as IconProp} />}
+                icon={renderMuiIcon(item.icon)}
                 onClick={() => handleClick(item.page, item.label)}
                 style={{
                   color:
