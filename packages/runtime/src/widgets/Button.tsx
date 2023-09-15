@@ -2,7 +2,7 @@ import type { Expression } from "framework";
 import { Button as AntButton } from "antd";
 import { useEnsembleState, useEvaluate } from "framework";
 import { WidgetRegistry } from "../registry";
-import { EnsembleWidgetProps } from "../util/types";
+import type { EnsembleWidgetProps } from "../util/types";
 
 export type ButtonProps = {
   label: Expression<string>;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Menu as AntMenu, Col, Divider, Image, Input, Layout } from "antd";
+import { Menu as AntMenu, Col, Divider, Image, Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import * as MuiIcons from "@mui/icons-material";
 import { WidgetRegistry } from "../registry";
@@ -22,8 +22,7 @@ type TypeColors =
   | "cyan"
   | "indigo"
   | "lime"
-  | "orange"
-  | string;
+  | "orange";
 
 interface MenuItem {
   icon: keyof typeof MuiIcons;
@@ -67,8 +66,8 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
       return (
         <MuiIconComponent
           style={{
-            width: props.styles?.iconWidth! ?? "15px",
-            height: props.styles?.iconHeight! ?? "15px",
+            width: props.styles?.iconWidth ?? "15px",
+            height: props.styles?.iconHeight ?? "15px",
           }}
         />
       );
@@ -111,8 +110,8 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
               : props.logo.collapsedSource
           }
           style={{
-            width: props.logo.styles?.width! ?? "15px",
-            height: props.logo.styles?.height! ?? "15px",
+            width: props.logo.styles?.width ?? "15px",
+            height: props.logo.styles?.height ?? "15px",
             marginTop: "20px",
             marginBottom: "20px",
           }}

@@ -1,10 +1,9 @@
-import type { Expression } from "framework";
 import { useEnsembleState } from "framework";
 import { useState } from "react";
 import { Typography } from "antd";
 import { WidgetRegistry } from "../registry";
 import type { BaseTextProps } from "../util/types";
-import {getTextAlign} from "../util/utils";
+import { getTextAlign } from "../util/utils";
 
 export type TextProps = {
   // to be added more

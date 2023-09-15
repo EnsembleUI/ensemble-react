@@ -1,5 +1,6 @@
-import * as Icons from '@mui/icons-material';
-import {SvgIconComponent} from "@mui/icons-material";
+import * as Icons from "@mui/icons-material";
+import type { SvgIconComponent } from "@mui/icons-material";
+import { get } from "lodash-es";
 
 type Color = number | string;
 
@@ -35,7 +36,6 @@ export const getColor = (color: number | string): string => {
     const b = parseInt(myColor.slice(8, 10), 16);
 
     const rgba = `rgba(${r}, ${g}, ${b}, ${alpha.toFixed(2)})`;
-    console.log(rgba);
     return rgba;
   }
 
@@ -43,7 +43,9 @@ export const getColor = (color: number | string): string => {
 };
 
 /// same common properties as with Flutter
-export const getTextAlign = (value: string | undefined): string => {
+export const getTextAlign = (
+  value: string | undefined,
+): "left" | "right" | "center" | "justify" | "end" | "start" => {
   switch (value) {
     case "left":
       return "left";
@@ -96,6 +98,5 @@ export const getCrossAxis = (crossAxis: string): string | undefined => {
 };
 
 export const getIcon = (name: string): SvgIconComponent | undefined => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
-  return (Icons as any)[name];
+  return get(Icons, name) as SvgIconComponent;
 };

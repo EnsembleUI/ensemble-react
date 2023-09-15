@@ -14,6 +14,7 @@
     "*.{ts,tsx}": "eslint --fix"
   },
   "devDependencies": {
+    "@ant-design/icons": "^5.2.6",
     "@mui/icons-material": "^5.14.9",
     "@mui/material": "^5.14.9",
     "@testing-library/react": "^13.4.0",
@@ -31,9 +32,5 @@
     "react-markdown": "^8.0.7",
     "tsconfig": "workspace:*",
     "tsup": "^7.2.0"
-  },
-  "dependencies": {
-    "@ant-design/icons": "^5.2.6",
-    "@mui/icons-material": "^5.14.9"
   }
 }
