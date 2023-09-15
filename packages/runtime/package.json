@@ -10,6 +10,9 @@
     "test": "jest",
     "lint": "eslint ."
   },
+  "lint-staged": {
+    "*.{ts,tsx}": "eslint --fix"
+  },
   "devDependencies": {
     "@mui/icons-material": "^5.14.9",
     "@mui/material": "^5.14.9",
