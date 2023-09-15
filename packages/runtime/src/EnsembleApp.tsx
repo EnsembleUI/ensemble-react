@@ -27,7 +27,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
         rawScreen.content,
       );
       return {
-        path: `/${screen.name}` === "home" ? "" : screen.name.toLowerCase(),
+        path: `/${screen.name === "Home" ? "" : screen.name.toLowerCase()}`,
         element: <EnsembleRuntime.Screen screen={screen} />,
       };
     });

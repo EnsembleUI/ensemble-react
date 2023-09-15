@@ -43,10 +43,10 @@ test("Renders error page", () => {
   expect(screen.getByText("Something went wrong:")).not.toBeNull();
 });
 
-test.skip("Renders view widget of home screen", () => {
+test("Renders view widget of home screen", () => {
   loadAppMock.mockReturnValue({ screens: [{ content: "" }] });
   parseScreenMock.mockReturnValue({
-    name: "test",
+    name: "Home",
     body: {
       name: "Column",
       properties: {
@@ -69,7 +69,7 @@ test.skip("Renders view widget of home screen", () => {
 test("Bind data from other widgets", () => {
   loadAppMock.mockReturnValue({ screens: [{ content: "" }] });
   parseScreenMock.mockReturnValue({
-    name: "test",
+    name: "Home",
     body: {
       name: "Column",
       properties: {
@@ -101,7 +101,7 @@ test("Bind data from other widgets", () => {
 test.skip("Updates values through Ensemble state", async () => {
   loadAppMock.mockReturnValue({ screens: [{ content: "" }] });
   parseScreenMock.mockReturnValue({
-    name: "test",
+    name: "Home",
     body: {
       name: "Column",
       properties: {
