@@ -18,6 +18,8 @@ jest.mock("framework", () => ({
   },
 }));
 
+jest.mock("react-markdown", jest.fn());
+
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: jest.fn().mockImplementation((query) => ({

@@ -1,21 +1,24 @@
-import type { Expression } from "framework";
 import { useEnsembleState } from "framework";
 import { useState } from "react";
 import { Typography } from "antd";
 import { WidgetRegistry } from "../registry";
-import type { EnsembleWidgetProps } from ".";
+import type { BaseTextProps } from "../util/types";
+import { getTextAlign } from "../util/utils";
 
 export type TextProps = {
-  text: Expression<string>;
-  [key: string]: unknown;
-} & EnsembleWidgetProps;
+  // to be added more
+} & BaseTextProps;
 
 export const Text: React.FC<TextProps> = (props) => {
   const [text, setText] = useState(props.text);
   const { values } = useEnsembleState({ ...props, text }, props.id, {
     setText,
   });
-  return <Typography.Text>{values.text}</Typography.Text>;
+  return (
+    <Typography.Text style={{ textAlign: getTextAlign(props.textAlign) }}>
+      {values.text}
+    </Typography.Text>
+  );
 };
 
 WidgetRegistry.register("Text", Text);
