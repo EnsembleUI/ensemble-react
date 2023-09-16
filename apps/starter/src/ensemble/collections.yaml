@@ -59,8 +59,8 @@ View:
                   margin: 0 20px
                   children:
                     - Markdown:
-                        text: '# Team Dashboard'
-
+                        text: '# Collections'
+                        id: title
                     - Row:
                         styles:
                           crossAxis: center
@@ -188,7 +188,7 @@ View:
                     - Button:
                         label: Click Me
                         onTap:
-                          navigateScreen: Collections
+                          executeCode: myText.setText("Spiderman")
                     - Text:
                         text: ${myText.text}
                     - Text:
