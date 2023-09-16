@@ -16,6 +16,9 @@ const components = {
 
 export const Markdown: React.FC<BaseTextProps> = (props) => {
   const [text, setText] = useState(props.text);
+  if (props.text !== text) {
+    setText(props.text);
+  }
   const { values } = useEnsembleState({ ...props, text }, props.id, {
     setText,
   });
