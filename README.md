@@ -35,6 +35,14 @@ This repo includes the following packages/apps:
 
 Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
 
+### How to run the starter app
+
+cd starter
+pnpm install
+pnpm start
+
+This command will start the development server, and it should automatically open your default web browser displaying the app. If it doesn't, you can manually navigate to http://localhost:3000 in your browser.
+
 ### Utilities
 
 This Turborepo has some additional tools already setup for you:
