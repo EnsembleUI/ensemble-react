@@ -4,6 +4,8 @@ This is a monorepo containing the React elements for Ensemble, built with Turbor
 
 ## Getting Started
 
+Clone the repo and then cd into the root directory of the repo.
+
 Activate `pnpm` with node's corepack:
 
 ```sh
