@@ -1,11 +1,13 @@
 View:
-  styles:
-    backgroundColor: "#f2f0f0"
+  
   onLoad:
     name: getData
 
   body:
+    
     Column:
+      styles:
+        backgroundColor: "#f2f0f0"
       children:
         - Row:
             children:
@@ -55,11 +57,16 @@ View:
                   
                   children:
                     - Row:
+                        styles:
+                          backgroundColor: white
                         children:
                           - Search:
                               styles:
                                 width: 300px
                                 backgroundColor: white
+                                border: 1px solid grey
+                                margin: 5px 5px 5px 5px
+                          
                     - Markdown:
                         text: '# Team Dashboard'
 

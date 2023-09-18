@@ -13,6 +13,8 @@ export type SearchProps = {
     width: string;
     height: string;
     backgroundColor: string;
+    border: string;
+    margin: string;
   }
 } & EnsembleWidgetProps;
 
@@ -25,15 +27,17 @@ export const Search: React.FC<SearchProps> = (props) => {
       style={{
         display: "flex",
         alignItems: "center",
-        justifyContent: "space-between",
+        justifyContent: "flex-start",
         backgroundColor: (props.styles?.backgroundColor as string) ?? "#3e5975",
         width: props.styles?.width ?? "100px",
-        borderRadius: "5px",
+        borderRadius: "15px",
+        border: props.styles?.border ?? "1px solid grey",
+        margin: props.styles?.margin,
       }}
     >
-      <SearchOutlined color="grey" style={{ marginLeft: "4px" }} />
+      <SearchOutlined color="grey" style={{ marginLeft: "10px" }} />
       <Input
-        placeholder="Search..."
+        placeholder="Search"
         style={{
           width: "80%",
           padding: "8px",
