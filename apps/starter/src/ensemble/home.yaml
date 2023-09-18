@@ -15,7 +15,7 @@ View:
                   text: ${myText.text}
               - Grid:
                   test: value
-              - SideBarMenu:
+              - SideBarMenu1:
                   logo:
                     collapsedSource: https://i.imgur.com/peprs0j.png
                     uncollapsedSource: https://i.imgur.com/sH3zCi6.png
@@ -55,6 +55,7 @@ View:
                     - label: Account
                       icon: AccountCircleOutlined
                       page: profile
+                    
                     
                   styles:
                     backgroundColor: "#1A2A4C"
