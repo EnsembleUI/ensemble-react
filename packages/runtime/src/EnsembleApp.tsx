@@ -2,9 +2,10 @@ import type { Application } from "framework";
 import {
   ApplicationContextProvider,
   ApplicationLoader,
-  EnsembleParser,
+  
   ScreenContextProvider,
 } from "framework";
+import { EnsembleParserVG } from "framework";
 import { EnsembleRuntime } from "./runtime";
 import { ThemeProvider } from "./ThemeProvider";
 // Register built in widgets;
@@ -21,7 +22,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
 }) => {
   try {
     const resolvedApp = application ?? ApplicationLoader.load(appId);
-    const screen = EnsembleParser.parseScreen(
+    const screen = EnsembleParserVG.parseScreen(
       "Home",
       resolvedApp.screens[0].content,
     );

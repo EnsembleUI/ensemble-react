@@ -1,4 +1,47 @@
-View:
+ViewGroup:
+  Menu:
+    Column:
+      children:
+        - SideBarMenu1:
+            logo:
+              collapsedSource: https://i.imgur.com/peprs0j.png
+              uncollapsedSource: https://i.imgur.com/sH3zCi6.png
+              styles:
+                width: 15
+                height: 15
+            enableSearch: true
+            items:
+              - label: Teams
+                icon: PieChartOutlineOutlined
+                page: apple
+                selected: true
+              - label: Patients
+                icon: SickOutlined
+                page: banana
+              - label: Programs
+                icon: VolunteerActivismOutlined
+                page: banana
+              - label: Claims
+                icon: BusinessCenterOutlined
+                page: banana
+              - label: Awards
+                icon: CardGiftcardOutlined
+                page: banana
+                divider: true
+              - label: Reminders
+                icon: NotificationAddOutlined
+                page: reminders
+                hasNotifications: true
+              - label: Starred
+                icon: StarBorderOutlined
+                page: reminders
+              - label: Help
+                icon: HelpOutlineOutlined
+                page: reminders
+                divider: true
+              - label: Account
+                icon: AccountCircleOutlined
+                page: profile
   body:
     Column:
       children:
@@ -15,46 +58,7 @@ View:
                   text: ${myText.text}
               - Grid:
                   test: value
-              - SideBarMenu1:
-                  logo:
-                    collapsedSource: https://i.imgur.com/peprs0j.png
-                    uncollapsedSource: https://i.imgur.com/sH3zCi6.png
-                    styles:
-                      width: 15
-                      height: 15
-                  enableSearch: true
-                  items:
-                    - label: Teams
-                      icon: PieChartOutlineOutlined
-                      page: apple
-                      selected: true
-                    - label: Patients
-                      icon: SickOutlined
-                      page: banana
-                    - label: Programs
-                      icon: VolunteerActivismOutlined
-                      page: banana
-                    - label: Claims
-                      icon: BusinessCenterOutlined
-                      page: banana
-                    - label: Awards
-                      icon: CardGiftcardOutlined
-                      page: banana
-                      divider: true
-                    - label: Reminders
-                      icon: NotificationAddOutlined
-                      page: reminders
-                      hasNotifications: true
-                    - label: Starred
-                      icon: StarBorderOutlined
-                      page: reminders
-                    - label: Help
-                      icon: HelpOutlineOutlined
-                      page: reminders
-                      divider: true
-                    - label: Account
-                      icon: AccountCircleOutlined
-                      page: profile
+              
                     
                     
                   styles:

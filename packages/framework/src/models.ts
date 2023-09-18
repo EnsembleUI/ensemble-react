@@ -16,7 +16,12 @@ export interface EnsembleScreen {
   header?: Widget;
   body: Widget;
 }
-
+export interface EnsembleScreenVG {
+  name: string;
+  header?: Widget;
+  body: Widget;
+  menu?: Widget;
+}
 export interface Widget {
   name: string;
   properties: Record<string, unknown>;
