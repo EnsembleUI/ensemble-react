@@ -57,8 +57,8 @@ export const CardComponent: React.FC<CardComponentProps> = (props) => {
         boxShadow: props.styles?.boxShadow ?? "inherit",
         width: props.styles?.width ?? 250,
         height: props.styles?.height ?? 140,
-        padding: props.styles?.padding ?? "10px",
-        margin: props.styles?.margin ?? "10px",
+        padding: props.styles?.padding ?? "0px",
+        margin: props.styles?.margin ?? "10px 10px 0px 0px",
        }}
       cover={coverImage}
     >

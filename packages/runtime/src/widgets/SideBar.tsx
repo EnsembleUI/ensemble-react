@@ -71,7 +71,7 @@ interface MenuBaseProps {
 }
 
 export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
-  const [collapsed, setCollapsed] = useState(!(window.innerWidth > 768));
+  const [collapsed, setCollapsed] = useState(props.isCollapsible && !(window.innerWidth > 768));
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
   const renderMuiIcon = (iconName: keyof typeof MuiIcons) => {
