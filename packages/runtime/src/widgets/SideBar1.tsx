@@ -61,7 +61,7 @@ export const SideBarMenu1: React.FC<MenuBaseProps> = (props) => {
   const [collapsed, setCollapsed] = useState(!(window.innerWidth > 768));
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
-  const [mode, setMode] = useState("horizontal");
+  const [mode, setMode] = useState("vertical");
   const renderMuiIcon = (iconName: keyof typeof MuiIcons) => {
     const MuiIconComponent = MuiIcons[iconName];
     if (MuiIconComponent) {
@@ -100,7 +100,7 @@ export const SideBarMenu1: React.FC<MenuBaseProps> = (props) => {
   return (
     <>
       <AntMenu
-        mode="horizontal"
+        mode="inline"
         style={{
           width: mode === "vertical" ? (collapsed ? 56 : 256) : "",
           minHeight: mode === "vertical" ? "90vh" : "",
