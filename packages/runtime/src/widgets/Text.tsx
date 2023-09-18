@@ -5,6 +5,7 @@ import { Typography } from "antd";
 import { WidgetRegistry } from "../registry";
 import type { BaseTextProps } from "../util/types";
 import {getTextAlign} from "../util/utils";
+import { TextAlign } from "chart.js";
 
 export type TextProps = {
   // to be added more
@@ -16,7 +17,7 @@ export const Text: React.FC<TextProps> = (props) => {
     setText,
   });
   return (
-    <Typography.Text style={{ textAlign: getTextAlign(props.textAlign) }}>
+    <Typography.Text style={{ textAlign: getTextAlign(props.textAlign) as TextAlign }}>
       {values.text}
     </Typography.Text>
   );

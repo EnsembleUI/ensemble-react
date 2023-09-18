@@ -4,10 +4,13 @@ import { useEnsembleState } from "framework";
 import { WidgetRegistry } from "../registry";
 import type { BaseTextProps } from "../util/types";
 import { getTextAlign } from "../util/utils";
+import { TextAlign } from "chart.js";
 
 // TODO: customize in theme
 const components = {
-  h1: ({ node, ...props }) => <h1 style={{ fontSize: "2.5em" }} {...props} />,
+  h1: ({ node, ...props }: { node: any; [key: string]: any }) => (
+    <h1 style={{ fontSize: "2.5em" }} {...props} />
+  ),
 };
 
 export const Markdown: React.FC<BaseTextProps> = (props) => {
@@ -16,7 +19,7 @@ export const Markdown: React.FC<BaseTextProps> = (props) => {
     setText,
   });
   return (
-    <div style={{ textAlign: getTextAlign(props.textAlign) }}>
+    <div style={{ textAlign: getTextAlign(props.textAlign) as TextAlign }}>
       <ReactMarkdown components={components}>{values.text ?? ""}</ReactMarkdown>
     </div>
   );

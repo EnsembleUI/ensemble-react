@@ -18,12 +18,12 @@ export const Row: React.FC<FlexboxProps> = (props) => {
         margin: props.margin,
         padding: props.padding,
         gap: props.gap,
-        borderRadius: props.styles?.borderRadius,
-        borderWidth: props.styles?.borderWidth,
-        borderColor: props.styles?.borderColor
-          ? getColor(props.styles?.borderColor)
+        borderRadius: props?.borderRadius,
+        borderWidth: props?.borderWidth,
+        borderColor: props?.borderColor
+          ? getColor(props?.borderColor)
           : undefined,
-        borderStyle: props.styles?.borderWidth ? "solid" : undefined,
+        borderStyle: props?.borderWidth ? "solid" : undefined,
         ...(get(props, "styles") as object),
       }}
     >
