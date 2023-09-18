@@ -56,6 +56,7 @@ View:
                   margin: 0 20px
                   
                   children:
+                    
                     - Row:
                         styles:
                           backgroundColor: white
@@ -66,7 +67,114 @@ View:
                                 backgroundColor: white
                                 border: 1px solid grey
                                 margin: 5px 5px 5px 5px
-                          
+                    - Row:
+                        styles:
+                          crossAxis: center
+                        children:
+                          - CardComponent:
+                              children:
+                                - Column:
+                                    children:
+                                      - Text:
+                                          id: num1
+                                          text: 44
+                                          textAlign: center
+                                          styles:
+                                            fontFamily: Helvetica Neue
+                                            fontSize: 40px
+                                            fontWeight: 400
+                                      - Text: 
+                                          id: card1
+                                          text: Negative
+                                          textAlign: center
+                                          styles:
+                                            fontFamily: Helvetica Neue
+                                            fontSize: 14px
+                                      - Text: 
+                                          id: card1per
+                                          text: ^ +2.5% increase
+                                          textAlign: center 
+                                          styles:
+                                            fontFamily: Helvetica Neue
+                                            fontSize: 14px
+                          - CardComponent:
+                              children:
+                                - Column:
+                                    children:
+                                      - Text:
+                                          id: num1
+                                          text: 44
+                                          textAlign: center
+                                          styles:
+                                            fontFamily: Helvetica Neue
+                                            fontSize: 40px
+                                            fontWeight: 400
+                                      - Text: 
+                                          id: card1
+                                          text: Negative
+                                          textAlign: center
+                                          styles:
+                                            fontFamily: Helvetica Neue
+                                            fontSize: 14px
+                                      - Text: 
+                                          id: card1per
+                                          text: ^ +2.5% increase
+                                          textAlign: center 
+                                          styles:
+                                            fontFamily: Helvetica Neue
+                                            fontSize: 14px
+                          - CardComponent:
+                              children:
+                                - Column:
+                                    children:
+                                      - Text:
+                                          id: num1
+                                          text: 44
+                                          textAlign: center
+                                          styles:
+                                            fontFamily: Helvetica Neue
+                                            fontSize: 40px
+                                            fontWeight: 400
+                                      - Text: 
+                                          id: card1
+                                          text: Negative
+                                          textAlign: center
+                                          styles:
+                                            fontFamily: Helvetica Neue
+                                            fontSize: 14px
+                                      - Text: 
+                                          id: card1per
+                                          text: ^ +2.5% increase
+                                          textAlign: center 
+                                          styles:
+                                            fontFamily: Helvetica Neue
+                                            fontSize: 14px  
+                          - CardComponent:
+                              children:
+                                - Column:
+                                    children:
+                                      - Text:
+                                          id: num1
+                                          text: 44
+                                          textAlign: center
+                                          styles:
+                                            fontFamily: Helvetica Neue
+                                            fontSize: 40px
+                                            fontWeight: 400
+                                      - Text: 
+                                          id: card1
+                                          text: Negative
+                                          textAlign: center
+                                          styles:
+                                            fontFamily: Helvetica Neue
+                                            fontSize: 14px
+                                      - Text: 
+                                          id: card1per
+                                          text: ^ +2.5% increase
+                                          textAlign: center 
+                                          styles:
+                                            fontFamily: Helvetica Neue
+                                            fontSize: 14px                   
                     - Markdown:
                         text: '# Team Dashboard'
 
