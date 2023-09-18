@@ -1,4 +1,6 @@
 View:
+  styles:
+    backgroundColor: "#f2f0f0"
   onLoad:
     name: getData
 
@@ -9,55 +11,55 @@ View:
             children:
               - SideBarMenu:
                   logo:
-                    collapsedSource: https://i.imgur.com/peprs0j.png
-                    uncollapsedSource: https://i.imgur.com/sH3zCi6.png
+                    collapsedSource: https://i.imgur.com/hYrGRRn.png
+                    uncollapsedSource: https://i.imgur.com/CLnFeag.png
                     styles:
-                      width: 80px
-                      height: 20px
-                  enableSearch: true
+                      width: 110px
+                      height: 50px
+                  enableSearch: false
+                  isCollapsible: false
+                  hasBottomButton: true
+                  bottomButton:
+                    icon: LegendToggle
+                    text: Give us feedback
+                    page: ContactSupportOutlined
                   items:
-                    - label: Teams
-                      icon: PieChartOutlineOutlined
+                    - label: Dashboard
+                      icon: LegendToggle
                       page: apple
                       selected: true
-                    - label: Patients
-                      icon: SickOutlined
+                    - label: Collection
+                      icon: PermMediaOutlined
                       page: banana
-                    - label: Programs
-                      icon: VolunteerActivismOutlined
+                    - label: Users + Groups
+                      icon: PersonOutlineOutlined
                       page: banana
-                    - label: Claims
-                      icon: BusinessCenterOutlined
+                    - label: Ask Embrace
+                      icon: TextsmsOutlined
                       page: banana
-                    - label: Awards
-                      icon: CardGiftcardOutlined
-                      page: banana
-                      divider: true
-                    - label: Reminders
-                      icon: NotificationAddOutlined
-                      page: reminders
-                      hasNotifications: true
-                    - label: Starred
-                      icon: StarBorderOutlined
-                      page: reminders
-                    - label: Help
-                      icon: HelpOutlineOutlined
-                      page: reminders
-                      divider: true
-                    - label: Account
-                      icon: AccountCircleOutlined
-                      page: profile
+                    
                     
                   styles:
-                    backgroundColor: "#1A2A4C"
+                    backgroundColor: "#fcfeff"
                     labelColor: grey
-                    selectedColor: white
+                    selectedColor: black
                     labelFontSize: 1
-                    searchBoxColor: "#3e5975"
+                    onSelectStyles:
+                      borderWidth: "0px 0px 0px 0px"
+                      borderColor: "red"
+                      backgroundColor: "#e0e0e0"
+                      borderRadius: 10px
               - Column:
                   crossAxis: stretch
                   margin: 0 20px
+                  
                   children:
+                    - Row:
+                        children:
+                          - Search:
+                              styles:
+                                width: 300px
+                                backgroundColor: white
                     - Markdown:
                         text: '# Team Dashboard'
 
