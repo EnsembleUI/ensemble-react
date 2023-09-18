@@ -13,6 +13,7 @@ export const Row: React.FC<FlexboxProps> = (props) => {
   return (
     <AntRow
       style={{
+        flexFlow: "nowrap",
         justifyContent: props.mainAxis && getMainAxis(props.mainAxis),
         alignItems: props.crossAxis && getCrossAxis(props.crossAxis),
         margin: props.margin,
