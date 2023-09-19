@@ -21,7 +21,7 @@
 
 /* Override tab border styles */
 .my-tab-bar .ant-tabs-top > .ant-tabs-nav::before {
-  border: 2px solid black;
+  border: 2px solid black imo !important;
 }
 
 .ant-tabs-ink-bar {
@@ -32,4 +32,12 @@
 /* Optional: Change the selected tab text color */
 .ant-tabs-tab-active .ant-tabs-tab-btn {
   color: black; /* Change to your desired text color */
+}
+
+.ant-tabs-nav::before{
+    border-bottom: 1px solid rgb(177, 176, 176) !important;
+}
+
+.ant-tabs-ink-bar {
+  border-bottom: 2px solid #cbcbcb;
 }

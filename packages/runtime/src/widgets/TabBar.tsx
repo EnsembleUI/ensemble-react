@@ -26,6 +26,7 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
   return (
     <Tabs
       className="my-tab-bar"
+      tabBarStyle={{ borderBottom: "1px solid #cbcbcb" }}
     >
       {props.TabPane.map((tabItem) => (
         <TabPane key={tabItem.key} tab={tabItem.label}>
