@@ -1,5 +1,4 @@
-import type { Expression } from "framework";
-import { Button as AntButton, Input } from "antd";
+import { Input } from "antd";
 import { useEnsembleState, useEvaluate } from "framework";
 import { WidgetRegistry } from "../registry";
 import { EnsembleWidgetProps } from "../util/types";

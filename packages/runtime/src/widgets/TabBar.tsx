@@ -1,8 +1,6 @@
-import { useMemo } from "react";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
-import type { TabsProps } from "antd";
-import { Card, Tabs } from "antd";
+import { Tabs } from "antd";
 import { Widget } from "framework";
 const { TabPane } = Tabs;
 import "./index.css";

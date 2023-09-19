@@ -3,7 +3,6 @@ import { WidgetRegistry } from "../registry";
 import { getColor } from "../util/utils";
 import type { EnsembleWidgetProps, HasBorder } from "../util/types";
 import { Expression, useEnsembleState } from "framework";
-import { TextAlign } from "chart.js";
 import * as MuiIcons from "@mui/icons-material";
 import { renderMuiIcon } from "../util/utils";
 export type TogglerProps = {

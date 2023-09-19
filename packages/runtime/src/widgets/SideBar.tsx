@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Menu as AntMenu, Col, Divider, Image, Input, Layout, Row } from "antd";
+import { Menu as AntMenu, Col, Divider, Image, Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import * as MuiIcons from "@mui/icons-material";
 import { renderMuiIcon } from "../util/utils";

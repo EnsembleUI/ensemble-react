@@ -1,13 +1,8 @@
 import { useMemo } from "react";
-import { Row as AntRow } from "antd";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
-import { getColor, getCrossAxis, getMainAxis } from "../util/utils";
-import type { FlexboxProps } from "../util/types";
-import { get } from "lodash-es";
-import { Avatar, Card } from "antd";
+import { Card } from "antd";
 import { Widget } from "framework";
-const { Meta } = Card;
 
 export type CardComponentProps = {
   image?: {
