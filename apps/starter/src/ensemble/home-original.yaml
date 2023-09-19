@@ -107,134 +107,134 @@ View:
                           - key: knowledge health
                             label: Knowledge Health
                     
-#                    - Row:
-#                        styles:
-#                          margin: "0px 0px 10px 0px"
-#                        children:
-#                          - Column:
-#                              styles:
-#                                width: 50%
-#                              children:
-#                                - Row:
-#                                    children:
-#                                      - CardComponent:
-#                                          styles:
-#                                            width: 50%
-#                                            border: "1px solid #cfcfcf"
-#                                          children:
-#                                            - Column:
-#                                                children:
-#                                                  - Text:
-#                                                      id: num1
-#                                                      text: 44
-#                                                      textAlign: center
-#                                                      styles:
-#                                                        fontFamily: Helvetica Neue
-#                                                        fontSize: 2rem
-#                                                        fontWeight: 400
-#                                                  - Text:
-#                                                      id: card1
-#                                                      text: Negative
-#                                                      textAlign: center
-#                                                      styles:
-#                                                        fontFamily: Helvetica Neue
-#                                                        fontSize: 0.8rem
-#                                                  - Text:
-#                                                      id: card1per
-#                                                      text: ^ +2.5% increase
-#                                                      textAlign: center
-#                                                      styles:
-#                                                        fontFamily: Helvetica Neue
-#                                                        fontSize: 0.8rem
-#                                      - CardComponent:
-#                                          styles:
-#                                            width: 50%
-#                                            border: "1px solid #cfcfcf"
-#                                          children:
-#                                            - Column:
-#                                                children:
-#                                                  - Text:
-#                                                      id: num1
-#                                                      text: 44
-#                                                      textAlign: center
-#                                                      styles:
-#                                                        fontFamily: Helvetica Neue
-#                                                        fontSize: 2rem
-#                                                        fontWeight: 400
-#                                                  - Text:
-#                                                      id: card1
-#                                                      text: Positive
-#                                                      textAlign: center
-#                                                      styles:
-#                                                        fontFamily: Helvetica Neue
-#                                                        fontSize: 0.8rem
-#                                                  - Text:
-#                                                      id: card1per
-#                                                      text: ^ +2.5% increase
-#                                                      textAlign: center
-#                                                      styles:
-#                                                        fontFamily: Helvetica Neue
-#                                                        fontSize: 0.8rem
-#                                - Row:
-#                                    children:
-#                                      - CardComponent:
-#                                          styles:
-#                                            width: 50%
-#                                            border: "1px solid #cfcfcf"
-#                                          children:
-#                                            - Column:
-#                                                children:
-#                                                  - Text:
-#                                                      id: num1
-#                                                      text: 795
-#                                                      textAlign: center
-#                                                      styles:
-#                                                        fontFamily: Helvetica Neue
-#                                                        fontSize: 2rem
-#                                                        fontWeight: 400
-#                                                  - Text:
-#                                                      id: card1
-#                                                      text: Success rate
-#                                                      textAlign: center
-#                                                      styles:
-#                                                        fontFamily: Helvetica Neue
-#                                                        fontSize: 0.8rem
-#                                                  - Text:
-#                                                      id: card1per
-#                                                      text: ^ +2.5% increase
-#                                                      textAlign: center
-#                                                      styles:
-#                                                        fontFamily: Helvetica Neue
-#                                                        fontSize: 0.8rem
-#                                      - CardComponent:
-#                                          styles:
-#                                            width: 50%
-#                                            border: "1px solid #cfcfcf"
-#                                          children:
-#                                            - Column:
-#                                                children:
-#                                                  - Text:
-#                                                      id: num1
-#                                                      text: 234
-#                                                      textAlign: center
-#                                                      styles:
-#                                                        fontFamily: Helvetica Neue
-#                                                        fontSize: 2rem
-#                                                        fontWeight: 400
-#                                                  - Text:
-#                                                      id: card1
-#                                                      text: Questions asked
-#                                                      textAlign: center
-#                                                      styles:
-#                                                        fontFamily: Helvetica Neue
-#                                                        fontSize: 0.8rem
-#                                                  - Text:
-#                                                      id: card1per
-#                                                      text: ^ +2.5% increase
-#                                                      textAlign: center
-#                                                      styles:
-#                                                        fontFamily: Helvetica Neue
-#                                                        fontSize: 0.8rem
+                    - Row:
+                        styles:
+                          margin: "0px 0px 10px 0px"
+                        children:
+                          - Column:
+                              styles:
+                                width: 50%
+                              children:
+                                - Row:
+                                    children:
+                                      - CardComponent:
+                                          styles:
+                                            width: 50%
+                                            border: "1px solid #cfcfcf"
+                                          children:
+                                            - Column:
+                                                children:
+                                                  - Text:
+                                                      id: num1
+                                                      text: 44
+                                                      textAlign: center
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 2rem
+                                                        fontWeight: 400
+                                                  - Text: 
+                                                      id: card1
+                                                      text: Negative
+                                                      textAlign: center
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 0.8rem
+                                                  - Text: 
+                                                      id: card1per
+                                                      text: ^ +2.5% increase
+                                                      textAlign: center 
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 0.8rem
+                                      - CardComponent:
+                                          styles:
+                                            width: 50%
+                                            border: "1px solid #cfcfcf"
+                                          children:
+                                            - Column:
+                                                children:
+                                                  - Text:
+                                                      id: num1
+                                                      text: 44
+                                                      textAlign: center
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 2rem
+                                                        fontWeight: 400
+                                                  - Text: 
+                                                      id: card1
+                                                      text: Positive
+                                                      textAlign: center
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 0.8rem
+                                                  - Text: 
+                                                      id: card1per
+                                                      text: ^ +2.5% increase
+                                                      textAlign: center 
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 0.8rem
+                                - Row: 
+                                    children:
+                                      - CardComponent:
+                                          styles:
+                                            width: 50%
+                                            border: "1px solid #cfcfcf"
+                                          children:
+                                            - Column:
+                                                children:
+                                                  - Text:
+                                                      id: num1
+                                                      text: 795
+                                                      textAlign: center
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 2rem
+                                                        fontWeight: 400
+                                                  - Text: 
+                                                      id: card1
+                                                      text: Success rate
+                                                      textAlign: center
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 0.8rem
+                                                  - Text: 
+                                                      id: card1per
+                                                      text: ^ +2.5% increase
+                                                      textAlign: center 
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 0.8rem  
+                                      - CardComponent:
+                                          styles:
+                                            width: 50%
+                                            border: "1px solid #cfcfcf"
+                                          children:
+                                            - Column:
+                                                children:
+                                                  - Text:
+                                                      id: num1
+                                                      text: 234
+                                                      textAlign: center
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 2rem
+                                                        fontWeight: 400
+                                                  - Text: 
+                                                      id: card1
+                                                      text: Questions asked
+                                                      textAlign: center
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 0.8rem
+                                                  - Text: 
+                                                      id: card1per
+                                                      text: ^ +2.5% increase
+                                                      textAlign: center 
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 0.8rem  
 
                                 
                           - Column:

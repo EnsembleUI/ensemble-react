@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Menu as AntMenu, Col, Divider, Image, Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import * as MuiIcons from "@mui/icons-material";
-import { renderMuiIcon } from "../util/utils";
+import { renderMuiIcon } from "../util/viewUtils";
 import { WidgetRegistry } from "../registry";
 
 type TypeColors =
