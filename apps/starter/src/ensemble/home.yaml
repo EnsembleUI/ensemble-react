@@ -91,7 +91,16 @@ View:
                                 
                     - Markdown:
                         text: '# Welcome back, Francisco'
-
+                    - TabBar:
+                        TabPane:
+                          - key: overview
+                            label: Overview
+                          - key: adoption usage
+                            label: Adoption Usage
+                          - key: group impact
+                            label: Group Impact
+                          - key: knowledge health
+                            label: Knowledge Health
                     - Row:
                         styles:
                           margin: "0px 0px 10px 0px"

@@ -1,0 +1,35 @@
+/* Increase specificity to override Ant Design styles */
+.my-tab-bar .ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: black;
+}
+
+/* Override ink bar styles */
+.my-tab-bar .ant-tabs-ink-bar::after {
+  background: red;
+  width: 20px;
+}
+
+/* Override tab bar background color */
+.my-tab-bar .ant-tabs .ant-tabs-ink-bar {
+  background: #13161b;
+}
+
+/* Override selected tab text color */
+.my-tab-bar .ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: black;
+}
+
+/* Override tab border styles */
+.my-tab-bar .ant-tabs-top > .ant-tabs-nav::before {
+  border: 2px solid black;
+}
+
+.ant-tabs-ink-bar {
+  background-color: red; /* Change to your desired color */
+  height: 5px; /* Change to your desired thickness */
+}
+
+/* Optional: Change the selected tab text color */
+.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: black; /* Change to your desired text color */
+}
