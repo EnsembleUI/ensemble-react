@@ -1,5 +1,9 @@
 import type { APIModel, EnsembleScreenModel, Widget } from "framework";
-import { DataFetcher, useEnsembleStore } from "framework";
+import {
+  DataFetcher,
+  ScreenContextProvider,
+  useEnsembleStore,
+} from "framework";
 import type { ReactNode } from "react";
 import { isValidElement, useEffect } from "react";
 import { WidgetRegistry } from "../registry";
@@ -32,7 +36,11 @@ const EnsembleScreen: React.FC<EnsembleScreenProps> = ({ screen }) => {
     void fetchAndSetContext(api);
   });
 
-  return <WidgetFn {...rootWidget.properties} />;
+  return (
+    <ScreenContextProvider screen={screen}>
+      <WidgetFn {...rootWidget.properties} />
+    </ScreenContextProvider>
+  );
 };
 
 export const EnsembleRuntime = {

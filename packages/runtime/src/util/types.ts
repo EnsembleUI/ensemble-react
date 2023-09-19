@@ -1,9 +1,9 @@
-import type { Widget } from "framework";
-import {Expression} from "framework";
+import type { Widget, Expression } from "framework";
 
 export interface EnsembleWidgetProps {
   id?: string;
   [key: string]: unknown;
+  styles?: Record<string, string | number>;
 }
 
 export type BaseTextProps = {
@@ -29,8 +29,8 @@ export type IconProps = {
 } & EnsembleWidgetProps;
 
 // composable types
-export type HasBorder = {
+export interface HasBorder {
   borderRadius?: number;
   borderWidth?: number;
   borderColor?: number | string;
-};
+}

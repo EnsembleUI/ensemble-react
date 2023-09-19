@@ -10,6 +10,9 @@
     "test": "jest",
     "lint": "eslint ."
   },
+  "lint-staged": {
+    "*.{ts,tsx}": "eslint --fix"
+  },
   "devDependencies": {
     "@testing-library/react": "^13.4.0",
     "@types/lodash-es": "^4.17.8",

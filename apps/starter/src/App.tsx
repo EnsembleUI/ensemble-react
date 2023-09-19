@@ -1,6 +1,7 @@
 import { EnsembleApp } from "runtime";
 import type { Application } from "framework";
 import HomeYAML from "./ensemble/home.yaml";
+import CollectionsYAML from "./ensemble/collections.yaml";
 
 import "./App.css";
 
@@ -12,6 +13,11 @@ const testApp: Application = {
       id: "home",
       name: "Home",
       content: String(HomeYAML),
+    },
+    {
+      id: "collections",
+      name: "Collections",
+      content: String(CollectionsYAML),
     },
   ],
 };

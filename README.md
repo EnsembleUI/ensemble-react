@@ -4,6 +4,8 @@ This is a monorepo containing the React elements for Ensemble, built with Turbor
 
 ## Getting Started
 
+Clone the repo and then cd into the root directory of the repo.
+
 Activate `pnpm` with node's corepack:
 
 ```sh
@@ -32,6 +34,15 @@ This repo includes the following packages/apps:
 - `tsconfig`: `tsconfig.json`s used throughout the monorepo
 
 Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+
+### How to run the starter app
+```sh
+cd starter
+pnpm install
+pnpm start
+```
+
+This command will start the development server, and it should automatically open your default web browser displaying the app. If it doesn't, you can manually navigate to http://localhost:3000 in your browser.
 
 ### Utilities
 

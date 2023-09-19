@@ -3,8 +3,8 @@ import {
   ApplicationContextProvider,
   ApplicationLoader,
   EnsembleParser,
-  ScreenContextProvider,
 } from "framework";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { EnsembleRuntime } from "./runtime";
 import { ThemeProvider } from "./ThemeProvider";
 // Register built in widgets;
@@ -21,16 +21,21 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
 }) => {
   try {
     const resolvedApp = application ?? ApplicationLoader.load(appId);
-    const screen = EnsembleParser.parseScreen(
-      "Home",
-      resolvedApp.screens[0].content,
-    );
+    const routes = resolvedApp.screens.map((rawScreen) => {
+      const screen = EnsembleParser.parseScreen(
+        rawScreen.name,
+        rawScreen.content,
+      );
+      return {
+        path: `/${screen.name === "Home" ? "" : screen.name.toLowerCase()}`,
+        element: <EnsembleRuntime.Screen screen={screen} />,
+      };
+    });
+    const router = createBrowserRouter(routes);
     return (
       <ApplicationContextProvider app={resolvedApp}>
         <ThemeProvider>
-          <ScreenContextProvider screen={screen}>
-            <EnsembleRuntime.Screen screen={screen} />
-          </ScreenContextProvider>
+          <RouterProvider router={router} />
         </ThemeProvider>
       </ApplicationContextProvider>
     );

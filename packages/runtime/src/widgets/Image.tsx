@@ -1,8 +1,9 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
+import type { Expression } from "framework";
+import { useEnsembleState } from "framework";
 import { WidgetRegistry } from "../registry";
 import { getColor } from "../util/utils";
 import type { EnsembleWidgetProps, HasBorder } from "../util/types";
-import {Expression, useEnsembleState} from "framework";
 
 export type ImageProps = {
   source: Expression<string>;
@@ -11,7 +12,8 @@ export type ImageProps = {
   width?: number | string;
   height?: number | string;
   fit?: "contain" | "cover" | "fill" | "none" | "scale-down";
-} & HasBorder & EnsembleWidgetProps;
+} & HasBorder &
+  EnsembleWidgetProps;
 
 export const Image: React.FC<ImageProps> = (props) => {
   const [source, setSource] = useState(props.source);
