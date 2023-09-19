@@ -8,19 +8,28 @@ import { TextAlign } from "chart.js";
 export type ProfileIconProps = {
   source?: Expression<string>;
   name?: Expression<string>;
+  hasNotification?: boolean;
   styles?: {
     width?: number | string;
     height?: number | string;
     fit?: "contain" | "cover" | "fill" | "none" | "scale-down";
     backgroundColor: string;
-    nameStyles?:{
-        color: string;
-        fontSize: string;
-        fontFamily: string;
-        fontWeight: string;
-        textAlign: string;
+    notificationStyles?: {
+        position: "absolute" | "relative" | "fixed" | "sticky";
+        top: number;
+        right: number;
+        width: string;
+        height: string;
+        borderRadius: string;
+        backgroundColor: string;
     }
-    
+    nameStyles?: {
+      color: string;
+      fontSize: string;
+      fontFamily: string;
+      fontWeight: string;
+      textAlign: string;
+    };
   } & HasBorder;
 } & EnsembleWidgetProps;
 
@@ -29,6 +38,16 @@ export const ProfileIcon: React.FC<ProfileIconProps> = (props) => {
   const { values } = useEnsembleState({ ...props, source }, props.id, {
     setSource,
   });
+
+  const notificationCircleStyles = {
+    position: props.styles?.notificationStyles?.position ?? "absolute",
+    top: props.styles?.notificationStyles?.top ?? 10,
+    right: props.styles?.notificationStyles?.right ?? 12,
+    width: props.styles?.notificationStyles?.width ?? "10px",
+    height: props.styles?.notificationStyles?.height ?? "10px",
+    backgroundColor: props.styles?.notificationStyles?.backgroundColor ?? "red",
+    borderRadius: props.styles?.notificationStyles?.borderRadius ?? "50%",
+  };
 
   return (
     <div
@@ -71,6 +90,9 @@ export const ProfileIcon: React.FC<ProfileIconProps> = (props) => {
         >
           {props?.name?.charAt(0)}
         </span>
+      )}
+      {props?.hasNotification && (
+        <div style={notificationCircleStyles}></div>
       )}
     </div>
   );

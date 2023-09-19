@@ -76,6 +76,7 @@ View:
                                 - ProfileIcon:
                                     # source: https://tostatus.in/wp-content/uploads/2023/02/Single-Boy-for-Whatsapp-DP-Download-2023-1024x1024.jpg
                                     name: Francisco
+                                    hasNotification: true
                     - Markdown:
                         text: '# Welcome back, Francisco'
 
