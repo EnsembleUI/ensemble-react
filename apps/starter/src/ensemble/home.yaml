@@ -95,6 +95,7 @@ View:
                                 
                     - Markdown:
                         text: '# Welcome back, Francisco'
+                    
                     - TabBar:
                         TabPane:
                           - key: overview
