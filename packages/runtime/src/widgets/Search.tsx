@@ -8,13 +8,13 @@ export type SearchProps = {
   onTap?: {
     executeCode: string;
   };
-  styles?:{
+  styles?: {
     width: string;
     height: string;
     backgroundColor: string;
     border: string;
     margin: string;
-  }
+  };
 } & EnsembleWidgetProps;
 
 export const Search: React.FC<SearchProps> = (props) => {

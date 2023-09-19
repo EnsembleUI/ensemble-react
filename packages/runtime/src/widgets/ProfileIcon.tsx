@@ -15,14 +15,14 @@ export type ProfileIconProps = {
     fit?: "contain" | "cover" | "fill" | "none" | "scale-down";
     backgroundColor: string;
     notificationStyles?: {
-        position: "absolute" | "relative" | "fixed" | "sticky";
-        top: number;
-        right: number;
-        width: string;
-        height: string;
-        borderRadius: string;
-        backgroundColor: string;
-    }
+      position: "absolute" | "relative" | "fixed" | "sticky";
+      top: number;
+      right: number;
+      width: string;
+      height: string;
+      borderRadius: string;
+      backgroundColor: string;
+    };
     nameStyles?: {
       color: string;
       fontSize: string;
@@ -92,9 +92,7 @@ export const ProfileIcon: React.FC<ProfileIconProps> = (props) => {
           {props?.name?.charAt(0)}
         </span>
       )}
-      {props?.hasNotification && (
-        <div style={notificationCircleStyles}></div>
-      )}
+      {props?.hasNotification && <div style={notificationCircleStyles}></div>}
     </div>
   );
 };

@@ -4,7 +4,7 @@ import { getColor } from "../util/utils";
 import type { EnsembleWidgetProps, HasBorder } from "../util/types";
 import { Expression, useEnsembleState } from "framework";
 import * as MuiIcons from "@mui/icons-material";
-import { renderMuiIcon } from "../util/utils";
+import { renderMuiIcon } from "../util/viewUtils";
 export type TogglerProps = {
   likedSource?: Expression<string>;
   unlikedSource?: Expression<string>;
@@ -33,14 +33,14 @@ export type TogglerProps = {
 } & EnsembleWidgetProps;
 
 export const Toggler: React.FC<TogglerProps> = (props) => {
-    const [isLiked, setIsLiked] = useState(true);
+  const [isLiked, setIsLiked] = useState(true);
   const [source, setSource] = useState(props.source);
   const { values } = useEnsembleState({ ...props, source }, props.id, {
     setSource,
   });
-  const toggleButton = () =>{
+  const toggleButton = () => {
     setIsLiked(!isLiked);
-  }
+  };
   const notificationCircleStyles = {
     position: props.styles?.notificationStyles?.position ?? "absolute",
     top: props.styles?.notificationStyles?.top ?? 0,
@@ -103,12 +103,12 @@ export const Toggler: React.FC<TogglerProps> = (props) => {
               ? renderMuiIcon(
                   props.likedLabel,
                   props.styles?.iconWidth,
-                  props.styles?.iconHeight
+                  props.styles?.iconHeight,
                 )
               : renderMuiIcon(
                   props.unlikedLabel,
                   props.styles?.iconWidth,
-                  props.styles?.iconHeight
+                  props.styles?.iconHeight,
                 )
             : ""}
         </span>

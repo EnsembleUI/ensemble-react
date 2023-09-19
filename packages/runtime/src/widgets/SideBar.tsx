@@ -72,10 +72,11 @@ interface MenuBaseProps {
 }
 
 export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
-  const [collapsed, setCollapsed] = useState(props.isCollapsible && !(window.innerWidth > 768));
+  const [collapsed, setCollapsed] = useState(
+    props.isCollapsible && !(window.innerWidth > 768),
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
-  
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -185,7 +186,11 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
               }}
             >
               <AntMenu.Item
-                icon={renderMuiIcon(item.icon, props.styles?.iconWidth, props.styles?.iconHeight)}
+                icon={renderMuiIcon(
+                  item.icon,
+                  props.styles?.iconWidth,
+                  props.styles?.iconHeight,
+                )}
                 key={index}
                 onClick={() => handleClick(item.page, item.label)}
                 style={{
