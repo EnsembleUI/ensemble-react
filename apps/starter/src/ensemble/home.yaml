@@ -193,6 +193,16 @@ View:
                         text: ${myText.text}
                     - Text:
                         text: ${data.getData.body.total}
+                    - MultiSelect:
+                        data: [{
+                            value: 'jack',
+                            label: 'jack'
+                          }, {
+                            value: 'lucy',
+                            label: 'lucy'
+                          }]
+                        defaultValue: []
+                        placeholder: 'Select From Groups'
 
 
         ## Grid widgets
