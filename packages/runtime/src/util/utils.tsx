@@ -1,6 +1,6 @@
 import * as Icons from '@mui/icons-material';
-import {SvgIconComponent} from "@mui/icons-material";
-
+import { SvgIconComponent } from "@mui/icons-material";
+import * as MuiIcons from "@mui/icons-material";
 type Color = number | string;
 
 const namedColors: { [key in Color]?: string } = {
@@ -98,4 +98,23 @@ export const getCrossAxis = (crossAxis: string): string | undefined => {
 export const getIcon = (name: string): SvgIconComponent | undefined => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
   return (Icons as any)[name];
+};
+
+export const renderMuiIcon = (
+  iconName: keyof typeof MuiIcons,
+  width?: string,
+  height?: string
+) => {
+  const MuiIconComponent = MuiIcons[iconName];
+  if (MuiIconComponent) {
+    return (
+      <MuiIconComponent
+        style={{
+          width: width ?? "15px",
+          height: height ?? "15px",
+        }}
+      />
+    );
+  }
+  return null;
 };

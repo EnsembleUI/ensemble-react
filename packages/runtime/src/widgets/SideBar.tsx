@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Menu as AntMenu, Col, Divider, Image, Input, Layout, Row } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import * as MuiIcons from "@mui/icons-material";
+import { renderMuiIcon } from "../util/utils";
 import { WidgetRegistry } from "../registry";
 
 type TypeColors =
@@ -74,20 +75,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
   const [collapsed, setCollapsed] = useState(props.isCollapsible && !(window.innerWidth > 768));
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
-  const renderMuiIcon = (iconName: keyof typeof MuiIcons) => {
-    const MuiIconComponent = MuiIcons[iconName];
-    if (MuiIconComponent) {
-      return (
-        <MuiIconComponent
-          style={{
-            width: props.styles?.iconWidth! ?? "15px",
-            height: props.styles?.iconHeight! ?? "15px",
-          }}
-        />
-      );
-    }
-    return null;
-  };
+  
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -108,7 +96,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
     setSelectedItem(label);
     //window.location.href = page;
   };
-console.log(selectedItem)
+
   return (
     <Col
       style={{
@@ -197,7 +185,7 @@ console.log(selectedItem)
               }}
             >
               <AntMenu.Item
-                icon={renderMuiIcon(item.icon)}
+                icon={renderMuiIcon(item.icon, props.styles?.iconWidth, props.styles?.iconHeight)}
                 key={index}
                 onClick={() => handleClick(item.page, item.label)}
                 style={{

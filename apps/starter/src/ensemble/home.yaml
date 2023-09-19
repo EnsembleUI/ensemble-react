@@ -72,7 +72,17 @@ View:
                                 border: 1px solid grey
                                 margin: 5px 5px 5px 5px
                           - Row:
+                              gap: 10
                               children:
+                                - Icons:
+                                    label: Notifications
+                                    hasNotification: true
+                                    styles:
+                                      backgroundColor: "#cfd0d1"
+                                      iconWidth: 25
+                                      iconHeight: 25
+                                      width: 45
+                                      height: 45
                                 - ProfileIcon:
                                     # source: https://tostatus.in/wp-content/uploads/2023/02/Single-Boy-for-Whatsapp-DP-Download-2023-1024x1024.jpg
                                     name: Francisco
