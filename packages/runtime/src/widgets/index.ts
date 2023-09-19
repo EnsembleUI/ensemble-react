@@ -12,3 +12,4 @@ export * from "./Charts";
 export * from "./DataGrid";
 export * from "./Search";
 export * from "./CardComponent";
+export * from "./ProfileIcon";
