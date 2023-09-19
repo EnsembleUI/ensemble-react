@@ -1,7 +1,7 @@
 import { EnsembleApp } from "runtime";
 import type { Application } from "framework";
 import HomeYAML from "./ensemble/home.yaml";
-
+import CollectionsYAML from "./ensemble/collections.yaml";
 import "./App.css";
 
 const testApp: Application = {
@@ -13,13 +13,18 @@ const testApp: Application = {
       name: "Home",
       content: String(HomeYAML),
     },
+    {
+      id: "collections",
+      name: "Collections",
+      content: String(CollectionsYAML),
+    },
   ],
 };
 
 const App: React.FC = () => {
   return (
     <div className="App">
-      <EnsembleApp appId="test" application={testApp} />
+      <EnsembleApp appId="test" application={testApp} page="Home" />
     </div>
   );
 };

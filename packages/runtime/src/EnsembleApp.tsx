@@ -13,16 +13,18 @@ import "./widgets";
 export interface EnsembleAppProps {
   appId: string;
   application?: Application;
+  page: string;
 }
 
 export const EnsembleApp: React.FC<EnsembleAppProps> = ({
+  page,
   appId,
   application,
 }) => {
   try {
     const resolvedApp = application ?? ApplicationLoader.load(appId);
     const screen = EnsembleParser.parseScreen(
-      "Home",
+      page,
       resolvedApp.screens[0].content,
     );
     return (
