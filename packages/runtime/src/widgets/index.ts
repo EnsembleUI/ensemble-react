@@ -16,3 +16,4 @@ export * from "./ProfileIcon";
 export * from "./Icons";
 export * from "./Toggler";
 export * from "./TabBar";
+export * from "./Dropdown";

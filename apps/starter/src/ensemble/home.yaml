@@ -101,6 +101,8 @@ View:
                             label: Group Impact
                           - key: knowledge health
                             label: Knowledge Health
+                    
+
                     - Row:
                         styles:
                           margin: "0px 0px 10px 0px"
