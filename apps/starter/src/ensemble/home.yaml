@@ -85,9 +85,13 @@ View:
                                       iconHeight: 25
                                       width: 45
                                       height: 45
+                                      notificationStyles:
+                                        backgroundColor: '#6DC4E5'
                                 - ProfileIcon:
                                     # source: https://tostatus.in/wp-content/uploads/2023/02/Single-Boy-for-Whatsapp-DP-Download-2023-1024x1024.jpg
                                     name: Francisco
+                                    styles:
+                                      backgroundColor: '#28304B'
                                 
                     - Markdown:
                         text: '# Welcome back, Francisco'
@@ -102,7 +106,6 @@ View:
                           - key: knowledge health
                             label: Knowledge Health
                     
-
                     - Row:
                         styles:
                           margin: "0px 0px 10px 0px"
