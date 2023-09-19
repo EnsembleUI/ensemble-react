@@ -78,7 +78,9 @@ View:
                                     label: Notifications
                                     hasNotification: true
                                     styles:
-                                      backgroundColor: "#cfd0d1"
+                                      backgroundColor: white
+                                      borderWidth: 1px
+                                      borderColor: grey
                                       iconWidth: 25
                                       iconHeight: 25
                                       width: 45
@@ -86,7 +88,7 @@ View:
                                 - ProfileIcon:
                                     # source: https://tostatus.in/wp-content/uploads/2023/02/Single-Boy-for-Whatsapp-DP-Download-2023-1024x1024.jpg
                                     name: Francisco
-                                    hasNotification: true
+                                
                     - Markdown:
                         text: '# Welcome back, Francisco'
 
@@ -269,6 +271,7 @@ View:
                                 - DataGrid:
                                     DataColumns:
                                       - label: Name
+                                      - label: Feedback
                                       - label: Performance
                                       - label: MoM
                                       - label: Progress
@@ -298,6 +301,15 @@ View:
                                                             text: ${user.firstName}
                                                         - Text:
                                                             text: ${user.email}
+                                            - Toggler:
+                                                likedSource: https://i.imgur.com/3T1xpWR.png
+                                                unlikedSource: https://i.imgur.com/zAme0lT.png
+                                                styles:
+                                                  iconWidth: 15
+                                                  iconHeight: 15
+                                                  borderRadius: 0
+
+                                            
                                             - Text:
                                                 text: ${user.age}
 

@@ -14,3 +14,4 @@ export * from "./Search";
 export * from "./CardComponent";
 export * from "./ProfileIcon";
 export * from "./Icons";
+export * from "./Toggler";
