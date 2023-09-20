@@ -10,6 +10,8 @@ export * from "./Row";
 export * from "./SideBar";
 export * from "./Charts";
 export * from "./DataGrid";
+export * from "./Flow";
+export * from "./SimpleTag";
 export * from "./Search";
 export * from "./CardComponent";
 export * from "./ProfileIcon";
