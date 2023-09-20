@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { useMemo } from "react";
 import { Col } from "antd";
 import { get } from "lodash-es";
@@ -15,11 +16,17 @@ export const Column: React.FC<FlexboxProps> = (props) => {
     <Col
       style={{
         flexDirection: "column",
-        justifyContent: props.mainAxis && getMainAxis(props.mainAxis),
-        alignItems: props.crossAxis && getCrossAxis(props.crossAxis),
-        margin: props.margin,
-        padding: props.padding,
-        gap: props.gap,
+        justifyContent: (props.styles?.mainAxis &&
+          getMainAxis(
+            String(props.styles.mainAxis),
+          )) as CSSProperties["justifyContent"],
+        alignItems: (props.styles?.crossAxis &&
+          getCrossAxis(
+            String(props.styles.crossAxis),
+          )) as CSSProperties["alignItems"],
+        margin: props.styles?.margin,
+        padding: props.styles?.padding,
+        gap: props.styles?.gap,
         borderRadius: props.styles?.borderRadius,
         borderWidth: props.styles?.borderWidth,
         borderColor: props.styles?.borderColor

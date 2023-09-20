@@ -1,28 +1,20 @@
-import type { CSSProperties } from "react";
 import { useMemo } from "react";
-import { Row as AntRow } from "antd";
+import { Row } from "antd";
 import { get } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
-import { getColor, getCrossAxis, getMainAxis } from "../util/utils";
 import type { FlexboxProps } from "../util/types";
+import { getColor } from "../util/utils";
 
-export const Row: React.FC<FlexboxProps> = (props) => {
+export const GridView: React.FC<FlexboxProps> = (props) => {
   const renderedChildren = useMemo(() => {
     return EnsembleRuntime.render(props.children);
   }, [props.children]);
+
   return (
-    <AntRow
+    <Row
       style={{
-        flexFlow: "nowrap",
-        justifyContent: (props.styles?.mainAxis &&
-          getMainAxis(
-            String(props.styles.mainAxis),
-          )) as CSSProperties["justifyContent"],
-        alignItems: (props.styles?.crossAxis &&
-          getCrossAxis(
-            String(props.styles.crossAxis),
-          )) as CSSProperties["alignItems"],
+        flexDirection: "column",
         margin: props.styles?.margin,
         padding: props.styles?.padding,
         gap: props.styles?.gap,
@@ -32,12 +24,15 @@ export const Row: React.FC<FlexboxProps> = (props) => {
           ? getColor(props.styles.borderColor)
           : undefined,
         borderStyle: props.styles?.borderWidth ? "solid" : undefined,
+
+        display: "flex",
+        flexGrow: 1,
         ...(get(props, "styles") as object),
       }}
     >
       {renderedChildren}
-    </AntRow>
+    </Row>
   );
 };
 
-WidgetRegistry.register("Row", Row);
+WidgetRegistry.register("GridView", GridView);

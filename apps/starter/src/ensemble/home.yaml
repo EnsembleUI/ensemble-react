@@ -16,7 +16,7 @@ View:
                     collapsedSource: https://i.imgur.com/hYrGRRn.png
                     uncollapsedSource: https://i.imgur.com/CLnFeag.png
                     styles:
-                      width: 110px
+                      width: 140px
                       height: 50px
                   enableSearch: false
                   isCollapsible: false
@@ -52,18 +52,17 @@ View:
                       backgroundColor: "#e0e0e0"
                       borderRadius: 10px
               - Column:
-                  crossAxis: stretch
-                  margin: 0 20px
+                  styles:
+                    crossAxis: stretch
+                    margin: 0 20px
                   
                   children:
-                    
-                    
                     - Row:
-                        mainAxis: spaceBetween
-                        crossAxis: center
-                        padding: 10
                         styles:
                           backgroundColor: white
+                          mainAxis: spaceBetween
+                          crossAxis: center
+                          padding: 10
                         children:
                           - Search:
                               styles:
@@ -72,7 +71,8 @@ View:
                                 border: 1px solid grey
                                 margin: 5px 5px 5px 5px
                           - Row:
-                              gap: 10
+                              styles:
+                                gap: 10
                               children:
                                 - Icons:
                                     label: Notifications
@@ -92,9 +92,24 @@ View:
                                     name: Francisco
                                     styles:
                                       backgroundColor: '#28304B'
-                                
-                    - Markdown:
-                        text: '# Welcome back, Francisco'
+
+
+                    - Row:
+                        styles:
+                          mainAxis: spaceBetween
+                          crossAxis: center
+                        children:
+                          - Markdown:
+                              text: '# Welcome back'
+                          - Button:
+                              styles:
+                                backgroundColor: black
+                              label: Collections
+                              startingIcon:
+                                name: RuleFolder
+                              onTap:
+                                navigateScreen: '/collections'
+
                     
                     - TabBar:
                         TabPane:
@@ -298,8 +313,9 @@ View:
                                           children:
                                             # Person
                                             - Row:
-                                                crossAxis: center
-                                                gap: 5
+                                                styles:
+                                                  crossAxis: center
+                                                  gap: 5
                                                 children:
                                                   - Image:
                                                       source: ${user.image}
@@ -310,7 +326,8 @@ View:
 #                                                      borderColor: grey
 #                                                      borderWidth: 1px
                                                   - Column:
-                                                      crossAxis: start
+                                                      styles:
+                                                        crossAxis: start
                                                       children:
                                                         - Text:
                                                             text: ${user.firstName}
