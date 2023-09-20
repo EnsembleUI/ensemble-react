@@ -373,20 +373,8 @@ View:
                             name: user
                             data: data.getData.body.users
                             template:
-                                FlowComponents:
-                                  children:
-                                    - Row: 
-                                        children:
-                                          - Text:
-                                              text: 'Text-'
-                                          - Text:
-                                              text: ${user.firstName}
-                                    - Text:
-                                        text: ${user.firstName}
-                                    - Text:
-                                        text: ${user.firstName}
-                                    - Text:
-                                        text: ${user.firstName}
+                              Text:
+                                text: ${user.firstName}
 
 
         ## Grid widgets
