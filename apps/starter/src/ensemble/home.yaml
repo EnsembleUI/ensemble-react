@@ -351,6 +351,25 @@ View:
                         text: ${myText.text}
                     - Text:
                         text: ${data.getData.body.total}
+                    - Flow:
+                        item-template:
+                            name: user
+                            data: data.getData.body.users
+                            template:
+                                FlowComponents:
+                                  children:
+                                    - Row: 
+                                        children:
+                                          - Text:
+                                              text: 'Text-'
+                                          - Text:
+                                              text: ${user.firstName}
+                                    - Text:
+                                        text: ${user.firstName}
+                                    - Text:
+                                        text: ${user.firstName}
+                                    - Text:
+                                        text: ${user.firstName}
 
 
         ## Grid widgets

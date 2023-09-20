@@ -161,9 +161,6 @@ importers:
       react-router-dom: ^6.16.0
       tsconfig: workspace:*
       tsup: ^7.2.0
-    dependencies:
-      '@ant-design/icons': 5.2.6_react@18.2.0
-      '@mui/icons-material': 5.14.9_13b5b3b22d0dce79005299da3dd6a3a8
     devDependencies:
       '@emotion/react': 11.11.1_3439121291b5e89e1eb824656ce6133e
       '@emotion/styled': 11.11.0_8c41d907693fb2d1ff357a3f9b3c0456
@@ -263,6 +260,7 @@ packages:
       classnames: 2.3.2
       rc-util: 5.37.0_react@18.2.0
       react: 18.2.0
+    dev: true
 
   /@ant-design/react-slick/1.0.2_react@18.2.0:
     resolution: {integrity: sha512-Wj8onxL/T8KQLFFiCA4t8eIRGpRR+UPgOdac2sYzonv+i0n3kXHmvHLLiOYL655DQx2Umii9Y9nNgL7ssu5haQ==}
@@ -12241,6 +12239,7 @@ packages:
       '@babel/runtime': 7.22.15
       react: 18.2.0
       react-is: 16.13.1
+    dev: true
 
   /rc-virtual-list/3.10.7_react@18.2.0:
     resolution: {integrity: sha512-NZl8nsNV2kf0k9o4SHt6u/2kFBhE0SRTh71msUZkUB/rfNTBRKnhLXf8bD2jayT7TkprnbHBCPQbPqwJo2BSJw==}
