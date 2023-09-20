@@ -1,136 +1,284 @@
 View:
+  
   onLoad:
     name: getData
 
   body:
+    
     Column:
+      styles:
+        backgroundColor: "#f2f0f0"
       children:
         - Row:
             children:
               - SideBarMenu:
                   logo:
-                    collapsedSource: https://i.imgur.com/peprs0j.png
-                    uncollapsedSource: https://i.imgur.com/sH3zCi6.png
+                    collapsedSource: https://i.imgur.com/hYrGRRn.png
+                    uncollapsedSource: https://i.imgur.com/CLnFeag.png
                     styles:
-                      width: 80px
-                      height: 20px
-                  enableSearch: true
+                      width: 110px
+                      height: 50px
+                  enableSearch: false
+                  isCollapsible: false
+                  hasBottomButton: true
+                  bottomButton:
+                    icon: LegendToggle
+                    text: Give us feedback
+                    page: ContactSupportOutlined
                   items:
-                    - label: Teams
-                      icon: PieChartOutlineOutlined
+                    - label: Dashboard
+                      icon: LegendToggle
                       page: apple
                       selected: true
-                    - label: Patients
-                      icon: SickOutlined
+                    - label: Collection
+                      icon: PermMediaOutlined
                       page: banana
-                    - label: Programs
-                      icon: VolunteerActivismOutlined
+                    - label: Users + Groups
+                      icon: PersonOutlineOutlined
                       page: banana
-                    - label: Claims
-                      icon: BusinessCenterOutlined
+                    - label: Ask Embrace
+                      icon: TextsmsOutlined
                       page: banana
-                    - label: Awards
-                      icon: CardGiftcardOutlined
-                      page: banana
-                      divider: true
-                    - label: Reminders
-                      icon: NotificationAddOutlined
-                      page: reminders
-                      hasNotifications: true
-                    - label: Starred
-                      icon: StarBorderOutlined
-                      page: reminders
-                    - label: Help
-                      icon: HelpOutlineOutlined
-                      page: reminders
-                      divider: true
-                    - label: Account
-                      icon: AccountCircleOutlined
-                      page: profile
+                    
                     
                   styles:
-                    backgroundColor: "#1A2A4C"
+                    backgroundColor: "#fcfeff"
                     labelColor: grey
-                    selectedColor: white
+                    selectedColor: black
                     labelFontSize: 1
-                    searchBoxColor: "#3e5975"
+                    onSelectStyles:
+                      borderWidth: "0px 0px 0px 0px"
+                      borderColor: "red"
+                      backgroundColor: "#e0e0e0"
+                      borderRadius: 10px
               - Column:
                   crossAxis: stretch
                   margin: 0 20px
+                  
                   children:
+                    
+                    
+                    - Row:
+                        mainAxis: spaceBetween
+                        crossAxis: center
+                        padding: 10
+                        styles:
+                          backgroundColor: white
+                        children:
+                          - Search:
+                              styles:
+                                width: 300px
+                                backgroundColor: white
+                                border: 1px solid grey
+                                margin: 5px 5px 5px 5px
+                          - Row:
+                              gap: 10
+                              children:
+                                - Icons:
+                                    label: Notifications
+                                    hasNotification: true
+                                    styles:
+                                      backgroundColor: white
+                                      borderWidth: 1px
+                                      borderColor: grey
+                                      iconWidth: 25
+                                      iconHeight: 25
+                                      width: 45
+                                      height: 45
+                                      notificationStyles:
+                                        backgroundColor: '#6DC4E5'
+                                - ProfileIcon:
+                                    # source: https://tostatus.in/wp-content/uploads/2023/02/Single-Boy-for-Whatsapp-DP-Download-2023-1024x1024.jpg
+                                    name: Francisco
+                                    styles:
+                                      backgroundColor: '#28304B'
+                                
                     - Markdown:
-                        text: '# Team Dashboard'
-
+                        text: '# Welcome back, Francisco'
+                    
+                    - TabBar:
+                        TabPane:
+                          - key: overview
+                            label: Overview
+                          - key: adoption usage
+                            label: Adoption Usage
+                          - key: group impact
+                            label: Group Impact
+                          - key: knowledge health
+                            label: Knowledge Health
+                    
                     - Row:
                         styles:
-                          crossAxis: center
-                          gap: 20
-                          margin: 0 0 20px 0
+                          margin: "0px 0px 10px 0px"
                         children:
+                          - Column:
+                              styles:
+                                width: 50%
+                              children:
+                                - Row:
+                                    children:
+                                      - CardComponent:
+                                          styles:
+                                            width: 50%
+                                            border: "1px solid #cfcfcf"
+                                          children:
+                                            - Column:
+                                                children:
+                                                  - Text:
+                                                      id: num1
+                                                      text: 44
+                                                      textAlign: center
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 2rem
+                                                        fontWeight: 400
+                                                  - Text:
+                                                      id: card1
+                                                      text: Negative
+                                                      textAlign: center
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 0.8rem
+                                                  - Text:
+                                                      id: card1per
+                                                      text: ^ +2.5% increase
+                                                      textAlign: center
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 0.8rem
+                                      - CardComponent:
+                                          styles:
+                                            width: 50%
+                                            border: "1px solid #cfcfcf"
+                                          children:
+                                            - Column:
+                                                children:
+                                                  - Text:
+                                                      id: num2
+                                                      text: 44
+                                                      textAlign: center
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 2rem
+                                                        fontWeight: 400
+                                                  - Text:
+                                                      id: card2
+                                                      text: Positive
+                                                      textAlign: center
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 0.8rem
+                                                  - Text:
+                                                      id: card2per
+                                                      text: ^ +2.5% increase
+                                                      textAlign: center
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 0.8rem
+                                - Row:
+                                    children:
+                                      - CardComponent:
+                                          styles:
+                                            width: 50%
+                                            border: "1px solid #cfcfcf"
+                                          children:
+                                            - Column:
+                                                children:
+                                                  - Text:
+                                                      id: num3
+                                                      text: 795
+                                                      textAlign: center
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 2rem
+                                                        fontWeight: 400
+                                                  - Text:
+                                                      id: card3
+                                                      text: Success rate
+                                                      textAlign: center
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 0.8rem
+                                                  - Text:
+                                                      id: card3per
+                                                      text: ^ +2.5% increase
+                                                      textAlign: center
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 0.8rem
+                                      - CardComponent:
+                                          styles:
+                                            width: 50%
+                                            border: "1px solid #cfcfcf"
+                                          children:
+                                            - Column:
+                                                children:
+                                                  - Text:
+                                                      id: num4
+                                                      text: 234
+                                                      textAlign: center
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 2rem
+                                                        fontWeight: 400
+                                                  - Text:
+                                                      id: card4
+                                                      text: Questions asked
+                                                      textAlign: center
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 0.8rem
+                                                  - Text:
+                                                      id: card4per
+                                                      text: ^ +2.5% increase
+                                                      textAlign: center
+                                                      styles:
+                                                        fontFamily: Helvetica Neue
+                                                        fontSize: 0.8rem
+
+                                
                           - Column:
 
                               styles:
-                                width: 400px
+                                width: 50%
                                 height: 300px
-                                borderColor: '#EBEAED'
+                                borderColor: '#cfcfcf'
                                 borderRadius: 10
                                 borderWidth: 1px
-                                padding: 10px 20px
+                                backgroundColor: white
+                                padding: 10px
+                                margin: 10px 0px 0px 0px
 
                               children:
                                 - Chart:
                                     type: bar
-                                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']
+                                    labels: ['Jan', 'Feb', 'Mar', 'Apr']
                                     datasets: [
                                       {
-                                        label: 'Matched',
-                                        data: [190, 200, 210, 145, 230, 240, 220, 190, 120],
-                                        backgroundColor: "#5542f6",
+                                        label: 'Negative',
+                                        data: [190, 200, 210, 145],
+                                        backgroundColor: "#717171",
                                         barPercentage: 0.8,
                                         borderRadius: 3,
                                       },
                                       {
-                                        label: 'Enrolled',
-                                        data: [160, 170, 170, 105, 190, 170, 155, 160, 110],
-                                        backgroundColor: "#01a4ff",
+                                        label: 'Mixed',
+                                        data: [160, 170, 170, 105],
+                                        backgroundColor: "#A3A3A3",
                                         barPercentage: 0.8,
                                         borderRadius: 3
                                       },
                                       {
-                                        label: 'Award',
-                                        data: [140, 130, 90, 90, 150, 170, 140, 80, 110],
-                                        backgroundColor: "#22c9ac",
+                                        label: 'Positive',
+                                        data: [140, 130, 90, 90],
+                                        backgroundColor: "#CFCFCF",
                                         barPercentage: 0.8,
                                         borderRadius: 3,
                                       },
-                                    ]
-                          - Row:
-                              styles:
-                                #crossAxis: end
-                                width: 300px
-                                height: 300px
-                                borderColor: '#EBEAED'
-                                borderRadius: 10
-                                borderWidth: 1px
-                                padding: 10px 20px 30px 20px
+                                    ]                
+                    
 
-                              children:
-                                - Chart:
-                                    type: doughnut
-                                    labels: ['Red', 'Blue', 'Yellow']
-                                    datasets: [
-                                      {
-                                        label: '',
-                                        data: [300, 50, 100],
-                                        backgroundColor: [
-                                          'rgb(255, 99, 132)',
-                                          'rgb(54, 162, 235)',
-                                          'rgb(255, 205, 86)'
-                                        ],
-                                        hoverOffset: 4,
-                                        borderWidth: 1
-                                      }
-                                    ]
+                    
                     - Row:
                         children:
                           - Column:
@@ -138,6 +286,7 @@ View:
                                 - DataGrid:
                                     DataColumns:
                                       - label: Name
+                                      - label: Feedback
                                       - label: Performance
                                       - label: MoM
                                       - label: Progress
@@ -167,6 +316,15 @@ View:
                                                             text: ${user.firstName}
                                                         - Text:
                                                             text: ${user.email}
+                                            - Toggler:
+                                                likedSource: https://i.imgur.com/3T1xpWR.png
+                                                unlikedSource: https://i.imgur.com/zAme0lT.png
+                                                styles:
+                                                  iconWidth: 15
+                                                  iconHeight: 15
+                                                  borderRadius: 0
+
+                                            
                                             - Text:
                                                 text: ${user.age}
 
@@ -188,7 +346,7 @@ View:
                     - Button:
                         label: Click Me
                         onTap:
-                          navigateScreen: Collections
+                          executeCode: myText.setText("Spiderman")
                     - Text:
                         text: ${myText.text}
                     - Text:
@@ -212,7 +370,6 @@ View:
                                         text: ${user.firstName}
                                     - Text:
                                         text: ${user.firstName}
-                   
 
 
         ## Grid widgets

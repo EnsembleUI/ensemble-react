@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { Card as MuiCard, CardContent, Typography } from "@mui/material";
 import type { Expression } from "framework";
 import { useEnsembleState } from "framework";

@@ -1,7 +1,6 @@
-import * as Icons from "@mui/icons-material";
-import type { SvgIconComponent } from "@mui/icons-material";
-import { get } from "lodash-es";
-
+import * as Icons from '@mui/icons-material';
+import { SvgIconComponent } from "@mui/icons-material";
+import * as MuiIcons from "@mui/icons-material";
 type Color = number | string;
 
 const namedColors: { [key in Color]?: string } = {
@@ -36,6 +35,7 @@ export const getColor = (color: number | string): string => {
     const b = parseInt(myColor.slice(8, 10), 16);
 
     const rgba = `rgba(${r}, ${g}, ${b}, ${alpha.toFixed(2)})`;
+    console.log(rgba);
     return rgba;
   }
 
@@ -43,9 +43,7 @@ export const getColor = (color: number | string): string => {
 };
 
 /// same common properties as with Flutter
-export const getTextAlign = (
-  value: string | undefined,
-): "left" | "right" | "center" | "justify" | "end" | "start" => {
+export const getTextAlign = (value: string | undefined): string => {
   switch (value) {
     case "left":
       return "left";
@@ -98,5 +96,25 @@ export const getCrossAxis = (crossAxis: string): string | undefined => {
 };
 
 export const getIcon = (name: string): SvgIconComponent | undefined => {
-  return get(Icons, name) as SvgIconComponent;
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
+  return (Icons as any)[name];
+};
+
+export const renderMuiIcon = (
+  iconName: keyof typeof MuiIcons,
+  width?: string,
+  height?: string
+) => {
+  const MuiIconComponent = MuiIcons[iconName];
+  if (MuiIconComponent) {
+    return (
+      <MuiIconComponent
+        style={{
+          width: width ?? "15px",
+          height: height ?? "15px",
+        }}
+      />
+    );
+  }
+  return null;
 };
