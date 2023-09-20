@@ -100,10 +100,10 @@ View:
                           crossAxis: center
                         children:
                           - Markdown:
-                              text: '# Welcome back, Francisco '
-                          - Text:
-                              text: '${data.getData.body.total}'
+                              text: '# Welcome back'
                           - Button:
+                              styles:
+                                backgroundColor: black
                               label: Collections
                               startingIcon:
                                 name: RuleFolder

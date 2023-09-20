@@ -15,6 +15,8 @@ export type ButtonProps = {
   startingIcon?: IconProps;
   endingIcon?: IconProps;
   gap?: number | string;
+  backgroundColor?: number | string;
+  padding?: number | string;
 } & EnsembleWidgetProps;
 
 export const Button: React.FC<ButtonProps> = (props) => {
@@ -31,6 +33,8 @@ export const Button: React.FC<ButtonProps> = (props) => {
         alignItems: "center",
         justifyContent: "center",
         width: "auto",
+        backgroundColor: props.styles?.backgroundColor,
+        padding: props.styles?.padding,
       }}
       type="primary"
     >
