@@ -24,7 +24,7 @@ const testApp: Application = {
 const App: React.FC = () => {
   return (
     <div className="App">
-      <EnsembleApp appId="test" application={testApp} page="Home" />
+      <EnsembleApp appId="test" application={testApp} />
     </div>
   );
 };
