@@ -15,11 +15,11 @@ export const Column: React.FC<FlexboxProps> = (props) => {
     <Col
       style={{
         flexDirection: "column",
-        justifyContent: props.mainAxis && getMainAxis(props.mainAxis),
-        alignItems: props.crossAxis && getCrossAxis(props.crossAxis),
-        margin: props.margin,
-        padding: props.padding,
-        gap: props.gap,
+        justifyContent: props.styles?.mainAxis && getMainAxis(props.styles?.mainAxis),
+        alignItems: props.styles?.crossAxis && getCrossAxis(props.styles?.crossAxis),
+        margin: props.styles?.margin,
+        padding: props.styles?.padding,
+        gap: props.styles?.gap,
         borderRadius: props.styles?.borderRadius,
         borderWidth: props.styles?.borderWidth,
         borderColor: props.styles?.borderColor

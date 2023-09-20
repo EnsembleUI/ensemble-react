@@ -19,4 +19,6 @@ View:
             endingIcon:
               name: AcUnit
               color: white
+            onTap:
+              navigateScreen: '/'
 
