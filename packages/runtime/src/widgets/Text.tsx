@@ -1,6 +1,7 @@
 import { useEnsembleState } from "framework";
 import { useState } from "react";
 import { Typography } from "antd";
+import { get } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type { BaseTextProps } from "../util/types";
 import { getTextAlign } from "../util/utils";
@@ -15,7 +16,12 @@ export const Text: React.FC<TextProps> = (props) => {
     setText,
   });
   return (
-    <Typography.Text style={{ textAlign: getTextAlign(props.textAlign) }}>
+    <Typography.Text
+      style={{
+        textAlign: getTextAlign(props.textAlign),
+        ...get(props, "styles"),
+      }}
+    >
       {values.text}
     </Typography.Text>
   );

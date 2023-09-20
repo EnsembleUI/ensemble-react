@@ -1,0 +1,24 @@
+View:
+  body:
+    Column:
+      styles:
+        crossAxis: start
+      children:
+        - Text:
+            text: hello
+        - Icon:
+            name: NorthEast
+            color: green
+        - Button:
+            styles:
+              gap: 10
+            label: Submit
+            startingIcon:
+              name: NorthEast
+              color: white
+            endingIcon:
+              name: AcUnit
+              color: white
+            onTap:
+              navigateScreen: '/'
+
