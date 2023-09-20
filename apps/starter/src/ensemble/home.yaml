@@ -194,29 +194,25 @@ View:
                     - Text:
                         text: ${data.getData.body.total}
                     - Flow:
-                        children:
-                          - SimpleTag:
-                              color: '#f9f7ea'
-                              label: Human Resources
-                          - SimpleTag:
-                              color: '#f9f7ea'
-                              label: Human Resources
-                          - SimpleTag:
-                              color: '#ccc'
-                              label: Product Onboarding
-                          - SimpleTag:
-                              color: '#ccc'
-                              label: Product Onboarding
-                          - SimpleTag:
-                              color: '#ccc'
-                              label: Employee Communications
-                          - SimpleTag:
-                              color: '#ccc'
-                              label: All Access
-                          - Text:
-                              text: ${myText.text}
-                          - Text:
-                              text: Peter Parker
+                        item-template:
+                            name: user
+                            data: data.getData.body.users
+                            template:
+                                FlowComponents:
+                                  children:
+                                    - Row: 
+                                        children:
+                                          - Text:
+                                              text: 'Text-'
+                                          - Text:
+                                              text: ${user.firstName}
+                                    - Text:
+                                        text: ${user.firstName}
+                                    - Text:
+                                        text: ${user.firstName}
+                                    - Text:
+                                        text: ${user.firstName}
+                   
 
 
         ## Grid widgets
