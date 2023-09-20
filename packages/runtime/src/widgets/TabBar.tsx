@@ -1,3 +1,4 @@
+import React, { useMemo } from "react";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import { Tabs } from "antd";
@@ -8,18 +9,17 @@ export type TabItem = {
   key: string;
   label: string;
   children?: Widget[];
-  
 };
 export type TabBarProps = {
   TabPane: TabItem[];
-}
+};
 export const TabBar: React.FC<TabBarProps> = (props) => {
-  // const renderedChildren = useMemo(() => {
-  //   return EnsembleRuntime.render(props.children);
-  // }, [props.children]);
-  const renderChildren = (children: Widget[]) => {
-    return EnsembleRuntime.render(children);
-  };
+ 
+  const renderChildren = useMemo(() => {
+    return (children: Widget[]) => {
+      return EnsembleRuntime.render(children);
+    };
+  }, [props.TabPane]);
   
   return (
     <Tabs

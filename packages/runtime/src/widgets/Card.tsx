@@ -4,7 +4,7 @@ import type { Expression } from "framework";
 import { useEnsembleState } from "framework";
 import { useState } from "react";
 import { WidgetRegistry } from "../registry";
-import type { EnsembleWidgetProps } from "../util/types";
+import { EnsembleWidgetProps } from "../util/types";
 
 export type CardProps = {
   title?: Expression<string>;

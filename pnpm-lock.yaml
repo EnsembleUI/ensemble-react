@@ -162,10 +162,8 @@ importers:
       tsconfig: workspace:*
       tsup: ^7.2.0
     devDependencies:
-      '@ant-design/icons': 5.2.6_react@18.2.0
       '@emotion/react': 11.11.1_3439121291b5e89e1eb824656ce6133e
       '@emotion/styled': 11.11.0_8c41d907693fb2d1ff357a3f9b3c0456
-      '@mui/icons-material': 5.14.9_13b5b3b22d0dce79005299da3dd6a3a8
       '@mui/material': 5.14.9_fbdfc163f26c42a4cde1fe579cb1706c
       '@testing-library/react': 13.4.0_react@18.2.0
       '@turbo/gen': 1.10.13
@@ -2756,7 +2754,7 @@ packages:
       '@mui/material': 5.14.9_fbdfc163f26c42a4cde1fe579cb1706c
       '@types/react': 18.2.21
       react: 18.2.0
-    dev: true
+    dev: false
 
   /@mui/icons-material/5.14.9_@mui+material@5.14.9:
     resolution: {integrity: sha512-xTRQbDsogsJo7tY5Og8R9zbuG2q+KIPVIM6JQoKxtJlz9DPOw1u0T2fGrvwD+XAOVifQf6epNMcGCDLfJAz4Nw==}

@@ -14,7 +14,7 @@ export type DividerProps = {
     backgroundColor: string;
     width: string;
     minWidth: string;
-  }
+  };
 };
 export const Divider: React.FC<DividerProps> = (props) => {
   return (

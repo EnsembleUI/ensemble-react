@@ -3,6 +3,7 @@ import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import { Card } from "antd";
 import { Widget } from "framework";
+import { random } from "lodash-es";
 
 export type CardComponentProps = {
   image?: {
@@ -41,9 +42,9 @@ export const CardComponent: React.FC<CardComponentProps> = (props) => {
   ) : null;
   return (
     <Card
-      style={{ 
+      style={{
         display: props.styles?.display ?? "flex",
-        flexDirection: (props.styles?.flexDirection) ?? "column",
+        flexDirection: props.styles?.flexDirection ?? "column",
         justifyContent: props.styles?.justifyContent ?? "center",
         alignItems: props.styles?.alignItems ?? "center",
         border: props.styles?.border ?? "0px",
@@ -54,10 +55,9 @@ export const CardComponent: React.FC<CardComponentProps> = (props) => {
         height: props.styles?.height ?? 140,
         padding: props.styles?.padding ?? "0px",
         margin: props.styles?.margin ?? "10px 10px 0px 0px",
-       }}
+      }}
       cover={coverImage}
     >
-      
       {renderedChildren}
     </Card>
   );
