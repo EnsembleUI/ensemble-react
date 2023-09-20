@@ -7,7 +7,6 @@ import { getColor, getCrossAxis, getMainAxis } from "../util/utils";
 import type { FlexboxProps } from "../util/types";
 
 export const Row: React.FC<FlexboxProps> = (props) => {
-  
   const renderedChildren = useMemo(() => {
     return EnsembleRuntime.render(props.children);
   }, [props.children]);

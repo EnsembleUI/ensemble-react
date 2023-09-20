@@ -16,7 +16,7 @@ View:
                     collapsedSource: https://i.imgur.com/hYrGRRn.png
                     uncollapsedSource: https://i.imgur.com/CLnFeag.png
                     styles:
-                      width: 110px
+                      width: 140px
                       height: 50px
                   enableSearch: false
                   isCollapsible: false

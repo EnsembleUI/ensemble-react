@@ -14,13 +14,12 @@ export type TabBarProps = {
   TabPane: TabItem[];
 };
 export const TabBar: React.FC<TabBarProps> = (props) => {
- 
   const renderChildren = useMemo(() => {
     return (children: Widget[]) => {
       return EnsembleRuntime.render(children);
     };
   }, [props.TabPane]);
-  
+
   return (
     <Tabs
       className="my-tab-bar"

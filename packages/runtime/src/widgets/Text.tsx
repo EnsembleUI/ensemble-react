@@ -11,9 +11,6 @@ export type TextProps = {
 
 export const Text: React.FC<TextProps> = (props) => {
   const [text, setText] = useState(props.text);
-  if (props.text !== text) {
-    setText(props.text);
-  }
   const { values } = useEnsembleState({ ...props, text }, props.id, {
     setText,
   });
