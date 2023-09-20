@@ -31,17 +31,17 @@ View:
                   items:
                     - label: Dashboard
                       icon: LegendToggle
-                      page: apple
+                      page: '/collections'
                     - label: Collection
                       icon: PermMediaOutlined
-                      page: banana
+                      page: '/collections'
                       selected: true
                     - label: Users + Groups
                       icon: PersonOutlineOutlined
-                      page: banana
+                      page: '/collections'
                     - label: Ask Embrace
                       icon: TextsmsOutlined
-                      page: banana
+                      page: '/collections'
 
 
                   styles:

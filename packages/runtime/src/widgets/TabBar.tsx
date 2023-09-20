@@ -3,8 +3,10 @@ import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import { Tabs } from "antd";
 import { Widget } from "framework";
-const { TabPane } = Tabs;
 import "./index.css";
+
+const { TabPane } = Tabs;
+
 export type TabItem = {
   key: string;
   label: string;

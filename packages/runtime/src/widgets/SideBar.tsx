@@ -4,6 +4,7 @@ import { SearchOutlined } from "@ant-design/icons";
 import * as MuiIcons from "@mui/icons-material";
 import { renderMuiIcon } from "../util/viewUtils";
 import { WidgetRegistry } from "../registry";
+import { useNavigateScreen } from "../runtime/navigate";
 
 type TypeColors =
   | number
@@ -77,7 +78,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
-
+  const [selectedPage, setSelectedPage] = useState<string>("");
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   };
@@ -92,12 +93,15 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
   const filteredItems = props.items.filter((item) =>
     item.label.toLowerCase().includes(searchQuery.toLowerCase()),
   );
+  const onNavigate = useNavigateScreen(selectedPage);
 
   const handleClick = (page: string, label: string) => {
     setSelectedItem(label);
-    //window.location.href = page;
+    setSelectedPage(page ?? "");
   };
-
+  useEffect(() => {
+    onNavigate();
+  }, [selectedPage]);
   return (
     <Col
       style={{
@@ -113,8 +117,8 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
               : props.logo.collapsedSource
           }
           style={{
-            width: props.logo.styles?.width! ?? "15px",
-            height: props.logo.styles?.height! ?? "15px",
+            width: props.logo.styles?.width ?? "15px",
+            height: props.logo.styles?.height ?? "15px",
             marginTop: "20px",
             marginBottom: "20px",
           }}
