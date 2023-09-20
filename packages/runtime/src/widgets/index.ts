@@ -20,3 +20,4 @@ export * from "./Toggler";
 export * from "./TabBar";
 export * from "./Dropdown";
 export * from "./Divider";
+export * from "./GridView";

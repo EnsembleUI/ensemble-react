@@ -33,14 +33,14 @@ export const Button: React.FC<ButtonProps> = (props) => {
         alignItems: "center",
         justifyContent: "center",
         width: "auto",
-        backgroundColor: props.styles?.backgroundColor,
+        backgroundColor: String(props.styles?.backgroundColor),
         padding: props.styles?.padding,
       }}
       type="primary"
     >
-      {props.startingIcon && <Icon {...props.startingIcon} />}
+      {props.startingIcon ? <Icon {...props.startingIcon} /> : null}
       {values.label}
-      {props.endingIcon && <Icon {...props.endingIcon} />}
+      {props.endingIcon ? <Icon {...props.endingIcon} /> : null}
     </AntButton>
   );
 };

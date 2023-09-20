@@ -8,8 +8,11 @@ View:
     Column:
       styles:
         backgroundColor: "#f2f0f0"
+        height: 100vh
       children:
         - Row:
+            styles:
+              height: 100%
             children:
               - SideBarMenu:
                   logo:
@@ -120,11 +123,88 @@ View:
                                     label: Create Collection
 
                     - GridView:
-                        # bind to API here
-
-
-
-
+                        styles:
+                          display: grid
+                          grid-template-columns: 33% 33% 33%
+                          grid-template-rows: 20% 20%
+                        children:
+                          - CardComponent:
+                              styles:
+                                width: 95%
+                                border: "1px solid #cfcfcf"
+                                alignItems: "start"
+                              children:
+                                - Column:
+                                    children:
+                                      - Markdown:
+                                          text: '## Getting Started'
+                                      - Text:
+                                          text: 12 sources
+                                          styles:
+                                            fontFamily: Helvetica Neue
+                                            color: lightgrey
+                                      - Text:
+                                          text: "Status: Good"
+                                          styles:
+                                            fontFamily: Helvetica Neue
+                          - CardComponent:
+                              styles:
+                                width: 95%
+                                border: "1px solid #cfcfcf"
+                                alignItems: start
+                              children:
+                                - Column:
+                                    children:
+                                      - Markdown:
+                                          text: '## Account Setup'
+                                      - Text:
+                                          text: 10 Sources
+                                          styles:
+                                            fontFamily: Helvetica Neue
+                                            color: lightgrey
+                                      - Text:
+                                          text: "Status: Good"
+                                          styles:
+                                            fontFamily: Helvetica Neue
+                          - CardComponent:
+                              styles:
+                                width: 95%
+                                border: "1px solid #cfcfcf"
+                                alignItems: start
+                              children:
+                                - Column:
+                                    children:
+                                      - Markdown:
+                                          text: '## Billing And Payments'
+                                      - Text:
+                                          text: 10 Sources
+                                          styles:
+                                            fontFamily: Helvetica Neue
+                                            color: lightgrey
+                                      - Text:
+                                          text: "Status: Needs Attention"
+                                          styles:
+                                            fontFamily: Helvetica Neue
+                                            fontWeight: 800
+                          - CardComponent:
+                              styles:
+                                width: 95%
+                                border: "1px solid #cfcfcf"
+                                alignItems: start
+                              children:
+                                - Column:
+                                    children:
+                                      - Markdown:
+                                          text: '## Analytics and Reporting'
+                                      - Text:
+                                          text: 10 sources
+                                          styles:
+                                            fontFamily: Helvetica Neue
+                                            color: lightgrey
+                                      - Text:
+                                          text: "Status: Good"
+                                          styles:
+                                            fontFamily: Helvetica Neue
 API:
   getData:
     method: GET
