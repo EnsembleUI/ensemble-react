@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { Expression } from "framework";
-import { useEnsembleState } from "framework";
+import { useEnsembleState, useEvaluate } from "framework";
+import { useNavigateScreen } from "../runtime/navigate";
 import { WidgetRegistry } from "../registry";
-import { getColor } from "../util/utils";
 import {
   Avatar as MuiAvatar,
   Menu,
@@ -10,7 +10,6 @@ import {
   ListItemIcon,
 } from "@mui/material";
 import * as MuiIcons from "@mui/icons-material";
-import type { EnsembleWidgetProps, HasBorder } from "../util/types";
 import { renderMuiIcon } from "../util/renderMuiIcons";
 
 export type AvatarMenu = {
@@ -36,6 +35,8 @@ export type AvatarProps = {
 };
 
 export const Avatar: React.FC<AvatarProps> = (props) => {
+  const [code, setCode] = useState("");
+  const [screen, setScreen] = useState("");
   function stringToColor(string: Expression<string>) {
     let hash = 0;
     let i;
@@ -78,6 +79,23 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
   const handleMenuClose = () => {
     setMenuAnchorEl(null);
   };
+
+  const handleMenuClick = (menuItem: any) => {
+    menuItem.onTap?.executeCode && setCode(menuItem.onTap?.executeCode);
+    menuItem.onTap?.navigateScreen && setScreen(menuItem.onTap?.navigateScreen);
+    handleMenuClose();
+  };
+  useEffect(() => {
+    code && onTapCallback();
+  }, [code]);
+  useEffect(() => {
+    screen && onNavigate();
+  }, [screen]);
+
+  const { values } = useEnsembleState(props);
+  const onTapCallback = useEvaluate(code, values);
+  const onNavigate = useNavigateScreen(screen);
+
   return (
     <div>
       <MuiAvatar
@@ -87,10 +105,10 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
             props.styles?.backgroundColor ?? stringToColor(nameString ?? ""),
           width: props.styles?.width,
           height: props.styles?.height,
-          cursor: "pointer", // Add cursor style to indicate it's clickable
+          cursor: "pointer",
         }}
         src={props.src}
-        onClick={handleMenuOpen} // Open the menu on click
+        onClick={handleMenuOpen}
       >
         {props?.name
           ? generateInitials(props.name)
@@ -101,37 +119,9 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
           anchorEl={menuAnchorEl}
           open={Boolean(menuAnchorEl)}
           onClose={handleMenuClose}
-        //   PaperProps={{
-        //     elevation: 0,
-        //     sx: {
-        //       overflow: "visible",
-        //       filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-        //       mt: 1.5,
-        //       "& .MuiAvatar-root": {
-        //         width: 32,
-        //         height: 32,
-        //         ml: -0.5,
-        //         mr: 1,
-        //       },
-        //       "&:before": {
-        //         content: '""',
-        //         display: "block",
-        //         position: "absolute",
-        //         top: 0,
-        //         right: 14,
-        //         width: 10,
-        //         height: 10,
-        //         bgcolor: "background.paper",
-        //         transform: "translateY(-50%) rotate(45deg)",
-        //         zIndex: 0,
-        //       },
-        //     },
-        //   }}
-        //   transformOrigin={{ horizontal: "right", vertical: "top" }}
-        //   anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         >
           {props.menu?.map((menuItem, index) => (
-            <MenuItem key={index} onClick={handleMenuClose}>
+            <MenuItem key={index} onClick={() => handleMenuClick(menuItem)}>
               {menuItem.icon && (
                 <ListItemIcon>{renderMuiIcon(menuItem.icon)}</ListItemIcon>
               )}
