@@ -60,7 +60,40 @@ View:
                   children:
                     - Markdown:
                         text: '# Team Dashboard'
-
+                    - AvatarGroup:
+                        max: 4
+                        item-template:
+                          data: data.getData.body.users
+                          name: user
+                          template:
+                            Avatars:
+                              children:
+                                - Avatar:
+                                    alt: abc
+                                    name: sana1
+                                    menu:
+                                      - label: Personal Information
+                                        icon: Person
+                                        onTap:
+                                          executeCode: myText.setText("Spiderman")
+                                      - label: fatima
+                                        icon: Settings
+                                - Avatar:
+                                    alt: abcd
+                                    name: hello
+                                - Avatar:
+                                    alt: abcd
+                                    name: ok
+                                - Avatar:
+                                    alt: abcd
+                                    name: fatima
+                                - Avatar:
+                                    alt: abcd
+                                    name: nof
+                                - Avatar:
+                                    alt: abcd
+                                    name: fods
+                                    
                     - Row:
                         styles:
                           crossAxis: center
