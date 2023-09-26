@@ -58,6 +58,11 @@ View:
                   crossAxis: stretch
                   margin: 0 20px
                   children:
+                    - Search:
+                        placeholder: Search
+                        data: data.getData.body.users
+                        searchKey: email
+
                     - Markdown:
                         text: '# Team Dashboard'
 
