@@ -26,7 +26,6 @@ export const Search: React.FC<SearchProps> = ({
   searchKey,
   styles,
 }) => {
-  console.log("styles", styles);
   const [options, setOptions] = useState<SelectProps<object>["options"]>([]);
 
   const templateData = useTemplateData(
