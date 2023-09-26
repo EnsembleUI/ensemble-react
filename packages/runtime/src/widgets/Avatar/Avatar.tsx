@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import type { Expression } from "framework";
 import { useEnsembleState, useEvaluate } from "framework";
-import { useNavigateScreen } from "../../runtime/navigate";
-import { WidgetRegistry } from "../../registry";
 import {
   Avatar as MuiAvatar,
   Menu,
@@ -13,6 +11,8 @@ import * as MuiIcons from "@mui/icons-material";
 import { renderMuiIcon } from "../../util/renderMuiIcons";
 import { stringToColor } from "./utils/stringToColors";
 import { generateInitials } from "./utils/generateInitials";
+import { useNavigateScreen } from "../../runtime/navigate";
+import { WidgetRegistry } from "../../registry";
 
 export type AvatarMenu = {
   label: string;
@@ -41,22 +41,22 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
   const [screen, setScreen] = useState("");
   const nameString = props.name?.toString();
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(!!menuAnchorEl);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(Boolean(menuAnchorEl));
   const { values } = useEnsembleState(props);
   const onTapCallback = useEvaluate(code, values);
   const onNavigate = useNavigateScreen(screen);
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>): void => {
     setMenuAnchorEl(event.currentTarget);
     setIsMenuOpen(true);
   };
 
-  const handleMenuClose = () => {
+  const handleMenuClose = (): void => {
     setMenuAnchorEl(null);
     setIsMenuOpen(false);
   };
 
-  const handleMenuClick = (menuItem: any) => {
+  const handleMenuClick = (menuItem: AvatarMenu): void => {
     menuItem.onTap?.executeCode && setCode(menuItem.onTap?.executeCode);
     menuItem.onTap?.navigateScreen && setScreen(menuItem.onTap?.navigateScreen);
     handleMenuClose();
