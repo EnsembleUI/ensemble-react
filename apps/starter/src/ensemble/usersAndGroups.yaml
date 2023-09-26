@@ -1,0 +1,90 @@
+View:
+  onLoad:
+    name: getData
+
+  body:
+    Column:
+      children:
+        - Row:
+            children:
+              - SideBarMenu:
+                  logo:
+                    collapsedSource: https://i.imgur.com/peprs0j.png
+                    uncollapsedSource: https://i.imgur.com/sH3zCi6.png
+                    styles:
+                      width: 80px
+                      height: 20px
+                  enableSearch: true
+                  items:
+                    - label: Teams
+                      icon: PieChartOutlineOutlined
+                      page: apple
+                      selected: true
+                    - label: Patients
+                      icon: SickOutlined
+                      page: banana
+                    - label: Programs
+                      icon: VolunteerActivismOutlined
+                      page: banana
+                    - label: Claims
+                      icon: BusinessCenterOutlined
+                      page: banana
+                    - label: Awards
+                      icon: CardGiftcardOutlined
+                      page: banana
+                      divider: true
+                    - label: Reminders
+                      icon: NotificationAddOutlined
+                      page: reminders
+                      hasNotifications: true
+                    - label: Starred
+                      icon: StarBorderOutlined
+                      page: reminders
+                    - label: Help
+                      icon: HelpOutlineOutlined
+                      page: reminders
+                      divider: true
+                    - label: Account
+                      icon: AccountCircleOutlined
+                      page: profile
+                  styles:
+                    backgroundColor: "#1A2A4C"
+                    labelColor: grey
+                    selectedColor: white
+                    labelFontSize: 1
+                    searchBoxColor: "#3e5975"
+
+              - Column:
+                  crossAxis: stretch
+                  margin: 0 20px
+                  children:
+                    - Markdown:
+                        text: "# User Management"
+
+                    - GridView:
+                        styles:
+                          horizontalTileCount: 5
+                          horizontalGap: 50
+                          verticalGap: 30
+                        item-template:
+                          data: data.getData.body.users
+                          name: user
+                          template:
+                            Text:
+                              text: ${user.firstName}
+
+                    - GridView:
+                        styles:
+                          horizontalTileCount: 1
+                          verticalGap: 30
+                        item-template:
+                          data: [1, 2, 3, 4, 5, 6, 7]
+                          name: n
+                          template:
+                            Text:
+                              text: ${n}
+
+API:
+  getData:
+    method: GET
+    uri: https://dummyjson.com/users
