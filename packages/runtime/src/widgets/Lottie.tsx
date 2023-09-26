@@ -1,4 +1,4 @@
-import Lottie from "react-lottie";
+import Lottie from "lottie-react";
 import React, { useEffect, useState } from "react";
 import type { Expression } from "framework";
 import { WidgetRegistry } from "../registry";
@@ -35,11 +35,6 @@ export const LottieWidget: React.FC<LottieProps> = (props) => {
         console.error("Error fetching animation data:", error);
       });
   }, [props.source]);
-  const defaultOptions = {
-    loop: props.styles?.repeat ? props.styles.repeat : true,
-    autoplay: true,
-    animationData,
-  };
   return (
     <div
       style={{
@@ -51,7 +46,12 @@ export const LottieWidget: React.FC<LottieProps> = (props) => {
         }`,
       }}
     >
-      {animationData ? <Lottie options={defaultOptions} /> : null}
+      {animationData ? (
+        <Lottie
+          animationData={animationData}
+          loop={props.styles?.repeat ? props.styles.repeat : true}
+        />
+      ) : null}
     </div>
   );
 };
