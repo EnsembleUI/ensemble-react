@@ -69,30 +69,11 @@ View:
                             Avatars:
                               children:
                                 - Avatar:
-                                    alt: abc
-                                    name: sana1
-                                    menu:
-                                      - label: Personal Information
-                                        icon: Person
-                                        onTap:
-                                          executeCode: myText.setText("Spiderman")
-                                      - label: fatima
-                                        icon: Settings
-                                - Avatar:
-                                    alt: abcd
-                                    name: hello
-                                - Avatar:
-                                    alt: abcd
-                                    name: ok
-                                - Avatar:
-                                    alt: abcd
-                                    name: fatima
-                                - Avatar:
-                                    alt: abcd
-                                    name: nof
-                                - Avatar:
-                                    alt: abcd
-                                    name: fods
+                                    alt: ${user.firstName}
+                                    src: ${user.image}
+                                    name1: ${user.firstName}
+                                
+                                
                                     
                     - Row:
                         styles:
