@@ -1,6 +1,6 @@
 import type { Expression } from "framework";
 
-export function stringToColor(string: Expression<string>) {
+export function stringToColor(string: Expression<string>): string {
   let hash = 0;
   let i;
 

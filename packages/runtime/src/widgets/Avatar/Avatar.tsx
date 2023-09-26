@@ -9,10 +9,10 @@ import {
 } from "@mui/material";
 import * as MuiIcons from "@mui/icons-material";
 import { renderMuiIcon } from "../../util/renderMuiIcons";
-import { stringToColor } from "./utils/stringToColors";
-import { generateInitials } from "./utils/generateInitials";
 import { useNavigateScreen } from "../../runtime/navigate";
 import { WidgetRegistry } from "../../registry";
+import { stringToColor } from "./utils/stringToColors";
+import { generateInitials } from "./utils/generateInitials";
 
 export type AvatarMenu = {
   label: string;
@@ -64,10 +64,10 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
 
   useEffect(() => {
     code && onTapCallback();
-  }, [code]);
+  }, [code, onTapCallback]);
   useEffect(() => {
     screen && onNavigate();
-  }, [screen]);
+  }, [screen, onNavigate]);
 
   return (
     <div>
