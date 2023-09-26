@@ -10,4 +10,4 @@ export * from "./Row";
 export * from "./SideBar";
 export * from "./Charts";
 export * from "./DataGrid";
-export * from "./Avatar";
+export * from "./Avatar/Avatar";

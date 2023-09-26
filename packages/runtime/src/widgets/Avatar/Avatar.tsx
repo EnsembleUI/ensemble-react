@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import type { Expression } from "framework";
 import { useEnsembleState, useEvaluate } from "framework";
-import { useNavigateScreen } from "../runtime/navigate";
-import { WidgetRegistry } from "../registry";
+import { useNavigateScreen } from "../../runtime/navigate";
+import { WidgetRegistry } from "../../registry";
 import {
   Avatar as MuiAvatar,
   Menu,
@@ -10,7 +10,9 @@ import {
   ListItemIcon,
 } from "@mui/material";
 import * as MuiIcons from "@mui/icons-material";
-import { renderMuiIcon } from "../util/renderMuiIcons";
+import { renderMuiIcon } from "../../util/renderMuiIcons";
+import { stringToColor } from "./utils/stringToColors";
+import { generateInitials } from "./utils/generateInitials";
 
 export type AvatarMenu = {
   label: string;
@@ -37,47 +39,21 @@ export type AvatarProps = {
 export const Avatar: React.FC<AvatarProps> = (props) => {
   const [code, setCode] = useState("");
   const [screen, setScreen] = useState("");
-  function stringToColor(string: Expression<string>) {
-    let hash = 0;
-    let i;
-
-    /* eslint-disable no-bitwise */
-    for (i = 0; i < string.length; i += 1) {
-      hash = string.charCodeAt(i) + ((hash << 5) - hash);
-    }
-
-    let color = "#";
-
-    for (i = 0; i < 3; i += 1) {
-      const value = (hash >> (i * 8)) & 0xff;
-      color += `00${value.toString(16)}`.slice(-2);
-    }
-    /* eslint-enable no-bitwise */
-
-    return color;
-  }
-
-  const generateInitials = (name?: string): string => {
-    if (!name) return "";
-
-    const words = name.split(" ");
-    if (words.length === 1) {
-      return words[0][0].toUpperCase();
-    } else if (words.length >= 2) {
-      return `${words[0][0].toUpperCase()}${words[1][0].toUpperCase()}`;
-    }
-
-    return "";
-  };
   const nameString = props.name?.toString();
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(!!menuAnchorEl);
+  const { values } = useEnsembleState(props);
+  const onTapCallback = useEvaluate(code, values);
+  const onNavigate = useNavigateScreen(screen);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setMenuAnchorEl(event.currentTarget);
+    setIsMenuOpen(true);
   };
 
   const handleMenuClose = () => {
     setMenuAnchorEl(null);
+    setIsMenuOpen(false);
   };
 
   const handleMenuClick = (menuItem: any) => {
@@ -85,16 +61,13 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
     menuItem.onTap?.navigateScreen && setScreen(menuItem.onTap?.navigateScreen);
     handleMenuClose();
   };
+
   useEffect(() => {
     code && onTapCallback();
   }, [code]);
   useEffect(() => {
     screen && onNavigate();
   }, [screen]);
-
-  const { values } = useEnsembleState(props);
-  const onTapCallback = useEvaluate(code, values);
-  const onNavigate = useNavigateScreen(screen);
 
   return (
     <div>
@@ -117,7 +90,7 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
       {props.menu && (
         <Menu
           anchorEl={menuAnchorEl}
-          open={Boolean(menuAnchorEl)}
+          open={isMenuOpen}
           onClose={handleMenuClose}
         >
           {props.menu?.map((menuItem, index) => (
