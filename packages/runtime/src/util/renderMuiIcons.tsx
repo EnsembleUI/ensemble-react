@@ -3,7 +3,7 @@ import * as MuiIcons from "@mui/icons-material";
 export const renderMuiIcon = (
   iconName: keyof typeof MuiIcons,
   width?: string,
-  height?: string
+  height?: string,
 ) => {
   const MuiIconComponent = MuiIcons[iconName];
   if (MuiIconComponent) {
