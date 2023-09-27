@@ -1,27 +1,33 @@
-import { createContext, useContext } from "react";
+import { Provider, useAtomValue, useSetAtom } from "jotai";
+import { useCallback } from "react";
 import type { EnsembleScreenModel } from "../models";
-import type { ScreenContextDefinition } from "../state";
+import { ensembleStore, screenAtom, screenDataAtom } from "../state";
+import type { ScreenContextActions, ScreenContextDefinition } from "../state";
+import type { Response } from "../data";
 
 interface ScreenContextProps {
   screen: EnsembleScreenModel;
 }
 type ScreenContextProviderProps = React.PropsWithChildren<ScreenContextProps>;
 
-export const ScreenContext = createContext<ScreenContextDefinition | null>(
-  null,
-);
-
 export const ScreenContextProvider: React.FC<ScreenContextProviderProps> = ({
   children,
 }) => {
-  return (
-    <ScreenContext.Provider value={{ data: {}, widgets: {} }}>
-      {children}
-    </ScreenContext.Provider>
-  );
+  return <Provider store={ensembleStore}>{children}</Provider>;
 };
 
-export const useScreenContext = (): ScreenContextDefinition | null => {
-  const screenContext = useContext(ScreenContext);
-  return screenContext;
+export const useScreenContext = ():
+  | (ScreenContextDefinition & Pick<ScreenContextActions, "setData">)
+  | null => {
+  const screenContext = useAtomValue(screenAtom);
+  const setDataAtom = useSetAtom(screenDataAtom);
+  const setData = useCallback(
+    (name: string, response: Response) => {
+      const data = screenContext.data;
+      data[name] = response;
+      setDataAtom(data);
+    },
+    [screenContext.data, setDataAtom],
+  );
+  return { ...screenContext, setData };
 };

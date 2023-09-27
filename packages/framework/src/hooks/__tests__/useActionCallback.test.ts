@@ -1,27 +1,25 @@
 /* eslint import/first: 0 */
-const mockStore = jest.fn();
-
 import { renderHook } from "@testing-library/react";
-import { useEvaluate } from "../useEvaluateCode";
-
-jest.mock("../../state", () => ({
-  useEnsembleStore: mockStore,
-}));
+import { getDefaultStore } from "jotai";
+import { useActionCallback } from "../useActionCallback";
+import { screenAtom } from "../../state";
 
 test("populates screen invokables in function context", () => {
-  mockStore.mockReturnValue({
-    screen: {
-      widgets: {
-        myWidget: {
-          values: {
-            value: 2,
-          },
-          invokable: {},
+  const store = getDefaultStore();
+  store.set(screenAtom, {
+    widgets: {
+      myWidget: {
+        values: {
+          value: 2,
+        },
+        invokable: {
+          id: "myWidget",
         },
       },
     },
+    data: {},
   });
-  const { result } = renderHook(() => useEvaluate("myWidget.value"));
+  const { result } = renderHook(() => useActionCallback("myWidget.value"));
 
   const execResult = result.current();
   expect(execResult).toBe(2);
@@ -29,7 +27,7 @@ test("populates screen invokables in function context", () => {
 
 test("populates context passed in", () => {
   const { result } = renderHook(() =>
-    useEvaluate("specialScope.value", { specialScope: { value: 4 } }),
+    useActionCallback("specialScope.value", { specialScope: { value: 4 } }),
   );
 
   const execResult = result.current();

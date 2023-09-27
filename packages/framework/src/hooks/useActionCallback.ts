@@ -1,16 +1,17 @@
 import { useCallback } from "react";
 import { merge } from "lodash-es";
+import { useAtomValue } from "jotai";
 import type { InvokableMethods } from "../state";
-import { useEnsembleStore } from "../state";
+import { screenAtom } from "../state";
 
-export const useEvaluate = (
+export const useActionCallback = (
   js?: string,
   context?: Record<string, unknown>,
 ): (() => unknown) => {
-  const store = useEnsembleStore();
+  const screen = useAtomValue(screenAtom);
 
   const widgets: [string, InvokableMethods | undefined][] = Object.entries(
-    store.screen.widgets,
+    screen.widgets,
   ).map(([id, state]) => {
     const methods = state?.invokable.methods;
     const values = state?.values;
@@ -21,7 +22,7 @@ export const useEvaluate = (
     ...widgets,
     ...Object.entries(context ?? {}),
   ]);
-  invokableObj.data = store.screen.data;
+  invokableObj.data = screen.data;
 
   const execute = useCallback((): unknown => {
     // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
