@@ -1,9 +1,9 @@
 import {
+  EnsembleWidget,
   Expression,
-  Widget,
+  ScreenContextDefinition,
   unwrapWidget,
   useScreenContext,
-  ScreenContextDefinition,
 } from "framework";
 import { evaluate } from "framework/src/evaluate";
 import { WidgetRegistry } from "../registry";
@@ -11,7 +11,7 @@ import { EnsembleRuntime } from "../runtime";
 import { handleCurlyBraces } from "../util/utils";
 import { head, isEmpty, last } from "lodash-es";
 
-type CondtionalElement = Record<Capitalize<string>, Widget> &
+type CondtionalElement = Record<Capitalize<string>, EnsembleWidget> &
   (
     | { if: Expression<string>; elseif?: never; else?: never }
     | { elseif: Expression<string>; if?: never; else?: never }
@@ -95,10 +95,9 @@ export const extractWidget = (condition: CondtionalElement) => {
 };
 
 export const extractCondition = (condition: CondtionalElement) => {
-  for (const key in condition) {
+  for (const key in condition)
     if (key === "if" || key === "elseif" || key === "else")
       return condition[key];
-  }
 
   throw Error("Improper structure, make sure every condition has a condition");
 };
