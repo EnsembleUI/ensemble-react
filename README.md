@@ -36,6 +36,7 @@ This repo includes the following packages/apps:
 Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
 
 ### How to run the starter app
+
 ```sh
 cd starter
 pnpm install
