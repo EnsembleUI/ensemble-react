@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { useEnsembleState } from "framework";
+import { useRegisterBindings } from "framework";
 import { WidgetRegistry } from "../registry";
 import type { BaseTextProps } from "../util/types";
 import { getTextAlign } from "../util/utils";
@@ -19,7 +19,7 @@ export const Markdown: React.FC<BaseTextProps> = (props) => {
   if (props.text !== text) {
     setText(props.text);
   }
-  const { values } = useEnsembleState({ ...props, text }, props.id, {
+  const { values } = useRegisterBindings({ ...props, text }, props.id, {
     setText,
   });
   return (

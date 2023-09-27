@@ -1,4 +1,4 @@
-import { useEnsembleState } from "framework";
+import { useRegisterBindings } from "framework";
 import { useState } from "react";
 import { Typography } from "antd";
 import { WidgetRegistry } from "../registry";
@@ -11,10 +11,7 @@ export type TextProps = {
 
 export const Text: React.FC<TextProps> = (props) => {
   const [text, setText] = useState(props.text);
-  if (props.text !== text) {
-    setText(props.text);
-  }
-  const { values } = useEnsembleState({ ...props, text }, props.id, {
+  const { values } = useRegisterBindings({ ...props, text }, props.id, {
     setText,
   });
   return (
