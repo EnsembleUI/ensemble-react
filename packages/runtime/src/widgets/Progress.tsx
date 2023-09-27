@@ -19,7 +19,9 @@ const Progress: React.FC<ProgressProps> = (props) => {
   // Determine whether to use linear or circular progress based on the "display" prop
   const isCircular = display === "circular";
   const DEFAULT_STROKE_WIDTH = 6;
-
+  const DEFAULT_RADIUS = 9.5;
+  const radius = styles?.size || DEFAULT_RADIUS;
+  const thickness = styles?.thickness ? styles.thickness : DEFAULT_STROKE_WIDTH;
   // Calculate the percentage based on the countdown value
   const [percent, setPercent] = useState(countdown ? 0 : -1);
 
@@ -54,13 +56,65 @@ const Progress: React.FC<ProgressProps> = (props) => {
             showInfo={false}
             size={styles?.size || "default"}
             strokeColor={styles?.color || ""}
-            strokeWidth={
-              styles?.thickness ? styles.thickness : DEFAULT_STROKE_WIDTH
-            }
+            strokeWidth={thickness}
             type="circle"
           />
         ) : (
-          <div className="spinner circular" />
+          <svg
+            width={radius * 2}
+            height={radius * 2}
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g>
+              <circle
+                cx={radius}
+                cy={radius}
+                r={radius - thickness / 2}
+                fill="none"
+                stroke={`${styles?.color ? styles.color : "#000"}`}
+                strokeWidth={thickness}
+                strokeLinecap="round"
+              >
+                <animate
+                  attributeName="stroke-dasharray"
+                  calcMode="spline"
+                  dur="3s"
+                  keySplines="0.42,0,0.58,1;0.42,0,0.58,1;0.42,0,0.58,1"
+                  keyTimes="0;0.475;0.95;1"
+                  repeatCount="indefinite"
+                  values={`0 ${2 * Math.PI * (radius - thickness / 2)};
+                           ${0.66 * Math.PI * radius} ${
+                             2 * Math.PI * (radius - thickness / 2)
+                           };
+                           ${0.66 * Math.PI * radius} ${
+                             2 * Math.PI * (radius - thickness / 2)
+                           };
+                           ${0.66 * Math.PI * radius} ${
+                             2 * Math.PI * (radius - thickness / 2)
+                           }`}
+                />
+                <animate
+                  attributeName="stroke-dashoffset"
+                  calcMode="spline"
+                  dur="3s"
+                  keySplines="0.42,0,0.58,1;0.42,0,0.58,1;0.42,0,0.58,1"
+                  keyTimes="0;0.475;0.95;1"
+                  repeatCount="indefinite"
+                  values={`0;
+                           ${-0.53 * Math.PI * radius};
+                           ${-1.96 * Math.PI * radius};
+                           ${-1.96 * Math.PI * radius}`}
+                />
+              </circle>
+              <animateTransform
+                attributeName="transform"
+                dur="2s"
+                repeatCount="indefinite"
+                type="rotate"
+                values={`0 ${radius} ${radius};360 ${radius} ${radius}`}
+              />
+            </g>
+          </svg>
         )}
         <style>
           {`
@@ -99,9 +153,7 @@ const Progress: React.FC<ProgressProps> = (props) => {
             showInfo={false}
             size={"default"}
             strokeColor={styles?.color || ""}
-            strokeWidth={
-              styles?.thickness ? styles.thickness : DEFAULT_STROKE_WIDTH
-            }
+            strokeWidth={thickness}
           />
         ) : (
           <div className="loader" />
