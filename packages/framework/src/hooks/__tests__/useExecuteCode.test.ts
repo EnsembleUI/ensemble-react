@@ -1,7 +1,7 @@
 /* eslint import/first: 0 */
 import { renderHook } from "@testing-library/react";
 import { getDefaultStore } from "jotai";
-import { useActionCallback } from "../useActionCallback";
+import { useExecuteCode } from "../useExecuteCode";
 import { screenAtom } from "../../state";
 
 test("populates screen invokables in function context", () => {
@@ -19,7 +19,7 @@ test("populates screen invokables in function context", () => {
     },
     data: {},
   });
-  const { result } = renderHook(() => useActionCallback("myWidget.value"));
+  const { result } = renderHook(() => useExecuteCode("myWidget.value"));
 
   const execResult = result.current();
   expect(execResult).toBe(2);
@@ -27,7 +27,7 @@ test("populates screen invokables in function context", () => {
 
 test("populates context passed in", () => {
   const { result } = renderHook(() =>
-    useActionCallback("specialScope.value", { specialScope: { value: 4 } }),
+    useExecuteCode("specialScope.value", { specialScope: { value: 4 } }),
   );
 
   const execResult = result.current();

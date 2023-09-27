@@ -192,7 +192,7 @@ View:
                     - Text:
                         text: ${myText.text}
                     - Text:
-                        text: ${data.getData.body.total}
+                        text: ${getData.body.total}
 
 
         ## Grid widgets

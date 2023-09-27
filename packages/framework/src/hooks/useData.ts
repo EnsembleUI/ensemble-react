@@ -1,9 +1,10 @@
 import { useMemo } from "react";
 import { useAtomValue } from "jotai";
-import { get, isString } from "lodash-es";
+import { isString } from "lodash-es";
 import { selectAtom } from "jotai/utils";
 import { screenAtom } from "../state";
 import type { Expression } from "../models";
+import { evaluate } from "../evaluate";
 
 type TemplateData = object | unknown[];
 
@@ -14,7 +15,7 @@ export const useTemplateData = (
   const dataAtom = useMemo(
     () =>
       selectAtom(screenAtom, (screenContext) =>
-        get(screenContext, String(expression)),
+        evaluate(screenContext, String(expression)),
       ),
     [expression],
   );

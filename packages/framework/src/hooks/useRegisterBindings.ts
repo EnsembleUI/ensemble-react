@@ -1,10 +1,11 @@
 import { useEffect, useMemo } from "react";
-import { compact, get, head, isEqual, map, merge } from "lodash-es";
+import { compact, isEqual, map, merge } from "lodash-es";
 import { useAtom } from "jotai";
 import { selectAtom } from "jotai/utils";
 import { focusAtom } from "jotai-optics";
 import type { InvokableMethods } from "../state";
 import { screenAtom } from "../state";
+import { evaluate } from "../evaluate";
 import { useWidgetId } from "./useWidgetId";
 import { useCustomScope } from "./useCustomScope";
 
@@ -45,6 +46,8 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
     [],
   );
 
+  const customScope = useCustomScope();
+
   const bindingsAtom = useMemo(
     () =>
       selectAtom(
@@ -52,40 +55,17 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
         (screenContext) => {
           const bindingValues = Object.fromEntries(
             expressions.map(([key, expression]) => {
-              const tokens = expression.split(".");
-              const identifier = head(tokens);
-              if (identifier === "data") {
-                return [key, get(screenContext, tokens)];
-              }
-              tokens.splice(1, 0, "values");
-              return [key, get(screenContext.widgets, tokens)];
+              return [key, evaluate(screenContext, expression, customScope)];
             }),
           );
           return bindingValues;
         },
         isEqual,
       ),
-    [expressions],
+    [customScope, expressions],
   );
 
-  const [screenValues] = useAtom(bindingsAtom);
-
-  const customScope = useCustomScope();
-  const customScopeValues = Object.fromEntries(
-    compact(
-      expressions.map(([key, expression]) => {
-        const value = get(customScope, expression);
-        if (value === undefined) {
-          return;
-        }
-        return [key, value];
-      }),
-    ),
-  );
-  const bindings = {
-    ...screenValues,
-    ...customScopeValues,
-  };
+  const [bindings] = useAtom(bindingsAtom);
 
   const newValues = merge({}, values, bindings) as T;
 

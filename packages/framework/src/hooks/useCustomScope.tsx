@@ -5,7 +5,9 @@ type CustomScopeProps = {
   value: CustomScope;
 } & React.PropsWithChildren<CustomScope>;
 
-export const CustomScopeContext = createContext<CustomScope | null>(null);
+export const CustomScopeContext = createContext<CustomScope | undefined>(
+  undefined,
+);
 
 export const CustomScopeProvider: React.FC<CustomScopeProps> = ({
   children,
@@ -18,7 +20,7 @@ export const CustomScopeProvider: React.FC<CustomScopeProps> = ({
   );
 };
 
-export const useCustomScope = (): CustomScope | null => {
+export const useCustomScope = (): CustomScope | undefined => {
   const scope = useContext(CustomScopeContext);
   return scope;
 };
