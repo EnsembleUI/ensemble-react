@@ -2,6 +2,7 @@ import { EnsembleApp } from "runtime";
 import type { Application } from "framework";
 import HomeYAML from "./ensemble/home.yaml";
 import CollectionsYAML from "./ensemble/collections.yaml";
+import UsersAndGroupsYAML from "./ensemble/usersAndGroups.yaml";
 
 import "./App.css";
 
@@ -18,6 +19,11 @@ const testApp: Application = {
       id: "collections",
       name: "Collections",
       content: String(CollectionsYAML),
+    },
+    {
+      id: "usersAndGroups",
+      name: "UsersAndGroups",
+      content: String(UsersAndGroupsYAML),
     },
   ],
 };
