@@ -67,7 +67,7 @@ View:
                           horizontalGap: 50
                           verticalGap: 30
                         item-template:
-                          data: data.getData.body.users
+                          data: ${getData.body.users}
                           name: user
                           template:
                             Text:

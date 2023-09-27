@@ -7,7 +7,7 @@ import {
   CustomScopeProvider,
   Expression,
   Widget,
-  useEnsembleStore,
+  useTemplateData,
 } from "framework";
 import { Col, Row } from "antd";
 
@@ -30,18 +30,17 @@ export const GridView: React.FC<GridViewProps> = ({
   styles,
   ...props
 }) => {
+  const defaultColumnCount = 4;
   const templateData = isArray(data)
     ? data
-    : useEnsembleStore((state) => ({
-        templateData: get(state.screen, data as string) as object,
-      })).templateData;
+    : useTemplateData(removeCurlyBraces(data.toString()));
 
   const namedData = map(templateData, (value) => ({
     [name]: value,
   }));
 
   const rows = [];
-  const colCount = styles?.horizontalTileCount ?? 4;
+  const colCount = styles?.horizontalTileCount ?? defaultColumnCount;
   const rowCount = Math.ceil(namedData.length / colCount);
 
   for (let i = 0; i < rowCount; i++) {
@@ -88,3 +87,9 @@ export const GridView: React.FC<GridViewProps> = ({
 };
 
 WidgetRegistry.register("GridView", GridView);
+
+function removeCurlyBraces(string: string): string {
+  if (string.startsWith("${") && string.endsWith("}")) {
+    return string.substring(2, string.length - 1);
+  } else return string;
+}
