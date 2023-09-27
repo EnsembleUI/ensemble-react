@@ -12,5 +12,6 @@ export * from "./DataGrid";
 export * from "./Conditional";
 export * from "./TabBar";
 export * from "./Progress";
+export * from "./Conditional";
 export * from "./GridView";
 export * from "./Avatar/Avatar";
