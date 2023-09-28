@@ -1,37 +1,67 @@
-import { Card as MuiCard, CardContent, Typography } from "@mui/material";
-import type { Expression } from "framework";
-import { useRegisterBindings } from "framework";
-import { useState } from "react";
+import type { Widget } from "framework";
+import { useMemo } from "react";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from "../util/types";
+import { EnsembleRuntime } from "../runtime";
 
 export type CardProps = {
-  title?: Expression<string>;
-  content?: Expression<string>;
   [key: string]: unknown;
+  children: Widget[];
+  styles?: {
+    display: string; //write only display options
+    flexDirection?:
+      | "row"
+      | "row-reverse"
+      | "column"
+      | "column-reverse"
+      | undefined;
+    justifyContent?:
+      | "flex-start"
+      | "flex-end"
+      | "space-around"
+      | "space-evenly"
+      | "space-between"; //justify options
+    alignItems?:
+      | "flex-start"
+      | "flex-end"
+      | "space-around"
+      | "space-evenly"
+      | "space-between"; //justify options
+    gap?: number;
+    border: string;
+    borderRadius: string;
+    borderWidth: string;
+    boxShadow: string;
+    width: number;
+    height: number;
+    margin: string;
+    padding: string;
+  };
 } & EnsembleWidgetProps;
 
 export const Card: React.FC<CardProps> = (props) => {
-  const [title, setTitle] = useState(props.title || "");
-  const [content, setContent] = useState(props.content || "");
-  const { values } = useRegisterBindings(
-    { ...props, title, content },
-    props.id,
-    {
-      setTitle,
-      setContent,
-    },
-  );
-
+  const renderedChildren = useMemo(() => {
+    return EnsembleRuntime.render(props.children);
+  }, [props.children]);
   return (
-    <MuiCard>
-      <CardContent>
-        {values.title ? (
-          <Typography variant="h5">{values.title}</Typography>
-        ) : null}
-        {values.content ? <Typography>{values.content}</Typography> : null}
-      </CardContent>
-    </MuiCard>
+    <div
+      style={{
+        display: props.styles?.display ?? "flex",
+        flexDirection: props.styles?.flexDirection ?? "column",
+        justifyContent: props.styles?.justifyContent ?? "center",
+        gap: props.styles?.gap ?? "4px",
+        alignItems: props.styles?.alignItems ?? "center",
+        border: props.styles?.border ?? "0px",
+        borderRadius: props.styles?.borderRadius ?? "10px",
+        borderWidth: props.styles?.borderWidth,
+        width: props.styles?.width ?? "100%",
+        height: props.styles?.height ?? "100%",
+        boxShadow: "5px 5px 8px 0px rgba(0, 0, 0, 0.08)",
+        padding: props.styles?.padding ?? "0px",
+      }}
+    >
+      {renderedChildren}
+    </div>
   );
 };
 
