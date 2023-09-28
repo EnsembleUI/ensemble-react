@@ -1,6 +1,6 @@
 import { Card as MuiCard, CardContent, Typography } from "@mui/material";
 import type { Expression } from "framework";
-import { useEnsembleState } from "framework";
+import { useRegisterBindings } from "framework";
 import { useState } from "react";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from "../util/types";
@@ -14,10 +14,14 @@ export type CardProps = {
 export const Card: React.FC<CardProps> = (props) => {
   const [title, setTitle] = useState(props.title || "");
   const [content, setContent] = useState(props.content || "");
-  const { values } = useEnsembleState({ ...props, title, content }, props.id, {
-    setTitle,
-    setContent,
-  });
+  const { values } = useRegisterBindings(
+    { ...props, title, content },
+    props.id,
+    {
+      setTitle,
+      setContent,
+    },
+  );
 
   return (
     <MuiCard>
