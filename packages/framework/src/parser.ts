@@ -73,9 +73,9 @@ export const unwrapWidget = (obj: Record<string, unknown>): Widget => {
     //map(items, unwrapWidget)
     //map(items as object, unwrapWidget);
     //set(properties as object, "items", unwrappedItems);
-    (items as Array<any>).map((item) => {
-      const unwrappedWidget = unwrapWidget(item[1]);
-      //return { label, widget: unwrappedWidget }
+    (items as Array<any>).map(({ label, widget }) => {
+      const unwrappedWidget = unwrapWidget(widget);
+      return { label, widget: unwrappedWidget }
     })
   }
   if (isObject(widget)) {
