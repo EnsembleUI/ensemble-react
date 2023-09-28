@@ -9,7 +9,8 @@ export const EnsembleParser = {
     const viewNode = get(view, "body");
     if (!viewNode) {
       throw new Error(
-        `Invalid screen: missing view widget:\n${isEmpty(yaml) ? "Bad YAML" : yaml
+        `Invalid screen: missing view widget:\n${
+          isEmpty(yaml) ? "Bad YAML" : yaml
         }`,
       );
     }
@@ -52,7 +53,7 @@ export const unwrapWidget = (obj: Record<string, unknown>): Widget => {
   if (!name) {
     throw Error("Invalid widget definition");
   }
-  console.log(obj,"objjjjjjjjjj");
+  console.log(obj, "objjjjjjjjjj");
   const properties = get(obj, name);
   const children = get(properties, "children");
   const template = get(properties, ["item-template", "template"]) as unknown;
@@ -75,8 +76,8 @@ export const unwrapWidget = (obj: Record<string, unknown>): Widget => {
     //set(properties as object, "items", unwrappedItems);
     (items as Array<any>).map(({ label, widget }) => {
       const unwrappedWidget = unwrapWidget(widget);
-      return { label, widget: unwrappedWidget }
-    })
+      return { label, widget: unwrappedWidget };
+    });
   }
   if (isObject(widget)) {
     console.log("is widget &&&&&&&&&&&&&&&&");

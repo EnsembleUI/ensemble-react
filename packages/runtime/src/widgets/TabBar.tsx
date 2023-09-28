@@ -8,7 +8,7 @@ const { TabPane } = Tabs;
 
 export type items = {
   label: string;
-  icon?:string;
+  icon?: string;
   widget: Widget;
 };
 export type TabBarProps = {
@@ -17,7 +17,7 @@ export type TabBarProps = {
   items: items[];
 };
 export const TabBar: React.FC<TabBarProps> = (props) => {
-console.log(props.items);
+  console.log(props.items);
 
   return (
     <Tabs tabBarStyle={{ borderBottom: "1px solid #cbcbcb" }}>
