@@ -13,6 +13,7 @@ import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetProps } from "../../util/types";
 import { BarChart } from "./BarChart";
 import { DoughnutChart } from "./DoughnutChart";
+import { Expression } from "framework";
 
 ChartJS.register(
   CategoryScale,
@@ -38,6 +39,7 @@ export type ChartProps = {
   type: "bar" | "doughnut";
   labels: string[] | undefined;
   datasets: ChartDataSets[];
+  title?: Expression<string>;
   [key: string]: unknown;
 } & EnsembleWidgetProps;
 
@@ -47,13 +49,13 @@ const tabsConfig = {
 };
 
 export const Chart: React.FC<ChartProps> = (props) => {
-  const { labels, datasets, type } = props;
+  const { type } = props;
 
   if (!type) {
     return <b>Chart type missing</b>;
   }
 
-  return React.cloneElement(tabsConfig[type], { labels, datasets });
+  return React.cloneElement(tabsConfig[type], { ...props });
 };
 
 WidgetRegistry.register("Chart", Chart);
