@@ -53,6 +53,7 @@ export const EnsembleRuntime = {
     return <WidgetFn {...rootWidget.properties} />;
   },
   render: (widgets: Widget[]): ReactNode[] => {
+    //console.log("runtimeeeeeeeee", widgets);
     return widgets.map((child, index) => {
       const result = WidgetRegistry.find(child.name);
       if (isValidElement(result)) {

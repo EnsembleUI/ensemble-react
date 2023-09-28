@@ -15,7 +15,7 @@ View:
                       width: 80px
                       height: 20px
                   enableSearch: true
-                  items:
+                  itemsno:
                     - label: Teams
                       icon: PieChartOutlineOutlined
                       page: apple

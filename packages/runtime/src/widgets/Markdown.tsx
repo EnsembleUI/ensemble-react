@@ -6,6 +6,9 @@ import { WidgetRegistry } from "../registry";
 import type { BaseTextProps } from "../util/types";
 import { getTextAlign } from "../util/utils";
 
+export type MarkdownProps = {
+  // to be added more
+} & BaseTextProps;
 // TODO: customize in theme
 const components = {
   h1: ({ ...props }): ReactElement => (
@@ -14,7 +17,7 @@ const components = {
   ),
 };
 
-export const Markdown: React.FC<BaseTextProps> = (props) => {
+export const Markdown: React.FC<MarkdownProps> = (props) => {
   const [text, setText] = useState(props.text);
   if (props.text !== text) {
     setText(props.text);

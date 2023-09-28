@@ -15,7 +15,7 @@ View:
                       width: 80px
                       height: 20px
                   enableSearch: true
-                  items:
+                  itemsno:
                     - label: Teams
                       icon: PieChartOutlineOutlined
                       page: apple
@@ -60,7 +60,51 @@ View:
                   children:
                     - Markdown:
                         text: '# Team Dashboard'
+                    - TabBar:
+                        id: 1
+                        selectedIndex: 0
+                        items:
+                          - label: Overview
+                            widget:
+                              Row:
+                                styles:
+                                  #crossAxis: end
+                                  width: 300px
+                                  height: 300px
+                                  borderColor: '#EBEAED'
+                                  borderRadius: 10
+                                  borderWidth: 1px
+                                  padding: 10px 20px 30px 20px
 
+                                children:
+                                  - Chart:
+                                      type: doughnut
+                                      labels: ['Red', 'Blue', 'Yellow']
+                                      datasets: [
+                                        {
+                                          label: '',
+                                          data: [300, 50, 100],
+                                          backgroundColor: [
+                                            'rgb(255, 99, 132)',
+                                            'rgb(54, 162, 235)',
+                                            'rgb(255, 205, 86)'
+                                          ],
+                                          hoverOffset: 4,
+                                          borderWidth: 1
+                                        }
+                                      ]
+                          - label: Adoption Usage
+                            widget:
+                              Markdown:
+                                text: '# Team Dashboard2'
+                          - label: Group Impact
+                            widget:
+                              Markdown:
+                                text: '# Team Dashboard3'
+                          - label: Knowledge Health
+                            widget:
+                              Markdown:
+                                text: '# Team Dashboard4'
                     - Row:
                         styles:
                           crossAxis: center
