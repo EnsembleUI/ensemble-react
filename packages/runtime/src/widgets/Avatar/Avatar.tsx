@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import type { Expression } from "framework";
-import { useEnsembleState, useEvaluate } from "framework";
+import { useRegisterBindings, useExecuteCode } from "framework";
 import {
   Avatar as MuiAvatar,
   Menu,
@@ -42,8 +42,8 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
   const nameString = props.name?.toString();
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(Boolean(menuAnchorEl));
-  const { values } = useEnsembleState(props);
-  const onTapCallback = useEvaluate(code, values);
+  const { values } = useRegisterBindings(props);
+  const onTapCallback = useExecuteCode(code, values);
   const onNavigate = useNavigateScreen(screen);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>): void => {
