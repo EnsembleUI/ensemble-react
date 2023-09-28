@@ -142,7 +142,7 @@ View:
                                       - label: MoM
                                       - label: Progress
                                     item-template:
-                                      data: data.getData.body.users
+                                      data: getData.body.users
                                       name: user
                                       template:
                                         DataRow:
@@ -203,7 +203,6 @@ View:
                           }]
                         defaultValue: []
                         placeholder: 'Select From Groups'
-
 
         ## Grid widgets
 #        - Row:
