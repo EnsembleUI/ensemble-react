@@ -8,34 +8,15 @@ export type CardProps = {
   [key: string]: unknown;
   children: Widget[];
   styles?: {
-    display: string; //write only display options
-    flexDirection?:
-      | "row"
-      | "row-reverse"
-      | "column"
-      | "column-reverse"
-      | undefined;
-    justifyContent?:
-      | "flex-start"
-      | "flex-end"
-      | "space-around"
-      | "space-evenly"
-      | "space-between"; //justify options
-    alignItems?:
-      | "flex-start"
-      | "flex-end"
-      | "space-around"
-      | "space-evenly"
-      | "space-between"; //justify options
     gap?: number;
-    border: string;
-    borderRadius: string;
-    borderWidth: string;
-    boxShadow: string;
-    width: number;
-    height: number;
-    margin: string;
-    padding: string;
+    borderColor?: string;
+    borderRadius?: string;
+    borderWidth?: string;
+    shadowColor?: string;
+    shadowOffset?: string;
+    shadowBlur?: string;
+    margin?: string;
+    padding?: string;
   };
 } & EnsembleWidgetProps;
 
@@ -46,17 +27,20 @@ export const Card: React.FC<CardProps> = (props) => {
   return (
     <div
       style={{
-        display: props.styles?.display ?? "flex",
-        flexDirection: props.styles?.flexDirection ?? "column",
-        justifyContent: props.styles?.justifyContent ?? "center",
+        display: "flex",
+        flexDirection: "column",
         gap: props.styles?.gap ?? "4px",
-        alignItems: props.styles?.alignItems ?? "center",
-        border: props.styles?.border ?? "0px",
+        borderColor: props.styles?.borderColor ?? "transparent",
         borderRadius: props.styles?.borderRadius ?? "10px",
         borderWidth: props.styles?.borderWidth,
         width: props.styles?.width ?? "100%",
         height: props.styles?.height ?? "100%",
-        boxShadow: "5px 5px 8px 0px rgba(0, 0, 0, 0.08)",
+        boxShadow: `
+		${props.styles?.shadowOffset ? props.styles.shadowOffset : "0"}px 
+		${props.styles?.shadowOffset ? props.styles.shadowOffset : "0"}px
+		${props.styles?.shadowBlur ? props.styles.shadowBlur : "0"}px 
+		0px 
+		${props.styles?.shadowColor ? props.styles.shadowColor : "#000"}`,
         padding: props.styles?.padding ?? "0px",
       }}
     >
