@@ -79,7 +79,11 @@ View:
 
                               children:
                                 - Chart:
+                                    styles:
+                                      height: 100%
+                                      width: 100%
                                     type: bar
+                                    title: Bar Chart
                                     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']
                                     datasets: [
                                       {
@@ -117,7 +121,11 @@ View:
                               children:
                                 - Chart:
                                     type: doughnut
+                                    styles:
+                                      height: 200px
+                                      width: 200px
                                     labels: ['Red', 'Blue', 'Yellow']
+                                    title: Doughnut Chart
                                     datasets: [
                                       {
                                         label: '',
