@@ -18,6 +18,7 @@ const Progress: React.FC<ProgressProps> = (props) => {
 
   // Determine whether to use linear or circular progress based on the "display" prop
   const isCircular = display === "circular";
+  const isLinear = display === "linear";
   const DEFAULT_STROKE_WIDTH = 6;
   const DEFAULT_RADIUS = 9.5;
   const radius = styles?.size || DEFAULT_RADIUS;
@@ -47,42 +48,48 @@ const Progress: React.FC<ProgressProps> = (props) => {
     }
   }, [countdown]);
 
+  if (isCircular && countdown) {
+    // When display is circular
+    return (
+      <div>
+        <AntProgress
+          percent={percent}
+          showInfo={false}
+          size={styles?.size || "default"}
+          strokeColor={styles?.color || ""}
+          strokeWidth={thickness}
+          type="circle"
+        />
+      </div>
+    );
+  }
+
   if (isCircular) {
     return (
       <div>
-        {percent !== -1 ? (
-          <AntProgress
-            percent={percent}
-            showInfo={false}
-            size={styles?.size || "default"}
-            strokeColor={styles?.color || ""}
-            strokeWidth={thickness}
-            type="circle"
-          />
-        ) : (
-          <svg
-            width={radius * 2}
-            height={radius * 2}
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <g>
-              <circle
-                cx={radius}
-                cy={radius}
-                r={radius - thickness / 2}
-                fill="none"
-                stroke={`${styles?.color ? styles.color : "#000"}`}
-                strokeWidth={thickness}
-                strokeLinecap="round"
-              >
-                <animate
-                  attributeName="stroke-dasharray"
-                  calcMode="spline"
-                  dur="3s"
-                  keySplines="0.42,0,0.58,1;0.42,0,0.58,1;0.42,0,0.58,1"
-                  keyTimes="0;0.475;0.95;1"
-                  repeatCount="indefinite"
-                  values={`0 ${2 * Math.PI * (radius - thickness / 2)};
+        <svg
+          width={radius * 2}
+          height={radius * 2}
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <g>
+            <circle
+              cx={radius}
+              cy={radius}
+              r={radius - thickness / 2}
+              fill="none"
+              stroke={`${styles?.color ? styles.color : "#000"}`}
+              strokeWidth={thickness}
+              strokeLinecap="round"
+            >
+              <animate
+                attributeName="stroke-dasharray"
+                calcMode="spline"
+                dur="2s"
+                keySplines="0.42,0,0.58,1;0.42,0,0.58,1;0.42,0,0.58,1"
+                keyTimes="0;0.475;0.95;1"
+                repeatCount="indefinite"
+                values={`0 ${2 * Math.PI * (radius - thickness / 2)};
                            ${0.66 * Math.PI * radius} ${
                              2 * Math.PI * (radius - thickness / 2)
                            };
@@ -92,72 +99,55 @@ const Progress: React.FC<ProgressProps> = (props) => {
                            ${0.66 * Math.PI * radius} ${
                              2 * Math.PI * (radius - thickness / 2)
                            }`}
-                />
-                <animate
-                  attributeName="stroke-dashoffset"
-                  calcMode="spline"
-                  dur="3s"
-                  keySplines="0.42,0,0.58,1;0.42,0,0.58,1;0.42,0,0.58,1"
-                  keyTimes="0;0.475;0.95;1"
-                  repeatCount="indefinite"
-                  values={`0;
+              />
+              <animate
+                attributeName="stroke-dashoffset"
+                calcMode="spline"
+                dur="2s"
+                keySplines="0.42,0,0.58,1;0.42,0,0.58,1;0.42,0,0.58,1"
+                keyTimes="0;0.475;0.95;1"
+                repeatCount="indefinite"
+                values={`0;
                            ${-0.53 * Math.PI * radius};
                            ${-1.96 * Math.PI * radius};
                            ${-1.96 * Math.PI * radius}`}
-                />
-              </circle>
-              <animateTransform
-                attributeName="transform"
-                dur="2s"
-                repeatCount="indefinite"
-                type="rotate"
-                values={`0 ${radius} ${radius};360 ${radius} ${radius}`}
               />
-            </g>
-          </svg>
-        )}
-        <style>
-          {`
-			  /* Spinner animation */
-			  .spinner {
-				width: ${styles?.size ? styles.size : 10}px;
-				height: ${styles?.size ? styles.size : 10}px;
-				border-radius: 50%;
-				border: ${styles?.thickness ? styles.thickness : 4}px solid rgba(0, 0, 0, 0.1);
-				border-top: ${styles?.thickness ? styles.thickness : 4}px solid ${
-          styles?.color ? styles.color : "#1890ff"
-        };
-				animation: spin 1s linear infinite;
-				margin: auto;
-			  }
-			  
-			  /* Keyframes for the spinner animation */
-			  @keyframes spin {
-				0% { transform: rotate(0deg); }
-				100% { transform: rotate(360deg); }
-			  }
-		  `}
-        </style>
+            </circle>
+            <animateTransform
+              attributeName="transform"
+              dur="2s"
+              repeatCount="indefinite"
+              type="rotate"
+              values={`0 ${radius} ${radius};360 ${radius} ${radius}`}
+            />
+          </g>
+        </svg>
       </div>
     );
-  } else {
+  }
+
+  if (isLinear && countdown) {
     return (
       <div
         style={{
           width: styles?.size ? `${styles.size}px` : "auto", // Set width only for circular display
         }}
       >
-        {percent !== -1 ? (
-          <AntProgress
-            percent={percent}
-            showInfo={false}
-            size={"default"}
-            strokeColor={styles?.color || ""}
-            strokeWidth={thickness}
-          />
-        ) : (
-          <div className="loader" />
-        )}
+        <AntProgress
+          percent={percent}
+          showInfo={false}
+          size="default"
+          strokeColor={styles?.color || ""}
+          strokeWidth={thickness}
+        />
+      </div>
+    );
+  }
+
+  if (isLinear) {
+    return (
+      <div>
+        <div className="loader" />
         <style>
           {`
 			/* Linear loader animation */
@@ -166,7 +156,7 @@ const Progress: React.FC<ProgressProps> = (props) => {
 			  position: relative;
 			  background-color: rgba(0,0,0,0.1);
 			  height: ${styles?.thickness ? styles.thickness : 12}px;
-			  width: 100%;
+			  width: ${styles?.size ? `${styles.size}px` : "100%"};
 			  overflow: hidden;
 			}
 			.loader::after {
@@ -178,7 +168,7 @@ const Progress: React.FC<ProgressProps> = (props) => {
 			  top: 0;
 			  left: 0;
 			  box-sizing: border-box;
-			  animation: animloader 2s linear infinite;
+			  animation: animloader 1.5s linear infinite;
 			}
 			
 			@keyframes animloader {
@@ -196,6 +186,8 @@ const Progress: React.FC<ProgressProps> = (props) => {
       </div>
     );
   }
+
+  return null;
 };
 
 WidgetRegistry.register("Progress", Progress);
