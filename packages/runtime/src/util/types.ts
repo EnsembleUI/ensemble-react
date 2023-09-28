@@ -28,6 +28,12 @@ export type IconProps = {
   color?: string;
 } & EnsembleWidgetProps;
 
+export type GridViewStyles = {
+  horizontalTileCount?: number;
+  horizontalGap?: number;
+  verticalGap?: number;
+};
+
 // composable types
 export interface HasBorder {
   borderRadius?: number;

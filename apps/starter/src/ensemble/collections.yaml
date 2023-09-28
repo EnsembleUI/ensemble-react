@@ -142,7 +142,7 @@ View:
                                       - label: MoM
                                       - label: Progress
                                     item-template:
-                                      data: data.getData.body.users
+                                      data: getData.body.users
                                       name: user
                                       template:
                                         DataRow:
@@ -192,7 +192,7 @@ View:
                     - Text:
                         text: ${myText.text}
                     - Text:
-                        text: ${data.getData.body.total}
+                        text: ${getData.body.total}
 
 
         ## Grid widgets

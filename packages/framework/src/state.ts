@@ -1,7 +1,5 @@
-import type { Mutate, StateCreator, StoreApi, UseBoundStore } from "zustand";
-import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
-import { merge } from "lodash-es";
+import { atom, createStore } from "jotai";
+import { focusAtom } from "jotai-optics";
 import type { Application } from "./models";
 import type { Response } from "./data";
 
@@ -38,14 +36,6 @@ export interface EnsembleDataContext {
   screen: ScreenContextType;
   app: ApplicationContextType;
 }
-
-export type StateSlice<T> = StateCreator<
-  EnsembleDataContext,
-  [["zustand/immer", never]],
-  [],
-  T
->;
-
 interface WidgetState<T = Record<string, unknown>> {
   values: T;
   invokable: Invokable;
@@ -57,50 +47,22 @@ export interface Invokable {
   methods?: InvokableMethods;
 }
 
-const createApplicationContext: StateSlice<ApplicationContextType> = (set) => ({
+export const screenAtom = atom<ScreenContextDefinition>({
+  data: {},
+  widgets: {},
+});
+
+export const screenDataAtom = focusAtom(screenAtom, (optic) =>
+  optic.prop("data"),
+);
+
+export const appAtom = atom<ApplicationContextDefinition>({
   application: null,
   storage: null,
   env: null,
   auth: null,
   user: null,
   secrets: null,
-
-  setApplication: (application: Application) => set(() => ({ application })),
 });
 
-const createScreenContext: StateSlice<ScreenContextType> = (set) => ({
-  data: {},
-  widgets: {},
-
-  setWidget: (id: string, widgetState: WidgetState) =>
-    set((state) => {
-      const prevState = state.screen.widgets[id];
-      if (prevState) {
-        merge(prevState, widgetState);
-      } else {
-        state.screen.widgets[id] = widgetState;
-      }
-    }),
-  setData: (name: string, response: Response) =>
-    set((state) => {
-      const prevResponse = state.screen.data[name];
-      if (prevResponse) {
-        merge(prevResponse, response);
-      } else {
-        state.screen.data[name] = response;
-      }
-    }),
-  setCustom: (id: string, data: unknown) =>
-    set((state) => {
-      state.screen[id] = data;
-    }),
-});
-
-export const useEnsembleStore: UseBoundStore<
-  Mutate<StoreApi<EnsembleDataContext>, []>
-> = create<EnsembleDataContext>()(
-  immer((...a) => ({
-    app: createApplicationContext(...a),
-    screen: createScreenContext(...a),
-  })),
-);
+export const ensembleStore = createStore();

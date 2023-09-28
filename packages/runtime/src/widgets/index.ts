@@ -11,3 +11,4 @@ export * from "./SideBar";
 export * from "./Charts";
 export * from "./DataGrid";
 export * from "./Search";
+export * from "./GridView";
