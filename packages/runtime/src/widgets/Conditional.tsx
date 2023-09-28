@@ -1,4 +1,11 @@
-import { Expression, Widget, useExecuteCode } from "framework";
+import {
+  Expression,
+  Widget,
+  unwrapWidget,
+  useScreenContext,
+  ScreenContextDefinition,
+} from "framework";
+import { evaluate } from "framework/src/evaluate";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import { handleCurlyBraces } from "../util/utils";
@@ -16,19 +23,18 @@ export type ConditionalProps = {
 };
 
 export const Conditional: React.FC<ConditionalProps> = (props) => {
+  const context = useScreenContext();
+
   const [isValid, errorMessage] = hasProperStructure(props.conditions);
   if (!isValid) throw Error(errorMessage);
 
-  let element = head(
-    props.conditions.filter((condition) => {
-      let conditionString = extractCondition(condition);
-      if (typeof conditionString !== "string") return false;
+  let element = props.conditions.find((condition) => {
+    let conditionString = extractCondition(condition);
+    if (typeof conditionString !== "string") return false;
 
-      conditionString = handleCurlyBraces(conditionString);
-      const evaluate = useExecuteCode(conditionString);
-      return evaluate();
-    })
-  );
+    conditionString = handleCurlyBraces(conditionString);
+    return evaluate(context as ScreenContextDefinition, conditionString);
+  });
 
   if (!element) {
     // check if last condition is 'else'
@@ -46,14 +52,13 @@ export const Conditional: React.FC<ConditionalProps> = (props) => {
 
 WidgetRegistry.register("Conditional", Conditional);
 
-const hasProperStructure = (
+export const hasProperStructure = (
   conditions: CondtionalElement[]
 ): [boolean, string] => {
   if (
     !conditions ||
     isEmpty(conditions) ||
-    !head(conditions)?.hasOwnProperty("if") ||
-    conditions.filter((condition) => condition.hasOwnProperty("if")).length > 1
+    !head(conditions)?.hasOwnProperty("if")
   )
     return [
       false,
@@ -65,6 +70,10 @@ const hasProperStructure = (
 
     if (
       Object.entries(condition).length !== 2 ||
+      (condition.hasOwnProperty("if") &&
+        index > 0 &&
+        (conditions[index - 1].hasOwnProperty("elseif") ||
+          conditions[index - 1].hasOwnProperty("else"))) ||
       (condition.hasOwnProperty("elseif") && index === 0) ||
       (condition.hasOwnProperty("else") && index !== conditions.length - 1)
     )
@@ -77,20 +86,19 @@ const hasProperStructure = (
   return [true, ""];
 };
 
-const extractWidget = (condition: CondtionalElement) => {
-  for (const key in condition) {
+export const extractWidget = (condition: CondtionalElement) => {
+  for (const key in condition)
     if (key !== "if" && key !== "elseif" && key !== "else")
-      return {
-        name: key,
-        properties: condition[key as keyof typeof condition] as {},
-      } as Widget;
-  }
+      return unwrapWidget({ [key]: condition[key as keyof typeof condition] });
+
   throw Error("Improper structure, make sure every condition has a widget");
 };
 
-const extractCondition = (condition: CondtionalElement) => {
+export const extractCondition = (condition: CondtionalElement) => {
   for (const key in condition) {
     if (key === "if" || key === "elseif" || key === "else")
       return condition[key];
   }
+
+  throw Error("Improper structure, make sure every condition has a condition");
 };

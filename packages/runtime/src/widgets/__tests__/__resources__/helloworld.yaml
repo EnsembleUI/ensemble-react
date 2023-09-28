@@ -1,0 +1,41 @@
+View:
+  header:
+    title: Welcome
+
+  onLoad:
+    name: getData
+
+  body:
+    Column:
+      children:
+        - Column:
+            crossAxis: stretch
+            margin: 0 20px
+            children:
+              - GridView:
+                  styles:
+                    horizontalTileCount: 5
+                    horizontalGap: 50
+                    verticalGap: 30
+                  item-template:
+                    data: ${getData.body.users}
+                    name: user
+                    template:
+                      Text:
+                        text: ${user.firstName}
+
+              - GridView:
+                  styles:
+                    horizontalTileCount: 1
+                    verticalGap: 30
+                  item-template:
+                    data: [1, 2, 3, 4, 5, 6, 7]
+                    name: n
+                    template:
+                      Text:
+                        text: ${n}
+
+API:
+  getData:
+    method: GET
+    uri: https://dummyjson.com/users
