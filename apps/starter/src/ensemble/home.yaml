@@ -95,12 +95,18 @@ View:
                                       ]
                           - label: Adoption Usage
                             widget:
-                              Markdown:
-                                text: '# Team Dashboard2'
+                              Text:
+                                id: myText2
+                                text: Peter Parker
                           - label: Group Impact
                             widget:
-                              Markdown:
-                                text: '# Team Dashboard3'
+                              Row:
+                                children:
+                                  - Icon:
+                                      name: NorthEast
+                                      color: green
+                                  - Text:
+                                      text: ffff
                           - label: Knowledge Health
                             widget:
                               Markdown:

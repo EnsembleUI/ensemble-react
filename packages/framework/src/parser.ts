@@ -53,13 +53,11 @@ export const unwrapWidget = (obj: Record<string, unknown>): Widget => {
   if (!name) {
     throw Error("Invalid widget definition");
   }
-  console.log(obj, "objjjjjjjjjj");
   const properties = get(obj, name);
   const children = get(properties, "children");
   const template = get(properties, ["item-template", "template"]) as unknown;
   const items = get(properties, "items");
   const widget = get(properties, "widget");
-  console.log("widgetttttttttttttt----------------------------", widget);
   if (isArray(children)) {
     const unwrappedChildren = map(children, unwrapWidget);
     set(properties as object, "children", unwrappedChildren);
@@ -69,18 +67,13 @@ export const unwrapWidget = (obj: Record<string, unknown>): Widget => {
     set(properties as object, ["item-template", "template"], unwrappedTemplate);
   }
   if (isArray(items)) {
-    console.log("items****************************");
-    //unwrapWidget(items);
-    //map(items, unwrapWidget)
-    //map(items as object, unwrapWidget);
-    //set(properties as object, "items", unwrappedItems);
-    (items as Array<any>).map(({ label, widget }) => {
+    const valueItems =(items as Array<any>).map(({ label, widget }) => {
       const unwrappedWidget = unwrapWidget(widget);
-      return { label, widget: unwrappedWidget };
+      return { label, widget: unwrappedWidget }
     });
+    set(properties as Object, "items", valueItems);
   }
   if (isObject(widget)) {
-    console.log("is widget &&&&&&&&&&&&&&&&");
     const unwrappedWidget = unwrapWidget(widget);
     set(properties as object, "widget", unwrappedWidget);
   }
