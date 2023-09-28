@@ -1,8 +1,7 @@
-import { map } from "lodash-es";
+import { isString, map } from "lodash-es";
 import type { CustomScope, Expression, EnsembleWidget } from "framework";
 import { CustomScopeProvider, useTemplateData } from "framework";
 import { Col, Row } from "antd";
-import { isString } from "antd/es/button";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import type { GridViewStyles } from "../util/types";

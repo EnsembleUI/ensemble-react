@@ -7,10 +7,11 @@ import {
 } from "framework";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ThemeProvider } from "./ThemeProvider";
-// Register built in widgets;
-import "./widgets";
 import { EnsembleEntry } from "./runtime/entry";
 import { EnsembleScreen } from "./runtime/screen";
+// Register built in widgets;
+import "./widgets";
+import { ErrorPage } from "./runtime/error";
 
 export interface EnsembleAppProps {
   appId: string;
@@ -29,6 +30,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
         {
           path: "/",
           element: <EnsembleEntry entry={app.home} />,
+          errorElement: <ErrorPage />,
           children: app.screens.map((screen) => {
             return {
               path: `${screen.name.toLowerCase()}`,

@@ -18,7 +18,7 @@ import type {
 } from "./shared/models";
 import type { ApplicationDTO } from "./shared/dto";
 
-interface EnsembleScreenYAML {
+export interface EnsembleScreenYAML {
   View?: {
     body: Record<string, unknown>;
   };
