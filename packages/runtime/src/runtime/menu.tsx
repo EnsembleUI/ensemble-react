@@ -99,10 +99,13 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
     <Col
       style={{
         backgroundColor,
+        borderRight: "1px solid lightgrey",
       }}
     >
       {props.header ? (
-        <Col span={24}>{EnsembleRuntime.render([props.header])}</Col>
+        <Col span={24} style={{ padding: "20px" }}>
+          {EnsembleRuntime.render([props.header])}
+        </Col>
       ) : null}
       <AntMenu
         mode="inline"

@@ -26,6 +26,7 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({ entry }) => {
           footer={entry.footer}
           header={entry.header}
           items={entry.items}
+          styles={entry.styles}
         />
         <Outlet />
       </div>

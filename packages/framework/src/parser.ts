@@ -87,11 +87,17 @@ export const EnsembleParser = {
       throw Error("Invalid ViewGroup definition: invalid menu type");
     }
 
+    const headerDef = get(menu, [menuType, "header"]) as
+      | Record<string, unknown>
+      | undefined;
+    const footerDef = get(menu, [menuType, "footer"]) as
+      | Record<string, unknown>
+      | undefined;
     return {
       type: String(menuType),
       items: get(menu, [menuType, "items"]) as [],
-      header: get(menu, [menuType, "header"]) as EnsembleWidget,
-      footer: get(menu, [menuType, "footer"]) as EnsembleWidget,
+      header: headerDef ? unwrapWidget(headerDef) : undefined,
+      footer: footerDef ? unwrapWidget(footerDef) : undefined,
       styles: get(menu, [menuType, "styles"]) as Record<string, unknown>,
     };
   },
