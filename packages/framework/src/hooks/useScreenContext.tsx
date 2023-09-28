@@ -1,9 +1,9 @@
 import { Provider, useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
-import type { EnsembleScreenModel } from "../models";
 import { ensembleStore, screenAtom, screenDataAtom } from "../state";
 import type { ScreenContextActions, ScreenContextDefinition } from "../state";
 import type { Response } from "../data";
+import type { EnsembleScreenModel } from "../shared/models";
 
 interface ScreenContextProps {
   screen: EnsembleScreenModel;

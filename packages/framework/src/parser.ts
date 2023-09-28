@@ -1,18 +1,74 @@
 import { parse } from "yaml";
-import { get, head, isArray, isEmpty, isObject, map, set } from "lodash-es";
-import type { APIModel, EnsembleScreenModel, Widget } from "./models";
+import {
+  get,
+  head,
+  isArray,
+  isEmpty,
+  isObject,
+  map,
+  remove,
+  set,
+} from "lodash-es";
+import type {
+  EnsembleScreenModel,
+  EnsembleAPIModel,
+  EnsembleWidget,
+  EnsembleAppModel,
+  EnsembleMenuModel,
+} from "./shared/models";
+import type { ApplicationDTO } from "./shared/dto";
+
+interface EnsembleScreenYAML {
+  View?: {
+    body: Record<string, unknown>;
+  };
+  ViewGroup?: Record<string, unknown>;
+}
 
 export const EnsembleParser = {
-  parseScreen: (name: string, yaml: string): EnsembleScreenModel => {
-    const screen: object = parse(yaml) as object;
+  parseApplication: (app: ApplicationDTO): EnsembleAppModel => {
+    const screens = app.screens.map(({ name, content: yaml }) => {
+      const screen = parse(yaml) as EnsembleScreenYAML;
+      const viewGroup = get(screen, "ViewGroup");
+      if (viewGroup) {
+        return EnsembleParser.parseMenu(viewGroup);
+      }
+      return EnsembleParser.parseScreen(name, screen);
+    });
+    if (isEmpty(screens)) {
+      throw Error("Application must have at least one screen");
+    }
+
+    const menu = screens.find((screen) => "items" in screen) as
+      | EnsembleMenuModel
+      | undefined;
+
+    if (menu) {
+      remove(screens, (screen) => screen === menu);
+      menu.items.forEach(
+        (item) =>
+          (item.screen = screens.find(
+            (screen) => "name" in screen && screen.name === item.page,
+          ) as EnsembleScreenModel),
+      );
+    }
+
+    return {
+      menu,
+      screens: screens as EnsembleScreenModel[],
+      home: menu ?? screens[0],
+      theme: app.theme,
+    };
+  },
+
+  parseScreen: (
+    name: string,
+    screen: EnsembleScreenYAML,
+  ): EnsembleScreenModel | EnsembleMenuModel => {
     const view = get(screen, "View");
     const viewNode = get(view, "body");
     if (!viewNode) {
-      throw new Error(
-        `Invalid screen: missing view widget:\n${
-          isEmpty(yaml) ? "Bad YAML" : yaml
-        }`,
-      );
+      throw new Error("Invalid screen: missing view widget");
     }
     const viewWidget = unwrapWidget(viewNode);
     const apis = unwrapApiModels(screen);
@@ -24,17 +80,32 @@ export const EnsembleParser = {
       apis,
     };
   },
+
+  parseMenu: (menu: object): EnsembleMenuModel => {
+    const menuType = head(Object.keys(menu));
+    if (!menuType) {
+      throw Error("Invalid ViewGroup definition: invalid menu type");
+    }
+
+    return {
+      type: String(menuType),
+      items: get(menu, [menuType, "items"]) as [],
+      header: get(menu, [menuType, "header"]) as EnsembleWidget,
+      footer: get(menu, [menuType, "footer"]) as EnsembleWidget,
+      styles: get(menu, [menuType, "styles"]) as Record<string, unknown>,
+    };
+  },
 };
 
-const unwrapApiModels = (screen: unknown): APIModel[] => {
+const unwrapApiModels = (screen: unknown): EnsembleAPIModel[] => {
   const apiNode = get(screen, "API");
   if (isArray(apiNode)) {
-    return map<object, APIModel>(apiNode, (value) => {
+    return map<object, EnsembleAPIModel>(apiNode, (value) => {
       const name = head(Object.keys(value));
       return {
         name,
         ...value,
-      } as APIModel;
+      } as EnsembleAPIModel;
     });
   }
   if (isObject(apiNode)) {
@@ -42,13 +113,13 @@ const unwrapApiModels = (screen: unknown): APIModel[] => {
       return {
         name,
         ...value,
-      } as APIModel;
+      } as EnsembleAPIModel;
     });
   }
   return [];
 };
 
-export const unwrapWidget = (obj: Record<string, unknown>): Widget => {
+export const unwrapWidget = (obj: Record<string, unknown>): EnsembleWidget => {
   const name = head(Object.keys(obj));
   if (!name) {
     throw Error("Invalid widget definition");
