@@ -1,47 +1,51 @@
 import type { EnsembleWidget } from "framework";
 import { useMemo } from "react";
+import { merge } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from "../util/types";
 import { EnsembleRuntime } from "../runtime";
 
+interface CardStyles {
+  width: string;
+  height: string;
+  border: string;
+  borderRadius: string;
+  shadowColor: string;
+  shadowOffset: string;
+  shadowBlur: string;
+  shadowSpread: string;
+  padding: string;
+}
+
 export type CardProps = {
   [key: string]: unknown;
   children: EnsembleWidget[];
-  styles?: {
-    gap?: number;
-    borderColor?: string;
-    borderRadius?: string;
-    borderWidth?: string;
-    shadowColor?: string;
-    shadowOffset?: string;
-    shadowBlur?: string;
-    margin?: string;
-    padding?: string;
-  };
+  styles?: CardStyles;
 } & EnsembleWidgetProps;
 
-export const Card: React.FC<CardProps> = (props) => {
+const defaultStyles: CardStyles = {
+  border: "1px solid lightgrey",
+  width: "100%",
+  height: "100%",
+  padding: "20px",
+  borderRadius: "10px",
+  shadowColor: "lightgrey",
+  shadowOffset: "0",
+  shadowBlur: "0",
+  shadowSpread: "0",
+};
+
+export const Card: React.FC<CardProps> = ({ children, styles }) => {
   const renderedChildren = useMemo(() => {
-    return EnsembleRuntime.render(props.children);
-  }, [props.children]);
+    return EnsembleRuntime.render(children);
+  }, [children]);
+  const mergedStyles = merge(defaultStyles, styles);
+  const { shadowOffset, shadowBlur, shadowSpread, shadowColor } = mergedStyles;
   return (
     <div
       style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: props.styles?.gap ?? "4px",
-        borderColor: props.styles?.borderColor ?? "transparent",
-        borderRadius: props.styles?.borderRadius ?? "10px",
-        borderWidth: props.styles?.borderWidth,
-        width: props.styles?.width ?? "100%",
-        height: props.styles?.height ?? "100%",
-        boxShadow: `
-		${props.styles?.shadowOffset ? props.styles.shadowOffset : "0"}px 
-		${props.styles?.shadowOffset ? props.styles.shadowOffset : "0"}px
-		${props.styles?.shadowBlur ? props.styles.shadowBlur : "0"}px 
-		0px 
-		${props.styles?.shadowColor ? props.styles.shadowColor : "#000"}`,
-        padding: props.styles?.padding ?? "0px",
+        ...mergedStyles,
+        boxShadow: `${shadowOffset} ${shadowOffset} ${shadowBlur} ${shadowSpread} ${shadowColor}`,
       }}
     >
       {renderedChildren}
