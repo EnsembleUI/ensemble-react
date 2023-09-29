@@ -87,3 +87,10 @@ export const GridView: React.FC<GridViewProps> = ({
 };
 
 WidgetRegistry.register("GridView", GridView);
+
+function removeCurlyBraces(string: string): string {
+  if (string.startsWith("${") && string.endsWith("}")) {
+    return string.substring(2, string.length - 1);
+  }
+  return string;
+}
