@@ -1,6 +1,6 @@
 import type { AxiosResponse, AxiosResponseHeaders } from "axios";
 import axios from "axios";
-import type { APIModel } from "../models";
+import type { EnsembleAPIModel } from "../shared/models";
 import type { Response } from "./index";
 
 export type Headers = AxiosResponseHeaders;
@@ -32,7 +32,7 @@ class EnsembleResponse implements Response {
 }
 
 export const DataFetcher = {
-  fetch: async (api: APIModel): Promise<Response> => {
+  fetch: async (api: EnsembleAPIModel): Promise<Response> => {
     const axRes = await axios.get(api.uri, { method: api.method });
     return EnsembleResponse.fromAxiosResponse(axRes);
   },
