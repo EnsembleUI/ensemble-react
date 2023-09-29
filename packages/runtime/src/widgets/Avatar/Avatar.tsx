@@ -7,16 +7,16 @@ import {
   MenuItem,
   ListItemIcon,
 } from "@mui/material";
-import * as MuiIcons from "@mui/icons-material";
-import { renderMuiIcon } from "../../util/renderMuiIcons";
 import { useNavigateScreen } from "../../runtime/navigate";
 import { WidgetRegistry } from "../../registry";
 import { stringToColor } from "./utils/stringToColors";
 import { generateInitials } from "./utils/generateInitials";
+import { IconProps } from "../../util/types";
+import { Icon } from "../Icon";
 
 export type AvatarMenu = {
   label: string;
-  icon?: keyof typeof MuiIcons;
+  icon?: IconProps;
   onTap?: {
     executeCode?: string;
     navigateScreen?: string;
@@ -27,7 +27,7 @@ export type AvatarProps = {
   alt: Expression<string>;
   src?: Expression<string>;
   name?: Expression<string>;
-  icon?: keyof typeof MuiIcons;
+  icon?: IconProps;
   styles?: {
     width?: number | string;
     height?: number | string;
@@ -83,9 +83,15 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
         src={props.src}
         onClick={handleMenuOpen}
       >
-        {props?.name
-          ? generateInitials(props.name)
-          : renderMuiIcon(props?.icon ?? "Person")}
+        {props?.name ? (
+          generateInitials(props.name)
+        ) : (
+          <Icon
+            name={props.icon?.name ?? ""}
+            color={props.icon?.color}
+            size={props.icon?.size}
+          />
+        )}
       </MuiAvatar>
       {props.menu && (
         <Menu
@@ -96,7 +102,15 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
           {props.menu?.map((menuItem, index) => (
             <MenuItem key={index} onClick={() => handleMenuClick(menuItem)}>
               {menuItem.icon && (
-                <ListItemIcon>{renderMuiIcon(menuItem.icon)}</ListItemIcon>
+                <ListItemIcon>
+                  {
+                    <Icon
+                      name={menuItem.icon.name ?? ""}
+                      color={menuItem.icon.color}
+                      size={menuItem.icon.size}
+                    />
+                  }
+                </ListItemIcon>
               )}
               {menuItem.label}
             </MenuItem>
