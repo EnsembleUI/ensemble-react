@@ -67,9 +67,9 @@ export const unwrapWidget = (obj: Record<string, unknown>): Widget => {
     set(properties as object, ["item-template", "template"], unwrappedTemplate);
   }
   if (isArray(items)) {
-    const valueItems =(items as Array<any>).map(({ label, widget }) => {
+    const valueItems =(items as Array<any>).map(({ label, widget, icon }) => {
       const unwrappedWidget = unwrapWidget(widget);
-      return { label, widget: unwrappedWidget }
+      return { label, icon, widget: unwrappedWidget }
     });
     set(properties as Object, "items", valueItems);
   }
