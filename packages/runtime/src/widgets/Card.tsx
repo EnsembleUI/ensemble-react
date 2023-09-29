@@ -1,4 +1,4 @@
-import type { Widget } from "framework";
+import type { EnsembleWidget } from "framework";
 import { useMemo } from "react";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from "../util/types";
@@ -6,7 +6,7 @@ import { EnsembleRuntime } from "../runtime";
 
 export type CardProps = {
   [key: string]: unknown;
-  children: Widget[];
+  children: EnsembleWidget[];
   styles?: {
     gap?: number;
     borderColor?: string;
