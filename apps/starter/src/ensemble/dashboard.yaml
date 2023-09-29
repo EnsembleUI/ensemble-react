@@ -132,6 +132,50 @@ View:
                                       }
                                     ]
                     - Row:
+                        styles:
+                          #crossAxis: end
+                          borderColor: '#EBEAED'
+                          borderRadius: 10
+                          borderWidth: 1px
+                          padding: 10px 20px 30px 20px
+
+                        children:
+                          - Chart:
+                              styles:
+                                height: 30px
+                              type: stackbar
+                              labels: ["Jan"]
+                              datasets: [
+                                {
+                                  label: "Matched",
+                                  data: [190],
+                                  backgroundColor: "#5542f6",
+                                  borderRadius: [{ topLeft: 50, topRight: 50, bottomLeft: 50, bottomRight: 50 }],
+                                  borderSkipped: false
+                                },
+                                {
+                                  label: "Enrolled",
+                                  data: [160],
+                                  backgroundColor: "#01a4ff",
+                                  borderRadius: [{ topLeft: 50, topRight: 50, bottomLeft: 50, bottomRight: 50 }],
+                                  borderSkipped: false
+                                },
+                                {
+                                  label: "Award",
+                                  data: [140],
+                                  backgroundColor: "#22c9ac",
+                                  borderRadius: [{ topLeft: 50, topRight: 50, bottomLeft: 50, bottomRight: 50 }],
+                                  borderSkipped: false
+                                },
+                                {
+                                  label: "Not Started",
+                                  data: [140],
+                                  backgroundColor: "#eee",
+                                  borderRadius: [{ topLeft: 50, topRight: 50, bottomLeft: 50, bottomRight: 50 }],
+                                  borderSkipped: false
+                                },
+                              ]
+                    - Row:
                         children:
                           - Column:
                               children:
