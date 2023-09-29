@@ -13,5 +13,6 @@ export * from "./Conditional";
 export * from "./TabBar";
 export * from "./Progress";
 export * from "./Conditional";
+export * from "./Progress";
 export * from "./GridView";
 export * from "./Avatar/Avatar";
