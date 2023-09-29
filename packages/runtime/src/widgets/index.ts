@@ -7,7 +7,7 @@ export * from "./Card";
 export * from "./Image";
 export * from "./Icon";
 export * from "./Row";
-export * from "./SideBar";
 export * from "./Charts";
 export * from "./DataGrid";
+export * from "./Progress";
 export * from "./GridView";

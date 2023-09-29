@@ -1,37 +1,51 @@
-import { Card as MuiCard, CardContent, Typography } from "@mui/material";
-import type { Expression } from "framework";
-import { useRegisterBindings } from "framework";
-import { useState } from "react";
+import type { EnsembleWidget } from "framework";
+import { useMemo } from "react";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from "../util/types";
+import { EnsembleRuntime } from "../runtime";
 
 export type CardProps = {
-  title?: Expression<string>;
-  content?: Expression<string>;
   [key: string]: unknown;
+  children: EnsembleWidget[];
+  styles?: {
+    gap?: number;
+    borderColor?: string;
+    borderRadius?: string;
+    borderWidth?: string;
+    shadowColor?: string;
+    shadowOffset?: string;
+    shadowBlur?: string;
+    margin?: string;
+    padding?: string;
+  };
 } & EnsembleWidgetProps;
 
 export const Card: React.FC<CardProps> = (props) => {
-  const [title, setTitle] = useState(props.title || "");
-  const [content, setContent] = useState(props.content || "");
-  const { values } = useRegisterBindings(
-    { ...props, title, content },
-    props.id,
-    {
-      setTitle,
-      setContent,
-    },
-  );
-
+  const renderedChildren = useMemo(() => {
+    return EnsembleRuntime.render(props.children);
+  }, [props.children]);
   return (
-    <MuiCard>
-      <CardContent>
-        {values.title ? (
-          <Typography variant="h5">{values.title}</Typography>
-        ) : null}
-        {values.content ? <Typography>{values.content}</Typography> : null}
-      </CardContent>
-    </MuiCard>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: props.styles?.gap ?? "4px",
+        borderColor: props.styles?.borderColor ?? "transparent",
+        borderRadius: props.styles?.borderRadius ?? "10px",
+        borderWidth: props.styles?.borderWidth,
+        width: props.styles?.width ?? "100%",
+        height: props.styles?.height ?? "100%",
+        boxShadow: `
+		${props.styles?.shadowOffset ? props.styles.shadowOffset : "0"}px 
+		${props.styles?.shadowOffset ? props.styles.shadowOffset : "0"}px
+		${props.styles?.shadowBlur ? props.styles.shadowBlur : "0"}px 
+		0px 
+		${props.styles?.shadowColor ? props.styles.shadowColor : "#000"}`,
+        padding: props.styles?.padding ?? "0px",
+      }}
+    >
+      {renderedChildren}
+    </div>
   );
 };
 

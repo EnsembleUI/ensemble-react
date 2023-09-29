@@ -13,6 +13,7 @@ import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetProps } from "../../util/types";
 import { BarChart } from "./BarChart";
 import { DoughnutChart } from "./DoughnutChart";
+import { StackBarChart } from "./StackBarChart";
 import { Expression } from "framework";
 
 ChartJS.register(
@@ -36,7 +37,7 @@ interface ChartDataSets {
 }
 
 export type ChartProps = {
-  type: "bar" | "doughnut";
+  type: "bar" | "doughnut" | "stackbar";
   labels: string[] | undefined;
   datasets: ChartDataSets[];
   title?: Expression<string>;
@@ -46,6 +47,7 @@ export type ChartProps = {
 const tabsConfig = {
   bar: <BarChart />,
   doughnut: <DoughnutChart />,
+  stackbar: <StackBarChart />
 };
 
 export const Chart: React.FC<ChartProps> = (props) => {
