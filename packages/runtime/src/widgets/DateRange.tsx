@@ -1,18 +1,16 @@
 import { DatePicker } from "antd";
+import { useRegisterBindings } from "framework";
 import { WidgetRegistry } from "../registry";
-import dayjs from 'dayjs';
-import { DateProps } from "./Date";
+import type { DateProps } from "./Date";
 
 const { RangePicker } = DatePicker;
 
-export const DateRange: React.FC<DateProps> = ({
-  format = 'YYYY/MM/DD',
-  styles
-}) => {
+export const DateRange: React.FC<DateProps> = (props) => {
+  const { values } = useRegisterBindings(props, props.id);
 
-  return <RangePicker
-    style={styles}
-    format={format} />;
+  const { styles, format = "YYYY/MM/DD" } = values;
+
+  return <RangePicker format={format} style={styles} />;
 };
 
 WidgetRegistry.register("DateRange", DateRange);
