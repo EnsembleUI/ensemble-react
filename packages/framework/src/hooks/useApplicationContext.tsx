@@ -1,13 +1,13 @@
 import { Provider, useAtomValue } from "jotai";
-import type { Application } from "../models";
 import {
   appAtom,
   ensembleStore,
   type ApplicationContextDefinition,
 } from "../state";
+import type { EnsembleAppModel } from "../shared/models";
 
 interface ApplicationContextProps {
-  app: Application;
+  app: EnsembleAppModel;
 }
 
 type ApplicationContextProviderProps =
