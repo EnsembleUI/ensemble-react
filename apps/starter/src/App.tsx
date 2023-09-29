@@ -1,12 +1,14 @@
 import { EnsembleApp } from "runtime";
-import type { Application } from "framework";
+import type { ApplicationDTO } from "framework";
 import HomeYAML from "./ensemble/home.yaml";
 import CollectionsYAML from "./ensemble/collections.yaml";
 import UsersAndGroupsYAML from "./ensemble/usersAndGroups.yaml";
+import DashboardYAML from "./ensemble/dashboard.yaml";
+import AskEmbraceYAML from "./ensemble/askEmbrace.yaml";
 
 import "./App.css";
 
-const testApp: Application = {
+const testApp: ApplicationDTO = {
   id: "test",
   name: "My App",
   screens: [
@@ -24,6 +26,16 @@ const testApp: Application = {
       id: "usersAndGroups",
       name: "UsersAndGroups",
       content: String(UsersAndGroupsYAML),
+    },
+    {
+      id: "dashboard",
+      name: "Dashboard",
+      content: String(DashboardYAML),
+    },
+    {
+      id: "askEmbrace",
+      name: "Ask Embrace",
+      content: String(AskEmbraceYAML),
     },
   ],
 };

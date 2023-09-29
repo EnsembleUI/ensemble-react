@@ -1,16 +1,10 @@
-import { isArray, map } from "lodash-es";
+import { isString, map } from "lodash-es";
+import type { CustomScope, Expression, EnsembleWidget } from "framework";
+import { CustomScopeProvider, useTemplateData } from "framework";
+import { Col, Row } from "antd";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import type { GridViewStyles } from "../util/types";
-import {
-  CustomScope,
-  CustomScopeProvider,
-  Expression,
-  Widget,
-  useTemplateData,
-} from "framework";
-import { Col, Row } from "antd";
-import { handleCurlyBraces } from "../util/utils";
 
 interface EnsembleWidgetProps<T> {
   id?: string;
@@ -22,19 +16,18 @@ export type GridViewProps = {
   "item-template": {
     data: Expression<object>;
     name: string;
-    template: Widget;
+    template: EnsembleWidget;
   };
 } & EnsembleWidgetProps<GridViewStyles>;
 
 export const GridView: React.FC<GridViewProps> = ({
   "item-template": { data, name, template },
   styles,
-  ...props
 }) => {
   const defaultColumnCount = 4;
-  const templateData = isArray(data)
-    ? data
-    : useTemplateData(handleCurlyBraces(data.toString()));
+  const templateData = useTemplateData(
+    isString(data) ? removeCurlyBraces(data) : data
+  );
 
   const namedData = map(templateData, (value) => ({
     [name]: value,
@@ -71,8 +64,8 @@ export const GridView: React.FC<GridViewProps> = ({
     }
     rows.push(
       <Row
-        key={i}
         gutter={[styles?.horizontalGap ?? 10, styles?.verticalGap ?? 10]}
+        key={i}
         style={{
           alignItems: "center",
           marginTop: (styles?.verticalGap ?? 20) / 2,
@@ -88,3 +81,10 @@ export const GridView: React.FC<GridViewProps> = ({
 };
 
 WidgetRegistry.register("GridView", GridView);
+
+function removeCurlyBraces(string: string): string {
+  if (string.startsWith("${") && string.endsWith("}")) {
+    return string.substring(2, string.length - 1);
+  }
+  return string;
+}

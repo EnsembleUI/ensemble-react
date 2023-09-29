@@ -1,7 +1,7 @@
-import type { Application } from "./models";
+import type { ApplicationDTO } from "./shared/dto";
 
 export const ApplicationLoader = {
-  load: (_id: string): Application => {
+  load: (_id: string): ApplicationDTO => {
     throw Error("Not implemented");
   },
 };
