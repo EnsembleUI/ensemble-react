@@ -5,8 +5,22 @@ import { Expression } from "framework";
 
 const options: ChartOptions<"bar"> = {
   maintainAspectRatio: false,
+  indexAxis: 'y',
+  plugins: {
+    legend: {
+      display: false
+    },
+    tooltip: {
+      enabled: false
+    }
+  },
   scales: {
     x: {
+      display: false,
+      stacked: true,
+      ticks: {
+        display: false
+      },
       border: {
         display: true,
       },
@@ -15,13 +29,17 @@ const options: ChartOptions<"bar"> = {
       },
     },
     y: {
+      display: false,
+      ticks: {
+        display: false
+      },
+      stacked: true,
       border: {
         display: false,
         dash: [2, 2],
       },
       grid: {
-        lineWidth: 1,
-        tickBorderDash: [1],
+        lineWidth: 0,
       },
     },
   },
@@ -35,22 +53,22 @@ interface ChartDataSets {
   borderRadius?: number;
 }
 
-export type BarChartProps = {
+type BarChartProps = {
   labels?: string[] | undefined;
   datasets?: ChartDataSets[];
   title?: Expression<string>;
   [key: string]: unknown;
 } & EnsembleWidgetProps;
 
-export const BarChart: React.FC<BarChartProps> = (props) => {
-  const { labels, datasets, title, styles } = props;
+export const StackBarChart: React.FC<BarChartProps> = (props) => {
+  const { labels, datasets, styles, title } = props;
 
+  console.log("f-f-f-f>>  ", styles)
   return (
-    <div
-      style={{
-        height: styles?.height || "100%",
-        width: styles?.width || "100%"
-      }}>
+    <div style={{
+      height: styles?.height || "20px",
+      width: styles?.width || "100%"
+    }}>
       <Bar
         data={{
           labels,
@@ -59,6 +77,7 @@ export const BarChart: React.FC<BarChartProps> = (props) => {
         options={{
           ...options,
           plugins: {
+            ...options.plugins,
             title: {
               display: !!title,
               text: title

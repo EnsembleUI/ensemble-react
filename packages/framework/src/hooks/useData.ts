@@ -3,10 +3,8 @@ import { useAtomValue } from "jotai";
 import { isString } from "lodash-es";
 import { selectAtom } from "jotai/utils";
 import { screenAtom } from "../state";
-import type { Expression } from "../models";
 import { evaluate } from "../evaluate";
-
-type TemplateData = object | unknown[];
+import type { Expression, TemplateData } from "../shared/common";
 
 export const useTemplateData = (
   expression: Expression<TemplateData>,
