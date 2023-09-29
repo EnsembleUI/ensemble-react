@@ -35,7 +35,7 @@ interface MenuItem {
 }
 
 interface MenuBaseProps {
-  itemsno: MenuItem[];
+  menuItems: MenuItem[];
   styles?: {
     backgroundColor?: TypeColors;
     labelColor?: TypeColors;
@@ -80,14 +80,14 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
   };
 
   useEffect(() => {
-    const initiallySelectedItem = props.itemsno.find((item) => item.selected);
+    const initiallySelectedItem = props.menuItems.find((item) => item.selected);
     if (initiallySelectedItem) {
       setSelectedItem(initiallySelectedItem.label);
     }
-  }, [props.itemsno]);
+  }, [props.menuItems]);
 
-  const filteredItems = props.itemsno.filter((item) =>
-    item.label.toLowerCase().includes(searchQuery.toLowerCase()),
+  const filteredItems = props.menuItems.filter((item) =>
+    item.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleClick = (page: string, label: string) => {
@@ -197,7 +197,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
                             props.styles?.labelFontSize
                               ? props.styles.labelFontSize
                               : 1
-                          }` || "1",
+                          }` || "1"
                         ) + 0.2
                       }rem`
                     : `${
