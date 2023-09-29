@@ -62,7 +62,8 @@ View:
                         text: "# Team Dashboard"
                     - TabBar:
                         id: 1
-                        selectedIndex: 0
+
+                        selectedIndex: Knowledge Health
                         items:
                           - label: Overview
                             icon:
@@ -257,18 +258,7 @@ View:
                             widget:
                               Markdown:
                                 text: "# Team Dashboard5"
-                          - label: Knowledge Health1
-                            widget:
-                              Markdown:
-                                text: "# Team Dashboard6"
-                          - label: Knowledge
-                            widget:
-                              Markdown:
-                                text: "# Team Dashboard7"
-                          - label: Knowledge Health3
-                            widget:
-                              Markdown:
-                                text: "# Team Dashboard8"
+
                     # - Row:
                     #     styles:
                     #       crossAxis: center

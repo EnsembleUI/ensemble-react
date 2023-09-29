@@ -14,7 +14,7 @@ export type items = {
 };
 export type TabBarProps = {
   id?: string;
-  selectedIndex?: number;
+  selectedIndex?: string;
   items: items[];
   styles?: {
     tabPosition: "start" | "stretch";
@@ -90,7 +90,7 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
       }}
     >
       <style>{customStyles}</style>
-      <Tabs>
+      <Tabs defaultActiveKey={props.selectedIndex}>
         {props.items.map((tabItem) => (
           <TabPane
             key={tabItem.label}
