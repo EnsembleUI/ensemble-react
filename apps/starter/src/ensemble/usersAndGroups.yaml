@@ -59,7 +59,15 @@ View:
                 label: Group Impact
               - key: knowledge health
                 label: Knowledge Health
-                   
+        - Dropdown:
+            id: dd
+            labelId: dd1
+            label: age
+            menu:
+              - label: sana
+                value: 10
+              - label: hello
+                value: 20             
         - Column:
             children:
               - GridView:

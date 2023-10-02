@@ -63,11 +63,6 @@ export const Dropdown: React.FC<DropdownProps> = (props) => {
       }}
     >
       <FormControl fullWidth>
-        {!props.displayEmpty && (
-          <InputLabel id={`${props.labelId}input-select-label`}>
-            {props.label}
-          </InputLabel>
-        )}
         <Select
           labelId={props.labelId}
           id={props.id}
@@ -75,7 +70,7 @@ export const Dropdown: React.FC<DropdownProps> = (props) => {
           label={!props.displayEmpty ? props.label : null}
           onChange={handleChange}
           variant={props.variant}
-          displayEmpty={props.displayEmpty}
+          displayEmpty
         >
           {props.menu &&
             props.menu?.map((menuItem) => (
