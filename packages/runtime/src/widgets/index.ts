@@ -12,3 +12,4 @@ export * from "./DataGrid";
 export * from "./Conditional";
 export * from "./Progress";
 export * from "./GridView";
+export * from "./Avatar/Avatar";
