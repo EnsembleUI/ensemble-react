@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import {
   Conditional,
   ConditionalProps,
@@ -6,6 +6,9 @@ import {
   extractWidget,
   extractCondition,
 } from "../Conditional";
+import "../index";
+
+jest.mock("react-markdown", jest.fn());
 
 describe("Conditional Component", () => {
   test('renders the widget when "if" condition is met', () => {
@@ -40,9 +43,9 @@ describe("Conditional Component", () => {
       ],
     };
 
-    expect(() =>
-      render(<Conditional conditions={conditionalProps.conditions} />)
-    ).not.toThrow();
+    render(<Conditional conditions={conditionalProps.conditions} />);
+
+    expect(screen.getByText("Widget B")).not.toBeNull();
   });
 
   test('renders the widget when "else" condition is met', () => {
