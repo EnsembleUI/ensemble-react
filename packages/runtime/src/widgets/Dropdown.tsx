@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import type { Expression } from "framework";
-import { useEnsembleState, useEvaluate } from "framework";
+import { useRegisterBindings, useExecuteCode } from "framework";
 import { useNavigateScreen } from "../runtime/navigate";
 import { WidgetRegistry } from "../registry";
 import { MenuItem, Select, InputLabel, FormControl, Box } from "@mui/material";
@@ -51,8 +51,8 @@ export const Dropdown: React.FC<DropdownProps> = (props) => {
     screen && onNavigate();
   }, [screen]);
 
-  const { values } = useEnsembleState(props);
-  const onTapCallback = useEvaluate(code, values);
+  const { values } = useRegisterBindings(props);
+  const onTapCallback = useExecuteCode(code, values);
   const onNavigate = useNavigateScreen(screen);
 
   return (
