@@ -39,11 +39,23 @@ View:
                           height: 45
                           notificationStyles:
                             backgroundColor: '#6DC4E5'
-                    - ProfileIcon:
-                        # source: https://tostatus.in/wp-content/uploads/2023/02/Single-Boy-for-Whatsapp-DP-Download-2023-1024x1024.jpg
-                        name: Francisco
-                        styles:
-                          backgroundColor: '#28304B'
+                    # - ProfileIcon:
+                    #     # source: https://tostatus.in/wp-content/uploads/2023/02/Single-Boy-for-Whatsapp-DP-Download-2023-1024x1024.jpg
+                    #     name: Francisco
+                    #     styles:
+                    #       backgroundColor: '#28304B'
+                    - Avatar:
+                        alt: abc
+                        name: sana
+                        menu:
+                          - label: Personal Information
+                            icon: Person
+                            onTap:
+                              executeCode: myText.setText("Spiderman")
+                          - label: Collections
+                            icon: Settings
+                            onTap:
+                              navigateScreen: Collections
 
         - Markdown:
             text: '# User Management'
