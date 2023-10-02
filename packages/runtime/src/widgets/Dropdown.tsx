@@ -33,7 +33,7 @@ export const Dropdown: React.FC<DropdownProps> = (props) => {
   const [code, setCode] = useState("");
   const [screen, setScreen] = useState("");
   const [dropdownValue, setDropdownValue] = React.useState(
-    props.defaultValue ?? ""
+    props.defaultValue ?? "",
   );
 
   const handleChange = (event: SelectChangeEvent) => {
