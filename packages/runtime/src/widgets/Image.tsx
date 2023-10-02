@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import type { Expression } from "framework";
-import { useEnsembleState } from "framework";
+import { useRegisterBindings } from "framework";
 import { WidgetRegistry } from "../registry";
 import { getColor } from "../util/utils";
 import type { EnsembleWidgetProps, HasBorder } from "../util/types";
@@ -17,7 +17,7 @@ export type ImageProps = {
 
 export const Image: React.FC<ImageProps> = (props) => {
   const [source, setSource] = useState(props.source);
-  const { values } = useEnsembleState({ ...props, source }, props.id, {
+  const { values } = useRegisterBindings({ ...props, source }, props.id, {
     setSource,
   });
 

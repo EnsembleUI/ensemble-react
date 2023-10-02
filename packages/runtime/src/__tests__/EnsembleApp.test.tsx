@@ -1,6 +1,6 @@
 /* eslint import/first: 0 */
 const loadAppMock = jest.fn();
-const parseScreenMock = jest.fn();
+const parseApplicationMock = jest.fn();
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const frameworkActual = jest.requireActual("framework");
 
@@ -14,7 +14,7 @@ jest.mock("framework", () => ({
     load: loadAppMock,
   },
   EnsembleParser: {
-    parseScreen: parseScreenMock,
+    parseApplication: parseApplicationMock,
   },
 }));
 
@@ -37,15 +37,20 @@ Object.defineProperty(window, "matchMedia", {
 
 test("Renders error page", () => {
   loadAppMock.mockReturnValue({});
-  parseScreenMock.mockReturnValue({});
-  render(<EnsembleApp appId="test" />);
+  parseApplicationMock.mockReturnValue({ screens: [] });
+  try {
+    render(<EnsembleApp appId="test" />);
+  } catch (e) {
+    // no-op
+  }
 
-  expect(screen.getByText("Something went wrong:")).not.toBeNull();
+  expect(
+    screen.getByText("Sorry, an unexpected error has occurred."),
+  ).not.toBeNull();
 });
 
 test("Renders view widget of home screen", () => {
-  loadAppMock.mockReturnValue({ screens: [{ content: "" }] });
-  parseScreenMock.mockReturnValue({
+  const mockScreen = {
     name: "Home",
     body: {
       name: "Column",
@@ -60,6 +65,11 @@ test("Renders view widget of home screen", () => {
         ],
       },
     },
+  };
+  loadAppMock.mockReturnValue({ screens: [{ content: "" }] });
+  parseApplicationMock.mockReturnValue({
+    home: mockScreen,
+    screens: [mockScreen],
   });
   render(<EnsembleApp appId="test" />);
 
@@ -67,8 +77,7 @@ test("Renders view widget of home screen", () => {
 });
 
 test("Bind data from other widgets", () => {
-  loadAppMock.mockReturnValue({ screens: [{ content: "" }] });
-  parseScreenMock.mockReturnValue({
+  const mockScreen = {
     name: "Home",
     body: {
       name: "Column",
@@ -91,6 +100,11 @@ test("Bind data from other widgets", () => {
         ],
       },
     },
+  };
+  loadAppMock.mockReturnValue({ screens: [{ content: "" }] });
+  parseApplicationMock.mockReturnValue({
+    home: mockScreen,
+    screens: [mockScreen],
   });
   render(<EnsembleApp appId="test" />);
 
@@ -99,8 +113,7 @@ test("Bind data from other widgets", () => {
 });
 
 test.skip("Updates values through Ensemble state", async () => {
-  loadAppMock.mockReturnValue({ screens: [{ content: "" }] });
-  parseScreenMock.mockReturnValue({
+  const mockScreen = {
     name: "Home",
     body: {
       name: "Column",
@@ -125,6 +138,11 @@ test.skip("Updates values through Ensemble state", async () => {
         ],
       },
     },
+  };
+  loadAppMock.mockReturnValue({ screens: [{ content: "" }] });
+  parseApplicationMock.mockReturnValue({
+    home: mockScreen,
+    screens: [mockScreen],
   });
   render(<EnsembleApp appId="test" />);
 

@@ -1,33 +1,55 @@
-import { Card as MuiCard, CardContent, Typography } from "@mui/material";
-import type { Expression } from "framework";
-import { useEnsembleState } from "framework";
-import { useState } from "react";
+import type { EnsembleWidget } from "framework";
+import { useMemo } from "react";
+import { merge } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from "../util/types";
+import { EnsembleRuntime } from "../runtime";
+
+interface CardStyles {
+  width: string;
+  height: string;
+  border: string;
+  borderRadius: string;
+  shadowColor: string;
+  shadowOffset: string;
+  shadowBlur: string;
+  shadowSpread: string;
+  padding: string;
+}
 
 export type CardProps = {
-  title?: Expression<string>;
-  content?: Expression<string>;
   [key: string]: unknown;
+  children: EnsembleWidget[];
+  styles?: CardStyles;
 } & EnsembleWidgetProps;
 
-export const Card: React.FC<CardProps> = (props) => {
-  const [title, setTitle] = useState(props.title || "");
-  const [content, setContent] = useState(props.content || "");
-  const { values } = useEnsembleState({ ...props, title, content }, props.id, {
-    setTitle,
-    setContent,
-  });
+const defaultStyles: CardStyles = {
+  border: "1px solid lightgrey",
+  width: "100%",
+  height: "100%",
+  padding: "20px",
+  borderRadius: "10px",
+  shadowColor: "lightgrey",
+  shadowOffset: "0",
+  shadowBlur: "0",
+  shadowSpread: "0",
+};
 
+export const Card: React.FC<CardProps> = ({ children, styles }) => {
+  const renderedChildren = useMemo(() => {
+    return EnsembleRuntime.render(children);
+  }, [children]);
+  const mergedStyles = merge(defaultStyles, styles);
+  const { shadowOffset, shadowBlur, shadowSpread, shadowColor } = mergedStyles;
   return (
-    <MuiCard>
-      <CardContent>
-        {values.title ? (
-          <Typography variant="h5">{values.title}</Typography>
-        ) : null}
-        {values.content ? <Typography>{values.content}</Typography> : null}
-      </CardContent>
-    </MuiCard>
+    <div
+      style={{
+        ...mergedStyles,
+        boxShadow: `${shadowOffset} ${shadowOffset} ${shadowBlur} ${shadowSpread} ${shadowColor}`,
+      }}
+    >
+      {renderedChildren}
+    </div>
   );
 };
 
