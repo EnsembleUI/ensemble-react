@@ -2,20 +2,22 @@ import React from "react";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import { Tabs, ConfigProvider } from "antd";
-import { Widget } from "framework";
+import { EnsembleWidget } from "framework";
 import { IconProps } from "../util/types";
 import { Icon } from "./Icon";
+import type { Expression } from "framework";
+
 const { TabPane } = Tabs;
 
-export type items = {
-  label: string;
+export type TabBarItem = {
+  label: Expression<string>;
   icon?: IconProps;
-  widget: Widget;
+  widget: EnsembleWidget;
 };
 export type TabBarProps = {
   id?: string;
-  selectedIndex?: string;
-  items: items[];
+  selectedIndex?: number;
+  items: TabBarItem[];
   styles?: {
     tabPosition: "start" | "stretch";
     tabPadding: string;
@@ -76,6 +78,13 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
     }
   `;
 
+    const setDefaultSelectedTab = (() => {
+        if (props.selectedIndex &&  props.selectedIndex <= props.items.length) {
+            return props.items[props.selectedIndex].label;
+        }
+        return props.items[0].label;
+    });
+
   return (
     <ConfigProvider
       theme={{
@@ -90,7 +99,7 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
       }}
     >
       <style>{customStyles}</style>
-      <Tabs defaultActiveKey={props.selectedIndex}>
+      <Tabs defaultActiveKey={setDefaultSelectedTab()}>
         {props.items.map((tabItem) => (
           <TabPane
             key={tabItem.label}

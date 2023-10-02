@@ -47,9 +47,9 @@ export const EnsembleParser = {
       remove(screens, (screen) => screen === menu);
       menu.items.forEach(
         (item) =>
-          (item.screen = screens.find(
-            (screen) => "name" in screen && screen.name === item.page,
-          ) as EnsembleScreenModel),
+        (item.screen = screens.find(
+          (screen) => "name" in screen && screen.name === item.page,
+        ) as EnsembleScreenModel),
       );
     }
 
@@ -134,7 +134,6 @@ export const unwrapWidget = (obj: Record<string, unknown>): EnsembleWidget => {
   const children = get(properties, "children");
   const template = get(properties, ["item-template", "template"]) as unknown;
   const items = get(properties, "items");
-  const widget = get(properties, "widget");
   if (isArray(children)) {
     const unwrappedChildren = map(children, unwrapWidget);
     set(properties as object, "children", unwrappedChildren);
@@ -149,10 +148,6 @@ export const unwrapWidget = (obj: Record<string, unknown>): EnsembleWidget => {
       return { label, icon, widget: unwrappedWidget };
     });
     set(properties as Object, "items", valueItems);
-  }
-  if (isObject(widget)) {
-    const unwrappedWidget = unwrapWidget(widget);
-    set(properties as object, "widget", unwrappedWidget);
   }
   return {
     name,

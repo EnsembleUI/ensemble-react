@@ -62,8 +62,7 @@ type BarChartProps = {
 
 export const StackBarChart: React.FC<BarChartProps> = (props) => {
   const { labels, datasets, styles, title } = props;
-
-  console.log("f-f-f-f>>  ", styles);
+  
   return (
     <div
       style={{
