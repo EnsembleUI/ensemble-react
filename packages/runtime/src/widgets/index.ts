@@ -13,4 +13,5 @@ export * from "./TabBar";
 export * from "./Search";
 export * from "./GridView";
 export * from "./Progress";
+export * from "./GridView";
 export * from "./Avatar/Avatar";
