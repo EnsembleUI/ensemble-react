@@ -5,7 +5,6 @@ import { getColor, getIcon } from "../util/utils";
 
 export const Icon: React.FC<IconProps> = (props) => {
   const IconComponent = getIcon(props.name);
-  //console.log(props, IconComponent);
   if (IconComponent) {
     return (
       <IconComponent
