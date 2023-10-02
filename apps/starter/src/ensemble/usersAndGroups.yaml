@@ -4,85 +4,95 @@ View:
 
   body:
     Column:
+      styles:
+        crossAxis: stretch
+        margin: 0 20px
+        backgroundColor: 
       children:
         - Row:
+            styles:
+              backgroundColor: white
+              mainAxis: spaceBetween
+              crossAxis: center
+              padding: 10
             children:
-              - SideBarMenu:
-                  logo:
-                    collapsedSource: https://i.imgur.com/peprs0j.png
-                    uncollapsedSource: https://i.imgur.com/sH3zCi6.png
-                    styles:
-                      width: 80px
-                      height: 20px
-                  enableSearch: true
-                  items:
-                    - label: Teams
-                      icon: PieChartOutlineOutlined
-                      page: apple
-                      selected: true
-                    - label: Patients
-                      icon: SickOutlined
-                      page: banana
-                    - label: Programs
-                      icon: VolunteerActivismOutlined
-                      page: banana
-                    - label: Claims
-                      icon: BusinessCenterOutlined
-                      page: banana
-                    - label: Awards
-                      icon: CardGiftcardOutlined
-                      page: banana
-                      divider: true
-                    - label: Reminders
-                      icon: NotificationAddOutlined
-                      page: reminders
-                      hasNotifications: true
-                    - label: Starred
-                      icon: StarBorderOutlined
-                      page: reminders
-                    - label: Help
-                      icon: HelpOutlineOutlined
-                      page: reminders
-                      divider: true
-                    - label: Account
-                      icon: AccountCircleOutlined
-                      page: profile
+              - Search:
                   styles:
-                    backgroundColor: "#1A2A4C"
-                    labelColor: grey
-                    selectedColor: white
-                    labelFontSize: 1
-                    searchBoxColor: "#3e5975"
-
-              - Column:
-                  crossAxis: stretch
-                  margin: 0 20px
+                    width: 300px
+                    backgroundColor: white
+                    border: 1px solid grey
+                    margin: 5px 5px 5px 5px
+              - Row:
+                  styles:
+                    gap: 10
                   children:
-                    - Markdown:
-                        text: "# User Management"
-
-                    - GridView:
+                    - Icons:
+                        label: Notifications
+                        hasNotification: true
                         styles:
-                          horizontalTileCount: 5
-                          horizontalGap: 50
-                          verticalGap: 30
-                        item-template:
-                          data: ${getData.body.users}
-                          name: user
-                          template:
-                            Text:
-                              text: ${user.firstName}
-
-                    - GridView:
+                          backgroundColor: white
+                          borderWidth: 1px
+                          borderColor: grey
+                          iconWidth: 25
+                          iconHeight: 25
+                          width: 45
+                          height: 45
+                          notificationStyles:
+                            backgroundColor: '#6DC4E5'
+                    - ProfileIcon:
+                        # source: https://tostatus.in/wp-content/uploads/2023/02/Single-Boy-for-Whatsapp-DP-Download-2023-1024x1024.jpg
+                        name: Francisco
                         styles:
-                          horizontalTileCount: 1
-                          verticalGap: 30
-                        item-template:
-                          data: [1, 2, 3, 4, 5, 6, 7]
-                          name: n
-                          template:
-                            Text:
-                              text: ${n}
+                          backgroundColor: '#28304B'
+
+        - Markdown:
+            text: '# User Management'
+        
+        - TabBar:
+            TabPane:
+              - key: overview
+                label: Overview
+                page: Collections
+              - key: adoption usage
+                label: Adoption Usage
+              - key: group impact
+                label: Group Impact
+              - key: knowledge health
+                label: Knowledge Health
+                   
+        - Column:
+            children:
+              - GridView:
+                  item-template:
+                    data: getData.body.users
+                    name: user
+                    template:
+                      Card:
+                        styles:
+                          shadowColor: lightgrey
+                          shadowOffset: 8px
+                          shadowBlur: 10px
+                          shadowSpread: -2px
+                        children:
+                          - Column:
+                              styles:
+                                crossAxis: center
+                                gap: 5
+                              children:
+                                - Image:
+                                    source: ${user.image}
+                                    width: 40
+                                    height: 40
+                                    fit: cover
+                                    borderRadius: 100
+                                - Column:
+                                    styles:
+                                      crossAxis: start
+                                    children:
+                                      - Text:
+                                          text: ${user.firstName}
+                                      - Text:
+                                          text: ${user.email}
 
 API:
   getData:

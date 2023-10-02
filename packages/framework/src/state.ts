@@ -1,7 +1,7 @@
 import { atom, createStore } from "jotai";
 import { focusAtom } from "jotai-optics";
-import type { Application } from "./models";
 import type { Response } from "./data";
+import type { EnsembleAppModel } from "./shared/models";
 
 export interface ScreenContextDefinition {
   data: Record<string, Response | undefined>;
@@ -16,7 +16,7 @@ export interface ScreenContextActions {
 }
 
 export interface ApplicationContextDefinition {
-  application: Application | null;
+  application: EnsembleAppModel | null;
   storage: unknown;
   secrets: unknown;
   env: unknown;
@@ -25,7 +25,7 @@ export interface ApplicationContextDefinition {
 }
 
 export interface ApplicationContextActions {
-  setApplication: (app: Application) => void;
+  setApplication: (app: EnsembleAppModel) => void;
 }
 
 export type ScreenContextType = ScreenContextActions & ScreenContextDefinition;

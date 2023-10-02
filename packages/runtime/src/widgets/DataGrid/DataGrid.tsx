@@ -1,5 +1,9 @@
 import { Table } from "antd";
-import { useTemplateData, type Expression, type Widget } from "framework";
+import {
+  useTemplateData,
+  type Expression,
+  type EnsembleWidget,
+} from "framework";
 import { map } from "lodash-es";
 import type { ReactElement } from "react";
 import { WidgetRegistry } from "../../registry";
@@ -22,10 +26,10 @@ export interface GridProps {
   };
 }
 
-export interface DataGridRowTemplate extends Widget {
+export interface DataGridRowTemplate extends EnsembleWidget {
   name: "DataRow";
   properties: {
-    children: Widget[];
+    children: EnsembleWidget[];
   };
 }
 
