@@ -47,9 +47,9 @@ export const EnsembleParser = {
       remove(screens, (screen) => screen === menu);
       menu.items.forEach(
         (item) =>
-        (item.screen = screens.find(
-          (screen) => "name" in screen && screen.name === item.page,
-        ) as EnsembleScreenModel),
+          (item.screen = screens.find(
+            (screen) => "name" in screen && screen.name === item.page,
+          ) as EnsembleScreenModel),
       );
     }
 

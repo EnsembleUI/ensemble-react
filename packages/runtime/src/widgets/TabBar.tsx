@@ -78,12 +78,12 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
     }
   `;
 
-    const setDefaultSelectedTab = (() => {
-        if (props.selectedIndex &&  props.selectedIndex <= props.items.length) {
-            return props.items[props.selectedIndex].label;
-        }
-        return props.items[0].label;
-    });
+  const setDefaultSelectedTab = () => {
+    if (props.selectedIndex && props.selectedIndex <= props.items.length) {
+      return props.items[props.selectedIndex].label;
+    }
+    return props.items[0].label;
+  };
 
   return (
     <ConfigProvider
