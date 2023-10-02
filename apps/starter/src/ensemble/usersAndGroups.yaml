@@ -9,20 +9,51 @@ View:
         margin: 0 20px
         backgroundColor:
       children:
+        - Markdown:
+            text: "# User Management"
         - TabBar:
             id: tababr1
-            selectedIndex: 1
+            selectedIndex: 0
             items:
-              - label: sana
-                icon: sana
+              - label: Overview
+                widget: 
+                  Column:
+                    children:
+                      - GridView:
+                          item-template:
+                            data: getData.body.users
+                            name: user
+                            template:
+                              Card:
+                                styles:
+                                  shadowColor: lightgrey
+                                  shadowOffset: 8px
+                                  shadowBlur: 10px
+                                  shadowSpread: -2px
+                                children:
+                                  - Column:
+                                      styles:
+                                        crossAxis: center
+                                        gap: 5
+                                      children:
+                                        - Image:
+                                            source: ${user.image}
+                                            width: 40
+                                            height: 40
+                                            fit: cover
+                                            borderRadius: 100
+                                        - Column:
+                                            styles:
+                                              crossAxis: start
+                                            children:
+                                              - Text:
+                                                  text: ${user.firstName}
+                                              - Text:
+                                                  text: ${user.email}
+              - label: Collections
                 widget: 
                   Markdown:
-                    text: "dashboard1"
-              - label: sana2
-                icon: sana2
-                widget: 
-                  Markdown:
-                    text: "# dashboard2"
+                    text: "# Render widgets in this tab"
         # - Row:
         #     styles:
         #       backgroundColor: white
@@ -59,42 +90,7 @@ View:
                     #     styles:
                     #       backgroundColor: "#28304B"
 
-        - Markdown:
-            text: "# User Management"
-
-        - Column:
-            children:
-              - GridView:
-                  item-template:
-                    data: getData.body.users
-                    name: user
-                    template:
-                      Card:
-                        styles:
-                          shadowColor: lightgrey
-                          shadowOffset: 8px
-                          shadowBlur: 10px
-                          shadowSpread: -2px
-                        children:
-                          - Column:
-                              styles:
-                                crossAxis: center
-                                gap: 5
-                              children:
-                                - Image:
-                                    source: ${user.image}
-                                    width: 40
-                                    height: 40
-                                    fit: cover
-                                    borderRadius: 100
-                                - Column:
-                                    styles:
-                                      crossAxis: start
-                                    children:
-                                      - Text:
-                                          text: ${user.firstName}
-                                      - Text:
-                                          text: ${user.email}
+        
 
 API:
   getData:
