@@ -1,6 +1,19 @@
 View:
   body:
     Column:
+      styles:
+        crossAxis: stretch
+        margin: 0 20px
       children:
-        - Text:
-            text: TODO
+        - Row:
+            mainAxis: spaceBetween
+            crossAxis: center
+            children:
+              - Markdown:
+                  text: "# Content Collections"
+              - Button:
+                  label: Create Collection
+                  onTap:
+                    navigateModalScreen:
+                      name: Ask Embrace
+                      maskClosable: false
