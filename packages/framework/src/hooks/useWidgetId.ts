@@ -10,8 +10,9 @@ export const useWidgetId = (id?: string): string => {
   return resolvedId;
 };
 
+const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
 const generateRandomString = (length: number): string => {
-  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
   let randomString = "";
 
   for (let i = 0; i < length; i++) {

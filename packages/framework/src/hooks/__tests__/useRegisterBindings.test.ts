@@ -1,12 +1,8 @@
 /* eslint import/first: 0 */
-const mockUseEnsembleStore = jest.fn();
-
 import { renderHook } from "@testing-library/react";
-import { useEnsembleState } from "../useEnsembleState";
-
-jest.mock("../../state", () => ({
-  useEnsembleStore: mockUseEnsembleStore,
-}));
+import { getDefaultStore } from "jotai";
+import { useRegisterBindings } from "../useRegisterBindings";
+import { screenAtom } from "../../state";
 
 const mockInvokable = {
   id: "test",
@@ -18,18 +14,22 @@ const mockValues = {
   baz: "deadbeef",
 };
 
+const store = getDefaultStore();
+
 test("instantiates state from props", () => {
-  mockUseEnsembleStore.mockReturnValue({
-    state: {
-      values: mockValues,
+  store.set(screenAtom, {
+    widgets: {
+      test: {
+        values: mockValues,
+        invokable: mockInvokable,
+      },
     },
-    setWidget: jest.fn(),
+    data: {},
   });
   const { result } = renderHook(() =>
-    useEnsembleState(mockValues, mockInvokable.id, mockInvokable.methods),
+    useRegisterBindings(mockValues, mockInvokable.id, mockInvokable.methods),
   );
 
-  expect(mockUseEnsembleStore).toBeCalledTimes(1);
   expect(result.current).toEqual({
     id: "test",
     values: {
@@ -44,15 +44,17 @@ test("updates bindings when incoming values update", () => {
     foo: "bar",
     baz: "deadbeef",
   };
-  const mockSetWidget = jest.fn();
-  mockUseEnsembleStore.mockReturnValue({
-    state: {
-      values: mockMutableValues,
+  store.set(screenAtom, {
+    widgets: {
+      test: {
+        values: mockMutableValues,
+        invokable: mockInvokable,
+      },
     },
-    setWidget: mockSetWidget,
+    data: {},
   });
   const { result, rerender } = renderHook(() =>
-    useEnsembleState(
+    useRegisterBindings(
       mockMutableValues,
       mockInvokable.id,
       mockInvokable.methods,
@@ -63,15 +65,8 @@ test("updates bindings when incoming values update", () => {
     foo: "deadbeef",
     baz: "bar",
   };
-  mockUseEnsembleStore.mockReturnValue({
-    state: {
-      values: mockMutableValues,
-    },
-    setWidget: mockSetWidget,
-  });
   rerender();
 
-  expect(mockSetWidget).toBeCalledTimes(2);
   expect(result.current).toEqual({
     id: "test",
     values: {
@@ -86,15 +81,17 @@ test("updates bindings when invokable updates", () => {
     id: "test",
     methods: {},
   };
-  const mockSetWidget = jest.fn();
-  mockUseEnsembleStore.mockReturnValue({
-    state: {
-      values: mockValues,
+  store.set(screenAtom, {
+    widgets: {
+      test: {
+        values: mockValues,
+        invokable: mockMutableInvokable,
+      },
     },
-    setWidget: mockSetWidget,
+    data: {},
   });
   const { result, rerender } = renderHook(() =>
-    useEnsembleState(
+    useRegisterBindings(
       mockValues,
       mockMutableInvokable.id,
       mockMutableInvokable.methods,
@@ -110,6 +107,7 @@ test("updates bindings when invokable updates", () => {
   };
   rerender();
 
-  expect(mockSetWidget).toBeCalledTimes(2);
+  const updatedScreen = store.get(screenAtom);
   expect(result.current.values).toEqual(mockValues);
+  expect(updatedScreen.widgets.test?.invokable.methods?.setter).not.toBeNull();
 });

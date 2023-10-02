@@ -1,6 +1,10 @@
 import { Table } from "antd";
-import { type Expression, type Widget, useEnsembleStore } from "framework";
-import { get, map } from "lodash-es";
+import {
+  useTemplateData,
+  type Expression,
+  type EnsembleWidget,
+} from "framework";
+import { map } from "lodash-es";
 import type { ReactElement } from "react";
 import { WidgetRegistry } from "../../registry";
 import { DataCell } from "./DataCell";
@@ -22,10 +26,10 @@ export interface GridProps {
   };
 }
 
-export interface DataGridRowTemplate extends Widget {
+export interface DataGridRowTemplate extends EnsembleWidget {
   name: "DataRow";
   properties: {
-    children: Widget[];
+    children: EnsembleWidget[];
   };
 }
 
@@ -33,9 +37,7 @@ export const DataGrid: React.FC<GridProps> = ({
   DataColumns,
   "item-template": itemTemplate,
 }) => {
-  const { templateData } = useEnsembleStore((state) => ({
-    templateData: get(state.screen, itemTemplate.data as string) as object,
-  }));
+  const templateData = useTemplateData(itemTemplate.data);
   const namedData = map(templateData, (value) => {
     const namedObj: Record<string, unknown> = {};
     namedObj[itemTemplate.name] = value;

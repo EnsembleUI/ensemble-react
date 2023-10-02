@@ -95,12 +95,14 @@ importers:
       axios: 0.27.2
       eslint-config-custom: workspace:*
       immer: 9.0.21
+      jotai: ^2.4.2
+      jotai-optics: ^0.3.1
       lodash-es: ^4.17.21
+      optics-ts: ^2.4.1
       react: ^18.2.0
       tsconfig: workspace:*
       tsup: ^7.2.0
       yaml: ^2.3.2
-      zustand: ^4.4.1
     devDependencies:
       '@testing-library/react': 13.4.0_react@18.2.0
       '@types/lodash-es': 4.17.9
@@ -108,12 +110,14 @@ importers:
       axios: 0.27.2
       eslint-config-custom: link:../eslint-config-custom
       immer: 9.0.21
+      jotai: 2.4.2_3439121291b5e89e1eb824656ce6133e
+      jotai-optics: 0.3.1_jotai@2.4.2+optics-ts@2.4.1
       lodash-es: 4.17.21
+      optics-ts: 2.4.1
       react: 18.2.0
       tsconfig: link:../tsconfig
       tsup: 7.2.0
       yaml: 2.3.2
-      zustand: 4.4.1_245f1985910c312a56e229408597632a
 
   packages/runtime:
     specifiers:
@@ -9054,6 +9058,32 @@ packages:
     resolution: {integrity: sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA==}
     dev: true
 
+  /jotai-optics/0.3.1_jotai@2.4.2+optics-ts@2.4.1:
+    resolution: {integrity: sha512-KibUx9IneM2hGWGIYGs/v0KCxU985lg7W2c6dt5RodJCB2XPbmok8rkkLmdVk9+fKsn2shkPMi+AG8XzHgB3+w==}
+    peerDependencies:
+      jotai: '>=1.11.0'
+      optics-ts: '*'
+    dependencies:
+      jotai: 2.4.2_3439121291b5e89e1eb824656ce6133e
+      optics-ts: 2.4.1
+    dev: true
+
+  /jotai/2.4.2_3439121291b5e89e1eb824656ce6133e:
+    resolution: {integrity: sha512-90jXVOd9h6gi5JXk558M+wnJfaaVN2WegcNOCfiFbWboNaDl6DkRgiY/K1oeqTfYJmq8yM7XPsL99LAvcOPqhw==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=17.0.0'
+      react: '>=17.0.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      react:
+        optional: true
+    dependencies:
+      '@types/react': 18.2.21
+      react: 18.2.0
+    dev: true
+
   /joycon/3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
     engines: {node: '>=10'}
@@ -10203,6 +10233,10 @@ packages:
       define-lazy-prop: 3.0.0
       is-inside-container: 1.0.0
       is-wsl: 2.2.0
+    dev: true
+
+  /optics-ts/2.4.1:
+    resolution: {integrity: sha512-HaYzMHvC80r7U/LqAd4hQyopDezC60PO2qF5GuIwALut2cl5rK1VWHsqTp0oqoJJWjiv6uXKqsO+Q2OO0C3MmQ==}
     dev: true
 
   /optionator/0.8.3:
@@ -14286,14 +14320,6 @@ packages:
       qs: 6.11.2
     dev: true
 
-  /use-sync-external-store/1.2.0_react@18.2.0:
-    resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    dependencies:
-      react: 18.2.0
-    dev: true
-
   /util-deprecate/1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
     dev: true
@@ -15014,25 +15040,4 @@ packages:
   /yocto-queue/0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
-    dev: true
-
-  /zustand/4.4.1_245f1985910c312a56e229408597632a:
-    resolution: {integrity: sha512-QCPfstAS4EBiTQzlaGP1gmorkh/UL1Leaj2tdj+zZCZ/9bm0WS7sI2wnfD5lpOszFqWJ1DcPnGoY8RDL61uokw==}
-    engines: {node: '>=12.7.0'}
-    peerDependencies:
-      '@types/react': '>=16.8'
-      immer: '>=9.0'
-      react: '>=16.8'
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-      immer:
-        optional: true
-      react:
-        optional: true
-    dependencies:
-      '@types/react': 18.2.21
-      immer: 9.0.21
-      react: 18.2.0
-      use-sync-external-store: 1.2.0_react@18.2.0
     dev: true

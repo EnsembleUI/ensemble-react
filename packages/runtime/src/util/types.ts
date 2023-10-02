@@ -1,4 +1,4 @@
-import type { Widget, Expression } from "framework";
+import type { EnsembleWidget, Expression } from "framework";
 
 export interface EnsembleWidgetProps {
   id?: string;
@@ -13,7 +13,7 @@ export type BaseTextProps = {
 } & EnsembleWidgetProps;
 
 export type FlexboxProps = {
-  children: Widget[];
+  children: EnsembleWidget[];
   mainAxis?: string;
   crossAxis?: string;
   gap?: number;
@@ -27,6 +27,12 @@ export type IconProps = {
   size?: number;
   color?: string;
 } & EnsembleWidgetProps;
+
+export interface GridViewStyles {
+  horizontalTileCount?: number;
+  horizontalGap?: number;
+  verticalGap?: number;
+}
 
 // composable types
 export interface HasBorder {

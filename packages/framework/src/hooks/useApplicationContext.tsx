@@ -1,38 +1,28 @@
-import { createContext, useContext } from "react";
-import type { Application } from "../models";
-import type { ApplicationContextDefinition } from "../state";
+import { Provider, useAtomValue } from "jotai";
+import {
+  appAtom,
+  ensembleStore,
+  type ApplicationContextDefinition,
+} from "../state";
+import type { EnsembleAppModel } from "../shared/models";
 
 interface ApplicationContextProps {
-  app: Application;
+  app: EnsembleAppModel;
 }
 
 type ApplicationContextProviderProps =
   React.PropsWithChildren<ApplicationContextProps>;
 
-export const ApplicationContext =
-  createContext<ApplicationContextDefinition | null>(null);
-
 export const ApplicationContextProvider: React.FC<
   ApplicationContextProviderProps
 > = ({ app, children }) => {
-  return (
-    <ApplicationContext.Provider
-      value={{
-        application: app,
-        storage: null,
-        secrets: null,
-        env: null,
-        auth: null,
-        user: null,
-      }}
-    >
-      {children}
-    </ApplicationContext.Provider>
-  );
+  const appAtomValue = ensembleStore.get(appAtom);
+  ensembleStore.set(appAtom, { ...appAtomValue, application: app });
+  return <Provider store={ensembleStore}>{children}</Provider>;
 };
 
 export const useApplicationContext =
   (): ApplicationContextDefinition | null => {
-    const appContext = useContext(ApplicationContext);
+    const appContext = useAtomValue(appAtom);
     return appContext;
   };
