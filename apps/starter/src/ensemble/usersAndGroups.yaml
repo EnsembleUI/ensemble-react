@@ -52,7 +52,7 @@ View:
                             icon: Person
                             onTap:
                               executeCode: myText.setText("Spiderman")
-                          - label: fatima
+                          - label: Collections
                             icon: Settings
                             onTap:
                               navigateScreen: Collections
