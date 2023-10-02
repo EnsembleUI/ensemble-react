@@ -6,85 +6,79 @@ import { WidgetRegistry } from "../registry";
 import { MenuItem, Select, InputLabel, FormControl, Box } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
 
-export type MenuItems = {
-  label?: string;
-  value?: string;
-  onTap?: {
-    executeCode?: string;
-    navigateScreen?: string;
-  };
+export type DropdownItem = {
+  label: string;
+  value: string;
 };
 
 export type DropdownProps = {
   id: Expression<string>;
-  labelId: Expression<string>;
   label?: Expression<string>;
+  labelHint?: Expression<string>;
+  hintText?: Expression<string>;
+  required?: boolean;
+  enabled?: boolean;
   variant?: "standard" | "filled";
   displayEmpty?: boolean;
+  onChange?: {
+    executeCode?: string;
+    navigateScreen?: string;
+  };
   styles?: {
     minWidth?: number | string;
     maxWidth?: number | string;
   };
   defaultValue?: string;
-  menu?: MenuItems[];
+  menu?: (string | DropdownItem)[];
 };
 
 export const Dropdown: React.FC<DropdownProps> = (props) => {
-  const [code, setCode] = useState("");
-  const [screen, setScreen] = useState("");
   const [dropdownValue, setDropdownValue] = React.useState(
-    props.defaultValue ?? "",
+    props.defaultValue ?? ""
   );
-
+  const { values } = useRegisterBindings(
+    { ...props, dropdownValue },
+    props.id,
+    {
+      setDropdownValue,
+    }
+  );
+  //const { values } = useRegisterBindings(props);
+  const onTapCallback = useExecuteCode(
+    props.onChange?.executeCode || "",
+    values
+  );
+  const onNavigate = useNavigateScreen(props.onChange?.navigateScreen || "");
+  
   const handleChange = (event: SelectChangeEvent) => {
     setDropdownValue(event.target.value as string);
+    props.onChange?.executeCode && onTapCallback();
+    props.onChange?.navigateScreen && onNavigate();
   };
-
-  const handleMenuClick = (menuItem: any) => {
-    menuItem.onTap?.executeCode && setCode(menuItem.onTap?.executeCode);
-    menuItem.onTap?.navigateScreen && setScreen(menuItem.onTap?.navigateScreen);
-  };
-  useEffect(() => {
-    code && onTapCallback();
-  }, [code]);
-  useEffect(() => {
-    screen && onNavigate();
-  }, [screen]);
-
-  const { values } = useRegisterBindings(props);
-  const onTapCallback = useExecuteCode(code, values);
-  const onNavigate = useNavigateScreen(screen);
 
   return (
-    <Box
-      sx={{
-        minWidth: props.styles?.minWidth,
-        maxWidth: props.styles?.maxWidth,
-      }}
-    >
-      <FormControl fullWidth>
-        <Select
-          labelId={props.labelId}
-          id={props.id}
-          value={dropdownValue}
-          label={!props.displayEmpty ? props.label : null}
-          onChange={handleChange}
-          variant={props.variant}
-          displayEmpty
-        >
-          {props.menu &&
-            props.menu?.map((menuItem) => (
-              <MenuItem
-                key={menuItem.value ?? menuItem.label}
-                value={menuItem.value ?? menuItem.label}
-                onClick={() => handleMenuClick(menuItem)}
-              >
-                {menuItem.label ?? menuItem.value}
+    <FormControl sx={{ m: 1, minWidth: 120 }}>
+      <Select
+        id={props.id}
+        value={dropdownValue}
+        onChange={handleChange}
+        displayEmpty
+        placeholder={props.hintText}
+      >
+        {props.menu &&
+          props.menu?.map((menuItem) => {
+            const itemValue =
+              typeof menuItem === "string" ? menuItem : menuItem.value;
+            const itemLabel =
+              typeof menuItem === "string" ? menuItem : menuItem.label;
+            return (
+              <MenuItem key={itemValue} value={itemValue}>
+                {itemLabel}
               </MenuItem>
-            ))}
-        </Select>
-      </FormControl>
-    </Box>
+            );
+          })}
+      </Select>
+    </FormControl>
   );
 };
 

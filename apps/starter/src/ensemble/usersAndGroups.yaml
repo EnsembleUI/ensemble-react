@@ -63,11 +63,11 @@ View:
             id: dd
             labelId: dd1
             label: age
+            hintText: age
             menu:
-              - label: sana
-                value: 10
-              - label: hello
-                value: 20             
+              - Red
+              - Blue
+              - Green          
         - Column:
             children:
               - GridView:
