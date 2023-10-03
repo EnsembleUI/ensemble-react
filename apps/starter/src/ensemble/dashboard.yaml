@@ -4,284 +4,232 @@ View:
 
   body:
     Column:
+      crossAxis: stretch
+      margin: 0 20px
       children:
+        - Markdown:
+            text: "# Collections"
+            id: title
+        - Row:
+            styles:
+              crossAxis: center
+              gap: 20
+              margin: 0 0 20px 0
+
+              children:
+                - Chart:
+                    styles:
+                      height: 100%
+                      width: 100%
+                    type: bar
+                    title: Bar Chart
+                    labels:
+                      [
+                        "Jan",
+                        "Feb",
+                        "Mar",
+                        "Apr",
+                        "May",
+                        "Jun",
+                        "Jul",
+                        "Aug",
+                        "Sep",
+                      ]
+                    datasets:
+                      [
+                        {
+                          label: "Matched",
+                          data: [190, 200, 210, 145, 230, 240, 220, 190, 120],
+                          backgroundColor: "#5542f6",
+                          barPercentage: 0.8,
+                          borderRadius: 3,
+                        },
+                        {
+                          label: "Enrolled",
+                          data: [160, 170, 170, 105, 190, 170, 155, 160, 110],
+                          backgroundColor: "#01a4ff",
+                          barPercentage: 0.8,
+                          borderRadius: 3,
+                        },
+                        {
+                          label: "Award",
+                          data: [140, 130, 90, 90, 150, 170, 140, 80, 110],
+                          backgroundColor: "#22c9ac",
+                          barPercentage: 0.8,
+                          borderRadius: 3,
+                        },
+                      ]
+        - Row:
+            styles:
+              #crossAxis: end
+              width: 300px
+              height: 300px
+              borderColor: "#EBEAED"
+              borderRadius: 10
+              borderWidth: 1px
+              padding: 10px 20px 30px 20px
+
+            children:
+              - Chart:
+                  type: doughnut
+                  styles:
+                    height: 200px
+                    width: 200px
+                  labels: ["Red", "Blue", "Yellow"]
+                  title: Doughnut Chart
+                  datasets:
+                    [
+                      {
+                        label: "",
+                        data: [300, 50, 100],
+                        backgroundColor:
+                          [
+                            "rgb(255, 99, 132)",
+                            "rgb(54, 162, 235)",
+                            "rgb(255, 205, 86)",
+                          ],
+                        hoverOffset: 4,
+                        borderWidth: 1,
+                      },
+                    ]
+        - Row:
+            styles:
+              #crossAxis: end
+              borderColor: "#EBEAED"
+              borderRadius: 10
+              borderWidth: 1px
+              padding: 10px 20px 30px 20px
+
+            children:
+              - Chart:
+                  styles:
+                    height: 30px
+                  type: stackbar
+                  labels: ["Jan"]
+                  datasets:
+                    [
+                      {
+                        label: "Matched",
+                        data: [190],
+                        backgroundColor: "#5542f6",
+                        borderRadius:
+                          [
+                            {
+                              topLeft: 50,
+                              topRight: 50,
+                              bottomLeft: 50,
+                              bottomRight: 50,
+                            },
+                          ],
+                        borderSkipped: false,
+                      },
+                      {
+                        label: "Enrolled",
+                        data: [160],
+                        backgroundColor: "#01a4ff",
+                        borderRadius:
+                          [
+                            {
+                              topLeft: 50,
+                              topRight: 50,
+                              bottomLeft: 50,
+                              bottomRight: 50,
+                            },
+                          ],
+                        borderSkipped: false,
+                      },
+                      {
+                        label: "Award",
+                        data: [140],
+                        backgroundColor: "#22c9ac",
+                        borderRadius:
+                          [
+                            {
+                              topLeft: 50,
+                              topRight: 50,
+                              bottomLeft: 50,
+                              bottomRight: 50,
+                            },
+                          ],
+                        borderSkipped: false,
+                      },
+                      {
+                        label: "Not Started",
+                        data: [140],
+                        backgroundColor: "#eee",
+                        borderRadius:
+                          [
+                            {
+                              topLeft: 50,
+                              topRight: 50,
+                              bottomLeft: 50,
+                              bottomRight: 50,
+                            },
+                          ],
+                        borderSkipped: false,
+                      },
+                    ]
         - Row:
             children:
-              - SideBarMenu:
-                  logo:
-                    collapsedSource: https://i.imgur.com/peprs0j.png
-                    uncollapsedSource: https://i.imgur.com/sH3zCi6.png
-                    styles:
-                      width: 80px
-                      height: 20px
-                  enableSearch: true
-                  items:
-                    - label: Teams
-                      icon: PieChartOutlineOutlined
-                      page: apple
-                      selected: true
-                    - label: Patients
-                      icon: SickOutlined
-                      page: banana
-                    - label: Programs
-                      icon: VolunteerActivismOutlined
-                      page: banana
-                    - label: Claims
-                      icon: BusinessCenterOutlined
-                      page: banana
-                    - label: Awards
-                      icon: CardGiftcardOutlined
-                      page: banana
-                      divider: true
-                    - label: Reminders
-                      icon: NotificationAddOutlined
-                      page: reminders
-                      hasNotifications: true
-                    - label: Starred
-                      icon: StarBorderOutlined
-                      page: reminders
-                    - label: Help
-                      icon: HelpOutlineOutlined
-                      page: reminders
-                      divider: true
-                    - label: Account
-                      icon: AccountCircleOutlined
-                      page: profile
-                    
-                  styles:
-                    backgroundColor: "#1A2A4C"
-                    labelColor: grey
-                    selectedColor: white
-                    labelFontSize: 1
-                    searchBoxColor: "#3e5975"
               - Column:
-                  crossAxis: stretch
-                  margin: 0 20px
                   children:
-                    - Search:
-                        placeholder: Search
-                        data: data.getData.body.users
-                        searchKey: email
-                    - Markdown:
-                        text: '# Collections'
-                        id: title
-                    - Row:
-                        styles:
-                          crossAxis: center
-                          gap: 20
-                          margin: 0 0 20px 0
-
-                          children:
-                            - Chart:
-                                styles:
-                                  height: 100%
-                                  width: 100%
-                                type: bar
-                                title: Bar Chart
-                                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']
-                                datasets: [
-                                  {
-                                    label: 'Matched',
-                                    data: [190, 200, 210, 145, 230, 240, 220, 190, 120],
-                                    backgroundColor: "#5542f6",
-                                    barPercentage: 0.8,
-                                    borderRadius: 3,
-                                  },
-                                  {
-                                    label: 'Enrolled',
-                                    data: [160, 170, 170, 105, 190, 170, 155, 160, 110],
-                                    backgroundColor: "#01a4ff",
-                                    barPercentage: 0.8,
-                                    borderRadius: 3
-                                  },
-                                  {
-                                    label: 'Award',
-                                    data: [140, 130, 90, 90, 150, 170, 140, 80, 110],
-                                    backgroundColor: "#22c9ac",
-                                    barPercentage: 0.8,
-                                    borderRadius: 3,
-                                  },
-                                ]
-                    - Row:
-                        styles:
-                          #crossAxis: end
-                          width: 300px
-                          height: 300px
-                          borderColor: '#EBEAED'
-                          borderRadius: 10
-                          borderWidth: 1px
-                          padding: 10px 20px 30px 20px
-
-                        children:
-                          - Chart:
-                              type: doughnut
-                              styles:
-                                height: 200px
-                                width: 200px
-                              labels: ['Red', 'Blue', 'Yellow']
-                              title: Doughnut Chart
-                              datasets: [
-                                {
-                                  label: '',
-                                  data: [300, 50, 100],
-                                  backgroundColor: [
-                                    'rgb(255, 99, 132)',
-                                    'rgb(54, 162, 235)',
-                                    'rgb(255, 205, 86)'
-                                  ],
-                                  hoverOffset: 4,
-                                  borderWidth: 1
-                                }
-                              ]
-                    - Row:
-                        styles:
-                          #crossAxis: end
-                          borderColor: '#EBEAED'
-                          borderRadius: 10
-                          borderWidth: 1px
-                          padding: 10px 20px 30px 20px
-
-                        children:
-                          - Chart:
-                              styles:
-                                height: 30px
-                              type: stackbar
-                              labels: ["Jan"]
-                              datasets: [
-                                {
-                                  label: "Matched",
-                                  data: [190],
-                                  backgroundColor: "#5542f6",
-                                  borderRadius: [{ topLeft: 50, topRight: 50, bottomLeft: 50, bottomRight: 50 }],
-                                  borderSkipped: false
-                                },
-                                {
-                                  label: "Enrolled",
-                                  data: [160],
-                                  backgroundColor: "#01a4ff",
-                                  borderRadius: [{ topLeft: 50, topRight: 50, bottomLeft: 50, bottomRight: 50 }],
-                                  borderSkipped: false
-                                },
-                                {
-                                  label: "Award",
-                                  data: [140],
-                                  backgroundColor: "#22c9ac",
-                                  borderRadius: [{ topLeft: 50, topRight: 50, bottomLeft: 50, bottomRight: 50 }],
-                                  borderSkipped: false
-                                },
-                                {
-                                  label: "Not Started",
-                                  data: [140],
-                                  backgroundColor: "#eee",
-                                  borderRadius: [{ topLeft: 50, topRight: 50, bottomLeft: 50, bottomRight: 50 }],
-                                  borderSkipped: false
-                                },
-                              ]
-                    - Row:
-                        children:
-                          - Column:
+                    - DataGrid:
+                        DataColumns:
+                          - label: Name
+                          - label: Performance
+                          - label: MoM
+                          - label: Progress
+                        item-template:
+                          data: data.getData.body.users
+                          name: user
+                          template:
+                            DataRow:
                               children:
-                                - DataGrid:
-                                    DataColumns:
-                                      - label: Name
-                                      - label: Performance
-                                      - label: MoM
-                                      - label: Progress
-                                    item-template:
-                                      data: data.getData.body.users
-                                      name: user
-                                      template:
-                                        DataRow:
+                                # Person
+                                - Row:
+                                    crossAxis: center
+                                    gap: 5
+                                    children:
+                                      - Image:
+                                          source: ${user.image}
+                                          width: 40
+                                          height: 40
+                                          fit: cover
+                                          borderRadius: 100
+                                      #                                                      borderColor: grey
+                                      #                                                      borderWidth: 1px
+                                      - Column:
+                                          crossAxis: start
                                           children:
-                                            # Person
-                                            - Row:
-                                                crossAxis: center
-                                                gap: 5
-                                                children:
-                                                  - Image:
-                                                      source: ${user.image}
-                                                      width: 40
-                                                      height: 40
-                                                      fit: cover
-                                                      borderRadius: 100
-#                                                      borderColor: grey
-#                                                      borderWidth: 1px
-                                                  - Column:
-                                                      crossAxis: start
-                                                      children:
-                                                        - Text:
-                                                            text: ${user.firstName}
-                                                        - Text:
-                                                            text: ${user.email}
                                             - Text:
-                                                text: ${user.age}
-
-                                            # MoM
-                                            - Row:
-                                                children:
-                                                  - Icon:
-                                                      name: NorthEast
-                                                      color: green
-                                                  - Text:
-                                                      text: ${user.weight}
-
-
+                                                text: ${user.firstName}
                                             - Text:
-                                                text: ${user.weight}
-                    - Text:
-                        id: myText
-                        text: Peter Parker
-                    - Button:
-                        label: Click Me
-                        onTap:
-                          executeCode: myText.setText("Spiderman")
-                    - Text:
-                        text: ${myText.text}
-                    - Text:
-                        text: ${data.getData.body.total}
+                                                text: ${user.email}
+                                - Text:
+                                    text: ${user.age}
 
+                                # MoM
+                                - Row:
+                                    children:
+                                      - Icon:
+                                          name: NorthEast
+                                          color: green
+                                      - Text:
+                                          text: ${user.weight}
 
-        ## Grid widgets
-#        - Row:
-#            crossAxis: center
-#            gap: 50
-#            children:
-#              # Person
-#              - Row:
-#                  crossAxis: center
-#                  gap: 5
-#                  children:
-#                    - Image:
-#                        source: https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=248&fit=crop&auto=format&dpr=2
-#                        width: 40
-#                        height: 40
-#                        fit: cover
-#                        borderRadius: 100
-#                    - Column:
-#                        crossAxis: start
-#                        children:
-#                          - Text:
-#                              text: Peter Gibbon
-#                          - Text:
-#                              text: peter@atlas.health
-#
-#              # Icons
-#              - Row:
-#                  children:
-#                    - Icon:
-#                        name: NorthEast
-#                        color: green
-#                    - Text:
-#                        text: 20%
-#              - Row:
-#                  children:
-#                    - Icon:
-#                        name: SouthEast
-#                        color: red
-#                    - Text:
-#                        text: 5%
-
-
+                                - Text:
+                                    text: ${user.weight}
+        - Text:
+            id: myText
+            text: Peter Parker
+        - Button:
+            label: Click Me
+            onTap:
+              executeCode: myText.setText("Spiderman")
+        - Text:
+            text: ${myText.text}
+        - Text:
+            text: ${data.getData.body.total}
 
 API:
   getData:

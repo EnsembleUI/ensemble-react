@@ -9,21 +9,21 @@ import {
 } from "@mui/material";
 import { useNavigateScreen } from "../../runtime/navigate";
 import { WidgetRegistry } from "../../registry";
+import type { IconProps } from "../../util/types";
+import { Icon } from "../Icon";
 import { stringToColor } from "./utils/stringToColors";
 import { generateInitials } from "./utils/generateInitials";
-import { IconProps } from "../../util/types";
-import { Icon } from "../Icon";
 
-export type AvatarMenu = {
+export interface AvatarMenu {
   label: string;
   icon?: IconProps;
   onTap?: {
     executeCode?: string;
     navigateScreen?: string;
   };
-};
+}
 
-export type AvatarProps = {
+export interface AvatarProps {
   alt: Expression<string>;
   src?: Expression<string>;
   name?: Expression<string>;
@@ -34,7 +34,7 @@ export type AvatarProps = {
     backgroundColor?: string;
   };
   menu?: AvatarMenu[];
-};
+}
 
 export const Avatar: React.FC<AvatarProps> = (props) => {
   const [code, setCode] = useState("");
@@ -42,7 +42,7 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
   const nameString = props.name?.toString();
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(Boolean(menuAnchorEl));
-  const { values } = useRegisterBindings(props);
+  const { values } = useRegisterBindings({ ...props });
   const onTapCallback = useExecuteCode(code, values);
   const onNavigate = useNavigateScreen(screen);
 
@@ -57,8 +57,8 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
   };
 
   const handleMenuClick = (menuItem: AvatarMenu): void => {
-    menuItem.onTap?.executeCode && setCode(menuItem.onTap?.executeCode);
-    menuItem.onTap?.navigateScreen && setScreen(menuItem.onTap?.navigateScreen);
+    menuItem.onTap?.executeCode && setCode(menuItem.onTap.executeCode);
+    menuItem.onTap?.navigateScreen && setScreen(menuItem.onTap.navigateScreen);
     handleMenuClose();
   };
 
@@ -72,7 +72,9 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
   return (
     <div>
       <MuiAvatar
-        alt={props?.alt}
+        alt={props.alt}
+        onClick={handleMenuOpen}
+        src={props.src}
         sx={{
           bgcolor:
             props.styles?.backgroundColor ?? stringToColor(nameString ?? ""),
@@ -80,43 +82,39 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
           height: props.styles?.height,
           cursor: "pointer",
         }}
-        src={props.src}
-        onClick={handleMenuOpen}
       >
-        {props?.name ? (
+        {props.name ? (
           generateInitials(props.name)
         ) : (
           <Icon
-            name={props.icon?.name ?? ""}
             color={props.icon?.color}
+            name={props.icon?.name ?? ""}
             size={props.icon?.size}
           />
         )}
       </MuiAvatar>
-      {props.menu && (
+      {props.menu ? (
         <Menu
           anchorEl={menuAnchorEl}
-          open={isMenuOpen}
           onClose={handleMenuClose}
+          open={isMenuOpen}
         >
-          {props.menu?.map((menuItem, index) => (
+          {props.menu.map((menuItem, index) => (
             <MenuItem key={index} onClick={() => handleMenuClick(menuItem)}>
-              {menuItem.icon && (
+              {menuItem.icon ? (
                 <ListItemIcon>
-                  {
-                    <Icon
-                      name={menuItem.icon.name ?? ""}
-                      color={menuItem.icon.color}
-                      size={menuItem.icon.size}
-                    />
-                  }
+                  <Icon
+                    color={menuItem.icon.color}
+                    name={menuItem.icon.name}
+                    size={menuItem.icon.size}
+                  />
                 </ListItemIcon>
-              )}
+              ) : null}
               {menuItem.label}
             </MenuItem>
           ))}
         </Menu>
-      )}
+      ) : null}
     </div>
   );
 };
