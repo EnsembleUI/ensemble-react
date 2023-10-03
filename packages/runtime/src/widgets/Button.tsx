@@ -1,12 +1,13 @@
 import type { Expression } from "framework";
-import { useRegisterBindings, useExecuteCode } from "framework";
+import {
+  useRegisterBindings,
+  useExecuteCode,
+  NavigateModalScreenProps,
+} from "framework";
 import { useNavigateScreen } from "../runtime/navigate";
-import { useNavigateModalScreen } from "../runtime/navigateModal";
-import type {
-  EnsembleWidgetProps,
-  navigateModalScreenProps,
-} from "../util/types";
+import useNavigateModalScreen from "../runtime/navigateModal";
 import { WidgetRegistry } from "../registry";
+import type { EnsembleWidgetProps } from "../util/types";
 import { Button as AntButton } from "antd";
 
 export type ButtonProps = {
@@ -14,7 +15,7 @@ export type ButtonProps = {
   onTap?: {
     executeCode?: string;
     navigateScreen?: string;
-    navigateModalScreen?: string | navigateModalScreenProps;
+    navigateModalScreen?: string | NavigateModalScreenProps;
   };
 } & EnsembleWidgetProps;
 

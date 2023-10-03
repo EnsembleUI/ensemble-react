@@ -6,11 +6,6 @@ export interface EnsembleWidgetProps {
   styles?: Record<string, string | number>;
 }
 
-export type navigateModalScreenProps = {
-  name?: string;
-  maskClosable?: boolean;
-};
-
 export type BaseTextProps = {
   [key: string]: unknown;
   text?: Expression<string>;
