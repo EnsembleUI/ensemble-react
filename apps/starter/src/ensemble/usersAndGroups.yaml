@@ -100,6 +100,28 @@ View:
                                           text: ${user.firstName}
                                       - Text:
                                           text: ${user.email}
+        - PopupMenu:
+            items:
+              - { "label": "Red", "value": "red" }
+              - { "label": "Blue", "value": "blue" }
+              - { "label": "Green", "value": "green" }
+            onItemSelect:
+              executeCode: myText.setText("Spiderman")
+            widget:
+              Column:
+                styles:
+                  backgroundColor: blue
+                  padding: 10
+                children:
+                  - Button:
+                      label:
+                  - Text:
+                      text: Hello
+        - Text:
+            id: myText
+            text: Peter Parker
+        - Text:
+            text: ${myText.text}
 API:
   getData:
     method: GET
