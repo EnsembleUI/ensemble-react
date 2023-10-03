@@ -1,7 +1,8 @@
-import React, { ReactNode, isValidElement, useMemo } from "react";
+import type { ReactNode } from "react";
+import React, { isValidElement, useEffect, useMemo, useState } from "react";
 import { Menu, Dropdown as AntdDropdown, Button } from "antd";
 import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
-import { merge } from "lodash-es";
+import { cloneDeep, merge } from "lodash-es";
 import {
   type EnsembleWidget,
   useExecuteCode,
@@ -12,10 +13,10 @@ import { useNavigateScreen } from "../runtime/navigate";
 import type { EnsembleWidgetProps } from "../util/types";
 import { WidgetRegistry } from "../registry";
 
-type PopupMenuItem = {
+interface PopupMenuItem {
   label: string;
   value: string;
-};
+}
 
 interface PopupMenuStyles {
   backgroundColor: string;
@@ -46,6 +47,7 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
   const { values } = useRegisterBindings(props, props.id);
   const onTapCallback = useExecuteCode(onItemSelect, values);
   const onNavigate = useNavigateScreen(props.onItemSelect?.navigateScreen);
+  const [widgetProps, setWidgetProps] = useState<EnsembleWidget>();
   const menuItems = (
     <Menu>
       {props.items.map((item) => (
@@ -58,28 +60,39 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
       ))}
     </Menu>
   );
-  if (props.widget) {
-    const actualWidget = unwrapWidget(props.widget);
-    const renderedChild = useMemo(() => {
-      return renderWidget(actualWidget);
-    }, [props.widget]);
-    return (
-      <AntdDropdown overlay={menuItems} trigger={["click"]}>
-        <div>{renderedChild}</div>
-      </AntdDropdown>
-    );
-  } else {
-    return (
-      <AntdDropdown overlay={menuItems} trigger={["click"]}>
-        <Button
-          icon={<MoreVertOutlinedIcon />}
-          style={{
-            ...mergedStyles,
-          }}
-        />
-      </AntdDropdown>
-    );
-  }
+
+  useEffect((): void => {
+    if (!props.widget) {
+      return;
+    }
+    // clone value so we're not updating the yaml doc
+    const widget = cloneDeep(props.widget);
+    const actualWidget = unwrapWidget(widget);
+    setWidgetProps(actualWidget);
+    // Only run once
+  }, []);
+
+  const renderedChild = useMemo(() => {
+    if (!widgetProps) {
+      return null;
+    }
+    return renderWidget(widgetProps);
+  }, [widgetProps]);
+  return (
+    <AntdDropdown overlay={menuItems} trigger={["click"]}>
+      <div>{renderedChild}</div>
+    </AntdDropdown>
+  );
+  return (
+    <AntdDropdown overlay={menuItems} trigger={["click"]}>
+      <Button
+        icon={<MoreVertOutlinedIcon />}
+        style={{
+          ...mergedStyles,
+        }}
+      />
+    </AntdDropdown>
+  );
 };
 
 WidgetRegistry.register("PopupMenu", PopupMenu);
