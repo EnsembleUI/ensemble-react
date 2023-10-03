@@ -216,6 +216,14 @@ View:
                                           color: green
                                       - Text:
                                           text: ${user.weight}
+                                # MoM
+                                - Row:
+                                    children:
+                                      - Icon:
+                                          name: NorthEast
+                                          color: green
+                                      - Text:
+                                          text: ${user.weight}
 
                                 - Text:
                                     text: ${user.weight}
