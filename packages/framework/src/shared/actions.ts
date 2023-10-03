@@ -10,3 +10,8 @@ export interface InvokeAPIAction {
 }
 
 export type EnsembleAction = ExecuteCodeAction | InvokeAPIAction;
+
+export type NavigateModalScreenProps = {
+  name?: string;
+  maskClosable?: boolean;
+};

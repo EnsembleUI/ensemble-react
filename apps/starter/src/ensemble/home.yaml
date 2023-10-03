@@ -26,7 +26,7 @@ ViewGroup:
         selected: true
       - label: Ask Embrace
         icon: TextsmsOutlined
-        page: askEmbrace
+        page: Ask Embrace
     footer:
       Text:
         text: Give us feedback
