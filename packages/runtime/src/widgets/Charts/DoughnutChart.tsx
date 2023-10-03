@@ -5,7 +5,7 @@ import { Expression } from "framework";
 
 const options: ChartOptions<"doughnut"> = {
   cutout: "90%",
-  maintainAspectRatio: false
+  maintainAspectRatio: false,
 };
 
 interface ChartDataSets {
@@ -28,8 +28,9 @@ export const DoughnutChart: React.FC<DoughnutChartProps> = (props) => {
     <div
       style={{
         height: styles?.height || "100%",
-        width: styles?.width || "100%"
-      }}>
+        width: styles?.width || "100%",
+      }}
+    >
       <Doughnut
         data={{
           labels,
@@ -40,9 +41,9 @@ export const DoughnutChart: React.FC<DoughnutChartProps> = (props) => {
           plugins: {
             title: {
               display: !!title,
-              text: title
-            }
-          }
+              text: title,
+            },
+          },
         }}
       />
     </div>

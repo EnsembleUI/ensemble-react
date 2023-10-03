@@ -48,8 +48,8 @@ export const EnsembleParser = {
       menu.items.forEach(
         (item) =>
           (item.screen = screens.find(
-            (screen) => "name" in screen && screen.name === item.page,
-          ) as EnsembleScreenModel),
+            (screen) => "name" in screen && screen.name === item.page
+          ) as EnsembleScreenModel)
       );
     }
 
@@ -63,7 +63,7 @@ export const EnsembleParser = {
 
   parseScreen: (
     name: string,
-    screen: EnsembleScreenYAML,
+    screen: EnsembleScreenYAML
   ): EnsembleScreenModel | EnsembleMenuModel => {
     const view = get(screen, "View");
     const viewNode = get(view, "body");

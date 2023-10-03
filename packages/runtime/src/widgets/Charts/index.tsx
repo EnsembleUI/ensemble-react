@@ -47,7 +47,7 @@ export type ChartProps = {
 const tabsConfig = {
   bar: <BarChart />,
   doughnut: <DoughnutChart />,
-  stackbar: <StackBarChart />
+  stackbar: <StackBarChart />,
 };
 
 export const Chart: React.FC<ChartProps> = (props) => {

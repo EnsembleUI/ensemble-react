@@ -7,7 +7,7 @@ View:
       styles:
         crossAxis: stretch
         margin: 0 20px
-        backgroundColor: 
+        backgroundColor:
       children:
         - Row:
             styles:
@@ -38,16 +38,16 @@ View:
                           width: 45
                           height: 45
                           notificationStyles:
-                            backgroundColor: '#6DC4E5'
+                            backgroundColor: "#6DC4E5"
                     - ProfileIcon:
                         # source: https://tostatus.in/wp-content/uploads/2023/02/Single-Boy-for-Whatsapp-DP-Download-2023-1024x1024.jpg
                         name: Francisco
                         styles:
-                          backgroundColor: '#28304B'
+                          backgroundColor: "#28304B"
 
         - Markdown:
-            text: '# User Management'
-        
+            text: "# User Management"
+
         - TabBar:
             TabPane:
               - key: overview
@@ -59,7 +59,7 @@ View:
                 label: Group Impact
               - key: knowledge health
                 label: Knowledge Health
-                   
+
         - Column:
             children:
               - GridView:
@@ -93,7 +93,28 @@ View:
                                           text: ${user.firstName}
                                       - Text:
                                           text: ${user.email}
-
+        - PopupMenu:
+            widget:
+              Column:
+                styles:
+                  backgroundColor: blue
+                  padding: 10
+                children:
+                  - Button:
+                      label:
+                  - Text:
+                      text: Hello
+            items:
+              - { "label": "Red", "value": "red" }
+              - { "label": "Blue", "value": "blue" }
+              - { "label": "Green", "value": "green" }
+            onItemSelect:
+              executeCode: myText.setText("Spiderman")
+        - Text:
+            id: myText
+            text: Peter Parker
+        - Text:
+            text: ${myText.text}
 API:
   getData:
     method: GET
