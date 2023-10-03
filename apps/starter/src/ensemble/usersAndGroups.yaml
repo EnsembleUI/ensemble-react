@@ -7,7 +7,7 @@ View:
       styles:
         crossAxis: stretch
         margin: 0 20px
-        backgroundColor: 
+        backgroundColor:
       children:
         - Row:
             styles:
@@ -38,7 +38,7 @@ View:
                           width: 45
                           height: 45
                           notificationStyles:
-                            backgroundColor: '#6DC4E5'
+                            backgroundColor: "#6DC4E5"
                     - Avatar:
                         alt: abc
                         name: sana
@@ -53,8 +53,8 @@ View:
                               navigateScreen: Collections
 
         - Markdown:
-            text: '# User Management'
-        
+            text: "# User Management"
+
         - TabBar:
             TabPane:
               - key: overview
@@ -66,7 +66,7 @@ View:
                 label: Group Impact
               - key: knowledge health
                 label: Knowledge Health
-                   
+
         - Column:
             children:
               - GridView:
@@ -100,7 +100,28 @@ View:
                                           text: ${user.firstName}
                                       - Text:
                                           text: ${user.email}
-
+        - PopupMenu:
+            widget:
+              Column:
+                styles:
+                  backgroundColor: blue
+                  padding: 10
+                children:
+                  - Button:
+                      label:
+                  - Text:
+                      text: Hello
+            items:
+              - { "label": "Red", "value": "red" }
+              - { "label": "Blue", "value": "blue" }
+              - { "label": "Green", "value": "green" }
+            onItemSelect:
+              executeCode: myText.setText("Spiderman")
+        - Text:
+            id: myText
+            text: Peter Parker
+        - Text:
+            text: ${myText.text}
 API:
   getData:
     method: GET

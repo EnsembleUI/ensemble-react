@@ -12,3 +12,4 @@ export * from "./DataGrid";
 export * from "./Progress";
 export * from "./GridView";
 export * from "./Avatar/Avatar";
+export * from "./PopupMenu";
