@@ -28,3 +28,36 @@ test("parses simple view widget", () => {
     },
   });
 });
+
+test("parses recursively", () => {
+  const testFile = fs.readFileSync(`${__dirname}/__resources__/popupmenu.yaml`);
+
+  const screen = EnsembleParser.parseScreen(
+    "test",
+    parse(testFile.toString()) as EnsembleScreenYAML,
+  ) as EnsembleScreenModel;
+
+  expect(screen.name).toEqual("test");
+  expect(screen.body).toMatchObject({
+    name: "PopupMenu",
+    properties: {
+      widget: {
+        Column: {
+          styles: {
+            backgroundColor: "blue",
+            padding: 10,
+          },
+          children: [{ Button: { label: null } }, { Text: { text: "Hello" } }],
+        },
+      },
+      items: [
+        { label: "Red", value: "red" },
+        { label: "Blue", value: "blue" },
+        { label: "Green", value: "green" },
+      ],
+      onItemSelect: {
+        executeCode: 'myText.setText("Spiderman")',
+      },
+    },
+  });
+});

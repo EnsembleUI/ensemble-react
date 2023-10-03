@@ -1,0 +1,21 @@
+View:
+  header:
+    title: Welcome
+  body:
+    PopupMenu:
+      widget:
+        Column:
+          styles:
+            backgroundColor: blue
+            padding: 10
+          children:
+            - Button:
+                label:
+            - Text:
+                text: Hello
+      items:
+        - { "label": "Red", "value": "red" }
+        - { "label": "Blue", "value": "blue" }
+        - { "label": "Green", "value": "green" }
+      onItemSelect:
+        executeCode: myText.setText("Spiderman")
