@@ -101,6 +101,12 @@ View:
                                       - Text:
                                           text: ${user.email}
         - PopupMenu:
+            items:
+              - { "label": "Red", "value": "red" }
+              - { "label": "Blue", "value": "blue" }
+              - { "label": "Green", "value": "green" }
+            onItemSelect:
+              executeCode: myText.setText("Spiderman")
             widget:
               Column:
                 styles:
@@ -111,12 +117,6 @@ View:
                       label:
                   - Text:
                       text: Hello
-            items:
-              - { "label": "Red", "value": "red" }
-              - { "label": "Blue", "value": "blue" }
-              - { "label": "Green", "value": "green" }
-            onItemSelect:
-              executeCode: myText.setText("Spiderman")
         - Text:
             id: myText
             text: Peter Parker
