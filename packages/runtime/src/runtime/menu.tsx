@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Menu as AntMenu, Col, Divider } from "antd";
 import * as MuiIcons from "@mui/icons-material";
 import type { EnsembleWidget } from "framework";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getColor } from "../util/utils";
 import { EnsembleRuntime } from "./runtime";
 
@@ -77,6 +77,7 @@ const renderMuiIcon = (
 
 export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
   const backgroundColor = props.styles?.backgroundColor
@@ -89,6 +90,15 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
       setSelectedItem(initiallySelectedItem.label);
     }
   }, [props.items]);
+
+  useEffect(() => {
+    const locationMatch = props.items.find(
+      (item) => `/${item.page.toLowerCase()}` === location.pathname,
+    );
+    if (locationMatch) {
+      setSelectedItem(locationMatch.label);
+    }
+  }, [location.pathname, props.items]);
 
   const handleClick = (page: string, label: string): void => {
     setSelectedItem(label);
