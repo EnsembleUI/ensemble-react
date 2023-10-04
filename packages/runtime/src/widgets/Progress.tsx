@@ -40,7 +40,7 @@ const Progress: React.FC<ProgressProps> = (props) => {
             clearInterval(interval);
           }
         },
-        (countdown * 1000) / targetPercent
+        (countdown * 1000) / targetPercent,
       );
       return () => clearInterval(interval);
     } else {
