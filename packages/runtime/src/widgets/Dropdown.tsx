@@ -58,7 +58,7 @@ export const Dropdown: React.FC<DropdownProps> = (props) => {
   const onNavigate = useNavigateScreen(props.onChange?.navigateScreen || "");
 
   const handleChange = (event: SelectChangeEvent) => {
-    setDropdownValue(event.target.value as string);
+    setDropdownValue(event.target.value);
     props.onChange?.executeCode && onTapCallback();
     props.onChange?.navigateScreen && onNavigate();
   };
@@ -79,7 +79,7 @@ export const Dropdown: React.FC<DropdownProps> = (props) => {
         variant={props.styles?.variant ?? "outlined"}
         style={{
           borderRadius: props.styles?.borderRadius,
-          borderWidth: `${props.styles?.borderWidth} !important`,
+          borderWidth: props.styles?.borderWidth,
           borderColor: props.required
             ? props.styles?.borderColor
             : props.styles?.disabledBorderColor,
