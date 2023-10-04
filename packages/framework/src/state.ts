@@ -6,6 +6,7 @@ import type { EnsembleAppModel } from "./shared/models";
 export interface ScreenContextDefinition {
   data: Record<string, Response | undefined>;
   widgets: Record<string, WidgetState | undefined>;
+  storage: Record<string, unknown>;
   [key: string]: unknown;
 }
 
@@ -50,6 +51,7 @@ export interface Invokable {
 export const screenAtom = atom<ScreenContextDefinition>({
   data: {},
   widgets: {},
+  storage: {},
 });
 
 export const screenDataAtom = focusAtom(screenAtom, (optic) =>
