@@ -11,7 +11,7 @@ import { EnsembleRuntime } from "../runtime";
 import { handleCurlyBraces } from "../util/utils";
 import { head, isEmpty, last } from "lodash-es";
 
-type CondtionalElement = Record<Capitalize<string>, EnsembleWidget> &
+type CondtionalElement = Record<Capitalize<string>, Record<string, unknown>> &
   (
     | { if: Expression<string>; elseif?: never; else?: never }
     | { elseif: Expression<string>; if?: never; else?: never }
@@ -23,6 +23,7 @@ export type ConditionalProps = {
 };
 
 export const Conditional: React.FC<ConditionalProps> = (props) => {
+  console.log("Conditional", props);
   const context = useScreenContext();
 
   const [isValid, errorMessage] = hasProperStructure(props.conditions);

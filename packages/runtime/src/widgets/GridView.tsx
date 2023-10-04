@@ -1,4 +1,4 @@
-import { isArray, map } from "lodash-es";
+import { isArray, isString, map } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import type { GridViewStyles } from "../util/types";
@@ -32,7 +32,7 @@ export const GridView: React.FC<GridViewProps> = ({
 }) => {
   const defaultColumnCount = 4;
   const templateData = useTemplateData(
-    isString(data) ? removeCurlyBraces(data) : data
+    isString(data) ? handleCurlyBraces(data) : data
   );
 
   const namedData = map(templateData, (value) => ({

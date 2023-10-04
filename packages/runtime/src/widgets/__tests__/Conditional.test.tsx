@@ -16,17 +16,17 @@ describe("Conditional Component", () => {
       conditions: [
         {
           if: "true",
-          Text: { name: "Text", properties: { text: "Widget A" } },
+          Text: { text: "Widget A" },
         },
         {
           else: null,
-          Text: { name: "Text", properties: { text: "Widget B" } },
+          Text: { text: "Widget B" },
         },
       ],
     };
-    expect(() =>
-      render(<Conditional conditions={conditionalProps.conditions} />)
-    ).not.toThrow();
+
+    render(<Conditional conditions={conditionalProps.conditions} />);
+    expect(screen.getByText("Widget A")).not.toBeNull();
   });
 
   test('renders the widget when "elseif" condition is met', () => {
@@ -34,17 +34,16 @@ describe("Conditional Component", () => {
       conditions: [
         {
           if: "false",
-          Text: { name: "Text", properties: { text: "Widget A" } },
+          Text: { text: "Widget A" },
         },
         {
           elseif: "true",
-          Text: { name: "Text", properties: { text: "Widget B" } },
+          Text: { text: "Widget B" },
         },
       ],
     };
 
     render(<Conditional conditions={conditionalProps.conditions} />);
-
     expect(screen.getByText("Widget B")).not.toBeNull();
   });
 
@@ -53,18 +52,17 @@ describe("Conditional Component", () => {
       conditions: [
         {
           if: "false",
-          Text: { name: "Text", properties: { text: "Widget A" } },
+          Text: { text: "Widget A" },
         },
         {
           else: null,
-          Text: { name: "Text", properties: { text: "Widget C" } },
+          Text: { text: "Widget C" },
         },
       ],
     };
 
-    expect(() =>
-      render(<Conditional conditions={conditionalProps.conditions} />)
-    ).not.toThrow();
+    render(<Conditional conditions={conditionalProps.conditions} />);
+    expect(screen.getByText("Widget C")).not.toBeNull();
   });
 
   test("renders nothing when no condition is met", () => {
@@ -72,18 +70,17 @@ describe("Conditional Component", () => {
       conditions: [
         {
           if: "false",
-          Text: { name: "Text", properties: { text: "Widget A" } },
+          Text: { text: "Widget A" },
         },
         {
           if: "false",
-          Text: { name: "Text", properties: { text: "Widget AA" } },
+          Text: { text: "Widget AA" },
         },
       ],
     };
 
-    expect(() =>
-      render(<Conditional conditions={conditionalProps.conditions} />)
-    ).not.toThrow();
+    render(<Conditional conditions={conditionalProps.conditions} />);
+    expect(screen.queryByText("Widget A")).toBeNull();
   });
 });
 
@@ -98,11 +95,11 @@ describe("hasProperStructure Function", () => {
       conditions: [
         {
           elseif: "true",
-          Text: { name: "Text", properties: { text: "Widget A" } },
+          Text: { text: "Widget A" },
         },
         {
           else: null,
-          Text: { name: "Text", properties: { text: "Widget B" } },
+          Text: { text: "Widget B" },
         },
       ],
     };
@@ -116,8 +113,8 @@ describe("hasProperStructure Function", () => {
       conditions: [
         {
           if: "true",
-          Text: { name: "Text", properties: { text: "Widget A" } },
-          Text2: { name: "Text", properties: { text: "Widget B" } },
+          Text: { text: "Widget A" },
+          Text2: { text: "Widget B" },
         },
         {
           else: null,
@@ -133,11 +130,11 @@ describe("hasProperStructure Function", () => {
     const conditions = [
       {
         elseif: "false",
-        Text: { name: "Text", properties: { text: "Widget A" } },
+        Text: { text: "Widget A" },
       },
       {
         if: "true",
-        Text: { name: "Text", properties: { text: "Widget B" } },
+        Text: { text: "Widget B" },
       },
     ];
 
@@ -150,19 +147,19 @@ describe("hasProperStructure Function", () => {
       conditions: [
         {
           if: "false",
-          Text: { name: "Text", properties: { text: "Widget A" } },
+          Text: { text: "Widget A" },
         },
         {
           elseif: "true",
-          Text: { name: "Text", properties: { text: "Widget B" } },
+          Text: { text: "Widget B" },
         },
         {
           else: null,
-          Text: { name: "Text", properties: { text: "Widget C" } },
+          Text: { text: "Widget C" },
         },
         {
           else: null,
-          Text: { name: "Text", properties: { text: "Widget D" } },
+          Text: { text: "Widget D" },
         },
       ],
     };
@@ -176,15 +173,15 @@ describe("hasProperStructure Function", () => {
       conditions: [
         {
           if: "false",
-          Text: { name: "Text", properties: { text: "Widget A" } },
+          Text: { text: "Widget A" },
         },
         {
           elseif: "true",
-          Text: { name: "Text", properties: { text: "Widget B" } },
+          Text: { text: "Widget B" },
         },
         {
           else: null,
-          Text: { name: "Text", properties: { text: "Widget C" } },
+          Text: { text: "Widget C" },
         },
       ],
     };
@@ -195,7 +192,7 @@ describe("hasProperStructure Function", () => {
 });
 
 describe("extractWidget Function", () => {
-  it("throws an error for improper structure", () => {
+  test("throws an error for improper structure", () => {
     const condition = {
       if: "true",
     };
@@ -203,31 +200,31 @@ describe("extractWidget Function", () => {
     expect(() => extractWidget(condition)).toThrow();
   });
 
-  it("extracts the correct widget", () => {
+  test("extracts the correct widget", () => {
     const condition = {
       if: "true",
-      Text: { name: "Text", properties: { text: "Widget A" } },
+      Text: { text: "Widget A" },
     };
 
     const widget = extractWidget(condition);
-    expect(widget.name).toBe("Text");
+    expect(widget).toEqual({ name: "Text", properties: { text: "Widget A" } });
   });
 });
 
 describe("extractCondition Function", () => {
-  it("throws an error for improper structure", () => {
+  test("throws an error for improper structure", () => {
     const condition = {
       iff: "true",
-      Text: { name: "Text", properties: { text: "Widget A" } },
+      Text: { text: "Widget A" },
     };
 
     expect(() => extractCondition(condition as any)).toThrow();
   });
 
-  it("extracts the correct condition", () => {
+  test("extracts the correct condition", () => {
     const condition = {
       if: "1 === 1",
-      Text: { name: "Text", properties: { text: "Widget A" } },
+      Text: { text: "Widget A" },
     };
 
     const extractedCondition = extractCondition(condition);

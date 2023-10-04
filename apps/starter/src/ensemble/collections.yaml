@@ -232,7 +232,7 @@ View:
                           - if: ${myText.text.length > 0}
                             Text:
                               text: ${myText.text}
-                          - elseif: 1 == 13
+                          - elseif: 1 == 11
                             Image:
                               source: https://i.imgur.com/Tf67Bu6.png
                               width: 100
