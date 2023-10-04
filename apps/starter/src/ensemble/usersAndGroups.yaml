@@ -7,7 +7,6 @@ View:
       styles:
         crossAxis: stretch
         margin: 0 20px
-        backgroundColor:
       children:
         - Row:
             styles:
@@ -38,7 +37,7 @@ View:
                           width: 45
                           height: 45
                           notificationStyles:
-                            backgroundColor: '#6DC4E5'
+                          backgroundColor: '#6DC4E5'
                     - Avatar:
                         alt: abc
                         name: sana
@@ -59,7 +58,7 @@ View:
             selectedIndex: 0
             items:
               - label: Overview
-                widget: 
+                widget:
                   Column:
                     children:
                       - GridView:
@@ -94,7 +93,7 @@ View:
                                               - Text:
                                                   text: ${user.email}
               - label: Collections
-                widget: 
+                widget:
                   Markdown:
                     text: "# Render widgets in this tab"
         # - Row:
