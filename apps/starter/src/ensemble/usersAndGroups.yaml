@@ -9,6 +9,49 @@ View:
         margin: 0 20px
         backgroundColor:
       children:
+        - Row:
+            styles:
+              backgroundColor: white
+              mainAxis: spaceBetween
+              crossAxis: center
+              padding: 10
+            children:
+              - Search:
+                  styles:
+                    width: 300px
+                    backgroundColor: white
+                    border: 1px solid grey
+                    margin: 5px 5px 5px 5px
+              - Row:
+                  styles:
+                    gap: 10
+                  children:
+                    - Icons:
+                        label: Notifications
+                        hasNotification: true
+                        styles:
+                          backgroundColor: white
+                          borderWidth: 1px
+                          borderColor: grey
+                          iconWidth: 25
+                          iconHeight: 25
+                          width: 45
+                          height: 45
+                          notificationStyles:
+                            backgroundColor: '#6DC4E5'
+                    - Avatar:
+                        alt: abc
+                        name: sana
+                        menu:
+                          - label: Personal Information
+                            icon: Person
+                            onTap:
+                              executeCode: myText.setText("Spiderman")
+                          - label: Collections
+                            icon: Settings
+                            onTap:
+                              navigateScreen: Collections
+
         - Markdown:
             text: "# User Management"
         - TabBar:

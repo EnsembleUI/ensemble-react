@@ -7,7 +7,7 @@ export const useNavigateScreen = (name?: string): (() => void) => {
     if (!name) {
       return;
     }
-    navigate(name.toLowerCase());
+    navigate(`/${name.toLowerCase()}`);
   }, [name, navigate]);
   return callback;
 };
