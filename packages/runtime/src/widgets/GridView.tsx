@@ -65,7 +65,7 @@ export const GridView: React.FC<GridViewProps> = ({
             <CustomScopeProvider value={namedData[dataIndex] as CustomScope}>
               {EnsembleRuntime.render([template])}
             </CustomScopeProvider>
-          </Col>,
+          </Col>
         );
     }
     rows.push(
@@ -79,7 +79,7 @@ export const GridView: React.FC<GridViewProps> = ({
         }}
       >
         {cols}
-      </Row>,
+      </Row>
     );
   }
 

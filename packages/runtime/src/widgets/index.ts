@@ -12,6 +12,7 @@ export * from "./DataGrid";
 export * from "./MultiSelect";
 export * from "./Conditional";
 export * from "./TabBar";
+export * from "./Search";
 export * from "./Progress";
 export * from "./GridView";
 export * from "./Avatar/Avatar";

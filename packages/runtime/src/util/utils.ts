@@ -104,5 +104,6 @@ export const getIcon = (name: string): SvgIconComponent | undefined => {
 export const handleCurlyBraces = (string: string): string => {
   if (string.startsWith("${") && string.endsWith("}")) {
     return string.substring(2, string.length - 1);
-  } else return string;
+  }
+  return string;
 };
