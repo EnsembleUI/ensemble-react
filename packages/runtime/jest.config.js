@@ -5,6 +5,5 @@ module.exports = {
   testEnvironment: "jsdom",
   moduleNameMapper: {
     "^lodash-es$": "lodash",
-    "\\.(s?css|less)$": "identity-obj-proxy",
   },
 };

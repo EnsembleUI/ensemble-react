@@ -6,7 +6,6 @@ import type { SearchStyles } from "../util/types";
 import { SearchOutlined } from "@mui/icons-material";
 import { get, isObject, isString } from "lodash-es";
 import { getColor, handleCurlyBraces } from "../util/utils";
-import "./Widgets.css";
 
 interface EnsembleWidgetProps<T> {
   id?: string;
@@ -65,7 +64,6 @@ export const Search: React.FC<SearchProps> = ({
       <Input
         placeholder={placeholder}
         prefix={<SearchOutlined />}
-        className="no-box-shadow"
         style={{
           width: styles?.width,
           height: styles?.height,
