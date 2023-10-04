@@ -8,7 +8,7 @@ View:
       margin: 0 20px
       children:
         - Markdown:
-            text: '# Collections'
+            text: "# Collections"
             id: title
         - Row:
             styles:
@@ -52,7 +52,7 @@ View:
               #crossAxis: end
               width: 300px
               height: 300px
-              borderColor: '#EBEAED'
+              borderColor: "#EBEAED"
               borderRadius: 10
               borderWidth: 1px
               padding: 10px 20px 30px 20px
@@ -169,6 +169,7 @@ View:
                                           color: green
                                       - Text:
                                           text: ${user.weight}
+
                                 - Text:
                                     text: ${user.weight}
         - Text:

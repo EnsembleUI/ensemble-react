@@ -9,18 +9,22 @@ View:
         margin: 0 20px
       children:
         - Row:
-            styles:
-              backgroundColor: white
-              mainAxis: spaceBetween
-              crossAxis: center
-              padding: 10
+            backgroundColor: white
+            mainAxis: spaceBetween
+            crossAxis: center
+            padding: 10
             children:
               - Search:
                   styles:
-                    width: 300px
-                    backgroundColor: white
-                    border: 1px solid grey
-                    margin: 5px 5px 5px 5px
+                    width: 320px
+                    height: 40px
+                    borderRadius: 12
+                    borderWidth: 2
+                    borderStyle: solid
+                    borderColor: "#B8BED6"
+                  placeholder: Search
+                  data: getData.body.users
+                  searchKey: email
               - Row:
                   styles:
                     gap: 10
@@ -29,7 +33,6 @@ View:
                         label: Notifications
                         hasNotification: true
                         styles:
-                          backgroundColor: white
                           borderWidth: 1px
                           borderColor: grey
                           iconWidth: 25
@@ -131,8 +134,7 @@ View:
                     #     name: Francisco
                     #     styles:
                     #       backgroundColor: "#28304B"
-
-        
+                    
 
 API:
   getData:

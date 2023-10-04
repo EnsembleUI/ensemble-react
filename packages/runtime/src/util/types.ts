@@ -34,9 +34,16 @@ export interface GridViewStyles {
   verticalGap?: number;
 }
 
+export type SearchStyles = {
+  width?: number;
+  height?: number;
+  margin?: number | string;
+} & HasBorder;
+
 // composable types
 export interface HasBorder {
   borderRadius?: number;
   borderWidth?: number;
+  borderStyle?: string;
   borderColor?: number | string;
 }
