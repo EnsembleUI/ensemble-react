@@ -25,6 +25,7 @@ test("instantiates state from props", () => {
       },
     },
     data: {},
+    storage: {},
   });
   const { result } = renderHook(() =>
     useRegisterBindings(mockValues, mockInvokable.id, mockInvokable.methods),
@@ -52,6 +53,7 @@ test("updates bindings when incoming values update", () => {
       },
     },
     data: {},
+    storage: {},
   });
   const { result, rerender } = renderHook(() =>
     useRegisterBindings(
@@ -89,6 +91,7 @@ test("updates bindings when invokable updates", () => {
       },
     },
     data: {},
+    storage: {},
   });
   const { result, rerender } = renderHook(() =>
     useRegisterBindings(

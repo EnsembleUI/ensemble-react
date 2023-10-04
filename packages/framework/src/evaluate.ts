@@ -1,5 +1,6 @@
-import { merge } from "lodash-es";
+import { isEmpty, last, merge } from "lodash-es";
 import type { InvokableMethods, ScreenContextDefinition } from "./state";
+import { EnsembleStorage } from "./storage";
 
 export const buildEvaluateFn = (
   screen: ScreenContextDefinition,
@@ -20,13 +21,32 @@ export const buildEvaluateFn = (
     ...Object.entries(context ?? {}),
   ]);
 
+  invokableObj.ensemble = {
+    storage: EnsembleStorage,
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
-  const jsFunc = new Function(
-    ...[...Object.keys(invokableObj)],
-    js ? `return ${js}` : "console.log('No expression was given')",
-  );
+  const jsFunc = new Function(...[...Object.keys(invokableObj)], formatJs(js));
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return () => jsFunc(...Object.values(invokableObj));
+};
+
+const formatJs = (js?: string): string => {
+  if (!js || isEmpty(js)) {
+    return "console.log('No expression was given')";
+  }
+  // multiline js
+  if (js.includes("\n")) {
+    const lines = js.trim().split("\n");
+    const lastLine = last(lines);
+    lines.splice(lines.length - 1, 1, `return ${String(lastLine)}`);
+    return `
+      return (function() {
+        ${lines.join("\n")}
+      }())
+    `;
+  }
+  return `return ${js}`;
 };
 
 export const evaluate = (
