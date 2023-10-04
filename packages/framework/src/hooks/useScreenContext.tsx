@@ -7,12 +7,18 @@ import type { EnsembleScreenModel } from "../shared/models";
 
 interface ScreenContextProps {
   screen: EnsembleScreenModel;
+  context?: ScreenContextDefinition;
 }
+
 type ScreenContextProviderProps = React.PropsWithChildren<ScreenContextProps>;
 
 export const ScreenContextProvider: React.FC<ScreenContextProviderProps> = ({
+  context,
   children,
 }) => {
+  if (context) {
+    ensembleStore.set(screenAtom, context);
+  }
   return <Provider store={ensembleStore}>{children}</Provider>;
 };
 

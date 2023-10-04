@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import type { Expression } from "framework";
-import { useRegisterBindings, useExecuteCode } from "framework";
+import { useRegisterBindings } from "framework";
 import {
   Avatar as MuiAvatar,
   Menu,
   MenuItem,
   ListItemIcon,
 } from "@mui/material";
-import { useNavigateScreen } from "../../runtime/navigate";
+import { useNavigateScreen } from "../../runtime/hooks/useNavigateScreen";
 import { WidgetRegistry } from "../../registry";
 import type { IconProps } from "../../util/types";
 import { Icon } from "../Icon";
+import { useExecuteCode } from "../../runtime/hooks/useEnsembleAction";
 import { stringToColor } from "./utils/stringToColors";
 import { generateInitials } from "./utils/generateInitials";
 
@@ -43,8 +44,9 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(Boolean(menuAnchorEl));
   const { values } = useRegisterBindings({ ...props });
-  const onTapCallback = useExecuteCode(code, values);
-  const onNavigate = useNavigateScreen(screen);
+  // FIXME: action callbacks should take params so they can be callable per element
+  const executeCode = useExecuteCode(code, { context: values });
+  const navigate = useNavigateScreen(screen);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>): void => {
     setMenuAnchorEl(event.currentTarget);
@@ -63,11 +65,11 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
   };
 
   useEffect(() => {
-    code && onTapCallback();
-  }, [code, onTapCallback]);
+    code && executeCode?.callback?.();
+  }, [code, executeCode]);
   useEffect(() => {
-    screen && onNavigate();
-  }, [screen, onNavigate]);
+    screen && navigate?.callback?.();
+  }, [screen, navigate]);
 
   return (
     <div>
