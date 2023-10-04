@@ -14,7 +14,6 @@ export const Text: React.FC<TextProps> = (props) => {
   const { values } = useRegisterBindings({ ...props, text }, props.id, {
     setText,
   });
-
   return (
     <Typography.Text style={{ textAlign: getTextAlign(props.textAlign) }}>
       {values.text}

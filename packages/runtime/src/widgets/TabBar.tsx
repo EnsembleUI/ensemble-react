@@ -1,11 +1,16 @@
-import React from "react";
-import { WidgetRegistry } from "../registry";
-import { EnsembleRuntime } from "../runtime";
+import React, { type ReactElement } from "react";
+import {
+  type EnsembleWidget,
+  useRegisterBindings,
+  useScreenContext,
+} from "framework";
 import { Tabs, ConfigProvider } from "antd";
-import { EnsembleWidget } from "framework";
-import { IconProps } from "../util/types";
+import type { Expression, ScreenContextDefinition } from "framework";
+import { type IconProps } from "../util/types";
+import { evaluate } from "framework/src/evaluate";
+import { EnsembleRuntime } from "../runtime";
+import { WidgetRegistry } from "../registry";
 import { Icon } from "./Icon";
-import type { Expression } from "framework";
 
 const { TabPane } = Tabs;
 
@@ -32,7 +37,20 @@ export type TabBarProps = {
   };
 };
 export const TabBar: React.FC<TabBarProps> = (props) => {
-  const renderLabel = (label: string, icon?: IconProps) => {
+  const { values } = useRegisterBindings(props, props?.id);
+  const context = useScreenContext();
+  const renderLabel = (
+    label: Expression<string>,
+    icon?: IconProps
+  ): ReactElement => {
+    let labelEvaluated = "";
+    if (containsExpression(label)) {
+      const cleanedExpression = label.replace(/\${|}/g, "");
+      labelEvaluated = evaluate(
+        context as ScreenContextDefinition,
+        cleanedExpression
+      ) as string;
+    }
     return (
       <div
         style={{
@@ -42,7 +60,7 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
         }}
       >
         {icon && <Icon name={icon.name} size={icon.size} color={icon.color} />}{" "}
-        &nbsp; {label}
+        &nbsp; {labelEvaluated ? labelEvaluated : label}
       </div>
     );
   };
@@ -100,7 +118,7 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
     >
       <style>{customStyles}</style>
       <Tabs defaultActiveKey={setDefaultSelectedTab()}>
-        {props.items.map((tabItem) => (
+        {values.items.map((tabItem) => (
           <TabPane
             key={tabItem.label}
             tab={renderLabel(tabItem.label, tabItem.icon)}
@@ -114,3 +132,11 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
 };
 
 WidgetRegistry.register("TabBar", TabBar);
+
+function containsExpression(str: string): boolean {
+  // Regular expression to match expressions within `${}`
+  const expressionPattern = /\${[^}]*}/;
+
+  // Check if the string contains the expression pattern
+  return expressionPattern.test(str);
+}

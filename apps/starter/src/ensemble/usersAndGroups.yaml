@@ -30,6 +30,19 @@ View:
                   styles:
                     gap: 10
                   children:
+                    - Icons:
+                        label: Notifications
+                        hasNotification: true
+                        styles:
+                          backgroundColor: white
+                          borderWidth: 1px
+                          borderColor: grey
+                          iconWidth: 25
+                          iconHeight: 25
+                          width: 45
+                          height: 45
+                          notificationStyles:
+                            backgroundColor: "#6DC4E5"
                     - Avatar:
                         alt: abc
                         name: sana
@@ -45,11 +58,13 @@ View:
 
         - Markdown:
             text: "# User Management"
+        - Text:
+            text: ${getData.body.users[0].id + "groups"}
         - TabBar:
             id: tababr1
             selectedIndex: 0
             items:
-              - label: Overview
+              - label: ${ "Groups(" + getData.body.limit+")"}
                 widget:
                   Column:
                     children:
@@ -134,6 +149,49 @@ View:
                 widget:
                   Markdown:
                     text: "# Render widgets in this tab"
+              - label: Contributors
+                widget:
+                  Text:
+                    text: contributors
+              - label: Admins
+                widget:
+                  Text:
+                    text: admins
+        # - Row:
+        #     styles:
+        #       backgroundColor: white
+        #       mainAxis: spaceBetween
+        #       crossAxis: center
+        #       padding: 10
+        #     children:
+        # - Search:
+        #     styles:
+        #       width: 300px
+        #       backgroundColor: white
+        #       border: 1px solid grey
+        #       margin: 5px 5px 5px 5px
+        # - Row:
+        #     styles:
+        #       gap: 10
+        #     children:
+        # - Icons:
+        #     label: Notifications
+        #     hasNotification: true
+        #     styles:
+        #       backgroundColor: white
+        #       borderWidth: 1px
+        #       borderColor: grey
+        #       iconWidth: 25
+        #       iconHeight: 25
+        #       width: 45
+        #       height: 45
+        #       notificationStyles:
+        #         backgroundColor: "#6DC4E5"
+        # - ProfileIcon:
+        #     # source: https://tostatus.in/wp-content/uploads/2023/02/Single-Boy-for-Whatsapp-DP-Download-2023-1024x1024.jpg
+        #     name: Francisco
+        #     styles:
+        #       backgroundColor: "#28304B"
 
 API:
   getData:
