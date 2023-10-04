@@ -48,12 +48,12 @@ export const Dropdown: React.FC<DropdownProps> = (props) => {
     props.id,
     {
       setDropdownValue,
-    }
+    },
   );
 
   const onTapCallback = useExecuteCode(
     props.onChange?.executeCode || "",
-    values
+    values,
   );
   const onNavigate = useNavigateScreen(props.onChange?.navigateScreen || "");
 
