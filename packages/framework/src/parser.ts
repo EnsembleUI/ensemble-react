@@ -135,6 +135,7 @@ export const unwrapWidget = (obj: Record<string, unknown>): EnsembleWidget => {
   const properties = get(obj, name);
   const children = get(properties, "children");
   const template = get(properties, ["item-template", "template"]) as unknown;
+  const items = get(properties, "items");
   if (isArray(children)) {
     const unwrappedChildren = map(children, unwrapWidget);
     set(properties as object, "children", unwrappedChildren);
@@ -142,6 +143,13 @@ export const unwrapWidget = (obj: Record<string, unknown>): EnsembleWidget => {
   if (isObject(template)) {
     const unwrappedTemplate = unwrapWidget(template as Record<string, unknown>);
     set(properties as object, ["item-template", "template"], unwrappedTemplate);
+  }
+  if (isArray(items)) {
+    const valueItems = (items as Array<any>).map(({ label, widget, icon }) => {
+      const unwrappedWidget = unwrapWidget(widget);
+      return { label, icon, widget: unwrappedWidget };
+    });
+    set(properties as Object, "items", valueItems);
   }
   return {
     name,

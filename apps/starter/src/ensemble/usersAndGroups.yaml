@@ -7,7 +7,6 @@ View:
       styles:
         crossAxis: stretch
         margin: 0 20px
-        backgroundColor:
       children:
         - Row:
             backgroundColor: white
@@ -58,52 +57,84 @@ View:
 
         - Markdown:
             text: "# User Management"
-
         - TabBar:
-            TabPane:
-              - key: overview
-                label: Overview
-                page: Collections
-              - key: adoption usage
-                label: Adoption Usage
-              - key: group impact
-                label: Group Impact
-              - key: knowledge health
-                label: Knowledge Health
-
-        - Column:
-            children:
-              - GridView:
-                  item-template:
-                    data: getData.body.users
-                    name: user
-                    template:
-                      Card:
-                        styles:
-                          shadowColor: lightgrey
-                          shadowOffset: 8px
-                          shadowBlur: 10px
-                          shadowSpread: -2px
-                        children:
-                          - Column:
-                              styles:
-                                crossAxis: center
-                                gap: 5
-                              children:
-                                - Image:
-                                    source: ${user.image}
-                                    width: 40
-                                    height: 40
-                                    fit: cover
-                                    borderRadius: 100
-                                - Column:
-                                    styles:
-                                      crossAxis: start
-                                    children:
-                                      - Text:
-                                          text: ${user.firstName}
-                                      - Text:
-                                          text: ${user.email}
+            id: tababr1
+            selectedIndex: 0
+            items:
+              - label: Overview
+                widget:
+                  Column:
+                    children:
+                      - GridView:
+                          item-template:
+                            data: getData.body.users
+                            name: user
+                            template:
+                              Card:
+                                styles:
+                                  shadowColor: lightgrey
+                                  shadowOffset: 8px
+                                  shadowBlur: 10px
+                                  shadowSpread: -2px
+                                children:
+                                  - Column:
+                                      styles:
+                                        crossAxis: center
+                                        gap: 5
+                                      children:
+                                        - Image:
+                                            source: ${user.image}
+                                            width: 40
+                                            height: 40
+                                            fit: cover
+                                            borderRadius: 100
+                                        - Column:
+                                            styles:
+                                              crossAxis: start
+                                            children:
+                                              - Text:
+                                                  text: ${user.firstName}
+                                              - Text:
+                                                  text: ${user.email}
+              - label: Collections
+                widget:
+                  Markdown:
+                    text: "# Render widgets in this tab"
+        # - Row:
+        #     styles:
+        #       backgroundColor: white
+        #       mainAxis: spaceBetween
+        #       crossAxis: center
+        #       padding: 10
+        #     children:
+        # - Search:
+        #     styles:
+        #       width: 300px
+        #       backgroundColor: white
+        #       border: 1px solid grey
+        #       margin: 5px 5px 5px 5px
+        # - Row:
+        #     styles:
+        #       gap: 10
+        #     children:
+        # - Icons:
+        #     label: Notifications
+        #     hasNotification: true
+        #     styles:
+        #       backgroundColor: white
+        #       borderWidth: 1px
+        #       borderColor: grey
+        #       iconWidth: 25
+        #       iconHeight: 25
+        #       width: 45
+        #       height: 45
+        #       notificationStyles:
+        #         backgroundColor: "#6DC4E5"
+        # - ProfileIcon:
+        #     # source: https://tostatus.in/wp-content/uploads/2023/02/Single-Boy-for-Whatsapp-DP-Download-2023-1024x1024.jpg
+        #     name: Francisco
+        #     styles:
+        #       backgroundColor: "#28304B"
 
 API:
   getData:

@@ -5,21 +5,21 @@ import { Expression } from "framework";
 
 const options: ChartOptions<"bar"> = {
   maintainAspectRatio: false,
-  indexAxis: 'y',
+  indexAxis: "y",
   plugins: {
     legend: {
-      display: false
+      display: false,
     },
     tooltip: {
-      enabled: false
-    }
+      enabled: false,
+    },
   },
   scales: {
     x: {
       display: false,
       stacked: true,
       ticks: {
-        display: false
+        display: false,
       },
       border: {
         display: true,
@@ -31,7 +31,7 @@ const options: ChartOptions<"bar"> = {
     y: {
       display: false,
       ticks: {
-        display: false
+        display: false,
       },
       stacked: true,
       border: {
@@ -63,12 +63,13 @@ type BarChartProps = {
 export const StackBarChart: React.FC<BarChartProps> = (props) => {
   const { labels, datasets, styles, title } = props;
 
-  console.log("f-f-f-f>>  ", styles)
   return (
-    <div style={{
-      height: styles?.height || "20px",
-      width: styles?.width || "100%"
-    }}>
+    <div
+      style={{
+        height: styles?.height || "20px",
+        width: styles?.width || "100%",
+      }}
+    >
       <Bar
         data={{
           labels,
@@ -80,9 +81,9 @@ export const StackBarChart: React.FC<BarChartProps> = (props) => {
             ...options.plugins,
             title: {
               display: !!title,
-              text: title
-            }
-          }
+              text: title,
+            },
+          },
         }}
       />
     </div>
