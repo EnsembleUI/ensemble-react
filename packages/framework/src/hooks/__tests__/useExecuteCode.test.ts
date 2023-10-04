@@ -18,6 +18,7 @@ test("populates screen invokables in function context", () => {
       },
     },
     data: {},
+    storage: {},
   });
   const { result } = renderHook(() => useExecuteCode("myWidget.value"));
 
