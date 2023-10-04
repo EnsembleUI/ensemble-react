@@ -4,7 +4,7 @@ import { AutoComplete, Input, SelectProps } from "antd";
 import { WidgetRegistry } from "../registry";
 import type { SearchStyles } from "../util/types";
 import { SearchOutlined } from "@mui/icons-material";
-import { get, isString } from "lodash-es";
+import { get, isObject, isString } from "lodash-es";
 import { getColor, handleCurlyBraces } from "../util/utils";
 import "./Widgets.css";
 
@@ -37,15 +37,16 @@ export const Search: React.FC<SearchProps> = ({
       setOptions(
         value
           ? templateData
-              .filter((item) =>
-                get(item, searchKey ?? "")
-                  .toString()
-                  .toLowerCase()
-                  .includes(value.toLowerCase())
+              .filter(
+                (item) =>
+                  (isObject(item) ? get(item, searchKey ?? "") : item)
+                    ?.toString()
+                    ?.toLowerCase()
+                    ?.includes(value.toLowerCase())
               )
               .map((item) => ({
-                value: get(item, searchKey ?? ""),
-                label: get(item, searchKey ?? ""),
+                value: isObject(item) ? get(item, searchKey ?? "") : item,
+                label: isObject(item) ? get(item, searchKey ?? "") : item,
               }))
           : []
       );
