@@ -1,11 +1,16 @@
 import { isString, map } from "lodash-es";
-import type { CustomScope, Expression, EnsembleWidget } from "framework";
-import { CustomScopeProvider, useTemplateData } from "framework";
-import { Col, Row } from "antd";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import type { GridViewStyles } from "../util/types";
 import { handleCurlyBraces } from "../util/utils";
+import {
+  CustomScope,
+  CustomScopeProvider,
+  EnsembleWidget,
+  Expression,
+  useTemplateData,
+} from "framework";
+import { Col, Row } from "antd";
 
 interface EnsembleWidgetProps<T> {
   id?: string;
