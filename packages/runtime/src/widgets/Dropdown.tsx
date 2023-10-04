@@ -19,7 +19,6 @@ export type DropdownProps = {
   required?: boolean;
   enabled?: boolean;
   variant?: "standard" | "filled";
-  displayEmpty?: boolean;
   onChange?: {
     executeCode?: string;
     navigateScreen?: string;
@@ -33,9 +32,7 @@ export type DropdownProps = {
 };
 
 export const Dropdown: React.FC<DropdownProps> = (props) => {
-  const [dropdownValue, setDropdownValue] = React.useState(
-    props.defaultValue ?? ""
-  );
+  const [dropdownValue, setDropdownValue] = React.useState(props.hintText);
   const { values } = useRegisterBindings(
     { ...props, dropdownValue },
     props.id,
@@ -49,7 +46,7 @@ export const Dropdown: React.FC<DropdownProps> = (props) => {
     values
   );
   const onNavigate = useNavigateScreen(props.onChange?.navigateScreen || "");
-  
+
   const handleChange = (event: SelectChangeEvent) => {
     setDropdownValue(event.target.value as string);
     props.onChange?.executeCode && onTapCallback();
@@ -59,12 +56,14 @@ export const Dropdown: React.FC<DropdownProps> = (props) => {
   return (
     <FormControl sx={{ m: 1, minWidth: 120 }}>
       <Select
-        id={props.id}
         value={dropdownValue}
+        id={props.id}
         onChange={handleChange}
-        displayEmpty
-        placeholder={props.hintText}
+        required={props.required}
       >
+        <MenuItem value={props.hintText}>
+          <em>None</em>
+        </MenuItem>
         {props.menu &&
           props.menu?.map((menuItem) => {
             const itemValue =
