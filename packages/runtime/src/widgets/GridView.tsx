@@ -1,10 +1,16 @@
 import { isString, map } from "lodash-es";
-import type { CustomScope, Expression, EnsembleWidget } from "framework";
-import { CustomScopeProvider, useTemplateData } from "framework";
-import { Col, Row } from "antd";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import type { GridViewStyles } from "../util/types";
+import { handleCurlyBraces } from "../util/utils";
+import {
+  CustomScope,
+  CustomScopeProvider,
+  EnsembleWidget,
+  Expression,
+  useTemplateData,
+} from "framework";
+import { Col, Row } from "antd";
 
 interface EnsembleWidgetProps<T> {
   id?: string;
@@ -26,7 +32,7 @@ export const GridView: React.FC<GridViewProps> = ({
 }) => {
   const defaultColumnCount = 4;
   const templateData = useTemplateData(
-    isString(data) ? removeCurlyBraces(data) : data,
+    isString(data) ? handleCurlyBraces(data) : data
   );
 
   const namedData = map(templateData, (value) => ({
@@ -81,10 +87,3 @@ export const GridView: React.FC<GridViewProps> = ({
 };
 
 WidgetRegistry.register("GridView", GridView);
-
-function removeCurlyBraces(string: string): string {
-  if (string.startsWith("${") && string.endsWith("}")) {
-    return string.substring(2, string.length - 1);
-  }
-  return string;
-}

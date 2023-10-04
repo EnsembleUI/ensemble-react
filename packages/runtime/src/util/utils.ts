@@ -44,7 +44,7 @@ export const getColor = (color: number | string): string => {
 
 /// same common properties as with Flutter
 export const getTextAlign = (
-  value: string | undefined,
+  value: string | undefined
 ): "left" | "right" | "center" | "justify" | "end" | "start" => {
   switch (value) {
     case "left":
@@ -99,4 +99,10 @@ export const getCrossAxis = (crossAxis: string): string | undefined => {
 
 export const getIcon = (name: string): SvgIconComponent | undefined => {
   return get(Icons, name) as SvgIconComponent;
+};
+
+export const handleCurlyBraces = (string: string): string => {
+  if (string.startsWith("${") && string.endsWith("}")) {
+    return string.substring(2, string.length - 1);
+  } else return string;
 };

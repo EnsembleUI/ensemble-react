@@ -169,8 +169,6 @@ View:
                                           color: green
                                       - Text:
                                           text: ${user.weight}
-
-
                                 - Text:
                                     text: ${user.weight}
         - Text:
