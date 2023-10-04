@@ -48,8 +48,8 @@ export const EnsembleParser = {
       menu.items.forEach(
         (item) =>
           (item.screen = screens.find(
-            (screen) => "name" in screen && screen.name === item.page,
-          ) as EnsembleScreenModel),
+            (screen) => "name" in screen && screen.name === item.page
+          ) as EnsembleScreenModel)
       );
     }
 
@@ -63,10 +63,12 @@ export const EnsembleParser = {
 
   parseScreen: (
     name: string,
-    screen: EnsembleScreenYAML,
+    screen: EnsembleScreenYAML
   ): EnsembleScreenModel | EnsembleMenuModel => {
     const view = get(screen, "View");
     const viewNode = get(view, "body");
+    const header = get(view, "header") as Record<string, unknown> | undefined;
+
     if (!viewNode) {
       throw new Error("Invalid screen: missing view widget");
     }
@@ -75,7 +77,7 @@ export const EnsembleParser = {
     return {
       ...(view ?? {}),
       name,
-      header: get(view, "header"),
+      header: header ? unwrapWidget(header) : undefined,
       body: viewWidget,
       apis,
     };
@@ -133,6 +135,7 @@ export const unwrapWidget = (obj: Record<string, unknown>): EnsembleWidget => {
   const properties = get(obj, name);
   const children = get(properties, "children");
   const template = get(properties, ["item-template", "template"]) as unknown;
+  const items = get(properties, "items");
   if (isArray(children)) {
     const unwrappedChildren = map(children, unwrapWidget);
     set(properties as object, "children", unwrappedChildren);
@@ -140,6 +143,13 @@ export const unwrapWidget = (obj: Record<string, unknown>): EnsembleWidget => {
   if (isObject(template)) {
     const unwrappedTemplate = unwrapWidget(template as Record<string, unknown>);
     set(properties as object, ["item-template", "template"], unwrappedTemplate);
+  }
+  if (isArray(items)) {
+    const valueItems = (items as Array<any>).map(({ label, widget, icon }) => {
+      const unwrappedWidget = unwrapWidget(widget);
+      return { label, icon, widget: unwrappedWidget };
+    });
+    set(properties as Object, "items", valueItems);
   }
   return {
     name,
