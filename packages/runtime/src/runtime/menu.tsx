@@ -55,7 +55,7 @@ interface MenuBaseProps {
 const renderMuiIcon = (
   iconName?: string,
   width = "15px",
-  height = "15px"
+  height = "15px",
 ): ReactNode => {
   if (!iconName) {
     return null;
@@ -93,7 +93,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
 
   useEffect(() => {
     const locationMatch = props.items.find(
-      (item) => `/${item.page.toLowerCase()}` === location.pathname
+      (item) => `/${item.page.toLowerCase()}` === location.pathname,
     );
     if (locationMatch) {
       setSelectedItem(locationMatch.label);
@@ -131,7 +131,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
               icon={renderMuiIcon(
                 item.icon,
                 props.styles?.iconWidth,
-                props.styles?.iconHeight
+                props.styles?.iconHeight,
               )}
               key={item.page}
               onClick={() => handleClick(item.page, item.label)}
@@ -155,7 +155,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
                             props.styles?.labelFontSize
                               ? props.styles.labelFontSize
                               : 1
-                          }` || "1"
+                          }` || "1",
                         ) + 0.2
                       }rem`
                     : `${
