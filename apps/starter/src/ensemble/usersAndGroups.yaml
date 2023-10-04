@@ -33,7 +33,6 @@ View:
                         label: Notifications
                         hasNotification: true
                         styles:
-                          backgroundColor: white
                           borderWidth: 1px
                           borderColor: grey
                           iconWidth: 25
@@ -41,7 +40,7 @@ View:
                           width: 45
                           height: 45
                           notificationStyles:
-                            backgroundColor: "#6DC4E5"
+                          backgroundColor: '#6DC4E5'
                     - Avatar:
                         alt: abc
                         name: sana
@@ -107,34 +106,35 @@ View:
         #       crossAxis: center
         #       padding: 10
         #     children:
-        # - Search:
-        #     styles:
-        #       width: 300px
-        #       backgroundColor: white
-        #       border: 1px solid grey
-        #       margin: 5px 5px 5px 5px
-        # - Row:
-        #     styles:
-        #       gap: 10
-        #     children:
-        # - Icons:
-        #     label: Notifications
-        #     hasNotification: true
-        #     styles:
-        #       backgroundColor: white
-        #       borderWidth: 1px
-        #       borderColor: grey
-        #       iconWidth: 25
-        #       iconHeight: 25
-        #       width: 45
-        #       height: 45
-        #       notificationStyles:
-        #         backgroundColor: "#6DC4E5"
-        # - ProfileIcon:
-        #     # source: https://tostatus.in/wp-content/uploads/2023/02/Single-Boy-for-Whatsapp-DP-Download-2023-1024x1024.jpg
-        #     name: Francisco
-        #     styles:
-        #       backgroundColor: "#28304B"
+              # - Search:
+              #     styles:
+              #       width: 300px
+              #       backgroundColor: white
+              #       border: 1px solid grey
+              #       margin: 5px 5px 5px 5px
+              # - Row:
+              #     styles:
+              #       gap: 10
+              #     children:
+                    # - Icons:
+                    #     label: Notifications
+                    #     hasNotification: true
+                    #     styles:
+                    #       backgroundColor: white
+                    #       borderWidth: 1px
+                    #       borderColor: grey
+                    #       iconWidth: 25
+                    #       iconHeight: 25
+                    #       width: 45
+                    #       height: 45
+                    #       notificationStyles:
+                    #         backgroundColor: "#6DC4E5"
+                    # - ProfileIcon:
+                    #     # source: https://tostatus.in/wp-content/uploads/2023/02/Single-Boy-for-Whatsapp-DP-Download-2023-1024x1024.jpg
+                    #     name: Francisco
+                    #     styles:
+                    #       backgroundColor: "#28304B"
+                    
 
 API:
   getData:

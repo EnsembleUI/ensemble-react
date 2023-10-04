@@ -14,4 +14,3 @@ export * from "./Search";
 export * from "./Progress";
 export * from "./GridView";
 export * from "./Avatar/Avatar";
-export * from "./Search";
