@@ -10,6 +10,7 @@ export * from "./Row";
 export * from "./Charts";
 export * from "./DataGrid";
 export * from "./MultiSelect";
+export * from "./TabBar";
 export * from "./Progress";
 export * from "./GridView";
 export * from "./Avatar/Avatar";

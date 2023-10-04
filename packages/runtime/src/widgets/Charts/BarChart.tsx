@@ -49,8 +49,9 @@ export const BarChart: React.FC<BarChartProps> = (props) => {
     <div
       style={{
         height: styles?.height || "100%",
-        width: styles?.width || "100%"
-      }}>
+        width: styles?.width || "100%",
+      }}
+    >
       <Bar
         data={{
           labels,
@@ -61,9 +62,9 @@ export const BarChart: React.FC<BarChartProps> = (props) => {
           plugins: {
             title: {
               display: !!title,
-              text: title
-            }
-          }
+              text: title,
+            },
+          },
         }}
       />
     </div>
