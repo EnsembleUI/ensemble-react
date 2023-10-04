@@ -58,16 +58,7 @@ View:
               - key: group impact
                 label: Group Impact
               - key: knowledge health
-                label: Knowledge Health
-        - Dropdown:
-            id: dd
-            labelId: dd1
-            label: age
-            hintText: age
-            menu:
-              - Red
-              - Blue
-              - Green          
+                label: Knowledge Health     
         - Column:
             children:
               - GridView:
