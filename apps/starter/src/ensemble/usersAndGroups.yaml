@@ -58,8 +58,6 @@ View:
 
         - Markdown:
             text: "# User Management"
-        - Text:
-            text: ${getData.body.users[0].id + "groups"}
         - TabBar:
             id: tababr1
             selectedIndex: 0
