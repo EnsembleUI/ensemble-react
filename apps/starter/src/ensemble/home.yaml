@@ -1,14 +1,15 @@
 ViewGroup:
   SideBar:
     styles:
+      width: 240px
+      iconWidth: 20px
+      iconHeight: 20px
       backgroundColor: "#fcfeff"
-      labelColor: grey
-      selectedColor: black
+      labelColor: "#171B2A"
+      selectedColor: "#171B2A"
       labelFontSize: 1
       onSelectStyles:
-        borderWidth: "0px 0px 0px 0px"
-        borderColor: "red"
-        backgroundColor: "#e0e0e0"
+        backgroundColor: "#D5DAEA"
         borderRadius: 10px
     header:
       Image:

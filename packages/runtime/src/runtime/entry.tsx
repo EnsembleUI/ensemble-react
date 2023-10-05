@@ -28,7 +28,9 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({ entry }) => {
           items={entry.items}
           styles={entry.styles}
         />
-        <Outlet />
+        <div style={{ marginLeft: String(entry.styles.width), flexGrow: 1 }}>
+          <Outlet />
+        </div>
       </div>
     );
   }

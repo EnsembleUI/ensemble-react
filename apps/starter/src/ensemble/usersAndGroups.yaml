@@ -10,13 +10,14 @@ View:
     Column:
       styles:
         crossAxis: stretch
-        margin: 0 20px
       children:
         - Row:
             backgroundColor: white
             mainAxis: spaceBetween
             crossAxis: center
             padding: 10
+            styles:
+              borderBottom: "1px #D5DAEA solid"
             children:
               - Search:
                   styles:
@@ -34,8 +35,10 @@ View:
                     gap: 10
                   children:
                     - Avatar:
+                        styles:
+                          backgroundColor: "#171B2A"
                         alt: abc
-                        name: sana
+                        name: Adam
                         menu:
                           - label: Personal Information
                             icon: Person
@@ -45,74 +48,35 @@ View:
                             icon: Settings
                             onTap:
                               navigateScreen: Collections
-
-        - Markdown:
-            text: "# User Management"
-        - TabBar:
-            id: tababr1
-            selectedIndex: 0
-            items:
-              - label: ${ "Groups(" + getData.body.limit+")"}
-                widget:
-                  Column:
-                    children:
-                      - Row:
-                          mainAxis: spaceBetween
+        - Column:
+            styles:
+              padding: 0 40px
+              backgroundColor: "#FAFAFA"
+            children:
+              - Markdown:
+                  text: "# User Management"
+              - TabBar:
+                  id: tababr1
+                  selectedIndex: 0
+                  items:
+                    - label: ${ "Groups(" + getData.body.limit+")"}
+                      widget:
+                        Column:
                           children:
-                            - Search:
-                                styles:
-                                  width: 320px
-                                  height: 40px
-                                  borderRadius: 12
-                                  borderWidth: 2
-                                  borderStyle: solid
-                                  borderColor: "#B8BED6"
-                                placeholder: Search
-                                data: getData.body.users
-                                searchKey: email
-                            - Button:
-                                label: Create new group
-                                styles:
-                                  backgroundColor: black
-                                  padding: 16
-                                gap: 6
-                                startingIcon:
-                                  name: Add
-                                  color: white
-                                  size: 22
-                                onTap:
-                                  navigateModalScreen:
-                                    name: Create Group
-                                    maskClosable: false
-                      - Conditional:
-                          conditions:
-                            - if: ${!getData.body.users}
-                              Column:
-                                mainAxis: center
-                                crossAxis: center
-                                gap: 24
+                            - Row:
+                                mainAxis: spaceBetween
                                 children:
-                                  - Column:
+                                  - Search:
                                       styles:
-                                        width: 200
-                                        height: 200
-                                        backgroundColor: "#D9D9D9"
-                                        borderRadius: 100
-                                      children:
-                                        - Text:
-                                            text:
-                                  - Column:
-                                      crossAxis: center
-                                      children:
-                                        - Text:
-                                            text: Organize users into groups
-                                            styles:
-                                              fontSize: 22
-                                              color: black
-                                              fontWeight: 600
-                                        - Text:
-                                            text: Grant users messaging access by adding them to groups.
-
+                                        width: 320px
+                                        height: 40px
+                                        borderRadius: 12
+                                        borderWidth: 2
+                                        borderStyle: solid
+                                        borderColor: "#B8BED6"
+                                      placeholder: Search
+                                      data: getData.body.users
+                                      searchKey: email
                                   - Button:
                                       label: Create new group
                                       styles:
@@ -127,159 +91,223 @@ View:
                                         navigateModalScreen:
                                           name: Create Group
                                           maskClosable: false
-
-                            - else:
-                              GridView:
-                                item-template:
-                                  data: ensemble.storage.get("arrayOfUsers")
-                                  name: user
-                                  template:
-                                    Card:
-                                      styles:
-                                        shadowColor: lightgrey
-                                        shadowOffset: 8px
-                                        shadowBlur: 10px
-                                        shadowSpread: -2px
+                            - Conditional:
+                                conditions:
+                                  - if: ${!getData.body.users}
+                                    Column:
+                                      mainAxis: center
+                                      crossAxis: center
+                                      gap: 24
                                       children:
                                         - Column:
                                             styles:
-                                              crossAxis: center
-                                              gap: 5
+                                              width: 200
+                                              height: 200
+                                              backgroundColor: "#D9D9D9"
+                                              borderRadius: 100
                                             children:
-                                              - Conditional:
-                                                  conditions:
-                                                    - if: ${user.image}
-                                                      Image:
-                                                        source: ${user.image}
-                                                        width: 40
-                                                        height: 40
-                                                        fit: cover
-                                                        borderRadius: 100
-                                                    - else:
-                                                      Avatar:
-                                                        alt: abc
-                                                        name: ${user.firstName}
+                                              - Text:
+                                                  text:
+                                        - Column:
+                                            crossAxis: center
+                                            gap: 24
+                                            children:
                                               - Column:
                                                   styles:
-                                                    crossAxis: start
+                                                    width: 200
+                                                    height: 200
+                                                    backgroundColor: "#D9D9D9"
+                                                    borderRadius: 100
                                                   children:
                                                     - Text:
-                                                        text: ${user.firstName}
+                                                        text:
+                                              - Column:
+                                                  crossAxis: center
+                                                  children:
                                                     - Text:
-                                                        text: ${user.email}
+                                                        text: Organize users into groups
+                                                        styles:
+                                                          fontSize: 22
+                                                          color: black
+                                                          fontWeight: 600
+                                                    - Text:
+                                                        text: Grant users messaging access by adding them to groups.
 
-              - label: All Users
-                widget:
-                  Row:
-                    children:
-                      - Column:
+                                              - Button:
+                                                  label: Create new group
+                                                  styles:
+                                                    backgroundColor: black
+                                                    padding: 16
+                                                  gap: 6
+                                                  startingIcon:
+                                                    name: Add
+                                                    color: white
+                                                    size: 22
+                                                  onTap:
+                                                    navigateModalScreen:
+                                                      name: Create Group
+                                                      maskClosable: false
+
+                                  - else:
+                                    GridView:
+                                      item-template:
+                                        data: ensemble.storage.get("arrayOfUsers")
+                                        name: user
+                                        template:
+                                          Card:
+                                            styles:
+                                              shadowColor: lightgrey
+                                              shadowOffset: 8px
+                                              shadowBlur: 10px
+                                              shadowSpread: -2px
+                                              backgroundColor: white
+                                            children:
+                                              - Column:
+                                                  children:
+                                                    - Conditional:
+                                                        conditions:
+                                                          - if: ${user.image}
+                                                            Image:
+                                                              source: ${user.image}
+                                                              width: 40
+                                                              height: 40
+                                                              fit: cover
+                                                              borderRadius: 100
+                                                          - else:
+                                                            Avatar:
+                                                              styles:
+                                                                backgroundColor: "#D9D9D9"
+                                                              alt: abc
+                                                              name: ${user.firstName}
+                                                    - Column:
+                                                        styles:
+                                                          crossAxis: center
+                                                          gap: 5
+                                                          marginTop: 20px
+                                                        children:
+                                                          - Column:
+                                                              styles:
+                                                                crossAxis: start
+                                                              children:
+                                                                - Text:
+                                                                    text: ${user.firstName}
+                                                                - Text:
+                                                                    text: ${user.email}
+
+                    - label: All Users
+                      widget:
+                        Row:
                           children:
-                            - Row:
-                                mainAxis: spaceBetween
+                            - Column:
                                 children:
-                                  - Column:
-                                      mainAxis: start
-                                      children:
-                                        - Text:
-                                            text: All Users
-                                            styles:
-                                              fontSize: 22
-                                              fontWeight: 600
-                                        - Text:
-                                            text: Users must be added to a group to get access to messaging.
-                                            styles:
-                                              fontSize: 16
-                                              fontWeight: 400
                                   - Row:
                                       mainAxis: spaceBetween
-                                      gap: 20
                                       children:
-                                        - Search:
-                                            styles:
-                                              width: 320px
-                                              height: 40px
-                                              borderRadius: 12
-                                              borderWidth: 2
-                                              borderStyle: solid
-                                              borderColor: "#B8BED6"
-                                            placeholder: Search
-                                            data: getData.body.users
-                                            searchKey: email
-                                        - Button:
-                                            label: invite
-                                            styles:
-                                              backgroundColor: "#072CC4"
-                                              padding: 16
-                                            gap: 6
-                                            startingIcon:
-                                              name: Add
-                                              color: white
-                                              size: 22
-                                            onTap:
-                                              navigateModalScreen:
-                                                name: Create Group
-                                                maskClosable: false
-
-                            - DataGrid:
-                                DataColumns:
-                                  - label: User
-                                  - label: Role
-                                  - label: Groups
-                                  - label: Last Active
-                                item-template:
-                                  data: getData.body.users
-                                  name: user
-                                  template:
-                                    DataRow:
-                                      children:
-                                        # Person
+                                        - Column:
+                                            mainAxis: start
+                                            children:
+                                              - Text:
+                                                  text: All Users
+                                                  styles:
+                                                    fontSize: 22
+                                                    fontWeight: 600
+                                              - Text:
+                                                  text: Users must be added to a group to get access to messaging.
+                                                  styles:
+                                                    fontSize: 16
+                                                    fontWeight: 400
                                         - Row:
-                                            crossAxis: center
                                             mainAxis: spaceBetween
-                                            gap: 5
+                                            gap: 20
                                             children:
-                                              - Avatar:
-                                                  name: ${user.firstName}
-                                              - Column:
-                                                  crossAxis: start
+                                              - Search:
+                                                  styles:
+                                                    width: 320px
+                                                    height: 40px
+                                                    borderRadius: 12
+                                                    borderWidth: 2
+                                                    borderStyle: solid
+                                                    borderColor: "#B8BED6"
+                                                  placeholder: Search
+                                                  data: getData.body.users
+                                                  searchKey: email
+                                              - Button:
+                                                  label: invite
+                                                  styles:
+                                                    backgroundColor: "#072CC4"
+                                                    padding: 16
+                                                  gap: 6
+                                                  startingIcon:
+                                                    name: Add
+                                                    color: white
+                                                    size: 22
+                                                  onTap:
+                                                    navigateModalScreen:
+                                                      name: Create Group
+                                                      maskClosable: false
+
+                                  - DataGrid:
+                                      DataColumns:
+                                        - label: User
+                                        - label: Role
+                                        - label: Groups
+                                        - label: Last Active
+                                      item-template:
+                                        data: getData.body.users
+                                        name: user
+                                        template:
+                                          DataRow:
+                                            children:
+                                              # Person
+                                              - Row:
+                                                  crossAxis: center
+                                                  mainAxis: spaceBetween
+                                                  gap: 5
                                                   children:
-                                                    - Text:
-                                                        text: ${user.firstName}
-                                                    - Text:
-                                                        text: ${user.email}
-                                        - Text:
-                                            text: user
+                                                    - Avatar:
+                                                        styles:
+                                                          backgroundColor: "#D9D9D9"
+                                                        name: ${user.firstName}
+                                                    - Column:
+                                                        crossAxis: start
+                                                        children:
+                                                          - Text:
+                                                              text: ${user.firstName}
+                                                          - Text:
+                                                              text: ${user.email}
+                                              - Text:
+                                                  text: user
 
-                                        # MoM
-                                        - Row:
-                                            crossAxis: center
-                                            gap: 10
-                                            children:
-                                              - Tag:
-                                                  label: Administration
-                                                  icon:
-                                                    name: CloseOutlined
-                                                  styles:
-                                                    backgroundColor: "#FBF8EC"
-                                                    borderRadius: 2
-                                              - Tag:
-                                                  label: Human Resource
-                                                  icon:
-                                                    name: CloseOutlined
-                                                  styles:
-                                                    backgroundColor: "#FBF8EC"
-                                                    borderRadius: 2
+                                              # MoM
+                                              - Row:
+                                                  crossAxis: center
+                                                  gap: 10
+                                                  children:
+                                                    - Tag:
+                                                        label: Administration
+                                                        icon:
+                                                          name: CloseOutlined
+                                                        styles:
+                                                          backgroundColor: "#FBF8EC"
+                                                          borderRadius: 2
+                                                    - Tag:
+                                                        label: Human Resource
+                                                        icon:
+                                                          name: CloseOutlined
+                                                        styles:
+                                                          backgroundColor: "#FBF8EC"
+                                                          borderRadius: 2
 
-                                        - Text:
-                                            text: 1 day ago
-              - label: Contributors
-                widget:
-                  Text:
-                    text: contributors
-              - label: Admins
-                widget:
-                  Text:
-                    text: admins
+                                              - Text:
+                                                  text: 1 day ago
+                    - label: Contributors
+                      widget:
+                        Text:
+                          text: contributors
+                    - label: Admins
+                      widget:
+                        Text:
+                          text: admins
 API:
   getData:
     method: GET

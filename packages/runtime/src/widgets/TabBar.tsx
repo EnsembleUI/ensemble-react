@@ -14,12 +14,12 @@ import { Icon } from "./Icon";
 
 const { TabPane } = Tabs;
 
-export type TabBarItem = {
+export interface TabBarItem {
   label: Expression<string>;
   icon?: IconProps;
   widget: EnsembleWidget;
-};
-export type TabBarProps = {
+}
+export interface TabBarProps {
   id?: string;
   selectedIndex?: number;
   items: TabBarItem[];
@@ -35,7 +35,7 @@ export type TabBarProps = {
     indicatorColor: string;
     indicatorThickness: string;
   };
-};
+}
 export const TabBar: React.FC<TabBarProps> = (props) => {
   const { values } = useRegisterBindings(props, props?.id);
   const context = useScreenContext();
@@ -88,7 +88,7 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
     }
 
     .ant-tabs > .ant-tabs-nav {
-      background-color: ${props.styles?.tabBackgroundColor || "white"};
+      background-color: ${props.styles?.tabBackgroundColor || "none"};
     }
 
     .ant-tabs {
@@ -123,7 +123,7 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
             key={tabItem.label}
             tab={renderLabel(tabItem.label, tabItem.icon)}
           >
-            {tabItem.widget && EnsembleRuntime.render([tabItem.widget])}
+            {tabItem.widget ? EnsembleRuntime.render([tabItem.widget]) : null}
           </TabPane>
         ))}
       </Tabs>
