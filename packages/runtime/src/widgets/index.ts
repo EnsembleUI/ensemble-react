@@ -18,3 +18,4 @@ export * from "./Avatar/Avatar";
 export * from "./Form";
 export * from "./MultiSelect";
 export * from "./Divider";
+export * from "./Tag";

@@ -15,7 +15,6 @@ View:
           const firstName = groupName.value
           const res = ensemble.storage.get("arrayOfUsers")
           res.push({"id": res.length+1, "firstName": firstName })
-          console.log(res)
       children:
         - TextInput:
             id: groupName
