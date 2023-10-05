@@ -50,7 +50,7 @@ export const getColor = (color: number | string): string => {
 
 /// same common properties as with Flutter
 export const getTextAlign = (
-  value: string | undefined
+  value: string | undefined,
 ): "left" | "right" | "center" | "justify" | "end" | "start" => {
   switch (value) {
     case "left":

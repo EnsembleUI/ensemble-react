@@ -1,26 +1,25 @@
 import React, { useEffect, useState } from "react";
-import type { Expression } from "framework";
-import { useRegisterBindings, useExecuteCode } from "framework";
+import type { EnsembleAction, ExecuteCodeAction, Expression } from "framework";
+import { useRegisterBindings } from "framework";
 import {
   Avatar as MuiAvatar,
   Menu,
   MenuItem,
   ListItemIcon,
 } from "@mui/material";
-import { useNavigateScreen } from "../../runtime/navigate";
+import { useNavigateScreen } from "../../runtime/hooks/useNavigateScreen";
+import { useExecuteCode } from "../../runtime/hooks/useEnsembleAction";
 import { WidgetRegistry } from "../../registry";
 import type { IconProps } from "../../util/types";
 import { Icon } from "../Icon";
 import { stringToColor } from "./utils/stringToColors";
 import { generateInitials } from "./utils/generateInitials";
+import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 
 export interface AvatarMenu {
   label: string;
   icon?: IconProps;
-  onTap?: {
-    executeCode?: string;
-    navigateScreen?: string;
-  };
+  onTap?: EnsembleAction;
 }
 
 export interface AvatarProps {
@@ -38,8 +37,8 @@ export interface AvatarProps {
 }
 
 export const Avatar: React.FC<AvatarProps> = (props) => {
-  const [code, setCode] = useState("");
-  const [screen, setScreen] = useState("");
+  const [code, setCode] = useState<ExecuteCodeAction>();
+  const [screen, setScreen] = useState<ExecuteCodeAction>();
   const nameString = props.name?.toString();
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(Boolean(menuAnchorEl));
@@ -48,8 +47,8 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
     setText,
   });
 
-  const onTapCallback = useExecuteCode(code, values);
-  const onNavigate = useNavigateScreen(screen);
+  //const onTapCallback = useExecuteCode(code, values);
+  //const onNavigate = useNavigateScreen(screen);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>): void => {
     setMenuAnchorEl(event.currentTarget);
@@ -67,12 +66,12 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
     handleMenuClose();
   };
 
-  useEffect(() => {
-    code && onTapCallback();
-  }, [code, onTapCallback]);
-  useEffect(() => {
-    screen && onNavigate();
-  }, [screen, onNavigate]);
+  // useEffect(() => {
+  //   code && onTapCallback();
+  // }, [code, onTapCallback]);
+  // useEffect(() => {
+  //   screen && onNavigate();
+  // }, [screen, onNavigate]);
 
   return (
     <div>

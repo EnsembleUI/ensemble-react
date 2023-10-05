@@ -7,14 +7,14 @@ import { getTextAlign } from "../util/utils";
 import { Icon } from "./Icon";
 
 export type TagProps = {
-    id?: string;
+  id?: string;
   label: Expression<string>;
-  styles?:{
+  styles?: {
     backgroundColor: string;
     borderRadius: string;
-  }
+  };
   icon: IconProps;
-}
+};
 
 export const Tag: React.FC<TagProps> = (props) => {
   const [text, setText] = useState(props.label);
@@ -23,7 +23,13 @@ export const Tag: React.FC<TagProps> = (props) => {
   });
 
   return (
-    <div style={{ display: "inline-flex", justifyContent: "left", alignItems: "center" }}>
+    <div
+      style={{
+        display: "inline-flex",
+        justifyContent: "left",
+        alignItems: "center",
+      }}
+    >
       <Typography.Text
         style={{
           backgroundColor: props.styles?.backgroundColor ?? "#e6e7e8",
