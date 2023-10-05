@@ -25,7 +25,9 @@ export const GridView: React.FC<GridViewProps> = ({
   styles,
 }) => {
   const defaultColumnCount = 4;
-  const templateData = useTemplateData(data);
+  const templateData = useTemplateData(
+    isString(data) ? handleCurlyBraces(data) : data
+  );
 
   const namedData = map(templateData, (value) => ({
     [name]: value,
@@ -57,7 +59,7 @@ export const GridView: React.FC<GridViewProps> = ({
             <CustomScopeProvider value={namedData[dataIndex] as CustomScope}>
               {EnsembleRuntime.render([template])}
             </CustomScopeProvider>
-          </Col>,
+          </Col>
         );
     }
     rows.push(
@@ -71,7 +73,7 @@ export const GridView: React.FC<GridViewProps> = ({
         }}
       >
         {cols}
-      </Row>,
+      </Row>
     );
   }
 

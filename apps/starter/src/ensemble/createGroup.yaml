@@ -1,0 +1,26 @@
+View:
+  header:
+    Text:
+      text: Create a new group
+      styles:
+        fontSize: 24
+        fontWeight: 500
+  body:
+    Column:
+      children:
+        - Text:
+            text: TODO 1
+        - Text:
+            text: TODO 2
+        - Text:
+            text: TODO 3
+        - Text:
+            text: TODO 4
+        - Text:
+            text: TODO 5
+        - Text:
+            text: TODO 6
+        - Text:
+            text: TODO 7
+        - Text:
+            text: TODO 8
