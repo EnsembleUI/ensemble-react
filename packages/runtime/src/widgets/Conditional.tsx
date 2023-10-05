@@ -1,8 +1,9 @@
 import type { Expression, ScreenContextDefinition } from "framework";
 import { evaluate, unwrapWidget, useScreenContext } from "framework";
-import { head, isEmpty, last } from "lodash-es";
+import { cloneDeep, head, isEmpty, last } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
+import { useMemo } from "react";
 
 type CondtionalElement = Record<Capitalize<string>, Record<string, unknown>> &
   (
@@ -36,7 +37,7 @@ export const Conditional: React.FC<ConditionalProps> = (props) => {
     else return <></>;
   }
 
-  const widget = extractWidget(element);
+  const widget = useMemo(() => extractWidget(element!), [element]);
 
   return <>{EnsembleRuntime.render([widget])}</>;
 };
@@ -44,7 +45,7 @@ export const Conditional: React.FC<ConditionalProps> = (props) => {
 WidgetRegistry.register("Conditional", Conditional);
 
 export const hasProperStructure = (
-  conditions: CondtionalElement[],
+  conditions: CondtionalElement[]
 ): [boolean, string] => {
   if (isEmpty(conditions) || !("if" in head(conditions)!))
     return [
@@ -76,7 +77,9 @@ export const hasProperStructure = (
 export const extractWidget = (condition: CondtionalElement) => {
   for (const key in condition)
     if (key !== "if" && key !== "elseif" && key !== "else")
-      return unwrapWidget({ [key]: condition[key as keyof typeof condition] });
+      return unwrapWidget({
+        [key]: cloneDeep(condition[key as keyof typeof condition]),
+      });
 
   throw Error("Improper structure, make sure every condition has a widget");
 };
