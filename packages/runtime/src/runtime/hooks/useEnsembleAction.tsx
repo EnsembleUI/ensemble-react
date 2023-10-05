@@ -10,7 +10,7 @@ import type {
   Response,
   EnsembleAction,
 } from "framework";
-import { isString } from "lodash-es";
+import { isString, merge } from "lodash-es";
 import { useState, useEffect, useMemo } from "react";
 import { useNavigateScreen } from "./useNavigateScreen";
 // FIXME: refactor
@@ -47,8 +47,8 @@ export const useExecuteCode: EnsembleActionHook<
       return;
     }
 
-    return () => {
-      const retVal = evaluate(screen, js, options?.context);
+    return (args: unknown) => {
+      const retVal = evaluate(screen, js, merge({}, options?.context, args));
       onCompleteAction?.callback();
       return retVal;
     };
@@ -103,7 +103,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
       return;
     }
 
-    onResponseAction?.callback(response);
+    onResponseAction?.callback({ response });
   }, [action?.onResponse, onResponseAction, response]);
 
   const onErrorAction = useEnsembleAction(action?.onError);
@@ -112,7 +112,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
       return;
     }
 
-    onErrorAction?.callback(error);
+    onErrorAction?.callback({ error });
   }, [action?.onError, error, onErrorAction]);
 
   return invokeApi;
