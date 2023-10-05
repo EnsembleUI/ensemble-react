@@ -16,6 +16,7 @@ import { useNavigateScreen } from "./useNavigateScreen";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { useNavigateModalScreen } from "./useNavigateModal";
+import { useShowToast } from "./useShowToast";
 
 export type EnsembleActionHookResult =
   | {
@@ -137,6 +138,13 @@ export const useEnsembleAction = (
     action.navigateModalScreen,
     options as null,
   );
-  return invokeApi || executeCode || navigateScreen || navigateModalScreen;
+  const showToast = useShowToast(action.showToast);
+  return (
+    invokeApi ||
+    executeCode ||
+    navigateScreen ||
+    navigateModalScreen ||
+    showToast
+  );
 };
 /* eslint-enable react-hooks/rules-of-hooks */

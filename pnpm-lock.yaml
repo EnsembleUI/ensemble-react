@@ -139,6 +139,7 @@ importers:
       react-dom: ^18.2.0
       react-markdown: ^8.0.7
       react-router-dom: ^6.16.0
+      react-toastify: ^9.1.3
       tsconfig: workspace:*
       tsup: ^7.2.0
     devDependencies:
@@ -162,6 +163,7 @@ importers:
       react-dom: 18.2.0_react@18.2.0
       react-markdown: 8.0.7_3439121291b5e89e1eb824656ce6133e
       react-router-dom: 6.16.0_react-dom@18.2.0+react@18.2.0
+      react-toastify: 9.1.3_react-dom@18.2.0+react@18.2.0
       tsconfig: link:../tsconfig
       tsup: 7.2.0
 
@@ -5288,6 +5290,11 @@ packages:
   /clone/1.0.4:
     resolution: {integrity: sha512-JQHZ2QMW6l3aH/j6xCqQThY/9OH4D/9ls34cgkUBiEeocRTU04tHfKPBsUK1PqZCUQM7GiA0IIXJSuXHI64Kbg==}
     engines: {node: '>=0.8'}
+    dev: true
+
+  /clsx/1.2.1:
+    resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
+    engines: {node: '>=6'}
     dev: true
 
   /clsx/2.0.0:
@@ -12363,6 +12370,17 @@ packages:
       - webpack-cli
       - webpack-hot-middleware
       - webpack-plugin-serve
+    dev: true
+
+  /react-toastify/9.1.3_react-dom@18.2.0+react@18.2.0:
+    resolution: {integrity: sha512-fPfb8ghtn/XMxw3LkxQBk3IyagNpF/LIKjOBflbexr2AWxAH1MJgvnESwEwBn9liLFXgTKWgBSdZpw9m4OTHTg==}
+    peerDependencies:
+      react: '>=16'
+      react-dom: '>=16'
+    dependencies:
+      clsx: 1.2.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: true
 
   /react-transition-group/4.4.5_react-dom@18.2.0+react@18.2.0:
