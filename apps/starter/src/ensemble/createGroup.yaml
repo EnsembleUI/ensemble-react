@@ -11,8 +11,11 @@ View:
         labelPosition: top
         gap: 20
       onSubmit:
-        invokeAPI:
-          name: addCollection
+        executeCode: |
+          const firstName = groupName.value
+          const res = ensemble.storage.get("arrayOfUsers")
+          res.push({"id": res.length+1, "firstName": firstName })
+          console.log(res)
       children:
         - TextInput:
             id: groupName
@@ -23,7 +26,6 @@ View:
               thickness: 1
               color: "#ECEFF6"
         - Text:
-            id: textMy
             text: Group icon
             styles:
               fontSize: 14
@@ -45,13 +47,24 @@ View:
                     borderRadius: "8px"
                     border: "1px solid black"
                     padding: 12
+                  onTap:
+                    executeCode: |
+                      console.log("Hello")
         - Divider:
             styles:
               thickness: 1
               color: "#ECEFF6"
-        - TextInput:
-            value: as
-            hintText: Add users by name or email (Optional)
+        - MultiSelect:
+            id: multiValue
+            data: getData.body.users
+            labelKey: email
+            valueKey: email
+            default:
+              [
+                { value: "jack", label: "jack" },
+                { value: "lucy", label: "lucy" },
+              ]
+            placeholder: "Select From Groups"
         - Divider:
             styles:
               thickness: 1

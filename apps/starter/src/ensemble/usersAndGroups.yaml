@@ -2,6 +2,9 @@ View:
   onLoad:
     invokeApi:
       name: getData
+      onResponse:
+        executeCode: |
+          ensemble.storage.set("arrayOfUsers",response.body.users)
 
   body:
     Column:
@@ -53,6 +56,34 @@ View:
                 widget:
                   Column:
                     children:
+                      - Row:
+                          mainAxis: spaceBetween
+                          children:
+                            - Search:
+                                styles:
+                                  width: 320px
+                                  height: 40px
+                                  borderRadius: 12
+                                  borderWidth: 2
+                                  borderStyle: solid
+                                  borderColor: "#B8BED6"
+                                placeholder: Search
+                                data: getData.body.users
+                                searchKey: email
+                            - Button:
+                                label: Create new group
+                                styles:
+                                  backgroundColor: black
+                                  padding: 16
+                                gap: 6
+                                startingIcon:
+                                  name: Add
+                                  color: white
+                                  size: 22
+                                onTap:
+                                  navigateModalScreen:
+                                    name: Create Group
+                                    maskClosable: false
                       - Conditional:
                           conditions:
                             - if: ${!getData.body.users}
@@ -100,7 +131,7 @@ View:
                             - else:
                               GridView:
                                 item-template:
-                                  data: getData.body.users
+                                  data: ensemble.storage.get("arrayOfUsers")
                                   name: user
                                   template:
                                     Card:
@@ -115,12 +146,19 @@ View:
                                               crossAxis: center
                                               gap: 5
                                             children:
-                                              - Image:
-                                                  source: ${user.image}
-                                                  width: 40
-                                                  height: 40
-                                                  fit: cover
-                                                  borderRadius: 100
+                                              - Conditional:
+                                                  conditions:
+                                                    - if: ${user.image}
+                                                      Image:
+                                                        source: ${user.image}
+                                                        width: 40
+                                                        height: 40
+                                                        fit: cover
+                                                        borderRadius: 100
+                                                    - else:
+                                                      Avatar:
+                                                        alt: abc
+                                                        name: ${user.firstName}
                                               - Column:
                                                   styles:
                                                     crossAxis: start
@@ -148,5 +186,4 @@ API:
     method: GET
     uri: https://dummyjson.com/users
     onResponse:
-      executeCode: |
-        ensemble.storage.set("arrayOfUsers",response.body.users)
+      executeCode: console.log("Hello")
