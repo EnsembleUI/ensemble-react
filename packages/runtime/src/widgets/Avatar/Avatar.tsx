@@ -47,7 +47,7 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
   const { values } = useRegisterBindings({ ...props, text }, props.alt, {
     setText,
   });
-  
+
   const onTapCallback = useExecuteCode(code, values);
   const onNavigate = useNavigateScreen(screen);
 

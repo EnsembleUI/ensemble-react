@@ -1,5 +1,5 @@
 {
   "extends": "tsconfig/react-library.json",
-  "include": ["./src"],
+  "include": ["./src", "../runtime/src/runtime/hooks/useExecuteCode.ts", "../runtime/src/runtime/hooks/__tests__/useExecuteCode.test.ts"],
   "exclude": ["dist", "build", "node_modules"]
 }

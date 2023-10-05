@@ -1,6 +1,7 @@
 View:
   onLoad:
-    name: getData
+    invokeApi:
+      name: getData
 
   body:
     Column:
@@ -29,18 +30,6 @@ View:
                   styles:
                     gap: 10
                   children:
-                    - Icons:
-                        label: Notifications
-                        hasNotification: true
-                        styles:
-                          borderWidth: 1px
-                          borderColor: grey
-                          iconWidth: 25
-                          iconHeight: 25
-                          width: 45
-                          height: 45
-                          notificationStyles:
-                          backgroundColor: '#6DC4E5'
                     - Avatar:
                         alt: abc
                         name: sana
@@ -114,12 +103,6 @@ View:
                                       mainAxis: spaceBetween
                                       gap: 10
                                       children:
-                                        - Image:
-                                            source: ${user.image}
-                                            width: 40
-                                            height: 40
-                                            fit: cover
-                                            borderRadius: 100
                                         - Column:
                                             children:
                                               - Text:

@@ -1,9 +1,10 @@
 import { atom, createStore } from "jotai";
 import { focusAtom } from "jotai-optics";
 import type { Response } from "./data";
-import type { EnsembleAppModel } from "./shared/models";
+import type { EnsembleAppModel, EnsembleScreenModel } from "./shared/models";
 
 export interface ScreenContextDefinition {
+  model?: EnsembleScreenModel;
   data: Record<string, Response | undefined>;
   widgets: Record<string, WidgetState | undefined>;
   storage: Record<string, unknown>;
@@ -49,6 +50,7 @@ export interface Invokable {
 }
 
 export const screenAtom = atom<ScreenContextDefinition>({
+  model: undefined,
   data: {},
   widgets: {},
   storage: {},

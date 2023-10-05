@@ -4,6 +4,12 @@ import { get } from "lodash-es";
 
 type Color = number | string;
 
+export interface EnsembleWidgetProps<T> {
+  id?: string;
+  [key: string]: unknown;
+  styles?: T;
+}
+
 const namedColors: { [key in Color]?: string } = {
   black: "0xff000000",
   white: "0xffffffff",
@@ -99,11 +105,4 @@ export const getCrossAxis = (crossAxis: string): string | undefined => {
 
 export const getIcon = (name: string): SvgIconComponent | undefined => {
   return get(Icons, name) as SvgIconComponent;
-};
-
-export const handleCurlyBraces = (string: string): string => {
-  if (string.startsWith("${") && string.endsWith("}")) {
-    return string.substring(2, string.length - 1);
-  }
-  return string;
 };
