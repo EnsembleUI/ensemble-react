@@ -11,12 +11,6 @@ export interface EnsembleScreenProps {
 }
 
 export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({ screen }) => {
-  const rootWidget = screen.body;
-  const WidgetFn = WidgetRegistry.find(rootWidget.name);
-  if (!(WidgetFn instanceof Function)) {
-    throw new Error(`Unknown widget: ${rootWidget.name}`);
-  }
-
   const onLoadAction = useEnsembleAction(screen.onLoad);
 
   useEffect(() => {
@@ -25,6 +19,12 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({ screen }) => {
     }
     onLoadAction.callback();
   }, [onLoadAction]);
+
+  const rootWidget = screen.body;
+  const WidgetFn = WidgetRegistry.find(rootWidget.name);
+  if (!(WidgetFn instanceof Function)) {
+    throw new Error(`Unknown widget: ${rootWidget.name}`);
+  }
 
   return (
     <ScreenContextProvider screen={screen}>
