@@ -8,7 +8,7 @@ import { Icon } from "./Icon";
 
 export type TagProps = {
   id?: string;
-  label: Expression<string>;
+  label: Expression<string> | Expression<string[]>;
   styles?: {
     backgroundColor: string;
     borderRadius: string;
@@ -17,35 +17,38 @@ export type TagProps = {
 };
 
 export const Tag: React.FC<TagProps> = (props) => {
+    
   const [text, setText] = useState(props.label);
   const { values } = useRegisterBindings({ ...props, text }, props.id, {
     setText,
   });
-
+console.log(values.label)
   return (
-    <div
-      style={{
-        display: "inline-flex",
-        justifyContent: "left",
-        alignItems: "center",
-      }}
-    >
-      <Typography.Text
+    <>
+      <div
         style={{
-          backgroundColor: props.styles?.backgroundColor ?? "#e6e7e8",
-          paddingLeft: "10px",
-          paddingRight: "10px",
-          textAlign: "left",
-          borderRadius: props.styles?.borderRadius ?? 10,
-          fontWeight: "normal",
-          display: "flex",
+          display: "inline-flex",
+          justifyContent: "left",
           alignItems: "center",
         }}
       >
-        {values.text} &nbsp;
-        {props.icon && <Icon {...props.icon} />}
-      </Typography.Text>
-    </div>
+        <Typography.Text
+          style={{
+            backgroundColor: props.styles?.backgroundColor ?? "#e6e7e8",
+            paddingLeft: "10px",
+            paddingRight: "10px",
+            textAlign: "left",
+            borderRadius: props.styles?.borderRadius ?? 10,
+            fontWeight: "normal",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          {values.text} &nbsp;
+          {props.icon && <Icon {...props.icon} />}
+        </Typography.Text>
+      </div>
+    </>
   );
 };
 

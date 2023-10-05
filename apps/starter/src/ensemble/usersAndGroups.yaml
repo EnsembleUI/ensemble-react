@@ -177,7 +177,7 @@ View:
                                   - label: Collection Access
                                   - label: Last Active
                                 item-template:
-                                  data: getData.body.users
+                                  data: getData.body.records
                                   name: user
                                   template:
                                     DataRow:
@@ -189,7 +189,7 @@ View:
                                             children:
                                               - Avatar:
                                                   alt: sana
-                                                  name: ${user.firstName}
+                                                  name: ${user.fields.name}
                                                   styles:
                                                     backgroundColor: "#F4F4F4"
                                                     color: grey
@@ -198,9 +198,9 @@ View:
                                                   children:
                                                     
                                                     - Text:
-                                                        text: ${user.firstName}
+                                                        text: ${user.fields.name}
                                                     - Text:
-                                                        text: ${user.email}
+                                                        text: ${user.fields.email}
                                                         styles:
                                                           fontWeight: normal
                                                           fontSize: 12px
@@ -210,15 +210,11 @@ View:
                                             gap: 10
                                             children:
                                               - Tag:
-                                                  label: Administration
+                                                  label: ${user.fields.groups}
                                                   styles:
                                                     backgroundColor: "#FBF8EC"
                                                     borderRadius: 5
-                                              - Tag:
-                                                  label: Human Resource
-                                                  styles:
-                                                    backgroundColor: "#FBF8EC"
-                                                    borderRadius: 5
+                                              
 
                                         # MoM
                                         - Row:
@@ -226,18 +222,18 @@ View:
                                             gap: 10
                                             children:
                                               - Tag:
-                                                  label: R&D
+                                                  label: ${user.fields.collection_access}
                                                   styles:
                                                     backgroundColor: "#E9ECF4"
                                                     borderRadius: 5
-                                              - Tag:
-                                                  label: Business
-                                                  styles:
-                                                    backgroundColor: "#E9ECF4"
-                                                    borderRadius: 5
+                                              
 
                                         - Text:
-                                            text: 4 days ago
+                                            text: ${user.fields.last_Active}
+                                            styles:
+                                              fontWeight: normal
+                                              fontSize: 12px
+                                              color: "#767676"
               - label: Admins
                 widget:
                   Column:
@@ -343,6 +339,9 @@ View:
                     
 
 API:
-  getData:
+  getData:    
+    uri: https://api.airtable.com/v0/app0FnT5yUsW9fjn6/tblWGM6o7vqlTfB8b
     method: GET
-    uri: https://dummyjson.com/users
+    headers:
+      Authorization: Bearer patN2XAiLVZQ8Yp3h.2bddb84031b2be89b576f01869dc17c3826e16ae7daa8895f92c05a0799004ab
+   
