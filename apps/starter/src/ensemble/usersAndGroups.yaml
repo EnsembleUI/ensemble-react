@@ -213,6 +213,7 @@ View:
                                         - Row:
                                             crossAxis: center
                                             gap: 15
+                                            minWidth: 250px
                                             children:
                                               - Avatar:
                                                   alt: sana
@@ -235,6 +236,7 @@ View:
                                         - Row:
                                             crossAxis: center
                                             gap: 10
+                                            
                                             children:
                                               - Tag:
                                                   label: ${user.fields.groups}
