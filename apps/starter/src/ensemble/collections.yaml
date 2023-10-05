@@ -17,3 +17,19 @@ View:
                     navigateModalScreen:
                       name: Ask Embrace
                       maskClosable: false
+        - Row:
+            mainAxis: spaceBetween
+            crossAxis: center
+            children:
+              - Markdown:
+                  text: "### Groups"
+              - MultiSelect:
+                  data: getData.body.users
+                  labelKey: firstName
+                  valueKey: email
+                  default:
+                    [
+                      { value: "jack", label: "jack" },
+                      { value: "lucy", label: "lucy" },
+                    ]
+                  placeholder: "Select From Groups"
