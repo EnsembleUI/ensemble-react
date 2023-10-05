@@ -2,8 +2,7 @@ import { Expression, useRegisterBindings } from "framework";
 import { useState } from "react";
 import { Typography } from "antd";
 import { WidgetRegistry } from "../registry";
-import type { BaseTextProps, IconProps } from "../util/types";
-import { getTextAlign } from "../util/utils";
+import type { IconProps } from "../util/types";
 import { Icon } from "./Icon";
 
 export type TagProps = {
