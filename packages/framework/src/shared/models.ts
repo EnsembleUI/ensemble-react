@@ -43,7 +43,9 @@ export interface EnsembleAPIModel {
   inputs?: string[];
   uri: string;
   method: "GET" | "POST" | "PUT" | "PATCH";
+  body?: Record<string, unknown>;
   onResponse?: EnsembleAction;
+  onError?: EnsembleAction;
 }
 
 export interface EnsembleWidget {

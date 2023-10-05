@@ -35,9 +35,10 @@ const formatJs = (js?: string): string => {
   if (!js || isEmpty(js)) {
     return "console.log('No expression was given')";
   }
+  const sanitizedJs = sanitizeJs(js);
   // multiline js
-  if (js.includes("\n")) {
-    const lines = js.trim().split("\n");
+  if (sanitizedJs.includes("\n")) {
+    const lines = sanitizedJs.split("\n");
     const lastLine = last(lines);
     lines.splice(lines.length - 1, 1, `return ${String(lastLine)}`);
     return `
@@ -46,7 +47,14 @@ const formatJs = (js?: string): string => {
       }())
     `;
   }
-  return `return ${js}`;
+  return `return ${sanitizedJs}`;
+};
+
+const sanitizeJs = (string: string): string => {
+  if (string.startsWith("${") && string.endsWith("}")) {
+    return string.substring(2, string.length - 1);
+  }
+  return string.trim();
 };
 
 export const evaluate = (
