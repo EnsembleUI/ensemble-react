@@ -1,3 +1,5 @@
+import type { Expression } from "./common";
+
 export type ExecuteCodeAction =
   | string
   | {
@@ -7,7 +9,7 @@ export type ExecuteCodeAction =
 
 export interface InvokeAPIAction {
   name: string;
-  inputs: Record<string, unknown>;
+  inputs: Record<string, Expression<unknown>>;
   onResponse?: EnsembleAction;
   onError?: EnsembleAction;
 }

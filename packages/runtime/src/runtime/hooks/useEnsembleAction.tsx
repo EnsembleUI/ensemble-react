@@ -1,4 +1,9 @@
-import { DataFetcher, useScreenContext, evaluate } from "framework";
+import {
+  DataFetcher,
+  useScreenContext,
+  evaluate,
+  isExpression,
+} from "framework";
 import type {
   InvokeAPIAction,
   ExecuteCodeAction,
@@ -56,27 +61,38 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const [error, setError] = useState<unknown>();
 
   const invokeApi = useMemo(() => {
-    if (!screenContext) {
+    if (!screenContext || !action) {
       return;
     }
 
     const apiModel = screenContext.model?.apis?.find(
-      (model) => model.name === action?.name,
+      (model) => model.name === action.name,
     );
     if (!apiModel) {
       return;
     }
 
+    const inputs = action.inputs;
     return async () => {
+      const resolvedInputs = Object.entries(inputs).map(([key, value]) => {
+        if (isExpression(value)) {
+          const resolvedValue = evaluate(screenContext, value);
+          return [key, resolvedValue];
+        }
+        return [key, value];
+      });
       try {
-        const res = await DataFetcher.fetch(apiModel);
+        const res = await DataFetcher.fetch(
+          apiModel,
+          Object.fromEntries(resolvedInputs) as Record<string, unknown>,
+        );
         screenContext.setData(apiModel.name, res);
         setResponse(res);
       } catch (e) {
         setError(e);
       }
     };
-  }, [action?.name, screenContext]);
+  }, [action, screenContext]);
 
   const onResponseAction = useEnsembleAction(action?.onResponse);
   useEffect(() => {

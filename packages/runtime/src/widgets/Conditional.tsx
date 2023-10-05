@@ -3,7 +3,6 @@ import { evaluate, unwrapWidget, useScreenContext } from "framework";
 import { head, isEmpty, last } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
-import { handleCurlyBraces } from "../util/utils";
 
 type CondtionalElement = Record<Capitalize<string>, Record<string, unknown>> &
   (
@@ -23,10 +22,9 @@ export const Conditional: React.FC<ConditionalProps> = (props) => {
   if (!isValid) throw Error(errorMessage);
 
   let element = props.conditions.find((condition) => {
-    let conditionString = extractCondition(condition);
+    const conditionString = extractCondition(condition);
     if (typeof conditionString !== "string") return false;
 
-    conditionString = handleCurlyBraces(conditionString);
     return evaluate(context as ScreenContextDefinition, conditionString);
   });
 

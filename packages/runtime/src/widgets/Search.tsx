@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useTemplateData, type Expression } from "framework";
-import { AutoComplete, Input, SelectProps } from "antd";
+import type { SelectProps } from "antd";
+import { AutoComplete, Input } from "antd";
+import { SearchOutlined } from "@mui/icons-material";
+import { get, isObject } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type { SearchStyles } from "../util/types";
-import { SearchOutlined } from "@mui/icons-material";
-import { get, isObject, isString } from "lodash-es";
-import { getColor, handleCurlyBraces } from "../util/utils";
+import { getColor } from "../util/utils";
 
 interface EnsembleWidgetProps<T> {
   id?: string;
@@ -27,10 +28,9 @@ export const Search: React.FC<SearchProps> = ({
 }) => {
   const [options, setOptions] = useState<SelectProps<object>["options"]>([]);
 
-  const templateData = useTemplateData(
-    isString(data) ? handleCurlyBraces(data) : (data as Expression<object>)
-  );
+  const templateData = useTemplateData(data!);
 
+  // TODO: Pass in search predicate function via props or filter via API
   const handleSearch = (value: string) => {
     if (Array.isArray(templateData)) {
       setOptions(
@@ -38,28 +38,33 @@ export const Search: React.FC<SearchProps> = ({
           ? templateData
               .filter(
                 (item) =>
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
                   (isObject(item) ? get(item, searchKey ?? "") : item)
                     ?.toString()
                     ?.toLowerCase()
-                    ?.includes(value.toLowerCase())
+                    ?.includes(value.toLowerCase()),
               )
               .map((item) => ({
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 value: isObject(item) ? get(item, searchKey ?? "") : item,
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 label: isObject(item) ? get(item, searchKey ?? "") : item,
               }))
-          : []
+          : [],
       );
     }
   };
 
   return (
     <AutoComplete
-      popupMatchSelectWidth={styles?.width}
-      options={options}
-      onSelect={() => {}}
-      onSearch={handleSearch}
-      size="large"
       allowClear
+      onSearch={handleSearch}
+      // TODO: Handle on search result select
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      onSelect={() => {}}
+      options={options}
+      popupMatchSelectWidth={styles?.width}
+      size="large"
     >
       <Input
         placeholder={placeholder}
@@ -72,7 +77,7 @@ export const Search: React.FC<SearchProps> = ({
           borderWidth: styles?.borderWidth,
           borderStyle: styles?.borderStyle,
           borderColor: styles?.borderColor
-            ? getColor(styles?.borderColor)
+            ? getColor(styles.borderColor)
             : undefined,
           boxShadow: "none",
         }}

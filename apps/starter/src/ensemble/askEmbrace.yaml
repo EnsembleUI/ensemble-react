@@ -12,6 +12,7 @@ View:
       children:
         - TextInput:
             label: Name
+            value: foo
         - Button:
             label: Submit
             submitForm: true
