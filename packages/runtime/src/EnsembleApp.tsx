@@ -6,13 +6,16 @@ import {
   EnsembleParser,
 } from "framework";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import { injectStyle } from "react-toastify/dist/inject-style";
 import { ThemeProvider } from "./ThemeProvider";
 import { EnsembleEntry } from "./runtime/entry";
 import { EnsembleScreen } from "./runtime/screen";
+import { ErrorPage } from "./runtime/error";
 // Register built in widgets;
 import "./widgets";
-import { ErrorPage } from "./runtime/error";
 
+injectStyle();
 export interface EnsembleAppProps {
   appId: string;
   application?: ApplicationDTO;
@@ -45,6 +48,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
     <ApplicationContextProvider app={app}>
       <ThemeProvider>
         <RouterProvider router={router} />
+        <ToastContainer />
       </ThemeProvider>
     </ApplicationContextProvider>
   );

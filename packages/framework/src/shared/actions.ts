@@ -23,9 +23,19 @@ export type NavigateModalScreenAction =
 
 export type NavigateScreenAction = string;
 
+export interface ShowToastAction {
+  message: string;
+  options: {
+    type: "success" | "warning" | "info" | "error";
+  };
+  dismissable?: boolean;
+  duration?: number;
+}
+
 export interface EnsembleAction {
   executeCode?: ExecuteCodeAction;
   invokeApi?: InvokeAPIAction;
   navigateScreen?: NavigateScreenAction;
   navigateModalScreen?: NavigateScreenAction;
+  showToast?: ShowToastAction;
 }
