@@ -1,4 +1,6 @@
 View:
+  onLoad:
+    executeCode: null
   body:
     Column:
       styles:
@@ -24,6 +26,7 @@ View:
               - Markdown:
                   text: "### Groups"
               - MultiSelect:
+                  id: myMultiSelect
                   data: getData.body.users
                   labelKey: firstName
                   valueKey: email
@@ -33,3 +36,8 @@ View:
                       { value: "lucy", label: "lucy" },
                     ]
                   placeholder: "Select From Groups"
+        - Button:
+            label: Get Multi Select Value
+            onTap:
+              executeCode: |
+                console.log(myMultiSelect.value)
