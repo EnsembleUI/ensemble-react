@@ -1,7 +1,14 @@
+import type {
+  FieldValues,
+  SubmitHandler,
+  UseFormHandleSubmit,
+} from "react-hook-form";
 import { FormProvider, useForm } from "react-hook-form";
 import type { EnsembleAction, EnsembleWidget } from "framework";
+import { useCallback } from "react";
 import { WidgetRegistry } from "../../registry";
 import { EnsembleRuntime } from "../../runtime";
+import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 
 export interface FormProps {
   children: EnsembleWidget[];
@@ -14,14 +21,26 @@ export interface FormProps {
 }
 export const Form: React.FC<FormProps> = (props) => {
   const methods = useForm();
-  // eslint-disable-next-line no-console
-  const onSubmit = (data: unknown) => console.log(data);
+  const action = useEnsembleAction(props.onSubmit);
+
+  const handleSubmit = useCallback<UseFormHandleSubmit<FieldValues>>(
+    (onValidate) => {
+      const validateWithAction: SubmitHandler<FieldValues> = (values) => {
+        onValidate(values);
+        if (!action) {
+          return;
+        }
+
+        return action.callback();
+      };
+      return methods.handleSubmit(validateWithAction);
+    },
+    [action, methods],
+  );
 
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={() => methods.handleSubmit(onSubmit)}>
-        {EnsembleRuntime.render(props.children)}
-      </form>
+    <FormProvider {...methods} handleSubmit={handleSubmit}>
+      <form>{EnsembleRuntime.render(props.children)}</form>
     </FormProvider>
   );
 };
