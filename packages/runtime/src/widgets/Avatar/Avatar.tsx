@@ -42,7 +42,10 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
   const nameString = props.name?.toString();
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(Boolean(menuAnchorEl));
-  const { values } = useRegisterBindings({ ...props });
+  const [text, setText] = useState(props.name);
+  const { values } = useRegisterBindings({ ...props, text }, props.name, {
+    setText,
+  });
   const onTapCallback = useExecuteCode(code, values);
   const onNavigate = useNavigateScreen(screen);
 
@@ -77,14 +80,14 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
         src={props.src}
         sx={{
           bgcolor:
-            props.styles?.backgroundColor ?? stringToColor(nameString ?? ""),
+            props.styles?.backgroundColor ?? stringToColor(values.text ?? ""),
           width: props.styles?.width,
           height: props.styles?.height,
           cursor: "pointer",
         }}
       >
         {props.name ? (
-          generateInitials(props.name)
+          generateInitials(values.text)
         ) : (
           <Icon
             color={props.icon?.color}

@@ -69,6 +69,195 @@ View:
                   Column:
                     children:
                       - Row:
+                          gap: 10
+                          mainAxis: start
+                          crossAxis: center
+                          children:
+                            - Search:
+                                styles:
+                                  width: 320px
+                                  height: 40px
+                                  borderRadius: 5
+                                  borderWidth: 2
+                                  borderStyle: solid
+                                  borderColor: "#D0D0D0"
+                                data: getData.body.users
+                                searchKey: email
+                            - Button:
+                                label: Create new group
+                                startingIcon:
+                                  name: AddOutlined
+                                onTap:
+                                  navigateModalScreen:
+                                    name: Ask Embrace
+                                    maskClosable: false
+                                styles:
+                                  backgroundColor: white
+                                  borderColor: black
+                                  borderRadius: 5
+                                  borderWidth: 1px
+                      - GridView:
+                          item-template:
+                            data: getData.body.users
+                            name: user
+                            template:
+                              Card:
+                                styles:
+                                  shadowColor: lightgrey
+                                  shadowOffset: 8px
+                                  shadowBlur: 10px
+                                  shadowSpread: -2px
+                                  height: 150px
+                                children:
+                                  - Column:
+                                      crossAxis: stretch
+                                      mainAxis: spaceBetween
+                                      gap: 10
+                                      children:
+                                        - Image:
+                                            source: ${user.image}
+                                            width: 40
+                                            height: 40
+                                            fit: cover
+                                            borderRadius: 100
+                                        - Column:
+                                            children:
+                                              - Text:
+                                                  text: ${user.firstName}
+                                              - Tag:
+                                                  label: ${user.email}
+              - label: All Users
+                widget:
+                  Row:
+                    children:
+                      - Column:
+                          children:
+                            - DataGrid:
+                                DataColumns:
+                                  - label: User
+                                  - label: Role
+                                  - label: Groups
+                                  - label: Last Active
+                                item-template:
+                                  data: getData.body.users
+                                  name: user
+                                  template:
+                                    DataRow:
+                                      children:
+                                        # Person
+                                        - Row:
+                                            crossAxis: center
+                                            gap: 5
+                                            children:
+                                              - Column:
+                                                  crossAxis: start
+                                                  children:
+                                                    - Text:
+                                                        text: ${user.firstName}
+                                                    - Text:
+                                                        text: ${user.email}
+                                        - Text:
+                                            text: user
+
+                                        # MoM
+                                        - Row:
+                                            crossAxis: center
+                                            gap: 10
+                                            children:
+                                              - Tag:
+                                                  label: Administration
+                                                  icon:
+                                                    name: CloseOutlined
+                                                  styles:
+                                                    backgroundColor: "#FBF8EC"
+                                                    borderRadius: 2
+                                              - Tag:
+                                                  label: Human Resource
+                                                  icon:
+                                                    name: CloseOutlined
+                                                  styles:
+                                                    backgroundColor: "#FBF8EC"
+                                                    borderRadius: 2
+
+                                        - Text:
+                                            text: 1 day ago
+              - label: Contributors
+                widget:
+                  Row:
+                    children:
+                      - Column:
+                          children:
+                            - DataGrid:
+                                DataColumns:
+                                  - label: User
+                                  - label: Groups
+                                  - label: Collection Access
+                                  - label: Last Active
+                                item-template:
+                                  data: getData.body.users
+                                  name: user
+                                  template:
+                                    DataRow:
+                                      children:
+                                        # Person
+                                        - Row:
+                                            crossAxis: center
+                                            gap: 5
+                                            children:
+                                              
+                                              - Column:
+                                                  crossAxis: start
+                                                  children:
+                                                    - Text:
+                                                        text: ${user.firstName}
+                                                    - Text:
+                                                        text: ${user.email}
+                                        - Row:
+                                            crossAxis: center
+                                            gap: 10
+                                            children:
+                                              - Tag:
+                                                  label: Administration
+                                                  icon:
+                                                    name: CloseOutlined
+                                                  styles:
+                                                    backgroundColor: "#FBF8EC"
+                                                    borderRadius: 2
+                                              - Tag:
+                                                  label: Human Resource
+                                                  icon:
+                                                    name: CloseOutlined
+                                                  styles:
+                                                    backgroundColor: "#FBF8EC"
+                                                    borderRadius: 2
+
+                                        # MoM
+                                        - Row:
+                                            crossAxis: center
+                                            gap: 10
+                                            children:
+                                              - Tag:
+                                                  label: R&D
+                                                  icon:
+                                                    name: CloseOutlined
+                                                  styles:
+                                                    backgroundColor: "#E9ECF4"
+                                                    borderRadius: 2
+                                              - Tag:
+                                                  label: Business
+                                                  icon:
+                                                    name: CloseOutlined
+                                                  styles:
+                                                    backgroundColor: "#E9ECF4"
+                                                    borderRadius: 2
+
+                                        - Text:
+                                            text: 4 days ago
+              - label: Admins
+                widget:
+                  Column:
+                    children:
+                      - Row:
                           gap: 20
                           mainAxis: start
                           crossAxis: center
@@ -87,54 +276,39 @@ View:
                                 label: Create new group
                                 startingIcon:
                                   name: AddOutlined
+                                onTap:
+                                  navigateModalScreen:
+                                    name: Ask Embrace
+                                    maskClosable: false
                                 styles:
                                   backgroundColor: white
                                   borderColor: black
                                   borderRadius: 5
                                   borderWidth: 1px
-                      - GridView:
+                      - DataGrid:
+                          DataColumns:
+                            - label: User
+                            - label: Last Active
                           item-template:
                             data: getData.body.users
                             name: user
                             template:
-                              Card:
-                                styles:
-                                  shadowColor: lightgrey
-                                  shadowOffset: 8px
-                                  shadowBlur: 10px
-                                  shadowSpread: -2px
+                              DataRow:
                                 children:
-                                  - Column:
-                                      styles:
-                                        crossAxis: center
-                                        gap: 5
-                                      children:
-                                        - Image:
-                                            source: ${user.image}
-                                            width: 40
-                                            height: 40
-                                            fit: cover
-                                            borderRadius: 100
+                                  # Person
+                                  - Row:
+                                      crossAxis: center
+                                      gap: 5
+                                      children:                                        
                                         - Column:
-                                            styles:
-                                              crossAxis: start
+                                            crossAxis: start
                                             children:
                                               - Text:
                                                   text: ${user.firstName}
                                               - Text:
                                                   text: ${user.email}
-              - label: All Users
-                widget:
-                  Markdown:
-                    text: "# Render widgets in this tab"
-              - label: Contributors
-                widget:
-                  Markdown:
-                    text: "# Render widgets in this tab"
-              - label: Admins
-                widget:
-                  Markdown:
-                    text: "# Render widgets in this tab"
+                                  - Text:
+                                      text: 4 days ago
 
         # - Row:
         #     styles:
