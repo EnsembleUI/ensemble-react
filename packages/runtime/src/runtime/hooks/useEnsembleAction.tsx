@@ -13,6 +13,8 @@ import type {
 import { isString } from "lodash-es";
 import { useState, useEffect, useMemo } from "react";
 import { useNavigateScreen } from "./useNavigateScreen";
+// FIXME: refactor
+// eslint-disable-next-line import/no-cycle
 import { useNavigateModalScreen } from "./useNavigateModal";
 
 export type EnsembleActionHookResult =
@@ -61,19 +63,19 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const [error, setError] = useState<unknown>();
 
   const invokeApi = useMemo(() => {
-    if (!screenContext || !action) {
+    if (!screenContext?.model || !action) {
       return;
     }
 
-    const apiModel = screenContext.model?.apis?.find(
+    const apiModel = screenContext.model.apis?.find(
       (model) => model.name === action.name,
     );
     if (!apiModel) {
       return;
     }
 
-    const inputs = action.inputs;
-    return async () => {
+    const inputs = action.inputs ?? {};
+    const callback = async (): Promise<void> => {
       const resolvedInputs = Object.entries(inputs).map(([key, value]) => {
         if (isExpression(value)) {
           const resolvedValue = evaluate(screenContext, value);
@@ -92,7 +94,8 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
         setError(e);
       }
     };
-  }, [action, screenContext]);
+    return { callback };
+  }, [action, screenContext?.model]);
 
   const onResponseAction = useEnsembleAction(action?.onResponse);
   useEffect(() => {
@@ -112,7 +115,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
     onErrorAction?.callback(error);
   }, [action?.onError, error, onErrorAction]);
 
-  return invokeApi ? { callback: invokeApi } : undefined;
+  return invokeApi;
 };
 
 /* eslint-disable react-hooks/rules-of-hooks */

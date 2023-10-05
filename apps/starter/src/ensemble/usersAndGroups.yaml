@@ -1,6 +1,7 @@
 View:
   onLoad:
-    name: getData
+    invokeApi:
+      name: getData
 
   body:
     Column:

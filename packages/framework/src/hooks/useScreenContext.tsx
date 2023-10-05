@@ -1,5 +1,5 @@
 import { Provider, useAtomValue, useSetAtom } from "jotai";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { ensembleStore, screenAtom, screenDataAtom } from "../state";
 import type { ScreenContextActions, ScreenContextDefinition } from "../state";
 import type { Response } from "../data";
@@ -13,12 +13,23 @@ interface ScreenContextProps {
 type ScreenContextProviderProps = React.PropsWithChildren<ScreenContextProps>;
 
 export const ScreenContextProvider: React.FC<ScreenContextProviderProps> = ({
+  screen,
   context,
   children,
 }) => {
-  if (context) {
-    ensembleStore.set(screenAtom, context);
-  }
+  useEffect(() => {
+    if (context) {
+      ensembleStore.set(screenAtom, context);
+    } else {
+      ensembleStore.set(screenAtom, {
+        model: screen,
+        widgets: {},
+        data: {},
+        storage: {},
+      });
+    }
+  }, []);
+
   return <Provider store={ensembleStore}>{children}</Provider>;
 };
 
