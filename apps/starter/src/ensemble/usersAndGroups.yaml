@@ -218,18 +218,14 @@ View:
                                             children:
                                               - Tag:
                                                   label: Administration
-                                                  icon:
-                                                    name: CloseOutlined
                                                   styles:
                                                     backgroundColor: "#FBF8EC"
-                                                    borderRadius: 2
+                                                    borderRadius: 5
                                               - Tag:
                                                   label: Human Resource
-                                                  icon:
-                                                    name: CloseOutlined
                                                   styles:
                                                     backgroundColor: "#FBF8EC"
-                                                    borderRadius: 2
+                                                    borderRadius: 5
 
                                         # MoM
                                         - Row:
@@ -238,18 +234,14 @@ View:
                                             children:
                                               - Tag:
                                                   label: R&D
-                                                  icon:
-                                                    name: CloseOutlined
                                                   styles:
                                                     backgroundColor: "#E9ECF4"
-                                                    borderRadius: 2
+                                                    borderRadius: 5
                                               - Tag:
                                                   label: Business
-                                                  icon:
-                                                    name: CloseOutlined
                                                   styles:
                                                     backgroundColor: "#E9ECF4"
-                                                    borderRadius: 2
+                                                    borderRadius: 5
 
                                         - Text:
                                             text: 4 days ago
