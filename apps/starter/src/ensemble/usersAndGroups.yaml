@@ -166,10 +166,37 @@ View:
                                             text: 1 day ago
               - label: Contributors
                 widget:
-                  Row:
+                  Column:
                     children:
-                      - Column:
+                      - Row:
+                          gap: 20
+                          mainAxis: start
+                          crossAxis: center
                           children:
+                            - Search:
+                                styles:
+                                  width: 320px
+                                  height: 40px
+                                  borderRadius: 5
+                                  borderWidth: 2
+                                  borderStyle: solid
+                                  borderColor: "#D0D0D0"
+                                data: getData.body.users
+                                searchKey: email
+                            - Button:
+                                label: Create new group
+                                startingIcon:
+                                  name: AddOutlined
+                                onTap:
+                                  navigateModalScreen:
+                                    name: Ask Embrace
+                                    maskClosable: false
+                                styles:
+                                  backgroundColor: white
+                                  borderColor: black
+                                  borderRadius: 5
+                                  borderWidth: 1px
+                  
                             - DataGrid:
                                 DataColumns:
                                   - label: User
@@ -213,7 +240,7 @@ View:
                                                   label: ${user.fields.groups}
                                                   styles:
                                                     backgroundColor: "#FBF8EC"
-                                                    borderRadius: 5
+                                                    borderRadius: 8
                                               
 
                                         # MoM
@@ -225,7 +252,7 @@ View:
                                                   label: ${user.fields.collection_access}
                                                   styles:
                                                     backgroundColor: "#E9ECF4"
-                                                    borderRadius: 5
+                                                    borderRadius: 8
                                               
 
                                         - Text:
@@ -271,7 +298,7 @@ View:
                             - label: User
                             - label: Last Active
                           item-template:
-                            data: getData.body.users
+                            data: getData.body.records
                             name: user
                             template:
                               DataRow:
@@ -283,7 +310,7 @@ View:
                                       children: 
                                         - Avatar:
                                             alt: sana
-                                            name: ${user.firstName}
+                                            name: ${user.fields.name}
                                             styles:
                                               backgroundColor: "#F4F4F4"
                                               color: grey                                       
@@ -291,15 +318,19 @@ View:
                                             crossAxis: start
                                             children:
                                               - Text:
-                                                  text: ${user.firstName}
+                                                  text: ${user.fields.name}
                                               - Text:
-                                                  text: ${user.email}
+                                                  text: ${user.fields.email}
                                                   styles:
                                                     fontWeight: normal
                                                     fontSize: 12px
                                                     color: "#767676"
                                   - Text:
-                                      text: 4 days ago
+                                      text: ${user.fields.last_Active}
+                                      styles:
+                                        fontWeight: normal
+                                        fontSize: 12px
+                                        color: "#767676"
 
         # - Row:
         #     styles:
