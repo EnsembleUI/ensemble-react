@@ -184,7 +184,7 @@ View:
                                 data: getData.body.users
                                 searchKey: email
                             - Button:
-                                label: Create new group
+                                label: Invite Contributor
                                 startingIcon:
                                   name: AddOutlined
                                 onTap:
@@ -283,7 +283,7 @@ View:
                                 data: getData.body.users
                                 searchKey: email
                             - Button:
-                                label: Create new group
+                                label: Invite Admin
                                 startingIcon:
                                   name: AddOutlined
                                 onTap:
