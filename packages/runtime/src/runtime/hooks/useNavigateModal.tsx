@@ -10,10 +10,12 @@ import type {
   EnsembleActionHookResult,
 } from "./useEnsembleAction";
 
-export type UseNavigateModalScreenResult = {
-  openModal: () => void;
-  Modal: ReactNode;
-} & EnsembleActionHookResult;
+export type UseNavigateModalScreenResult =
+  | ({
+      openModal: () => void;
+      Modal: ReactNode;
+    } & EnsembleActionHookResult)
+  | undefined;
 
 export const useNavigateModalScreen: EnsembleActionHook<
   NavigateModalScreenAction,
@@ -54,8 +56,11 @@ export const useNavigateModalScreen: EnsembleActionHook<
     </Modal>
   ) : null;
 
-  return {
-    openModal,
-    Modal: ModalElement,
-  };
+  return ModalElement
+    ? {
+        callback: openModal,
+        openModal,
+        Modal: ModalElement,
+      }
+    : undefined;
 };

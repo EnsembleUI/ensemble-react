@@ -6,13 +6,13 @@ import type {
   EnsembleAction,
 } from "framework";
 import { isString } from "lodash-es";
-import { useCallback, useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigateScreen } from "./useNavigateScreen";
 import { useNavigateModalScreen } from "./useNavigateModal";
 
 export type EnsembleActionHookResult =
   | {
-      callback?: (...args: unknown[]) => unknown;
+      callback: (...args: unknown[]) => unknown;
     }
   | undefined;
 export type EnsembleActionHook<
@@ -35,16 +35,18 @@ export const useExecuteCode: EnsembleActionHook<
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,
   );
-  const execute = useCallback(() => {
+  const execute = useMemo(() => {
     if (!screen || !js) {
       return;
     }
 
-    const retVal = evaluate(screen, js, options?.context);
-    onCompleteAction?.callback?.();
-    return retVal;
+    return () => {
+      const retVal = evaluate(screen, js, options?.context);
+      onCompleteAction?.callback();
+      return retVal;
+    };
   }, [screen, js, options?.context, onCompleteAction]);
-  return { callback: execute };
+  return execute ? { callback: execute } : undefined;
 };
 
 export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
@@ -53,7 +55,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const [response, setResponse] = useState<Response>();
   const [error, setError] = useState<unknown>();
 
-  const invokeApi = useCallback(async () => {
+  const invokeApi = useMemo(() => {
     if (!screenContext) {
       return;
     }
@@ -65,13 +67,15 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
       return;
     }
 
-    try {
-      const res = await DataFetcher.fetch(apiModel);
-      screenContext.setData(apiModel.name, res);
-      setResponse(res);
-    } catch (e) {
-      setError(e);
-    }
+    return async () => {
+      try {
+        const res = await DataFetcher.fetch(apiModel);
+        screenContext.setData(apiModel.name, res);
+        setResponse(res);
+      } catch (e) {
+        setError(e);
+      }
+    };
   }, [action?.name, screenContext]);
 
   const onResponseAction = useEnsembleAction(action?.onResponse);
@@ -80,7 +84,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
       return;
     }
 
-    onResponseAction?.callback?.(response);
+    onResponseAction?.callback(response);
   }, [action?.onResponse, onResponseAction, response]);
 
   const onErrorAction = useEnsembleAction(action?.onError);
@@ -89,10 +93,10 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
       return;
     }
 
-    onErrorAction?.callback?.(error);
+    onErrorAction?.callback(error);
   }, [action?.onError, error, onErrorAction]);
 
-  return { callback: invokeApi };
+  return invokeApi ? { callback: invokeApi } : undefined;
 };
 
 /* eslint-disable react-hooks/rules-of-hooks */
@@ -102,7 +106,7 @@ export const useEnsembleAction = (
 ): EnsembleActionHookResult => {
   // FIXME: Figure out how to chain without breaking rules of hooks and infinite loop
   if (!action) {
-    return { callback: undefined };
+    return;
   }
   const invokeApi = useInvokeApi(action.invokeApi, options);
   const executeCode = useExecuteCode(

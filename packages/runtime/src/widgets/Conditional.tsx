@@ -1,15 +1,9 @@
-import {
-  EnsembleWidget,
-  Expression,
-  ScreenContextDefinition,
-  unwrapWidget,
-  useScreenContext,
-} from "framework";
-import { evaluate } from "framework/src/evaluate";
+import type { Expression, ScreenContextDefinition } from "framework";
+import { evaluate, unwrapWidget, useScreenContext } from "framework";
+import { head, isEmpty, last } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import { handleCurlyBraces } from "../util/utils";
-import { head, isEmpty, last } from "lodash-es";
 
 type CondtionalElement = Record<Capitalize<string>, Record<string, unknown>> &
   (
@@ -18,12 +12,11 @@ type CondtionalElement = Record<Capitalize<string>, Record<string, unknown>> &
     | { else: null; if?: never; elseif?: never }
   );
 
-export type ConditionalProps = {
+export interface ConditionalProps {
   conditions: CondtionalElement[];
-};
+}
 
 export const Conditional: React.FC<ConditionalProps> = (props) => {
-  console.log("Conditional", props);
   const context = useScreenContext();
 
   const [isValid, errorMessage] = hasProperStructure(props.conditions);
@@ -40,8 +33,7 @@ export const Conditional: React.FC<ConditionalProps> = (props) => {
   if (!element) {
     // check if last condition is 'else'
     const lastCondition = last(props.conditions);
-    if (lastCondition && lastCondition.hasOwnProperty("else"))
-      element = lastCondition;
+    if (lastCondition && "else" in lastCondition) element = lastCondition;
     // otherwise return empty fragment
     else return <></>;
   }
@@ -54,13 +46,9 @@ export const Conditional: React.FC<ConditionalProps> = (props) => {
 WidgetRegistry.register("Conditional", Conditional);
 
 export const hasProperStructure = (
-  conditions: CondtionalElement[]
+  conditions: CondtionalElement[],
 ): [boolean, string] => {
-  if (
-    !conditions ||
-    isEmpty(conditions) ||
-    !head(conditions)?.hasOwnProperty("if")
-  )
+  if (isEmpty(conditions) || !("if" in head(conditions)!))
     return [
       false,
       "Improper structure, make sure one 'if' condition is present",
@@ -71,12 +59,12 @@ export const hasProperStructure = (
 
     if (
       Object.entries(condition).length !== 2 ||
-      (condition.hasOwnProperty("if") &&
+      ("if" in condition &&
         index > 0 &&
-        (conditions[index - 1].hasOwnProperty("elseif") ||
-          conditions[index - 1].hasOwnProperty("else"))) ||
-      (condition.hasOwnProperty("elseif") && index === 0) ||
-      (condition.hasOwnProperty("else") && index !== conditions.length - 1)
+        ("elseif" in conditions[index - 1] ||
+          "else" in conditions[index - 1])) ||
+      ("elseif" in condition && index === 0) ||
+      ("else" in condition && index !== conditions.length - 1)
     )
       return [
         false,

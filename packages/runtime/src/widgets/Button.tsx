@@ -16,7 +16,7 @@ export const Button: React.FC<ButtonProps> = (props) => {
   const action = useEnsembleAction(props.onTap);
 
   const onClickCallback = useCallback(() => {
-    if (!action?.callback) {
+    if (!action) {
       return;
     }
     action.callback();
