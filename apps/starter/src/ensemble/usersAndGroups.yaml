@@ -217,7 +217,7 @@ View:
                                               size: 22
                                             onTap:
                                               navigateModalScreen:
-                                                name: Create Group
+                                                name: Invite
                                                 maskClosable: false
 
                             - DataGrid:
