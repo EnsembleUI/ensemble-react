@@ -25,6 +25,8 @@ export interface AvatarMenu {
 }
 
 export interface AvatarProps {
+  id?: string;
+  [key: string]: unknown;
   alt: Expression<string>;
   src?: Expression<string>;
   name?: Expression<string>;
@@ -43,7 +45,10 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
   const nameString = props.name?.toString();
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(Boolean(menuAnchorEl));
-  const { values } = useRegisterBindings({ ...props });
+  const [name, setName] = useState(props.name);
+  const { values } = useRegisterBindings({ ...props, name }, props.id, {
+    setName,
+  });
   // FIXME: action callbacks should take params so they can be callable per element
   const executeCode = useExecuteCode(code, { context: values });
   const navigate = useNavigateScreen(screen);
@@ -86,7 +91,7 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
         }}
       >
         {props.name ? (
-          generateInitials(props.name)
+          generateInitials(values.name)
         ) : (
           <Icon
             color={props.icon?.color}

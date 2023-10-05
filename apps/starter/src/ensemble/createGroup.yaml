@@ -6,21 +6,74 @@ View:
         fontSize: 24
         fontWeight: 500
   body:
-    Column:
+    Form:
+      styles:
+        labelPosition: top
+        gap: 20
+      onSubmit:
+        invokeAPI:
+          name: addCollection
       children:
+        - TextInput:
+            id: groupName
+            value: foo
+            hintText: Group name (e.g. Sales)
+        - Divider:
+            styles:
+              thickness: 1
+              color: "#ECEFF6"
         - Text:
-            text: TODO 1
-        - Text:
-            text: TODO 2
-        - Text:
-            text: TODO 3
-        - Text:
-            text: TODO 4
-        - Text:
-            text: TODO 5
-        - Text:
-            text: TODO 6
-        - Text:
-            text: TODO 7
-        - Text:
-            text: TODO 8
+            id: textMy
+            text: Group icon
+            styles:
+              fontSize: 14
+              fontWeight: 500
+        - Row:
+            crossAxis: center
+            styles:
+              gap: 16
+            children:
+              - Avatar:
+                  id: avatar
+                  alt: abc
+                  name: Ali
+              - Button:
+                  label: Change Color
+                  styles:
+                    backgroundColor: transparent
+                    color: black
+                    borderRadius: "8px"
+                    border: "1px solid black"
+                    padding: 12
+        - Divider:
+            styles:
+              thickness: 1
+              color: "#ECEFF6"
+        - TextInput:
+            value: as
+            hintText: Add users by name or email (Optional)
+        - Divider:
+            styles:
+              thickness: 1
+              color: "#ECEFF6"
+        - Row:
+            mainAxis: end
+            crossAxis: center
+            styles:
+              gap: 16
+            children:
+              - Button:
+                  label: Cancel
+                  styles:
+                    backgroundColor: transparent
+                    border: "0px"
+                    color: black
+              - Button:
+                  label: Create Group
+                  submitForm: true
+                  onTap:
+                    executeCode: avatar.setName(groupName.value)
+                  styles:
+                    backgroundColor: black
+                    color: white
+                    padding: 24

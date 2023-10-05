@@ -17,7 +17,7 @@ const useNavigateModalScreen = (props?: string | NavigateModalScreenProps) => {
 
   const { screen, title } = useMemo(() => {
     const screen = app?.application?.screens.find(
-      (s) => s.name.toLowerCase() === screenName?.toLowerCase()
+      (s) => s.name.toLowerCase() === screenName?.toLowerCase(),
     );
     const title = screen?.header && EnsembleRuntime.render([screen.header]);
     return { screen, title };

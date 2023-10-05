@@ -11,13 +11,20 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
   const { values } = useRegisterBindings({ ...props, value }, props.id, {
     setValue,
   });
+
   return (
     <AntForm.Item
       label={values.label}
       name={values.label}
       rules={[{ required: values.required }]}
+      style={{
+        margin: "0px",
+      }}
     >
-      <Input onChange={(event): void => setValue(event.target.value)} />
+      <Input
+        onChange={(event): void => setValue(event.target.value)}
+        placeholder={values?.hintText ? values.hintText : ""}
+      />
     </AntForm.Item>
   );
 };

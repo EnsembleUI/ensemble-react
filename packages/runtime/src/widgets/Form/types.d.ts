@@ -3,4 +3,5 @@ export interface FormInputProps<T> {
   required: boolean;
   enabled: boolean;
   value?: T;
+  hintText?: string;
 }

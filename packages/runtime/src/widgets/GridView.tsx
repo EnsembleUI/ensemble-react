@@ -25,9 +25,7 @@ export const GridView: React.FC<GridViewProps> = ({
   styles,
 }) => {
   const defaultColumnCount = 4;
-  const templateData = useTemplateData(
-    isString(data) ? handleCurlyBraces(data) : data
-  );
+  const templateData = useTemplateData(data);
 
   const namedData = map(templateData, (value) => ({
     [name]: value,
