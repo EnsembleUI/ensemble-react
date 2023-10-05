@@ -59,11 +59,39 @@ View:
         - TabBar:
             id: tababr1
             selectedIndex: 0
+            styles:
+              tabFontWeight: bold
+              inactiveTabColor: black
+              activeTabColor: black
             items:
-              - label: Overview
+              - label: Groups
                 widget:
                   Column:
                     children:
+                      - Row:
+                          gap: 20
+                          mainAxis: start
+                          crossAxis: center
+                          children:
+                            - Search:
+                                styles:
+                                  width: 320px
+                                  height: 40px
+                                  borderRadius: 5
+                                  borderWidth: 2
+                                  borderStyle: solid
+                                  borderColor: "#D0D0D0"
+                                data: getData.body.users
+                                searchKey: email
+                            - Button:
+                                label: Create new group
+                                startingIcon:
+                                  name: AddOutlined
+                                styles:
+                                  backgroundColor: white
+                                  borderColor: black
+                                  borderRadius: 5
+                                  borderWidth: 1px
                       - GridView:
                           item-template:
                             data: getData.body.users
@@ -95,10 +123,19 @@ View:
                                                   text: ${user.firstName}
                                               - Text:
                                                   text: ${user.email}
-              - label: Collections
+              - label: All Users
                 widget:
                   Markdown:
                     text: "# Render widgets in this tab"
+              - label: Contributors
+                widget:
+                  Markdown:
+                    text: "# Render widgets in this tab"
+              - label: Admins
+                widget:
+                  Markdown:
+                    text: "# Render widgets in this tab"
+
         # - Row:
         #     styles:
         #       backgroundColor: white
