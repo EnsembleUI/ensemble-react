@@ -1,17 +1,11 @@
-import type { ReactNode } from "react";
-import React, { isValidElement, useEffect, useMemo, useState } from "react";
-import { Menu, Dropdown as AntdDropdown, Button } from "antd";
-import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
-import { cloneDeep, merge } from "lodash-es";
-import {
-  type EnsembleWidget,
-  useExecuteCode,
-  useRegisterBindings,
-  unwrapWidget,
-} from "framework";
-import { useNavigateScreen } from "../runtime/navigate";
+import React, { useEffect, useState } from "react";
+import { Menu, Dropdown as AntdDropdown } from "antd";
+import { cloneDeep } from "lodash-es";
+import { type EnsembleWidget, unwrapWidget } from "framework";
 import type { EnsembleWidgetProps } from "../util/types";
 import { WidgetRegistry } from "../registry";
+import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
+import { EnsembleRuntime } from "../runtime";
 
 interface PopupMenuItem {
   label: string;
@@ -35,26 +29,13 @@ type PopupMenuProps = {
   };
 } & EnsembleWidgetProps;
 
-const defaultStyles: PopupMenuStyles = {
-  backgroundColor: "transparent",
-  borderRadius: "50%",
-  borderWidth: "1px",
-  borderColor: "transparent",
-};
 export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
-  const onItemSelect = props.onItemSelect?.executeCode;
-  const mergedStyles = merge(defaultStyles, props.styles);
-  const { values } = useRegisterBindings(props, props.id);
-  const onTapCallback = useExecuteCode(onItemSelect, values);
-  const onNavigate = useNavigateScreen(props.onItemSelect?.navigateScreen);
+  const action = useEnsembleAction(props.onItemSelect);
   const [widgetProps, setWidgetProps] = useState<EnsembleWidget>();
   const menuItems = (
     <Menu>
       {props.items.map((item) => (
-        <Menu.Item
-          key={item.value}
-          onClick={onItemSelect ? onTapCallback : onNavigate}
-        >
+        <Menu.Item key={item.value} onClick={() => action?.callback(item)}>
           {item.label}
         </Menu.Item>
       ))}
@@ -72,36 +53,11 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
     // Only run once
   }, []);
 
-  const renderedChild = useMemo(() => {
-    if (!widgetProps) {
-      return null;
-    }
-    return renderWidget(widgetProps);
-  }, [widgetProps]);
   return (
     <AntdDropdown overlay={menuItems} trigger={["click"]}>
-      <div>{renderedChild}</div>
-    </AntdDropdown>
-  );
-  return (
-    <AntdDropdown overlay={menuItems} trigger={["click"]}>
-      <Button
-        icon={<MoreVertOutlinedIcon />}
-        style={{
-          ...mergedStyles,
-        }}
-      />
+      <div>{widgetProps ? EnsembleRuntime.render([widgetProps]) : null}</div>
     </AntdDropdown>
   );
 };
 
 WidgetRegistry.register("PopupMenu", PopupMenu);
-
-function renderWidget(widget: EnsembleWidget): ReactNode {
-  const result = WidgetRegistry.find(widget.name);
-  if (isValidElement(result)) {
-    return result;
-  }
-  const WidgetFn = result as React.FC<unknown>;
-  return <WidgetFn {...widget.properties} />;
-}

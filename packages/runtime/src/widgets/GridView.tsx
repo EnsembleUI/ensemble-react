@@ -1,5 +1,5 @@
-import { isString, map } from "lodash-es";
-import type { CustomScope, Expression, EnsembleWidget } from "framework";
+import { map } from "lodash-es";
+import type { CustomScope, EnsembleWidget, Expression } from "framework";
 import { CustomScopeProvider, useTemplateData } from "framework";
 import { Col, Row } from "antd";
 import { WidgetRegistry } from "../registry";
@@ -25,9 +25,7 @@ export const GridView: React.FC<GridViewProps> = ({
   styles,
 }) => {
   const defaultColumnCount = 4;
-  const templateData = useTemplateData(
-    isString(data) ? removeCurlyBraces(data) : data,
-  );
+  const templateData = useTemplateData(data);
 
   const namedData = map(templateData, (value) => ({
     [name]: value,
@@ -81,10 +79,3 @@ export const GridView: React.FC<GridViewProps> = ({
 };
 
 WidgetRegistry.register("GridView", GridView);
-
-function removeCurlyBraces(string: string): string {
-  if (string.startsWith("${") && string.endsWith("}")) {
-    return string.substring(2, string.length - 1);
-  }
-  return string;
-}

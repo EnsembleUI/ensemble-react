@@ -1,5 +1,6 @@
-import { merge } from "lodash-es";
+import { isEmpty, last, merge } from "lodash-es";
 import type { InvokableMethods, ScreenContextDefinition } from "./state";
+import { EnsembleStorage } from "./storage";
 
 export const buildEvaluateFn = (
   screen: ScreenContextDefinition,
@@ -20,13 +21,40 @@ export const buildEvaluateFn = (
     ...Object.entries(context ?? {}),
   ]);
 
+  invokableObj.ensemble = {
+    storage: EnsembleStorage,
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
-  const jsFunc = new Function(
-    ...[...Object.keys(invokableObj)],
-    js ? `return ${js}` : "console.log('No expression was given')",
-  );
+  const jsFunc = new Function(...[...Object.keys(invokableObj)], formatJs(js));
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return () => jsFunc(...Object.values(invokableObj));
+};
+
+const formatJs = (js?: string): string => {
+  if (!js || isEmpty(js)) {
+    return "console.log('No expression was given')";
+  }
+  const sanitizedJs = sanitizeJs(js);
+  // multiline js
+  if (sanitizedJs.includes("\n")) {
+    const lines = sanitizedJs.split("\n");
+    const lastLine = last(lines);
+    lines.splice(lines.length - 1, 1, `return ${String(lastLine)}`);
+    return `
+      return (function() {
+        ${lines.join("\n")}
+      }())
+    `;
+  }
+  return `return ${sanitizedJs}`;
+};
+
+const sanitizeJs = (string: string): string => {
+  if (string.startsWith("${") && string.endsWith("}")) {
+    return string.substring(2, string.length - 1);
+  }
+  return string.trim();
 };
 
 export const evaluate = (

@@ -1,4 +1,6 @@
 View:
+  onLoad:
+    executeCode: null
   body:
     Column:
       styles:
@@ -17,3 +19,25 @@ View:
                     navigateModalScreen:
                       name: Ask Embrace
                       maskClosable: false
+        - Row:
+            mainAxis: spaceBetween
+            crossAxis: center
+            children:
+              - Markdown:
+                  text: "### Groups"
+              - MultiSelect:
+                  id: myMultiSelect
+                  data: getData.body.users
+                  labelKey: firstName
+                  valueKey: email
+                  default:
+                    [
+                      { value: "jack", label: "jack" },
+                      { value: "lucy", label: "lucy" },
+                    ]
+                  placeholder: "Select From Groups"
+        - Button:
+            label: Get Multi Select Value
+            onTap:
+              executeCode: |
+                console.log(myMultiSelect.value)

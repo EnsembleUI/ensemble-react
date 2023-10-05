@@ -3,21 +3,17 @@ View:
     Text:
       text: Ask Embrace
   body:
-    Column:
+    Form:
+      styles:
+        labelPosition: top
+      onSubmit:
+        invokeAPI:
+          name: addCollection
       children:
-        - Text:
-            text: TODO 1
-        - Text:
-            text: TODO 2
-        - Text:
-            text: TODO 3
-        - Text:
-            text: TODO 4
-        - Text:
-            text: TODO 5
-        - Text:
-            text: TODO 6
-        - Text:
-            text: TODO 7
-        - Text:
-            text: TODO 8
+        - TextInput:
+            label: Name
+            value: foo
+        - Button:
+            label: Submit
+            submitForm: true
+    

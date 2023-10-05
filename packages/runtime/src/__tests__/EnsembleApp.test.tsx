@@ -76,9 +76,9 @@ test("Renders view widget of home screen", () => {
   expect(screen.getByText("Peter Parker")).not.toBeNull();
 });
 
-test("Bind data from other widgets", () => {
+test("Bind data from other widgets", async () => {
   const mockScreen = {
-    name: "Home",
+    name: "ReadValue",
     body: {
       name: "Column",
       properties: {
@@ -108,13 +108,14 @@ test("Bind data from other widgets", () => {
   });
   render(<EnsembleApp appId="test" />);
 
-  const components = screen.queryAllByText("Peter Parker");
+  const components = await screen.findAllByText("Peter Parker");
   expect(components.length).toEqual(2);
 });
 
-test.skip("Updates values through Ensemble state", async () => {
+// FIXME: id collision in widget state here
+test("Updates values through Ensemble state", async () => {
   const mockScreen = {
-    name: "Home",
+    name: "UpdateValue",
     body: {
       name: "Column",
       properties: {
@@ -122,7 +123,7 @@ test.skip("Updates values through Ensemble state", async () => {
           {
             name: "Text",
             properties: {
-              id: "myText",
+              id: "myText2",
               text: "Peter Parker",
             },
           },
@@ -131,7 +132,7 @@ test.skip("Updates values through Ensemble state", async () => {
             properties: {
               label: "Click Me",
               onTap: {
-                executeCode: "myText.setText('Spiderman')",
+                executeCode: "myText2.setText('Spiderman')",
               },
             },
           },

@@ -1,48 +1,45 @@
-import type { Expression } from "framework";
-import {
-  useRegisterBindings,
-  useExecuteCode,
-  NavigateModalScreenProps,
-} from "framework";
-import { useNavigateScreen } from "../runtime/navigate";
-import useNavigateModalScreen from "../runtime/navigateModal";
+import type { EnsembleAction, Expression } from "framework";
+import { useRegisterBindings } from "framework";
+import { Button as AntButton, Form as AntForm } from "antd";
+import { useCallback } from "react";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from "../util/types";
-import { Button as AntButton } from "antd";
+import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
 export type ButtonProps = {
   label: Expression<string>;
-  onTap?: {
-    executeCode?: string;
-    navigateScreen?: string;
-    navigateModalScreen?: string | NavigateModalScreenProps;
-  };
+  onTap?: EnsembleAction;
+  submitForm?: boolean;
 } & EnsembleWidgetProps;
 
 export const Button: React.FC<ButtonProps> = (props) => {
-  const onTap = props?.onTap?.executeCode;
-  const { values } = useRegisterBindings(props, props?.id);
-  const onTapCallback = useExecuteCode(onTap, values);
-  const onNavigate = useNavigateScreen(props?.onTap?.navigateScreen);
-  const { openModal, renderModal } = useNavigateModalScreen(
-    props?.onTap?.navigateModalScreen
-  );
+  const { values } = useRegisterBindings(props, props.id);
+  const action = useEnsembleAction(props.onTap);
 
+  const onClickCallback = useCallback(() => {
+    if (!action) {
+      return;
+    }
+    action.callback();
+  }, [action]);
+  if (values.submitForm) {
+    return (
+      <AntForm.Item>
+        <>
+          <AntButton htmlType="submit" onClick={onClickCallback} type="primary">
+            {values.label}
+          </AntButton>
+          {action && "Modal" in action ? action.Modal : null}
+        </>
+      </AntForm.Item>
+    );
+  }
   return (
     <>
-      <AntButton
-        onClick={
-          props?.onTap?.navigateScreen
-            ? onNavigate
-            : props?.onTap?.navigateModalScreen
-            ? openModal
-            : onTapCallback
-        }
-        type="primary"
-      >
+      <AntButton onClick={onClickCallback} type="primary">
         {values.label}
       </AntButton>
-      {renderModal}
+      {action && "Modal" in action ? action.Modal : null}
     </>
   );
 };

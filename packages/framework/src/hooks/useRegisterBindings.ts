@@ -6,6 +6,7 @@ import { focusAtom } from "jotai-optics";
 import type { InvokableMethods } from "../state";
 import { screenAtom } from "../state";
 import { evaluate } from "../evaluate";
+import { isExpression } from "../shared";
 import { useWidgetId } from "./useWidgetId";
 import { useCustomScope } from "./useCustomScope";
 
@@ -32,11 +33,7 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
     () =>
       compact(
         map(Object.entries(values), ([key, value]) => {
-          if (
-            typeof value === "string" &&
-            value.startsWith("${") &&
-            value.endsWith("}")
-          ) {
+          if (isExpression(value)) {
             return [key, value.slice(2, value.length - 1)];
           }
         }),

@@ -1,44 +1,35 @@
 View:
   onLoad:
-    name: getData
+    invokeApi:
+      name: getData
 
   body:
     Column:
       styles:
         crossAxis: stretch
         margin: 0 20px
-        backgroundColor:
       children:
         - Row:
-            styles:
-              backgroundColor: white
-              mainAxis: spaceBetween
-              crossAxis: center
-              padding: 10
+            backgroundColor: white
+            mainAxis: spaceBetween
+            crossAxis: center
+            padding: 10
             children:
               - Search:
                   styles:
-                    width: 300px
-                    backgroundColor: white
-                    border: 1px solid grey
-                    margin: 5px 5px 5px 5px
+                    width: 320px
+                    height: 40px
+                    borderRadius: 12
+                    borderWidth: 2
+                    borderStyle: solid
+                    borderColor: "#B8BED6"
+                  placeholder: Search
+                  data: getData.body.users
+                  searchKey: email
               - Row:
                   styles:
                     gap: 10
                   children:
-                    - Icons:
-                        label: Notifications
-                        hasNotification: true
-                        styles:
-                          backgroundColor: white
-                          borderWidth: 1px
-                          borderColor: grey
-                          iconWidth: 25
-                          iconHeight: 25
-                          width: 45
-                          height: 45
-                          notificationStyles:
-                            backgroundColor: "#6DC4E5"
                     - Avatar:
                         alt: abc
                         name: sana
@@ -54,74 +45,96 @@ View:
 
         - Markdown:
             text: "# User Management"
-
         - TabBar:
-            TabPane:
-              - key: overview
-                label: Overview
-                page: Collections
-              - key: adoption usage
-                label: Adoption Usage
-              - key: group impact
-                label: Group Impact
-              - key: knowledge health
-                label: Knowledge Health
-
-        - Column:
-            children:
-              - GridView:
-                  item-template:
-                    data: getData.body.users
-                    name: user
-                    template:
-                      Card:
-                        styles:
-                          shadowColor: lightgrey
-                          shadowOffset: 8px
-                          shadowBlur: 10px
-                          shadowSpread: -2px
-                        children:
-                          - Column:
-                              styles:
-                                crossAxis: center
-                                gap: 5
-                              children:
-                                - Image:
-                                    source: ${user.image}
-                                    width: 40
-                                    height: 40
-                                    fit: cover
-                                    borderRadius: 100
-                                - Column:
-                                    styles:
-                                      crossAxis: start
-                                    children:
-                                      - Text:
-                                          text: ${user.firstName}
-                                      - Text:
-                                          text: ${user.email}
-        - PopupMenu:
+            id: tababr1
+            selectedIndex: 0
             items:
-              - { "label": "Red", "value": "red" }
-              - { "label": "Blue", "value": "blue" }
-              - { "label": "Green", "value": "green" }
-            onItemSelect:
-              executeCode: myText.setText("Spiderman")
-            widget:
-              Column:
-                styles:
-                  backgroundColor: blue
-                  padding: 10
-                children:
-                  - Button:
-                      label:
-                  - Text:
-                      text: Hello
-        - Text:
-            id: myText
-            text: Peter Parker
-        - Text:
-            text: ${myText.text}
+              - label: Overview
+                widget:
+                  Column:
+                    children:
+                      - Conditional:
+                          conditions:
+                            - if: ${!getData.body.users}
+                              Column:
+                                mainAxis: center
+                                crossAxis: center
+                                gap: 24
+                                children:
+                                  - Column:
+                                      styles:
+                                        width: 200
+                                        height: 200
+                                        backgroundColor: "#D9D9D9"
+                                        borderRadius: 100
+                                      children:
+                                        - Text:
+                                            text:
+                                  - Column:
+                                      crossAxis: center
+                                      children:
+                                        - Text:
+                                            text: Organize users into groups
+                                            styles:
+                                              fontSize: 22
+                                              color: black
+                                              fontWeight: 600
+                                        - Text:
+                                            text: Grant users messaging access by adding them to groups.
+
+                                  - Button:
+                                      label: Create new group
+                                      styles:
+                                        backgroundColor: black
+                                        padding: 16
+                                      gap: 6
+                                      startingIcon:
+                                        name: Add
+                                        color: white
+                                        size: 22
+                                      onTap:
+                                        navigateModalScreen:
+                                          name: Create Group
+                                          maskClosable: false
+
+                            - else:
+                              GridView:
+                                item-template:
+                                  data: getData.body.users
+                                  name: user
+                                  template:
+                                    Card:
+                                      styles:
+                                        shadowColor: lightgrey
+                                        shadowOffset: 8px
+                                        shadowBlur: 10px
+                                        shadowSpread: -2px
+                                      children:
+                                        - Column:
+                                            styles:
+                                              crossAxis: center
+                                              gap: 5
+                                            children:
+                                              - Image:
+                                                  source: ${user.image}
+                                                  width: 40
+                                                  height: 40
+                                                  fit: cover
+                                                  borderRadius: 100
+                                              - Column:
+                                                  styles:
+                                                    crossAxis: start
+                                                  children:
+                                                    - Text:
+                                                        text: ${user.firstName}
+                                                    - Text:
+                                                        text: ${user.email}
+
+              - label: Collections
+                widget:
+                  Markdown:
+                    text: "# Render widgets in this tab"
+
 API:
   getData:
     method: GET
