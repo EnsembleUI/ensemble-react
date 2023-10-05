@@ -1,16 +1,10 @@
-import { isString, map } from "lodash-es";
+import { map } from "lodash-es";
+import type { CustomScope, EnsembleWidget, Expression } from "framework";
+import { CustomScopeProvider, useTemplateData } from "framework";
+import { Col, Row } from "antd";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import type { GridViewStyles } from "../util/types";
-import { handleCurlyBraces } from "../util/utils";
-import {
-  CustomScope,
-  CustomScopeProvider,
-  EnsembleWidget,
-  Expression,
-  useTemplateData,
-} from "framework";
-import { Col, Row } from "antd";
 
 interface EnsembleWidgetProps<T> {
   id?: string;
@@ -31,9 +25,7 @@ export const GridView: React.FC<GridViewProps> = ({
   styles,
 }) => {
   const defaultColumnCount = 4;
-  const templateData = useTemplateData(
-    isString(data) ? handleCurlyBraces(data) : data
-  );
+  const templateData = useTemplateData(data);
 
   const namedData = map(templateData, (value) => ({
     [name]: value,
@@ -65,7 +57,7 @@ export const GridView: React.FC<GridViewProps> = ({
             <CustomScopeProvider value={namedData[dataIndex] as CustomScope}>
               {EnsembleRuntime.render([template])}
             </CustomScopeProvider>
-          </Col>
+          </Col>,
         );
     }
     rows.push(
@@ -79,7 +71,7 @@ export const GridView: React.FC<GridViewProps> = ({
         }}
       >
         {cols}
-      </Row>
+      </Row>,
     );
   }
 
