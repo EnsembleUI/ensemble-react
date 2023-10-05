@@ -4,6 +4,8 @@ View:
       text: Ask Embrace
   body:
     Form:
+      styles:
+        labelPosition: top
       onSubmit:
         invokeAPI:
           name: addCollection

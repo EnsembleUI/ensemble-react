@@ -1,11 +1,7 @@
-import type {
-  FieldValues,
-  SubmitHandler,
-  UseFormHandleSubmit,
-} from "react-hook-form";
-import { FormProvider, useForm } from "react-hook-form";
 import type { EnsembleAction, EnsembleWidget } from "framework";
+import { Form as AntForm } from "antd";
 import { useCallback } from "react";
+import type { FormLayout } from "antd/es/form/Form";
 import { WidgetRegistry } from "../../registry";
 import { EnsembleRuntime } from "../../runtime";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
@@ -20,29 +16,39 @@ export interface FormProps {
   };
 }
 export const Form: React.FC<FormProps> = (props) => {
-  const methods = useForm();
   const action = useEnsembleAction(props.onSubmit);
 
-  const handleSubmit = useCallback<UseFormHandleSubmit<FieldValues>>(
-    (onValidate) => {
-      const validateWithAction: SubmitHandler<FieldValues> = (values) => {
-        onValidate(values);
-        if (!action) {
-          return;
-        }
+  const onFinishCallback = useCallback(
+    (values: unknown) => {
+      if (!action) {
+        return;
+      }
 
-        return action.callback();
-      };
-      return methods.handleSubmit(validateWithAction);
+      return action.callback(values);
     },
-    [action, methods],
+    [action],
   );
 
   return (
-    <FormProvider {...methods} handleSubmit={handleSubmit}>
-      <form>{EnsembleRuntime.render(props.children)}</form>
-    </FormProvider>
+    <AntForm
+      colon={false}
+      layout={getLayout(props.styles.labelPosition)}
+      onFinish={onFinishCallback}
+    >
+      {EnsembleRuntime.render(props.children)}
+    </AntForm>
   );
+};
+
+const getLayout = (labelPosition?: string): FormLayout => {
+  switch (labelPosition) {
+    case "start":
+      return "horizontal";
+    case "top":
+      return "vertical";
+    default:
+      return "horizontal";
+  }
 };
 
 WidgetRegistry.register("Form", Form);
