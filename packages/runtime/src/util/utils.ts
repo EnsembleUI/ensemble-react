@@ -4,6 +4,12 @@ import { get } from "lodash-es";
 
 type Color = number | string;
 
+export interface EnsembleWidgetProps<T> {
+  id?: string;
+  [key: string]: unknown;
+  styles?: T;
+}
+
 const namedColors: { [key in Color]?: string } = {
   black: "0xff000000",
   white: "0xffffffff",
@@ -44,7 +50,7 @@ export const getColor = (color: number | string): string => {
 
 /// same common properties as with Flutter
 export const getTextAlign = (
-  value: string | undefined,
+  value: string | undefined
 ): "left" | "right" | "center" | "justify" | "end" | "start" => {
   switch (value) {
     case "left":

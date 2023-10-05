@@ -1,17 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Expression, useTemplateData } from "framework";
 import { WidgetRegistry } from "../registry";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { Select as SelectComponent, Space } from "antd";
 import { get } from "lodash-es";
 import { SearchStyles } from "../util/types";
-import { getColor } from "../util/utils";
-
-interface EnsembleWidgetProps<T> {
-  id?: string;
-  [key: string]: unknown;
-  styles?: T;
-}
+import { EnsembleWidgetProps, getColor } from "../util/utils";
 
 type SelectOption = {
   label: Expression<string>;
@@ -40,7 +34,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
     defaultOptions?.map((item) => item.value?.toString())
   );
 
-  const templateData = useMemo(() => useTemplateData(data), [data]);
+  const templateData = useTemplateData(data);
 
   useEffect(() => {
     if (Array.isArray(templateData)) {
