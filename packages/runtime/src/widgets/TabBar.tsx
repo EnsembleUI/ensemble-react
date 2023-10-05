@@ -1,13 +1,13 @@
 import React, { type ReactElement } from "react";
-import {
+import { useRegisterBindings, useScreenContext } from "framework";
+import type {
+  Expression,
+  ScreenContextDefinition,
   type EnsembleWidget,
-  useRegisterBindings,
-  useScreenContext,
 } from "framework";
 import { Tabs, ConfigProvider } from "antd";
-import type { Expression, ScreenContextDefinition } from "framework";
-import { type IconProps } from "../util/types";
 import { evaluate } from "framework/src/evaluate";
+import { type IconProps } from "../util/types";
 import { EnsembleRuntime } from "../runtime";
 import { WidgetRegistry } from "../registry";
 import { Icon } from "./Icon";
@@ -37,7 +37,7 @@ export interface TabBarProps {
   };
 }
 export const TabBar: React.FC<TabBarProps> = (props) => {
-  const { values } = useRegisterBindings(props, props?.id);
+  const { values } = useRegisterBindings(props, props.id);
   const context = useScreenContext();
   const renderLabel = (
     label: Expression<string>,
@@ -59,7 +59,9 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
           padding: props.styles?.tabPadding ?? "5px 5px 5px 5px",
         }}
       >
-        {icon && <Icon name={icon.name} size={icon.size} color={icon.color} />}{" "}
+        {icon ? (
+          <Icon color={icon.color} name={icon.name} size={icon.size} />
+        ) : null}{" "}
         &nbsp; {labelEvaluated ? labelEvaluated : label}
       </div>
     );

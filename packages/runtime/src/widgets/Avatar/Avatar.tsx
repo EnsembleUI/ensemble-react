@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import type { Expression } from "framework";
+import type { EnsembleAction, ExecuteCodeAction, Expression } from "framework";
 import { useRegisterBindings } from "framework";
 import {
   Avatar as MuiAvatar,
@@ -8,20 +8,18 @@ import {
   ListItemIcon,
 } from "@mui/material";
 import { useNavigateScreen } from "../../runtime/hooks/useNavigateScreen";
+import { useExecuteCode } from "../../runtime/hooks/useEnsembleAction";
 import { WidgetRegistry } from "../../registry";
 import type { IconProps } from "../../util/types";
 import { Icon } from "../Icon";
-import { useExecuteCode } from "../../runtime/hooks/useEnsembleAction";
 import { stringToColor } from "./utils/stringToColors";
 import { generateInitials } from "./utils/generateInitials";
+import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 
 export interface AvatarMenu {
   label: string;
   icon?: IconProps;
-  onTap?: {
-    executeCode?: string;
-    navigateScreen?: string;
-  };
+  onTap?: EnsembleAction;
 }
 
 export interface AvatarProps {
@@ -35,13 +33,14 @@ export interface AvatarProps {
     width?: number | string;
     height?: number | string;
     backgroundColor?: string;
+    color: string;
   };
   menu?: AvatarMenu[];
 }
 
 export const Avatar: React.FC<AvatarProps> = (props) => {
-  const [code, setCode] = useState("");
-  const [screen, setScreen] = useState("");
+  const [code, setCode] = useState<ExecuteCodeAction>();
+  const [screen, setScreen] = useState<ExecuteCodeAction>();
   const nameString = props.name?.toString();
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(Boolean(menuAnchorEl));
@@ -69,12 +68,12 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
     handleMenuClose();
   };
 
-  useEffect(() => {
-    code && executeCode?.callback?.();
-  }, [code, executeCode]);
-  useEffect(() => {
-    screen && navigate?.callback?.();
-  }, [screen, navigate]);
+  // useEffect(() => {
+  //   code && onTapCallback();
+  // }, [code, onTapCallback]);
+  // useEffect(() => {
+  //   screen && onNavigate();
+  // }, [screen, onNavigate]);
 
   return (
     <div>
@@ -84,9 +83,10 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
         src={props.src}
         sx={{
           bgcolor:
-            props.styles?.backgroundColor ?? stringToColor(nameString ?? ""),
+            props.styles?.backgroundColor ?? stringToColor(values.name ?? ""),
           width: props.styles?.width,
           height: props.styles?.height,
+          color: props.styles?.color ?? "white",
           cursor: "pointer",
         }}
       >

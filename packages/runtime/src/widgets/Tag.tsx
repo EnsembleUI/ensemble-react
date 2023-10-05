@@ -8,7 +8,7 @@ import { Icon } from "./Icon";
 
 export type TagProps = {
   id?: string;
-  label: Expression<string>;
+  label: Expression<string> | Expression<string[]>;
   styles?: {
     backgroundColor: string;
     borderRadius: string;
@@ -22,15 +22,14 @@ export const Tag: React.FC<TagProps> = (props) => {
     setText,
   });
 
-  return (
-    <div
-      style={{
-        display: "inline-flex",
-        justifyContent: "left",
-        alignItems: "center",
-      }}
-    >
+  const labels = Array.isArray(values.label)
+    ? (values.label as string[])
+    : [values.label as string];
+
+  const tagElements = labels.map((item, index) => (
+    
       <Typography.Text
+        key={index}
         style={{
           backgroundColor: props.styles?.backgroundColor ?? "#e6e7e8",
           paddingLeft: "10px",
@@ -38,15 +37,19 @@ export const Tag: React.FC<TagProps> = (props) => {
           textAlign: "left",
           borderRadius: props.styles?.borderRadius ?? 10,
           fontWeight: "normal",
-          display: "flex",
+          display: "inline-flex",
           alignItems: "center",
+          margin: "5px",
+          whiteSpace: "nowrap",
         }}
       >
-        {values.text} &nbsp;
+        {item} &nbsp;
         {props.icon && <Icon {...props.icon} />}
       </Typography.Text>
-    </div>
-  );
+     
+  ));
+
+  return <div>{tagElements}</div>;
 };
 
 WidgetRegistry.register("Tag", Tag);

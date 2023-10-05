@@ -34,7 +34,7 @@ View:
               color: "#ECEFF6"
         - MultiSelect:
             id: addUserValues
-            data: getData.body.users
+            data: getData.body.records
             labelKey: email
             valueKey: email
             default:
@@ -50,8 +50,8 @@ View:
               gap: 10
               indicatorType: none
             item-template:
-              data: ensemble.storage.get("arrayOfUsers")
-              name: user
+              data: ensemble.storage.get("arrayOfGroups")
+              name: group
               template:
                 Row:
                   mainAxis: center
@@ -61,7 +61,7 @@ View:
                     padding: 12
                   children:
                     - Text:
-                        text: ${user.firstName}
+                        text: ${group}
                         styles:
                           color: "#171B2A"
                           fontSize: 14
@@ -93,6 +93,7 @@ View:
                     showToast:
                       message: ${"Created new user " + groupName.value}
                   styles:
+                    textColor: white
                     backgroundColor: black
                     color: white
                     padding: 24

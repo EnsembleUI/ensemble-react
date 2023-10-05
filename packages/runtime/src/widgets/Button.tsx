@@ -6,33 +6,27 @@ import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps, IconProps } from "../util/types";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { Icon } from "./Icon";
-import { merge } from "lodash-es";
-
-export interface ButtonStyles {
-  backgroundColor?: string;
-  color?: string;
-  border?: string;
-  borderRadius?: string;
-}
-
-const defaultStyles: ButtonStyles = {
-  border: "1px solid lightgrey",
-  borderRadius: "10px",
-};
 
 export type ButtonProps = {
   label: Expression<string>;
   onTap?: EnsembleAction;
   submitForm?: boolean;
-  styles: ButtonStyles;
   startingIcon?: IconProps;
-  gap?: string | number;
+  endingIcon?: IconProps;
+  styles?: {
+    textColor: string;
+    borderColor: string;
+    borderRadius: string;
+    borderWidth: string;
+    gap?: number | string;
+    backgroundColor?: number | string;
+    padding?: number | string;
+  };
 } & EnsembleWidgetProps;
 
 export const Button: React.FC<ButtonProps> = (props) => {
   const { values } = useRegisterBindings(props, props.id);
   const action = useEnsembleAction(props.onTap);
-  const mergedStyles = merge(defaultStyles, props?.styles);
   const onClickCallback = useCallback(() => {
     if (!action) {
       return;
@@ -50,28 +44,23 @@ export const Button: React.FC<ButtonProps> = (props) => {
           <AntButton
             htmlType="submit"
             onClick={onClickCallback}
-            type="primary"
             style={{
-              backgroundColor: `${
-                props.styles?.backgroundColor
-                  ? props.styles.backgroundColor
-                  : "black"
-              }`,
-              color: `${props.styles?.color ? props.styles.color : "white"}`,
               display: "flex",
               alignItems: "center",
-              gap: `${props?.gap ? `${props.gap}px` : "6px"}`,
-              ...mergedStyles,
+              justifyContent: "center",
+              width: "auto",
+              backgroundColor: String(props.styles?.backgroundColor),
+              padding: props.styles?.padding,
+              color: props.styles?.textColor ?? "black",
+              borderColor: props.styles?.borderColor,
+              borderWidth: props.styles?.borderWidth,
+              borderRadius: props.styles?.borderRadius,
             }}
           >
-            <Icon
-              color={
-                props?.startingIcon?.color ? props.startingIcon.color : "black"
-              }
-              name={props?.startingIcon?.name ? props.startingIcon.name : ""}
-              size={props?.startingIcon?.size ? props.startingIcon.size : 6}
-            />
+            {props.startingIcon ? <Icon {...props.startingIcon} /> : null}
+            &nbsp;
             {values.label}
+            {props.endingIcon ? <Icon {...props.endingIcon} /> : null}
           </AntButton>
           {action && "Modal" in action ? action.Modal : null}
         </>
@@ -82,28 +71,23 @@ export const Button: React.FC<ButtonProps> = (props) => {
     <>
       <AntButton
         onClick={onClickCallback}
-        type="primary"
         style={{
-          backgroundColor: `${
-            props.styles?.backgroundColor
-              ? props.styles.backgroundColor
-              : "black"
-          }`,
-          color: `${props.styles?.color ? props.styles.color : "white"}`,
           display: "flex",
           alignItems: "center",
-          gap: `${props?.gap ? `${props.gap}px` : "6px"}`,
-          ...mergedStyles,
+          justifyContent: "center",
+          width: "auto",
+          backgroundColor: String(props.styles?.backgroundColor),
+          padding: props.styles?.padding,
+          color: props.styles?.textColor ?? "black",
+          borderColor: props.styles?.borderColor,
+          borderWidth: props.styles?.borderWidth,
+          borderRadius: props.styles?.borderRadius,
         }}
       >
-        <Icon
-          color={
-            props?.startingIcon?.color ? props.startingIcon.color : "black"
-          }
-          name={props?.startingIcon?.name ? props.startingIcon.name : ""}
-          size={props?.startingIcon?.size ? props.startingIcon.size : 6}
-        />
+        {props.startingIcon ? <Icon {...props.startingIcon} /> : null}
+        &nbsp;
         {values.label}
+        {props.endingIcon ? <Icon {...props.endingIcon} /> : null}
       </AntButton>
       {action && "Modal" in action ? action.Modal : null}
     </>

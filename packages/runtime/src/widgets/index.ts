@@ -15,6 +15,7 @@ export * from "./Search";
 export * from "./Progress";
 export * from "./GridView";
 export * from "./Avatar/Avatar";
+export * from "./Tag";
 export * from "./Form";
 export * from "./MultiSelect";
 export * from "./Divider";
