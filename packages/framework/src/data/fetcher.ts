@@ -45,6 +45,7 @@ export const DataFetcher = {
     const axRes = await axios({
       url: api.uri,
       method: api.method,
+      headers: api.headers,
       params,
       data: api.body,
     });
