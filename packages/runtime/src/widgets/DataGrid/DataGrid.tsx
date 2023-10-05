@@ -44,7 +44,7 @@ export const DataGrid: React.FC<GridProps> = ({
     return namedObj;
   });
   return (
-    <Table dataSource={namedData}>
+    <Table dataSource={namedData} style={{width: "100%"}}>
       {DataColumns.map((col, index) => {
         return (
           <Table.Column
