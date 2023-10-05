@@ -1,5 +1,6 @@
 import { Provider, useAtomValue, useSetAtom } from "jotai";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
+import { merge } from "lodash-es";
 import { ensembleStore, screenAtom, screenDataAtom } from "../state";
 import type { ScreenContextActions, ScreenContextDefinition } from "../state";
 import type { Response } from "../data";
@@ -13,12 +14,25 @@ interface ScreenContextProps {
 type ScreenContextProviderProps = React.PropsWithChildren<ScreenContextProps>;
 
 export const ScreenContextProvider: React.FC<ScreenContextProviderProps> = ({
+  screen,
   context,
   children,
 }) => {
-  if (context) {
-    ensembleStore.set(screenAtom, context);
-  }
+  useEffect(() => {
+    // FIXME: guarantee ordering in resetting screen state
+    const prevValue = ensembleStore.get(screenAtom);
+    if (context) {
+      ensembleStore.set(screenAtom, merge(prevValue, context));
+    } else {
+      ensembleStore.set(
+        screenAtom,
+        merge(prevValue, {
+          model: screen,
+        }),
+      );
+    }
+  }, []);
+
   return <Provider store={ensembleStore}>{children}</Provider>;
 };
 

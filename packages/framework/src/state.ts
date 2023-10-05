@@ -50,7 +50,7 @@ export interface Invokable {
 }
 
 export const screenAtom = atom<ScreenContextDefinition>({
-  screenModel: null,
+  model: undefined,
   data: {},
   widgets: {},
   storage: {},
