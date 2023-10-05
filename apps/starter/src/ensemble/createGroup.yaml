@@ -13,8 +13,9 @@ View:
       onSubmit:
         executeCode: |
           const firstName = groupName.value
+          const email = emailValue.value[0]
           const res = ensemble.storage.get("arrayOfUsers")
-          res.push({"id": res.length+1, "firstName": firstName })
+          res.push({"id": res.length+1, "firstName": firstName, "email": email })
       children:
         - TextInput:
             id: groupName
@@ -36,7 +37,7 @@ View:
             children:
               - Avatar:
                   id: avatar
-                  alt: abc
+                  aplt: abc
                   name: Ali
               - Button:
                   label: Change Color
@@ -54,7 +55,7 @@ View:
               thickness: 1
               color: "#ECEFF6"
         - MultiSelect:
-            id: multiValue
+            id: emailValue
             data: getData.body.users
             labelKey: email
             valueKey: email
