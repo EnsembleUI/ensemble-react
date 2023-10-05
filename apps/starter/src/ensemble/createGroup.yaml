@@ -85,7 +85,8 @@ View:
                   label: Create Group
                   submitForm: true
                   onTap:
-                    executeCode: avatar.setName(groupName.value)
+                    showToast:
+                      message: ${"Created new user " + groupName.value}
                   styles:
                     backgroundColor: black
                     color: white
