@@ -1,4 +1,5 @@
 export const generateInitials = (name?: string): string => {
+
   if (!name) return "";
 
   const words = name.split(" ");

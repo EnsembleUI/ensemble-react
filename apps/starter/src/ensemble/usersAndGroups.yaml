@@ -202,16 +202,26 @@ View:
                                         # Person
                                         - Row:
                                             crossAxis: center
-                                            gap: 5
+                                            gap: 15
                                             children:
-                                              
+                                              - Avatar:
+                                                  alt: sana
+                                                  name: ${user.firstName}
+                                                  styles:
+                                                    backgroundColor: "#F4F4F4"
+                                                    color: grey
                                               - Column:
                                                   crossAxis: start
                                                   children:
+                                                    
                                                     - Text:
                                                         text: ${user.firstName}
                                                     - Text:
                                                         text: ${user.email}
+                                                        styles:
+                                                          fontWeight: normal
+                                                          fontSize: 12px
+                                                          color: "#767676"
                                         - Row:
                                             crossAxis: center
                                             gap: 10
@@ -290,8 +300,14 @@ View:
                                   # Person
                                   - Row:
                                       crossAxis: center
-                                      gap: 5
-                                      children:                                        
+                                      gap: 15
+                                      children: 
+                                        - Avatar:
+                                            alt: sana
+                                            name: ${user.firstName}
+                                            styles:
+                                              backgroundColor: "#F4F4F4"
+                                              color: grey                                       
                                         - Column:
                                             crossAxis: start
                                             children:
@@ -299,6 +315,10 @@ View:
                                                   text: ${user.firstName}
                                               - Text:
                                                   text: ${user.email}
+                                                  styles:
+                                                    fontWeight: normal
+                                                    fontSize: 12px
+                                                    color: "#767676"
                                   - Text:
                                       text: 4 days ago
 

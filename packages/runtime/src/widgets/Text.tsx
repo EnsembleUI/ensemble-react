@@ -6,7 +6,11 @@ import type { BaseTextProps } from "../util/types";
 import { getTextAlign } from "../util/utils";
 
 export type TextProps = {
-  // to be added more
+  styles?:{
+    fontWeight: string;
+    color: string;
+    fontSize: string;
+  }
 } & BaseTextProps;
 
 export const Text: React.FC<TextProps> = (props) => {
@@ -16,7 +20,10 @@ export const Text: React.FC<TextProps> = (props) => {
   });
 
   return (
-    <Typography.Text style={{ textAlign: getTextAlign(props.textAlign) }}>
+    <Typography.Text style={{ textAlign: getTextAlign(props.textAlign),
+    fontWeight: props.styles?.fontWeight, 
+    fontSize: props.styles?.fontSize,
+    color: props.styles?.color }}>
       {values.text}
     </Typography.Text>
   );

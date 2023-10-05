@@ -32,6 +32,7 @@ export interface AvatarProps {
     width?: number | string;
     height?: number | string;
     backgroundColor?: string;
+    color: string;
   };
   menu?: AvatarMenu[];
 }
@@ -43,9 +44,10 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(Boolean(menuAnchorEl));
   const [text, setText] = useState(props.name);
-  const { values } = useRegisterBindings({ ...props, text }, props.name, {
+  const { values } = useRegisterBindings({ ...props, text }, props.alt, {
     setText,
   });
+  
   const onTapCallback = useExecuteCode(code, values);
   const onNavigate = useNavigateScreen(screen);
 
@@ -80,14 +82,15 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
         src={props.src}
         sx={{
           bgcolor:
-            props.styles?.backgroundColor ?? stringToColor(values.text ?? ""),
+            props.styles?.backgroundColor ?? stringToColor(values.name ?? ""),
           width: props.styles?.width,
           height: props.styles?.height,
+          color: props.styles?.color ?? "white",
           cursor: "pointer",
         }}
       >
         {props.name ? (
-          generateInitials(values.text)
+          generateInitials(values.name)
         ) : (
           <Icon
             color={props.icon?.color}
