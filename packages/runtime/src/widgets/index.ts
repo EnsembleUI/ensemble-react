@@ -19,3 +19,4 @@ export * from "./Form";
 export * from "./MultiSelect";
 export * from "./Divider";
 export * from "./Tag";
+export * from "./Carousel";

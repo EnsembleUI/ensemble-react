@@ -202,50 +202,33 @@ View:
                                 children:
                                   - Row:
                                       mainAxis: spaceBetween
+                                      gap: 20
                                       children:
-                                        - Column:
-                                            mainAxis: start
-                                            children:
-                                              - Text:
-                                                  text: All Users
-                                                  styles:
-                                                    fontSize: 22
-                                                    fontWeight: 600
-                                              - Text:
-                                                  text: Users must be added to a group to get access to messaging.
-                                                  styles:
-                                                    fontSize: 16
-                                                    fontWeight: 400
-                                        - Row:
-                                            mainAxis: spaceBetween
-                                            gap: 20
-                                            children:
-                                              - Search:
-                                                  styles:
-                                                    width: 320px
-                                                    height: 40px
-                                                    borderRadius: 12
-                                                    borderWidth: 2
-                                                    borderStyle: solid
-                                                    borderColor: "#B8BED6"
-                                                  placeholder: Search
-                                                  data: getData.body.users
-                                                  searchKey: email
-                                              - Button:
-                                                  label: invite
-                                                  styles:
-                                                    backgroundColor: "#072CC4"
-                                                    padding: 16
-                                                  gap: 6
-                                                  startingIcon:
-                                                    name: Add
-                                                    color: white
-                                                    size: 22
-                                                  onTap:
-                                                    navigateModalScreen:
-                                                      name: Create Group
-                                                      maskClosable: false
-
+                                        - Search:
+                                            styles:
+                                              width: 320px
+                                              height: 40px
+                                              borderRadius: 12
+                                              borderWidth: 2
+                                              borderStyle: solid
+                                              borderColor: "#B8BED6"
+                                            placeholder: Search
+                                            data: getData.body.users
+                                            searchKey: email
+                                        - Button:
+                                            label: invite
+                                            styles:
+                                              backgroundColor: "#072CC4"
+                                              padding: 16
+                                            gap: 6
+                                            startingIcon:
+                                              name: Add
+                                              color: white
+                                              size: 22
+                                            onTap:
+                                              navigateModalScreen:
+                                                name: Invite
+                                                maskClosable: false
                                   - DataGrid:
                                       DataColumns:
                                         - label: User
