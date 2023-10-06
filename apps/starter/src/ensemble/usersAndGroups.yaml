@@ -129,11 +129,109 @@ View:
                                                         text: ${user.firstName}
                                                     - Text:
                                                         text: ${user.email}
-
               - label: Collections
                 widget:
-                  Markdown:
-                    text: "# Render widgets in this tab"
+                  Row:
+                    children:
+                      - Column:
+                          children:
+                            - Row:
+                                mainAxis: spaceBetween
+                                gap: 20
+                                children:
+                                  - Search:
+                                      styles:
+                                        width: 320px
+                                        height: 40px
+                                        borderRadius: 12
+                                        borderWidth: 2
+                                        borderStyle: solid
+                                        borderColor: "#B8BED6"
+                                      placeholder: Search
+                                      data: getData.body.users
+                                      searchKey: email
+                                  - Button:
+                                      label: Invite
+                                      styles:
+                                        textColor: white
+                                        backgroundColor: "#072CC4"
+                                        padding: 16
+                                      gap: 6
+                                      startingIcon:
+                                        name: Add
+                                        color: white
+                                        size: 22
+                                      onTap:
+                                        navigateModalScreen:
+                                          name: Invite
+                                          maskClosable: false
+                            - DataGrid:
+                                DataColumns:
+                                  - label: User
+                                  - label: Role
+                                  - label: Groups
+                                  - label: Last Active
+                                item-template:
+                                  data: getData.body.users
+                                  name: user
+                                  template:
+                                    DataRow:
+                                      children:
+                                        # Person
+                                        - Row:
+                                            crossAxis: center
+                                            mainAxis: spaceBetween
+                                            gap: 5
+                                            children:
+                                              - Avatar:
+                                                  styles:
+                                                    backgroundColor: "#D9D9D9"
+                                                  name: ${user.firstName}
+                                              - Column:
+                                                  crossAxis: start
+                                                  children:
+                                                    - Text:
+                                                        text: ${user.firstName}
+                                                    - Text:
+                                                        text: ${user.email}
+                                        - Text:
+                                            text: user
+
+                                        # MoM
+                                        - Row:
+                                            crossAxis: center
+                                            gap: 10
+                                            children:
+                                              - Tag:
+                                                  label: Administration
+                                                  icon:
+                                                    name: CloseOutlined
+                                                  styles:
+                                                    backgroundColor: "#FBF8EC"
+                                                    borderRadius: 2
+                                              - Tag:
+                                                  label: Human Resource
+                                                  icon:
+                                                    name: CloseOutlined
+                                                  styles:
+                                                    backgroundColor: "#FBF8EC"
+                                                    borderRadius: 2
+
+                                        - Row:
+                                            mainAxis: spaceBetween
+                                            children:
+                                              - Text:
+                                                  text: 1 day ago
+                                              - PopupMenu:
+                                                  items:
+                                                    - { "label": "View", "value": "red" }
+                                                    - { "label": "Remove", "value": "blue" }
+                                                    - { "label": "Message", "value": "green" }
+                                                  onItemSelect:
+                                                    executeCode: console.log(value)
+                                                  widget:
+                                                    Icon:
+                                                      name: MoreVert
 
 API:
   getData:
