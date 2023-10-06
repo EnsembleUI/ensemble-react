@@ -62,7 +62,7 @@ export const Carousel: React.FC<CarouselProps> = (props) => {
   }
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState<number | undefined>(
-    undefined
+    undefined,
   );
   //   const renderedChildren = useMemo(() => {
   //     return EnsembleRuntime.render(props.children);

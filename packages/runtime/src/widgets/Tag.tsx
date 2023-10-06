@@ -27,26 +27,24 @@ export const Tag: React.FC<TagProps> = (props) => {
     : [values.label as string];
 
   const tagElements = labels.map((item, index) => (
-    
-      <Typography.Text
-        key={index}
-        style={{
-          backgroundColor: props.styles?.backgroundColor ?? "#e6e7e8",
-          paddingLeft: "10px",
-          paddingRight: "10px",
-          textAlign: "left",
-          borderRadius: props.styles?.borderRadius ?? 10,
-          fontWeight: "normal",
-          display: "inline-flex",
-          alignItems: "center",
-          margin: "5px",
-          whiteSpace: "nowrap",
-        }}
-      >
-        {item} &nbsp;
-        {props.icon && <Icon {...props.icon} />}
-      </Typography.Text>
-     
+    <Typography.Text
+      key={index}
+      style={{
+        backgroundColor: props.styles?.backgroundColor ?? "#e6e7e8",
+        paddingLeft: "10px",
+        paddingRight: "10px",
+        textAlign: "left",
+        borderRadius: props.styles?.borderRadius ?? 10,
+        fontWeight: "normal",
+        display: "inline-flex",
+        alignItems: "center",
+        margin: "5px",
+        whiteSpace: "nowrap",
+      }}
+    >
+      {item} &nbsp;
+      {props.icon && <Icon {...props.icon} />}
+    </Typography.Text>
   ));
 
   return <div>{tagElements}</div>;
