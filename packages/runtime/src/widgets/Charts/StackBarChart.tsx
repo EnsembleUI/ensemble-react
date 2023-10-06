@@ -1,7 +1,7 @@
 import { Bar } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
+import type { Expression } from "framework";
 import type { EnsembleWidgetProps } from "../../util/types";
-import { Expression } from "framework";
 
 const options: ChartOptions<"bar"> = {
   maintainAspectRatio: false,
@@ -80,7 +80,7 @@ export const StackBarChart: React.FC<BarChartProps> = (props) => {
           plugins: {
             ...options.plugins,
             title: {
-              display: !!title,
+              display: Boolean(title),
               text: title,
             },
           },

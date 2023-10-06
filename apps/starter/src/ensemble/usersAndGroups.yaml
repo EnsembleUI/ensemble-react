@@ -278,8 +278,21 @@ View:
                                                           backgroundColor: "#FBF8EC"
                                                           borderRadius: 2
 
-                                              - Text:
-                                                  text: 1 day ago
+                                              - Row:
+                                                  mainAxis: spaceBetween
+                                                  children:
+                                                    - Text:
+                                                        text: 1 day ago
+                                                    - PopupMenu:
+                                                        items:
+                                                          - { "label": "View", "value": "red" }
+                                                          - { "label": "Remove", "value": "blue" }
+                                                          - { "label": "Message", "value": "green" }
+                                                        onItemSelect:
+                                                          executeCode: console.log(value)
+                                                        widget:
+                                                          Icon:
+                                                            name: MoreVert
                     - label: Contributors
                       widget:
                         Column:
@@ -372,13 +385,26 @@ View:
                                                           backgroundColor: "#E9ECF4"
                                                           borderRadius: 8
                                                     
+                                              - Row:
+                                                  mainAxis: spaceBetween
+                                                  children:
+                                                    - Text:
+                                                        text: ${user.fields.last_Active}
+                                                        styles:
+                                                          fontWeight: normal
+                                                          fontSize: 12px
+                                                          color: "#767676"
+                                                    - PopupMenu:
+                                                        items:
+                                                          - { "label": "View", "value": "red" }
+                                                          - { "label": "Remove", "value": "blue" }
+                                                          - { "label": "Message", "value": "green" }
+                                                        onItemSelect:
+                                                          executeCode: console.log(value)
+                                                        widget:
+                                                          Icon:
+                                                            name: MoreVert
 
-                                              - Text:
-                                                  text: ${user.fields.last_Active}
-                                                  styles:
-                                                    fontWeight: normal
-                                                    fontSize: 12px
-                                                    color: "#767676"
                     - label: Admins
                       widget:
                         Column:

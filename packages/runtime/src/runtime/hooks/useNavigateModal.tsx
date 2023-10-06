@@ -3,6 +3,8 @@ import { useApplicationContext } from "framework";
 import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
 import { Modal } from "antd";
+// FIXME
+// eslint-disable-next-line import/no-cycle
 import { EnsembleScreen } from "../screen";
 import { EnsembleRuntime } from "../runtime";
 import type {

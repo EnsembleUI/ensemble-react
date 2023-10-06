@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import type { EnsembleAction, ExecuteCodeAction, Expression } from "framework";
+import type { EnsembleAction, Expression } from "framework";
 import { useRegisterBindings } from "framework";
 import {
   Avatar as MuiAvatar,
@@ -8,13 +8,12 @@ import {
   ListItemIcon,
 } from "@mui/material";
 import { useNavigateScreen } from "../../runtime/hooks/useNavigateScreen";
-import { useExecuteCode } from "../../runtime/hooks/useEnsembleAction";
 import { WidgetRegistry } from "../../registry";
 import type { IconProps } from "../../util/types";
 import { Icon } from "../Icon";
+import { useExecuteCode } from "../../runtime/hooks/useEnsembleAction";
 import { stringToColor } from "./utils/stringToColors";
 import { generateInitials } from "./utils/generateInitials";
-import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 
 export interface AvatarMenu {
   label: string;
@@ -39,9 +38,8 @@ export interface AvatarProps {
 }
 
 export const Avatar: React.FC<AvatarProps> = (props) => {
-  const [code, setCode] = useState<ExecuteCodeAction>();
-  const [screen, setScreen] = useState<ExecuteCodeAction>();
-  const nameString = props.name?.toString();
+  const [code, setCode] = useState("");
+  const [screen, setScreen] = useState("");
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(Boolean(menuAnchorEl));
   const [name, setName] = useState(props.name);
@@ -63,17 +61,17 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
   };
 
   const handleMenuClick = (menuItem: AvatarMenu): void => {
-    menuItem.onTap?.executeCode && setCode(menuItem.onTap.executeCode);
+    menuItem.onTap?.executeCode && setCode(String(menuItem.onTap.executeCode));
     menuItem.onTap?.navigateScreen && setScreen(menuItem.onTap.navigateScreen);
     handleMenuClose();
   };
 
-  // useEffect(() => {
-  //   code && onTapCallback();
-  // }, [code, onTapCallback]);
-  // useEffect(() => {
-  //   screen && onNavigate();
-  // }, [screen, onNavigate]);
+  useEffect(() => {
+    code && executeCode?.callback();
+  }, [code, executeCode]);
+  useEffect(() => {
+    screen && navigate?.callback();
+  }, [screen, navigate]);
 
   return (
     <div>

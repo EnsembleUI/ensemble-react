@@ -3,7 +3,7 @@ import { useRegisterBindings, useScreenContext } from "framework";
 import type {
   Expression,
   ScreenContextDefinition,
-  type EnsembleWidget,
+  EnsembleWidget,
 } from "framework";
 import { Tabs, ConfigProvider } from "antd";
 import { evaluate } from "framework/src/evaluate";
@@ -37,7 +37,7 @@ export interface TabBarProps {
   };
 }
 export const TabBar: React.FC<TabBarProps> = (props) => {
-  const { values } = useRegisterBindings(props, props.id);
+  const { values } = useRegisterBindings({ ...props }, props.id);
   const context = useScreenContext();
   const renderLabel = (
     label: Expression<string>,
