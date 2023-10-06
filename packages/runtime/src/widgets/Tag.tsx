@@ -20,12 +20,17 @@ export const Tag: React.FC<TagProps> = (props) => {
   const { values } = useRegisterBindings({ ...props, text }, props.id, {
     setText,
   });
+  const [expanded, setExpanded] = useState(false);
+const toggleExpansion = () => {
+  setExpanded(!expanded);
+};
 
   const labels = Array.isArray(values.label)
     ? (values.label as string[])
     : [values.label as string];
-
-  const tagElements = labels.map((item, index) => (
+const truncatedLabels = expanded ? labels : labels.slice(0, 4);
+const additionalTagsCount = labels.length - truncatedLabels.length;
+  const tagElements = truncatedLabels.map((item, index) => (
     <Typography.Text
       key={index}
       style={{
@@ -46,7 +51,31 @@ export const Tag: React.FC<TagProps> = (props) => {
     </Typography.Text>
   ));
 
-  return <div>{tagElements}</div>;
+  return (
+    <div>
+      {tagElements}
+      {additionalTagsCount > 0 && (
+        <Typography.Text
+          style={{
+            backgroundColor: props.styles?.backgroundColor ?? "#e6e7e8",
+            paddingLeft: "10px",
+            paddingRight: "10px",
+            textAlign: "left",
+            borderRadius: props.styles?.borderRadius ?? 10,
+            fontWeight: "bold",
+            display: "inline-flex",
+            alignItems: "center",
+            margin: "5px",
+            whiteSpace: "nowrap",
+            cursor: "pointer",
+          }}
+          onClick={toggleExpansion}
+        >
+          +{additionalTagsCount} more
+        </Typography.Text>
+      )}
+    </div>
+  );
 };
 
 WidgetRegistry.register("Tag", Tag);
