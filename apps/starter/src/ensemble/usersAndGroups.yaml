@@ -387,6 +387,7 @@ View:
                                                     
                                               - Row:
                                                   mainAxis: spaceBetween
+                                                  minWidth: 180px
                                                   children:
                                                     - Text:
                                                         text: ${user.fields.last_Active}
