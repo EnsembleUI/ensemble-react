@@ -15,7 +15,7 @@ View:
           const firstName = groupName.value
           const email = emailValue.value[0]
           const res = ensemble.storage.get("arrayOfUsers")
-          res.push({"id": res.length+1, "firstName": firstName, "email": email })
+          res.push({"id": res.length+1, "fields": { "name": firstName, "email": email }})
       children:
         - TextInput:
             id: groupName

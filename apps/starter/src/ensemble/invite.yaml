@@ -15,7 +15,7 @@ View:
           const firstName = groupName.value
           const email = emailValue.value[0]
           const res = ensemble.storage.get("arrayOfUsers")
-          res.push({"id": res.length+1, "firstName": firstName, "email": email })
+          res.push({"id": res.length+1, "fields": { "name": firstName, "email": email }})
       children:
         - MultiSelect:
             id: addUserValues
@@ -46,7 +46,7 @@ View:
         - Carousel:
             styles:
               layout: multiple
-              multipleItemWidthRatio: 0.2
+              multipleItemWidthRatio: 0.4
               gap: 10
               indicatorType: none
             item-template:
