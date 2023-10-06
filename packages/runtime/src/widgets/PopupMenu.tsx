@@ -54,9 +54,12 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
   }, []);
 
   return (
-    <AntdDropdown overlay={menuItems} trigger={["click"]}>
-      <div>{widgetProps ? EnsembleRuntime.render([widgetProps]) : null}</div>
-    </AntdDropdown>
+    <>
+      <AntdDropdown overlay={menuItems} trigger={["click"]}>
+        <div>{widgetProps ? EnsembleRuntime.render([widgetProps]) : null}</div>
+      </AntdDropdown>
+      {action && "Modal" in action ? action.Modal : null}
+    </>
   );
 };
 

@@ -289,7 +289,8 @@ View:
                                                           - { "label": "Remove", "value": "blue" }
                                                           - { "label": "Message", "value": "green" }
                                                         onItemSelect:
-                                                          executeCode: console.log(value)
+                                                          navigateModalScreen:
+                                                            name: Ask Embrace
                                                         widget:
                                                           Icon:
                                                             name: MoreVert
@@ -365,7 +366,7 @@ View:
                                               - Row:
                                                   crossAxis: center
                                                   gap: 10
-                                                  
+                                                  maxWidth: 400px
                                                   children:
                                                     - Tag:
                                                         label: ${user.fields.groups}
@@ -387,6 +388,8 @@ View:
                                                     
                                               - Row:
                                                   mainAxis: spaceBetween
+                                                  styles:
+                                                    flexWrap: nowrap
                                                   children:
                                                     - Text:
                                                         text: ${user.fields.last_Active}

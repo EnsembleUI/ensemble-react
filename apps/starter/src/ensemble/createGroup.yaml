@@ -88,6 +88,7 @@ View:
                     showToast:
                       message: ${"Created new user " + groupName.value}
                   styles:
+                    textColor: white
                     backgroundColor: black
                     color: white
                     padding: 24
