@@ -1,5 +1,8 @@
 import { render, screen } from "@testing-library/react";
-import type { ConditionalProps } from "../Conditional";
+import type {
+  ConditionalProps,
+  CondtionalElement as ConditionalElement,
+} from "../Conditional";
 import {
   Conditional,
   hasProperStructure,
@@ -218,7 +221,9 @@ describe("extractCondition Function", () => {
       Text: { text: "Widget A" },
     };
 
-    expect(() => extractCondition(condition as unknown)).toThrow();
+    expect(() =>
+      extractCondition(condition as unknown as ConditionalElement),
+    ).toThrow();
   });
 
   test("extracts the correct condition", () => {

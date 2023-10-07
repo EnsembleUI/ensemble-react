@@ -5,7 +5,10 @@ import { useMemo } from "react";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 
-type CondtionalElement = Record<Capitalize<string>, Record<string, unknown>> &
+export type CondtionalElement = Record<
+  Capitalize<string>,
+  Record<string, unknown>
+> &
   (
     | { if: Expression<string>; elseif?: never; else?: never }
     | { elseif: Expression<string>; if?: never; else?: never }
