@@ -1,13 +1,8 @@
-import {
-  type Expression,
-  CustomScopeProvider,
-  type CustomScope,
-  EnsembleWidget,
-  useTemplateData,
-} from "framework";
+import { CustomScopeProvider, useTemplateData } from "framework";
+import type { EnsembleWidget, Expression, CustomScope } from "framework";
 import { Carousel as AntCarousel } from "antd"; // Assuming you have imported Ant Design's Carousel
 import { useEffect, useRef, useState } from "react";
-import { get, map } from "lodash-es";
+import { map } from "lodash-es";
 import type { HasBorder } from "../util/types";
 import { EnsembleRuntime } from "../runtime";
 import { WidgetRegistry } from "../registry";
@@ -62,7 +57,7 @@ export const Carousel: React.FC<CarouselProps> = (props) => {
   }
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState<number | undefined>(
-    undefined
+    undefined,
   );
   //   const renderedChildren = useMemo(() => {
   //     return EnsembleRuntime.render(props.children);
