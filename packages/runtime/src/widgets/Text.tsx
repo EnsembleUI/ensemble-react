@@ -5,8 +5,14 @@ import { WidgetRegistry } from "../registry";
 import type { BaseTextProps } from "../util/types";
 import { getTextAlign } from "../util/utils";
 
+export interface TextStyles {
+  fontSize?: string | number;
+  fontWeight?: string | number;
+  color: string;
+}
+
 export type TextProps = {
-  // to be added more
+  styles: TextStyles;
 } & BaseTextProps;
 
 export const Text: React.FC<TextProps> = (props) => {
@@ -14,9 +20,15 @@ export const Text: React.FC<TextProps> = (props) => {
   const { values } = useRegisterBindings({ ...props, text }, props.id, {
     setText,
   });
-
   return (
-    <Typography.Text style={{ textAlign: getTextAlign(props.textAlign) }}>
+    <Typography.Text
+      style={{
+        textAlign: getTextAlign(props.textAlign),
+        fontSize: props.styles?.fontSize,
+        fontWeight: props.styles?.fontWeight,
+        color: props.styles?.color,
+      }}
+    >
       {values.text}
     </Typography.Text>
   );

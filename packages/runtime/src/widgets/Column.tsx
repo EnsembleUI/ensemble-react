@@ -10,7 +10,6 @@ export const Column: React.FC<FlexboxProps> = (props) => {
   const renderedChildren = useMemo(() => {
     return EnsembleRuntime.render(props.children);
   }, [props.children]);
-
   return (
     <Col
       style={{

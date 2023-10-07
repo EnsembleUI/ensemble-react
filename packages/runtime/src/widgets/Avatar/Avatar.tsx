@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import type { Expression } from "framework";
+import type { EnsembleAction, Expression } from "framework";
 import { useRegisterBindings } from "framework";
 import {
   Avatar as MuiAvatar,
@@ -18,13 +18,12 @@ import { generateInitials } from "./utils/generateInitials";
 export interface AvatarMenu {
   label: string;
   icon?: IconProps;
-  onTap?: {
-    executeCode?: string;
-    navigateScreen?: string;
-  };
+  onTap?: EnsembleAction;
 }
 
 export interface AvatarProps {
+  id?: string;
+  [key: string]: unknown;
   alt: Expression<string>;
   src?: Expression<string>;
   name?: Expression<string>;
@@ -33,6 +32,7 @@ export interface AvatarProps {
     width?: number | string;
     height?: number | string;
     backgroundColor?: string;
+    color: string;
   };
   menu?: AvatarMenu[];
 }
@@ -40,10 +40,12 @@ export interface AvatarProps {
 export const Avatar: React.FC<AvatarProps> = (props) => {
   const [code, setCode] = useState("");
   const [screen, setScreen] = useState("");
-  const nameString = props.name?.toString();
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(Boolean(menuAnchorEl));
-  const { values } = useRegisterBindings({ ...props });
+  const [name, setName] = useState(props.name);
+  const { values } = useRegisterBindings({ ...props, name }, props.id, {
+    setName,
+  });
   // FIXME: action callbacks should take params so they can be callable per element
   const executeCode = useExecuteCode(code, { context: values });
   const navigate = useNavigateScreen(screen);
@@ -59,16 +61,16 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
   };
 
   const handleMenuClick = (menuItem: AvatarMenu): void => {
-    menuItem.onTap?.executeCode && setCode(menuItem.onTap.executeCode);
+    menuItem.onTap?.executeCode && setCode(String(menuItem.onTap.executeCode));
     menuItem.onTap?.navigateScreen && setScreen(menuItem.onTap.navigateScreen);
     handleMenuClose();
   };
 
   useEffect(() => {
-    code && executeCode?.callback?.();
+    code && executeCode?.callback();
   }, [code, executeCode]);
   useEffect(() => {
-    screen && navigate?.callback?.();
+    screen && navigate?.callback();
   }, [screen, navigate]);
 
   return (
@@ -79,14 +81,15 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
         src={props.src}
         sx={{
           bgcolor:
-            props.styles?.backgroundColor ?? stringToColor(nameString ?? ""),
+            props.styles?.backgroundColor ?? stringToColor(values.name ?? ""),
           width: props.styles?.width,
           height: props.styles?.height,
+          color: props.styles?.color ?? "white",
           cursor: "pointer",
         }}
       >
         {props.name ? (
-          generateInitials(props.name)
+          generateInitials(values.name)
         ) : (
           <Icon
             color={props.icon?.color}

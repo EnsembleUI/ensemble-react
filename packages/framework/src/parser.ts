@@ -48,8 +48,8 @@ export const EnsembleParser = {
       menu.items.forEach(
         (item) =>
           (item.screen = screens.find(
-            (screen) => "name" in screen && screen.name === item.page
-          ) as EnsembleScreenModel)
+            (screen) => "name" in screen && screen.name === item.page,
+          ) as EnsembleScreenModel),
       );
     }
 
@@ -63,7 +63,7 @@ export const EnsembleParser = {
 
   parseScreen: (
     name: string,
-    screen: EnsembleScreenYAML
+    screen: EnsembleScreenYAML,
   ): EnsembleScreenModel | EnsembleMenuModel => {
     const view = get(screen, "View");
     const viewNode = get(view, "body");
@@ -144,12 +144,18 @@ export const unwrapWidget = (obj: Record<string, unknown>): EnsembleWidget => {
     const unwrappedTemplate = unwrapWidget(template as Record<string, unknown>);
     set(properties as object, ["item-template", "template"], unwrappedTemplate);
   }
-  if (isArray(items)) {
-    const valueItems = (items as Array<any>).map(({ label, widget, icon }) => {
-      const unwrappedWidget = unwrapWidget(widget);
-      return { label, icon, widget: unwrappedWidget };
-    });
-    set(properties as Object, "items", valueItems);
+  if (isArray(items) && !isEmpty(items)) {
+    if ("widget" in items[0]) {
+      const valueItems = (items as Record<string, unknown>[]).map(
+        ({ label, widget, icon }) => {
+          const unwrappedWidget = unwrapWidget(
+            widget as Record<string, unknown>,
+          );
+          return { label, icon, widget: unwrappedWidget };
+        },
+      );
+      set(properties as object, "items", valueItems);
+    }
   }
   return {
     name,

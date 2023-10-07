@@ -35,7 +35,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   const [options, setOptions] = useState<SelectOption[]>([]);
   const [newOption, setNewOption] = useState("");
   const [selectedValues, setSelectedValues] = useState<string[] | undefined>(
-    defaultOptions?.map((item) => item.value.toString()),
+    defaultOptions?.map((item) => item.value?.toString()),
   );
 
   const templateData = useTemplateData(data);
@@ -97,8 +97,12 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
       onChange={handleChange}
       onSearch={(v) => {
         if (
-          values.options.some((option) =>
-            option.label.toString().toLowerCase().startsWith(v.toLowerCase()),
+          options.some(
+            (option) =>
+              option?.label
+                ?.toString()
+                .toLowerCase()
+                .startsWith(v.toLowerCase()),
           )
         )
           setNewOption("");

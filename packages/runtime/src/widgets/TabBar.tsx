@@ -1,20 +1,25 @@
-import React from "react";
-import { WidgetRegistry } from "../registry";
-import { EnsembleRuntime } from "../runtime";
+import React, { type ReactElement } from "react";
+import { useRegisterBindings, useScreenContext } from "framework";
+import type {
+  Expression,
+  ScreenContextDefinition,
+  EnsembleWidget,
+} from "framework";
 import { Tabs, ConfigProvider } from "antd";
-import { EnsembleWidget } from "framework";
-import { IconProps } from "../util/types";
+import { evaluate } from "framework/src/evaluate";
+import { type IconProps } from "../util/types";
+import { EnsembleRuntime } from "../runtime";
+import { WidgetRegistry } from "../registry";
 import { Icon } from "./Icon";
-import type { Expression } from "framework";
 
 const { TabPane } = Tabs;
 
-export type TabBarItem = {
+export interface TabBarItem {
   label: Expression<string>;
   icon?: IconProps;
   widget: EnsembleWidget;
-};
-export type TabBarProps = {
+}
+export interface TabBarProps {
   id?: string;
   selectedIndex?: number;
   items: TabBarItem[];
@@ -30,9 +35,22 @@ export type TabBarProps = {
     indicatorColor: string;
     indicatorThickness: string;
   };
-};
+}
 export const TabBar: React.FC<TabBarProps> = (props) => {
-  const renderLabel = (label: string, icon?: IconProps) => {
+  const { values } = useRegisterBindings({ ...props }, props.id);
+  const context = useScreenContext();
+  const renderLabel = (
+    label: Expression<string>,
+    icon?: IconProps,
+  ): ReactElement => {
+    let labelEvaluated = "";
+    if (containsExpression(label)) {
+      const cleanedExpression = label.replace(/\${|}/g, "");
+      labelEvaluated = evaluate(
+        context as ScreenContextDefinition,
+        cleanedExpression,
+      ) as string;
+    }
     return (
       <div
         style={{
@@ -41,8 +59,10 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
           padding: props.styles?.tabPadding ?? "5px 5px 5px 5px",
         }}
       >
-        {icon && <Icon name={icon.name} size={icon.size} color={icon.color} />}{" "}
-        &nbsp; {label}
+        {icon ? (
+          <Icon color={icon.color} name={icon.name} size={icon.size} />
+        ) : null}{" "}
+        &nbsp; {labelEvaluated ? labelEvaluated : label}
       </div>
     );
   };
@@ -70,7 +90,7 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
     }
 
     .ant-tabs > .ant-tabs-nav {
-      background-color: ${props.styles?.tabBackgroundColor || "white"};
+      background-color: ${props.styles?.tabBackgroundColor || "none"};
     }
 
     .ant-tabs {
@@ -100,12 +120,12 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
     >
       <style>{customStyles}</style>
       <Tabs defaultActiveKey={setDefaultSelectedTab()}>
-        {props.items.map((tabItem) => (
+        {values.items.map((tabItem) => (
           <TabPane
             key={tabItem.label}
             tab={renderLabel(tabItem.label, tabItem.icon)}
           >
-            {tabItem.widget && EnsembleRuntime.render([tabItem.widget])}
+            {tabItem.widget ? EnsembleRuntime.render([tabItem.widget]) : null}
           </TabPane>
         ))}
       </Tabs>
@@ -114,3 +134,11 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
 };
 
 WidgetRegistry.register("TabBar", TabBar);
+
+function containsExpression(str: string): boolean {
+  // Regular expression to match expressions within `${}`
+  const expressionPattern = /\${[^}]*}/;
+
+  // Check if the string contains the expression pattern
+  return expressionPattern.test(str);
+}

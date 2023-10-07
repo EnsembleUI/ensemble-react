@@ -35,9 +35,10 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
           element: <EnsembleEntry entry={app.home} />,
           errorElement: <ErrorPage />,
           children: app.screens.map((screen) => {
+            const screenId = screen.name.toLowerCase();
             return {
-              path: `${screen.name.toLowerCase()}`,
-              element: <EnsembleScreen screen={screen} />,
+              path: `${screenId}`,
+              element: <EnsembleScreen key={screenId} screen={screen} />,
             };
           }),
         },

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import React, { useState, useEffect } from "react";
-import { Menu as AntMenu, Col, Divider } from "antd";
+import { Menu as AntMenu, Col, Divider, Row } from "antd";
 import * as MuiIcons from "@mui/icons-material";
 import type { EnsembleWidget } from "framework";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -46,6 +46,11 @@ interface MenuBaseProps {
     searchBoxColor?: TypeColors;
     iconWidth?: string;
     iconHeight?: string;
+    width?: string;
+    onSelectStyles?: {
+      backgroundColor?: TypeColors;
+      borderRadius?: string;
+    };
   };
   header?: EnsembleWidget;
   footer?: EnsembleWidget;
@@ -110,19 +115,27 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
       style={{
         backgroundColor,
         borderRight: "1px solid lightgrey",
+        display: "flex",
+        justifyContent: "space-between",
+        flexDirection: "column",
+        width: props.styles?.width,
+        height: "100vh",
+        position: "fixed",
+        alignItems: "center",
       }}
     >
       {props.header ? (
-        <Col span={24} style={{ padding: "20px" }}>
+        <Row style={{ padding: "20px" }}>
           {EnsembleRuntime.render([props.header])}
-        </Col>
+        </Row>
       ) : null}
       <AntMenu
         mode="inline"
         style={{
-          marginBottom: "80px",
           flex: "1",
           backgroundColor,
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         {props.items.map((item) => (
@@ -141,12 +154,9 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
                     ? (props.styles?.selectedColor as string) ?? "white"
                     : (props.styles?.labelColor as string) ?? "grey",
                 display: "flex",
-                justifyContent: "start",
-                borderLeft:
-                  selectedItem === item.label ? "4px solid #e07407" : "",
+                justifyContent: "center",
                 borderRadius: 0,
                 alignItems: "center",
-                //paddingLeft: "20px",
                 fontSize:
                   selectedItem === item.label
                     ? `${
@@ -163,16 +173,12 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
                           ? props.styles.labelFontSize
                           : 1
                       }rem`,
-                backgroundColor,
+                ...(selectedItem === item.label
+                  ? props.styles?.onSelectStyles ?? {}
+                  : {}),
               }}
             >
-              <span
-                style={{
-                  display: "flex",
-                  justifyContent: "left",
-                  //marginLeft: "15px",
-                }}
-              >
+              <span>
                 {item.label}
                 {item.hasNotifications ? (
                   <div

@@ -25,6 +25,8 @@ export const Row: React.FC<FlexboxProps> = (props) => {
           : undefined,
         borderStyle: props.styles?.borderWidth ? "solid" : undefined,
         ...(get(props, "styles") as object),
+        maxWidth: props.maxWidth ?? "100%",
+        minWidth: props.minWidth,
       }}
     >
       {renderedChildren}

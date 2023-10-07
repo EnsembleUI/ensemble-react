@@ -19,6 +19,8 @@ export type FlexboxProps = {
   gap?: number;
   margin?: number | string;
   padding?: number | string;
+  maxWidth?: string;
+  minWidth?: string;
 } & HasBorder &
   EnsembleWidgetProps;
 

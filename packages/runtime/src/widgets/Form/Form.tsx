@@ -13,6 +13,7 @@ export interface FormProps {
   styles: {
     labelPosition: "top" | "start" | "none";
     labelOverflow: "wrap" | "visible" | "clip" | "ellipsis";
+    gap?: string | number;
   };
 }
 export const Form: React.FC<FormProps> = (props) => {
@@ -34,6 +35,11 @@ export const Form: React.FC<FormProps> = (props) => {
       colon={false}
       layout={getLayout(props.styles.labelPosition)}
       onFinish={onFinishCallback}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: `${props?.styles.gap ? `${props.styles.gap}px` : "2px"}`,
+      }}
     >
       {EnsembleRuntime.render(props.children)}
     </AntForm>

@@ -1,11 +1,14 @@
 import type { Expression, ScreenContextDefinition } from "framework";
 import { evaluate, unwrapWidget, useScreenContext } from "framework";
 import { cloneDeep, head, isEmpty, last } from "lodash-es";
+import { useMemo } from "react";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
-import { useMemo } from "react";
 
-type CondtionalElement = Record<Capitalize<string>, Record<string, unknown>> &
+export type CondtionalElement = Record<
+  Capitalize<string>,
+  Record<string, unknown>
+> &
   (
     | { if: Expression<string>; elseif?: never; else?: never }
     | { elseif: Expression<string>; if?: never; else?: never }
@@ -34,10 +37,18 @@ export const Conditional: React.FC<ConditionalProps> = (props) => {
     const lastCondition = last(props.conditions);
     if (lastCondition && "else" in lastCondition) element = lastCondition;
     // otherwise return empty fragment
-    else return <></>;
   }
 
-  const widget = useMemo(() => extractWidget(element!), [element]);
+  const widget = useMemo(() => {
+    if (!element) {
+      return null;
+    }
+    return extractWidget(element);
+  }, [element]);
+
+  if (!widget) {
+    return <></>;
+  }
 
   return <>{EnsembleRuntime.render([widget])}</>;
 };
@@ -45,7 +56,7 @@ export const Conditional: React.FC<ConditionalProps> = (props) => {
 WidgetRegistry.register("Conditional", Conditional);
 
 export const hasProperStructure = (
-  conditions: CondtionalElement[]
+  conditions: CondtionalElement[],
 ): [boolean, string] => {
   if (isEmpty(conditions) || !("if" in head(conditions)!))
     return [

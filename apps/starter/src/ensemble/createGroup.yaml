@@ -1,0 +1,94 @@
+View:
+  header:
+    Text:
+      text: Create a new group
+      styles:
+        fontSize: 24
+        fontWeight: 500
+  body:
+    Form:
+      styles:
+        labelPosition: top
+        gap: 20
+      onSubmit:
+        executeCode: |
+          const firstName = groupName.value
+          const email = emailValue.value[0]
+          const res = ensemble.storage.get("arrayOfUsers")
+          res.push({"id": res.length+1, "fields": { "name": firstName, "email": email }})
+      children:
+        - TextInput:
+            id: groupName
+            value: foo
+            hintText: Group name (e.g. Sales)
+        - Divider:
+            styles:
+              thickness: 1
+              color: "#ECEFF6"
+        - Text:
+            text: Group icon
+            styles:
+              fontSize: 14
+              fontWeight: 500
+        - Row:
+            crossAxis: center
+            styles:
+              gap: 16
+            children:
+              - Avatar:
+                  id: avatar
+                  aplt: abc
+                  name: Ali
+              - Button:
+                  label: Change Color
+                  styles:
+                    backgroundColor: transparent
+                    color: black
+                    borderRadius: "8px"
+                    border: "1px solid black"
+                    padding: 12
+                  onTap:
+                    executeCode: |
+                      console.log("Hello")
+        - Divider:
+            styles:
+              thickness: 1
+              color: "#ECEFF6"
+        - MultiSelect:
+            id: emailValue
+            data: getData.body.users
+            labelKey: email
+            valueKey: email
+            default:
+              [
+                { value: "jack", label: "jack" },
+                { value: "lucy", label: "lucy" },
+              ]
+            placeholder: "Select From Groups"
+        - Divider:
+            styles:
+              thickness: 1
+              color: "#ECEFF6"
+        - Row:
+            mainAxis: end
+            crossAxis: center
+            styles:
+              gap: 16
+            children:
+              - Button:
+                  label: Cancel
+                  styles:
+                    backgroundColor: transparent
+                    border: "0px"
+                    color: black
+              - Button:
+                  label: Create Group
+                  submitForm: true
+                  onTap:
+                    showToast:
+                      message: ${"Created new user " + groupName.value}
+                  styles:
+                    textColor: white
+                    backgroundColor: black
+                    color: white
+                    padding: 24

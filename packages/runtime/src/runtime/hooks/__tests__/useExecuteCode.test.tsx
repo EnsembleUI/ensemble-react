@@ -30,7 +30,7 @@ test("populates screen invokables in function context", () => {
     wrapper,
   });
 
-  const execResult = result.current?.callback?.();
+  const execResult = result.current?.callback();
   expect(execResult).toBe(2);
 });
 
@@ -43,7 +43,7 @@ test("populates context passed in", () => {
     { wrapper },
   );
 
-  const execResult = result.current?.callback?.();
+  const execResult = result.current?.callback();
   expect(execResult).toBe(4);
 });
 test.todo("populates application invokables");
