@@ -28,6 +28,9 @@ ViewGroup:
       - label: Ask Embrace
         icon: TextsmsOutlined
         page: Ask Embrace
+      - label: Product and Development
+        icon: LegendToggle
+        page: productAndDevelopment
     footer:
       Text:
         text: Give us feedback

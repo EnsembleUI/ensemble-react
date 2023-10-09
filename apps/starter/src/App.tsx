@@ -7,7 +7,7 @@ import DashboardYAML from "./ensemble/dashboard.yaml";
 import AskEmbraceYAML from "./ensemble/askEmbrace.yaml";
 import CreateGroupYAML from "./ensemble/createGroup.yaml";
 import InviteYAML from "./ensemble/invite.yaml";
-import ProductAndDevelopment from "./ensemble/productAndDevelopment.yaml";
+import ProductAndDevelopmentYAML from "./ensemble/productAndDevelopment.yaml";
 
 import "./App.css";
 
@@ -53,7 +53,7 @@ const testApp: ApplicationDTO = {
     {
       id: "productAndDevelopment",
       name: "Product and Development",
-      content: String(ProductAndDevelopment),
+      content: String(ProductAndDevelopmentYAML),
     },
   ],
 };

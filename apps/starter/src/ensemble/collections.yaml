@@ -35,10 +35,19 @@ View:
                   data: getData.body.records
                   searchKey: email
               - Button:
-                  label: Create Collection
+                  label: Create collection
+                  styles:
+                    textColor: white
+                    backgroundColor: blue
+                    padding: 16
+                  gap: 6
+                  startingIcon:
+                    name: Add
+                    color: white
+                    size: 22
                   onTap:
                     navigateModalScreen:
-                      name: Ask Embrace
+                      name: Create Group
                       maskClosable: false
 
         - Conditional:
@@ -110,23 +119,37 @@ View:
                           - Column:
                               gap: 10
                               children:
-                                - Conditional:
-                                    conditions:
-                                      - if: ${!user.fields.icon}
-                                        Avatar:
-                                          styles:
-                                            backgroundColor: "#D9D9D9"
-                                          alt: abc
-                                          name: ${user.fields.Title}
-                                      - else:
-                                        Image:
-                                          source: ${user.fields.icon}
-                                          width: 30
-                                          height: 30
-                                          fit: cover
-                                          borderRadius: 10
-                                          backgroundColor: ${user.fields.backgroundColor}
-                                          padding: 5
+                                - Row:
+                                    mainAxis: spaceBetween
+                                    children:
+                                      - Conditional:
+                                          conditions:
+                                            - if: ${!user.fields.icon}
+                                              Avatar:
+                                                styles:
+                                                  backgroundColor: "#D9D9D9"
+                                                alt: abc
+                                                name: ${user.fields.Title}
+                                            - else:
+                                              Image:
+                                                source: ${user.fields.icon}
+                                                width: 30
+                                                height: 30
+                                                fit: cover
+                                                borderRadius: 10
+                                                backgroundColor: ${user.fields.backgroundColor}
+                                                padding: 5
+                                      - PopupMenu:
+                                          items:
+                                            - { "label": "View", "value": "red" }
+                                            - { "label": "Remove", "value": "blue" }
+                                            - { "label": "Edit", "value": "green" }
+                                          onItemSelect:
+                                            navigateModalScreen:
+                                              name: Ask Embrace
+                                          widget:
+                                            Icon:
+                                              name: MoreVert
                                 - Column:
                                     styles:
                                       crossAxis: center
