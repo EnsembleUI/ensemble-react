@@ -162,19 +162,20 @@ View:
                                                   children:
                                                     - Conditional:
                                                         conditions:
-                                                          - if: ${user.image}
-                                                            Image:
-                                                              source: ${user.image}
-                                                              width: 40
-                                                              height: 40
-                                                              fit: cover
-                                                              borderRadius: 100
-                                                          - else:
+                                                          - if: ${!user.fields.image}
                                                             Avatar:
                                                               styles:
                                                                 backgroundColor: "#D9D9D9"
                                                               alt: abc
-                                                              name: ${user.fields.name}
+                                                              name: ${user.fields.name}                                                           
+                                                          - else:
+                                                            Image:
+                                                              source: ${user.fields.image}
+                                                              width: 40
+                                                              height: 40
+                                                              fit: cover
+                                                              borderRadius: 100
+                                                            
                                                     - Column:
                                                         styles:
                                                           crossAxis: center

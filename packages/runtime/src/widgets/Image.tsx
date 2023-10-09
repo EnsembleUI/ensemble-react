@@ -9,6 +9,8 @@ export type ImageProps = {
   source: Expression<string>;
 
   // move these under styles
+  padding: string;
+  backgroundColor: string;
   width?: number | string;
   height?: number | string;
   fit?: "contain" | "cover" | "fill" | "none" | "scale-down";
@@ -35,6 +37,8 @@ export const Image: React.FC<ImageProps> = (props) => {
           ? getColor(props.borderColor)
           : undefined,
         borderStyle: props.borderWidth ? "solid" : undefined,
+        backgroundColor: props.backgroundColor,
+        padding: props.padding,
       }}
     />
   );
