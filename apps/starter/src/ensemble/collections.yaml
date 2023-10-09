@@ -108,23 +108,37 @@ View:
                               children:
                                 - Column:
                                     children:
-                                      - Conditional:
-                                          conditions:
-                                            - if: ${!user.fields.image}
-                                              Avatar:
-                                                styles:
-                                                  backgroundColor: "#D9D9D9"
-                                                alt: abc
-                                                name: ${user.fields.name}                                                           
-                                            - else:
-                                              Image:
-                                                source: ${user.fields.image}
-                                                width: 30
-                                                height: 30
-                                                fit: cover
-                                                borderRadius: 10
-                                                backgroundColor: ${user.fields.imageBackgroundColor}
-                                                padding: 5
+                                      - Row:
+                                          mainAxis: spaceBetween
+                                          children:
+                                            - Conditional:
+                                                conditions:
+                                                  - if: ${!user.fields.image}
+                                                    Avatar:
+                                                      styles:
+                                                        backgroundColor: "#D9D9D9"
+                                                      alt: abc
+                                                      name: ${user.fields.name}                                                           
+                                                  - else:
+                                                    Image:
+                                                      source: ${user.fields.image}
+                                                      width: 30
+                                                      height: 30
+                                                      fit: cover
+                                                      borderRadius: 10
+                                                      backgroundColor: ${user.fields.imageBackgroundColor}
+                                                      padding: 5
+                                            - PopupMenu:
+                                                items:
+                                                  - { "label": "View", "value": "red" }
+                                                  - { "label": "Remove", "value": "blue" }
+                                                  - { "label": "Edit", "value": "green" }
+                                                onItemSelect:
+                                                  navigateModalScreen:
+                                                    name: Ask Embrace
+                                                widget:
+                                                  Icon:
+                                                    name: MoreVert
                                       - Column:
                                           styles:
                                             crossAxis: center
