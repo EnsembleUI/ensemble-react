@@ -14,14 +14,12 @@ View:
       gap: 10
       children:
         - Row:
+            backgroundColor: white
             mainAxis: spaceBetween
             crossAxis: center
-            children:
-              - Markdown:
-                  text: "# Collections"
-        - Row:
-            mainAxis: spaceBetween
-            crossAxis: center
+            padding: 10
+            styles:
+              borderBottom: "1px #D5DAEA solid"
             children:
               - Search:
                   styles:
@@ -32,14 +30,33 @@ View:
                     borderStyle: solid
                     borderColor: "#B8BED6"
                   placeholder: Search
-                  data: getData.body.records
+                  data: getData.body.users
                   searchKey: email
-              - Button:
-                  label: Create Collection
-                  onTap:
-                    navigateModalScreen:
-                      name: Ask Embrace
-                      maskClosable: false
+              - Row:
+                  styles:
+                    gap: 10
+                  children:
+                    - Avatar:
+                        styles:
+                          backgroundColor: "#171B2A"
+                        alt: abc
+                        name: Adam
+                        menu:
+                          - label: Personal Information
+                            icon: Person
+                            onTap:
+                              executeCode: myText.setText("Spiderman")
+                          - label: Collections
+                            icon: Settings
+                            onTap:
+                              navigateScreen: Collections
+        - Row:
+            mainAxis: spaceBetween
+            crossAxis: center
+            children:
+              - Markdown:
+                  text: "# Product and Development"
+        
 
         - Conditional:
             conditions:
@@ -93,103 +110,155 @@ View:
                                         name: Create Group
                                         maskClosable: false
 
-                    - else:
-                      GridView:
-                        item-template:
-                          data: getData.body.records
-                          name: user
-                          template:
-                            Card:
-                              styles:
-                                shadowColor: lightgrey
-                                shadowOffset: 8px
-                                shadowBlur: 10px
-                                shadowSpread: -2px
-                                backgroundColor: white
+              - else:
+                Column:
+                  children:
+                    - Column:
+                        styles:
+                          borderWidth: 1px
+                          borderRadius: 10
+                          borderColor: "#e8e9eb"
+                          backgrounColor: white
+                        children:
+                          - Row:
+                              mainAxis: spaceBetween
+                              crossAxis: center
+                              padding: "10px 20px 0px 20px"
                               children:
-                                - Column:
-                                    gap: 10
-                                    children:
-                                      - Conditional:
-                                          conditions:
-                                            - if: ${!user.fields.icon}
-                                              Avatar:
-                                                styles:
-                                                  backgroundColor: "#D9D9D9"
-                                                alt: abc
-                                                name: ${user.fields.Title}
-                                            - else:
-                                              Image:
-                                                source: ${user.fields.icon}
-                                                width: 30
-                                                height: 30
-                                                fit: cover
-                                                borderRadius: 10
-                                                backgroundColor: ${user.fields.backgroundColor}
-                                                padding: 5
-                                      - Column:
+                                - Markdown:
+                                    text: '### Access to Collection'
+                                - Button:
+                                    label: Create collection
+                                    styles:
+                                      textColor: black
+                                      backgroundColor: white
+                                      padding: 16
+                                    gap: 6
+                                    startingIcon:
+                                      name: Add
+                                      color: black
+                                      size: 22
+                                    onTap:
+                                      navigateModalScreen:
+                                        name: group
+                                        maskClosable: false
+                          - Column:
+                              styles:
+                                borderWidth: 1px
+                                borderRadius: 10
+                                borderColor: "#e8e9eb"
+                                backgrounColor: white
+                                padding: 20
+                                margin: 20
+                              children:  
+                                - GridView:
+                                    styles:
+                                      horizontalTileCount: 3
+                                      horizontalGap: 5
+                                    item-template:
+                                      data: getData.body.records
+                                      name: user
+                                      template:
+                                        Card:
                                           styles:
-                                            crossAxis: center
-                                            gap: 5
-                                            marginTop: 20px
+                                            shadowColor: lightgrey
+                                            shadowOffset: 8px
+                                            shadowBlur: 10px
+                                            shadowSpread: -2px
+                                            backgroundColor: white
+                                            minWidth: 300px
+                                            maxWidth: 300px
                                           children:
                                             - Column:
-                                                styles:
-                                                  crossAxis: start
+                                                gap: 10
                                                 children:
-                                                  - Text:
-                                                      text: ${user.fields.Title}
-                                                      styles:
-                                                        fontSize: 16
-                                                        fontWeight: 700
-                                                  - Text:
-                                                      text: ${user.fields.sources}
-                                      - Row:
-                                          crossAxis: start
-                                          mainAxis: start
-                                          gap: 10
-                                          children:
-                                            - Tag:
-                                                label: ${user.fields.Tags}
-                                                styles:
-                                                  backgroundColor: "#ebedf0"
-                                                  borderRadius: 1
-                                      - Divider:
-                                          styles:
-                                            thickness: 1
-                                            color: "#ECEFF6"
+                                                  - Row:
+                                                      mainAxis: spaceBetween
+                                                      gap: 20
+                                                      children:
+                                                        
+                                                        - Avatar:
+                                                            styles:
+                                                              backgroundColor: "#D9D9D9"
+                                                            alt: abc
+                                                            name: ${user.fields.Name}
+                                                        - Column:
+                                                            styles:
+                                                              crossAxis: center
+                                                              gap: 5
+                                                            children:
+                                                              - Column:
+                                                                  styles:
+                                                                    crossAxis: start
+                                                                  children:
+                                                                    - Text:
+                                                                        text: ${user.fields.Name}
+                                                                        styles: 
+                                                                          fontSize: 16
+                                                                          fontWeight: 700
+                                                                    - Text:
+                                                                        text: ${user.fields.users}
+                                                        - PopupMenu:
+                                                            items:
+                                                              - { "label": "View", "value": "red" }
+                                                              - { "label": "Remove", "value": "blue" }
+                                                              - { "label": "Edit", "value": "green" }
+                                                            onItemSelect:
+                                                              navigateModalScreen:
+                                                                name: Ask Embrace
+                                                            widget:
+                                                              Icon:
+                                                                name: MoreVert
+                    - Column:
+                        styles:
+                          borderWidth: 1px
+                          borderRadius: 10
+                          borderColor: "#e8e9eb"
+                          backgrounColor: white
+                          padding: 20
+                          margin: "20px 0px 20px 0px"
+                          gap: 20
+                        children:
+                          - Row:
+                              children:
+                                - Markdown:
+                                    text: "## Sources in collections"
+                          - Column:
+                              mainAxis: center
+                              crossAxis: center
+                              gap: 10
+                              children:
+                                - Icon:
+                                    name: LibraryBooksOutlined
+                                    size: 50
+                                    color: black
+                                - Text:
+                                    text: Add content sources
+                                    styles:
+                                      fontSize: 20
+                                      fontWeight: 700
+                                - Text:
+                                    text: Start adding sources to this collection
+                                - Button:
+                                    label: Add content source
+                                    styles:
+                                      textColor: blue
+                                      backgroundColor: white
+                                      borderColor: blue
+                                      padding: 10
+                                    onTap:
+                                      navigateModalScreen:
+                                        name: group
+                                        maskClosable: false
+                                
+                                            
+                                            
+        
 
-                                      - Row:
-                                          gap: 8
-                                          crossAxis: center
-                                          children:
-                                            - Icon:
-                                                name: CheckCircleOutlineOutlined
-                                                size: 15
-                                                color: "#87888a"
-                                            - Text:
-                                                text: ${user.fields.status}
-                                                styles:
-                                                  color: "#87888a"
-                                                  fontSize: 13
-
-                                      - Row:
-                                          gap: 8
-                                          crossAxis: center
-                                          children:
-                                            - Icon:
-                                                name: CachedOutlined
-                                                size: 15
-                                                color: "#87888a"
-                                            - Text:
-                                                text: ${user.fields.last_active}
-                                                styles:
-                                                  color: "#87888a"
-                                                  fontSize: 13
 
 API:
   getData:
-    uri: https://api.airtable.com/v0/app4U7TLRbZKGKYWd/tbl6STCIq92xFop9T
+    uri: https://api.airtable.com/v0/appachBOsD5ZSdH8t/tbl3vjz4Zs29PGQjB
     method: GET
     headers:
       Authorization: Bearer patN2XAiLVZQ8Yp3h.2bddb84031b2be89b576f01869dc17c3826e16ae7daa8895f92c05a0799004ab

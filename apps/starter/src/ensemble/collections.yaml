@@ -14,6 +14,43 @@ View:
       gap: 10
       children:
         - Row:
+            backgroundColor: white
+            mainAxis: spaceBetween
+            crossAxis: center
+            padding: 10
+            styles:
+              borderBottom: "1px #D5DAEA solid"
+            children:
+              - Search:
+                  styles:
+                    width: 320px
+                    height: 40px
+                    borderRadius: 12
+                    borderWidth: 2
+                    borderStyle: solid
+                    borderColor: "#B8BED6"
+                  placeholder: Search
+                  data: getData.body.users
+                  searchKey: email
+              - Row:
+                  styles:
+                    gap: 10
+                  children:
+                    - Avatar:
+                        styles:
+                          backgroundColor: "#171B2A"
+                        alt: abc
+                        name: Adam
+                        menu:
+                          - label: Personal Information
+                            icon: Person
+                            onTap:
+                              executeCode: myText.setText("Spiderman")
+                          - label: Collections
+                            icon: Settings
+                            onTap:
+                              navigateScreen: Collections
+        - Row:
             mainAxis: spaceBetween
             crossAxis: center
             children:
@@ -115,6 +152,8 @@ View:
                           shadowBlur: 10px
                           shadowSpread: -2px
                           backgroundColor: white
+                          minWidth: 230px
+                          maxWidth: 230px
                         children:
                           - Column:
                               gap: 10
