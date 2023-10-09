@@ -4,7 +4,7 @@ View:
       name: getData
       onResponse:
         executeCode: |
-          ensemble.storage.set("arrayOfUsers",response.body.records)
+          ensemble.storage.set("arrayOfCollections",response.body.records)
           const groups = new Set(response.body.records.flatMap(record => record.fields.groups))
           ensemble.storage.set("arrayOfGroups", Array.from(groups))
   body:
@@ -142,7 +142,7 @@ View:
               - else:
                 GridView:
                   item-template:
-                    data: getData.body.records
+                    data: ensemble.storage.get("arrayOfCollections")
                     name: user
                     template:
                       Card:

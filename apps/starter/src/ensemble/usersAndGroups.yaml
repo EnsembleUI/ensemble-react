@@ -7,7 +7,6 @@ View:
           ensemble.storage.set("arrayOfUsers",response.body.records)
           const groups = new Set(response.body.records.flatMap(record => record.fields.groups))
           ensemble.storage.set("arrayOfGroups", Array.from(groups))
-
   body:
     Column:
       styles:
@@ -169,7 +168,7 @@ View:
                                                               styles:
                                                                 backgroundColor: "#D9D9D9"
                                                               alt: abc
-                                                              name: ${user.fields.name}                                                           
+                                                              name: ${user.fields.name}
                                                           - else:
                                                             Image:
                                                               source: ${user.fields.image}
@@ -177,7 +176,7 @@ View:
                                                               height: 40
                                                               fit: cover
                                                               borderRadius: 100
-                                                            
+
                                                     - Column:
                                                         styles:
                                                           crossAxis: center
@@ -288,9 +287,18 @@ View:
                                                         text: 1 day ago
                                                     - PopupMenu:
                                                         items:
-                                                          - { "label": "View", "value": "red" }
-                                                          - { "label": "Remove", "value": "blue" }
-                                                          - { "label": "Message", "value": "green" }
+                                                          - {
+                                                              "label": "View",
+                                                              "value": "red",
+                                                            }
+                                                          - {
+                                                              "label": "Remove",
+                                                              "value": "blue",
+                                                            }
+                                                          - {
+                                                              "label": "Message",
+                                                              "value": "green",
+                                                            }
                                                         onItemSelect:
                                                           navigateModalScreen:
                                                             name: Ask Embrace
@@ -329,7 +337,7 @@ View:
                                         borderColor: black
                                         borderRadius: 5
                                         borderWidth: 1px
-                        
+
                                   - DataGrid:
                                       DataColumns:
                                         - label: User
@@ -357,7 +365,6 @@ View:
                                                     - Column:
                                                         crossAxis: start
                                                         children:
-                                                          
                                                           - Text:
                                                               text: ${user.fields.name}
                                                           - Text:
@@ -376,7 +383,6 @@ View:
                                                         styles:
                                                           backgroundColor: "#FBF8EC"
                                                           borderRadius: 8
-                                                    
 
                                               # MoM
                                               - Row:
@@ -388,7 +394,7 @@ View:
                                                         styles:
                                                           backgroundColor: "#E9ECF4"
                                                           borderRadius: 8
-                                                    
+
                                               - Row:
                                                   mainAxis: spaceBetween
                                                   styles:
@@ -402,9 +408,18 @@ View:
                                                           color: "#767676"
                                                     - PopupMenu:
                                                         items:
-                                                          - { "label": "View", "value": "red" }
-                                                          - { "label": "Remove", "value": "blue" }
-                                                          - { "label": "Message", "value": "green" }
+                                                          - {
+                                                              "label": "View",
+                                                              "value": "red",
+                                                            }
+                                                          - {
+                                                              "label": "Remove",
+                                                              "value": "blue",
+                                                            }
+                                                          - {
+                                                              "label": "Message",
+                                                              "value": "green",
+                                                            }
                                                         onItemSelect:
                                                           executeCode: console.log(value)
                                                         widget:
@@ -457,13 +472,13 @@ View:
                                         - Row:
                                             crossAxis: center
                                             gap: 15
-                                            children: 
+                                            children:
                                               - Avatar:
                                                   alt: sana
                                                   name: ${user.fields.name}
                                                   styles:
                                                     backgroundColor: "#F4F4F4"
-                                                    color: grey                                       
+                                                    color: grey
                                               - Column:
                                                   crossAxis: start
                                                   children:
@@ -482,7 +497,7 @@ View:
                                               fontSize: 12px
                                               color: "#767676"
 API:
-  getData:    
+  getData:
     uri: https://api.airtable.com/v0/app0FnT5yUsW9fjn6/tblWGM6o7vqlTfB8b
     method: GET
     headers:
