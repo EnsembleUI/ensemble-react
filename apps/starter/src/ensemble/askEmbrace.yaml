@@ -3,17 +3,40 @@ View:
     Text:
       text: Ask Embrace
   body:
-    Form:
-      styles:
-        labelPosition: top
-      onSubmit:
-        invokeAPI:
-          name: addCollection
+    Column:
+      gap: 20
       children:
-        - TextInput:
-            label: Name
-            value: foo
-        - Button:
-            label: Submit
-            submitForm: true
-    
+        - Form:
+            styles:
+              labelPosition: top
+            onSubmit:
+              invokeAPI:
+                name: addCollection
+            children:
+              - TextInput:
+                  label: Name
+                  value: foo
+              - Button:
+                  label: Submit
+                  submitForm: true
+
+        - Search:
+            id: search1
+            placeholder: Search
+            searchKey: email
+            # data: getData.body.users
+            onValueChange:
+              invokeApi:
+                name: getData
+            onSelect:
+              executeCode: console.log('selected')
+              # navigateScreen: Collections
+        - Text:
+            text: ${search1.value}
+
+API:
+  getData:
+    uri: https://api.airtable.com/v0/app0FnT5yUsW9fjn6/tblWGM6o7vqlTfB8b
+    method: GET
+    headers:
+      Authorization: Bearer patN2XAiLVZQ8Yp3h.2bddb84031b2be89b576f01869dc17c3826e16ae7daa8895f92c05a0799004ab
