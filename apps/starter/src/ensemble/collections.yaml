@@ -84,7 +84,7 @@ View:
                     size: 22
                   onTap:
                     navigateModalScreen:
-                      name: Create Collection
+                      name: Add Groups
                       maskClosable: false
 
         - Conditional:
