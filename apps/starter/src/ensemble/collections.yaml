@@ -93,99 +93,99 @@ View:
                                         name: Create Group
                                         maskClosable: false
 
-                    - else:
-                      GridView:
-                        item-template:
-                          data: getData.body.records
-                          name: user
-                          template:
-                            Card:
-                              styles:
-                                shadowColor: lightgrey
-                                shadowOffset: 8px
-                                shadowBlur: 10px
-                                shadowSpread: -2px
-                                backgroundColor: white
+              - else:
+                GridView:
+                  item-template:
+                    data: getData.body.records
+                    name: user
+                    template:
+                      Card:
+                        styles:
+                          shadowColor: lightgrey
+                          shadowOffset: 8px
+                          shadowBlur: 10px
+                          shadowSpread: -2px
+                          backgroundColor: white
+                        children:
+                          - Column:
+                              gap: 10
                               children:
+                                - Conditional:
+                                    conditions:
+                                      - if: ${!user.fields.icon}
+                                        Avatar:
+                                          styles:
+                                            backgroundColor: "#D9D9D9"
+                                          alt: abc
+                                          name: ${user.fields.Title}
+                                      - else:
+                                        Image:
+                                          source: ${user.fields.icon}
+                                          width: 30
+                                          height: 30
+                                          fit: cover
+                                          borderRadius: 10
+                                          backgroundColor: ${user.fields.backgroundColor}
+                                          padding: 5
                                 - Column:
-                                    gap: 10
+                                    styles:
+                                      crossAxis: center
+                                      gap: 5
+                                      marginTop: 20px
                                     children:
-                                      - Conditional:
-                                          conditions:
-                                            - if: ${!user.fields.image}
-                                              Avatar:
-                                                styles:
-                                                  backgroundColor: "#D9D9D9"
-                                                alt: abc
-                                                name: ${user.fields.name}
-                                            - else:
-                                              Image:
-                                                source: ${user.fields.image}
-                                                width: 30
-                                                height: 30
-                                                fit: cover
-                                                borderRadius: 10
-                                                backgroundColor: ${user.fields.imageBackgroundColor}
-                                                padding: 5
                                       - Column:
                                           styles:
-                                            crossAxis: center
-                                            gap: 5
-                                            marginTop: 20px
+                                            crossAxis: start
                                           children:
-                                            - Column:
-                                                styles:
-                                                  crossAxis: start
-                                                children:
-                                                  - Text:
-                                                      text: ${user.fields.name}
-                                                      styles: 
-                                                        fontSize: 16
-                                                        fontWeight: 700
-                                                  - Text:
-                                                      text: ${user.fields.email}
-                                      - Row:
-                                          crossAxis: start
-                                          mainAxis: start
-                                          gap: 10
-                                          children:
-                                            - Tag:
-                                                label: ${user.fields.collection_access}
-                                                styles:
-                                                  backgroundColor: "#ebedf0"
-                                                  borderRadius: 1
-                                      - Divider:
+                                            - Text:
+                                                text: ${user.fields.Title}
+                                                styles: 
+                                                  fontSize: 16
+                                                  fontWeight: 700
+                                            - Text:
+                                                text: ${user.fields.sources}
+                                - Row:
+                                    crossAxis: start
+                                    mainAxis: start
+                                    gap: 10
+                                    children:
+                                      - Tag:
+                                          label: ${user.fields.Tags}
                                           styles:
-                                            thickness: 1
-                                            color: "#ECEFF6"
+                                            backgroundColor: "#ebedf0"
+                                            borderRadius: 1
+                                - Divider:
+                                    styles:
+                                      thickness: 1
+                                      color: "#ECEFF6"
 
-                                      - Row:
-                                          gap: 8
-                                          crossAxis: center
-                                          children:
-                                            - Icon:
-                                                name: CheckCircleOutlineOutlined
-                                                size: 15
-                                                color: "#87888a"
-                                            - Text:
-                                                text: Good
-                                                styles:
-                                                  color: "#87888a"
-                                                  fontSize: 13
+                                - Row:
+                                    gap: 8
+                                    crossAxis: center
+                                    children:
+                                      - Icon:
+                                          name: CheckCircleOutlineOutlined
+                                          size: 15
+                                          color: "#87888a"
+                                      - Text:
+                                          text: ${user.fields.Status}
+                                          styles:
+                                            color: "#87888a"
+                                            fontSize: 13
 
-                                      - Row:
-                                          gap: 8
-                                          crossAxis: center
-                                          children:
-                                            - Icon: 
-                                                name: CachedOutlined
-                                                size: 15
-                                                color: "#87888a"
-                                            - Text:
-                                                text: ${user.fields.last_Active}
-                                                styles:
-                                                  color: "#87888a"
-                                                  fontSize: 13
+                                - Row:
+                                    gap: 8
+                                    crossAxis: center
+                                    children:
+                                      - Icon: 
+                                          name: CachedOutlined
+                                          size: 15
+                                          color: "#87888a"
+                                      - Text:
+                                          text: ${user.fields.last_active}
+                                          styles:
+                                            color: "#87888a"
+                                            fontSize: 13
 
               
 
@@ -195,7 +195,7 @@ View:
 
 API:
   getData:
-    uri: https://api.airtable.com/v0/app0FnT5yUsW9fjn6/tblWGM6o7vqlTfB8b
+    uri: https://api.airtable.com/v0/app4U7TLRbZKGKYWd/tbl6STCIq92xFop9T
     method: GET
     headers:
       Authorization: Bearer patN2XAiLVZQ8Yp3h.2bddb84031b2be89b576f01869dc17c3826e16ae7daa8895f92c05a0799004ab
