@@ -1,0 +1,25 @@
+View:
+  header:
+    Text:
+      text: Create Collection
+  body:
+    Form:
+      styles:
+        labelPosition: top
+        gap: 10
+      onSubmit:
+        executeCode: console.log("Hi from collections")
+      children:
+        - TextInput:
+            id: collectionName
+            value: foo
+            hintText: Collection name
+        - TextInput:
+            id: description
+            value: describe it
+            multiLine: true
+            maxLines: 3
+            hintText: Description ( Optional )
+        - Button:
+            label: Submit
+            submitForm: true

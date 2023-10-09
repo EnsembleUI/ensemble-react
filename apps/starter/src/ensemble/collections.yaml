@@ -84,7 +84,7 @@ View:
                     size: 22
                   onTap:
                     navigateModalScreen:
-                      name: Create Group
+                      name: Create Collection
                       maskClosable: false
 
         - Conditional:
@@ -180,9 +180,18 @@ View:
                                                 padding: 5
                                       - PopupMenu:
                                           items:
-                                            - { "label": "View", "value": "red" }
-                                            - { "label": "Remove", "value": "blue" }
-                                            - { "label": "Edit", "value": "green" }
+                                            - {
+                                                "label": "View",
+                                                "value": "red",
+                                              }
+                                            - {
+                                                "label": "Remove",
+                                                "value": "blue",
+                                              }
+                                            - {
+                                                "label": "Edit",
+                                                "value": "green",
+                                              }
                                           onItemSelect:
                                             navigateModalScreen:
                                               name: Ask Embrace
@@ -201,7 +210,7 @@ View:
                                           children:
                                             - Text:
                                                 text: ${user.fields.Title}
-                                                styles: 
+                                                styles:
                                                   fontSize: 16
                                                   fontWeight: 700
                                             - Text:
@@ -239,7 +248,7 @@ View:
                                     gap: 8
                                     crossAxis: center
                                     children:
-                                      - Icon: 
+                                      - Icon:
                                           name: CachedOutlined
                                           size: 15
                                           color: "#87888a"
@@ -248,12 +257,6 @@ View:
                                           styles:
                                             color: "#87888a"
                                             fontSize: 13
-
-              
-
-              
-        
-
 
 API:
   getData:
