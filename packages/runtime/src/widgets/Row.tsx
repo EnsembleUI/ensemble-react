@@ -27,6 +27,8 @@ export const Row: React.FC<FlexboxProps> = (props) => {
         ...(get(props, "styles") as object),
         maxWidth: props.maxWidth ?? "100%",
         minWidth: props.minWidth,
+        flexDirection: "row",
+        flexFlow: "unset",
       }}
     >
       {renderedChildren}

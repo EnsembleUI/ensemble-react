@@ -9,6 +9,8 @@ export interface TextStyles {
   fontSize?: string | number;
   fontWeight?: string | number;
   color: string;
+  fontFamily: string;
+  backgroundColor: string;
 }
 
 export type TextProps = {
@@ -27,6 +29,10 @@ export const Text: React.FC<TextProps> = (props) => {
         fontSize: props.styles?.fontSize,
         fontWeight: props.styles?.fontWeight,
         color: props.styles?.color,
+        fontFamily: props.styles?.fontFamily,
+        backgroundColor: props.styles?.backgroundColor,
+        padding: `${props.styles?.padding}px`,
+        borderRadius: `${props.styles?.borderRadius}px`,
       }}
     >
       {values.text}

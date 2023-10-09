@@ -51,7 +51,11 @@ export const Tag: React.FC<TagProps> = (props) => {
   ));
 
   return (
-    <div>
+    <div
+      style={{
+        display: "flex",
+      }}
+    >
       {tagElements}
       {additionalTagsCount > 0 && (
         <Typography.Text
