@@ -107,6 +107,7 @@ View:
                                 backgroundColor: white
                               children:
                                 - Column:
+                                    gap: 10
                                     children:
                                       - Row:
                                           mainAxis: spaceBetween
@@ -151,8 +152,54 @@ View:
                                                 children:
                                                   - Text:
                                                       text: ${user.fields.name}
+                                                      styles: 
+                                                        fontSize: 16
+                                                        fontWeight: 700
                                                   - Text:
                                                       text: ${user.fields.email}
+                                      - Row:
+                                          crossAxis: start
+                                          mainAxis: start
+                                          gap: 10
+                                          children:
+                                            - Tag:
+                                                label: ${user.fields.collection_access}
+                                                styles:
+                                                  backgroundColor: "#ebedf0"
+                                                  borderRadius: 1
+                                      - Divider:
+                                          styles:
+                                            thickness: 1
+                                            color: "#ECEFF6"
+
+                                      - Row:
+                                          gap: 8
+                                          crossAxis: center
+                                          children:
+                                            - Icon:
+                                                name: CheckCircleOutlineOutlined
+                                                size: 15
+                                                color: "#87888a"
+                                            - Text:
+                                                text: Good
+                                                styles:
+                                                  color: "#87888a"
+                                                  fontSize: 13
+
+                                      - Row:
+                                          gap: 8
+                                          crossAxis: center
+                                          children:
+                                            - Icon: 
+                                                name: CachedOutlined
+                                                size: 15
+                                                color: "#87888a"
+                                            - Text:
+                                                text: ${user.fields.last_Active}
+                                                styles:
+                                                  color: "#87888a"
+                                                  fontSize: 13
+
               
 
               
