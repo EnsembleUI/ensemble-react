@@ -86,146 +86,60 @@ View:
                                     label: Create collection
                                     startingIcon:
                                       name: Add
-                                    styles:
-                                      borderRadius: 12
-                                      padding: 24
-                                      backgroundColor: "#072CC4"
-                                      textColor: white
-                    - Card:
-                        styles:
-                          shadowColor: lightgrey
-                          shadowOffset: 8px
-                          shadowBlur: 10px
-                          shadowSpread: -2px
-                          backgroundColor: white
-                          width: "40%"
-                        children:
-                          - Column:
-                              children:
-                                - Row:
-                                    mainAxis: spaceBetween
-                                    children:
-                                      - Text:
-                                          text: 🚀️
-                                          styles:
-                                            fontSize: 16
-                                            backgroundColor: "#FEEAEA"
-                                            padding: 16
-                                            borderRadius: 12
-                                      - PopupMenu:
-                                          items:
-                                            - {
-                                                "label": "View",
-                                                "value": "red",
-                                              }
-                                            - {
-                                                "label": "Remove",
-                                                "value": "blue",
-                                              }
-                                            - {
-                                                "label": "Message",
-                                                "value": "green",
-                                              }
-                                          onItemSelect:
-                                            executeCode: console.log("Hello")
-                                          widget:
-                                            Icon:
-                                              name: MoreVert
+                                      color: white
+                                      size: 22
+                                    onTap:
+                                      navigateModalScreen:
+                                        name: Create Group
+                                        maskClosable: false
 
-                                - Column:
-                                    styles:
-                                      crossAxis: center
-                                    children:
-                                      - Text:
-                                          text: Getting started with Embrace
-                                          styles:
-                                            fontSize: 20
-                                            fontWeight: 500
-                                            color: "#28304B"
-                                            fontFamily: Inter
-                                      - Text:
-                                          text: 48 sources
-                                          styles:
-                                            fontSize: 15
-                                            fontWeight: 400
-                                            color: "#565D80"
-                                            fontFamily: Inter
-                                      - Tag:
-                                          label: All groups
-                                          styles:
-                                            backgroundColor: "#FBF8EC"
-                                            borderRadius: 6
-                                - Divider:
-                                    styles:
-                                      thickness: 1
-                                      color: "#ECEFF6"
-                                - Text:
-                                    text: Managed by Embrace Team
-                                    styles:
-                                      fontSize: 13
-                                      fontWeight: 400
-                                      color: "#565D80"
-                                      fontFamily: Inter
-                                - Row:
-                                    crossAxis: center
-                                    children:
-                                      - Icon:
-                                          name: Refresh
-                                          color: "#565D80"
-                                      - Text:
-                                          text: 3 weeks ago
-                                          styles:
-                                            fontSize: 13
-                                            fontWeight: 400
-                                            color: "#565D80"
-                                            fontFamily: Inter
-              - else:
-                GridView:
-                  item-template:
-                    data: getData.body.records
-                    name: user
-                    template:
-                      Card:
-                        styles:
-                          shadowColor: lightgrey
-                          shadowOffset: 8px
-                          shadowBlur: 10px
-                          shadowSpread: -2px
-                          backgroundColor: white
-                        children:
-                          - Column:
+                    - else:
+                      GridView:
+                        item-template:
+                          data: getData.body.records
+                          name: user
+                          template:
+                            Card:
+                              styles:
+                                shadowColor: lightgrey
+                                shadowOffset: 8px
+                                shadowBlur: 10px
+                                shadowSpread: -2px
+                                backgroundColor: white
                               children:
-                                - Conditional:
-                                    conditions:
-                                      - if: ${!user.fields.image}
-                                        Avatar:
-                                          styles:
-                                            backgroundColor: "#D9D9D9"
-                                          alt: abc
-                                          name: ${user.fields.name}
-                                      - else:
-                                        Image:
-                                          source: ${user.fields.image}
-                                          width: 30
-                                          height: 30
-                                          fit: cover
-                                          borderRadius: 10
-                                          backgroundColor: ${user.fields.imageBackgroundColor}
-                                          padding: 5
                                 - Column:
-                                    styles:
-                                      crossAxis: center
-                                      gap: 5
-                                      marginTop: 20px
                                     children:
+                                      - Conditional:
+                                          conditions:
+                                            - if: ${!user.fields.image}
+                                              Avatar:
+                                                styles:
+                                                  backgroundColor: "#D9D9D9"
+                                                alt: abc
+                                                name: ${user.fields.name}
+                                            - else:
+                                              Image:
+                                                source: ${user.fields.image}
+                                                width: 30
+                                                height: 30
+                                                fit: cover
+                                                borderRadius: 10
+                                                backgroundColor: ${user.fields.imageBackgroundColor}
+                                                padding: 5
                                       - Column:
                                           styles:
-                                            crossAxis: start
+                                            crossAxis: center
+                                            gap: 5
+                                            marginTop: 20px
                                           children:
-                                            - Text:
-                                                text: ${user.fields.name}
-                                            - Text:
-                                                text: ${user.fields.email}
+                                            - Column:
+                                                styles:
+                                                  crossAxis: start
+                                                children:
+                                                  - Text:
+                                                      text: ${user.fields.name}
+                                                  - Text:
+                                                      text: ${user.fields.email}
 
 API:
   getData:
