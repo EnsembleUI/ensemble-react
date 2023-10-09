@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { Expression } from "framework";
-import { useRegisterBindings } from "framework";
+import { useRegisterBindings, useScreenContext } from "framework";
 import { WidgetRegistry } from "../registry";
 import { getColor } from "../util/utils";
 import type { EnsembleWidgetProps, HasBorder } from "../util/types";
-
+import {
+  evaluate,
+  isExpression,
+} from "framework";
 export type ImageProps = {
   source: Expression<string>;
 
@@ -22,6 +25,14 @@ export const Image: React.FC<ImageProps> = (props) => {
   const { values } = useRegisterBindings({ ...props, source }, props.id, {
     setSource,
   });
+  const [imageBackgroundColor, setImageBackgroundColor] = useState(props.backgroundColor);
+  const bgColor = useRegisterBindings(
+    { ...props, imageBackgroundColor },
+    props.id,
+    {
+      setImageBackgroundColor,
+    }
+  );
 
   return (
     <img
@@ -37,7 +48,7 @@ export const Image: React.FC<ImageProps> = (props) => {
           ? getColor(props.borderColor)
           : undefined,
         borderStyle: props.borderWidth ? "solid" : undefined,
-        backgroundColor: props.backgroundColor,
+        backgroundColor: bgColor.values.imageBackgroundColor,
         padding: props.padding,
       }}
     />
