@@ -76,7 +76,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
     }
 
     const inputs = action.inputs ?? {};
-    const callback = async (): Promise<void> => {
+    const callback = async (): Promise<any> => {
       const resolvedInputs = Object.entries(inputs).map(([key, value]) => {
         if (isExpression(value)) {
           const resolvedValue = evaluate(screenContext, value);
@@ -91,6 +91,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
         );
         screenContext.setData(apiModel.name, res);
         setResponse(res);
+        return res;
       } catch (e) {
         setError(e);
       }
