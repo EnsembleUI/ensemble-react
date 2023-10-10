@@ -17,7 +17,7 @@ View:
           const name = collectionName.value
           const email = description.value
           const res = ensemble.storage.get("arrayOfCollections")
-          res.push({"id": res.length+1, "fields": { "name": name, "email": email }})
+          res.push({"id": res.length+1, "fields": { "title": name, "sources": email }})
           ensemble.storage.set("arrayOfCollections",res)
       children:
         - TextInput:
@@ -68,8 +68,8 @@ View:
         - Carousel:
             styles:
               layout: multiple
-              multipleItemWidthRatio: 0.4
-              gap: 8
+              multipleItemWidthRatio: 0.25
+              gap: 6
               indicatorType: none
             item-template:
               data: ensemble.storage.get("arrayOfGroups")
@@ -82,7 +82,7 @@ View:
                   styles:
                     backgroundColor: "#EBEEF6"
                     borderRadius: "6px"
-                    padding: 8
+                    padding: 12
                   children:
                     - Icon:
                         name: Add

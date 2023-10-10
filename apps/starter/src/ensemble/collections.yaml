@@ -5,7 +5,7 @@ View:
       onResponse:
         executeCode: |
           ensemble.storage.set("arrayOfCollections",response.body.records)
-          const groups = new Set(response.body.records.flatMap(record => record.fields.groups))
+          const groups = new Set(response.body.records.flatMap(record => record.fields.Tags[0]))
           ensemble.storage.set("arrayOfGroups", Array.from(groups))
   body:
     Column:
@@ -84,7 +84,7 @@ View:
                     size: 22
                   onTap:
                     navigateModalScreen:
-                      name: Add Groups
+                      name: Create Collection
                       maskClosable: false
 
         - Conditional:
@@ -136,13 +136,13 @@ View:
                                       size: 22
                                     onTap:
                                       navigateModalScreen:
-                                        name: Create Group
+                                        name: Create Collection
                                         maskClosable: false
 
               - else:
                 GridView:
                   item-template:
-                    data: ensemble.storage.get("arrayOfCollections")
+                    data: getData.body.records
                     name: user
                     template:
                       Card:

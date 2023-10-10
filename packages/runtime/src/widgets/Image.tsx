@@ -22,16 +22,16 @@ export const Image: React.FC<ImageProps> = (props) => {
   const { values } = useRegisterBindings({ ...props, source }, props.id, {
     setSource,
   });
-const [imageBackgroundColor, setImageBackgroundColor] = useState(
-  props.backgroundColor
-);
-const bgColor = useRegisterBindings(
-  { ...props, imageBackgroundColor },
-  props.id,
-  {
-    setImageBackgroundColor,
-  }
-);
+  const [imageBackgroundColor, setImageBackgroundColor] = useState(
+    props.backgroundColor,
+  );
+  const bgColor = useRegisterBindings(
+    { ...props, imageBackgroundColor },
+    props.id,
+    {
+      setImageBackgroundColor,
+    },
+  );
   return (
     <img
       alt=""
