@@ -12,6 +12,7 @@ export interface TagProps {
   styles?: {
     backgroundColor: string;
     borderRadius: string;
+    fontSize: string;
   };
   icon: IconProps;
 }
@@ -39,6 +40,7 @@ export const Tag: React.FC<TagProps> = (props) => {
         textAlign: "left",
         borderRadius: props.styles?.borderRadius ?? 10,
         fontWeight: "normal",
+        fontSize: props.styles?.fontSize ?? 12,
         display: "inline-flex",
         alignItems: "center",
         margin: "5px",

@@ -184,8 +184,8 @@ View:
                                             - { "label": "Remove", "value": "blue" }
                                             - { "label": "Edit", "value": "green" }
                                           onItemSelect:
-                                            navigateModalScreen:
-                                              name: Ask Embrace
+                                            navigateScreen:
+                                              name: "Product and Development"
                                           widget:
                                             Icon:
                                               name: MoreVert
