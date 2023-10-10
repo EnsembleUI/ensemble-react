@@ -156,8 +156,8 @@ View:
                                               shadowBlur: 10px
                                               shadowSpread: -2px
                                               backgroundColor: white
-                                              minWidth: 200px
-                                              maxWidth: 200px
+                                              minWidth: 90%
+                                              maxWidth: 90%
                                             children:
                                               - Column:
                                                   children:

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Menu, Dropdown as AntdDropdown } from "antd";
 import { cloneDeep } from "lodash-es";
-import { type EnsembleWidget, unwrapWidget } from "framework";
+import { type EnsembleWidget, unwrapWidget, EnsembleAction } from "framework";
 import type { EnsembleWidgetProps } from "../util/types";
 import { WidgetRegistry } from "../registry";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
@@ -23,10 +23,7 @@ type PopupMenuProps = {
   items: PopupMenuItem[];
   widget?: Record<string, unknown>;
   styles?: PopupMenuStyles;
-  onItemSelect?: {
-    executeCode?: string;
-    navigateScreen?: string;
-  };
+  onItemSelect?: EnsembleAction;
 } & EnsembleWidgetProps;
 
 export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
