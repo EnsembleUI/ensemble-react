@@ -161,21 +161,11 @@ View:
                                             children:
                                               - Column:
                                                   children:
-                                                    - Conditional:
-                                                        conditions:
-                                                          - if: ${!user.fields.image}
-                                                            Avatar:
-                                                              styles:
-                                                                backgroundColor: "#D9D9D9"
-                                                              alt: abc
-                                                              name: ${user.fields.name}
-                                                          - else:
-                                                            Image:
-                                                              source: ${user.fields.image}
-                                                              width: 40
-                                                              height: 40
-                                                              fit: cover
-                                                              borderRadius: 100
+                                                    - Avatar:
+                                                        styles:
+                                                          backgroundColor: "#D9D9D9"
+                                                        alt: abc
+                                                        name: ${user.fields.name}
 
                                                     - Column:
                                                         styles:
@@ -337,7 +327,8 @@ View:
                                         borderColor: black
                                         borderRadius: 5
                                         borderWidth: 1px
-
+                            - Row:
+                                children:
                                   - DataGrid:
                                       DataColumns:
                                         - label: User
