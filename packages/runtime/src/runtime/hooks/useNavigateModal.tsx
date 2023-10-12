@@ -1,8 +1,6 @@
 import type { NavigateModalScreenAction } from "framework";
 import { useApplicationContext } from "framework";
 import type { ReactNode } from "react";
-import { useMemo, useState } from "react";
-import { Modal } from "antd";
 // FIXME
 // eslint-disable-next-line import/no-cycle
 import { EnsembleScreen } from "../screen";
@@ -11,6 +9,7 @@ import type {
   EnsembleActionHook,
   EnsembleActionHookResult,
 } from "./useEnsembleAction";
+import { GlobalModal } from "react-global-modal-plus";
 
 export type UseNavigateModalScreenResult =
   | ({
@@ -22,47 +21,34 @@ export type UseNavigateModalScreenResult =
 export const useNavigateModalScreen: EnsembleActionHook<
   NavigateModalScreenAction,
   null,
-  UseNavigateModalScreenResult
+  EnsembleActionHookResult
 > = (action?: NavigateModalScreenAction) => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const onCancel = (): void => setIsModalVisible(false);
-  const openModal = (): void => setIsModalVisible(true);
-
+  const screenName = typeof action === "string" ? action : action?.name;
   const app = useApplicationContext();
 
-  const screenName = typeof action === "string" ? action : action?.name;
-  const maskClosable =
-    typeof action === "string" ? true : Boolean(action?.maskClosable);
-
-  const { screen, title } = useMemo(() => {
+  const openModal = (): void => {
     const matchingScreen = app?.application?.screens.find(
       (s) => s.name.toLowerCase() === screenName?.toLowerCase(),
     );
-    const titleElement = matchingScreen?.header
-      ? EnsembleRuntime.render([matchingScreen.header])
-      : null;
-    return { screen: matchingScreen, title: titleElement };
-  }, [app, screenName]);
 
-  const ModalElement = screen ? (
-    <Modal
-      centered
-      footer={null}
-      maskClosable={maskClosable}
-      onCancel={onCancel}
-      open={isModalVisible}
-      title={title}
-    >
-      <EnsembleScreen screen={screen} />
-    </Modal>
-  ) : null;
+    if (matchingScreen) {
+      const titleElement = matchingScreen?.header
+        ? EnsembleRuntime.render([matchingScreen.header])
+        : null;
+      const maskClosable =
+        typeof action === "string" || !action?.maskClosable
+          ? true
+          : Boolean(action?.maskClosable);
 
-  return ModalElement
-    ? {
-        callback: openModal,
-        openModal,
-        Modal: ModalElement,
-      }
-    : undefined;
+      GlobalModal.popAndPush({
+        component: () => <EnsembleScreen screen={matchingScreen} />,
+        titleComponent: titleElement,
+        maskClosable: maskClosable,
+      });
+    }
+  };
+
+  return {
+    callback: openModal,
+  };
 };

@@ -36,6 +36,7 @@
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
+    "react-global-modal-plus": "^0.0.1",
     "react-markdown": "^8.0.7",
     "react-router-dom": "^6.16.0",
     "react-toastify": "^9.1.3",

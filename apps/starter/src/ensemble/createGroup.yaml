@@ -76,11 +76,14 @@ View:
               gap: 16
             children:
               - Button:
-                  label: Cancel
+                  label: Open Ask Embrace
                   styles:
                     backgroundColor: transparent
                     border: "0px"
                     color: black
+                  onTap:
+                    navigateModalScreen:
+                      name: Ask Embrace
               - Button:
                   label: Create Group
                   submitForm: true

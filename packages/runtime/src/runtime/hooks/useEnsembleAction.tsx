@@ -10,13 +10,14 @@ import type {
   Response,
   EnsembleAction,
 } from "framework";
-import { isString, merge } from "lodash-es";
+import { isString, keys, merge } from "lodash-es";
 import { useState, useEffect, useMemo } from "react";
 import { useNavigateScreen } from "./useNavigateScreen";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { useNavigateModalScreen } from "./useNavigateModal";
 import { useShowToast } from "./useShowToast";
+import { useCloseAllDialogs } from "./useCloseAllDialogs";
 
 export type EnsembleActionHookResult =
   | {
@@ -134,17 +135,23 @@ export const useEnsembleAction = (
     options as UseExecuteCodeActionOptions,
   );
   const navigateScreen = useNavigateScreen(action.navigateScreen, options);
+  const showToast = useShowToast(action.showToast);
   const navigateModalScreen = useNavigateModalScreen(
     action.navigateModalScreen,
     options as null,
   );
-  const showToast = useShowToast(action.showToast);
+  const closeAllDialogs = useCloseAllDialogs();
+
   return (
-    invokeApi ||
-    executeCode ||
-    navigateScreen ||
-    navigateModalScreen ||
-    showToast
+    (action.invokeApi && invokeApi) ||
+    (action.executeCode && executeCode) ||
+    (action.navigateScreen && navigateScreen) ||
+    (action.showToast && showToast) ||
+    (action.navigateModalScreen && navigateModalScreen) ||
+    (keys(action).find((key) => key === "closeAllDialogs") &&
+      closeAllDialogs) || {
+      callback: () => {},
+    }
   );
 };
 /* eslint-enable react-hooks/rules-of-hooks */
