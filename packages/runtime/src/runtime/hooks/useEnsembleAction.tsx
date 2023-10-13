@@ -36,6 +36,7 @@ export const useExecuteCode: EnsembleActionHook<
   ExecuteCodeAction,
   UseExecuteCodeActionOptions
 > = (action, options) => {
+  // console.log("useExecuteCode", action, options);
   const isCodeString = isString(action);
   const js = isCodeString ? action : action?.body;
   const screen = useScreenContext();
@@ -76,7 +77,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
     }
 
     const inputs = action.inputs ?? {};
-    const callback = async (): Promise<any> => {
+    const callback = async (): Promise<Response | undefined> => {
       const resolvedInputs = Object.entries(inputs).map(([key, value]) => {
         if (isExpression(value)) {
           const resolvedValue = evaluate(screenContext, value);

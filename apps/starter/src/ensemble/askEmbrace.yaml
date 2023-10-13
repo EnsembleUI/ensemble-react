@@ -1,4 +1,17 @@
 View:
+  onLoad:
+    invokeApi:
+      name: getDummyData
+      onResponse:
+        executeCode: |-
+          var users = getDummyData.body.users;
+          users = users.map(function(u){
+            return {
+              label: u.email,
+              value: u.email
+            }
+          });
+          search2.setOptions(users);
   header:
     Text:
       text: Ask Embrace
@@ -21,22 +34,23 @@ View:
                   submitForm: true
 
         - Search:
-            id: search1
+            id: search2
             placeholder: Search
             searchKey: email
-            # data: getData.body.users
+            # data: getDummyData.body.users
             onValueChange:
-              invokeApi:
-                name: getData
+              # showToast:
+              #   message: "value changed"
+              executeCode: console.log('value changed')
+              # invokeApi:
+              #   name: getDummyData
             onSelect:
               executeCode: console.log('selected')
               # navigateScreen: Collections
         - Text:
-            text: ${search1.value}
+            text: ${search2.value}
 
 API:
-  getData:
-    uri: https://api.airtable.com/v0/app0FnT5yUsW9fjn6/tblWGM6o7vqlTfB8b
+  getDummyData:
+    uri: https://dummyjson.com/users
     method: GET
-    headers:
-      Authorization: Bearer patN2XAiLVZQ8Yp3h.2bddb84031b2be89b576f01869dc17c3826e16ae7daa8895f92c05a0799004ab

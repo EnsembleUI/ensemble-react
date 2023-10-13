@@ -39,47 +39,32 @@ export const Search: React.FC<SearchProps> = ({
 }) => {
   const [options, setOptions] = useState<SelectProps<object>["options"]>([]);
   const [value, setValue] = useState("");
-  // eslint-disable-next-line no-empty-pattern
-  const {} = useRegisterBindings(
-    {
-      value,
-    },
-    id,
-    { setValue },
-  );
-
+  const [filteredOptions, setFilteredOptions] = useState<
+    SelectProps<object>["options"]
+  >([]);
   const templateData = useTemplateData(data ?? "");
   const valueChangeAction = useEnsembleAction(onValueChange);
   const selectAction = useEnsembleAction(onSelect);
 
+  useRegisterBindings(
+    {
+      value,
+      options,
+    },
+    id,
+    { setValue, setOptions },
+  );
+
   const handleSearch = (search: string): void => {
-    if (Array.isArray(templateData)) {
-      setOptions(
-        search
-          ? templateData
-              .filter(
-                (item) =>
-                  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-                  (isObject(item) ? get(item, searchKey ?? "") : item)
-                    ?.toString()
-                    ?.toLowerCase()
-                    ?.includes(search.toLowerCase()),
-              )
-              .map((item) => ({
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                value: isObject(item) ? get(item, searchKey ?? "") : item,
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                label: isObject(item) ? get(item, searchKey ?? "") : item,
-              }))
-          : [],
-      );
-    } else if (onValueChange) {
+    if (!searchKey) return;
+
+    if (onValueChange?.invokeApi) {
       (async (): Promise<void> => {
         const apiResponse = await valueChangeAction?.callback();
 
-        if (apiResponse) {
-          setOptions(
-            findValuesByKey<string>(apiResponse, searchKey ?? "")
+        if (apiResponse)
+          setFilteredOptions(
+            findValuesByKey<string>(apiResponse, searchKey)
               .filter((item) =>
                 item.toLowerCase().includes(search.toLowerCase()),
               )
@@ -88,22 +73,59 @@ export const Search: React.FC<SearchProps> = ({
                 label: item,
               })),
           );
-        }
       })().catch((e) => {
         throw e;
       });
-    }
+    } else if (
+      templateData &&
+      Array.isArray(templateData) &&
+      templateData.length > 0
+    )
+      setFilteredOptions(
+        search
+          ? templateData
+              .filter(
+                (item) =>
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+                  (isObject(item) ? get(item, searchKey) : item)
+                    ?.toString()
+                    ?.toLowerCase()
+                    ?.includes(search.toLowerCase()),
+              )
+              .map((item) => ({
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                value: isObject(item) ? get(item, searchKey) : item,
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                label: isObject(item) ? get(item, searchKey) : item,
+              }))
+          : [],
+      );
+    else if (options)
+      setFilteredOptions(
+        search
+          ? options.filter(
+              (item) =>
+                item.value
+                  ?.toString()
+                  ?.toLowerCase()
+                  ?.includes(search.toLowerCase()),
+            )
+          : [],
+      );
   };
 
   return (
     <AutoComplete
       allowClear
+      onChange={(): void => {
+        if (!onValueChange?.invokeApi) valueChangeAction?.callback();
+      }}
       onSearch={handleSearch}
       onSelect={(selectedValue: string): void => {
         setValue(selectedValue);
         onSelect && selectAction?.callback();
       }}
-      options={options}
+      options={filteredOptions}
       popupMatchSelectWidth={styles?.width}
       size="large"
     >
@@ -129,13 +151,16 @@ export const Search: React.FC<SearchProps> = ({
 
 WidgetRegistry.register("Search", Search);
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function findValuesByKey<T>(obj: any, key: string): T[] {
   let results: T[] = [];
 
   if (obj && typeof obj === "object") {
     for (const k in obj) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
       if (k === key) results.push(obj[k]);
       else {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         const nestedResults = findValuesByKey<T>(obj[k], key);
         results = results.concat(nestedResults);
       }
