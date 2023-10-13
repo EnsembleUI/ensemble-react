@@ -21,17 +21,23 @@ View:
       children:
         - Form:
             styles:
-              labelPosition: top
+              labelPosition: start
             onSubmit:
-              invokeAPI:
-                name: addCollection
+              executeCode: console.log("Hello")
             children:
               - TextInput:
                   label: Name
                   value: foo
+              - Checkbox:
+                  id: myCheckbox
+                  trailingText: I can be set to checked
+                  value: false
+                  enabled: true
               - Button:
                   label: Submit
                   submitForm: true
+                  onTap:
+                    executeCode: console.log(myCheckbox)
 
         - Search:
             id: search2
