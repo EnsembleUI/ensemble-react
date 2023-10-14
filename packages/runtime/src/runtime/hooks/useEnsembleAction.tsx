@@ -10,7 +10,7 @@ import type {
   Response,
   EnsembleAction,
 } from "framework";
-import { isString, keys, merge } from "lodash-es";
+import { isString, merge } from "lodash-es";
 import { useState, useEffect, useMemo } from "react";
 import { useNavigateScreen } from "./useNavigateScreen";
 // FIXME: refactor
@@ -148,10 +148,8 @@ export const useEnsembleAction = (
     (action.navigateScreen && navigateScreen) ||
     (action.showToast && showToast) ||
     (action.navigateModalScreen && navigateModalScreen) ||
-    (keys(action).find((key) => key === "closeAllDialogs") &&
-      closeAllDialogs) || {
-      callback: () => {},
-    }
+    ("closeAllDialogs" in action && closeAllDialogs) ||
+    undefined
   );
 };
 /* eslint-enable react-hooks/rules-of-hooks */

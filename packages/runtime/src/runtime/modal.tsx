@@ -1,70 +1,113 @@
-import { Button, Modal } from "antd";
-import React from "react";
-import { IModalProps } from "react-global-modal-plus";
+import { Modal } from "antd";
+import type { NavigateModalScreenAction } from "framework";
+import { createContext, useState } from "react";
+import { createPortal } from "react-dom";
+import { Outlet } from "react-router-dom";
+import OpenInFullIcon from "@mui/icons-material/OpenInFull";
+import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
 
-type IAntModalProps = IModalProps & {
-  width?: number;
-  centered?: boolean;
-  titleComponent?: React.ReactNode;
-  maskClosable?: boolean;
-};
+type ModalProps = {
+  title?: string | React.ReactNode;
+} & Omit<Exclude<NavigateModalScreenAction, string>, "name">;
 
-export const CustomModal = React.forwardRef<IAntModalProps>(
-  (props: IAntModalProps) => {
-    const {
-      children,
-      open,
-      className = "",
-      title,
-      onModalClose = () => {},
-      footer,
-      width,
-      closeIconComponent,
-      actions = [],
-      centered = true,
-      titleComponent,
-      maskClosable,
-    } = props;
+interface ModalContextProps {
+  visible: boolean;
+  setVisible: (visible: boolean) => void;
+  content: React.ReactNode;
+  setContent: (content: React.ReactNode) => void;
+  options: ModalProps;
+  setOptions: (options: ModalProps) => void;
+}
 
-    let footerComponent: React.ReactNode | null = null;
+export const ModalContext = createContext<ModalContextProps>({
+  visible: false,
+  setVisible: () => {},
+  content: null,
+  setContent: () => {},
+  options: {},
+  setOptions: () => {},
+});
 
-    if (actions.length > 0)
-      footerComponent = actions.map((el: any) => (
-        <Button
-          key={el.title}
-          className={el.className}
-          onClick={() => el?.onClick()}
-        >
-          {el.title}
-        </Button>
-      ));
+export const ModalWrapper: React.FC = () => {
+  const [visible, setVisible] = useState(false);
+  const [content, setContent] = useState<React.ReactNode>(null);
+  const [options, setOptions] = useState<ModalProps>({});
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
-    if (footer) footerComponent = footer;
+  const customStyles = `
+    .ant-modal-content {
+      padding: 10px 24px !important;
+    }
+  `;
 
-    return (
-      <Modal
-        open={open}
-        title={titleComponent || title}
-        onCancel={onModalClose}
-        footer={footerComponent}
-        width={width}
-        closeIcon={closeIconComponent}
-        maskClosable={maskClosable}
-        centered={centered}
-        bodyStyle={{
-          margin: 0,
-          padding: 0,
-        }}
-        className={className}
-      >
-        <div
+  const fullScreenStyles = `
+    .ant-modal, .ant-modal-content {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      top: 0;
+    }
+    .ant-modal-body {
+      height: calc(100vh - 110px);
+    }
+  `;
+
+  const titleElement = (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+      }}
+    >
+      {isFullScreen ? (
+        <CloseFullscreenIcon
+          onClick={() => setIsFullScreen(false)}
           style={{
-            position: "relative",
+            color: "rgba(0, 0, 0, 0.45)",
+            cursor: "pointer",
           }}
-        >
-          {children}
-        </div>
-      </Modal>
-    );
-  },
-);
+        />
+      ) : (
+        <OpenInFullIcon
+          onClick={() => setIsFullScreen(true)}
+          style={{
+            color: "rgba(0, 0, 0, 0.45)",
+            cursor: "pointer",
+          }}
+        />
+      )}
+      {options?.title}
+    </div>
+  );
+
+  return (
+    <ModalContext.Provider
+      value={{ visible, setVisible, content, setContent, options, setOptions }}
+    >
+      <Outlet />
+
+      {visible &&
+        createPortal(
+          <>
+            <style> {isFullScreen && fullScreenStyles}</style>
+            <style>{customStyles}</style>
+            <Modal
+              open={visible}
+              onCancel={() => setVisible(false)}
+              title={titleElement}
+              centered={!isFullScreen}
+              maskClosable={options?.maskClosable}
+              footer={null}
+              bodyStyle={{
+                margin: 0,
+                padding: 0,
+              }}
+            >
+              {content}
+            </Modal>
+          </>,
+          document.body,
+        )}
+    </ModalContext.Provider>
+  );
+};

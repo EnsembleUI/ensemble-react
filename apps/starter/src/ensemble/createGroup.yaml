@@ -84,6 +84,8 @@ View:
                   onTap:
                     navigateModalScreen:
                       name: Ask Embrace
+                      styles:
+                        position: right
               - Button:
                   label: Create Group
                   submitForm: true

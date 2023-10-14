@@ -36,6 +36,7 @@ export interface EnsembleAction {
   executeCode?: ExecuteCodeAction;
   invokeApi?: InvokeAPIAction;
   navigateScreen?: NavigateScreenAction;
-  navigateModalScreen?: NavigateScreenAction;
+  navigateModalScreen?: NavigateModalScreenAction;
   showToast?: ShowToastAction;
+  closeAllDialogs?: null;
 }

@@ -1,17 +1,16 @@
+import { useContext } from "react";
+import { ModalContext } from "../modal";
 import {
   EnsembleActionHook,
   EnsembleActionHookResult,
 } from "./useEnsembleAction";
-import { GlobalModal } from "react-global-modal-plus";
 
 export const useCloseAllDialogs: EnsembleActionHook<
-  boolean,
-  null,
   EnsembleActionHookResult
 > = () => {
-  const closeAllDialogs: () => void = () => {
-    GlobalModal.closeAll();
-  };
+  const { setVisible } = useContext(ModalContext);
+
+  const closeAllDialogs: () => void = () => setVisible(false);
 
   return { callback: closeAllDialogs };
 };

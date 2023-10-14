@@ -14,8 +14,7 @@ import { EnsembleScreen } from "./runtime/screen";
 import { ErrorPage } from "./runtime/error";
 // Register built in widgets;
 import "./widgets";
-import { GlobalModalWrapper, GlobalModal } from "react-global-modal-plus";
-import { CustomModal } from "./runtime/modal";
+import { ModalWrapper } from "./runtime/modal";
 
 injectStyle();
 export interface EnsembleAppProps {
@@ -34,7 +33,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
     () =>
       createBrowserRouter([
         {
-          element: <ModalRouteWrapper />,
+          element: <ModalWrapper />,
           children: [
             {
               path: "/",
@@ -60,18 +59,5 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
         <ToastContainer />
       </ThemeProvider>
     </ApplicationContextProvider>
-  );
-};
-
-const ModalRouteWrapper: React.FC = () => {
-  const globalModalRef = useRef(null);
-
-  useEffect(() => GlobalModal.setUpModal(globalModalRef.current), []);
-
-  return (
-    <>
-      <Outlet />
-      <GlobalModalWrapper customModal={CustomModal} ref={globalModalRef} />
-    </>
   );
 };
