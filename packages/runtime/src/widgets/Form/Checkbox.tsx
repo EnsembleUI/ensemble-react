@@ -19,7 +19,7 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
     props.id,
     {
       setValue: setChecked,
-    }
+    },
   );
   return (
     <AntForm.Item

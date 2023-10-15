@@ -7,10 +7,15 @@ View:
       styles:
         labelPosition: start
       onSubmit:
-        executeCode: console.log("Hello")
+        executeCode: console.log(values)
       children:
         - TextInput:
+            id: myName
             label: Name
+            value: foo
+        - TextInput:
+            id: myLastName
+            label: LastName
             value: foo
         - Checkbox:
             id: myCheckbox
@@ -20,5 +25,3 @@ View:
         - Button:
             label: Submit
             submitForm: true
-            onTap:
-              executeCode: console.log(myCheckbox)

@@ -5,10 +5,10 @@ import { EnsembleStorage } from "./storage";
 export const buildEvaluateFn = (
   screen: ScreenContextDefinition,
   js?: string,
-  context?: Record<string, unknown>,
+  context?: Record<string, unknown>
 ): (() => unknown) => {
   const widgets: [string, InvokableMethods | undefined][] = Object.entries(
-    screen.widgets,
+    screen.widgets
   ).map(([id, state]) => {
     const methods = state?.invokable.methods;
     const values = state?.values;
@@ -20,7 +20,7 @@ export const buildEvaluateFn = (
     ...Object.entries(screen.data),
     ...Object.entries(context ?? {}),
   ]);
-
+  console.log("inside the builderFunctin", invokableObj, context);
   invokableObj.ensemble = {
     storage: EnsembleStorage,
   };
@@ -60,12 +60,13 @@ const sanitizeJs = (string: string): string => {
 export const evaluate = (
   screen: ScreenContextDefinition,
   js?: string,
-  context?: Record<string, unknown>,
+  context?: Record<string, unknown>
 ): unknown => {
   try {
     const fn = buildEvaluateFn(screen, js, context);
     return fn();
   } catch (e) {
+    console.log("i am in ctach state", e);
     return null;
   }
 };

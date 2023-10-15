@@ -18,16 +18,15 @@ export interface FormProps {
 }
 export const Form: React.FC<FormProps> = (props) => {
   const action = useEnsembleAction(props.onSubmit);
-
   const onFinishCallback = useCallback(
     (values: unknown) => {
       if (!action) {
         return;
       }
 
-      return action.callback(values);
+      return action.callback({ values: values });
     },
-    [action],
+    [action]
   );
 
   return (
