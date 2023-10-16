@@ -25,7 +25,7 @@ export const Form: React.FC<FormProps> = (props) => {
         return;
       }
 
-      return action.callback(values);
+      return action.callback({ values });
     },
     [action],
   );
@@ -38,7 +38,7 @@ export const Form: React.FC<FormProps> = (props) => {
       style={{
         display: "flex",
         flexDirection: "column",
-        gap: `${props?.styles.gap ? `${props.styles.gap}px` : "2px"}`,
+        gap: `${props.styles.gap ? `${props.styles.gap}px` : "2px"}`,
       }}
     >
       {EnsembleRuntime.render(props.children)}
