@@ -1,19 +1,21 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import type { NavigateScreenAction } from "framework";
+import { isString } from "lodash-es";
 import type { EnsembleActionHook } from "./useEnsembleAction";
 
 export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
-  name?: string,
+  action,
 ) => {
   const navigate = useNavigate();
+  const screenName = isString(action) ? action : action?.name;
   const callback = useMemo(() => {
-    if (!name) {
+    if (!screenName) {
       return;
     }
     return () => {
-      navigate(`/${name.toLowerCase()}`);
+      navigate(`/${screenName.toLowerCase()}`);
     };
-  }, [name, navigate]);
+  }, [screenName, navigate]);
   return callback ? { callback } : undefined;
 };

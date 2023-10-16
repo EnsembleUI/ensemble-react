@@ -7,6 +7,9 @@ import DashboardYAML from "./ensemble/dashboard.yaml";
 import AskEmbraceYAML from "./ensemble/askEmbrace.yaml";
 import CreateGroupYAML from "./ensemble/createGroup.yaml";
 import InviteYAML from "./ensemble/invite.yaml";
+import ProductAndDevelopmentYAML from "./ensemble/productAndDevelopment.yaml";
+import CreateCollectionYAML from "./ensemble/createCollection.yaml";
+import AddGroupsYAML from "./ensemble/addGroups.yaml";
 
 import "./App.css";
 
@@ -48,6 +51,21 @@ const testApp: ApplicationDTO = {
       id: "invite",
       name: "Invite",
       content: String(InviteYAML),
+    },
+    {
+      id: "productAndDevelopment",
+      name: "Product and Development",
+      content: String(ProductAndDevelopmentYAML),
+    },
+    {
+      id: "createCollection",
+      name: "Create Collection",
+      content: String(CreateCollectionYAML),
+    },
+    {
+      id: "addGroups",
+      name: "Add Groups",
+      content: String(AddGroupsYAML),
     },
   ],
 };

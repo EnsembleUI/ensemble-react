@@ -15,6 +15,7 @@ View:
           const firstName = groupName.value
           const email = emailValue.value[0]
           const res = ensemble.storage.get("arrayOfUsers")
+          console.log(res)
           res.push({"id": res.length+1, "fields": { "name": firstName, "email": email }})
       children:
         - MultiSelect:

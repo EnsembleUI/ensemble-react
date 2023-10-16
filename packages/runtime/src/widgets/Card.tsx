@@ -15,6 +15,8 @@ interface CardStyles {
   shadowBlur: string;
   shadowSpread: string;
   padding: string;
+  maxWidth: string;
+  minWidth: string;
 }
 
 export type CardProps = {
@@ -33,6 +35,8 @@ const defaultStyles: CardStyles = {
   shadowOffset: "0",
   shadowBlur: "0",
   shadowSpread: "0",
+  maxWidth: "250px",
+  minWidth: "250px",
 };
 
 export const Card: React.FC<CardProps> = ({ children, styles }) => {
