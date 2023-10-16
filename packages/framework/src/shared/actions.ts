@@ -21,7 +21,7 @@ export type NavigateModalScreenAction =
       maskClosable?: boolean;
     };
 
-export type NavigateScreenAction = string;
+export type NavigateScreenAction = string | { name: string };
 
 export interface ShowToastAction {
   message: string;
@@ -36,6 +36,6 @@ export interface EnsembleAction {
   executeCode?: ExecuteCodeAction;
   invokeApi?: InvokeAPIAction;
   navigateScreen?: NavigateScreenAction;
-  navigateModalScreen?: NavigateScreenAction;
+  navigateModalScreen?: NavigateModalScreenAction;
   showToast?: ShowToastAction;
 }

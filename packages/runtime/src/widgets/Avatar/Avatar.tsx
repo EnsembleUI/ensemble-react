@@ -7,6 +7,7 @@ import {
   MenuItem,
   ListItemIcon,
 } from "@mui/material";
+import { isString } from "lodash-es";
 import { useNavigateScreen } from "../../runtime/hooks/useNavigateScreen";
 import { WidgetRegistry } from "../../registry";
 import type { IconProps } from "../../util/types";
@@ -62,7 +63,9 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
 
   const handleMenuClick = (menuItem: AvatarMenu): void => {
     menuItem.onTap?.executeCode && setCode(String(menuItem.onTap.executeCode));
-    menuItem.onTap?.navigateScreen && setScreen(menuItem.onTap.navigateScreen);
+    menuItem.onTap?.navigateScreen &&
+      isString(menuItem.onTap.navigateScreen) &&
+      setScreen(menuItem.onTap.navigateScreen);
     handleMenuClose();
   };
 

@@ -1,0 +1,118 @@
+View:
+  header:
+    Text:
+      text: Create Collection
+      styles:
+        fontSize: 20
+        color: "#28304B"
+        fontWeight: 500
+        fontFamily: Inter
+  body:
+    Form:
+      styles:
+        labelPosition: top
+        gap: 30
+      onSubmit:
+        executeCode: |
+          const name = collectionName.value
+          const email = description.value
+          const res = ensemble.storage.get("arrayOfCollections")
+          res.push({"id": res.length+1, "fields": { "title": name, "sources": email }})
+          ensemble.storage.set("arrayOfCollections",res)
+      children:
+        - TextInput:
+            id: collectionName
+            value: foo
+            hintText: Collection name
+        - TextInput:
+            id: description
+            value: describe it
+            multiLine: true
+            maxLines: 3
+            hintText: Description ( Optional )
+        - Row:
+            mainAxis: start
+            crossAxis: center
+            gap: 14
+            children:
+              - Text:
+                  text: 🐈‍
+                  styles:
+                    fontSize: 14
+                    backgroundColor: "#FEEAEA"
+                    padding: 8
+                    borderRadius: 6
+              - Button:
+                  label: change color
+                  styles:
+                    borderColor: transparent
+              - Button:
+                  label: change Icon
+                  styles:
+                    borderColor: transparent
+        - Divider:
+            styles:
+              thickness: 1
+              color: "#ECEFF6"
+        - MultiSelect:
+            id: groupsValue
+            data: getData.body.users
+            labelKey: name
+            valueKey: email
+            default:
+              [
+                { value: "jack", label: "jack" },
+                { value: "lucy", label: "lucy" },
+              ]
+            placeholder: Select From Collections
+        - Carousel:
+            styles:
+              layout: multiple
+              multipleItemWidthRatio: 0.25
+              gap: 6
+              indicatorType: none
+            item-template:
+              data: ensemble.storage.get("arrayOfGroups")
+              name: group
+              template:
+                Row:
+                  mainAxis: center
+                  crossAxis: center
+                  gap: 2p
+                  styles:
+                    backgroundColor: "#EBEEF6"
+                    borderRadius: "6px"
+                    padding: 12
+                  children:
+                    - Icon:
+                        name: Add
+                        color: "#28304B"
+                        size: 16
+                    - Text:
+                        text: ${group}
+                        styles:
+                          color: "#565D80"
+                          fontSize: 13
+        - Row:
+            mainAxis: end
+            crossAxis: center
+            styles:
+              gap: 16
+            children:
+              - Button:
+                  label: Cancel
+                  styles:
+                    backgroundColor: transparent
+                    border: "0px"
+                    color: black
+              - Button:
+                  label: Create Collection
+                  submitForm: true
+                  onTap:
+                    showToast:
+                      message: New Collection created
+                  styles:
+                    textColor: white
+                    backgroundColor: "#072CC4"
+                    color: white
+                    padding: 12
