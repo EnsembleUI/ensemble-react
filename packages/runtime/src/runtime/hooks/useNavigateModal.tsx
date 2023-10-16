@@ -1,39 +1,24 @@
 import type { NavigateModalScreenAction } from "framework";
 import { useApplicationContext } from "framework";
-import type { ReactNode } from "react";
-import { useMemo, useState } from "react";
-import { Modal } from "antd";
+import { useCallback, useContext, useMemo } from "react";
 // FIXME
 // eslint-disable-next-line import/no-cycle
 import { EnsembleScreen } from "../screen";
 import { EnsembleRuntime } from "../runtime";
-import type {
-  EnsembleActionHook,
-  EnsembleActionHookResult,
-} from "./useEnsembleAction";
-
-export type UseNavigateModalScreenResult =
-  | ({
-      openModal: () => void;
-      Modal: ReactNode;
-    } & EnsembleActionHookResult)
-  | undefined;
+import { ModalContext } from "../modal";
+import type { EnsembleActionHook } from "./useEnsembleAction";
 
 export const useNavigateModalScreen: EnsembleActionHook<
-  NavigateModalScreenAction,
-  null,
-  UseNavigateModalScreenResult
+  NavigateModalScreenAction
 > = (action?: NavigateModalScreenAction) => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const onCancel = (): void => setIsModalVisible(false);
-  const openModal = (): void => setIsModalVisible(true);
-
+  const { openModal } = useContext(ModalContext) || {};
   const app = useApplicationContext();
 
   const screenName = typeof action === "string" ? action : action?.name;
   const maskClosable =
-    typeof action === "string" ? true : Boolean(action?.maskClosable);
+    typeof action === "string" || action?.maskClosable === undefined
+      ? true
+      : Boolean(action?.maskClosable);
 
   const { screen, title } = useMemo(() => {
     const matchingScreen = app?.application?.screens.find(
@@ -45,24 +30,10 @@ export const useNavigateModalScreen: EnsembleActionHook<
     return { screen: matchingScreen, title: titleElement };
   }, [app, screenName]);
 
-  const ModalElement = screen ? (
-    <Modal
-      centered
-      footer={null}
-      maskClosable={maskClosable}
-      onCancel={onCancel}
-      open={isModalVisible}
-      title={title}
-    >
-      <EnsembleScreen screen={screen} />
-    </Modal>
-  ) : null;
+  const callback = useCallback(() => {
+    if (screen)
+      openModal?.(<EnsembleScreen screen={screen} />, { title, maskClosable });
+  }, [openModal, screen, title, maskClosable]);
 
-  return ModalElement
-    ? {
-        callback: openModal,
-        openModal,
-        Modal: ModalElement,
-      }
-    : undefined;
+  return { callback };
 };

@@ -38,4 +38,5 @@ export interface EnsembleAction {
   navigateScreen?: NavigateScreenAction;
   navigateModalScreen?: NavigateModalScreenAction;
   showToast?: ShowToastAction;
+  closeAllDialogs?: null;
 }

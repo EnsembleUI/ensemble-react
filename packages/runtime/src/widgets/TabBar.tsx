@@ -47,7 +47,7 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
     if (containsExpression(label)) {
       const cleanedExpression = label.replace(/\${|}/g, "");
       labelEvaluated = evaluate(
-        context as ScreenContextDefinition,
+        context as ScreenContextDefinition as any,
         cleanedExpression,
       ) as string;
     }

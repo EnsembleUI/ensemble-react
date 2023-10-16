@@ -62,7 +62,6 @@ export const Button: React.FC<ButtonProps> = (props) => {
             {values.label}
             {props.endingIcon ? <Icon {...props.endingIcon} /> : null}
           </AntButton>
-          {action && "Modal" in action ? action.Modal : null}
         </>
       </AntForm.Item>
     );
@@ -89,9 +88,7 @@ export const Button: React.FC<ButtonProps> = (props) => {
         {values.label}
         {props.endingIcon ? <Icon {...props.endingIcon} /> : null}
       </AntButton>
-      {action && "Modal" in action ? action.Modal : null}
     </>
   );
 };
-
 WidgetRegistry.register("Button", Button);

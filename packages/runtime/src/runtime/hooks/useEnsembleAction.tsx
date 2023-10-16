@@ -17,6 +17,7 @@ import { useNavigateScreen } from "./useNavigateScreen";
 // eslint-disable-next-line import/no-cycle
 import { useNavigateModalScreen } from "./useNavigateModal";
 import { useShowToast } from "./useShowToast";
+import { useCloseAllDialogs } from "./useCloseAllDialogs";
 
 export type EnsembleActionHookResult =
   | {
@@ -135,17 +136,21 @@ export const useEnsembleAction = (
     options as UseExecuteCodeActionOptions,
   );
   const navigateScreen = useNavigateScreen(action.navigateScreen, options);
+  const showToast = useShowToast(action.showToast);
   const navigateModalScreen = useNavigateModalScreen(
     action.navigateModalScreen,
     options as null,
   );
-  const showToast = useShowToast(action.showToast);
+  const closeAllDialogs = useCloseAllDialogs();
+
   return (
-    invokeApi ||
-    executeCode ||
-    navigateScreen ||
-    navigateModalScreen ||
-    showToast
+    (action.invokeApi && invokeApi) ||
+    (action.executeCode && executeCode) ||
+    (action.navigateScreen && navigateScreen) ||
+    (action.showToast && showToast) ||
+    (action.navigateModalScreen && navigateModalScreen) ||
+    ("closeAllDialogs" in action && closeAllDialogs) ||
+    undefined
   );
 };
 /* eslint-enable react-hooks/rules-of-hooks */
