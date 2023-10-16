@@ -6,17 +6,12 @@ import { useCallback, useContext, useMemo } from "react";
 import { EnsembleScreen } from "../screen";
 import { EnsembleRuntime } from "../runtime";
 import { ModalContext } from "../modal";
-import type {
-  EnsembleActionHook,
-  EnsembleActionHookResult,
-} from "./useEnsembleAction";
+import type { EnsembleActionHook } from "./useEnsembleAction";
 
 export const useNavigateModalScreen: EnsembleActionHook<
-  NavigateModalScreenAction,
-  null,
-  EnsembleActionHookResult
+  NavigateModalScreenAction
 > = (action?: NavigateModalScreenAction) => {
-  const { setVisible, setContent, setOptions } = useContext(ModalContext);
+  const { openModal } = useContext(ModalContext) || {};
   const app = useApplicationContext();
 
   const screenName = typeof action === "string" ? action : action?.name;
@@ -35,16 +30,10 @@ export const useNavigateModalScreen: EnsembleActionHook<
     return { screen: matchingScreen, title: titleElement };
   }, [app, screenName]);
 
-  const openModal = useCallback(() => {
-    if (screen) {
-      setVisible(true);
-      setContent(<EnsembleScreen screen={screen} />);
-      setOptions({
-        title,
-        maskClosable,
-      });
-    }
-  }, [screen, title, maskClosable]);
+  const callback = useCallback(() => {
+    if (screen)
+      openModal?.(<EnsembleScreen screen={screen} />, { title, maskClosable });
+  }, [openModal, screen, title, maskClosable]);
 
-  return { callback: openModal };
+  return { callback };
 };

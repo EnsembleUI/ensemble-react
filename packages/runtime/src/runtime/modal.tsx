@@ -1,38 +1,40 @@
 import { Modal } from "antd";
-import type { NavigateModalScreenAction } from "framework";
 import { createContext, useState } from "react";
 import { createPortal } from "react-dom";
 import { Outlet } from "react-router-dom";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
 
-type ModalProps = {
+interface ModalProps {
   title?: string | React.ReactNode;
-} & Omit<Exclude<NavigateModalScreenAction, string>, "name">;
-
-interface ModalContextProps {
-  visible: boolean;
-  setVisible: (visible: boolean) => void;
-  content: React.ReactNode;
-  setContent: (content: React.ReactNode) => void;
-  options: ModalProps;
-  setOptions: (options: ModalProps) => void;
+  maskClosable?: boolean;
 }
 
-export const ModalContext = createContext<ModalContextProps>({
-  visible: false,
-  setVisible: () => {},
-  content: null,
-  setContent: () => {},
-  options: {},
-  setOptions: () => {},
-});
+interface ModalContextProps {
+  openModal: (content: React.ReactNode, options: ModalProps) => void;
+  closeModal: () => void;
+}
+
+export const ModalContext = createContext<ModalContextProps | undefined>(
+  undefined,
+);
 
 export const ModalWrapper: React.FC = () => {
   const [visible, setVisible] = useState(false);
   const [content, setContent] = useState<React.ReactNode>(null);
   const [options, setOptions] = useState<ModalProps>({});
   const [isFullScreen, setIsFullScreen] = useState(false);
+
+  const openModal = (
+    content: React.ReactNode,
+    newOptions: ModalProps,
+  ): void => {
+    setContent(content);
+    setOptions(newOptions);
+    setVisible(true);
+  };
+
+  const closeModal = (): void => setVisible(false);
 
   const customStyles = `
     .ant-modal-content {
@@ -61,7 +63,7 @@ export const ModalWrapper: React.FC = () => {
     >
       {isFullScreen ? (
         <CloseFullscreenIcon
-          onClick={() => setIsFullScreen(false)}
+          onClick={(): void => setIsFullScreen(false)}
           style={{
             color: "rgba(0, 0, 0, 0.45)",
             cursor: "pointer",
@@ -69,7 +71,7 @@ export const ModalWrapper: React.FC = () => {
         />
       ) : (
         <OpenInFullIcon
-          onClick={() => setIsFullScreen(true)}
+          onClick={(): void => setIsFullScreen(true)}
           style={{
             color: "rgba(0, 0, 0, 0.45)",
             cursor: "pointer",
@@ -82,7 +84,10 @@ export const ModalWrapper: React.FC = () => {
 
   return (
     <ModalContext.Provider
-      value={{ visible, setVisible, content, setContent, options, setOptions }}
+      value={{
+        openModal,
+        closeModal,
+      }}
     >
       <Outlet />
 
@@ -93,7 +98,7 @@ export const ModalWrapper: React.FC = () => {
             <style>{customStyles}</style>
             <Modal
               open={visible}
-              onCancel={() => setVisible(false)}
+              onCancel={(): void => setVisible(false)}
               title={titleElement}
               centered={!isFullScreen}
               maskClosable={options?.maskClosable}

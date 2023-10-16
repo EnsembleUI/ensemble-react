@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 import type { ApplicationDTO } from "framework";
 import {
   ApplicationContextProvider,
   ApplicationLoader,
   EnsembleParser,
 } from "framework";
-import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { injectStyle } from "react-toastify/dist/inject-style";
 import { ThemeProvider } from "./ThemeProvider";

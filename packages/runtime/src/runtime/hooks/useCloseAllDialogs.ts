@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { ModalContext } from "../modal";
-import {
+import type {
   EnsembleActionHook,
   EnsembleActionHookResult,
 } from "./useEnsembleAction";
@@ -8,9 +8,9 @@ import {
 export const useCloseAllDialogs: EnsembleActionHook<
   EnsembleActionHookResult
 > = () => {
-  const { setVisible } = useContext(ModalContext);
+  const { closeModal } = useContext(ModalContext) || {};
 
-  const closeAllDialogs: () => void = () => setVisible(false);
+  const closeAllDialogs: () => void = () => closeModal?.();
 
   return { callback: closeAllDialogs };
 };
