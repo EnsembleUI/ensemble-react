@@ -1,17 +1,17 @@
 View:
-  onLoad:
-    invokeApi:
-      name: getDummyData
-      onResponse:
-        executeCode: |-
-          var users = getDummyData.body.users;
-          users = users.map(function(u){
-            return {
-              label: u.email,
-              value: u.email
-            }
-          });
-          search2.setOptions(users);
+  # onLoad:
+  #   invokeApi:
+  #     name: getDummyData
+  #     onResponse:
+  #       executeCode: |-
+  #         var users = getDummyData.body.users;
+  #         users = users.map(function(u){
+  #           return {
+  #             label: u.email,
+  #             value: u.email
+  #           }
+  #         });
+  #         search2.setOptions(users);
   header:
     Text:
       text: Ask Embrace
@@ -42,14 +42,15 @@ View:
         - Search:
             id: search2
             placeholder: Search
-            searchKey: email
+            # searchKey: email
             # data: getDummyData.body.users
+            data: getProductCategories.body
             onValueChange:
               # showToast:
               #   message: "value changed"
-              executeCode: console.log('value changed')
-              # invokeApi:
-              #   name: getDummyData
+              # executeCode: console.log('value changed')
+              invokeApi:
+                name: getProductCategories
             onSelect:
               executeCode: console.log('selected')
               # navigateScreen: Collections
@@ -59,4 +60,8 @@ View:
 API:
   getDummyData:
     uri: https://dummyjson.com/users
+    method: GET
+
+  getProductCategories:
+    uri: https://dummyjson.com/products/categories
     method: GET

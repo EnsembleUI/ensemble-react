@@ -36,7 +36,6 @@ export const useExecuteCode: EnsembleActionHook<
   ExecuteCodeAction,
   UseExecuteCodeActionOptions
 > = (action, options) => {
-  // console.log("useExecuteCode", action, options);
   const isCodeString = isString(action);
   const js = isCodeString ? action : action?.body;
   const screen = useScreenContext();

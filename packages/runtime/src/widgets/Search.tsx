@@ -3,12 +3,13 @@ import {
   useTemplateData,
   type Expression,
   type EnsembleAction,
+  type Response,
   useRegisterBindings,
 } from "framework";
 import type { SelectProps } from "antd";
 import { AutoComplete, Input } from "antd";
 import { SearchOutlined } from "@mui/icons-material";
-import { get, isObject } from "lodash-es";
+import { get, isObject, map } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type { SearchStyles } from "../util/types";
 import { getColor } from "../util/utils";
@@ -56,47 +57,23 @@ export const Search: React.FC<SearchProps> = ({
   );
 
   const handleSearch = (search: string): void => {
-    if (!searchKey) return;
-
-    if (onValueChange?.invokeApi) {
-      (async (): Promise<void> => {
-        const apiResponse = await valueChangeAction?.callback();
-
-        if (apiResponse)
-          setFilteredOptions(
-            findValuesByKey<string>(apiResponse, searchKey)
-              .filter((item) =>
-                item.toLowerCase().includes(search.toLowerCase()),
-              )
-              .map((item) => ({
-                value: item,
-                label: item,
-              })),
-          );
-      })().catch((e) => {
-        throw e;
-      });
-    } else if (
-      templateData &&
-      Array.isArray(templateData) &&
-      templateData.length > 0
-    )
+    if (templateData && Array.isArray(templateData) && templateData.length > 0)
       setFilteredOptions(
         search
           ? templateData
               .filter(
                 (item) =>
                   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-                  (isObject(item) ? get(item, searchKey) : item)
+                  (isObject(item) ? get(item, searchKey ?? "") : item)
                     ?.toString()
                     ?.toLowerCase()
                     ?.includes(search.toLowerCase()),
               )
               .map((item) => ({
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                value: isObject(item) ? get(item, searchKey) : item,
+                value: isObject(item) ? get(item, searchKey ?? "") : item,
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                label: isObject(item) ? get(item, searchKey) : item,
+                label: isObject(item) ? get(item, searchKey ?? "") : item,
               }))
           : [],
       );
@@ -114,12 +91,44 @@ export const Search: React.FC<SearchProps> = ({
       );
   };
 
+  const handleChange = (search: string): void => {
+    if (!onValueChange?.invokeApi) valueChangeAction?.callback();
+    else {
+      (async (): Promise<void> => {
+        const apiResponse = (await valueChangeAction?.callback()) as
+          | Response
+          | undefined;
+        if (!apiResponse) return;
+
+        let mappedRes =
+          typeof apiResponse.body === "string"
+            ? [
+                {
+                  value: apiResponse.body,
+                  label: apiResponse.body,
+                },
+              ]
+            : map(apiResponse.body, (item) => ({
+                value: item,
+                label: item,
+              }));
+        if (search)
+          mappedRes = mappedRes.filter((item) =>
+            item.value.toLowerCase().includes(search.toLowerCase()),
+          );
+
+        setFilteredOptions(mappedRes);
+      })().catch((e) => {
+        // eslint-disable-next-line no-console
+        console.error(e);
+      });
+    }
+  };
+
   return (
     <AutoComplete
       allowClear
-      onChange={(): void => {
-        if (!onValueChange?.invokeApi) valueChangeAction?.callback();
-      }}
+      onChange={handleChange}
       onSearch={handleSearch}
       onSelect={(selectedValue: string): void => {
         setValue(selectedValue);
@@ -150,22 +159,3 @@ export const Search: React.FC<SearchProps> = ({
 };
 
 WidgetRegistry.register("Search", Search);
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function findValuesByKey<T>(obj: any, key: string): T[] {
-  let results: T[] = [];
-
-  if (obj && typeof obj === "object") {
-    for (const k in obj) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
-      if (k === key) results.push(obj[k]);
-      else {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const nestedResults = findValuesByKey<T>(obj[k], key);
-        results = results.concat(nestedResults);
-      }
-    }
-  }
-
-  return results;
-}
