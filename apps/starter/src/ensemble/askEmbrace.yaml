@@ -18,6 +18,10 @@ View:
             value: false
             enabled: true
         - Button:
+            label: Cancel
+            onTap:
+              closeAllDialogs:
+        - Button:
             label: Submit
             submitForm: true
             onTap:
