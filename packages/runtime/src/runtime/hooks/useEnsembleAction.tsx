@@ -39,9 +39,8 @@ export const useExecuteCode: EnsembleActionHook<
   const isCodeString = isString(action);
   const js = isCodeString ? action : action?.body;
   const screen = useScreenContext();
-
   const onCompleteAction = useEnsembleAction(
-    isCodeString ? undefined : action?.onComplete,
+    isCodeString ? undefined : action?.onComplete
   );
   const execute = useMemo(() => {
     if (!screen || !js) {
@@ -49,6 +48,7 @@ export const useExecuteCode: EnsembleActionHook<
     }
 
     return (args: unknown) => {
+      console.log("Am i the one coming again n again", args);
       const retVal = evaluate(screen, js, merge({}, options?.context, args));
       onCompleteAction?.callback();
       return retVal;
@@ -69,7 +69,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
     }
 
     const apiModel = screenContext.model.apis?.find(
-      (model) => model.name === action.name,
+      (model) => model.name === action.name
     );
     if (!apiModel) {
       return;
@@ -87,7 +87,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
       try {
         const res = await DataFetcher.fetch(
           apiModel,
-          Object.fromEntries(resolvedInputs) as Record<string, unknown>,
+          Object.fromEntries(resolvedInputs) as Record<string, unknown>
         );
         screenContext.setData(apiModel.name, res);
         setResponse(res);
@@ -122,7 +122,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
 /* eslint-disable react-hooks/rules-of-hooks */
 export const useEnsembleAction = (
   action?: EnsembleAction,
-  options?: unknown,
+  options?: unknown
 ): EnsembleActionHookResult => {
   // FIXME: Figure out how to chain without breaking rules of hooks and infinite loop
   if (!action) {
@@ -131,12 +131,12 @@ export const useEnsembleAction = (
   const invokeApi = useInvokeApi(action.invokeApi, options);
   const executeCode = useExecuteCode(
     action.executeCode,
-    options as UseExecuteCodeActionOptions,
+    options as UseExecuteCodeActionOptions
   );
   const navigateScreen = useNavigateScreen(action.navigateScreen, options);
   const navigateModalScreen = useNavigateModalScreen(
     action.navigateModalScreen,
-    options as null,
+    options as null
   );
   const showToast = useShowToast(action.showToast);
   return (

@@ -25,9 +25,9 @@ export const Form: React.FC<FormProps> = (props) => {
         return;
       }
 
-      return action.callback(values);
+      return action.callback({ values });
     },
-    [action],
+    [action]
   );
 
   return (

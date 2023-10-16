@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import type { Expression } from "framework";
 import { useRegisterBindings, useTemplateData } from "framework";
 import { PlusCircleOutlined } from "@ant-design/icons";
-import { Select as SelectComponent, Space } from "antd";
+import { Select as SelectComponent, Space, Form as AntForm } from "antd";
 import { get } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type { SearchStyles } from "../util/types";
@@ -16,6 +16,7 @@ interface SelectOption {
 }
 
 export type MultiSelectProps = {
+  label: string;
   data: Expression<SelectOption[]>;
   labelKey?: string;
   valueKey?: string;
@@ -35,9 +36,8 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   const [options, setOptions] = useState<SelectOption[]>([]);
   const [newOption, setNewOption] = useState("");
   const [selectedValues, setSelectedValues] = useState<string[] | undefined>(
-    defaultOptions?.map((item) => item.value?.toString()),
+    defaultOptions?.map((item) => item.value?.toString())
   );
-
   const templateData = useTemplateData(data);
 
   useEffect(() => {
@@ -55,7 +55,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
       }
       setOptions(initialOptions);
     }
-  }, [templateData, defaultOptions]);
+  }, [templateData, defaultOptions, labelKey, valueKey]);
 
   const handleChange = (value: string[]) => {
     setSelectedValues(value);
@@ -72,56 +72,66 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   };
 
   const { values } = useRegisterBindings(
-    { value: selectedValues, options },
+    { ...props, value: selectedValues, options },
     props.id,
     {
       setSelectedValues,
       setOptions,
-    },
+    }
   );
 
   return (
-    <SelectComponent
-      allowClear
-      defaultValue={defaultOptions?.map((item) => item.value.toString())}
-      // eslint-disable-next-line react/no-unstable-nested-components
-      dropdownRender={(menu) => <Dropdown menu={menu} newOption={newOption} />}
-      filterOption={(input, option) =>
-        option?.label
-          .toString()
-          .toLowerCase()
-          .startsWith(input.toLowerCase()) || false
-      }
-      mode="tags"
-      notFoundContent={<></>}
-      onChange={handleChange}
-      onSearch={(v) => {
-        if (
-          options.some(
-            (option) =>
-              option?.label
-                ?.toString()
-                .toLowerCase()
-                .startsWith(v.toLowerCase()),
-          )
-        )
-          setNewOption("");
-        else setNewOption(v);
-      }}
-      options={values.options}
-      placeholder={placeholder ?? "Select"}
+    <AntForm.Item
+      label={values.label}
+      name={values.id}
       style={{
-        width: styles?.width ?? "100%",
-        margin: styles?.margin,
-        borderRadius: styles?.borderRadius,
-        borderWidth: styles?.borderWidth,
-        borderStyle: styles?.borderStyle,
-        borderColor: styles?.borderColor
-          ? getColor(styles.borderColor)
-          : undefined,
+        margin: "0px",
       }}
-      value={values.value}
-    />
+    >
+      <SelectComponent
+        allowClear
+        defaultValue={defaultOptions?.map((item) => item.value.toString())}
+        // eslint-disable-next-line react/no-unstable-nested-components
+        dropdownRender={(menu) => (
+          <Dropdown menu={menu} newOption={newOption} />
+        )}
+        filterOption={(input, option) =>
+          option?.label
+            .toString()
+            .toLowerCase()
+            .startsWith(input.toLowerCase()) || false
+        }
+        mode="tags"
+        notFoundContent={<></>}
+        onChange={handleChange}
+        onSearch={(v) => {
+          if (
+            options.some(
+              (option) =>
+                option?.label
+                  ?.toString()
+                  .toLowerCase()
+                  .startsWith(v.toLowerCase())
+            )
+          )
+            setNewOption("");
+          else setNewOption(v);
+        }}
+        options={values.options}
+        placeholder={placeholder ?? "Select"}
+        style={{
+          width: styles?.width ?? "100%",
+          margin: styles?.margin,
+          borderRadius: styles?.borderRadius,
+          borderWidth: styles?.borderWidth,
+          borderStyle: styles?.borderStyle,
+          borderColor: styles?.borderColor
+            ? getColor(styles.borderColor)
+            : undefined,
+        }}
+        value={values.value}
+      />
+    </AntForm.Item>
   );
 };
 

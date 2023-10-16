@@ -15,7 +15,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
   return (
     <AntForm.Item
       label={values.label}
-      name={values.label}
+      name={values.id}
       rules={[{ required: values.required }]}
       style={{
         margin: "0px",
