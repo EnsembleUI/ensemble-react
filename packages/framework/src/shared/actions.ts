@@ -32,11 +32,12 @@ export interface ShowToastAction {
   duration?: number;
 }
 
-export type PickFilesAction = {
+export interface PickFilesAction {
   id: string;
   allowMultiple?: boolean;
   allowedExtensions?: string[];
-};
+  onComplete?: EnsembleAction;
+}
 
 export interface EnsembleAction {
   executeCode?: ExecuteCodeAction;

@@ -37,6 +37,12 @@ View:
                     pickFiles:
                       id: myFiles
                       allowMultiple: true
+                      allowedExtensions:
+                        - jpg
+                        - png
+                        - mov
+                      onComplete:
+                        executeCode: console.log('files picked')
 
               - Conditional:
                   conditions:
