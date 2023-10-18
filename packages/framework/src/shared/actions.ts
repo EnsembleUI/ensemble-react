@@ -32,6 +32,12 @@ export interface ShowToastAction {
   duration?: number;
 }
 
+export type PickFilesAction = {
+  id: string;
+  allowMultiple?: boolean;
+  allowedExtensions?: string[];
+};
+
 export interface EnsembleAction {
   executeCode?: ExecuteCodeAction;
   invokeApi?: InvokeAPIAction;
@@ -39,4 +45,5 @@ export interface EnsembleAction {
   navigateModalScreen?: NavigateModalScreenAction;
   showToast?: ShowToastAction;
   closeAllDialogs?: null;
+  pickFiles?: PickFilesAction;
 }

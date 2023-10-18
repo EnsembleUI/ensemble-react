@@ -3,26 +3,61 @@ View:
     Text:
       text: Ask Embrace
   body:
-    Form:
-      styles:
-        labelPosition: start
-      onSubmit:
-        executeCode: console.log("Hello")
+    Column:
       children:
-        - TextInput:
-            label: Name
-            value: foo
-        - Checkbox:
-            id: myCheckbox
-            trailingText: I can be set to checked
-            value: false
-            enabled: true
-        - Button:
-            label: Cancel
-            onTap:
-              closeAllDialogs:
-        - Button:
-            label: Submit
-            submitForm: true
-            onTap:
-              executeCode: console.log(myCheckbox)
+        - Form:
+            styles:
+              labelPosition: start
+            onSubmit:
+              executeCode: console.log("Hello")
+            children:
+              - TextInput:
+                  label: Name
+                  value: foo
+              - Checkbox:
+                  id: myCheckbox
+                  trailingText: I can be set to checked
+                  value: false
+                  enabled: true
+              - Button:
+                  label: Submit
+                  submitForm: true
+                  onTap:
+                    executeCode: console.log(myCheckbox)
+              - Button:
+                  label: Cancel
+                  onTap:
+                    closeAllDialogs:
+
+        - Column:
+            children:
+              - Button:
+                  label: Upload Files
+                  onTap:
+                    pickFiles:
+                      id: myFiles
+                      allowMultiple: true
+
+              - Conditional:
+                  conditions:
+                    - if: ${myFiles.files.length > 0}
+                      DataGrid:
+                        DataColumns:
+                          - label: Name
+                          - label: Size
+                          - label: Type
+                          - label: Last Modified
+                        item-template:
+                          data: myFiles.files
+                          name: f
+                          template:
+                            DataRow:
+                              children:
+                                - Text:
+                                    text: ${f.name}
+                                - Text:
+                                    text: ${f.size}
+                                - Text:
+                                    text: ${f.type}
+                                - Text:
+                                    text: ${f.lastModified}

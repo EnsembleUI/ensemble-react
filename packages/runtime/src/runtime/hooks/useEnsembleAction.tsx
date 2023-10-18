@@ -18,6 +18,8 @@ import { useNavigateScreen } from "./useNavigateScreen";
 import { useNavigateModalScreen } from "./useNavigateModal";
 import { useShowToast } from "./useShowToast";
 import { useCloseAllDialogs } from "./useCloseAllDialogs";
+// eslint-disable-next-line import/no-cycle
+import { usePickFiles } from "./usePickFiles";
 
 export type EnsembleActionHookResult =
   | {
@@ -142,6 +144,8 @@ export const useEnsembleAction = (
   );
   const closeAllDialogs = useCloseAllDialogs();
 
+  const pickFiles = usePickFiles(action.pickFiles);
+
   return (
     (action.invokeApi && invokeApi) ||
     (action.executeCode && executeCode) ||
@@ -149,7 +153,7 @@ export const useEnsembleAction = (
     (action.showToast && showToast) ||
     (action.navigateModalScreen && navigateModalScreen) ||
     ("closeAllDialogs" in action && closeAllDialogs) ||
-    undefined
+    (action.pickFiles && pickFiles)
   );
 };
 /* eslint-enable react-hooks/rules-of-hooks */
