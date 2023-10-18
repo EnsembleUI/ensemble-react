@@ -40,7 +40,7 @@ export interface EnsembleMenuModel {
 
 export interface EnsembleAPIModel {
   name: string;
-  inputs?: string[];
+  inputs?: Record<string, unknown>;
   uri: string;
   method: "GET" | "POST" | "PUT" | "PATCH";
   headers?: Record<string, string | number | boolean>;

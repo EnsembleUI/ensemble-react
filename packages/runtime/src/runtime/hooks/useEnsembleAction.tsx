@@ -20,6 +20,8 @@ import { useShowToast } from "./useShowToast";
 import { useCloseAllDialogs } from "./useCloseAllDialogs";
 // eslint-disable-next-line import/no-cycle
 import { usePickFiles } from "./usePickFiles";
+// eslint-disable-next-line import/no-cycle
+import { useUploadFiles } from "./useUploadFiles";
 
 export type EnsembleActionHookResult =
   | {
@@ -145,6 +147,7 @@ export const useEnsembleAction = (
   const closeAllDialogs = useCloseAllDialogs();
 
   const pickFiles = usePickFiles(action.pickFiles);
+  const uploadFiles = useUploadFiles(action.uploadFiles);
 
   return (
     (action.invokeApi && invokeApi) ||
@@ -153,7 +156,8 @@ export const useEnsembleAction = (
     (action.showToast && showToast) ||
     (action.navigateModalScreen && navigateModalScreen) ||
     ("closeAllDialogs" in action && closeAllDialogs) ||
-    (action.pickFiles && pickFiles)
+    (action.pickFiles && pickFiles) ||
+    (action.uploadFiles && uploadFiles)
   );
 };
 /* eslint-enable react-hooks/rules-of-hooks */

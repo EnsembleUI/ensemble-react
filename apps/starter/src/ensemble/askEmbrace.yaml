@@ -29,10 +29,34 @@ View:
                   onTap:
                     closeAllDialogs:
 
+        # Not working (potential cause: id of pickFiles hasn't yet registered when uploadFiles is using it)
+        # - Column:
+        #     children:
+        #       - Button:
+        #           label: Upload Files
+        #           onTap:
+        #             pickFiles:
+        #               id: myFiles
+        #               allowMultiple: true
+        #               allowedExtensions:
+        #                 - jpg
+        #                 - png
+        #                 - mov
+        #               onComplete:
+        #                 uploadFiles:
+        #                   id: myUploader
+        #                   files: ${myFiles.files}
+        #                   uploadApi: uploadFile
+        #                   onComplete:
+        #                     executeCode: console.log(myUploader.body)
+        #                   onError:
+        #                     executeCode: console.log('Upload error')
+
+        # working fine
         - Column:
             children:
               - Button:
-                  label: Upload Files
+                  label: Pick Files
                   onTap:
                     pickFiles:
                       id: myFiles
@@ -42,28 +66,65 @@ View:
                         - png
                         - mov
                       onComplete:
-                        executeCode: console.log('files picked')
-
+                        executeCode: console.log('Files picked')
               - Conditional:
                   conditions:
                     - if: ${myFiles.files.length > 0}
-                      DataGrid:
-                        DataColumns:
-                          - label: Name
-                          - label: Size
-                          - label: Type
-                          - label: Last Modified
-                        item-template:
-                          data: myFiles.files
-                          name: f
-                          template:
-                            DataRow:
-                              children:
-                                - Text:
-                                    text: ${f.name}
-                                - Text:
-                                    text: ${f.size}
-                                - Text:
-                                    text: ${f.type}
-                                - Text:
-                                    text: ${f.lastModified}
+                      Column:
+                        children:
+                          - Markdown:
+                              text: "## Picked files"
+                          - DataGrid:
+                              DataColumns:
+                                - label: Name
+                                - label: Size
+                                - label: Type
+                                - label: Last Modified
+                              item-template:
+                                data: myFiles.files
+                                name: f
+                                template:
+                                  DataRow:
+                                    children:
+                                      - Text:
+                                          text: ${f.name}
+                                      - Text:
+                                          text: ${f.size}
+                                      - Text:
+                                          text: ${f.type}
+                                      - Text:
+                                          text: ${f.lastModified}
+
+              - Button:
+                  label: Upload Files
+                  onTap:
+                    uploadFiles:
+                      id: myUploader
+                      files: ${myFiles.files}
+                      uploadApi: uploadFile
+                      # inputs:
+                      #   dummy: 123
+                      # fieldName: xyz-2
+                      onComplete:
+                        executeCode: console.log('Upload complete')
+                      onError:
+                        executeCode: console.log('Upload error')
+              - Text:
+                  text: ${myUploader.progress}
+              - Text:
+                  text: ${myUploader.status}
+              - Button:
+                  label: tap me to log body
+                  onTap:
+                    executeCode: console.log(myUploader.body)
+              - Button:
+                  label: tap me to log headers
+                  onTap:
+                    executeCode: console.log(myUploader.headers)
+
+API:
+  uploadFile:
+    uri: https://upload.uploadcare.com/base/
+    method: POST
+    body:
+      UPLOADCARE_PUB_KEY: be316c999f9ffdf188a8

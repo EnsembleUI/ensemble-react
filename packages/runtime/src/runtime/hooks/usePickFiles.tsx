@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { type PickFilesAction, useRegisterBindings } from "framework";
+// eslint-disable-next-line import/no-cycle
 import {
   useEnsembleAction,
   type EnsembleActionHook,

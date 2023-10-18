@@ -39,6 +39,16 @@ export interface PickFilesAction {
   onComplete?: EnsembleAction;
 }
 
+export interface UploadFilesAction {
+  uploadApi: string;
+  files: string;
+  id?: string;
+  inputs: Record<string, unknown>;
+  fieldName?: string;
+  onComplete?: EnsembleAction;
+  onError: EnsembleAction;
+}
+
 export interface EnsembleAction {
   executeCode?: ExecuteCodeAction;
   invokeApi?: InvokeAPIAction;
@@ -47,4 +57,5 @@ export interface EnsembleAction {
   showToast?: ShowToastAction;
   closeAllDialogs?: null;
   pickFiles?: PickFilesAction;
+  uploadFiles?: UploadFilesAction;
 }
