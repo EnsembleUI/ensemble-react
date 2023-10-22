@@ -85,7 +85,9 @@ View:
                     navigateModalScreen:
                       name: Ask Embrace
                       styles:
-                        position: right
+                        position: top
+                        margin: 80px 0
+                        padding: 100px
               - Button:
                   label: Create Group
                   submitForm: true

@@ -14,11 +14,20 @@ export interface InvokeAPIAction {
   onError?: EnsembleAction;
 }
 
+export interface NavigateModalScreenStyles {
+  position?: "top" | "right" | "bottom" | "left";
+  height?: string;
+  width?: string;
+  margin?: string;
+  padding?: string;
+}
+
 export type NavigateModalScreenAction =
   | string
   | {
       name?: string;
       maskClosable?: boolean;
+      styles?: NavigateModalScreenStyles;
     };
 
 export type NavigateScreenAction = string | { name: string };
