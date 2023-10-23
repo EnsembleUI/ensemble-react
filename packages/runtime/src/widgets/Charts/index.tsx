@@ -7,14 +7,18 @@ import {
   Tooltip,
   Legend,
   ArcElement,
+  PointElement,
+  LineElement,
+  type ChartOptions,
 } from "chart.js";
-import React from "react";
+import React, { cloneElement } from "react";
+import type { Expression } from "framework";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetProps } from "../../util/types";
 import { BarChart } from "./BarChart";
 import { DoughnutChart } from "./DoughnutChart";
 import { StackBarChart } from "./StackBarChart";
-import { Expression } from "framework";
+import { LineChart } from "./LineChart";
 
 ChartJS.register(
   CategoryScale,
@@ -24,6 +28,8 @@ ChartJS.register(
   Tooltip,
   Legend,
   ArcElement,
+  PointElement,
+  LineElement,
 );
 
 interface ChartDataSets {
@@ -37,10 +43,11 @@ interface ChartDataSets {
 }
 
 export type ChartProps = {
-  type: "bar" | "doughnut" | "stackbar";
+  type: "bar" | "doughnut" | "stackbar" | "line";
   labels: string[] | undefined;
   datasets: ChartDataSets[];
   title?: Expression<string>;
+  options?: ChartOptions;
   [key: string]: unknown;
 } & EnsembleWidgetProps;
 
@@ -48,6 +55,7 @@ const tabsConfig = {
   bar: <BarChart />,
   doughnut: <DoughnutChart />,
   stackbar: <StackBarChart />,
+  line: <LineChart />,
 };
 
 export const Chart: React.FC<ChartProps> = (props) => {
@@ -57,7 +65,7 @@ export const Chart: React.FC<ChartProps> = (props) => {
     return <b>Chart type missing</b>;
   }
 
-  return React.cloneElement(tabsConfig[type], { ...props });
+  return cloneElement(tabsConfig[type], { ...props });
 };
 
 WidgetRegistry.register("Chart", Chart);
