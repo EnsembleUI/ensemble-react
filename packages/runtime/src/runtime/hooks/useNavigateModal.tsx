@@ -14,20 +14,18 @@ export const useNavigateModalScreen: EnsembleActionHook<
   const { openModal } = useContext(ModalContext) || {};
   const app = useApplicationContext();
 
-  const screenName = typeof action === "string" ? action : action?.name;
-  const maskClosable =
-    typeof action === "string" || action?.maskClosable === undefined
-      ? true
-      : Boolean(action.maskClosable);
-  const position =
-    typeof action !== "string" ? action?.styles?.position : undefined;
-  const height =
-    typeof action !== "string" ? action?.styles?.height : undefined;
-  const width = typeof action !== "string" ? action?.styles?.width : undefined;
-  const margin =
-    typeof action !== "string" ? action?.styles?.margin : undefined;
-  const padding =
-    typeof action !== "string" ? action?.styles?.padding : undefined;
+  const isStringAction = typeof action === "string";
+  const screenName = isStringAction ? action : action?.name;
+  const {
+    maskClosable = true,
+    styles: {
+      position = undefined,
+      height = undefined,
+      width = undefined,
+      margin = undefined,
+      padding = undefined,
+    } = {},
+  } = isStringAction ? {} : action || {};
 
   const { screen, title } = useMemo(() => {
     const matchingScreen = app?.application?.screens.find(
