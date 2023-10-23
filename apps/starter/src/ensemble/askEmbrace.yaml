@@ -13,6 +13,16 @@ View:
             id: name
             label: Name
             value: foo
+        - Dropdown:
+            id: myDropdown
+            label: Chose
+            hintText: Chose one option
+            items:
+              [
+                { value: "jack", label: "jack" },
+                { value: "lucy", label: "lucy" },
+                { value: "sibteali", label: "Ali" },
+              ]
         - MultiSelect:
             id: myMultiSelect
             label: Select One
