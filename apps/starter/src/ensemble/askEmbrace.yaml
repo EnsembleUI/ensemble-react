@@ -7,11 +7,24 @@ View:
       styles:
         labelPosition: start
       onSubmit:
-        executeCode: console.log("Hello")
+        executeCode: console.log(values)
       children:
         - TextInput:
+            id: name
             label: Name
             value: foo
+        - MultiSelect:
+            id: myMultiSelect
+            label: Select One
+            data: getData.body.users
+            labelKey: email
+            valueKey: email
+            default:
+              [
+                { value: "jack", label: "jack" },
+                { value: "lucy", label: "lucy" },
+              ]
+            placeholder: "Select From Groups"
         - Checkbox:
             id: myCheckbox
             trailingText: I can be set to checked
@@ -25,4 +38,4 @@ View:
             label: Submit
             submitForm: true
             onTap:
-              executeCode: console.log(myCheckbox)
+              executeCode: console.log(myMultiSelect)
