@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import type { Expression } from "framework";
-import { useRegisterBindings } from "framework";
+import type { Expression } from "@ensembleui/react-framework";
+import { useRegisterBindings } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import { getColor } from "../util/utils";
 import type { EnsembleWidgetProps, HasBorder } from "../util/types";

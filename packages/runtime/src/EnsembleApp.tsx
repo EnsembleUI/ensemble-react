@@ -1,10 +1,10 @@
 import { useMemo } from "react";
-import type { ApplicationDTO } from "framework";
+import type { ApplicationDTO } from "@ensembleui/react-framework";
 import {
   ApplicationContextProvider,
   ApplicationLoader,
   EnsembleParser,
-} from "framework";
+} from "@ensembleui/react-framework";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { injectStyle } from "react-toastify/dist/inject-style";

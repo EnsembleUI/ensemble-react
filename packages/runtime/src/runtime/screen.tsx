@@ -1,5 +1,5 @@
-import type { EnsembleScreenModel } from "framework";
-import { ScreenContextProvider } from "framework";
+import type { EnsembleScreenModel } from "@ensembleui/react-framework";
+import { ScreenContextProvider } from "@ensembleui/react-framework";
 import { useEffect } from "react";
 import { WidgetRegistry } from "../registry";
 // FIXME: refactor

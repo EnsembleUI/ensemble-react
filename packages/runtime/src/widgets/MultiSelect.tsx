@@ -1,7 +1,10 @@
 import type { ReactElement } from "react";
 import React, { useEffect, useState } from "react";
-import type { Expression } from "framework";
-import { useRegisterBindings, useTemplateData } from "framework";
+import type { Expression } from "@ensembleui/react-framework";
+import {
+  useRegisterBindings,
+  useTemplateData,
+} from "@ensembleui/react-framework";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { Select as SelectComponent, Space } from "antd";
 import { get } from "lodash-es";
@@ -35,7 +38,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   const [options, setOptions] = useState<SelectOption[]>([]);
   const [newOption, setNewOption] = useState("");
   const [selectedValues, setSelectedValues] = useState<string[] | undefined>(
-    defaultOptions?.map((item) => item.value?.toString()),
+    defaultOptions?.map((item) => item.value.toString()),
   );
 
   const templateData = useTemplateData(data);
@@ -97,12 +100,8 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
       onChange={handleChange}
       onSearch={(v) => {
         if (
-          options.some(
-            (option) =>
-              option?.label
-                ?.toString()
-                .toLowerCase()
-                .startsWith(v.toLowerCase()),
+          options.some((option) =>
+            option.label.toString().toLowerCase().startsWith(v.toLowerCase()),
           )
         )
           setNewOption("");

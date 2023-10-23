@@ -2,13 +2,13 @@
 const loadAppMock = jest.fn();
 const parseApplicationMock = jest.fn();
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-const frameworkActual = jest.requireActual("framework");
+const frameworkActual = jest.requireActual("@ensembleui/react-framework");
 
 import { render, screen, act } from "@testing-library/react";
 import { EnsembleApp } from "../EnsembleApp";
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-jest.mock("framework", () => ({
+jest.mock("@ensembleui/react-framework", () => ({
   ...frameworkActual,
   ApplicationLoader: {
     load: loadAppMock,

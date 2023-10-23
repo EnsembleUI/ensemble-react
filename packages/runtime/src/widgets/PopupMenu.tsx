@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Menu, Dropdown as AntdDropdown } from "antd";
 import { cloneDeep } from "lodash-es";
-import { type EnsembleWidget, unwrapWidget, EnsembleAction } from "framework";
+import { unwrapWidget } from "@ensembleui/react-framework";
+import type {
+  EnsembleAction,
+  EnsembleWidget,
+} from "@ensembleui/react-framework";
 import type { EnsembleWidgetProps } from "../util/types";
 import { WidgetRegistry } from "../registry";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";

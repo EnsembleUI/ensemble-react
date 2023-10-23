@@ -1,4 +1,4 @@
-import type { EnsembleEntryPoint } from "framework";
+import type { EnsembleEntryPoint } from "@ensembleui/react-framework";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { SideBarMenu } from "./menu";
