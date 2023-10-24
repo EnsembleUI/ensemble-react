@@ -14,7 +14,7 @@ corepack prepare pnpm@6.32.2 --activate
 
 [pnpm docs](https://pnpm.io/installation#using-corepack)
 
-Run the following commands:
+Run the following commands in the root directory:
 
 ```sh
 pnpm install
@@ -34,6 +34,12 @@ This repo includes the following packages/apps:
 - `tsconfig`: `tsconfig.json`s used throughout the monorepo
 
 Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+
+### How to run the complete project
+You can run the app in dev mode using this command
+```sh
+pnpm dev
+```
 
 ### How to run the starter app
 
