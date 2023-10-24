@@ -132,7 +132,7 @@ API:
   uploadFile:
     # inputs:
     #   - dummy
-    uri: https://upload.uploadcare.com/base
+    uri: https://upload.uploadcare.com/base/
     #?sjn=${he.text}&dummy=${dummy}
     method: POST
     body:
