@@ -108,7 +108,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
       }
     };
     return { callback };
-  }, [action, screenContext?.model]);
+  }, [action, screenContext]);
 
   const onResponseAction = useEnsembleAction(action?.onResponse);
   useEffect(() => {
@@ -129,6 +129,189 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
   }, [action?.onError, error, onErrorAction]);
 
   return invokeApi;
+};
+
+export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
+  action?: PickFilesAction,
+) => {
+  const [files, setFiles] = useState<FileList>();
+  const onCompleteAction = useEnsembleAction(action?.onComplete);
+
+  useRegisterBindings(
+    {
+      files,
+    },
+    action?.id,
+    {
+      setFiles,
+    },
+  );
+
+  const inputEl = useMemo(() => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.multiple = action?.allowMultiple || false;
+    input.accept =
+      action?.allowedExtensions?.map((ext) => ".".concat(ext))?.toString() ||
+      "*/*";
+
+    input.onchange = (event: Event): void => {
+      const selectedFiles =
+        (event.target as HTMLInputElement).files || undefined;
+
+      if (selectedFiles) {
+        setFiles(selectedFiles);
+        onCompleteAction?.callback();
+      }
+    };
+
+    return input;
+  }, [action?.allowMultiple, action?.allowedExtensions, onCompleteAction]);
+
+  useEffect(() => {
+    return () => {
+      inputEl.remove();
+    };
+  }, [inputEl]);
+
+  const callback = useCallback((): void => {
+    try {
+      inputEl.click();
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    }
+  }, [inputEl]);
+
+  return { callback };
+};
+
+export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
+  action?: UploadFilesAction,
+) => {
+  const [body, setBody] = useState<Record<string, unknown>>();
+  const [headers, setHeaders] = useState<Record<string, unknown>>();
+  const [status, setStatus] = useState<UploadStatus>("pending");
+  const [progress, setProgress] = useState<number>(0.0);
+
+  const onCompleteAction = useEnsembleAction(action?.onComplete);
+  const onErrorAction = useEnsembleAction(action?.onError);
+  const screenContext = useScreenContext();
+
+  useRegisterBindings(
+    {
+      body,
+      headers,
+      status,
+      progress,
+    },
+    action?.id,
+    {
+      setBody,
+      setHeaders,
+      setStatus,
+      setProgress,
+    },
+  );
+
+  const callback = useCallback(async (): Promise<void> => {
+    const apiModel = screenContext?.model?.apis?.find(
+      (model) => model?.name === action?.uploadApi,
+    );
+    if (!apiModel) return;
+
+    const progressCallback = (progressEvent: ProgressEvent): void => {
+      const percentCompleted =
+        (progressEvent.loaded * 100) / progressEvent.total;
+
+      setProgress(percentCompleted);
+    };
+
+    const files = evaluate(
+      screenContext as ScreenContextDefinition,
+      action?.files,
+    ) as FileList | undefined;
+    if (!files || files.length === 0) throw Error("Files not found");
+
+    const formData = new FormData();
+    if (files.length === 1)
+      formData.append(action?.fieldName ?? "files", head(files) as Blob);
+    else
+      for (let i = 0; i < files.length; i++) {
+        formData.append(action?.fieldName ?? `file${i}`, files[i]);
+      }
+
+    const apiModelBody = apiModel?.body ?? {};
+    for (const key in apiModelBody) {
+      const evaluatedValue = isExpression(apiModelBody[key])
+        ? evaluate(
+            screenContext as ScreenContextDefinition,
+            apiModelBody[key] as string,
+          ) || action?.inputs?.[key]
+        : apiModelBody[key];
+      formData.append(key, evaluatedValue as string);
+    }
+
+    let apiUrl = apiModel.uri;
+    apiUrl = apiUrl.replace(
+      /\${(.*?)}/g,
+      (match, p1) =>
+        (evaluate(screenContext as ScreenContextDefinition, match) as string) ||
+        (action?.inputs?.[p1] as string),
+    );
+
+    // Regular expression for text matches inside ${}
+    const matches = [...apiUrl.matchAll(/\${(.*?)}/g)];
+
+    // Replace matches with the evaluated value
+    matches.forEach((match) => {
+      apiUrl = apiUrl.replace(
+        match[0],
+        (evaluate(
+          screenContext as ScreenContextDefinition,
+          match[0],
+        ) as string) || (action?.inputs?.[match[1]] as string),
+      );
+    });
+
+    try {
+      setStatus("running");
+      const response = await DataFetcher.uploadFiles(
+        apiUrl,
+        apiModel.method,
+        {
+          "Content-Type": "multipart/form-data",
+          ...apiModel.headers,
+        },
+        formData,
+        progressCallback,
+      );
+
+      setBody(response.body as Record<string, unknown>);
+      setHeaders(response.headers as Record<string, unknown>);
+      if (response.isSuccess) {
+        setStatus("completed");
+        onCompleteAction?.callback({ response });
+      } else {
+        setStatus("failed");
+        onErrorAction?.callback({ response });
+      }
+    } catch (error: unknown) {
+      setBody(error as Record<string, unknown>);
+      setStatus("failed");
+      onErrorAction?.callback({ error });
+    }
+  }, [
+    action?.uploadApi,
+    action?.fieldName,
+    action?.files,
+    action?.inputs,
+    onCompleteAction,
+    onErrorAction,
+    screenContext,
+  ]);
+
+  return { callback };
 };
 
 /* eslint-disable react-hooks/rules-of-hooks */
