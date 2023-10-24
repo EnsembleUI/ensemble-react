@@ -94,6 +94,10 @@ View:
                                         navigateModalScreen:
                                           name: Create Group
                                           maskClosable: false
+                                          styles:
+                                            position: right
+                                            height: 100%
+                                            width: 70%
                             - Conditional:
                                 conditions:
                                   - if: ${!getData.body.records}
