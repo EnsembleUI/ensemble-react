@@ -1,5 +1,5 @@
-import type { Expression } from "framework";
-import { useRegisterBindings } from "framework";
+import type { Expression } from "@ensembleui/react-framework";
+import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useState } from "react";
 import { Typography } from "antd";
 import { WidgetRegistry } from "../registry";

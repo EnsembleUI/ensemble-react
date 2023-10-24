@@ -1,4 +1,4 @@
-import type { Expression } from "framework";
+import type { Expression } from "@ensembleui/react-framework";
 
 export function stringToColor(string: Expression<string>): string {
   let hash = 0;

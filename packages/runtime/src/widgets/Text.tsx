@@ -1,4 +1,4 @@
-import { useRegisterBindings } from "framework";
+import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useState } from "react";
 import { Typography } from "antd";
 import { WidgetRegistry } from "../registry";
@@ -14,7 +14,7 @@ export interface TextStyles {
 }
 
 export type TextProps = {
-  styles: TextStyles;
+  styles?: TextStyles;
 } & BaseTextProps;
 
 export const Text: React.FC<TextProps> = (props) => {
@@ -31,8 +31,8 @@ export const Text: React.FC<TextProps> = (props) => {
         color: props.styles?.color,
         fontFamily: props.styles?.fontFamily,
         backgroundColor: props.styles?.backgroundColor,
-        padding: `${props.styles?.padding}px`,
-        borderRadius: `${props.styles?.borderRadius}px`,
+        padding: props.styles?.padding,
+        borderRadius: props.styles?.borderRadius,
       }}
     >
       {values.text}

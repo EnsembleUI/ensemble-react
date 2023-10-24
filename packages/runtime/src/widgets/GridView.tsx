@@ -1,6 +1,13 @@
 import { map } from "lodash-es";
-import type { CustomScope, EnsembleWidget, Expression } from "framework";
-import { CustomScopeProvider, useTemplateData } from "framework";
+import type {
+  CustomScope,
+  EnsembleWidget,
+  Expression,
+} from "@ensembleui/react-framework";
+import {
+  CustomScopeProvider,
+  useTemplateData,
+} from "@ensembleui/react-framework";
 import { Col, Row } from "antd";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";

@@ -1,9 +1,12 @@
 {
-  "name": "framework",
-  "version": "0.0.0",
+  "name": "@ensembleui/react-framework",
+  "version": "0.0.2",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "private": true,
+  "files": [
+    "./dist/**"
+  ],
+  "repository": "https://github.com/EnsembleUI/ensemble-react",
   "scripts": {
     "dev": "tsup src/index.ts --format cjs --watch --dts --external react",
     "build": "tsup src/index.ts --format cjs --dts --external react",

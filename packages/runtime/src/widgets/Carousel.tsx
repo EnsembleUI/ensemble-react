@@ -1,5 +1,12 @@
-import { CustomScopeProvider, useTemplateData } from "framework";
-import type { EnsembleWidget, Expression, CustomScope } from "framework";
+import {
+  CustomScopeProvider,
+  useTemplateData,
+} from "@ensembleui/react-framework";
+import type {
+  EnsembleWidget,
+  Expression,
+  CustomScope,
+} from "@ensembleui/react-framework";
 import { Carousel as AntCarousel } from "antd"; // Assuming you have imported Ant Design's Carousel
 import { useEffect, useRef, useState } from "react";
 import { map } from "lodash-es";

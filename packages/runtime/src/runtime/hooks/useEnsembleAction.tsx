@@ -4,7 +4,7 @@ import {
   evaluate,
   isExpression,
   useRegisterBindings,
-} from "framework";
+} from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
   ExecuteCodeAction,
@@ -13,7 +13,7 @@ import type {
   PickFilesAction,
   UploadFilesAction,
   ScreenContextDefinition,
-} from "framework";
+} from "@ensembleui/react-framework";
 import { head, isString, merge } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigateScreen } from "./useNavigateScreen";

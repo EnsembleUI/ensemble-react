@@ -1,4 +1,4 @@
-import type { EnsembleWidget } from "framework";
+import type { EnsembleWidget } from "@ensembleui/react-framework";
 import type { ReactNode } from "react";
 import { isValidElement } from "react";
 import { WidgetRegistry } from "../registry";

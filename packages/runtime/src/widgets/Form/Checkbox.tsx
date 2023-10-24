@@ -1,10 +1,9 @@
-import { Form as AntForm } from "antd";
+import { Form as AntForm, Checkbox } from "antd";
 import { useState } from "react";
-import { useRegisterBindings } from "framework";
-import { Checkbox } from "antd";
+import { useRegisterBindings } from "@ensembleui/react-framework";
 import type { EnsembleWidgetProps } from "../../util/types";
-import type { FormInputProps } from "./types";
 import { WidgetRegistry } from "../../registry";
+import type { FormInputProps } from "./types";
 
 export type CheckBoxProps = {
   trailingText?: string;
@@ -19,26 +18,26 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
     props.id,
     {
       setValue: setChecked,
-    }
+    },
   );
   return (
     <AntForm.Item
       label={values.label}
       name={values.label}
-      valuePropName="checked"
       rules={[{ required: values.required }]}
       style={{
         margin: "0px",
       }}
+      valuePropName="checked"
     >
       {" "}
-      {props?.leadingText ? props.leadingText : ""}
+      {props.leadingText ? props.leadingText : ""}
       <Checkbox
         checked={checked}
         disabled={!props.enabled}
         onChange={(event): void => setChecked(event.target.checked)}
         style={{
-          marginLeft: `${props?.leadingText ? "4px" : "0px"}`,
+          marginLeft: `${props.leadingText ? "4px" : "0px"}`,
         }}
       >
         {values.trailingText}

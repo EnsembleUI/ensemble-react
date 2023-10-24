@@ -3,7 +3,7 @@ import {
   useTemplateData,
   type Expression,
   type EnsembleWidget,
-} from "framework";
+} from "@ensembleui/react-framework";
 import { map } from "lodash-es";
 import type { ReactElement } from "react";
 import { WidgetRegistry } from "../../registry";
