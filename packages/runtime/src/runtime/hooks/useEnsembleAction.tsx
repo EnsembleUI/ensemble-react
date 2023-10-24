@@ -247,32 +247,17 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
         ? evaluate(
             screenContext as ScreenContextDefinition,
             apiModelBody[key] as string,
-          ) || action?.inputs?.[key]
+            action?.inputs,
+          )
         : apiModelBody[key];
       formData.append(key, evaluatedValue as string);
     }
 
-    let apiUrl = apiModel.uri;
-    apiUrl = apiUrl.replace(
-      /\${(.*?)}/g,
-      (match, p1) =>
-        (evaluate(screenContext as ScreenContextDefinition, match) as string) ||
-        (action?.inputs?.[p1] as string),
-    );
-
-    // Regular expression for text matches inside ${}
-    const matches = [...apiUrl.matchAll(/\${(.*?)}/g)];
-
-    // Replace matches with the evaluated value
-    matches.forEach((match) => {
-      apiUrl = apiUrl.replace(
-        match[0],
-        (evaluate(
-          screenContext as ScreenContextDefinition,
-          match[0],
-        ) as string) || (action?.inputs?.[match[1]] as string),
-      );
-    });
+    const apiUrl = evaluate(
+      screenContext as ScreenContextDefinition,
+      `\`${apiModel.uri}\``,
+      action?.inputs,
+    ) as string;
 
     try {
       setStatus("running");
