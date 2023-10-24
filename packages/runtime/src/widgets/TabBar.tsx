@@ -1,12 +1,15 @@
 import React, { type ReactElement } from "react";
-import { useRegisterBindings, useScreenContext } from "framework";
+import {
+  useRegisterBindings,
+  useScreenContext,
+  evaluate,
+} from "@ensembleui/react-framework";
 import type {
   Expression,
   ScreenContextDefinition,
   EnsembleWidget,
-} from "framework";
+} from "@ensembleui/react-framework";
 import { Tabs, ConfigProvider } from "antd";
-import { evaluate } from "framework/src/evaluate";
 import { type IconProps } from "../util/types";
 import { EnsembleRuntime } from "../runtime";
 import { WidgetRegistry } from "../registry";
@@ -47,7 +50,7 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
     if (containsExpression(label)) {
       const cleanedExpression = label.replace(/\${|}/g, "");
       labelEvaluated = evaluate(
-        context as ScreenContextDefinition as any,
+        context as ScreenContextDefinition,
         cleanedExpression,
       ) as string;
     }

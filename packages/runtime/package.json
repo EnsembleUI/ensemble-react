@@ -1,9 +1,12 @@
 {
-  "name": "runtime",
-  "version": "0.0.0",
+  "name": "@ensembleui/react-runtime",
+  "version": "0.0.2",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "private": true,
+  "files": [
+    "./dist/**"
+  ],
+  "repository": "https://github.com/EnsembleUI/ensemble-react",
   "scripts": {
     "dev": "tsup src/index.tsx --format cjs --watch --dts --external react",
     "build": "tsup src/index.tsx --format cjs --dts --external react",
@@ -21,6 +24,7 @@
     "@ant-design/icons": "^5.2.6",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@ensembleui/react-framework": "workspace:*",
     "@mui/icons-material": "^5.14.9",
     "@mui/material": "^5.14.9",
     "@testing-library/react": "^13.4.0",
@@ -30,7 +34,6 @@
     "antd": "^5.9.0",
     "chart.js": "^4.4.0",
     "eslint-config-custom": "workspace:*",
-    "framework": "workspace:*",
     "jest": "27.5.1",
     "lodash-es": "^4.17.21",
     "react": "^18.2.0",

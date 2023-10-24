@@ -1,5 +1,5 @@
-import type { NavigateModalScreenAction } from "framework";
-import { useApplicationContext } from "framework";
+import type { NavigateModalScreenAction } from "@ensembleui/react-framework";
+import { useApplicationContext } from "@ensembleui/react-framework";
 import { useCallback, useContext, useMemo } from "react";
 // FIXME
 // eslint-disable-next-line import/no-cycle
@@ -18,7 +18,7 @@ export const useNavigateModalScreen: EnsembleActionHook<
   const maskClosable =
     typeof action === "string" || action?.maskClosable === undefined
       ? true
-      : Boolean(action?.maskClosable);
+      : Boolean(action.maskClosable);
 
   const { screen, title } = useMemo(() => {
     const matchingScreen = app?.application?.screens.find(

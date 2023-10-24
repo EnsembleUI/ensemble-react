@@ -3,13 +3,13 @@ import {
   useScreenContext,
   evaluate,
   isExpression,
-} from "framework";
+} from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
   ExecuteCodeAction,
   Response,
   EnsembleAction,
-} from "framework";
+} from "@ensembleui/react-framework";
 import { isString, merge } from "lodash-es";
 import { useState, useEffect, useMemo } from "react";
 import { useNavigateScreen } from "./useNavigateScreen";

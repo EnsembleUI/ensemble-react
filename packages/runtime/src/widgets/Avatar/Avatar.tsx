@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import type { EnsembleAction, Expression } from "framework";
-import { useRegisterBindings } from "framework";
+import type { EnsembleAction, Expression } from "@ensembleui/react-framework";
+import { useRegisterBindings } from "@ensembleui/react-framework";
 import {
   Avatar as MuiAvatar,
   Menu,

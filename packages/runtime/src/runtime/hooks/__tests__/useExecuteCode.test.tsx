@@ -1,6 +1,6 @@
 /* eslint import/first: 0 */
 import { renderHook } from "@testing-library/react";
-import { ScreenContextProvider } from "framework";
+import { ScreenContextProvider } from "@ensembleui/react-framework";
 import { useExecuteCode } from "../useEnsembleAction";
 
 const wrapper: React.FC<React.PropsWithChildren> = ({ children }) => (

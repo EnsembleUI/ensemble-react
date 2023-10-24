@@ -1,4 +1,7 @@
-import type { EnsembleAction, EnsembleWidget } from "framework";
+import type {
+  EnsembleAction,
+  EnsembleWidget,
+} from "@ensembleui/react-framework";
 import { Form as AntForm } from "antd";
 import { useCallback } from "react";
 import type { FormLayout } from "antd/es/form/Form";

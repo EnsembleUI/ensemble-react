@@ -1,5 +1,5 @@
-import { EnsembleApp } from "runtime";
-import type { ApplicationDTO } from "framework";
+import { EnsembleApp } from "@ensembleui/react-runtime";
+import type { ApplicationDTO } from "@ensembleui/react-framework";
 import HomeYAML from "./ensemble/home.yaml";
 import CollectionsYAML from "./ensemble/collections.yaml";
 import UsersAndGroupsYAML from "./ensemble/usersAndGroups.yaml";

@@ -1,6 +1,6 @@
 import type { PropsWithChildren } from "react";
 import { ConfigProvider } from "antd";
-import { useApplicationContext } from "framework";
+import { useApplicationContext } from "@ensembleui/react-framework";
 
 export const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const context = useApplicationContext();

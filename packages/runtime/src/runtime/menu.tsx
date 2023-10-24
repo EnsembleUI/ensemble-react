@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import React, { useState, useEffect } from "react";
 import { Menu as AntMenu, Col, Divider, Row } from "antd";
 import * as MuiIcons from "@mui/icons-material";
-import type { EnsembleWidget } from "framework";
+import type { EnsembleWidget } from "@ensembleui/react-framework";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getColor } from "../util/utils";
 import { EnsembleRuntime } from "./runtime";

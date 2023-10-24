@@ -12,7 +12,7 @@ import {
   type ChartOptions,
 } from "chart.js";
 import React, { cloneElement } from "react";
-import type { Expression } from "framework";
+import type { Expression } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetProps } from "../../util/types";
 import { BarChart } from "./BarChart";

@@ -1,4 +1,4 @@
-import type { EnsembleWidget, Expression } from "framework";
+import type { EnsembleWidget, Expression } from "@ensembleui/react-framework";
 
 export interface EnsembleWidgetProps {
   id?: string;
