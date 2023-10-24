@@ -56,7 +56,6 @@ export const DataFetcher = {
     method: string,
     headers: Headers,
     body?: Record<string, Expression<unknown>> | FormData,
-    params?: Record<string, unknown>,
     progressCallback?: (progressEvent: ProgressEvent) => void,
   ): Promise<Response> => {
     const axRes = await axios({
@@ -64,7 +63,6 @@ export const DataFetcher = {
       method,
       headers,
       data: body,
-      params,
 
       onUploadProgress: progressCallback,
     });

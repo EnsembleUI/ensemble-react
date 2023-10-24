@@ -5,6 +5,12 @@ View:
   body:
     Column:
       children:
+        # - Markdown:
+        #     id: askText
+        #     text: "## Ask Embrace"
+        # - Text:
+        #     id: he
+        #     text: hehe
         - Form:
             styles:
               labelPosition: start
@@ -124,7 +130,11 @@ View:
 
 API:
   uploadFile:
-    uri: https://upload.uploadcare.com/base/
+    # inputs:
+    #   - dummy
+    uri: https://upload.uploadcare.com/base
+    #?sjn=${he.text}&dummy=${dummy}
     method: POST
     body:
       UPLOADCARE_PUB_KEY: be316c999f9ffdf188a8
+      # dummy: ${askText.text}

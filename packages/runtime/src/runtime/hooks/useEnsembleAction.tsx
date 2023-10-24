@@ -159,13 +159,20 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
       const selectedFiles =
         (event.target as HTMLInputElement).files || undefined;
 
-      if (selectedFiles) setFiles(selectedFiles);
-
-      if (onCompleteAction) onCompleteAction?.callback();
+      if (selectedFiles) {
+        setFiles(selectedFiles);
+        onCompleteAction?.callback();
+      }
     };
 
     return input;
   }, [action?.allowMultiple, action?.allowedExtensions, onCompleteAction]);
+
+  useEffect(() => {
+    return () => {
+      inputEl.remove();
+    };
+  }, [inputEl]);
 
   const callback = useCallback((): void => {
     try {
@@ -207,18 +214,19 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
     },
   );
 
-  const apiModel = screenContext?.model?.apis?.find(
-    (model) => model?.name === action?.uploadApi,
-  );
-  if (!apiModel) return;
+  const callback = useCallback(async (): Promise<void> => {
+    const apiModel = screenContext?.model?.apis?.find(
+      (model) => model?.name === action?.uploadApi,
+    );
+    if (!apiModel) return;
 
-  const progressCallback = (progressEvent: ProgressEvent): void => {
-    const percentCompleted = (progressEvent.loaded * 100) / progressEvent.total;
+    const progressCallback = (progressEvent: ProgressEvent): void => {
+      const percentCompleted =
+        (progressEvent.loaded * 100) / progressEvent.total;
 
-    setProgress(percentCompleted);
-  };
+      setProgress(percentCompleted);
+    };
 
-  const callback = async (): Promise<void> => {
     const files = evaluate(
       screenContext as ScreenContextDefinition,
       action?.files,
@@ -235,37 +243,47 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
 
     const apiModelBody = apiModel?.body ?? {};
     for (const key in apiModelBody) {
-      formData.append(key, apiModelBody[key] as string);
-    }
-    const resolvedInputs = Object.entries(action?.inputs ?? {})
-      .concat(
-        (apiModel?.inputs?.map((value) => [value, value]) as [
-          string,
-          unknown,
-        ][]) ?? [],
-      )
-      .map(([key, value]) => {
-        if (isExpression(value)) {
-          const resolvedValue = evaluate(
+      const evaluatedValue = isExpression(apiModelBody[key])
+        ? evaluate(
             screenContext as ScreenContextDefinition,
-            value,
-          );
-          return [key, resolvedValue];
-        }
-        return [key, value];
-      });
+            apiModelBody[key] as string,
+          ) || action?.inputs?.[key]
+        : apiModelBody[key];
+      formData.append(key, evaluatedValue as string);
+    }
+
+    let apiUrl = apiModel.uri;
+    apiUrl = apiUrl.replace(
+      /\${(.*?)}/g,
+      (match, p1) =>
+        (evaluate(screenContext as ScreenContextDefinition, match) as string) ||
+        (action?.inputs?.[p1] as string),
+    );
+
+    // Regular expression for text matches inside ${}
+    const matches = [...apiUrl.matchAll(/\${(.*?)}/g)];
+
+    // Replace matches with the evaluated value
+    matches.forEach((match) => {
+      apiUrl = apiUrl.replace(
+        match[0],
+        (evaluate(
+          screenContext as ScreenContextDefinition,
+          match[0],
+        ) as string) || (action?.inputs?.[match[1]] as string),
+      );
+    });
 
     try {
       setStatus("running");
       const response = await DataFetcher.uploadFiles(
-        apiModel.uri,
+        apiUrl,
         apiModel.method,
         {
           "Content-Type": "multipart/form-data",
           ...apiModel.headers,
         },
         formData,
-        Object.fromEntries(resolvedInputs) as Record<string, unknown>,
         progressCallback,
       );
 
@@ -273,17 +291,25 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
       setHeaders(response.headers as Record<string, unknown>);
       if (response.isSuccess) {
         setStatus("completed");
-        onCompleteAction?.callback();
+        onCompleteAction?.callback({ response });
       } else {
         setStatus("failed");
-        onErrorAction?.callback();
+        onErrorAction?.callback({ response });
       }
-    } catch (err: unknown) {
-      setBody(err as Record<string, unknown>);
+    } catch (error: unknown) {
+      setBody(error as Record<string, unknown>);
       setStatus("failed");
-      onErrorAction?.callback();
+      onErrorAction?.callback({ error });
     }
-  };
+  }, [
+    action?.uploadApi,
+    action?.fieldName,
+    action?.files,
+    action?.inputs,
+    onCompleteAction,
+    onErrorAction,
+    screenContext,
+  ]);
 
   return { callback };
 };

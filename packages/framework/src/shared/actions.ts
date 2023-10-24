@@ -43,7 +43,7 @@ export interface UploadFilesAction {
   uploadApi: string;
   files: string;
   id?: string;
-  inputs: Record<string, unknown>;
+  inputs?: Record<string, unknown>;
   fieldName?: string;
   onComplete?: EnsembleAction;
   onError: EnsembleAction;
