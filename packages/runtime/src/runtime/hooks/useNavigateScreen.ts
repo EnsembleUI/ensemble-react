@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import type { NavigateScreenAction } from "framework";
+import type { NavigateScreenAction } from "@ensembleui/react-framework";
 import { isString } from "lodash-es";
 import type { EnsembleActionHook } from "./useEnsembleAction";
 

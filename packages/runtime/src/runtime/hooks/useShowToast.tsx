@@ -3,7 +3,7 @@ import {
   useScreenContext,
   type ShowToastAction,
   isExpression,
-} from "framework";
+} from "@ensembleui/react-framework";
 import type { Id } from "react-toastify";
 import { toast } from "react-toastify";
 import { useMemo, useRef } from "react";

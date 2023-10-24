@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useTemplateData, type Expression } from "framework";
+import { useTemplateData, type Expression } from "@ensembleui/react-framework";
 import type { SelectProps } from "antd";
 import { AutoComplete, Input } from "antd";
 import { SearchOutlined } from "@mui/icons-material";

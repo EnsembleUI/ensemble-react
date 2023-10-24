@@ -1,4 +1,4 @@
-import type { EnsembleWidget } from "framework";
+import type { EnsembleWidget } from "@ensembleui/react-framework";
 import { useMemo } from "react";
 import { merge } from "lodash-es";
 import { WidgetRegistry } from "../registry";

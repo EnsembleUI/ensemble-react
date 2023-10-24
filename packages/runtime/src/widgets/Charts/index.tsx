@@ -9,12 +9,12 @@ import {
   ArcElement,
 } from "chart.js";
 import React from "react";
+import type { Expression } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetProps } from "../../util/types";
 import { BarChart } from "./BarChart";
 import { DoughnutChart } from "./DoughnutChart";
 import { StackBarChart } from "./StackBarChart";
-import { Expression } from "framework";
 
 ChartJS.register(
   CategoryScale,
