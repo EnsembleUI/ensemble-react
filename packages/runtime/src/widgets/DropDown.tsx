@@ -1,7 +1,7 @@
 import { Form as AntForm, Select } from "antd";
 import { useState } from "react";
-import { useRegisterBindings } from "framework";
-import type { Expression } from "framework";
+import { useRegisterBindings } from "@ensembleui/react-framework";
+import type { Expression } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from "../util/types";
 
