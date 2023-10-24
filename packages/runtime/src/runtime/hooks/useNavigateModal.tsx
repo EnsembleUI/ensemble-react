@@ -1,5 +1,5 @@
-import type { NavigateModalScreenAction } from "framework";
-import { useApplicationContext } from "framework";
+import type { NavigateModalScreenAction } from "@ensembleui/react-framework";
+import { useApplicationContext } from "@ensembleui/react-framework";
 import { useCallback, useContext, useMemo } from "react";
 // FIXME
 // eslint-disable-next-line import/no-cycle

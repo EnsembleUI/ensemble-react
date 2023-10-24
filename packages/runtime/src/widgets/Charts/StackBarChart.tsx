@@ -1,6 +1,6 @@
 import { Bar } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
-import type { Expression } from "framework";
+import type { Expression } from "@ensembleui/react-framework";
 import type { EnsembleWidgetProps } from "../../util/types";
 
 const options: ChartOptions<"bar"> = {

@@ -1,5 +1,5 @@
 import { Form as AntForm, Input } from "antd";
-import { useRegisterBindings } from "framework";
+import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useState } from "react";
 import type { EnsembleWidgetProps } from "../../util/types";
 import { WidgetRegistry } from "../../registry";
@@ -24,13 +24,13 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
       {props.multiLine ? (
         <Input.TextArea
           onChange={(event): void => setValue(event.target.value)}
-          placeholder={values?.hintText ? values.hintText : ""}
-          rows={props?.maxLines ? Number(props?.maxLines) : 4} // Adjust the number of rows as needed
+          placeholder={values.hintText ? values.hintText : ""}
+          rows={props.maxLines ? Number(props.maxLines) : 4} // Adjust the number of rows as needed
         />
       ) : (
         <Input
           onChange={(event): void => setValue(event.target.value)}
-          placeholder={values?.hintText ? values.hintText : ""}
+          placeholder={values.hintText ? values.hintText : ""}
         />
       )}
     </AntForm.Item>

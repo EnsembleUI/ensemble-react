@@ -1,5 +1,5 @@
-import type { CustomScope } from "framework";
-import { CustomScopeProvider } from "framework";
+import type { CustomScope } from "@ensembleui/react-framework";
+import { CustomScopeProvider } from "@ensembleui/react-framework";
 import { EnsembleRuntime } from "../../runtime";
 import type { DataGridRowTemplate } from "./DataGrid";
 

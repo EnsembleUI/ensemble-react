@@ -1,5 +1,12 @@
-import type { Expression, ScreenContextDefinition } from "framework";
-import { evaluate, unwrapWidget, useScreenContext } from "framework";
+import type {
+  Expression,
+  ScreenContextDefinition,
+} from "@ensembleui/react-framework";
+import {
+  evaluate,
+  unwrapWidget,
+  useScreenContext,
+} from "@ensembleui/react-framework";
 import { cloneDeep, head, isEmpty, last } from "lodash-es";
 import { useMemo } from "react";
 import { WidgetRegistry } from "../registry";
