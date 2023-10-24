@@ -1,6 +1,7 @@
 View:
   onLoad:
-    name: getData
+    invokeApi:
+      name: getData
 
   body:
     Column:
@@ -15,38 +16,37 @@ View:
               crossAxis: center
               gap: 20
               margin: 0 0 20px 0
-
-              children:
-                - Chart:
-                    styles:
-                      height: 100%
-                      width: 100%
-                    type: bar
-                    title: Bar Chart
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']
-                    datasets: [
-                      {
-                        label: 'Matched',
-                        data: [190, 200, 210, 145, 230, 240, 220, 190, 120],
-                        backgroundColor: "#5542f6",
-                        barPercentage: 0.8,
-                        borderRadius: 3,
-                      },
-                      {
-                        label: 'Enrolled',
-                        data: [160, 170, 170, 105, 190, 170, 155, 160, 110],
-                        backgroundColor: "#01a4ff",
-                        barPercentage: 0.8,
-                        borderRadius: 3
-                      },
-                      {
-                        label: 'Award',
-                        data: [140, 130, 90, 90, 150, 170, 140, 80, 110],
-                        backgroundColor: "#22c9ac",
-                        barPercentage: 0.8,
-                        borderRadius: 3,
-                      },
-                    ]
+            children:
+              - Chart:
+                  styles:
+                    height: 100%
+                    width: 100%
+                  type: bar
+                  title: Bar Chart
+                  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep']
+                  datasets: [
+                    {
+                      label: 'Matched',
+                      data: [190, 200, 210, 145, 230, 240, 220, 190, 120],
+                      backgroundColor: "#5542f6",
+                      barPercentage: 0.8,
+                      borderRadius: 3,
+                    },
+                    {
+                      label: 'Enrolled',
+                      data: [160, 170, 170, 105, 190, 170, 155, 160, 110],
+                      backgroundColor: "#01a4ff",
+                      barPercentage: 0.8,
+                      borderRadius: 3
+                    },
+                    {
+                      label: 'Award',
+                      data: [140, 130, 90, 90, 150, 170, 140, 80, 110],
+                      backgroundColor: "#22c9ac",
+                      barPercentage: 0.8,
+                      borderRadius: 3,
+                    },
+                  ]
         - Row:
             styles:
               #crossAxis: end
@@ -133,7 +133,7 @@ View:
                           - label: MoM
                           - label: Progress
                         item-template:
-                          data: data.getData.body.users
+                          data: getData.body.users
                           name: user
                           template:
                             DataRow:
