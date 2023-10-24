@@ -40,15 +40,6 @@ You can run the app in dev mode using this command
 ```sh
 pnpm dev
 ```
-
-### How to run the starter app
-
-```sh
-cd starter
-pnpm install
-pnpm start
-```
-
 This command will start the development server, and it should automatically open your default web browser displaying the app. If it doesn't, you can manually navigate to http://localhost:3000 in your browser.
 
 ### Utilities
@@ -58,14 +49,6 @@ This Turborepo has some additional tools already setup for you:
 - [TypeScript](https://www.typescriptlang.org/) for static type checking
 - [ESLint](https://eslint.org/) for code linting
 - [Prettier](https://prettier.io) for code formatting
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```sh
-pnpm dev
-```
 
 ## Useful Links
 
