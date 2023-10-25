@@ -14,7 +14,7 @@ corepack prepare pnpm@6.32.2 --activate
 
 [pnpm docs](https://pnpm.io/installation#using-corepack)
 
-Run the following commands:
+Run the following commands in the root directory:
 
 ```sh
 pnpm install
@@ -35,14 +35,11 @@ This repo includes the following packages/apps:
 
 Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
 
-### How to run the starter app
-
+### How to run the complete project
+You can run the app in dev mode using this command
 ```sh
-cd starter
-pnpm install
-pnpm start
+pnpm dev
 ```
-
 This command will start the development server, and it should automatically open your default web browser displaying the app. If it doesn't, you can manually navigate to http://localhost:3000 in your browser.
 
 ### Utilities
@@ -52,14 +49,6 @@ This Turborepo has some additional tools already setup for you:
 - [TypeScript](https://www.typescriptlang.org/) for static type checking
 - [ESLint](https://eslint.org/) for code linting
 - [Prettier](https://prettier.io) for code formatting
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```sh
-pnpm dev
-```
 
 ## Useful Links
 

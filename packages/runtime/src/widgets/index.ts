@@ -22,3 +22,4 @@ export * from "./Divider";
 export * from "./Tag";
 export * from "./Carousel";
 export * from "./PopupMenu";
+export * from "./Dropdown";
