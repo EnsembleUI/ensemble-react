@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.0.3
+
+### Patch Changes
+
+- 266ef49: Add line chart
+
 ## 0.0.2
 
 ### Patch Changes
