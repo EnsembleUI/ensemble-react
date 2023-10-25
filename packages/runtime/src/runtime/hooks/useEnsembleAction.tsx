@@ -108,7 +108,8 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
       }
     };
     return { callback };
-  }, [action, screenContext]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [action, screenContext?.model]);
 
   const onResponseAction = useEnsembleAction(action?.onResponse);
   useEffect(() => {
