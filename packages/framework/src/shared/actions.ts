@@ -41,6 +41,23 @@ export interface ShowToastAction {
   duration?: number;
 }
 
+export interface PickFilesAction {
+  id: string;
+  allowMultiple?: boolean;
+  allowedExtensions?: string[];
+  onComplete?: EnsembleAction;
+}
+
+export interface UploadFilesAction {
+  uploadApi: string;
+  files: string;
+  id?: string;
+  inputs?: Record<string, unknown>;
+  fieldName?: string;
+  onComplete?: EnsembleAction;
+  onError: EnsembleAction;
+}
+
 export interface EnsembleAction {
   executeCode?: ExecuteCodeAction;
   invokeApi?: InvokeAPIAction;
@@ -48,4 +65,6 @@ export interface EnsembleAction {
   navigateModalScreen?: NavigateModalScreenAction;
   showToast?: ShowToastAction;
   closeAllDialogs?: null;
+  pickFiles?: PickFilesAction;
+  uploadFiles?: UploadFilesAction;
 }

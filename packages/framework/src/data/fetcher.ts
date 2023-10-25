@@ -51,6 +51,23 @@ export const DataFetcher = {
     });
     return EnsembleResponse.fromAxiosResponse(axRes);
   },
+  uploadFiles: async (
+    url: string,
+    method: string,
+    headers: Headers,
+    body?: Record<string, Expression<unknown>> | FormData,
+    progressCallback?: (progressEvent: ProgressEvent) => void,
+  ): Promise<Response> => {
+    const axRes = await axios({
+      url,
+      method,
+      headers,
+      data: body,
+
+      onUploadProgress: progressCallback,
+    });
+    return EnsembleResponse.fromAxiosResponse(axRes);
+  },
 };
 
 const resolveBody = (
