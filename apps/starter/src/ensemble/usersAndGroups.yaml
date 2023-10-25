@@ -264,14 +264,12 @@ View:
                                                         icon:
                                                           name: CloseOutlined
                                                         styles:
-                                                          backgroundColor: "#FBF8EC"
                                                           borderRadius: 2
                                                     - Tag:
                                                         label: Human Resource
                                                         icon:
                                                           name: CloseOutlined
                                                         styles:
-                                                          backgroundColor: "#FBF8EC"
                                                           borderRadius: 2
 
                                               - Row:

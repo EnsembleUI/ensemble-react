@@ -5,6 +5,7 @@ import { Typography } from "antd";
 import { WidgetRegistry } from "../registry";
 import type { IconProps } from "../util/types";
 import { Icon } from "./Icon";
+import { getRandomColor } from "../util/utils";
 
 export interface TagProps {
   id?: string;
@@ -34,7 +35,7 @@ export const Tag: React.FC<TagProps> = (props) => {
     <Typography.Text
       key={index}
       style={{
-        backgroundColor: props.styles?.backgroundColor ?? "#e6e7e8",
+        backgroundColor: props.styles?.backgroundColor ?? getRandomColor(),
         paddingLeft: "10px",
         paddingRight: "10px",
         textAlign: "left",
@@ -64,6 +65,7 @@ export const Tag: React.FC<TagProps> = (props) => {
           onClick={toggleExpansion}
           style={{
             backgroundColor: props.styles?.backgroundColor ?? "#e6e7e8",
+            color: "white",
             paddingLeft: "10px",
             paddingRight: "10px",
             textAlign: "left",
