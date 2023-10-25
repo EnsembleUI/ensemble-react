@@ -30,7 +30,6 @@
     "jotai-optics": "^0.3.1",
     "lodash-es": "^4.17.21",
     "optics-ts": "^2.4.1",
-    "react": "^18.2.0",
     "tsconfig": "workspace:*",
     "tsup": "^7.2.0",
     "yaml": "^2.3.2"
