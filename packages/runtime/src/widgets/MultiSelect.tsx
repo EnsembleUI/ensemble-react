@@ -6,7 +6,7 @@ import {
   useTemplateData,
 } from "@ensembleui/react-framework";
 import { PlusCircleOutlined } from "@ant-design/icons";
-import { Select as SelectComponent, Space } from "antd";
+import { Form as AntForm, Select as SelectComponent, Space } from "antd";
 import { get } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type { SearchStyles } from "../util/types";
@@ -20,6 +20,7 @@ interface SelectOption {
 
 export type MultiSelectProps = {
   data: Expression<SelectOption[]>;
+  label?: string;
   labelKey?: string;
   valueKey?: string;
   default?: SelectOption[];
@@ -58,7 +59,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
       }
       setOptions(initialOptions);
     }
-  }, [templateData, defaultOptions]);
+  }, [templateData, defaultOptions, labelKey, valueKey]);
 
   const handleChange = (value: string[]) => {
     setSelectedValues(value);
@@ -82,45 +83,58 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
       setOptions,
     },
   );
-
   return (
-    <SelectComponent
-      allowClear
-      defaultValue={defaultOptions?.map((item) => item.value.toString())}
-      // eslint-disable-next-line react/no-unstable-nested-components
-      dropdownRender={(menu) => <Dropdown menu={menu} newOption={newOption} />}
-      filterOption={(input, option) =>
-        option?.label
-          .toString()
-          .toLowerCase()
-          .startsWith(input.toLowerCase()) || false
-      }
-      mode="tags"
-      notFoundContent={<></>}
-      onChange={handleChange}
-      onSearch={(v) => {
-        if (
-          options.some((option) =>
-            option.label.toString().toLowerCase().startsWith(v.toLowerCase()),
-          )
-        )
-          setNewOption("");
-        else setNewOption(v);
-      }}
-      options={values.options}
-      placeholder={placeholder ?? "Select"}
+    <AntForm.Item
+      label={props?.label}
+      name={props?.id}
       style={{
-        width: styles?.width ?? "100%",
-        margin: styles?.margin,
-        borderRadius: styles?.borderRadius,
-        borderWidth: styles?.borderWidth,
-        borderStyle: styles?.borderStyle,
-        borderColor: styles?.borderColor
-          ? getColor(styles.borderColor)
-          : undefined,
+        margin: "0px",
       }}
-      value={values.value}
-    />
+    >
+      <SelectComponent
+        onChange={handleChange}
+        allowClear
+        defaultValue={defaultOptions?.map((item) => item.value.toString())}
+        // eslint-disable-next-line react/no-unstable-nested-components
+        dropdownRender={(menu) => (
+          <Dropdown menu={menu} newOption={newOption} />
+        )}
+        filterOption={(input, option) =>
+          option?.label
+            .toString()
+            .toLowerCase()
+            .startsWith(input.toLowerCase()) || false
+        }
+        mode="tags"
+        notFoundContent={<></>}
+        onSearch={(v) => {
+          if (
+            options.some(
+              (option) =>
+                option?.label
+                  ?.toString()
+                  .toLowerCase()
+                  .startsWith(v.toLowerCase()),
+            )
+          )
+            setNewOption("");
+          else setNewOption(v);
+        }}
+        options={values.options}
+        placeholder={placeholder ?? "Select"}
+        style={{
+          width: styles?.width ?? "100%",
+          margin: styles?.margin,
+          borderRadius: styles?.borderRadius,
+          borderWidth: styles?.borderWidth,
+          borderStyle: styles?.borderStyle,
+          borderColor: styles?.borderColor
+            ? getColor(styles.borderColor)
+            : undefined,
+        }}
+        value={values.value}
+      />
+    </AntForm.Item>
   );
 };
 
