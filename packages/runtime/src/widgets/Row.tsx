@@ -18,6 +18,7 @@ export const Row: React.FC<FlexboxProps> = (props) => {
         margin: props.margin,
         padding: props.padding,
         gap: props.gap,
+        backgroundColor: `${props.styles?.backgroundColor}`,
         borderRadius: props.styles?.borderRadius,
         borderWidth: props.styles?.borderWidth,
         borderColor: props.styles?.borderColor
@@ -29,6 +30,7 @@ export const Row: React.FC<FlexboxProps> = (props) => {
         minWidth: props.minWidth,
         flexDirection: "row",
         flexFlow: "unset",
+        flexGrow: "unset",
       }}
     >
       {renderedChildren}

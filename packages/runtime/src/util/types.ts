@@ -40,6 +40,7 @@ export type SearchStyles = {
   width?: number;
   height?: number;
   margin?: number | string;
+  backgroundColor?: string;
 } & HasBorder;
 
 // composable types
