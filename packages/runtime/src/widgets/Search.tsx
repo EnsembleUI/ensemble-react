@@ -42,7 +42,7 @@ export const Search: React.FC<SearchProps> = ({
                   (isObject(item) ? get(item, searchKey ?? "") : item)
                     ?.toString()
                     ?.toLowerCase()
-                    ?.includes(value.toLowerCase()),
+                    ?.includes(value.toLowerCase())
               )
               .map((item) => ({
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -50,7 +50,7 @@ export const Search: React.FC<SearchProps> = ({
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 label: isObject(item) ? get(item, searchKey ?? "") : item,
               }))
-          : [],
+          : []
       );
     }
   };
@@ -80,6 +80,7 @@ export const Search: React.FC<SearchProps> = ({
             ? getColor(styles.borderColor)
             : undefined,
           boxShadow: "none",
+          backgroundColor: styles?.backgroundColor,
         }}
       />
     </AutoComplete>

@@ -27,7 +27,6 @@ export const Column: React.FC<FlexboxProps> = (props) => {
         borderStyle: props.styles?.borderWidth ? "solid" : undefined,
 
         display: "flex",
-        flexGrow: 1,
         ...(get(props, "styles") as object),
       }}
     >
