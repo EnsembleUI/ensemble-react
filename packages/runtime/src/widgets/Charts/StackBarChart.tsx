@@ -8,7 +8,8 @@ const options: ChartOptions<"bar"> = {
   indexAxis: "y",
   plugins: {
     legend: {
-      display: false,
+      display: true,
+      position: "top",
     },
     tooltip: {
       enabled: false,
@@ -66,8 +67,8 @@ export const StackBarChart: React.FC<BarChartProps> = (props) => {
   return (
     <div
       style={{
-        height: styles?.height || "20px",
         width: styles?.width || "100%",
+        height: styles?.height || "50px",
       }}
     >
       <Bar
