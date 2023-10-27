@@ -19,14 +19,18 @@ export const Icon: React.FC<IconProps> = (props) => {
       setBackgroundColor,
     }
   );
-  const IconComponent = getIcon(values.name);
+  const IconComponent = getIcon(props.name);
   if (IconComponent) {
     return (
       <IconComponent
         sx={{
           color: props.color && getColor(String(values?.color)),
           fontSize: props.size,
-          backgroundColor: values.backgroundColor,
+          backgroundColor: `${
+            props.styles?.backgroundColor
+              ? props.styles.backgroundColor
+              : "transparent"
+          }`,
           padding: `${
             props.styles?.padding ? `${props.styles.padding}px` : "0px"
           }`,
