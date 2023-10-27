@@ -35,7 +35,7 @@ export const Text: React.FC<TextProps> = (props) => {
         borderRadius: props.styles?.borderRadius,
       }}
     >
-      {values.text}
+      {values?.text}
     </Typography.Text>
   );
 };

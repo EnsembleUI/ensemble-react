@@ -38,7 +38,7 @@ export interface EnsembleDataContext {
   screen: ScreenContextType;
   app: ApplicationContextType;
 }
-interface WidgetState<T = Record<string, unknown>> {
+export interface WidgetState<T = Record<string, unknown>> {
   values: T;
   invokable: Invokable;
 }

@@ -36,33 +36,10 @@ View:
                     closeAllDialogs:
 
         # Not working (potential cause: id of pickFiles hasn't yet registered when uploadFiles is using it)
-        # - Column:
-        #     children:
-        #       - Button:
-        #           label: Upload Files
-        #           onTap:
-        #             pickFiles:
-        #               id: myFiles
-        #               allowMultiple: true
-        #               allowedExtensions:
-        #                 - jpg
-        #                 - png
-        #                 - mov
-        #               onComplete:
-        #                 uploadFiles:
-        #                   id: myUploader
-        #                   files: ${myFiles.files}
-        #                   uploadApi: uploadFile
-        #                   onComplete:
-        #                     executeCode: console.log(myUploader.body)
-        #                   onError:
-        #                     executeCode: console.log('Upload error')
-
-        # working fine
         - Column:
             children:
               - Button:
-                  label: Pick Files
+                  label: Upload Files
                   onTap:
                     pickFiles:
                       id: myFiles
@@ -72,49 +49,72 @@ View:
                         - png
                         - mov
                       onComplete:
-                        executeCode: console.log('Files picked')
-              - Conditional:
-                  conditions:
-                    - if: ${myFiles.files.length > 0}
-                      Column:
-                        children:
-                          - Markdown:
-                              text: "## Picked files"
-                          - DataGrid:
-                              DataColumns:
-                                - label: Name
-                                - label: Size
-                                - label: Type
-                                - label: Last Modified
-                              item-template:
-                                data: myFiles.files
-                                name: f
-                                template:
-                                  DataRow:
-                                    children:
-                                      - Text:
-                                          text: ${f.name}
-                                      - Text:
-                                          text: ${f.size}
-                                      - Text:
-                                          text: ${f.type}
-                                      - Text:
-                                          text: ${f.lastModified}
+                        uploadFiles:
+                          id: myUploader
+                          files: ${myFiles.files}
+                          uploadApi: uploadFile
+                          onComplete:
+                            executeCode: console.log(myUploader.body)
+                          onError:
+                            executeCode: console.log('Upload error')
 
-              - Button:
-                  label: Upload Files
-                  onTap:
-                    uploadFiles:
-                      id: myUploader
-                      files: ${myFiles.files}
-                      uploadApi: uploadFile
-                      # inputs:
-                      #   dummy: 123
-                      # fieldName: xyz-2
-                      onComplete:
-                        executeCode: console.log('Upload complete')
-                      onError:
-                        executeCode: console.log('Upload error')
+        # working fine
+        # - Column:
+        #     children:
+        #       - Button:
+        #           label: Pick Files
+        #           onTap:
+        #             pickFiles:
+        #               id: myFiles
+        #               allowMultiple: true
+        #               allowedExtensions:
+        #                 - jpg
+        #                 - png
+        #                 - mov
+        #               onComplete:
+        #                 executeCode: console.log('Files picked')
+        #       - Conditional:
+        #           conditions:
+        #             - if: ${myFiles.files.length > 0}
+        #               Column:
+        #                 children:
+        #                   - Markdown:
+        #                       text: "## Picked files"
+        #                   - DataGrid:
+        #                       DataColumns:
+        #                         - label: Name
+        #                         - label: Size
+        #                         - label: Type
+        #                         - label: Last Modified
+        #                       item-template:
+        #                         data: myFiles.files
+        #                         name: f
+        #                         template:
+        #                           DataRow:
+        #                             children:
+        #                               - Text:
+        #                                   text: ${f.name}
+        #                               - Text:
+        #                                   text: ${f.size}
+        #                               - Text:
+        #                                   text: ${f.type}
+        #                               - Text:
+        #                                   text: ${f.lastModified}
+
+        #       - Button:
+        #           label: Upload Files
+        #           onTap:
+        #             uploadFiles:
+        #               id: myUploader
+        #               files: ${myFiles.files}
+        #               uploadApi: uploadFile
+        #               # inputs:
+        #               #   dummy: 123
+        #               # fieldName: xyz-2
+        #               onComplete:
+        #                 executeCode: console.log('Upload complete')
+        #               onError:
+        #                 executeCode: console.log('Upload error')
               - Text:
                   text: ${myUploader.progress}
               - Text:

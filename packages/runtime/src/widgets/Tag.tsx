@@ -14,7 +14,7 @@ export interface TagProps {
     borderRadius: string;
     fontSize: string;
   };
-  icon: IconProps;
+  icon?: IconProps;
 }
 
 export const Tag: React.FC<TagProps> = (props) => {
@@ -23,11 +23,14 @@ export const Tag: React.FC<TagProps> = (props) => {
     setText,
   });
   const [expanded, setExpanded] = useState(false);
-  const toggleExpansion = () => {
+  const toggleExpansion = (): void => {
     setExpanded(!expanded);
   };
 
-  const labels = Array.isArray(values.label) ? values.label : [values.label];
+  const labels =
+    values?.label && Array.isArray(values.label)
+      ? values.label
+      : [values?.label];
   const truncatedLabels = expanded ? labels : labels.slice(0, 4);
   const additionalTagsCount = labels.length - truncatedLabels.length;
   const tagElements = truncatedLabels.map((item, index) => (

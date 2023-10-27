@@ -23,17 +23,17 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     props.id,
     {
       setSelectedValue,
-    }
+    },
   );
-  const handleChange = (value: string) => {
+  const handleChange = (value: string): void => {
     setSelectedValue(value);
   };
   return (
-    <AntForm.Item label={values.label} name={values.id}>
+    <AntForm.Item label={values?.label} name={values?.id}>
       <Select
         onChange={handleChange}
         placeholder={values?.hintText ? values.hintText : ""}
-        value={values.selectedValue}
+        value={values?.selectedValue}
       >
         {props.items.map((option, index) => (
           <Select.Option key={index} value={option.value}>

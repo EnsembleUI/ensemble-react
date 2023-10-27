@@ -61,7 +61,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     }
   }, [templateData, defaultOptions, labelKey, valueKey]);
 
-  const handleChange = (value: string[]) => {
+  const handleChange = (value: string[]): void => {
     setSelectedValues(value);
     if (newOption) {
       setOptions([
@@ -85,42 +85,38 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   );
   return (
     <AntForm.Item
-      label={props?.label}
-      name={props?.id}
+      label={props.label}
+      name={props.id}
       style={{
         margin: "0px",
       }}
     >
       <SelectComponent
-        onChange={handleChange}
         allowClear
         defaultValue={defaultOptions?.map((item) => item.value.toString())}
         // eslint-disable-next-line react/no-unstable-nested-components
-        dropdownRender={(menu) => (
+        dropdownRender={(menu): ReactElement => (
           <Dropdown menu={menu} newOption={newOption} />
         )}
-        filterOption={(input, option) =>
+        filterOption={(input, option): boolean =>
           option?.label
             .toString()
             .toLowerCase()
             .startsWith(input.toLowerCase()) || false
         }
         mode="tags"
-        notFoundContent={<></>}
-        onSearch={(v) => {
+        notFoundContent="No Results"
+        onChange={handleChange}
+        onSearch={(v): void => {
           if (
-            options.some(
-              (option) =>
-                option?.label
-                  ?.toString()
-                  .toLowerCase()
-                  .startsWith(v.toLowerCase()),
+            options.some((option) =>
+              option.label.toString().toLowerCase().startsWith(v.toLowerCase()),
             )
           )
             setNewOption("");
           else setNewOption(v);
         }}
-        options={values.options}
+        options={values?.options}
         placeholder={placeholder ?? "Select"}
         style={{
           width: styles?.width ?? "100%",
@@ -132,7 +128,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
             ? getColor(styles.borderColor)
             : undefined,
         }}
-        value={values.value}
+        value={values?.value}
       />
     </AntForm.Item>
   );

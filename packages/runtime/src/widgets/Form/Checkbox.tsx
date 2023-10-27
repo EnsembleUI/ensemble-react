@@ -22,9 +22,9 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
   );
   return (
     <AntForm.Item
-      label={values.label}
-      name={values.label}
-      rules={[{ required: values.required }]}
+      label={values?.label}
+      name={values?.label}
+      rules={[{ required: values?.required }]}
       style={{
         margin: "0px",
       }}
@@ -40,7 +40,7 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
           marginLeft: `${props.leadingText ? "4px" : "0px"}`,
         }}
       >
-        {values.trailingText}
+        {values?.trailingText}
       </Checkbox>
     </AntForm.Item>
   );

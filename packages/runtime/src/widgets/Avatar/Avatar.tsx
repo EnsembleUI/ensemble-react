@@ -84,7 +84,7 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
         src={props.src}
         sx={{
           bgcolor:
-            props.styles?.backgroundColor ?? stringToColor(values.name ?? ""),
+            props.styles?.backgroundColor ?? stringToColor(values?.name ?? ""),
           width: props.styles?.width,
           height: props.styles?.height,
           color: props.styles?.color ?? "white",
@@ -92,7 +92,7 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
         }}
       >
         {props.name ? (
-          generateInitials(values.name)
+          generateInitials(values?.name)
         ) : (
           <Icon
             color={props.icon?.color}
