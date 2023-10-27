@@ -33,8 +33,8 @@ ChartJS.register(
 );
 
 interface ChartDataSets {
+  data: Expression<number[]>;
   label?: string;
-  data: number[];
   backgroundColor?: string[] | string;
   barPercentage?: number;
   borderRadius?: number;
@@ -42,13 +42,16 @@ interface ChartDataSets {
   borderWidth?: number;
 }
 
-export type ChartProps = {
+export type ChartConfigs = {
   type: "bar" | "doughnut" | "stackbar" | "line";
   labels: string[] | undefined;
   datasets: ChartDataSets[];
   title?: Expression<string>;
   options?: ChartOptions;
-  [key: string]: unknown;
+};
+
+export type ChartProps = {
+  config?: ChartConfigs;
 } & EnsembleWidgetProps;
 
 const tabsConfig = {
@@ -59,13 +62,18 @@ const tabsConfig = {
 };
 
 export const Chart: React.FC<ChartProps> = (props) => {
-  const { type } = props;
+  const config = new Function(
+    "return " + props.config?.toString(),
+  )() as ChartConfigs;
 
-  if (!type) {
+  if (!config.type) {
     return <b>Chart type missing</b>;
   }
 
-  return cloneElement(tabsConfig[type], { ...props });
+  return cloneElement(tabsConfig[config.type], {
+    ...props,
+    config: config,
+  });
 };
 
 WidgetRegistry.register("Chart", Chart);

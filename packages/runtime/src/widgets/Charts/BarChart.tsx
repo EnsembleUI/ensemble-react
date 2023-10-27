@@ -1,7 +1,13 @@
 import { Bar } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
-import type { Expression } from "@ensembleui/react-framework";
-import type { EnsembleWidgetProps } from "../../util/types";
+import {
+  useRegisterBindings,
+  evaluate,
+  useScreenContext,
+  ScreenContextDefinition,
+} from "@ensembleui/react-framework";
+import { useMemo, useState } from "react";
+import { ChartProps } from "../";
 
 const options: ChartOptions<"bar"> = {
   maintainAspectRatio: false,
@@ -27,23 +33,42 @@ const options: ChartOptions<"bar"> = {
   },
 };
 
-interface ChartDataSets {
-  label?: string;
-  data: number[];
-  backgroundColor?: string;
-  barPercentage?: number;
-  borderRadius?: number;
-}
+export const BarChart: React.FC<ChartProps> = (props) => {
+  const { id, styles, config } = props;
 
-export type BarChartProps = {
-  labels?: string[] | undefined;
-  datasets?: ChartDataSets[];
-  title?: Expression<string>;
-  [key: string]: unknown;
-} & EnsembleWidgetProps;
+  const [title, setTitle] = useState(config?.title);
+  const [labels, setLabels] = useState<string[]>(config?.labels || []);
+  const context = useScreenContext();
 
-export const BarChart: React.FC<BarChartProps> = (props) => {
-  const { labels, datasets, title, styles } = props;
+  const evaluatedDatasets = useMemo(() => {
+    return config?.datasets?.map((dataset) => ({
+      ...dataset,
+      data:
+        typeof dataset.data === "string"
+          ? evaluate(context as ScreenContextDefinition, dataset.data)
+          : dataset.data,
+
+      label: dataset.label?.startsWith("${")
+        ? (evaluate(
+            context as ScreenContextDefinition,
+            dataset.label,
+          ) as string)
+        : dataset.label,
+      backgroundColor:
+        typeof dataset.backgroundColor === "string" &&
+        dataset.backgroundColor.startsWith("${")
+          ? (evaluate(
+              context as ScreenContextDefinition,
+              dataset.backgroundColor,
+            ) as string | string[])
+          : dataset.backgroundColor,
+    }));
+  }, [config?.datasets]);
+
+  const { values } = useRegisterBindings({ labels, title }, id, {
+    setLabels,
+    setTitle,
+  });
 
   return (
     <div
@@ -54,15 +79,15 @@ export const BarChart: React.FC<BarChartProps> = (props) => {
     >
       <Bar
         data={{
-          labels,
-          datasets: datasets!,
+          labels: values?.labels,
+          datasets: evaluatedDatasets!,
         }}
         options={{
           ...options,
           plugins: {
             title: {
-              display: Boolean(title),
-              text: title,
+              display: Boolean(values?.title),
+              text: values?.title,
             },
           },
         }}
