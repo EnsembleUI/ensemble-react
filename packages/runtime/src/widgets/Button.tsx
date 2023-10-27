@@ -33,36 +33,34 @@ export const Button: React.FC<ButtonProps> = (props) => {
     }
     action.callback();
   }, [action]);
-  if (values.submitForm) {
+  if (values?.submitForm) {
     return (
       <AntForm.Item
         style={{
           margin: "0px",
         }}
       >
-        <>
-          <AntButton
-            htmlType="submit"
-            onClick={onClickCallback}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "auto",
-              backgroundColor: String(props.styles?.backgroundColor),
-              padding: props.styles?.padding,
-              color: props.styles?.textColor ?? "black",
-              borderColor: props.styles?.borderColor,
-              borderWidth: props.styles?.borderWidth,
-              borderRadius: props.styles?.borderRadius,
-            }}
-          >
-            {props.startingIcon ? <Icon {...props.startingIcon} /> : null}
-            &nbsp;
-            {values.label}
-            {props.endingIcon ? <Icon {...props.endingIcon} /> : null}
-          </AntButton>
-        </>
+        <AntButton
+          htmlType="submit"
+          onClick={onClickCallback}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "auto",
+            backgroundColor: String(props.styles?.backgroundColor),
+            padding: props.styles?.padding,
+            color: props.styles?.textColor ?? "black",
+            borderColor: props.styles?.borderColor,
+            borderWidth: props.styles?.borderWidth,
+            borderRadius: props.styles?.borderRadius,
+          }}
+        >
+          {props.startingIcon ? <Icon {...props.startingIcon} /> : null}
+          &nbsp;
+          {values.label}
+          {props.endingIcon ? <Icon {...props.endingIcon} /> : null}
+        </AntButton>
       </AntForm.Item>
     );
   }
@@ -84,7 +82,7 @@ export const Button: React.FC<ButtonProps> = (props) => {
     >
       {props.startingIcon ? <Icon {...props.startingIcon} /> : null}
       &nbsp;
-      {values.label}
+      {values?.label}
       {props.endingIcon ? <Icon {...props.endingIcon} /> : null}
     </AntButton>
   );

@@ -2,17 +2,17 @@ import { useEffect, useMemo } from "react";
 import { compact, isEqual, map, merge } from "lodash-es";
 import { useAtom } from "jotai";
 import { selectAtom } from "jotai/utils";
-import { focusAtom } from "jotai-optics";
 import type { InvokableMethods } from "../state";
 import { screenAtom } from "../state";
 import { evaluate } from "../evaluate";
 import { isExpression } from "../shared";
 import { useWidgetId } from "./useWidgetId";
 import { useCustomScope } from "./useCustomScope";
+import { useWidgetState } from "./useWidgetState";
 
 export interface EnsembleWidgetState<T> {
   id: string;
-  values: T;
+  values?: T;
 }
 
 export const useRegisterBindings = <T extends Record<string, unknown>>(
@@ -21,13 +21,7 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   methods?: InvokableMethods,
 ): EnsembleWidgetState<T> => {
   const resolvedWidgetId = useWidgetId(id);
-  const widgetStateAtom = useMemo(
-    () =>
-      focusAtom(screenAtom, (optic) => optic.path("widgets", resolvedWidgetId)),
-    [resolvedWidgetId],
-  );
-
-  const [widgetState, setWidgetState] = useAtom(widgetStateAtom);
+  const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
 
   const expressions = useMemo(
     () =>
@@ -85,6 +79,6 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
 
   return {
     id: resolvedWidgetId,
-    values: newValues,
+    values: widgetState?.values,
   };
 };

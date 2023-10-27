@@ -14,7 +14,7 @@ import type {
   UploadFilesAction,
   ScreenContextDefinition,
 } from "@ensembleui/react-framework";
-import { head, isString, merge } from "lodash-es";
+import { head, isEmpty, isString, merge } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigateScreen } from "./useNavigateScreen";
 // FIXME: refactor
@@ -136,9 +136,10 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
   action?: PickFilesAction,
 ) => {
   const [files, setFiles] = useState<FileList>();
+  const [isComplete, setIsComplete] = useState(false);
   const onCompleteAction = useEnsembleAction(action?.onComplete);
 
-  useRegisterBindings(
+  const { values } = useRegisterBindings(
     {
       files,
     },
@@ -161,19 +162,26 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
         (event.target as HTMLInputElement).files || undefined;
 
       if (selectedFiles) {
+        setIsComplete(false);
         setFiles(selectedFiles);
-        onCompleteAction?.callback();
       }
     };
 
     return input;
-  }, [action?.allowMultiple, action?.allowedExtensions, onCompleteAction]);
+  }, [action?.allowMultiple, action?.allowedExtensions]);
 
   useEffect(() => {
     return () => {
       inputEl.remove();
     };
   }, [inputEl]);
+
+  useEffect(() => {
+    if (!isEmpty(values?.files) && !isComplete) {
+      onCompleteAction?.callback();
+      setIsComplete(true);
+    }
+  }, [values?.files, onCompleteAction, isComplete]);
 
   const callback = useCallback((): void => {
     try {
@@ -217,7 +225,7 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
 
   const callback = useCallback(async (): Promise<void> => {
     const apiModel = screenContext?.model?.apis?.find(
-      (model) => model?.name === action?.uploadApi,
+      (model) => model.name === action?.uploadApi,
     );
     if (!apiModel) return;
 
@@ -242,7 +250,7 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
         formData.append(action?.fieldName ?? `file${i}`, files[i]);
       }
 
-    const apiModelBody = apiModel?.body ?? {};
+    const apiModelBody = apiModel.body ?? {};
     for (const key in apiModelBody) {
       const evaluatedValue = isExpression(apiModelBody[key])
         ? evaluate(
@@ -288,13 +296,13 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
       onErrorAction?.callback({ error });
     }
   }, [
-    action?.uploadApi,
-    action?.fieldName,
+    screenContext,
     action?.files,
+    action?.fieldName,
     action?.inputs,
+    action?.uploadApi,
     onCompleteAction,
     onErrorAction,
-    screenContext,
   ]);
 
   return { callback };

@@ -19,23 +19,21 @@ export type ImageProps = {
 
 export const Image: React.FC<ImageProps> = (props) => {
   const [source, setSource] = useState(props.source);
-  const { values } = useRegisterBindings({ ...props, source }, props.id, {
-    setSource,
-  });
   const [imageBackgroundColor, setImageBackgroundColor] = useState(
     props.backgroundColor,
   );
-  const bgColor = useRegisterBindings(
-    { ...props, imageBackgroundColor },
+  const { values } = useRegisterBindings(
+    { ...props, source, imageBackgroundColor },
     props.id,
     {
       setImageBackgroundColor,
+      setSource,
     },
   );
   return (
     <img
       alt=""
-      src={values.source}
+      src={values?.source}
       style={{
         width: props.width,
         height: props.height,
@@ -46,7 +44,7 @@ export const Image: React.FC<ImageProps> = (props) => {
           ? getColor(props.borderColor)
           : undefined,
         borderStyle: props.borderWidth ? "solid" : undefined,
-        backgroundColor: bgColor.values.imageBackgroundColor,
+        backgroundColor: values?.imageBackgroundColor,
         padding: props.padding,
       }}
     />

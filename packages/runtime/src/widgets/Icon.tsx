@@ -11,12 +11,12 @@ export const Icon: React.FC<IconProps> = (props) => {
     setColor,
     setName,
   });
-  const IconComponent = getIcon(values.name);
+  const IconComponent = getIcon(values?.name ?? name);
   if (IconComponent) {
     return (
       <IconComponent
         sx={{
-          color: props.color && getColor(String(values.color)),
+          color: props.color && getColor(String(values?.color)),
           fontSize: props.size,
         }}
       />

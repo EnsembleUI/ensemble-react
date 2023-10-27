@@ -123,7 +123,7 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
     >
       <style>{customStyles}</style>
       <Tabs defaultActiveKey={setDefaultSelectedTab()}>
-        {values.items.map((tabItem) => (
+        {values?.items.map((tabItem) => (
           <TabPane
             key={tabItem.label}
             tab={renderLabel(tabItem.label, tabItem.icon)}
