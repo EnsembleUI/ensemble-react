@@ -1,4 +1,7 @@
-import type { EnsembleScreenModel } from "@ensembleui/react-framework";
+import type {
+  EnsembleScreenModel,
+  EnsembleWidget,
+} from "@ensembleui/react-framework";
 import { ScreenContextProvider } from "@ensembleui/react-framework";
 import { useEffect } from "react";
 import { WidgetRegistry } from "../registry";
@@ -26,9 +29,24 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({ screen }) => {
     throw new Error(`Unknown widget: ${rootWidget.name}`);
   }
 
+  const headerWidget = screen.header?.title;
+  const HeaderFn = WidgetRegistry.find(
+    (headerWidget as EnsembleWidget)?.name ?? "",
+  );
+  const footerWidget = screen.footer;
+  const FooterFn = WidgetRegistry.find(
+    (footerWidget as EnsembleWidget)?.name ?? "",
+  );
+
   return (
     <ScreenContextProvider screen={screen}>
+      {HeaderFn instanceof Function && (
+        <HeaderFn {...(headerWidget as EnsembleWidget)?.properties} />
+      )}
       <WidgetFn {...rootWidget.properties} />
+      {FooterFn instanceof Function && (
+        <FooterFn {...(footerWidget as EnsembleWidget)?.properties} />
+      )}
     </ScreenContextProvider>
   );
 };

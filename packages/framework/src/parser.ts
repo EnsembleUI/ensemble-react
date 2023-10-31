@@ -15,6 +15,8 @@ import type {
   EnsembleWidget,
   EnsembleAppModel,
   EnsembleMenuModel,
+  EnsembleHeaderModel,
+  EnsembleFooterModel,
 } from "./shared/models";
 import type { ApplicationDTO } from "./shared/dto";
 
@@ -67,18 +69,22 @@ export const EnsembleParser = {
   ): EnsembleScreenModel | EnsembleMenuModel => {
     const view = get(screen, "View");
     const viewNode = get(view, "body");
-    const header = get(view, "header") as Record<string, unknown> | undefined;
+    const header = get(view, "header") as EnsembleHeaderModel | undefined;
+    const footer = get(view, "footer") as EnsembleFooterModel | undefined;
 
     if (!viewNode) {
       throw new Error("Invalid screen: missing view widget");
     }
     const viewWidget = unwrapWidget(viewNode);
+    const body = unwrapBody(viewWidget, header, footer);
     const apis = unwrapApiModels(screen);
+
     return {
       ...(view ?? {}),
       name,
-      header: header ? unwrapWidget(header) : undefined,
-      body: viewWidget,
+      header: header ? unwrapHeader(header) : undefined,
+      footer: footer ? unwrapFooter(footer) : undefined,
+      body,
       apis,
     };
   },
@@ -161,4 +167,161 @@ export const unwrapWidget = (obj: Record<string, unknown>): EnsembleWidget => {
     name,
     properties: properties as Record<string, unknown>,
   };
+};
+
+const unwrapBody = (
+  viewWidget: EnsembleWidget,
+  header: EnsembleHeaderModel | undefined,
+  footer?: EnsembleFooterModel | undefined,
+): EnsembleWidget => {
+  const marginTop = !header
+    ? "0px"
+    : !header?.styles?.titleBarHeight
+    ? "56px"
+    : typeof header?.styles?.titleBarHeight === "number"
+    ? header?.styles?.titleBarHeight + "px"
+    : header?.styles?.titleBarHeight;
+  const marginBottom = !footer
+    ? "0px"
+    : !("styles" in footer)
+    ? "56px"
+    : typeof footer?.styles?.height === "number"
+    ? footer?.styles?.height + "px"
+    : footer?.styles?.height;
+
+  // default body styles
+  const defaultStyles = {
+    height: `calc(100vh - ${marginTop} - ${marginBottom})`,
+    overflow: "auto",
+    marginTop,
+    marginBottom,
+  };
+
+  return {
+    name: "Column",
+    properties: {
+      children: [viewWidget],
+      styles: defaultStyles,
+    },
+  };
+};
+
+const unwrapHeader = (
+  header: EnsembleHeaderModel | undefined,
+): EnsembleHeaderModel | undefined => {
+  const title = get(header, "title") as
+    | Record<string, unknown>
+    | string
+    | undefined;
+
+  // default header styles
+  const defaultStyles = {
+    position: "fixed",
+    zIndex: 100,
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: header?.styles?.centerTitle ? "center" : "flex-start",
+    backgroundColor: header?.styles?.backgroundColor || "white",
+    height: header?.styles?.titleBarHeight || 56,
+    paddingRight:
+      document.getElementById("ensemble-sidebar")?.style?.width || "unset",
+  };
+
+  if (typeof title === "string") {
+    return {
+      title: {
+        name: "Column",
+        properties: {
+          styles: defaultStyles,
+          children: [
+            {
+              name: "Text",
+              properties: {
+                text: title,
+                styles: {
+                  color: header?.styles?.color,
+                },
+              },
+            },
+          ],
+        },
+      },
+    };
+  } else if (isObject(title)) {
+    const unwrappedTitle = unwrapWidget(title);
+
+    if (unwrappedTitle.properties.styles)
+      unwrappedTitle.properties.styles = {
+        ...unwrappedTitle.properties.styles,
+        color: header?.styles?.color,
+      };
+    else
+      unwrappedTitle.properties.styles = {
+        color: header?.styles?.color,
+      };
+
+    return {
+      title: {
+        name: "Column",
+        properties: {
+          styles: defaultStyles,
+          children: [unwrappedTitle],
+        },
+      },
+    };
+  }
+};
+
+const unwrapFooter = (
+  footer: EnsembleFooterModel | undefined,
+): EnsembleFooterModel | undefined => {
+  if (!footer) return undefined;
+
+  const givenStyles = footer && "styles" in footer ? footer.styles : undefined;
+
+  // default footer styles
+  const defaultStyles = {
+    position: "fixed",
+    zIndex: 100,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: givenStyles?.width || "100%",
+    backgroundColor: givenStyles?.backgroundColor || "white",
+    height: givenStyles?.height || "56px",
+    top: `calc(100vh - ${
+      (typeof givenStyles?.height === "number"
+        ? givenStyles?.height + "px"
+        : givenStyles?.height) || "56px"
+    })`,
+    paddingRight:
+      document.getElementById("ensemble-sidebar")?.style?.width || "unset",
+  };
+
+  if ("children" in footer) {
+    const children = footer.children.map((child) =>
+      unwrapWidget(child as unknown as Record<string, unknown>),
+    );
+
+    return {
+      name: "Column",
+      properties: {
+        styles: defaultStyles,
+        children,
+      },
+    };
+  } else {
+    const unwrappedFooter = unwrapWidget(
+      footer as unknown as Record<string, unknown>,
+    );
+
+    return {
+      name: "Column",
+      properties: {
+        styles: defaultStyles,
+        children: [unwrappedFooter],
+      },
+    };
+  }
 };
