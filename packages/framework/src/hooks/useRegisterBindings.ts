@@ -1,8 +1,8 @@
 import { useEffect, useMemo } from "react";
-import { compact, isEqual, map, merge } from "lodash-es";
+import { compact, isEqual, map, merge, throttle } from "lodash-es";
 import { useAtom } from "jotai";
 import { selectAtom } from "jotai/utils";
-import type { InvokableMethods } from "../state";
+import type { InvokableMethods, ScreenContextDefinition } from "../state";
 import { screenAtom } from "../state";
 import { evaluate } from "../evaluate";
 import { isExpression } from "../shared";
@@ -43,14 +43,14 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
     () =>
       selectAtom(
         screenAtom,
-        (screenContext) => {
+        throttle((screenContext: ScreenContextDefinition) => {
           const bindingValues = Object.fromEntries(
             expressions.map(([key, expression]) => {
               return [key, evaluate(screenContext, expression, customScope)];
             }),
           );
           return bindingValues;
-        },
+        }, 350),
         isEqual,
       ),
     [customScope, expressions],
