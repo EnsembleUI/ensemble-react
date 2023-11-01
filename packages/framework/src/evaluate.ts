@@ -17,6 +17,7 @@ export const buildEvaluateFn = (
 
   const invokableObj = Object.fromEntries([
     ...widgets,
+    ...Object.entries(screen.inputs ?? {}),
     ...Object.entries(screen.data),
     ...Object.entries(context ?? {}),
   ]);

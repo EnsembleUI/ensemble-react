@@ -26,7 +26,7 @@ View:
               thickness: 1
               color: "#ECEFF6"
         - Text:
-            text: Group icon
+            text: ${message}
             styles:
               fontSize: 14
               fontWeight: 500
