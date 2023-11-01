@@ -1,4 +1,5 @@
 import { atom, createStore } from "jotai";
+import { atomWithLocation } from "jotai-location";
 import { focusAtom } from "jotai-optics";
 import type { Response } from "./data";
 import type { EnsembleAppModel, EnsembleScreenModel } from "./shared/models";
@@ -68,5 +69,7 @@ export const appAtom = atom<ApplicationContextDefinition>({
   user: null,
   secrets: null,
 });
+
+export const locationAtom = atomWithLocation();
 
 export const ensembleStore = createStore();

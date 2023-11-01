@@ -1,12 +1,13 @@
 import { useAtom } from "jotai";
 import { focusAtom } from "jotai-optics";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import type { WidgetState, ScreenContextDefinition } from "../state";
-import { screenAtom } from "../state";
+import { locationAtom, screenAtom } from "../state";
 
 export const useWidgetState = <T extends Record<string, unknown>>(
   id: string,
 ): [WidgetState<T> | undefined, (state: WidgetState<T>) => void] => {
+  const [location] = useAtom(locationAtom);
   const widgetStateAtom = useMemo(
     () =>
       // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
@@ -19,5 +20,12 @@ export const useWidgetState = <T extends Record<string, unknown>>(
     [id],
   );
 
-  return useAtom(widgetStateAtom);
+  const widgetState = useAtom(widgetStateAtom);
+  const [, setWidgetState] = widgetState;
+
+  useEffect(() => {
+    return () => setWidgetState(undefined);
+  }, [location.pathname, setWidgetState]);
+
+  return widgetState;
 };
