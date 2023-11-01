@@ -7,17 +7,41 @@ import { getColor, getIcon } from "../util/utils";
 export const Icon: React.FC<IconProps> = (props) => {
   const [color, setColor] = useState(props.color);
   const [name, setName] = useState(props.name);
-  const { values } = useRegisterBindings({ ...props, color, name }, props.id, {
-    setColor,
-    setName,
-  });
-  const IconComponent = getIcon(values?.name ?? name);
+  const [backgroundColor, setBackgroundColor] = useState(
+    props.styles?.backgroundColor
+  );
+  const { values } = useRegisterBindings(
+    { ...props, color, name, backgroundColor },
+    props.id,
+    {
+      setColor,
+      setName,
+      setBackgroundColor,
+    }
+  );
+  const IconComponent = getIcon(props.name);
   if (IconComponent) {
     return (
       <IconComponent
         sx={{
           color: props.color && getColor(String(values?.color)),
           fontSize: props.size,
+          backgroundColor: `${
+            props.styles?.backgroundColor
+              ? props.styles.backgroundColor
+              : "transparent"
+          }`,
+          padding: `${
+            props.styles?.padding ? `${props.styles.padding}px` : "0px"
+          }`,
+          margin: `${
+            props.styles?.margin ? `${props.styles.margin}px` : "0px"
+          }`,
+          borderRadius: `${
+            props.styles?.borderRadius
+              ? `${props.styles.borderRadius}px`
+              : "0px"
+          }`,
         }}
       />
     );
