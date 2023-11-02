@@ -66,14 +66,12 @@ export interface EnsembleHeaderModel {
   };
 }
 
-export type EnsembleFooterModel =
-  | EnsembleWidget
-  | {
-      children: EnsembleWidget[];
-      styles?: {
-        backgroundColor?: string;
-        height?: string | number;
-        width?: string | number;
-        [key: string]: unknown;
-      };
-    };
+export interface EnsembleFooterModel {
+  children: EnsembleWidget[];
+  styles?: {
+    backgroundColor?: string;
+    height?: string | number;
+    width?: string | number;
+    [key: string]: unknown;
+  };
+}

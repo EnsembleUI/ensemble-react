@@ -5,7 +5,7 @@ View:
       Text:
         text: Ask Embrace header
         styles:
-          fontSize: 30
+          fontSize: 25
     styles:
       titleBarHeight: 100
       backgroundColor: "#f0f0f0"
@@ -148,9 +148,6 @@ View:
                         text: ${i}
 
   footer:
-    # Markdown:
-    #   text: "### Ask Embrace footer"
-
     children:
       - Button:
           label: Let's Go

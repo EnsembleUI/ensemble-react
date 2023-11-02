@@ -22,7 +22,9 @@ import type { ApplicationDTO } from "./shared/dto";
 
 export interface EnsembleScreenYAML {
   View?: {
+    header?: Record<string, unknown>;
     body: Record<string, unknown>;
+    footer?: Record<string, unknown>;
   };
   ViewGroup?: Record<string, unknown>;
 }
@@ -69,22 +71,21 @@ export const EnsembleParser = {
   ): EnsembleScreenModel | EnsembleMenuModel => {
     const view = get(screen, "View");
     const viewNode = get(view, "body");
-    const header = get(view, "header") as EnsembleHeaderModel | undefined;
-    const footer = get(view, "footer") as EnsembleFooterModel | undefined;
+    const header = get(view, "header");
+    const footer = get(view, "footer");
 
     if (!viewNode) {
       throw new Error("Invalid screen: missing view widget");
     }
     const viewWidget = unwrapWidget(viewNode);
-    const body = unwrapBody(viewWidget, header, footer);
     const apis = unwrapApiModels(screen);
 
     return {
       ...(view ?? {}),
       name,
-      header: header ? unwrapHeader(header) : undefined,
-      footer: footer ? unwrapFooter(footer) : undefined,
-      body,
+      header: unwrapHeader(header),
+      footer: unwrapFooter(footer),
+      body: viewWidget,
       apis,
     };
   },
@@ -169,159 +170,37 @@ export const unwrapWidget = (obj: Record<string, unknown>): EnsembleWidget => {
   };
 };
 
-const unwrapBody = (
-  viewWidget: EnsembleWidget,
-  header: EnsembleHeaderModel | undefined,
-  footer?: EnsembleFooterModel | undefined,
-): EnsembleWidget => {
-  const marginTop = !header
-    ? "0px"
-    : !header?.styles?.titleBarHeight
-    ? "56px"
-    : typeof header?.styles?.titleBarHeight === "number"
-    ? header?.styles?.titleBarHeight + "px"
-    : header?.styles?.titleBarHeight;
-  const marginBottom = !footer
-    ? "0px"
-    : !("styles" in footer)
-    ? "56px"
-    : typeof footer?.styles?.height === "number"
-    ? footer?.styles?.height + "px"
-    : footer?.styles?.height;
-
-  // default body styles
-  const defaultStyles = {
-    height: `calc(100vh - ${marginTop} - ${marginBottom})`,
-    overflow: "auto",
-    marginTop,
-    marginBottom,
-  };
-
-  return {
-    name: "Column",
-    properties: {
-      children: [viewWidget],
-      styles: defaultStyles,
-    },
-  };
-};
-
-const unwrapHeader = (
-  header: EnsembleHeaderModel | undefined,
+export const unwrapHeader = (
+  header: Record<string, unknown> | undefined,
 ): EnsembleHeaderModel | undefined => {
   const title = get(header, "title") as
     | Record<string, unknown>
     | string
     | undefined;
 
-  // default header styles
-  const defaultStyles = {
-    position: "fixed",
-    zIndex: 100,
-    width: "100%",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: header?.styles?.centerTitle ? "center" : "flex-start",
-    backgroundColor: header?.styles?.backgroundColor || "white",
-    height: header?.styles?.titleBarHeight || 56,
-    paddingRight:
-      document.getElementById("ensemble-sidebar")?.style?.width || "unset",
+  if (!header || !title) return undefined;
+
+  return {
+    title: typeof title === "string" ? title : unwrapWidget(title),
+    styles: get(header, "styles") as Record<string, unknown>,
   };
-
-  if (typeof title === "string") {
-    return {
-      title: {
-        name: "Column",
-        properties: {
-          styles: defaultStyles,
-          children: [
-            {
-              name: "Text",
-              properties: {
-                text: title,
-                styles: {
-                  color: header?.styles?.color,
-                },
-              },
-            },
-          ],
-        },
-      },
-    };
-  } else if (isObject(title)) {
-    const unwrappedTitle = unwrapWidget(title);
-
-    if (unwrappedTitle.properties.styles)
-      unwrappedTitle.properties.styles = {
-        ...unwrappedTitle.properties.styles,
-        color: header?.styles?.color,
-      };
-    else
-      unwrappedTitle.properties.styles = {
-        color: header?.styles?.color,
-      };
-
-    return {
-      title: {
-        name: "Column",
-        properties: {
-          styles: defaultStyles,
-          children: [unwrappedTitle],
-        },
-      },
-    };
-  }
 };
 
 const unwrapFooter = (
-  footer: EnsembleFooterModel | undefined,
+  footer: Record<string, unknown> | undefined,
 ): EnsembleFooterModel | undefined => {
   if (!footer) return undefined;
 
-  const givenStyles = footer && "styles" in footer ? footer.styles : undefined;
-
-  // default footer styles
-  const defaultStyles = {
-    position: "fixed",
-    zIndex: 100,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    width: givenStyles?.width || "100%",
-    backgroundColor: givenStyles?.backgroundColor || "white",
-    height: givenStyles?.height || "56px",
-    top: `calc(100vh - ${
-      (typeof givenStyles?.height === "number"
-        ? givenStyles?.height + "px"
-        : givenStyles?.height) || "56px"
-    })`,
-    paddingRight:
-      document.getElementById("ensemble-sidebar")?.style?.width || "unset",
-  };
-
-  if ("children" in footer) {
-    const children = footer.children.map((child) =>
-      unwrapWidget(child as unknown as Record<string, unknown>),
+  const children = get(footer, "children");
+  if (isArray(children)) {
+    const unwrappedChildren = map(children, (child) =>
+      unwrapWidget(child as Record<string, unknown>),
     );
+    set(footer as object, "children", unwrappedChildren);
 
     return {
-      name: "Column",
-      properties: {
-        styles: defaultStyles,
-        children,
-      },
-    };
-  } else {
-    const unwrappedFooter = unwrapWidget(
-      footer as unknown as Record<string, unknown>,
-    );
-
-    return {
-      name: "Column",
-      properties: {
-        styles: defaultStyles,
-        children: [unwrappedFooter],
-      },
+      children: unwrappedChildren,
+      styles: get(footer, "styles") as Record<string, unknown>,
     };
   }
 };
