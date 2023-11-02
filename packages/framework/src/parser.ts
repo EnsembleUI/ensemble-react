@@ -196,6 +196,7 @@ const unwrapFooter = (
     const unwrappedChildren = map(children, (child) =>
       unwrapWidget(child as Record<string, unknown>),
     );
+    set(footer as object, "children", unwrappedChildren);
 
     return {
       children: unwrappedChildren,

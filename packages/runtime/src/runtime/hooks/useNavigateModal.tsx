@@ -35,16 +35,21 @@ export const useNavigateModalScreen: EnsembleActionHook<
   }, [app, screenName]);
 
   const callback = useCallback(() => {
-    if (screen) {
-      openModal?.(<EnsembleScreen screen={screen} />, {
-        maskClosable,
-        position,
-        height,
-        width,
-        margin,
-        padding,
-      });
-    }
+    if (screen)
+      openModal?.(
+        <EnsembleScreen
+          inputs={isStringAction ? undefined : action?.inputs}
+          screen={screen}
+        />,
+        {
+          maskClosable,
+          position,
+          height,
+          width,
+          margin,
+          padding,
+        },
+      );
   }, [
     screen,
     openModal,
