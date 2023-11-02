@@ -1,11 +1,7 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  type NavigateScreenAction,
-  ensembleStore,
-  screenAtom,
-} from "@ensembleui/react-framework";
-import { isString, merge } from "lodash-es";
+import { type NavigateScreenAction } from "@ensembleui/react-framework";
+import { isEmpty, isString } from "lodash-es";
 import type { EnsembleActionHook } from "./useEnsembleAction";
 
 export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
@@ -19,13 +15,17 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
     if (!screenName) {
       return;
     }
-    return () => {
-      navigate(`/${screenName.toLowerCase()}`);
-      if (hasOptions) {
-        const context = ensembleStore.get(screenAtom);
-        context.inputs = merge({}, action?.inputs);
-        ensembleStore.set(screenAtom, context);
+    let queryString = "";
+    if (hasOptions) {
+      const searchParams = new URLSearchParams(
+        action?.inputs as Record<string, string>,
+      ).toString();
+      if (!isEmpty(searchParams)) {
+        queryString = `?${searchParams}`;
       }
+    }
+    return () => {
+      navigate(`/${screenName.toLowerCase()}${queryString}`);
     };
   }, [screenName, navigate, hasOptions, action]);
   return callback ? { callback } : undefined;

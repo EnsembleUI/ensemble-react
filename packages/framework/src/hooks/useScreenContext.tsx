@@ -1,14 +1,19 @@
-import { Provider, useAtomValue, useSetAtom } from "jotai";
+import { Provider, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useCallback, useEffect } from "react";
 import { merge } from "lodash-es";
-import { ensembleStore, screenAtom, screenDataAtom } from "../state";
+import {
+  ensembleStore,
+  locationAtom,
+  screenAtom,
+  screenDataAtom,
+} from "../state";
 import type { ScreenContextActions, ScreenContextDefinition } from "../state";
 import type { Response } from "../data";
 import type { EnsembleScreenModel } from "../shared/models";
 
 interface ScreenContextProps {
   screen: EnsembleScreenModel;
-  context?: ScreenContextDefinition;
+  context?: Partial<ScreenContextDefinition>;
 }
 
 type ScreenContextProviderProps = React.PropsWithChildren<ScreenContextProps>;
@@ -18,20 +23,26 @@ export const ScreenContextProvider: React.FC<ScreenContextProviderProps> = ({
   context,
   children,
 }) => {
+  const [location] = useAtom(locationAtom);
   useEffect(() => {
+    const queryParams = Object.fromEntries(location.searchParams ?? []);
     // FIXME: guarantee ordering in resetting screen state
     const prevValue = ensembleStore.get(screenAtom);
     if (context) {
-      ensembleStore.set(screenAtom, merge(prevValue, context));
+      ensembleStore.set(
+        screenAtom,
+        merge(prevValue, { inputs: queryParams }, context),
+      );
     } else {
       ensembleStore.set(
         screenAtom,
         merge(prevValue, {
           model: screen,
+          inputs: queryParams,
         }),
       );
     }
-  }, []);
+  }, [context, location.searchParams, screen]);
 
   return <Provider store={ensembleStore}>{children}</Provider>;
 };

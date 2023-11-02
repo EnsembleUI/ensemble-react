@@ -8,9 +8,13 @@ import { useEnsembleAction } from "./hooks/useEnsembleAction";
 
 export interface EnsembleScreenProps {
   screen: EnsembleScreenModel;
+  inputs?: Record<string, unknown>;
 }
 
-export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({ screen }) => {
+export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
+  screen,
+  inputs,
+}) => {
   const onLoadAction = useEnsembleAction(screen.onLoad);
 
   useEffect(() => {
@@ -27,7 +31,10 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({ screen }) => {
   }
 
   return (
-    <ScreenContextProvider screen={screen}>
+    <ScreenContextProvider
+      context={inputs ? { inputs } : undefined}
+      screen={screen}
+    >
       <WidgetFn {...rootWidget.properties} />
     </ScreenContextProvider>
   );
