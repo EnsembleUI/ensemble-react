@@ -3,11 +3,13 @@ import { atomWithLocation } from "jotai-location";
 import { focusAtom } from "jotai-optics";
 import type { Response } from "./data";
 import type { EnsembleAppModel, EnsembleScreenModel } from "./shared/models";
+import type { EnsembleStorage } from "./storage";
 
 export interface ScreenContextDefinition {
   model?: EnsembleScreenModel;
   data: Record<string, Response | undefined>;
   widgets: Record<string, WidgetState | undefined>;
+  inputs?: Record<string, unknown>;
   storage: Record<string, unknown>;
   [key: string]: unknown;
 }
@@ -20,7 +22,7 @@ export interface ScreenContextActions {
 
 export interface ApplicationContextDefinition {
   application: EnsembleAppModel | null;
-  storage: unknown;
+  storage: EnsembleStorage | null;
   secrets: unknown;
   env: unknown;
   auth: unknown;

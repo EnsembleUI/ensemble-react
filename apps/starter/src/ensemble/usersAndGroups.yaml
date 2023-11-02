@@ -93,6 +93,8 @@ View:
                                       onTap:
                                         navigateModalScreen:
                                           name: Create Group
+                                          inputs:
+                                            message: hello world
                                           maskClosable: false
                                           styles:
                                             position: right

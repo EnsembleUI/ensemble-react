@@ -1,7 +1,8 @@
 import type { NavigateModalScreenAction } from "@ensembleui/react-framework";
 import { useApplicationContext } from "@ensembleui/react-framework";
+import { isString } from "lodash-es";
 import { useCallback, useContext, useMemo } from "react";
-// FIXME
+// FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { EnsembleScreen } from "../screen";
 import { EnsembleRuntime } from "../runtime";
@@ -14,7 +15,7 @@ export const useNavigateModalScreen: EnsembleActionHook<
   const { openModal } = useContext(ModalContext) || {};
   const app = useApplicationContext();
 
-  const isStringAction = typeof action === "string";
+  const isStringAction = isString(action);
   const screenName = isStringAction ? action : action?.name;
   const {
     maskClosable = true,
@@ -38,19 +39,28 @@ export const useNavigateModalScreen: EnsembleActionHook<
   }, [app, screenName]);
 
   const callback = useCallback(() => {
-    if (screen)
-      openModal?.(<EnsembleScreen screen={screen} />, {
-        title,
-        maskClosable,
-        position,
-        height,
-        width,
-        margin,
-        padding,
-      });
+    if (screen) {
+      openModal?.(
+        <EnsembleScreen
+          inputs={isStringAction ? undefined : action?.inputs}
+          screen={screen}
+        />,
+        {
+          title,
+          maskClosable,
+          position,
+          height,
+          width,
+          margin,
+          padding,
+        },
+      );
+    }
   }, [
-    openModal,
     screen,
+    openModal,
+    isStringAction,
+    action,
     title,
     maskClosable,
     position,
