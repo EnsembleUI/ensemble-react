@@ -178,7 +178,7 @@ export const unwrapHeader = (
     | string
     | undefined;
 
-  if (!header || !title) return undefined;
+  if (!header || !title) return;
 
   return {
     title: typeof title === "string" ? title : unwrapWidget(title),
@@ -189,14 +189,13 @@ export const unwrapHeader = (
 const unwrapFooter = (
   footer: Record<string, unknown> | undefined,
 ): EnsembleFooterModel | undefined => {
-  if (!footer) return undefined;
+  if (!footer) return;
 
   const children = get(footer, "children");
   if (isArray(children)) {
     const unwrappedChildren = map(children, (child) =>
       unwrapWidget(child as Record<string, unknown>),
     );
-    set(footer as object, "children", unwrappedChildren);
 
     return {
       children: unwrappedChildren,

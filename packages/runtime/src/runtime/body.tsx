@@ -3,8 +3,8 @@ import type {
   EnsembleHeaderModel,
   EnsembleWidget,
 } from "@ensembleui/react-framework";
-import { set } from "lodash-es";
 import { WidgetRegistry } from "../registry";
+import { Column } from "../widgets";
 
 interface EnsembleBodyProps {
   body?: EnsembleWidget;
@@ -18,21 +18,20 @@ export const EnsembleBody: React.FC<EnsembleBodyProps> = ({
   footer,
 }) => {
   const BodyFn = WidgetRegistry.find(body?.name ?? "");
-  if (!(BodyFn instanceof Function)) {
+  if (!(BodyFn instanceof Function))
     throw new Error(`Unknown widget: ${body?.name}`);
-  }
 
-  prepareBody(body, header, footer);
+  const BodyWidget = prepareBody(body, header, footer);
 
-  return <BodyFn {...body?.properties} />;
+  return BodyWidget ? <>{BodyWidget}</> : null;
 };
 
 const prepareBody = (
   body?: EnsembleWidget,
   header?: EnsembleHeaderModel,
   footer?: EnsembleFooterModel,
-): void => {
-  if (!body) return body;
+): React.ReactElement | undefined => {
+  if (!body) return;
 
   // default body styles
   const marginTop = !header
@@ -52,9 +51,11 @@ const prepareBody = (
 
   // default body styles
   const defaultStyles = {
-    height: `calc(100vh - ${marginTop} - ${marginBottom})`,
-    overflow: "auto",
+    styles: {
+      height: `calc(100vh - ${marginTop} - ${marginBottom})`,
+      overflow: "auto",
+    },
   };
 
-  set(body, ["properties", "styles"], defaultStyles);
+  return <Column {...defaultStyles} children={[body]} />;
 };

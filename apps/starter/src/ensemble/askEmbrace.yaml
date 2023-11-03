@@ -11,6 +11,7 @@ View:
       backgroundColor: "#f0f0f0"
       centerTitle: true
       color: "#00f0f0"
+      titleColor: "#0000f0"
 
   body:
     Column:
