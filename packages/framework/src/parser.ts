@@ -52,8 +52,8 @@ export const EnsembleParser = {
       menu.items.forEach(
         (item) =>
           (item.screen = screens.find(
-            (screen) => "name" in screen && screen.name === item.page,
-          ) as EnsembleScreenModel),
+            (screen) => "name" in screen && screen.name === item.page
+          ) as EnsembleScreenModel)
       );
     }
 
@@ -68,7 +68,7 @@ export const EnsembleParser = {
 
   parseScreen: (
     name: string,
-    screen: EnsembleScreenYAML,
+    screen: EnsembleScreenYAML
   ): EnsembleScreenModel | EnsembleMenuModel => {
     const view = get(screen, "View");
     const viewNode = get(view, "body");
@@ -144,6 +144,7 @@ export const unwrapWidget = (obj: Record<string, unknown>): EnsembleWidget => {
   const children = get(properties, "children");
   const template = get(properties, ["item-template", "template"]) as unknown;
   const items = get(properties, "items");
+  const steps = get(properties, "steps");
   if (isArray(children)) {
     const unwrappedChildren = map(children, unwrapWidget);
     set(properties as object, "children", unwrappedChildren);
@@ -157,12 +158,41 @@ export const unwrapWidget = (obj: Record<string, unknown>): EnsembleWidget => {
       const valueItems = (items as Record<string, unknown>[]).map(
         ({ label, widget, icon }) => {
           const unwrappedWidget = unwrapWidget(
-            widget as Record<string, unknown>,
+            widget as Record<string, unknown>
           );
           return { label, icon, widget: unwrappedWidget };
-        },
+        }
       );
       set(properties as object, "items", valueItems);
+    }
+  }
+  if (isArray(steps) && !isEmpty(steps)) {
+    if ("contentWidget" in steps[0]) {
+      const valueSteps = (steps as Record<string, unknown>[]).map(
+        ({
+          stepLabel,
+          contentWidget,
+          inactiveStepWidget,
+          activeStepWidget,
+        }) => {
+          const unwrappedWidget = unwrapWidget(
+            contentWidget as Record<string, unknown>
+          );
+          const unwrappedInactiveStepWidget = unwrapWidget(
+            inactiveStepWidget as Record<string, unknown>
+          );
+          const unwrappedActiveStepWidget = unwrapWidget(
+            activeStepWidget as Record<string, unknown>
+          );
+          return {
+            stepLabel,
+            inactiveStepWidget: unwrappedInactiveStepWidget,
+            activeStepWidget: unwrappedActiveStepWidget,
+            contentWidget: unwrappedWidget,
+          };
+        }
+      );
+      set(properties as object, "steps", valueSteps);
     }
   }
   return {

@@ -23,3 +23,4 @@ export * from "./Tag";
 export * from "./Carousel";
 export * from "./PopupMenu";
 export * from "./Dropdown";
+export * from "./Stepper";
