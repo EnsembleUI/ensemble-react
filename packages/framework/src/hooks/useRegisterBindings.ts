@@ -18,7 +18,7 @@ export interface EnsembleWidgetState<T> {
 export const useRegisterBindings = <T extends Record<string, unknown>>(
   values: T,
   id?: string,
-  methods?: InvokableMethods,
+  methods?: InvokableMethods
 ): EnsembleWidgetState<T> => {
   const resolvedWidgetId = useWidgetId(id);
   const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
@@ -30,11 +30,11 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
           if (isExpression(value)) {
             return [key, value.slice(2, value.length - 1)];
           }
-        }),
+        })
       ),
     // FIXME: update expressions if props change without creating new atom
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    []
   );
 
   const customScope = useCustomScope();
@@ -47,21 +47,23 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
           const bindingValues = Object.fromEntries(
             expressions.map(([key, expression]) => {
               return [key, evaluate(screenContext, expression, customScope)];
-            }),
+            })
           );
           return bindingValues;
         }, 350),
-        isEqual,
+        isEqual
       ),
-    [customScope, expressions],
+    [customScope, expressions]
   );
 
   const [bindings] = useAtom(bindingsAtom);
 
   const newValues = merge({}, values, bindings) as T;
-
   useEffect(() => {
-    if (isEqual(newValues, widgetState?.values)) {
+    if (
+      isEqual(newValues, widgetState?.values) &&
+      isEqual(methods, widgetState?.invokable?.methods)
+    ) {
       return;
     }
 
