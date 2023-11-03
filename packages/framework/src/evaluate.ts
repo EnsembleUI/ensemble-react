@@ -1,6 +1,8 @@
 import { isEmpty, last, merge } from "lodash-es";
-import type { InvokableMethods, ScreenContextDefinition } from "./state";
+import type { ScreenContextDefinition } from "./state/screen";
+import type { InvokableMethods } from "./state/widget";
 import { EnsembleStorage } from "./storage";
+import { sanitizeJs } from "./shared";
 
 export const buildEvaluateFn = (
   screen: ScreenContextDefinition,
@@ -49,13 +51,6 @@ const formatJs = (js?: string): string => {
     `;
   }
   return `return ${sanitizedJs}`;
-};
-
-const sanitizeJs = (string: string): string => {
-  if (string.startsWith("${") && string.endsWith("}")) {
-    return string.substring(2, string.length - 1);
-  }
-  return string.trim();
 };
 
 export const evaluate = (

@@ -36,14 +36,19 @@ Object.defineProperty(window, "matchMedia", {
 });
 
 test("Renders error page", () => {
+  /* eslint-disable no-console */
+  const consoleErr = console.error;
+  console.error = jest.fn();
   loadAppMock.mockReturnValue({});
-  parseApplicationMock.mockReturnValue({ screens: [] });
+  parseApplicationMock.mockReturnValue({ home: {}, screens: [] });
   try {
     render(<EnsembleApp appId="test" />);
   } catch (e) {
     // no-op
   }
 
+  console.error = consoleErr;
+  /* eslint-enable no-console */
   expect(
     screen.getByText("Sorry, an unexpected error has occurred."),
   ).not.toBeNull();
@@ -76,8 +81,7 @@ test("Renders view widget of home screen", () => {
   expect(screen.getByText("Peter Parker")).not.toBeNull();
 });
 
-// FIXME: temporarily disable this until widget state performance is fixed
-test.skip("Bind data from other widgets", async () => {
+test("Bind data from other widgets", async () => {
   const mockScreen = {
     name: "ReadValue",
     body: {
