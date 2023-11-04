@@ -168,25 +168,12 @@ export const unwrapWidget = (obj: Record<string, unknown>): EnsembleWidget => {
   if (isArray(steps) && !isEmpty(steps)) {
     if ("contentWidget" in steps[0]) {
       const valueSteps = (steps as Record<string, unknown>[]).map(
-        ({
-          stepLabel,
-          contentWidget,
-          inactiveStepWidget,
-          activeStepWidget,
-        }) => {
+        ({ stepLabel, contentWidget }) => {
           const unwrappedWidget = unwrapWidget(
             contentWidget as Record<string, unknown>
           );
-          const unwrappedInactiveStepWidget = unwrapWidget(
-            inactiveStepWidget as Record<string, unknown>
-          );
-          const unwrappedActiveStepWidget = unwrapWidget(
-            activeStepWidget as Record<string, unknown>
-          );
           return {
             stepLabel,
-            inactiveStepWidget: unwrappedInactiveStepWidget,
-            activeStepWidget: unwrappedActiveStepWidget,
             contentWidget: unwrappedWidget,
           };
         }

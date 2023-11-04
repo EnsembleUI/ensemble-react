@@ -4,8 +4,6 @@ import {
   Step,
   StepLabel,
   StepButton,
-  Button,
-  Typography,
   StepOwnProps,
   styled,
 } from "@mui/material";
@@ -13,13 +11,17 @@ import type { StepIconProps } from "@mui/material/StepIcon";
 import StepConnector, {
   stepConnectorClasses,
 } from "@mui/material/StepConnector";
+import { map } from "lodash-es";
 import {
   type EnsembleWidget,
   useRegisterBindings,
+  type Expression,
+  useTemplateData,
 } from "@ensembleui/react-framework";
-import type { EnsembleWidgetProps } from "../util/types";
-import { WidgetRegistry } from "../registry";
-import { EnsembleRuntime } from "../runtime";
+import type { EnsembleWidgetProps } from "../../util/types";
+import { WidgetRegistry } from "../../registry";
+import { EnsembleRuntime } from "../../runtime";
+import { StepType } from "./StepType";
 
 export interface StepProps {
   stepLabel: string;
@@ -28,9 +30,20 @@ export interface StepProps {
   contentWidget: EnsembleWidget;
 }
 
+export interface StepTemplate {
+  name: "Steps";
+  properties: {
+    children: EnsembleWidget[];
+  };
+}
+
 export type StepperProps = {
-  activeStepIndex?: number;
   steps: StepProps[];
+  "item-template": {
+    data: Expression<object>;
+    name: string;
+    template: StepTemplate;
+  };
   styles: {
     connectorColor?: string;
     connectorHeight?: number;
@@ -38,14 +51,20 @@ export type StepperProps = {
 } & EnsembleWidgetProps;
 
 interface CustomConnectorProps {
-  connectorColor?: string;
-  activeConnectorColor?: string;
-  completedConnectorColor?: string;
-  connectorHeight?: number;
+  connector_color?: string;
+  connector_height?: number;
 }
 
 const Stepper: React.FC<StepperProps> = (props) => {
   const [activeStep, setActiveStep] = useState(0);
+  const itemTemplate = props["item-template"];
+  const templateData = useTemplateData(itemTemplate.data);
+  const namedData = map(templateData, (value) => {
+    const namedObj: Record<string, unknown> = {};
+    namedObj[itemTemplate.name] = value;
+    return namedObj;
+  });
+  const stepTypes = itemTemplate.template;
   const handleNext = useCallback(() => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   }, [setActiveStep]);
@@ -56,14 +75,11 @@ const Stepper: React.FC<StepperProps> = (props) => {
   const handleStep = (step: number) => () => {
     setActiveStep(step);
   };
-  const { values } = useRegisterBindings(
-    { ...props, activeStep: activeStep },
-    props.id,
-    {
-      handleNext,
-      handleBack,
-    }
-  );
+  const { values } = useRegisterBindings({ ...props, activeStep }, props.id, {
+    handleNext,
+    handleBack,
+  });
+  console.log("namedData", namedData, namedData[0][itemTemplate.name]);
   return (
     <div>
       <MUIStepper
@@ -71,21 +87,21 @@ const Stepper: React.FC<StepperProps> = (props) => {
         alternativeLabel
         connector={
           <CustomConnector
-            connectorColor={props?.styles.connectorColor}
-            connectorHeight={props?.styles.connectorHeight}
+            connector_color={props?.styles.connectorColor}
+            connector_height={props?.styles.connectorHeight}
           />
         }
       >
-        {values?.steps[0].inactiveStepWidget &&
-        values?.steps[0].activeStepWidget
-          ? values?.steps.map((step, index) => (
-              <Step key={step.stepLabel}>
-                <StepButton color="inherit" onClick={handleStep(index)}>
+        {values?.["item-template"]
+          ? namedData?.map((data, index) => (
+              <Step key={index}>
+                <StepButton onClick={handleStep(index)}>
                   <StepLabel
                     StepIconComponent={(iconProps: StepOwnProps) => {
                       const newProps = {
-                        step,
+                        stepTypes,
                         ...(iconProps as StepIconProps),
+                        data,
                       };
                       return CustomStepIcon(newProps);
                     }}
@@ -93,11 +109,7 @@ const Stepper: React.FC<StepperProps> = (props) => {
                 </StepButton>
               </Step>
             ))
-          : values?.steps.map((step) => (
-              <Step key={step.stepLabel}>
-                <StepLabel>{step.stepLabel}</StepLabel>
-              </Step>
-            ))}
+          : null}
       </MUIStepper>
       <div>
         {values?.steps.map((step, index) => (
@@ -127,7 +139,7 @@ const CustomConnector = styled(StepConnector)(
     },
     [`&.${stepConnectorClasses.active}`]: {
       [`& .${stepConnectorClasses.line}`]: {
-        borderColor: props?.connectorColor ?? "grey",
+        borderColor: props?.connector_color ?? "grey",
       },
     },
     [`&.${stepConnectorClasses.completed}`]: {
@@ -137,16 +149,29 @@ const CustomConnector = styled(StepConnector)(
     },
     [`& .${stepConnectorClasses.line}`]: {
       borderColor: "#eaeaf0",
-      borderTopWidth: props?.connectorHeight ?? 3,
+      borderTopWidth: props?.connector_height ?? 3,
       borderRadius: 1,
     },
   })
 );
 
-const CustomStepIcon = (props: { step: StepProps } & StepIconProps) => {
+const CustomStepIcon = (
+  props: { stepTypes: StepTemplate } & StepIconProps & {
+      data: Record<string, unknown>;
+    }
+) => {
   const { active, completed } = props;
-  if (active || completed) {
-    return <div>{EnsembleRuntime.render([props.step.activeStepWidget])}</div>;
+  if (active) {
+    return (
+      <StepType data={props.data} stepIndex={1} template={props.stepTypes} />
+    );
   }
-  return <div>{EnsembleRuntime.render([props.step.inactiveStepWidget])}</div>;
+  if (completed) {
+    return (
+      <StepType data={props.data} stepIndex={2} template={props.stepTypes} />
+    );
+  }
+  return (
+    <StepType data={props.data} stepIndex={0} template={props.stepTypes} />
+  );
 };

@@ -37,7 +37,6 @@ export const GridView: React.FC<GridViewProps> = ({
   const namedData = map(templateData, (value) => ({
     [name]: value,
   }));
-
   const rows = [];
   const colCount = styles?.horizontalTileCount ?? defaultColumnCount;
   const rowCount = Math.ceil(namedData.length / colCount);
@@ -64,7 +63,7 @@ export const GridView: React.FC<GridViewProps> = ({
             <CustomScopeProvider value={namedData[dataIndex] as CustomScope}>
               {EnsembleRuntime.render([template])}
             </CustomScopeProvider>
-          </Col>,
+          </Col>
         );
     }
     rows.push(
@@ -78,7 +77,7 @@ export const GridView: React.FC<GridViewProps> = ({
         }}
       >
         {cols}
-      </Row>,
+      </Row>
     );
   }
 
