@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import { useRegisterBindings } from "@ensembleui/react-framework";
+import {
+  useRegisterBindings,
+  evaluate,
+  useScreenContext,
+} from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import type { IconProps } from "../shared/types";
 import { getColor, getIcon } from "../shared/styles";
@@ -19,7 +23,7 @@ export const Icon: React.FC<IconProps> = (props) => {
       setBackgroundColor,
     },
   );
-  const IconComponent = getIcon(props.name);
+  const IconComponent = getIcon(values?.name ? values.name : "");
   if (IconComponent) {
     return (
       <IconComponent

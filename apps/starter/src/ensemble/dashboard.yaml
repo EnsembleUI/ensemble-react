@@ -139,41 +139,86 @@ View:
             text: ${getDummyJson.body.total}
         - Stepper:
             id: stepper1
-            activeStepIndex: 0
             styles:
               connectorColor: "#31C48D"
               connectorHeight: 4
+            item-template:
+              data:
+                - name: Match
+                  iconName: ScaleOutlined
+                - name: SubmitDocs
+                  iconName: FindInPageOutlined
+                - name: Review
+                  iconName: Check
+              name: step
+              template:
+                Steps:
+                  children:
+                    # InActive
+                    - Column:
+                        crossAxis: center
+                        children:
+                          - Icon:
+                              name: ${step.iconName}
+                              color: grey
+                              styles:
+                                borderWidth: 1
+                                borderRadius: 30
+                                padding: 8
+                                backgroundColor: white
+                          - Text:
+                              text: ${step.name}
+                    # Active
+                    - Column:
+                        crossAxis: center
+                        children:
+                          - Icon:
+                              name: ${step.iconName}
+                              color: "#1D1C21"
+                              styles:
+                                borderWidth: 1
+                                borderRadius: 30
+                                padding: 8
+                                backgroundColor: white
+                          - Text:
+                              text: In Progress
+                    # Completed
+                    - Column:
+                        crossAxis: center
+                        children:
+                          - Icon:
+                              name: ${step.iconName}
+                              color: "#31C48D"
+                              styles:
+                                borderWidth: 1
+                                borderRadius: 30
+                                padding: 8
+                                backgroundColor: white
+                          - Column:
+                              gap: 4
+                              crossAxis: center
+                              children:
+                                - Text:
+                                    text: ${step.name}
+                                    styles:
+                                      fontSize: 14
+                                      fontWeight: 600
+                                - Row:
+                                    gap: 3
+                                    children:
+                                      - Text:
+                                          text: 12/31/3131
+                                          styles:
+                                            fontSize: 12
+                                            color: "#747184"
+                                            fontWeight: 500
+                                      - Icon:
+                                          name: Check
+                                          color: "#31C48D"
+                                          size: 16
+
             steps:
               - stepLabel: Match
-                inactiveStepWidget:
-                  Column:
-                    crossAxis: center
-                    children:
-                      - Icon:
-                          name: ScaleOutlined
-                          color: grey
-                          styles:
-                            borderWidth: 1
-                            borderRadius: 30
-                            padding: 8
-                            backgroundColor: white
-                      - Text:
-                          text: Match
-                activeStepWidget:
-                  Column:
-                    crossAxis: center
-                    children:
-                      - Icon:
-                          name: ScaleOutlined
-                          color: "#31C48D"
-                          styles:
-                            borderColor: "#31C48D"
-                            borderWidth: 1
-                            borderRadius: 30
-                            padding: 8
-                            backgroundColor: white
-                      - Text:
-                          text: Match
                 contentWidget:
                   Column:
                     crossAxis: center
@@ -184,35 +229,6 @@ View:
                       - Button:
                           label: Doing Good
               - stepLabel: SubmitDocs
-                inactiveStepWidget:
-                  Column:
-                    crossAxis: center
-                    children:
-                      - Icon:
-                          name: FindInPageOutlined
-                          color: grey
-                          styles:
-                            borderWidth: 1
-                            borderRadius: 30
-                            padding: 8
-                            backgroundColor: white
-                      - Text:
-                          text: SubmitDocs
-                activeStepWidget:
-                  Column:
-                    crossAxis: center
-                    children:
-                      - Icon:
-                          name: FindInPageOutlined
-                          color: "#31C48D"
-                          styles:
-                            borderColor: "#31C48D"
-                            borderWidth: 1
-                            borderRadius: 30
-                            padding: 8
-                            backgroundColor: white
-                      - Text:
-                          text: SubmitDocs
                 contentWidget:
                   Column:
                     crossAxis: center
@@ -222,36 +238,7 @@ View:
                           text: Doing asd
                       - Button:
                           label: Doing Good
-              - stepLabel: Review
-                inactiveStepWidget:
-                  Column:
-                    crossAxis: center
-                    children:
-                      - Icon:
-                          name: Check
-                          color: grey
-                          styles:
-                            borderWidth: 1
-                            borderRadius: 30
-                            padding: 8
-                            backgroundColor: white
-                      - Text:
-                          text: Review
-                activeStepWidget:
-                  Column:
-                    crossAxis: center
-                    children:
-                      - Icon:
-                          name: Check
-                          color: "#31C48D"
-                          styles:
-                            borderColor: "#31C48D"
-                            borderWidth: 1
-                            borderRadius: 30
-                            padding: 8
-                            backgroundColor: white
-                      - Text:
-                          text: Review
+              - stepLabel: Check
                 contentWidget:
                   Column:
                     crossAxis: center
