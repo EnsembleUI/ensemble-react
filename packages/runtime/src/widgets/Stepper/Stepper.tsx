@@ -25,8 +25,6 @@ import { StepType } from "./StepType";
 
 export interface StepProps {
   stepLabel: string;
-  activeStepWidget: EnsembleWidget;
-  inactiveStepWidget: EnsembleWidget;
   contentWidget: EnsembleWidget;
 }
 
@@ -64,14 +62,19 @@ const Stepper: React.FC<StepperProps> = (props) => {
     namedObj[itemTemplate.name] = value;
     return namedObj;
   });
+  const stepsLength = namedData.length;
   const stepTypes = itemTemplate.template;
   const handleNext = useCallback(() => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  }, [setActiveStep]);
+    if (activeStep < namedData.length - 1) {
+      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
+  }, [activeStep, namedData.length]);
 
   const handleBack = useCallback(() => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  }, [setActiveStep]);
+    if (activeStep !== 0) {
+      setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    }
+  }, [activeStep]);
   const handleStep = (step: number) => () => {
     setActiveStep(step);
   };
@@ -79,7 +82,6 @@ const Stepper: React.FC<StepperProps> = (props) => {
     handleNext,
     handleBack,
   });
-  console.log("namedData", namedData, namedData[0][itemTemplate.name]);
   return (
     <div>
       <MUIStepper
@@ -102,6 +104,8 @@ const Stepper: React.FC<StepperProps> = (props) => {
                         stepTypes,
                         ...(iconProps as StepIconProps),
                         data,
+                        index: values.activeStep,
+                        stepsLength,
                       };
                       return CustomStepIcon(newProps);
                     }}
@@ -158,15 +162,15 @@ const CustomConnector = styled(StepConnector)(
 const CustomStepIcon = (
   props: { stepTypes: StepTemplate } & StepIconProps & {
       data: Record<string, unknown>;
-    }
+    } & { index: number } & { stepsLength: number }
 ) => {
   const { active, completed } = props;
-  if (active) {
+  if (active && props.index !== props.stepsLength - 1) {
     return (
       <StepType data={props.data} stepIndex={1} template={props.stepTypes} />
     );
   }
-  if (completed) {
+  if (completed || props.index === props.stepsLength - 1) {
     return (
       <StepType data={props.data} stepIndex={2} template={props.stepTypes} />
     );
