@@ -150,6 +150,8 @@ View:
                   iconName: FindInPageOutlined
                 - name: Review
                   iconName: Check
+                - name: Enroll
+                  iconName: Search
               name: step
               template:
                 Steps:
@@ -162,7 +164,7 @@ View:
                               name: ${step.iconName}
                               color: grey
                               styles:
-                                borderWidth: 1
+                                borderWidth: 2
                                 borderRadius: 30
                                 padding: 8
                                 backgroundColor: white
@@ -176,7 +178,7 @@ View:
                               name: ${step.iconName}
                               color: "#1D1C21"
                               styles:
-                                borderWidth: 1
+                                borderWidth: 2
                                 borderRadius: 30
                                 padding: 8
                                 backgroundColor: white
@@ -190,7 +192,7 @@ View:
                               name: ${step.iconName}
                               color: "#31C48D"
                               styles:
-                                borderWidth: 1
+                                borderWidth: 2
                                 borderRadius: 30
                                 padding: 8
                                 backgroundColor: white
