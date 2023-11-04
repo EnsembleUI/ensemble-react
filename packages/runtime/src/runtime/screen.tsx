@@ -10,9 +10,13 @@ import { EnsembleBody } from "./body";
 
 export interface EnsembleScreenProps {
   screen: EnsembleScreenModel;
+  inputs?: Record<string, unknown>;
 }
 
-export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({ screen }) => {
+export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
+  screen,
+  inputs,
+}) => {
   const onLoadAction = useEnsembleAction(screen.onLoad);
 
   useEffect(() => {
@@ -23,7 +27,10 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({ screen }) => {
   }, [onLoadAction]);
 
   return (
-    <ScreenContextProvider screen={screen}>
+    <ScreenContextProvider
+      context={inputs ? { inputs } : undefined}
+      screen={screen}
+    >
       <EnsembleHeader header={screen.header} />
       <EnsembleBody
         body={screen.body}

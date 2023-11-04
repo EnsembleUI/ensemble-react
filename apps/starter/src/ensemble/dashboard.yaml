@@ -59,7 +59,6 @@ View:
                       },
                     ]
         - Row:
-            #crossAxis: end
             width: 300px
             height: 300px
             borderColor: "#EBEAED"
@@ -140,6 +139,8 @@ View:
                       scales: { x: { display: false }, y: { display: false } },
                     }
         - Row:
+            crossAxis: stretch
+            mainAxis: left
             borderColor: "#EBEAED"
             borderRadius: 10
             borderWidth: 1px
@@ -147,15 +148,15 @@ View:
             children:
               - Chart:
                   styles:
-                    height: 10px
+                    height: 60px
                     width: 50%
                   type: stackbar
-                  labels: ["Jan"]
+                  labels: ["Jan", "Feb", "Mar"]
                   datasets:
                     [
                       {
                         label: "Matched",
-                        data: [190],
+                        data: [500],
                         backgroundColor: "#5542f6",
                         borderRadius:
                           [

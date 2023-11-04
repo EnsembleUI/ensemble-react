@@ -28,6 +28,11 @@ export type IconProps = {
   name: string;
   size?: number;
   color?: string;
+  styles?: {
+    backgroundColor?: string;
+    padding?: number | string;
+    margin?: number | string;
+  } & HasBorder;
 } & EnsembleWidgetProps;
 
 export interface GridViewStyles {
