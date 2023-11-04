@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useAtomValue } from "jotai";
-import { isEqual, isString, throttle } from "lodash-es";
+import { isEqual, isString } from "lodash-es";
 import { selectAtom } from "jotai/utils";
 import type { ScreenContextDefinition } from "../state";
 import { screenAtom } from "../state";
@@ -15,9 +15,9 @@ export const useTemplateData = (
     () =>
       selectAtom(
         screenAtom,
-        throttle((screenContext: ScreenContextDefinition) => {
+        (screenContext: ScreenContextDefinition) => {
           return evaluate(screenContext, String(expression));
-        }, 350),
+        },
         isEqual,
       ),
     [expression],

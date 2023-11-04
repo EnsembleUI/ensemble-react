@@ -22,14 +22,16 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
 
   const expressions = useMemo(
-    () =>
-      compact(
+    () => {
+      // console.log(`getting expressions for ${resolvedWidgetId}`);
+      return compact(
         map(Object.entries(values), ([key, value]) => {
           if (isExpression(value)) {
             return [key, value];
           }
         }),
-      ),
+      );
+    },
     // FIXME: update expressions if props change without creating new atom
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
@@ -38,6 +40,7 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   const customScope = useCustomScope();
 
   const bindingsAtom = useMemo(() => {
+    // console.log(`creating binding for ${resolvedWidgetId}`);
     const bindingsEntries = compact(
       expressions.map(([name, expr]) => {
         const valueAtom = createBindingAtom(expr, customScope);

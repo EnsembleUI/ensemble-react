@@ -19,7 +19,7 @@ export const sanitizeJs = (string: string): string => {
 };
 
 export const debug = (value: unknown): void => {
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.NODE_ENV === "debug") {
     // eslint-disable-next-line no-console
     console.debug(value);
   }

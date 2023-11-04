@@ -9,6 +9,7 @@ import {
   useTemplateData,
 } from "@ensembleui/react-framework";
 import { Col, Row } from "antd";
+import { useMemo } from "react";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import type { GridViewStyles } from "../util/types";
@@ -34,9 +35,13 @@ export const GridView: React.FC<GridViewProps> = ({
   const defaultColumnCount = 4;
   const templateData = useTemplateData(data);
 
-  const namedData = map(templateData, (value) => ({
-    [name]: value,
-  }));
+  const namedData = useMemo(
+    () =>
+      map(templateData, (value) => ({
+        [name]: value,
+      })),
+    [name, templateData],
+  );
 
   const rows = [];
   const colCount = styles?.horizontalTileCount ?? defaultColumnCount;
