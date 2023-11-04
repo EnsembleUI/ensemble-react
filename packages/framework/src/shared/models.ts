@@ -9,9 +9,10 @@ import type { ThemeDTO } from "./dto";
  */
 export interface EnsembleScreenModel {
   name: string;
-  header?: EnsembleWidget;
   body: EnsembleWidget;
   onLoad?: EnsembleAction;
+  header?: EnsembleHeaderModel;
+  footer?: EnsembleFooterModel;
   apis?: EnsembleAPIModel[];
 }
 
@@ -52,4 +53,25 @@ export interface EnsembleAPIModel {
 export interface EnsembleWidget {
   name: string;
   properties: Record<string, unknown>;
+}
+
+export interface EnsembleHeaderModel {
+  title: string | EnsembleWidget;
+  styles?: {
+    backgroundColor?: string;
+    centerTitle?: boolean;
+    titleBarHeight?: string | number;
+    color?: string;
+    [key: string]: unknown;
+  };
+}
+
+export interface EnsembleFooterModel {
+  children: EnsembleWidget[];
+  styles?: {
+    backgroundColor?: string;
+    height?: string | number;
+    width?: string | number;
+    [key: string]: unknown;
+  };
 }

@@ -112,6 +112,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
 
   return (
     <Col
+      id="ensemble-sidebar"
       style={{
         backgroundColor,
         borderRight: "1px solid lightgrey",

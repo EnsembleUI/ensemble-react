@@ -5,7 +5,6 @@ import { useCallback, useContext, useMemo } from "react";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { EnsembleScreen } from "../screen";
-import { EnsembleRuntime } from "../runtime";
 import { ModalContext } from "../modal";
 import type { EnsembleActionHook } from "./useEnsembleAction";
 
@@ -28,25 +27,21 @@ export const useNavigateModalScreen: EnsembleActionHook<
     } = {},
   } = isStringAction ? {} : action || {};
 
-  const { screen, title } = useMemo(() => {
+  const { screen } = useMemo(() => {
     const matchingScreen = app?.application?.screens.find(
       (s) => s.name.toLowerCase() === screenName?.toLowerCase(),
     );
-    const titleElement = matchingScreen?.header
-      ? EnsembleRuntime.render([matchingScreen.header])
-      : null;
-    return { screen: matchingScreen, title: titleElement };
+    return { screen: matchingScreen };
   }, [app, screenName]);
 
   const callback = useCallback(() => {
-    if (screen) {
+    if (screen)
       openModal?.(
         <EnsembleScreen
           inputs={isStringAction ? undefined : action?.inputs}
           screen={screen}
         />,
         {
-          title,
           maskClosable,
           position,
           height,
@@ -55,13 +50,11 @@ export const useNavigateModalScreen: EnsembleActionHook<
           padding,
         },
       );
-    }
   }, [
     screen,
     openModal,
     isStringAction,
     action,
-    title,
     maskClosable,
     position,
     height,

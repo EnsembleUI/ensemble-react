@@ -85,7 +85,9 @@ export const ModalWrapper: React.FC = () => {
       top: unset;
     }
     .ant-modal-content {
-      padding: ${options?.padding ? options.padding : "10px 24px"} !important;
+      padding: ${
+        options?.padding ? options.padding : "10px 24px 24px"
+      } !important;
     }
   `;
 
