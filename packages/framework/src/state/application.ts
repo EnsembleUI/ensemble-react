@@ -14,11 +14,15 @@ export interface ApplicationContextActions {
   setApplication: (app: EnsembleAppModel) => void;
 }
 
-export const appAtom = atom<ApplicationContextDefinition>({
+export const defaultApplicationContext = {
   application: null,
   storage: null,
   env: null,
   auth: null,
   user: null,
   secrets: null,
-});
+};
+
+export const appAtom = atom<ApplicationContextDefinition>(
+  defaultApplicationContext,
+);

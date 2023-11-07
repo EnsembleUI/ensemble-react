@@ -18,12 +18,14 @@ export interface ScreenContextActions {
   setCustom: (id: string, data: unknown) => void;
 }
 
-export const screenAtom = atom<ScreenContextDefinition>({
+export const defaultScreenContext = {
   model: undefined,
   data: {},
   widgets: {},
   storage: {},
-});
+};
+
+export const screenAtom = atom<ScreenContextDefinition>(defaultScreenContext);
 
 export const screenDataAtom = focusAtom(screenAtom, (optic) =>
   optic.prop("data"),

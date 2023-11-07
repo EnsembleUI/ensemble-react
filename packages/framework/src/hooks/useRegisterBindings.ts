@@ -43,7 +43,11 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
     // console.log(`creating binding for ${resolvedWidgetId}`);
     const bindingsEntries = compact(
       expressions.map(([name, expr]) => {
-        const valueAtom = createBindingAtom(expr, customScope);
+        const valueAtom = createBindingAtom(
+          expr,
+          customScope,
+          resolvedWidgetId,
+        );
         if (!valueAtom) {
           return;
         }
@@ -51,6 +55,7 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
       }),
     );
     return atom((get) => {
+      // console.log(`get bindings for ${resolvedWidgetId}`);
       const valueEntries = bindingsEntries.map(({ name, valueAtom }) => {
         return [name, get(valueAtom)];
       });
@@ -58,6 +63,7 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
     });
   }, [customScope, expressions]);
 
+  // console.log(`render: ${resolvedWidgetId}`);
   const [bindings] = useAtom(bindingsAtom);
 
   const newValues = merge({}, values, bindings) as T;

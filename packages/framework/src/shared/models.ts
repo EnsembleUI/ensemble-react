@@ -19,6 +19,7 @@ export interface EnsembleScreenModel {
 export type EnsembleEntryPoint = EnsembleScreenModel | EnsembleMenuModel;
 
 export interface EnsembleAppModel {
+  id: string;
   menu?: EnsembleMenuModel;
   screens: EnsembleScreenModel[];
   home: EnsembleEntryPoint;

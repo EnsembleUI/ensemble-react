@@ -7,7 +7,7 @@ import { merge } from "lodash-es";
 import type { Expression } from "../shared";
 import { isExpression, sanitizeJs, debug } from "../shared";
 import { evaluate } from "../evaluate";
-import { screenAtom } from "./screen";
+import { defaultScreenContext, screenAtom } from "./screen";
 
 export interface WidgetState<T = Record<string, unknown>> {
   values: T;
@@ -23,6 +23,7 @@ export interface Invokable {
 export const createBindingAtom = (
   expression?: Expression<unknown>,
   context?: Record<string, unknown>,
+  widgetId?: string,
 ): Atom<unknown> | undefined => {
   if (!isExpression(expression)) {
     return;
@@ -31,12 +32,18 @@ export const createBindingAtom = (
   const rawJsExpression = sanitizeJs(expression);
   const nameTokens: Token[] = [];
 
-  debug(`raw expression: ${rawJsExpression}`);
+  debug(`raw expression for ${String(widgetId)}: ${rawJsExpression}`);
   try {
     parseExpressionAt(rawJsExpression, 0, {
       ecmaVersion: 6,
       onToken: (token) => {
-        if (token.type === tokTypes.name) {
+        if (token.type !== tokTypes.name) {
+          return;
+        }
+
+        const isPrecededByDot =
+          rawJsExpression.charCodeAt(token.start - 1) === DOT_CHARCODE;
+        if (!isPrecededByDot) {
           nameTokens.push(token);
         }
       },
@@ -48,7 +55,7 @@ export const createBindingAtom = (
 
   const dependencyEntries = nameTokens.map((identifier) => {
     const name = rawJsExpression.substring(identifier.start, identifier.end);
-    debug(`found dependency: ${name}`);
+    debug(`found dependency for ${String(widgetId)}: ${name}`);
     const dependencyAtom = focusAtom(screenAtom, (optic) =>
       optic.path("widgets", name),
     );
@@ -58,18 +65,32 @@ export const createBindingAtom = (
   const bindingAtom = atom((get) => {
     const valueEntries = dependencyEntries.map(({ name, dependencyAtom }) => {
       const value = get(dependencyAtom);
-      debug(`value for ${name}: ${JSON.stringify(value)}`);
+      debug(
+        `value for dependency ${name} at ${String(widgetId)}: ${JSON.stringify(
+          value,
+        )}`,
+      );
       return [name, value?.values];
     });
-    const screenContext = get(screenAtom);
+    // const screenContext = get(screenAtom);
     const evaluationContext = merge(
       Object.fromEntries(valueEntries),
       context,
     ) as Record<string, unknown>;
-    const result = evaluate(screenContext, rawJsExpression, evaluationContext);
-    debug(`result for ${rawJsExpression}: ${JSON.stringify(result)}`);
+    const result = evaluate(
+      defaultScreenContext,
+      rawJsExpression,
+      evaluationContext,
+    );
+    debug(
+      `result for ${rawJsExpression} at ${String(widgetId)}: ${JSON.stringify(
+        result,
+      )}`,
+    );
     return result;
   });
 
   return bindingAtom;
 };
+
+const DOT_CHARCODE = 46; // .

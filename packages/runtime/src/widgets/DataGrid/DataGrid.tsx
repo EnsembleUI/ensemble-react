@@ -49,7 +49,7 @@ export const DataGrid: React.FC<GridProps> = ({
         namedObj[itemTemplate.name] = value;
         return namedObj;
       }),
-    [],
+    [itemTemplate.name, templateData],
   );
   return (
     <Table dataSource={namedData} key={widgetId} style={{ width: "100%" }}>

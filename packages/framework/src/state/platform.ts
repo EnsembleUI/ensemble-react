@@ -1,6 +1,9 @@
-import { createStore } from "jotai";
+import { getDefaultStore } from "jotai";
 import { atomWithLocation } from "jotai-location";
 
 export const locationAtom = atomWithLocation();
 
-export const ensembleStore = createStore();
+/**
+ * @deprecated DO NOT USE directly
+ */
+export const ensembleStore = getDefaultStore();

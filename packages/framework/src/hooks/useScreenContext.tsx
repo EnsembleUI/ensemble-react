@@ -1,15 +1,22 @@
 import { Provider, useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { merge } from "lodash-es";
+import { useHydrateAtoms } from "jotai/utils";
 import {
-  ensembleStore,
+  appAtom,
+  defaultScreenContext,
   locationAtom,
   screenAtom,
   screenDataAtom,
 } from "../state";
-import type { ScreenContextActions, ScreenContextDefinition } from "../state";
+import type {
+  ApplicationContextDefinition,
+  ScreenContextActions,
+  ScreenContextDefinition,
+} from "../state";
 import type { Response } from "../data";
 import type { EnsembleScreenModel } from "../shared/models";
+import { useApplicationContext } from "./useApplicationContext";
 
 interface ScreenContextProps {
   screen: EnsembleScreenModel;
@@ -24,27 +31,46 @@ export const ScreenContextProvider: React.FC<ScreenContextProviderProps> = ({
   children,
 }) => {
   const [location] = useAtom(locationAtom);
-  useEffect(() => {
-    const queryParams = Object.fromEntries(location.searchParams ?? []);
-    // FIXME: guarantee ordering in resetting screen state
-    const prevValue = ensembleStore.get(screenAtom);
-    if (context) {
-      ensembleStore.set(
-        screenAtom,
-        merge(prevValue, { inputs: queryParams }, context),
-      );
-    } else {
-      ensembleStore.set(
-        screenAtom,
-        merge(prevValue, {
-          model: screen,
-          inputs: queryParams,
-        }),
-      );
-    }
-  }, [context, location.searchParams, screen]);
+  const appContext = useApplicationContext();
 
-  return <Provider store={ensembleStore}>{children}</Provider>;
+  if (!appContext) {
+    throw new Error("Missing application context for screen!");
+  }
+
+  return (
+    <Provider key={screen.name}>
+      <HydrateAtoms
+        appContext={appContext}
+        screenContext={
+          merge(
+            {},
+            defaultScreenContext,
+            {
+              model: screen,
+              inputs: Object.fromEntries(location.searchParams ?? []),
+            },
+            context,
+          ) as ScreenContextDefinition
+        }
+      >
+        {children}
+      </HydrateAtoms>
+    </Provider>
+  );
+};
+
+const HydrateAtoms: React.FC<
+  React.PropsWithChildren<{
+    appContext: ApplicationContextDefinition;
+    screenContext: ScreenContextDefinition;
+  }>
+> = ({ appContext, screenContext, children }) => {
+  // initialising on state with prop on render here
+  useHydrateAtoms([
+    [appAtom, appContext],
+    [screenAtom, screenContext],
+  ]);
+  return <>{children}</>;
 };
 
 export const useScreenContext = ():
