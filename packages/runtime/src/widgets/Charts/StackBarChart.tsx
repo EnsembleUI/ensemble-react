@@ -1,7 +1,13 @@
 import { Bar } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
-import type { Expression } from "@ensembleui/react-framework";
-import type { EnsembleWidgetProps } from "../../util/types";
+import {
+  evaluate,
+  useScreenContext,
+  ScreenContextDefinition,
+  useRegisterBindings,
+} from "@ensembleui/react-framework";
+import { useMemo, useState } from "react";
+import { ChartDataSets, ChartProps } from ".";
 
 const options: ChartOptions<"bar"> = {
   maintainAspectRatio: false,
@@ -45,23 +51,26 @@ const options: ChartOptions<"bar"> = {
   },
 };
 
-interface ChartDataSets {
-  label?: string;
-  data: number[];
-  backgroundColor?: string;
-  barPercentage?: number;
-  borderRadius?: number;
-}
+export const StackBarChart: React.FC<ChartProps> = (props) => {
+  const { id, styles, config } = props;
 
-type BarChartProps = {
-  labels?: string[] | undefined;
-  datasets?: ChartDataSets[];
-  title?: Expression<string>;
-  [key: string]: unknown;
-} & EnsembleWidgetProps;
+  const [title, setTitle] = useState(config?.title);
+  const [labels, setLabels] = useState<string[]>(config?.data?.labels || []);
+  const context = useScreenContext();
 
-export const StackBarChart: React.FC<BarChartProps> = (props) => {
-  const { labels, datasets, styles, title } = props;
+  const evaluatedDatasets = useMemo(
+    () =>
+      evaluate(
+        context as ScreenContextDefinition,
+        JSON.stringify(config?.data?.datasets),
+      ) as ChartDataSets[] | undefined,
+    [config?.data?.datasets],
+  );
+
+  const { values } = useRegisterBindings({ labels, title }, id, {
+    setLabels,
+    setTitle,
+  });
 
   return (
     <div
@@ -72,16 +81,16 @@ export const StackBarChart: React.FC<BarChartProps> = (props) => {
     >
       <Bar
         data={{
-          labels,
-          datasets: datasets!,
+          labels: values?.labels,
+          datasets: evaluatedDatasets || [],
         }}
         options={{
           ...options,
           plugins: {
             ...options.plugins,
             title: {
-              display: Boolean(title),
-              text: title,
+              display: Boolean(values?.title),
+              text: values?.title,
             },
           },
         }}

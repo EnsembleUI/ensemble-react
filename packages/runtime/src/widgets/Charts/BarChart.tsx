@@ -4,10 +4,10 @@ import {
   useRegisterBindings,
   evaluate,
   useScreenContext,
-  ScreenContextDefinition,
+  type ScreenContextDefinition,
 } from "@ensembleui/react-framework";
 import { useMemo, useState } from "react";
-import { ChartProps } from "../";
+import type { ChartDataSets, ChartProps } from "..";
 
 const options: ChartOptions<"bar"> = {
   maintainAspectRatio: false,
@@ -37,33 +37,17 @@ export const BarChart: React.FC<ChartProps> = (props) => {
   const { id, styles, config } = props;
 
   const [title, setTitle] = useState(config?.title);
-  const [labels, setLabels] = useState<string[]>(config?.labels || []);
+  const [labels, setLabels] = useState<string[]>(config?.data?.labels || []);
   const context = useScreenContext();
 
-  const evaluatedDatasets = useMemo(() => {
-    return config?.datasets?.map((dataset) => ({
-      ...dataset,
-      data:
-        typeof dataset.data === "string"
-          ? evaluate(context as ScreenContextDefinition, dataset.data)
-          : dataset.data,
-
-      label: dataset.label?.startsWith("${")
-        ? (evaluate(
-            context as ScreenContextDefinition,
-            dataset.label,
-          ) as string)
-        : dataset.label,
-      backgroundColor:
-        typeof dataset.backgroundColor === "string" &&
-        dataset.backgroundColor.startsWith("${")
-          ? (evaluate(
-              context as ScreenContextDefinition,
-              dataset.backgroundColor,
-            ) as string | string[])
-          : dataset.backgroundColor,
-    }));
-  }, [config?.datasets]);
+  const evaluatedDatasets = useMemo(
+    () =>
+      evaluate(
+        context as ScreenContextDefinition,
+        JSON.stringify(config?.data?.datasets),
+      ) as ChartDataSets[] | undefined,
+    [config?.data?.datasets, context],
+  );
 
   const { values } = useRegisterBindings({ labels, title }, id, {
     setLabels,
@@ -80,7 +64,7 @@ export const BarChart: React.FC<ChartProps> = (props) => {
       <Bar
         data={{
           labels: values?.labels,
-          datasets: evaluatedDatasets!,
+          datasets: evaluatedDatasets || [],
         }}
         options={{
           ...options,

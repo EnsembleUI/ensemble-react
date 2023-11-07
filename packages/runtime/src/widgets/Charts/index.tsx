@@ -32,7 +32,7 @@ ChartJS.register(
   LineElement,
 );
 
-interface ChartDataSets {
+export interface ChartDataSets {
   data: Expression<number[]>;
   label?: string;
   backgroundColor?: string[] | string;
@@ -40,15 +40,18 @@ interface ChartDataSets {
   borderRadius?: number;
   borderColor?: string[] | string;
   borderWidth?: number;
+  [key: string]: unknown;
 }
 
-export type ChartConfigs = {
+export interface ChartConfigs {
   type: "bar" | "doughnut" | "stackbar" | "line";
-  labels: string[] | undefined;
-  datasets: ChartDataSets[];
+  data: {
+    labels?: string[] | undefined;
+    datasets?: ChartDataSets[];
+  };
   title?: Expression<string>;
   options?: ChartOptions;
-};
+}
 
 export type ChartProps = {
   config?: ChartConfigs;
@@ -62,8 +65,9 @@ const tabsConfig = {
 };
 
 export const Chart: React.FC<ChartProps> = (props) => {
+  // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
   const config = new Function(
-    "return " + props.config?.toString(),
+    `return ${props.config?.toString() || "{}"}`,
   )() as ChartConfigs;
 
   if (!config.type) {
@@ -72,7 +76,7 @@ export const Chart: React.FC<ChartProps> = (props) => {
 
   return cloneElement(tabsConfig[config.type], {
     ...props,
-    config: config,
+    config,
   });
 };
 

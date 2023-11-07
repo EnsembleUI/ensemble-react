@@ -497,9 +497,16 @@ View:
                                               fontWeight: normal
                                               fontSize: 12px
                                               color: "#767676"
+
 API:
   getData:
     uri: https://api.airtable.com/v0/app0FnT5yUsW9fjn6/tblWGM6o7vqlTfB8b
     method: GET
     headers:
       Authorization: Bearer patN2XAiLVZQ8Yp3h.2bddb84031b2be89b576f01869dc17c3826e16ae7daa8895f92c05a0799004ab
+  getDummyJson:
+    method: GET
+    uri: https://dummyjson.com/users
+  getDummyNumbers:
+    method: GET
+    uri: https://mocki.io/v1/c1f19d68-e6c8-4ae3-848d-d99e588cf224

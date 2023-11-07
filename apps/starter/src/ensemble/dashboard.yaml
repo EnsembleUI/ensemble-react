@@ -16,6 +16,7 @@ View:
             id: title
         - Text:
             text: ${getDummyNumbers.body}
+
         - Row:
             crossAxis: center
             gap: 20
@@ -29,193 +30,219 @@ View:
                   config: |
                     {
                       type: 'bar',
-                      labels:
-                      [
-                        "Jan",
-                        "Feb",
-                        "Mar",
-                        "Apr",
-                        "May",
-                        "Jun",
-                        "Jul",
-                        "Aug",
-                        "Sep",
-                      ],
                       title: "${title.text}",
-                      datasets:
-                      [
+                      data:
                         {
-                          label: 'first',
-                          data: "${getDummyNumbers.body}",
-                          backgroundColor: '#5542f6',
-                          barPercentage: 0.8,
-                          borderRadius: 3,
-                        },
-                        {
-                          label: "${title.text}",
-                          data: [65, 59, 80, 81, 56, 55, 40, 50, 60],
-                          backgroundColor: "${getDummyNumbers.body.length > 110 ? '#01a4ff' : 'yellow'}",
-                          barPercentage: 0.4,
-                          borderRadius: 10,
-                        },
-                      ],
+                          labels:
+                            [
+                              "Jan",
+                              "Feb",
+                              "Mar",
+                              "Apr",
+                              "May",
+                              "Jun",
+                              "Jul",
+                              "Aug",
+                              "Sep",
+                            ],
+                          datasets:
+                            [
+                              {
+                                label: 'first',
+                                data: "${getDummyNumbers.body}",
+                                backgroundColor: '#5542f6',
+                                barPercentage: 0.8,
+                                borderRadius: 3,
+                              },
+                              {
+                                label: "${title.text}",
+                                data: [65, 59, 80, 81, 56, 55, 40, 50, 60],
+                                backgroundColor: "${getDummyNumbers.body.length > 110 ? '#01a4ff' : 'yellow'}",
+                                barPercentage: 0.4,
+                                borderRadius: 10,
+                              },
+                            ],
+                        }
                     }
-        # - Row:
-        #     #crossAxis: end
-        #     width: 300px
-        #     height: 300px
-        #     borderColor: "#EBEAED"
-        #     borderRadius: 10
-        #     borderWidth: 1px
-        #     padding: 10px 20px 30px 20px
-        #     children:
-        #       - Chart:
-        #           type: doughnut
-        #           styles:
-        #             height: 200px
-        #             width: 500px
-        #           labels: ["Red", "Blue", "Yellow"]
-        #           title: Doughnut Chart
-        #           datasets:
-        #             [
-        #               {
-        #                 label: "",
-        #                 data: [300, 50, 100],
-        #                 backgroundColor:
-        #                   [
-        #                     "rgb(255, 99, 132)",
-        #                     "rgb(54, 162, 235)",
-        #                     "rgb(255, 205, 86)",
-        #                   ],
-        #                 hoverOffset: 4,
-        #                 borderWidth: 1,
-        #               },
-        #             ]
 
-        # - Row:
-        #     width: 300px
-        #     height: 300px
-        #     borderColor: "#EBEAED"
-        #     borderRadius: 10
-        #     borderWidth: 1px
-        #     padding: 10px 20px 30px 20px
-        #     children:
-        #       - Chart:
-        #           type: line
-        #           styles:
-        #             height: 50px
-        #             width: 100px
-        #           title: ""
-        #           labels:
-        #             [
-        #               "January",
-        #               "February",
-        #               "March",
-        #               "April",
-        #               "May",
-        #               "June",
-        #               "July",
-        #             ]
-        #           datasets:
-        #             [
-        #               {
-        #                 label: "",
-        #                 data: [65, 59, 80, 81, 56, 55, 40],
-        #                 backgroundColor: "#5542f6",
-        #                 borderRadius:
-        #                   [
-        #                     {
-        #                       topLeft: 50,
-        #                       topRight: 50,
-        #                       bottomLeft: 50,
-        #                       bottomRight: 50,
-        #                     },
-        #                   ],
-        #                 borderSkipped: false,
-        #               },
-        #             ]
-        #           options:
-        #             {
-        #               responsive: true,
-        #               elements: { point: { radius: 0 } },
-        #               tooltips: { enabled: false },
-        #               scales: { x: { display: false }, y: { display: false } },
-        #             }
-        # - Row:
-        #     borderColor: "#EBEAED"
-        #     borderRadius: 10
-        #     borderWidth: 1px
-        #     margin: 10px 0
-        #     children:
-        #       - Chart:
-        #           styles:
-        #             height: 10px
-        #             width: 50%
-        #           type: stackbar
-        #           labels: ["Jan"]
-        #           datasets:
-        #             [
-        #               {
-        #                 label: "Matched",
-        #                 data: [190],
-        #                 backgroundColor: "#5542f6",
-        #                 borderRadius:
-        #                   [
-        #                     {
-        #                       topLeft: 50,
-        #                       topRight: 50,
-        #                       bottomLeft: 50,
-        #                       bottomRight: 50,
-        #                     },
-        #                   ],
-        #                 borderSkipped: false,
-        #               },
-        #               {
-        #                 label: "Enrolled",
-        #                 data: [160],
-        #                 backgroundColor: "#01a4ff",
-        #                 borderRadius:
-        #                   [
-        #                     {
-        #                       topLeft: 50,
-        #                       topRight: 50,
-        #                       bottomLeft: 50,
-        #                       bottomRight: 50,
-        #                     },
-        #                   ],
-        #                 borderSkipped: false,
-        #               },
-        #               {
-        #                 label: "Award",
-        #                 data: [140],
-        #                 backgroundColor: "#22c9ac",
-        #                 borderRadius:
-        #                   [
-        #                     {
-        #                       topLeft: 50,
-        #                       topRight: 50,
-        #                       bottomLeft: 50,
-        #                       bottomRight: 50,
-        #                     },
-        #                   ],
-        #                 borderSkipped: false,
-        #               },
-        #               {
-        #                 label: "Not Started",
-        #                 data: [140],
-        #                 backgroundColor: "#eee",
-        #                 borderRadius:
-        #                   [
-        #                     {
-        #                       topLeft: 50,
-        #                       topRight: 50,
-        #                       bottomLeft: 50,
-        #                       bottomRight: 50,
-        #                     },
-        #                   ],
-        #                 borderSkipped: false,
-        #               },
-        #             ]
+        - Row:
+            crossAxis: end
+            width: 300px
+            height: 300px
+            borderColor: "#EBEAED"
+            borderRadius: 10
+            borderWidth: 1px
+            padding: 10px 20px 30px 20px
+            children:
+              - Chart:
+                  id: myDoughnutChart
+                  styles:
+                    height: 200px
+                    width: 500px
+                  config: |
+                    {
+                      type: 'doughnut',
+                      title: "${'Doughnut ' + title.text}",
+                      data:
+                        {
+                          labels: ["Red", "Blue", "Yellow"],
+                          datasets:
+                            [
+                              {
+                                label: "${'tekst ' + title.text}",
+                                data: [500, 50, 100],
+                                backgroundColor:
+                                  [
+                                    "rgb(255, 99, 132)",
+                                    "rgb(54, 162, 235)",
+                                    "rgb(255, 205, 86)",
+                                  ],
+                                hoverOffset: 4,
+                                borderWidth: 1,
+                              },
+                            ]
+                        }
+                    }
+
+        - Row:
+            width: 300px
+            height: 300px
+            borderColor: "#EBEAED"
+            borderRadius: 10
+            borderWidth: 1px
+            padding: 10px 20px 30px 20px
+            children:
+              - Chart:
+                  id: myLineChart
+                  styles:
+                    height: 50px
+                    width: 100px
+                  config: |
+                    {
+                      type: 'line',
+                      title: "${'Line ' + title.text}",
+                      data:
+                        {
+                          labels:
+                            [
+                              "January",
+                              "February",
+                              "March",
+                              "April",
+                              "May",
+                              "June",
+                              "July",
+                            ],
+                          datasets:
+                            [
+                              {
+                                label: "",
+                                data: [65, 59, 80, 81, 56, 55, 40],
+                                backgroundColor: "#5542f6",
+                                borderRadius:
+                                  [
+                                    {
+                                      topLeft: 50,
+                                      topRight: 50,
+                                      bottomLeft: 50,
+                                      bottomRight: 50,
+                                    },
+                                  ],
+                                borderSkipped: false,
+                              },
+                            ]
+                        },
+                      options:
+                        {
+                          responsive: true,
+                          elements: { point: { radius: 0 } },
+                          tooltips: { enabled: false },
+                          scales: { x: { display: false }, y: { display: false } },
+                        }
+                    }
+
+        - Row:
+            borderColor: "#EBEAED"
+            borderRadius: 10
+            borderWidth: 1px
+            margin: 10px 0
+            children:
+              - Chart:
+                  id: myStackBarChart
+                  styles:
+                    height: 10px
+                    width: 50%
+                  config: |
+                    {
+                      type: 'stackbar',
+                      data:
+                        {
+                          labels: ["Jan"],
+                          datasets:
+                            [
+                              {
+                                label: "${'Matched ' + title.text}",
+                                data: [190],
+                                backgroundColor: "#5542f6",
+                                borderRadius:
+                                  [
+                                    {
+                                      topLeft: 50,
+                                      topRight: 50,
+                                      bottomLeft: 50,
+                                      bottomRight: 50,
+                                    },
+                                  ],
+                                borderSkipped: false,
+                              },
+                              {
+                                label: "${'Enrolled ' + title.text}",
+                                data: [160],
+                                backgroundColor: "#01a4ff",
+                                borderRadius:
+                                  [
+                                    {
+                                      topLeft: 50,
+                                      topRight: 50,
+                                      bottomLeft: 50,
+                                      bottomRight: 50,
+                                    },
+                                  ],
+                                borderSkipped: false,
+                              },
+                              {
+                                label: "${'Award ' + title.text}",
+                                data: [140],
+                                backgroundColor: "#22c9ac",
+                                borderRadius:
+                                  [
+                                    {
+                                      topLeft: 50,
+                                      topRight: 50,
+                                      bottomLeft: 50,
+                                      bottomRight: 50,
+                                    },
+                                  ],
+                                borderSkipped: false,
+                              },
+                              {
+                                label: "Not Started",
+                                data: [140],
+                                backgroundColor: "#eee",
+                                borderRadius:
+                                  [
+                                    {
+                                      topLeft: 50,
+                                      topRight: 50,
+                                      bottomLeft: 50,
+                                      bottomRight: 50,
+                                    },
+                                  ],
+                                borderSkipped: false,
+                              },
+                            ]
+                        }
+                    }
 
         - DataGrid:
             DataColumns:
