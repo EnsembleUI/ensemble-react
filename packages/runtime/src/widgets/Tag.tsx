@@ -1,5 +1,13 @@
-import type { Expression } from "@ensembleui/react-framework";
-import { useRegisterBindings } from "@ensembleui/react-framework";
+import type {
+  Expression,
+  ScreenContextDefinition,
+} from "@ensembleui/react-framework";
+import {
+  evaluate,
+  useCustomScope,
+  useRegisterBindings,
+  useScreenContext,
+} from "@ensembleui/react-framework";
 import { useState } from "react";
 import { Typography } from "antd";
 import { WidgetRegistry } from "../registry";
@@ -10,23 +18,28 @@ export interface TagProps {
   id?: string;
   label: Expression<string> | Expression<string[]>;
   styles?: {
-    backgroundColor: string;
-    borderRadius: string;
-    fontSize: string;
+    backgroundColor?: Expression<string>;
+    borderRadius?: string;
+    fontSize?: string;
   };
   icon?: IconProps;
 }
-
 export const Tag: React.FC<TagProps> = (props) => {
   const [text, setText] = useState(props.label);
   const { values } = useRegisterBindings({ ...props, text }, props.id, {
     setText,
   });
+  const screen = useScreenContext();
+  const scope = useCustomScope();
+  const backgroundColor = evaluate(
+    screen as ScreenContextDefinition,
+    props?.styles?.backgroundColor,
+    scope
+  );
   const [expanded, setExpanded] = useState(false);
   const toggleExpansion = (): void => {
     setExpanded(!expanded);
   };
-
   const labels =
     values?.label && Array.isArray(values.label)
       ? values.label
@@ -37,7 +50,7 @@ export const Tag: React.FC<TagProps> = (props) => {
     <Typography.Text
       key={index}
       style={{
-        backgroundColor: props.styles?.backgroundColor ?? "#e6e7e8",
+        backgroundColor: (backgroundColor as string) ?? "#e6e7e8",
         paddingLeft: "10px",
         paddingRight: "10px",
         textAlign: "left",
