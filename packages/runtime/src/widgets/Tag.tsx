@@ -26,15 +26,16 @@ export interface TagProps {
 }
 export const Tag: React.FC<TagProps> = (props) => {
   const [text, setText] = useState(props.label);
-  const { values } = useRegisterBindings({ ...props, text }, props.id, {
-    setText,
-  });
-  const screen = useScreenContext();
-  const scope = useCustomScope();
-  const backgroundColor = evaluate(
-    screen as ScreenContextDefinition,
-    props?.styles?.backgroundColor,
-    scope
+  const [backgroundColor, setBackgroundColor] = useState(
+    props?.styles?.backgroundColor
+  );
+  const { values } = useRegisterBindings(
+    { ...props, text, backgroundColor },
+    props.id,
+    {
+      setText,
+      setBackgroundColor,
+    }
   );
   const [expanded, setExpanded] = useState(false);
   const toggleExpansion = (): void => {
@@ -50,7 +51,7 @@ export const Tag: React.FC<TagProps> = (props) => {
     <Typography.Text
       key={index}
       style={{
-        backgroundColor: (backgroundColor as string) ?? "#e6e7e8",
+        backgroundColor: values?.backgroundColor ?? "#e6e7e8",
         paddingLeft: "10px",
         paddingRight: "10px",
         textAlign: "left",
