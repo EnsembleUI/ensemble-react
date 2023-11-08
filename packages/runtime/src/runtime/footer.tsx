@@ -12,7 +12,7 @@ export const EnsembleFooter: React.FC<EnsembleFooterProps> = ({ footer }) => {
 };
 
 const prepareFooter = (
-  footer: EnsembleFooterModel | undefined,
+  footer: EnsembleFooterModel | undefined
 ): React.ReactElement | undefined => {
   if (!footer) return;
 
@@ -22,7 +22,6 @@ const prepareFooter = (
       position: "static",
       display: "flex",
       justifyContent: "center",
-      alignItems: "center",
       width: footer?.styles?.width || "100%",
       backgroundColor: footer?.styles?.backgroundColor || "white",
       height: footer?.styles?.height || "56px",
