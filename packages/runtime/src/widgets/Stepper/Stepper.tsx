@@ -28,19 +28,12 @@ export interface StepProps {
   contentWidget: EnsembleWidget;
 }
 
-export interface StepTemplate {
-  name: "Steps";
-  properties: {
-    children: EnsembleWidget[];
-  };
-}
-
 export type StepperProps = {
   steps: StepProps[];
   "item-template": {
     data: Expression<object>;
     name: string;
-    template: StepTemplate;
+    template: EnsembleWidget;
   };
   styles: {
     connectorColor?: string;
@@ -138,8 +131,6 @@ const CustomConnector = styled(StepConnector)(
   (props: CustomConnectorProps) => ({
     [`&.${stepConnectorClasses.alternativeLabel}`]: {
       top: 20,
-      left: "calc(-50% + 16px)",
-      right: "calc(50% + 16px)",
     },
     [`&.${stepConnectorClasses.active}`]: {
       [`& .${stepConnectorClasses.line}`]: {
@@ -160,22 +151,17 @@ const CustomConnector = styled(StepConnector)(
 );
 
 const CustomStepIcon = (
-  props: { stepTypes: StepTemplate } & StepIconProps & {
+  props: { stepTypes: EnsembleWidget } & StepIconProps & {
       data: Record<string, unknown>;
     } & { index: number } & { stepsLength: number }
 ) => {
-  const { active, completed } = props;
-  if (active && props.index !== props.stepsLength - 1) {
-    return (
-      <StepType data={props.data} stepIndex={1} template={props.stepTypes} />
-    );
-  }
-  if (completed || props.index === props.stepsLength - 1) {
-    return (
-      <StepType data={props.data} stepIndex={2} template={props.stepTypes} />
-    );
-  }
+  const { active, completed, stepsLength, index } = props;
+  const stateData = { active, completed, stepsLength, index };
   return (
-    <StepType data={props.data} stepIndex={0} template={props.stepTypes} />
+    <StepType
+      data={props.data}
+      stateData={stateData}
+      template={props.stepTypes}
+    />
   );
 };

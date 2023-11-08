@@ -5,10 +5,10 @@ import { EnsembleStorage } from "./storage";
 export const buildEvaluateFn = (
   screen: ScreenContextDefinition,
   js?: string,
-  context?: Record<string, unknown>,
+  context?: Record<string, unknown>
 ): (() => unknown) => {
   const widgets: [string, InvokableMethods | undefined][] = Object.entries(
-    screen.widgets,
+    screen.widgets
   ).map(([id, state]) => {
     const methods = state?.invokable.methods;
     const values = state?.values;
@@ -61,7 +61,7 @@ const sanitizeJs = (string: string): string => {
 export const evaluate = (
   screen: ScreenContextDefinition,
   js?: string,
-  context?: Record<string, unknown>,
+  context?: Record<string, unknown>
 ): unknown => {
   try {
     const fn = buildEvaluateFn(screen, js, context);
