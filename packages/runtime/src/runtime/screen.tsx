@@ -44,11 +44,11 @@ const OnLoadAction: React.FC<
   const onLoadAction = useEnsembleAction(action);
 
   useEffect(() => {
-    if (!onLoadAction) {
+    if (!onLoadAction?.callback) {
       return;
     }
     onLoadAction.callback();
-  }, [onLoadAction]);
+  }, [onLoadAction, onLoadAction?.callback]);
 
   return <>{children}</>;
 };
