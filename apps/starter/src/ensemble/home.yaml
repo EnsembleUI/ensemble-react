@@ -13,7 +13,8 @@ ViewGroup:
         borderRadius: 10px
     header:
       Image:
-        source: https://i.imgur.com/hYrGRRn.png
+        height: 50px
+        source: https://docs.ensembleui.com/images/logo.svg
     items:
       - label: Dashboard
         icon: LegendToggle
