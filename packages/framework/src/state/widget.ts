@@ -1,4 +1,3 @@
-import type { Token } from "acorn";
 import { parseExpressionAt, tokTypes } from "acorn";
 import { focusAtom } from "jotai-optics";
 import type { Atom } from "jotai";
@@ -30,7 +29,7 @@ export const createBindingAtom = (
   }
 
   const rawJsExpression = sanitizeJs(expression);
-  const nameTokens: Token[] = [];
+  const identifiers: string[] = [];
 
   debug(`raw expression for ${String(widgetId)}: ${rawJsExpression}`);
   try {
@@ -41,10 +40,12 @@ export const createBindingAtom = (
           return;
         }
 
+        const name = rawJsExpression.substring(token.start, token.end);
         const isPrecededByDot =
           rawJsExpression.charCodeAt(token.start - 1) === DOT_CHARCODE;
-        if (!isPrecededByDot) {
-          nameTokens.push(token);
+        const isDeclaredInContext = context && name in context;
+        if (!isPrecededByDot && !isDeclaredInContext) {
+          identifiers.push(name);
         }
       },
     });
@@ -53,13 +54,13 @@ export const createBindingAtom = (
     return;
   }
 
-  const dependencyEntries = nameTokens.map((identifier) => {
-    const name = rawJsExpression.substring(identifier.start, identifier.end);
-    debug(`found dependency for ${String(widgetId)}: ${name}`);
+  const dependencyEntries = identifiers.map((identifier) => {
+    debug(`found dependency for ${String(widgetId)}: ${identifier}`);
+    // TODO: Account for data bindings also
     const dependencyAtom = focusAtom(screenAtom, (optic) =>
-      optic.path("widgets", name),
+      optic.path("widgets", identifier),
     );
-    return { name, dependencyAtom };
+    return { name: identifier, dependencyAtom };
   });
 
   const bindingAtom = atom((get) => {
