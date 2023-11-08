@@ -1,23 +1,27 @@
-import type { CustomScope } from "@ensembleui/react-framework";
+import type { CustomScope, EnsembleWidget } from "@ensembleui/react-framework";
 import { CustomScopeProvider } from "@ensembleui/react-framework";
 import { EnsembleRuntime } from "../../runtime";
-import type { StepTemplate } from "./Stepper";
 
 export interface StepTypeProps {
   scopeName?: string;
   data: unknown;
-  template: StepTemplate;
-  stepIndex: number;
+  template: EnsembleWidget;
+  stateData: {
+    active?: boolean;
+    completed?: boolean;
+    stepsLength?: number;
+    index?: number;
+  };
 }
 export const StepType: React.FC<StepTypeProps> = ({
   data,
   template,
-  stepIndex,
+  stateData,
 }) => {
-  const stepTemplate = template.properties.children[stepIndex];
+  const newData: CustomScope = { ...(data as object), ...stateData };
   return (
-    <CustomScopeProvider value={data as CustomScope}>
-      {EnsembleRuntime.render([stepTemplate])}
+    <CustomScopeProvider value={newData}>
+      {EnsembleRuntime.render([template])}
     </CustomScopeProvider>
   );
 };

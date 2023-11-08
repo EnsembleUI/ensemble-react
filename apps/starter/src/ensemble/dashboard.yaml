@@ -142,6 +142,37 @@ View:
             styles:
               connectorColor: "#31C48D"
               connectorHeight: 4
+            steps:
+              - stepLabel: Match
+                contentWidget:
+                  Column:
+                    crossAxis: center
+                    mainAxis: spaceBetween
+                    children:
+                      - Text:
+                          text: Hello
+                      - Button:
+                          label: Doing Good
+              - stepLabel: SubmitDocs
+                contentWidget:
+                  Column:
+                    crossAxis: center
+                    mainAxis: spaceBetween
+                    children:
+                      - Text:
+                          text: Doing asd
+                      - Button:
+                          label: Doing Good
+              - stepLabel: Check
+                contentWidget:
+                  Column:
+                    crossAxis: center
+                    mainAxis: spaceBetween
+                    children:
+                      - Text:
+                          text: Doing asd
+                      - Button:
+                          label: Doing Good
             item-template:
               data:
                 - name: Match
@@ -154,38 +185,50 @@ View:
                   iconName: Search
               name: step
               template:
-                Steps:
-                  children:
-                    # InActive
-                    - Column:
+                Conditional:
+                  conditions:
+                    - if: ${index < stepsLength - 1}
+                      Column:
                         crossAxis: center
                         children:
                           - Icon:
                               name: ${step.iconName}
-                              color: grey
+                              color: ${!active ? completed ? "#31C48D" :"grey" :"#1D1C21"}
                               styles:
                                 borderWidth: 2
                                 borderRadius: 30
                                 padding: 8
                                 backgroundColor: white
-                          - Text:
-                              text: ${step.name}
-                    # Active
-                    - Column:
-                        crossAxis: center
-                        children:
-                          - Icon:
-                              name: ${step.iconName}
-                              color: "#1D1C21"
-                              styles:
-                                borderWidth: 2
-                                borderRadius: 30
-                                padding: 8
-                                backgroundColor: white
-                          - Text:
-                              text: In Progress
-                    # Completed
-                    - Column:
+                          - Conditional:
+                              conditions:
+                                - if: ${!completed}
+                                  Text:
+                                    text: ${active ? "In Progress" :step.name}
+                                - else:
+                                  Column:
+                                    gap: 4
+                                    crossAxis: center
+                                    children:
+                                      - Text:
+                                          text: ${step.name}
+                                          styles:
+                                            fontSize: 14
+                                            fontWeight: 600
+                                      - Row:
+                                          gap: 3
+                                          children:
+                                            - Text:
+                                                text: 12/31/3131
+                                                styles:
+                                                  fontSize: 12
+                                                  color: "#747184"
+                                                  fontWeight: 500
+                                            - Icon:
+                                                name: Check
+                                                color: "#31C48D"
+                                                size: 16
+                    - else:
+                      Column:
                         crossAxis: center
                         children:
                           - Icon:
@@ -218,38 +261,6 @@ View:
                                           name: Check
                                           color: "#31C48D"
                                           size: 16
-
-            steps:
-              - stepLabel: Match
-                contentWidget:
-                  Column:
-                    crossAxis: center
-                    mainAxis: spaceBetween
-                    children:
-                      - Text:
-                          text: Hello
-                      - Button:
-                          label: Doing Good
-              - stepLabel: SubmitDocs
-                contentWidget:
-                  Column:
-                    crossAxis: center
-                    mainAxis: spaceBetween
-                    children:
-                      - Text:
-                          text: Doing asd
-                      - Button:
-                          label: Doing Good
-              - stepLabel: Check
-                contentWidget:
-                  Column:
-                    crossAxis: center
-                    mainAxis: spaceBetween
-                    children:
-                      - Text:
-                          text: Doing asd
-                      - Button:
-                          label: Doing Good
 
         - Row:
             children:
