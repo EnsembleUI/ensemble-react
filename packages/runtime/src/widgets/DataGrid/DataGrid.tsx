@@ -5,8 +5,7 @@ import {
   type EnsembleWidget,
   useWidgetId,
 } from "@ensembleui/react-framework";
-import { map } from "lodash-es";
-import { useMemo, type ReactElement } from "react";
+import { type ReactElement } from "react";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetProps } from "../../util/utils";
 import { DataCell } from "./DataCell";
@@ -41,16 +40,7 @@ export const DataGrid: React.FC<GridProps> = ({
   id,
 }) => {
   const widgetId = useWidgetId(id);
-  const templateData = useTemplateData(itemTemplate.data);
-  const namedData = useMemo(
-    () =>
-      map(templateData, (value) => {
-        const namedObj: Record<string, unknown> = {};
-        namedObj[itemTemplate.name] = value;
-        return namedObj;
-      }),
-    [itemTemplate.name, templateData],
-  );
+  const { namedData } = useTemplateData({ ...itemTemplate });
   return (
     <Table dataSource={namedData} key={widgetId} style={{ width: "100%" }}>
       {DataColumns.map((col, index) => {

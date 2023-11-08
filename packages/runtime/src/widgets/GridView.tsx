@@ -1,4 +1,3 @@
-import { map } from "lodash-es";
 import type {
   CustomScope,
   EnsembleWidget,
@@ -9,7 +8,6 @@ import {
   useTemplateData,
 } from "@ensembleui/react-framework";
 import { Col, Row } from "antd";
-import { useMemo } from "react";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import type { GridViewStyles } from "../util/types";
@@ -33,15 +31,7 @@ export const GridView: React.FC<GridViewProps> = ({
   styles,
 }) => {
   const defaultColumnCount = 4;
-  const templateData = useTemplateData(data);
-
-  const namedData = useMemo(
-    () =>
-      map(templateData, (value) => ({
-        [name]: value,
-      })),
-    [name, templateData],
-  );
+  const { namedData } = useTemplateData({ data, name });
 
   const rows = [];
   const colCount = styles?.horizontalTileCount ?? defaultColumnCount;
