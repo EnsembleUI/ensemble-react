@@ -7,13 +7,9 @@ interface EnsembleHeaderProps {
 }
 
 export const EnsembleHeader: React.FC<EnsembleHeaderProps> = ({ header }) => {
-  if (!header) {
+  if (!header?.title) {
     return null;
   }
-
-  const title = header.title;
-  if (!title) return;
-
   // default header styles
   const defaultStyles = {
     styles: {
@@ -27,23 +23,17 @@ export const EnsembleHeader: React.FC<EnsembleHeaderProps> = ({ header }) => {
     },
   };
 
-  if (typeof title === "string") {
-    return (
-      <Column {...defaultStyles}>
-        {[
-          {
-            name: "Text",
-            properties: {
-              text: title,
-              styles: {
-                color: header.styles?.titleColor || "black",
-              },
-            },
+  const titleWidget = isObject(header.title)
+    ? header.title
+    : {
+        name: "Text",
+        properties: {
+          text: header.title,
+          styles: {
+            color: header.styles?.titleColor || "black",
           },
-        ]}
-      </Column>
-    );
-  } else if (isObject(title)) {
-    return <Column {...defaultStyles}>{[title]}</Column>;
-  }
+        },
+      };
+
+  return <Column {...defaultStyles}>{[titleWidget]}</Column>;
 };
