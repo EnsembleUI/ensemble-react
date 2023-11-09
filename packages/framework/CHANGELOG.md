@@ -1,5 +1,13 @@
 # @ensembleui/react-framework
 
+## 0.0.4
+
+### Patch Changes
+
+- fc85e1f: Update register bindings to return resolved state values
+- c0126ea: Short term fix for performance
+- 649fc3d: Improve performance from interpolated bindings
+
 ## 0.0.3
 
 ### Patch Changes
