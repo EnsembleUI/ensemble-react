@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import {
   Stepper as MUIStepper,
   Step,
@@ -11,30 +11,33 @@ import type { StepIconProps } from "@mui/material/StepIcon";
 import StepConnector, {
   stepConnectorClasses,
 } from "@mui/material/StepConnector";
-import { map } from "lodash-es";
+import { map, cloneDeep } from "lodash-es";
 import {
   type EnsembleWidget,
   useRegisterBindings,
   type Expression,
   useTemplateData,
+  unwrapWidget,
 } from "@ensembleui/react-framework";
+import Alert from "@mui/material/Alert";
 import type { EnsembleWidgetProps } from "../../util/types";
 import { WidgetRegistry } from "../../registry";
 import { EnsembleRuntime } from "../../runtime";
-import { StepType } from "./StepType";
+import { StepType, StepTypeProps } from "./StepType";
 
 export interface StepProps {
   stepLabel: string;
-  contentWidget: EnsembleWidget;
+  contentWidget: Record<string, unknown>;
+}
+export interface TemplateProps {
+  data: Expression<object>;
+  name: string;
+  template: EnsembleWidget;
 }
 
 export type StepperProps = {
   steps: StepProps[];
-  "item-template": {
-    data: Expression<object>;
-    name: string;
-    template: EnsembleWidget;
-  };
+  "item-template": TemplateProps;
   styles: {
     connectorColor?: string;
     connectorHeight?: number;
@@ -49,19 +52,23 @@ interface CustomConnectorProps {
 const Stepper: React.FC<StepperProps> = (props) => {
   const [activeStep, setActiveStep] = useState(0);
   const itemTemplate = props["item-template"];
-  const templateData = useTemplateData(itemTemplate.data);
-  const namedData = map(templateData, (value) => {
-    const namedObj: Record<string, unknown> = {};
-    namedObj[itemTemplate.name] = value;
-    return namedObj;
-  });
+  const templateData = useTemplateData(itemTemplate?.data);
+  const namedData = useMemo(() => {
+    const data = map(templateData, (value) => {
+      const namedObj: Record<string, unknown> = {};
+      namedObj[itemTemplate?.name] = value;
+      return namedObj;
+    });
+
+    return data;
+  }, [itemTemplate, templateData]);
   const stepsLength = namedData.length;
-  const stepTypes = itemTemplate.template;
+  const stepTypes = itemTemplate?.template;
   const handleNext = useCallback(() => {
     if (activeStep < namedData.length - 1) {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
-  }, [activeStep, namedData.length]);
+  }, [activeStep, namedData?.length]);
 
   const handleBack = useCallback(() => {
     if (activeStep !== 0) {
@@ -75,6 +82,7 @@ const Stepper: React.FC<StepperProps> = (props) => {
     handleNext,
     handleBack,
   });
+  const steps = unwrapContent(props?.steps);
   return (
     <div>
       <MUIStepper
@@ -86,37 +94,48 @@ const Stepper: React.FC<StepperProps> = (props) => {
             connector_height={props?.styles.connectorHeight}
           />
         }
+        sx={{
+          justifyContent: "center",
+        }}
       >
-        {values?.["item-template"]
-          ? namedData?.map((data, index) => (
-              <Step key={index}>
-                <StepButton onClick={handleStep(index)}>
-                  <StepLabel
-                    StepIconComponent={(iconProps: StepOwnProps) => {
-                      const newProps = {
-                        stepTypes,
-                        ...(iconProps as StepIconProps),
-                        data,
-                        index: values.activeStep,
-                        stepsLength,
-                      };
-                      return CustomStepIcon(newProps);
-                    }}
-                  />
-                </StepButton>
-              </Step>
-            ))
-          : null}
+        {values?.["item-template"] ? (
+          namedData?.map((data, index) => (
+            <Step key={index}>
+              <StepButton onClick={handleStep(index)}>
+                <StepLabel
+                  StepIconComponent={(iconProps: StepOwnProps) => {
+                    const newProps = {
+                      stepTypes,
+                      ...(iconProps as StepIconProps),
+                      data,
+                      index: values.activeStep,
+                      stepsLength,
+                      name: itemTemplate?.name,
+                    };
+                    return CustomStepIcon(newProps);
+                  }}
+                />
+              </StepButton>
+            </Step>
+          ))
+        ) : (
+          <Alert
+            severity="error"
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            Please use correct syntax for the <strong>Stepper widget !</strong>
+          </Alert>
+        )}
       </MUIStepper>
       <div>
-        {values?.steps.map((step, index) => (
+        {steps.map((step, index) => (
           <div key={step.stepLabel}>
             {index === values?.activeStep && (
-              <>
-                {step?.contentWidget
-                  ? EnsembleRuntime.render([step.contentWidget])
-                  : null}
-              </>
+              <>{EnsembleRuntime.render([step.contentWidget])}</>
             )}
           </div>
         ))}
@@ -153,15 +172,30 @@ const CustomConnector = styled(StepConnector)(
 const CustomStepIcon = (
   props: { stepTypes: EnsembleWidget } & StepIconProps & {
       data: Record<string, unknown>;
-    } & { index: number } & { stepsLength: number }
-) => {
+    } & { index: number } & { stepsLength: number } & { name: string }
+): React.ReactElement<StepTypeProps> => {
   const { active, completed, stepsLength, index } = props;
   const stateData = { active, completed, stepsLength, index };
   return (
     <StepType
       data={props.data}
       stateData={stateData}
-      template={props.stepTypes}
+      template={props?.stepTypes}
+      name={props.name}
     />
   );
+};
+
+const unwrapContent = (
+  steps: StepProps[]
+): { stepLabel: string; contentWidget: EnsembleWidget }[] => {
+  const unwrappedChildren = map(steps, ({ stepLabel, contentWidget }) => {
+    const deepCopy = cloneDeep(contentWidget);
+    const unwrapped = unwrapWidget(deepCopy);
+    return {
+      stepLabel,
+      contentWidget: unwrapped,
+    };
+  });
+  return [...unwrappedChildren];
 };

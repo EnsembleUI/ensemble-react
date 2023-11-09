@@ -187,13 +187,13 @@ View:
               template:
                 Conditional:
                   conditions:
-                    - if: ${index < stepsLength - 1}
+                    - if: ${step.index < step.stepsLength - 1}
                       Column:
                         crossAxis: center
                         children:
                           - Icon:
                               name: ${step.iconName}
-                              color: ${!active ? completed ? "#31C48D" :"grey" :"#1D1C21"}
+                              color: ${!step.active ? step.completed ? "#31C48D" :"grey" :"#1D1C21"}
                               styles:
                                 borderWidth: 2
                                 borderRadius: 30
@@ -201,9 +201,9 @@ View:
                                 backgroundColor: white
                           - Conditional:
                               conditions:
-                                - if: ${!completed}
+                                - if: ${!state.completed}
                                   Text:
-                                    text: ${active ? "In Progress" :step.name}
+                                    text: ${state.active ? "In Progress" :step.name}
                                 - else:
                                   Column:
                                     gap: 4

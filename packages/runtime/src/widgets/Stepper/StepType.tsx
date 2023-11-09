@@ -6,6 +6,7 @@ export interface StepTypeProps {
   scopeName?: string;
   data: unknown;
   template: EnsembleWidget;
+  name: string;
   stateData: {
     active?: boolean;
     completed?: boolean;
@@ -17,10 +18,13 @@ export const StepType: React.FC<StepTypeProps> = ({
   data,
   template,
   stateData,
+  name,
 }) => {
-  const newData: CustomScope = { ...(data as object), ...stateData };
+  const newStateData = {
+    [name]: { ...stateData, ...(data[name] as object) },
+  };
   return (
-    <CustomScopeProvider value={newData}>
+    <CustomScopeProvider value={newStateData}>
       {EnsembleRuntime.render([template])}
     </CustomScopeProvider>
   );

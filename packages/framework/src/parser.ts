@@ -144,7 +144,6 @@ export const unwrapWidget = (obj: Record<string, unknown>): EnsembleWidget => {
   const children = get(properties, "children");
   const template = get(properties, ["item-template", "template"]) as unknown;
   const items = get(properties, "items");
-  const steps = get(properties, "steps");
   if (isArray(children)) {
     const unwrappedChildren = map(children, unwrapWidget);
     set(properties as object, "children", unwrappedChildren);
@@ -166,22 +165,6 @@ export const unwrapWidget = (obj: Record<string, unknown>): EnsembleWidget => {
       set(properties as object, "items", valueItems);
     }
   }
-  if (isArray(steps) && !isEmpty(steps)) {
-    if ("contentWidget" in steps[0]) {
-      const valueSteps = (steps as Record<string, unknown>[]).map(
-        ({ stepLabel, contentWidget }) => {
-          const unwrappedWidget = unwrapWidget(
-            contentWidget as Record<string, unknown>
-          );
-          return {
-            stepLabel,
-            contentWidget: unwrappedWidget,
-          };
-        }
-      );
-      set(properties as object, "steps", valueSteps);
-    }
-  }
   return {
     name,
     properties: properties as Record<string, unknown>,
@@ -189,7 +172,7 @@ export const unwrapWidget = (obj: Record<string, unknown>): EnsembleWidget => {
 };
 
 export const unwrapHeader = (
-  header: Record<string, unknown> | undefined,
+  header: Record<string, unknown> | undefined
 ): EnsembleHeaderModel | undefined => {
   const title = get(header, "title") as
     | Record<string, unknown>
@@ -205,14 +188,14 @@ export const unwrapHeader = (
 };
 
 const unwrapFooter = (
-  footer: Record<string, unknown> | undefined,
+  footer: Record<string, unknown> | undefined
 ): EnsembleFooterModel | undefined => {
   if (!footer) return;
 
   const children = get(footer, "children");
   if (isArray(children)) {
     const unwrappedChildren = map(children, (child) =>
-      unwrapWidget(child as Record<string, unknown>),
+      unwrapWidget(child as Record<string, unknown>)
     );
     set(footer as object, "children", unwrappedChildren);
 
