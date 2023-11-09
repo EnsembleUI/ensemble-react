@@ -3,7 +3,7 @@ import { Row as AntRow } from "antd";
 import { get } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
-import { getColor, getCrossAxis, getMainAxis } from "../util/utils";
+import { getColor, getCrossAxis, getMainAxis } from "../shared/styles";
 import type { FlexboxProps } from "../shared/types";
 
 export const Row: React.FC<FlexboxProps> = (props) => {

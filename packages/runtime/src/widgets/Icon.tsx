@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import type { IconProps } from "../shared/types";
-import { getColor, getIcon } from "../util/utils";
+import { getColor, getIcon } from "../shared/styles";
 
 export const Icon: React.FC<IconProps> = (props) => {
   const [color, setColor] = useState(props.color);

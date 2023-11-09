@@ -6,7 +6,7 @@ import { SearchOutlined } from "@mui/icons-material";
 import { get, isObject } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps, HasBorder } from "../shared/types";
-import { getColor } from "../util/utils";
+import { getColor } from "../shared/styles";
 
 export type SearchStyles = {
   width?: number;

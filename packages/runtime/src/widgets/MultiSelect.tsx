@@ -10,7 +10,7 @@ import { Form as AntForm, Select as SelectComponent, Space } from "antd";
 import { get } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps, HasBorder } from "../shared/types";
-import { getColor } from "../util/utils";
+import { getColor } from "../shared/styles";
 
 interface SelectOption {
   label: Expression<string>;

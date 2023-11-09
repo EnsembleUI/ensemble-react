@@ -4,7 +4,7 @@ import ReactMarkdown from "react-markdown";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import type { BaseTextProps } from "../shared/types";
-import { getTextAlign } from "../util/utils";
+import { getTextAlign } from "../shared/styles";
 
 export type MarkdownProps = {
   // to be added more

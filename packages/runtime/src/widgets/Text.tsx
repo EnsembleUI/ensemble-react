@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Typography } from "antd";
 import { WidgetRegistry } from "../registry";
 import type { BaseTextProps } from "../shared/types";
-import { getTextAlign } from "../util/utils";
+import { getTextAlign } from "../shared/styles";
 
 export interface TextStyles {
   fontSize?: string | number;
