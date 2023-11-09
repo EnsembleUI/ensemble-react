@@ -1,21 +1,17 @@
 import type { EnsembleHeaderModel } from "@ensembleui/react-framework";
 import { isObject } from "lodash-es";
-import { Column } from "../widgets";
+import { Column } from "../widgets/Column";
 
 interface EnsembleHeaderProps {
   header?: EnsembleHeaderModel;
 }
 
 export const EnsembleHeader: React.FC<EnsembleHeaderProps> = ({ header }) => {
-  const HeaderWidget = prepareHeader(header);
+  if (!header) {
+    return null;
+  }
 
-  return HeaderWidget ? <>{HeaderWidget}</> : null;
-};
-
-const prepareHeader = (
-  header: EnsembleHeaderModel | undefined,
-): React.ReactElement | undefined => {
-  const title = header?.title;
+  const title = header.title;
   if (!title) return;
 
   // default header styles
@@ -25,30 +21,29 @@ const prepareHeader = (
       width: "100%",
       display: "flex",
       justifyContent: "center",
-      alignItems: header?.styles?.centerTitle ? "center" : "flex-start",
-      backgroundColor: header?.styles?.backgroundColor || "white",
-      height: header?.styles?.titleBarHeight || 56,
+      alignItems: header.styles?.centerTitle ? "center" : "flex-start",
+      backgroundColor: header.styles?.backgroundColor || "white",
+      height: header.styles?.titleBarHeight || 56,
     },
   };
 
-  if (typeof title === "string")
+  if (typeof title === "string") {
     return (
-      <Column
-        {...defaultStyles}
-        children={[
+      <Column {...defaultStyles}>
+        {[
           {
             name: "Text",
             properties: {
               text: title,
               styles: {
-                color: header?.styles?.titleColor || "black",
+                color: header.styles?.titleColor || "black",
               },
             },
           },
         ]}
-      />
+      </Column>
     );
-  else if (isObject(title))
-    return <Column {...defaultStyles} children={[title]} />;
-  return;
+  } else if (isObject(title)) {
+    return <Column {...defaultStyles}>{[title]}</Column>;
+  }
 };

@@ -10,7 +10,7 @@ import type {
   EnsembleWidget,
 } from "@ensembleui/react-framework";
 import { Tabs, ConfigProvider } from "antd";
-import { type IconProps } from "../util/types";
+import { type IconProps } from "../shared/types";
 import { EnsembleRuntime } from "../runtime";
 import { WidgetRegistry } from "../registry";
 import { Icon } from "./Icon";

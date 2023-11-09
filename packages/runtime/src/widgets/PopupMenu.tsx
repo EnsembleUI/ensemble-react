@@ -6,7 +6,7 @@ import type {
   EnsembleAction,
   EnsembleWidget,
 } from "@ensembleui/react-framework";
-import type { EnsembleWidgetProps } from "../util/types";
+import type { EnsembleWidgetProps } from "../shared/types";
 import { WidgetRegistry } from "../registry";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { EnsembleRuntime } from "../runtime";

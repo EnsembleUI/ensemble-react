@@ -2,7 +2,7 @@ import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useState } from "react";
 import { Typography } from "antd";
 import { WidgetRegistry } from "../registry";
-import type { BaseTextProps } from "../util/types";
+import type { BaseTextProps } from "../shared/types";
 import { getTextAlign } from "../util/utils";
 
 export interface TextStyles {

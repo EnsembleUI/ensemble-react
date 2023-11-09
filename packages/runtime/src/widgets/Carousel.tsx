@@ -9,7 +9,7 @@ import type {
 } from "@ensembleui/react-framework";
 import { Carousel as AntCarousel } from "antd"; // Assuming you have imported Ant Design's Carousel
 import { useEffect, useRef, useState } from "react";
-import type { HasBorder } from "../util/types";
+import type { HasBorder } from "../shared/types";
 import { EnsembleRuntime } from "../runtime";
 import { WidgetRegistry } from "../registry";
 

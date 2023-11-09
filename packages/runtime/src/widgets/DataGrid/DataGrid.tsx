@@ -7,7 +7,7 @@ import {
 } from "@ensembleui/react-framework";
 import { type ReactElement } from "react";
 import { WidgetRegistry } from "../../registry";
-import type { EnsembleWidgetProps } from "../../util/utils";
+import type { EnsembleWidgetProps } from "../../shared/types";
 import { DataCell } from "./DataCell";
 
 interface DataColumn {
@@ -18,7 +18,7 @@ interface DataColumn {
   sortKey?: string;
 }
 
-export interface GridProps extends EnsembleWidgetProps<object> {
+export interface GridProps extends EnsembleWidgetProps {
   DataColumns: DataColumn[];
   "item-template": {
     data: Expression<object>;
@@ -39,10 +39,16 @@ export const DataGrid: React.FC<GridProps> = ({
   "item-template": itemTemplate,
   id,
 }) => {
-  const widgetId = useWidgetId(id);
+  const { resolvedWidgetId, rootRef } = useWidgetId(id);
   const { namedData } = useTemplateData({ ...itemTemplate });
+
   return (
-    <Table dataSource={namedData} key={widgetId} style={{ width: "100%" }}>
+    <Table
+      dataSource={namedData}
+      key={resolvedWidgetId}
+      ref={rootRef}
+      style={{ width: "100%" }}
+    >
       {DataColumns.map((col, index) => {
         return (
           <Table.Column

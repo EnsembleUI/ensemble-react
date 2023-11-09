@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
-import type { IconProps } from "../util/types";
+import type { IconProps } from "../shared/types";
 import { getColor, getIcon } from "../util/utils";
 
 export const Icon: React.FC<IconProps> = (props) => {
   const [color, setColor] = useState(props.color);
   const [name, setName] = useState(props.name);
   const [backgroundColor, setBackgroundColor] = useState(
-    props.styles?.backgroundColor
+    props.styles?.backgroundColor,
   );
   const { values } = useRegisterBindings(
     { ...props, color, name, backgroundColor },
@@ -17,7 +17,7 @@ export const Icon: React.FC<IconProps> = (props) => {
       setColor,
       setName,
       setBackgroundColor,
-    }
+    },
   );
   const IconComponent = getIcon(props.name);
   if (IconComponent) {

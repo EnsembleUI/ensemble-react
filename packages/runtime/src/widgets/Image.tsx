@@ -3,7 +3,7 @@ import type { Expression } from "@ensembleui/react-framework";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import { getColor } from "../util/utils";
-import type { EnsembleWidgetProps, HasBorder } from "../util/types";
+import type { EnsembleWidgetProps, HasBorder } from "../shared/types";
 
 export type ImageProps = {
   source: Expression<string>;

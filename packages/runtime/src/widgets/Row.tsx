@@ -4,7 +4,7 @@ import { get } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import { getColor, getCrossAxis, getMainAxis } from "../util/utils";
-import type { FlexboxProps } from "../util/types";
+import type { FlexboxProps } from "../shared/types";
 
 export const Row: React.FC<FlexboxProps> = (props) => {
   const renderedChildren = useMemo(() => {
@@ -18,7 +18,9 @@ export const Row: React.FC<FlexboxProps> = (props) => {
         margin: props.margin,
         padding: props.padding,
         gap: props.gap,
-        backgroundColor: `${props.styles?.backgroundColor}`,
+        backgroundColor: props.styles?.backgroundColor
+          ? getColor(props.styles.backgroundColor)
+          : undefined,
         borderRadius: props.styles?.borderRadius,
         borderWidth: props.styles?.borderWidth,
         borderColor: props.styles?.borderColor

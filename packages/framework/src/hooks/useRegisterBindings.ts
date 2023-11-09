@@ -1,3 +1,4 @@
+import type { RefObject } from "react";
 import { useEffect, useMemo } from "react";
 import { compact, isEqual, map, merge } from "lodash-es";
 import { atom, useAtom } from "jotai";
@@ -8,17 +9,18 @@ import { useWidgetId } from "./useWidgetId";
 import { useCustomScope } from "./useCustomScope";
 import { useWidgetState } from "./useWidgetState";
 
-export interface EnsembleWidgetState<T> {
+export interface RegisterBindingsResult<T> {
   id: string;
   values?: T;
+  rootRef: RefObject<never>;
 }
 
 export const useRegisterBindings = <T extends Record<string, unknown>>(
   values: T,
   id?: string,
   methods?: InvokableMethods,
-): EnsembleWidgetState<T> => {
-  const resolvedWidgetId = useWidgetId(id);
+): RegisterBindingsResult<T> => {
+  const { resolvedWidgetId, rootRef } = useWidgetId(id);
   const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
 
   const expressions = useMemo(
@@ -88,5 +90,6 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   return {
     id: resolvedWidgetId,
     values: widgetState?.values,
+    rootRef,
   };
 };

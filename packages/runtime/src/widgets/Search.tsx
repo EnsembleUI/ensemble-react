@@ -5,14 +5,15 @@ import { AutoComplete, Input } from "antd";
 import { SearchOutlined } from "@mui/icons-material";
 import { get, isObject } from "lodash-es";
 import { WidgetRegistry } from "../registry";
-import type { SearchStyles } from "../util/types";
+import type { EnsembleWidgetProps, HasBorder } from "../shared/types";
 import { getColor } from "../util/utils";
 
-interface EnsembleWidgetProps<T> {
-  id?: string;
-  [key: string]: unknown;
-  styles?: T;
-}
+export type SearchStyles = {
+  width?: number;
+  height?: number;
+  margin?: number | string;
+  backgroundColor?: string;
+} & HasBorder;
 
 export type SearchProps = {
   placeholder?: string;

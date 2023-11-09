@@ -2,7 +2,7 @@ import type { EnsembleWidget } from "@ensembleui/react-framework";
 import { useMemo } from "react";
 import { merge } from "lodash-es";
 import { WidgetRegistry } from "../registry";
-import type { EnsembleWidgetProps } from "../util/types";
+import type { EnsembleWidgetProps } from "../shared/types";
 import { EnsembleRuntime } from "../runtime";
 
 interface CardStyles {

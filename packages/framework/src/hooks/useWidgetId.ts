@@ -1,13 +1,28 @@
-import { useMemo } from "react";
+import type { RefObject } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
-export const useWidgetId = (id?: string): string => {
-  const resolvedId = useMemo<string>(() => {
+export const useWidgetId = (
+  id?: string,
+): { resolvedWidgetId: string; rootRef: RefObject<never> } => {
+  const resolvedWidgetId = useMemo<string>(() => {
     if (id) {
       return id;
     }
     return generateRandomString(6);
   }, [id]);
-  return resolvedId;
+
+  const rootRef = useRef(null);
+
+  useEffect(() => {
+    if (rootRef.current && "setAttribute" in rootRef.current) {
+      (rootRef.current as HTMLElement).setAttribute(
+        "data-testid",
+        resolvedWidgetId,
+      );
+    }
+  }, [rootRef, resolvedWidgetId]);
+
+  return { resolvedWidgetId, rootRef };
 };
 
 const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";

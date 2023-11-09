@@ -1,7 +1,7 @@
 import { Doughnut } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
 import type { Expression } from "@ensembleui/react-framework";
-import type { EnsembleWidgetProps } from "../../util/types";
+import type { EnsembleWidgetProps } from "../../shared/types";
 
 const options: ChartOptions<"doughnut"> = {
   cutout: "90%",

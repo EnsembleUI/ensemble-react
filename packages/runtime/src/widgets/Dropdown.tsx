@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import type { Expression } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
-import type { EnsembleWidgetProps } from "../util/types";
+import type { EnsembleWidgetProps } from "../shared/types";
 
 export type DropdownProps = {
   label?: string;

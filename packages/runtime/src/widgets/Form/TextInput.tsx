@@ -1,7 +1,7 @@
 import { Form as AntForm, Input } from "antd";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useState } from "react";
-import type { EnsembleWidgetProps } from "../../util/types";
+import type { EnsembleWidgetProps } from "../../shared/types";
 import { WidgetRegistry } from "../../registry";
 import type { FormInputProps } from "./types";
 
