@@ -16,6 +16,7 @@ import "./App.css";
 const testApp: ApplicationDTO = {
   id: "test",
   name: "My App",
+  widgets: [],
   screens: [
     {
       id: "home",

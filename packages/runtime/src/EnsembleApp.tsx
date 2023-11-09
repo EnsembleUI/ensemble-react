@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import type { ApplicationDTO } from "@ensembleui/react-framework";
 import {
   ApplicationContextProvider,
@@ -15,6 +15,8 @@ import { ErrorPage } from "./runtime/error";
 // Register built in widgets;
 import "./widgets";
 import { ModalWrapper } from "./runtime/modal";
+import { WidgetRegistry } from "./registry";
+import { createCustomWidget } from "./runtime/customWidget";
 
 injectStyle();
 export interface EnsembleAppProps {
@@ -28,6 +30,15 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
 }) => {
   const resolvedApp = application ?? ApplicationLoader.load(appId);
   const app = EnsembleParser.parseApplication(resolvedApp);
+
+  useEffect(() => {
+    app.customWidgets.forEach((customWidget) => {
+      WidgetRegistry.register(
+        customWidget.name,
+        createCustomWidget(customWidget),
+      );
+    });
+  }, [app.customWidgets]);
 
   const router = useMemo(
     () =>

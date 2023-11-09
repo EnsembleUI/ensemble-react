@@ -19,6 +19,7 @@ import type {
   EnsembleFooterModel,
 } from "./shared/models";
 import type { ApplicationDTO } from "./shared/dto";
+import type { EnsembleAction } from "./shared";
 
 export interface EnsembleScreenYAML {
   View?: {
@@ -43,6 +44,18 @@ export const EnsembleParser = {
       throw Error("Application must have at least one screen");
     }
 
+    const customWidgets = app.widgets.map(({ name, content: yaml }) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const yamlObj = parse(yaml);
+
+      return {
+        name,
+        onLoad: get(yamlObj, "onLoad") as EnsembleAction,
+        inputs: (get(yamlObj, "inputs") ?? []) as string[],
+        body: unwrapWidget(get(yamlObj, "body") as Record<string, unknown>),
+      };
+    });
+
     const menu = screens.find((screen) => "items" in screen) as
       | EnsembleMenuModel
       | undefined;
@@ -61,6 +74,7 @@ export const EnsembleParser = {
       id: app.id,
       menu,
       screens: screens as EnsembleScreenModel[],
+      customWidgets,
       home: menu ?? screens[0],
       theme: app.theme,
     };
