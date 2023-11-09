@@ -44,11 +44,11 @@ export const ModalWrapper: React.FC = () => {
   }, [visible, isFullScreen, content]);
 
   const openModal = (
-    content: React.ReactNode,
+    newContent: React.ReactNode,
     newOptions: ModalProps,
   ): void => {
     setKey((prevKey) => prevKey + 1);
-    setContent(content);
+    setContent(newContent);
     setOptions(newOptions);
     setVisible(true);
   };
@@ -86,7 +86,7 @@ export const ModalWrapper: React.FC = () => {
     }
     .ant-modal-content {
       padding: ${
-        options?.padding ? options.padding : "10px 24px 24px"
+        options.padding ? options.padding : "10px 24px 24px"
       } !important;
     }
   `;
@@ -127,7 +127,7 @@ export const ModalWrapper: React.FC = () => {
           style={iconStyles}
         />
       )}
-      {options?.title}
+      {options.title}
       <CloseOutlined
         onClick={(): void => setVisible(false)}
         style={iconStyles}
@@ -144,35 +144,36 @@ export const ModalWrapper: React.FC = () => {
     >
       <Outlet />
 
-      {visible &&
-        createPortal(
-          <>
-            <style> {isFullScreen ? fullScreenStyles : positionStyles}</style>
-            <style>{customStyles}</style>
-            <Modal
-              key={key}
-              open={visible}
-              closable={false}
-              title={titleElement}
-              centered={!isFullScreen}
-              maskClosable={options?.maskClosable}
-              footer={null}
-              bodyStyle={{
-                height: endsWith(options?.height, "%")
-                  ? `clamp(0vh, ${parseInt(options?.height!, 10)}vh, 92vh`
-                  : options?.height,
-              }}
-              style={{
-                position: options?.position ? "absolute" : "unset",
-                margin: options?.margin || 0,
-              }}
-              width={options?.width}
-            >
-              {content}
-            </Modal>
-          </>,
-          document.body,
-        )}
+      {visible
+        ? createPortal(
+            <>
+              <style> {isFullScreen ? fullScreenStyles : positionStyles}</style>
+              <style>{customStyles}</style>
+              <Modal
+                bodyStyle={{
+                  height: endsWith(options.height, "%")
+                    ? `clamp(0vh, ${parseInt(options.height!, 10)}vh, 92vh`
+                    : options.height,
+                }}
+                centered={!isFullScreen}
+                closable={false}
+                footer={null}
+                key={key}
+                maskClosable={options.maskClosable}
+                open={visible}
+                style={{
+                  position: options.position ? "absolute" : "unset",
+                  margin: options.margin || 0,
+                }}
+                title={titleElement}
+                width={options.width}
+              >
+                {content}
+              </Modal>
+            </>,
+            document.body,
+          )
+        : null}
     </ModalContext.Provider>
   );
 };
