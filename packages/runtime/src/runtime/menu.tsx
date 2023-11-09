@@ -4,7 +4,7 @@ import { Menu as AntMenu, Col, Divider, Row } from "antd";
 import * as MuiIcons from "@mui/icons-material";
 import type { EnsembleWidget } from "@ensembleui/react-framework";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getColor } from "../util/utils";
+import { getColor } from "../shared/styles";
 import { EnsembleRuntime } from "./runtime";
 
 type TypeColors =

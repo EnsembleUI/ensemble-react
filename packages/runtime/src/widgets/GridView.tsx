@@ -10,12 +10,12 @@ import {
 import { Col, Row } from "antd";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
-import type { GridViewStyles } from "../util/types";
+import type { EnsembleWidgetProps } from "../shared/types";
 
-interface EnsembleWidgetProps<T> {
-  id?: string;
-  [key: string]: unknown;
-  styles?: T;
+export interface GridViewStyles {
+  horizontalTileCount?: number;
+  horizontalGap?: number;
+  verticalGap?: number;
 }
 
 export type GridViewProps = {

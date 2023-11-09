@@ -3,7 +3,7 @@ import { useRegisterBindings } from "@ensembleui/react-framework";
 import { Button as AntButton, Form as AntForm } from "antd";
 import { useCallback } from "react";
 import { WidgetRegistry } from "../registry";
-import type { EnsembleWidgetProps, IconProps } from "../util/types";
+import type { EnsembleWidgetProps, IconProps } from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { Icon } from "./Icon";
 
@@ -25,7 +25,7 @@ export type ButtonProps = {
 } & EnsembleWidgetProps;
 
 export const Button: React.FC<ButtonProps> = (props) => {
-  const { values } = useRegisterBindings(props, props.id);
+  const { values, rootRef } = useRegisterBindings(props, props.id);
   const action = useEnsembleAction(props.onTap);
   const onClickCallback = useCallback(() => {
     if (!action) {
@@ -43,6 +43,7 @@ export const Button: React.FC<ButtonProps> = (props) => {
         <AntButton
           htmlType="submit"
           onClick={onClickCallback}
+          ref={rootRef}
           style={{
             display: "flex",
             alignItems: "center",
@@ -67,6 +68,7 @@ export const Button: React.FC<ButtonProps> = (props) => {
   return (
     <AntButton
       onClick={onClickCallback}
+      ref={rootRef}
       style={{
         display: "flex",
         alignItems: "center",

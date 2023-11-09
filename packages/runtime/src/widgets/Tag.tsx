@@ -1,17 +1,9 @@
-import type {
-  Expression,
-  ScreenContextDefinition,
-} from "@ensembleui/react-framework";
-import {
-  evaluate,
-  useCustomScope,
-  useRegisterBindings,
-  useScreenContext,
-} from "@ensembleui/react-framework";
+import type { Expression } from "@ensembleui/react-framework";
+import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useState } from "react";
 import { Typography } from "antd";
 import { WidgetRegistry } from "../registry";
-import type { IconProps } from "../util/types";
+import type { IconProps } from "../shared/types";
 import { Icon } from "./Icon";
 
 export interface TagProps {
@@ -27,7 +19,7 @@ export interface TagProps {
 export const Tag: React.FC<TagProps> = (props) => {
   const [text, setText] = useState(props.label);
   const [backgroundColor, setBackgroundColor] = useState(
-    props?.styles?.backgroundColor
+    props.styles?.backgroundColor,
   );
   const { values } = useRegisterBindings(
     { ...props, text, backgroundColor },
@@ -35,7 +27,7 @@ export const Tag: React.FC<TagProps> = (props) => {
     {
       setText,
       setBackgroundColor,
-    }
+    },
   );
   const [expanded, setExpanded] = useState(false);
   const toggleExpansion = (): void => {

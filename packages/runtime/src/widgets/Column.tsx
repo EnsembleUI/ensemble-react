@@ -3,8 +3,8 @@ import { Col } from "antd";
 import { get } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
-import type { FlexboxProps } from "../util/types";
-import { getColor, getCrossAxis, getMainAxis } from "../util/utils";
+import type { FlexboxProps } from "../shared/types";
+import { getColor, getCrossAxis, getMainAxis } from "../shared/styles";
 
 export const Column: React.FC<FlexboxProps> = (props) => {
   const renderedChildren = useMemo(() => {

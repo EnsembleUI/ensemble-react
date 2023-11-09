@@ -10,7 +10,7 @@ import {
 import { isString } from "lodash-es";
 import { useNavigateScreen } from "../../runtime/hooks/useNavigateScreen";
 import { WidgetRegistry } from "../../registry";
-import type { IconProps } from "../../util/types";
+import type { IconProps } from "../../shared/types";
 import { Icon } from "../Icon";
 import { useExecuteCode } from "../../runtime/hooks/useEnsembleAction";
 import { stringToColor } from "./utils/stringToColors";

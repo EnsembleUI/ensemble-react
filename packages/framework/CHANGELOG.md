@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.0.5
+
+### Patch Changes
+
+- Add datatest-id support
+
 ## 0.0.4
 
 ### Patch Changes

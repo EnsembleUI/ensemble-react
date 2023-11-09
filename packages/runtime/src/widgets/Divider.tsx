@@ -1,5 +1,5 @@
 import { WidgetRegistry } from "../registry";
-import type { EnsembleWidgetProps } from "../util/types";
+import type { EnsembleWidgetProps } from "../shared/types";
 
 export type DividerProps = {
   styles: DividerStyles;
@@ -29,7 +29,7 @@ export const DividerWidget: React.FC<DividerProps> = (props) => {
             ? `0px ${props.styles.endIndent}px 0px ${props.styles.indent}px`
             : "0px"
         }`,
-        width: `${props?.styles?.direction === "vertical" ? "0px" : ""}`,
+        width: `${props.styles.direction === "vertical" ? "0px" : ""}`,
       }}
     />
   );

@@ -1,7 +1,7 @@
 import { Line } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
 import type { Expression } from "@ensembleui/react-framework";
-import type { EnsembleWidgetProps } from "../../util/types";
+import type { EnsembleWidgetProps } from "../../shared/types";
 
 const defaultOptions: ChartOptions<"line"> = {
   maintainAspectRatio: false,
