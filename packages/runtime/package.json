@@ -33,6 +33,7 @@
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.0",
     "antd": "^5.9.0",
+    "antd-input-otp": "^2.0.4",
     "chart.js": "^4.4.0",
     "eslint-config-custom": "workspace:*",
     "jest": "27.5.1",

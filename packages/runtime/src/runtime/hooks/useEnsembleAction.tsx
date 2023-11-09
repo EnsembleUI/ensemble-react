@@ -339,7 +339,7 @@ export const useEnsembleAction = (
     (action.navigateScreen && navigateScreen) ||
     (action.showToast && showToast) ||
     (action.navigateModalScreen && navigateModalScreen) ||
-    ("closeAllDialogs" in action && closeAllDialogs) ||
+    (!isString(action) && "closeAllDialogs" in action && closeAllDialogs) ||
     (action.pickFiles && pickFiles) ||
     (action.uploadFiles && uploadFiles)
   );

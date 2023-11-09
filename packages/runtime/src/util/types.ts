@@ -1,9 +1,9 @@
 import type { EnsembleWidget, Expression } from "@ensembleui/react-framework";
 
-export interface EnsembleWidgetProps {
+export interface EnsembleWidgetProps<T = Record<string, string | number>> {
   id?: string;
+  styles?: T;
   [key: string]: unknown;
-  styles?: Record<string, string | number>;
 }
 
 export type BaseTextProps = {
