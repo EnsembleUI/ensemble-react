@@ -43,3 +43,6 @@ jobs:
 
       - name: Test
         run: pnpm test
+
+      - name: Publish
+        run: pnpm changeset publish
