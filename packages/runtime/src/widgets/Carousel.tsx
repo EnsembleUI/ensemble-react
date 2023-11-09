@@ -9,7 +9,6 @@ import type {
 } from "@ensembleui/react-framework";
 import { Carousel as AntCarousel } from "antd"; // Assuming you have imported Ant Design's Carousel
 import { useEffect, useRef, useState } from "react";
-import { map } from "lodash-es";
 import type { HasBorder } from "../util/types";
 import { EnsembleRuntime } from "../runtime";
 import { WidgetRegistry } from "../registry";
@@ -47,21 +46,7 @@ export interface CarouselProps {
 
 export const Carousel: React.FC<CarouselProps> = (props) => {
   const itemTemplate = props["item-template"];
-  let namedData: Record<string, unknown>[] | number[] | string[] = [];
-  const templateData = useTemplateData(itemTemplate.data);
-  if (Array.isArray(itemTemplate.data)) {
-    namedData = map(itemTemplate.data, (value) => {
-      const namedObj: Record<string, unknown> = {};
-      namedObj[itemTemplate.name] = value;
-      return namedObj;
-    });
-  } else {
-    namedData = map(templateData, (value) => {
-      const namedObj: Record<string, unknown> = {};
-      namedObj[itemTemplate.name] = value;
-      return namedObj;
-    });
-  }
+  const { namedData } = useTemplateData({ ...itemTemplate });
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState<number | undefined>(
     undefined,

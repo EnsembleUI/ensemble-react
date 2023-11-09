@@ -28,21 +28,21 @@ export const Search: React.FC<SearchProps> = ({
 }) => {
   const [options, setOptions] = useState<SelectProps<object>["options"]>([]);
 
-  const templateData = useTemplateData(data!);
+  const { rawData } = useTemplateData({ data: data! });
 
   // TODO: Pass in search predicate function via props or filter via API
   const handleSearch = (value: string) => {
-    if (Array.isArray(templateData)) {
+    if (Array.isArray(rawData)) {
       setOptions(
         value
-          ? templateData
+          ? rawData
               .filter(
                 (item) =>
                   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
                   (isObject(item) ? get(item, searchKey ?? "") : item)
                     ?.toString()
                     ?.toLowerCase()
-                    ?.includes(value.toLowerCase())
+                    ?.includes(value.toLowerCase()),
               )
               .map((item) => ({
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -50,7 +50,7 @@ export const Search: React.FC<SearchProps> = ({
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 label: isObject(item) ? get(item, searchKey ?? "") : item,
               }))
-          : []
+          : [],
       );
     }
   };

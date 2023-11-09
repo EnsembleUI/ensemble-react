@@ -94,6 +94,7 @@ importers:
       '@testing-library/react': ^13.4.0
       '@types/lodash-es': ^4.17.8
       '@types/react': ^18.2.21
+      acorn: ^8.11.2
       axios: 0.27.2
       eslint-config-custom: workspace:*
       jotai: ^2.4.2
@@ -108,6 +109,7 @@ importers:
       '@testing-library/react': 13.4.0
       '@types/lodash-es': 4.17.9
       '@types/react': 18.2.21
+      acorn: 8.11.2
       axios: 0.27.2
       eslint-config-custom: link:../eslint-config-custom
       jotai: 2.4.2_@types+react@18.2.21
@@ -4316,6 +4318,12 @@ packages:
 
   /acorn/8.10.0:
     resolution: {integrity: sha512-F0SAmZ8iUtS//m8DmCTA0jlh6TDKkHQyK6xc6V4KDTyZKA9dnvX9/3sRTVQrWm79glUAZbnmmNcdYwUIHWVybw==}
+    engines: {node: '>=0.4.0'}
+    hasBin: true
+    dev: true
+
+  /acorn/8.11.2:
+    resolution: {integrity: sha512-nc0Axzp/0FILLEVsm4fNwLCwMttvhEI263QtVPQcbpfZZ3ts0hLsZGOpE6czNlid7CJ9MlyH8reXkpsf3YUY4w==}
     engines: {node: '>=0.4.0'}
     hasBin: true
     dev: true

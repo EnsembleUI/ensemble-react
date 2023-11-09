@@ -1,4 +1,5 @@
-import { ensembleStore, screenAtom } from "./state";
+import { screenAtom } from "./state/screen";
+import { ensembleStore } from "./state/platform";
 
 export interface EnsembleStorage {
   set: (key: string, value: unknown) => void;

@@ -58,6 +58,7 @@ export const EnsembleParser = {
     }
 
     return {
+      id: app.id,
       menu,
       screens: screens as EnsembleScreenModel[],
       home: menu ?? screens[0],

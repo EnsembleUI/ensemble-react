@@ -1,10 +1,8 @@
 import { useEffect, useMemo } from "react";
-import { compact, isEqual, map, merge, throttle } from "lodash-es";
-import { useAtom } from "jotai";
-import { selectAtom } from "jotai/utils";
-import type { InvokableMethods, ScreenContextDefinition } from "../state";
-import { screenAtom } from "../state";
-import { evaluate } from "../evaluate";
+import { compact, isEqual, map, merge } from "lodash-es";
+import { atom, useAtom } from "jotai";
+import type { InvokableMethods } from "../state";
+import { createBindingAtom } from "../state";
 import { isExpression } from "../shared";
 import { useWidgetId } from "./useWidgetId";
 import { useCustomScope } from "./useCustomScope";
@@ -24,14 +22,16 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
 
   const expressions = useMemo(
-    () =>
-      compact(
+    () => {
+      // console.log(`getting expressions for ${resolvedWidgetId}`);
+      return compact(
         map(Object.entries(values), ([key, value]) => {
           if (isExpression(value)) {
-            return [key, value.slice(2, value.length - 1)];
+            return [key, value];
           }
         }),
-      ),
+      );
+    },
     // FIXME: update expressions if props change without creating new atom
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
@@ -39,23 +39,31 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
 
   const customScope = useCustomScope();
 
-  const bindingsAtom = useMemo(
-    () =>
-      selectAtom(
-        screenAtom,
-        throttle((screenContext: ScreenContextDefinition) => {
-          const bindingValues = Object.fromEntries(
-            expressions.map(([key, expression]) => {
-              return [key, evaluate(screenContext, expression, customScope)];
-            }),
-          );
-          return bindingValues;
-        }, 350),
-        isEqual,
-      ),
-    [customScope, expressions],
-  );
+  const bindingsAtom = useMemo(() => {
+    // console.log(`creating binding for ${resolvedWidgetId}`);
+    const bindingsEntries = compact(
+      expressions.map(([name, expr]) => {
+        const valueAtom = createBindingAtom(
+          expr,
+          customScope,
+          resolvedWidgetId,
+        );
+        if (!valueAtom) {
+          return;
+        }
+        return { name, valueAtom };
+      }),
+    );
+    return atom((get) => {
+      // console.log(`get bindings for ${resolvedWidgetId}`);
+      const valueEntries = bindingsEntries.map(({ name, valueAtom }) => {
+        return [name, get(valueAtom)];
+      });
+      return Object.fromEntries(valueEntries) as Record<string, unknown>;
+    });
+  }, [customScope, expressions]);
 
+  // console.log(`render: ${resolvedWidgetId}`);
   const [bindings] = useAtom(bindingsAtom);
 
   const newValues = merge({}, values, bindings) as T;

@@ -42,11 +42,11 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     defaultOptions?.map((item) => item.value.toString()),
   );
 
-  const templateData = useTemplateData(data);
+  const { rawData } = useTemplateData({ data });
 
   useEffect(() => {
-    if (Array.isArray(templateData)) {
-      const initialOptions = templateData.map((item) => ({
+    if (Array.isArray(rawData)) {
+      const initialOptions = rawData.map((item) => ({
         label: get(item, labelKey ?? "label") as Expression<string>,
         value: get(item, valueKey ?? "value") as Expression<string | number>,
       }));
@@ -59,7 +59,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
       }
       setOptions(initialOptions);
     }
-  }, [templateData, defaultOptions, labelKey, valueKey]);
+  }, [rawData, defaultOptions, labelKey, valueKey]);
 
   const handleChange = (value: string[]): void => {
     setSelectedValues(value);

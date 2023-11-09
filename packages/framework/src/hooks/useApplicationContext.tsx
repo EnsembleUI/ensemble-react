@@ -1,8 +1,9 @@
 import { Provider, useAtomValue } from "jotai";
+import { useHydrateAtoms } from "jotai/utils";
 import {
   appAtom,
-  ensembleStore,
   type ApplicationContextDefinition,
+  defaultApplicationContext,
 } from "../state";
 import type { EnsembleAppModel } from "../shared/models";
 import { EnsembleStorage } from "../storage";
@@ -17,13 +18,19 @@ type ApplicationContextProviderProps =
 export const ApplicationContextProvider: React.FC<
   ApplicationContextProviderProps
 > = ({ app, children }) => {
-  const appAtomValue = ensembleStore.get(appAtom);
-  ensembleStore.set(appAtom, {
-    ...appAtomValue,
-    application: app,
-    storage: EnsembleStorage,
-  });
-  return <Provider store={ensembleStore}>{children}</Provider>;
+  return (
+    <Provider key={app.id}>
+      <HydrateAtoms
+        appContext={{
+          ...defaultApplicationContext,
+          application: app,
+          storage: EnsembleStorage,
+        }}
+      >
+        {children}
+      </HydrateAtoms>
+    </Provider>
+  );
 };
 
 export const useApplicationContext =
@@ -31,3 +38,11 @@ export const useApplicationContext =
     const appContext = useAtomValue(appAtom);
     return appContext;
   };
+
+const HydrateAtoms: React.FC<
+  React.PropsWithChildren<{ appContext: ApplicationContextDefinition }>
+> = ({ appContext, children }) => {
+  // initialising on state with prop on render here
+  useHydrateAtoms([[appAtom, appContext]]);
+  return <>{children}</>;
+};
