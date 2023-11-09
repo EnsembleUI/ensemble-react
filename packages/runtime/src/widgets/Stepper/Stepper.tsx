@@ -18,6 +18,7 @@ import {
   type Expression,
   useTemplateData,
   unwrapWidget,
+  TemplateData,
 } from "@ensembleui/react-framework";
 import Alert from "@mui/material/Alert";
 import type { EnsembleWidgetProps } from "../../util/types";
@@ -30,7 +31,7 @@ export interface StepProps {
   contentWidget: Record<string, unknown>;
 }
 export interface TemplateProps {
-  data: Expression<object>;
+  data: Expression<TemplateData>;
   name: string;
   template: EnsembleWidget;
 }
@@ -52,16 +53,7 @@ interface CustomConnectorProps {
 const Stepper: React.FC<StepperProps> = (props) => {
   const [activeStep, setActiveStep] = useState(0);
   const itemTemplate = props["item-template"];
-  const templateData = useTemplateData(itemTemplate?.data);
-  const namedData = useMemo(() => {
-    const data = map(templateData, (value) => {
-      const namedObj: Record<string, unknown> = {};
-      namedObj[itemTemplate?.name] = value;
-      return namedObj;
-    });
-
-    return data;
-  }, [itemTemplate, templateData]);
+  const { namedData } = useTemplateData({ ...itemTemplate });
   const stepsLength = namedData.length;
   const stepTypes = itemTemplate?.template;
   const handleNext = useCallback(() => {
@@ -171,7 +163,7 @@ const CustomConnector = styled(StepConnector)(
 
 const CustomStepIcon = (
   props: { stepTypes: EnsembleWidget } & StepIconProps & {
-      data: Record<string, unknown>;
+      data: object;
     } & { index: number } & { stepsLength: number } & { name: string }
 ): React.ReactElement<StepTypeProps> => {
   const { active, completed, stepsLength, index } = props;
