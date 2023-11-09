@@ -133,6 +133,7 @@ importers:
       '@types/react': ^18.2.21
       '@types/react-dom': ^18.2.0
       antd: ^5.9.0
+      antd-input-otp: ^2.0.4
       chart.js: ^4.4.0
       eslint-config-custom: workspace:*
       jest: 27.5.1
@@ -156,6 +157,7 @@ importers:
       '@types/react': 18.2.21
       '@types/react-dom': 18.2.7
       antd: 5.9.0
+      antd-input-otp: 2.0.4_antd@5.9.0
       chart.js: 4.4.0
       eslint-config-custom: link:../eslint-config-custom
       jest: 27.5.1
@@ -4460,6 +4462,15 @@ packages:
   /ansi-styles/6.2.1:
     resolution: {integrity: sha512-bN798gFfQX+viw3R7yrGWRqnrN2oRkEkUjjl4JNn4E8GxxbjtG3FbrEIIY3l8/hrwUwIeCZvi4QuOTP4MErVug==}
     engines: {node: '>=12'}
+    dev: true
+
+  /antd-input-otp/2.0.4_antd@5.9.0:
+    resolution: {integrity: sha512-j0jWH5vi1o/lbt1F9sXxtI/q2hikUjjsjRHlRaspLyxP0fAVdTxsG2Se3K1KQNoEQ94ILJ0c8Hu6ai5Oj7LbEA==}
+    peerDependencies:
+      antd: '>=4.19.0'
+      react: '>=16.8.0'
+    dependencies:
+      antd: 5.9.0
     dev: true
 
   /antd/5.9.0:

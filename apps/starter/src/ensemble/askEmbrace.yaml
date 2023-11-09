@@ -22,6 +22,32 @@ View:
         # - Text:
         #     id: he
         #     text: hehe
+        - ConfirmationInput:
+            id: myConfirmationInput
+            length: 4
+            styles:
+              inputType: "number"
+              fieldWidth: 30
+              fieldHeight: 30
+              defaultFieldBorderColor: "green"
+              defaultFieldBackgroundColor: "grey"
+              activeFieldBorderColor: "black"
+              activeFieldBackgroundColor: "yellow"
+              filledFieldBorderColor: "blue"
+              filledFieldBackgroundColor: "aqua"
+              gap: 30px
+              backgroundColor: "lightblue"
+              padding: 20
+              textStyle:
+                fontSize: 15
+            onChange:
+              executeCode:
+                body: |
+                  console.log(myConfirmationInput.text)
+            onComplete:
+              executeCode:
+                body: |
+                  console.log("completed: "+myConfirmationInput.text)
         - Form:
             styles:
               labelPosition: start
