@@ -12,7 +12,6 @@ export type SearchStyles = {
   width?: number;
   height?: number;
   margin?: number | string;
-  backgroundColor?: string;
 } & HasBorder;
 
 export type SearchProps = {
@@ -81,7 +80,6 @@ export const Search: React.FC<SearchProps> = ({
             ? getColor(styles.borderColor)
             : undefined,
           boxShadow: "none",
-          backgroundColor: styles?.backgroundColor,
         }}
       />
     </AutoComplete>
