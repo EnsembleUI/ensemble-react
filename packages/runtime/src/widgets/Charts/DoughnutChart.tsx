@@ -23,11 +23,7 @@ export const DoughnutChart: React.FC<ChartProps> = (props) => {
   const context = useScreenContext();
 
   const evaluatedDatasets = useMemo(
-    () =>
-      evaluate(
-        context as ScreenContextDefinition,
-        JSON.stringify(config?.data?.datasets),
-      ) as ChartDataSets[] | undefined,
+    () => evaluate(context as ScreenContextDefinition, config?.data?.datasets),
     [config?.data?.datasets, context],
   );
 
@@ -35,6 +31,8 @@ export const DoughnutChart: React.FC<ChartProps> = (props) => {
     setLabels,
     setTitle,
   });
+
+  if (!evaluatedDatasets) return null;
 
   return (
     <div
@@ -46,7 +44,7 @@ export const DoughnutChart: React.FC<ChartProps> = (props) => {
       <Doughnut
         data={{
           labels: values?.labels,
-          datasets: evaluatedDatasets || [],
+          datasets: evaluatedDatasets as ChartDataSets[],
         }}
         options={{
           ...options,

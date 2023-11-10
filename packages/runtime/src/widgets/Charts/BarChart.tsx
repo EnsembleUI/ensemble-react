@@ -41,11 +41,7 @@ export const BarChart: React.FC<ChartProps> = (props) => {
   const context = useScreenContext();
 
   const evaluatedDatasets = useMemo(
-    () =>
-      evaluate(
-        context as ScreenContextDefinition,
-        JSON.stringify(config?.data?.datasets),
-      ) as ChartDataSets[] | undefined,
+    () => evaluate(context as ScreenContextDefinition, config?.data?.datasets),
     [config?.data?.datasets, context],
   );
 
@@ -53,6 +49,10 @@ export const BarChart: React.FC<ChartProps> = (props) => {
     setLabels,
     setTitle,
   });
+
+  console.log("BarChart", evaluatedDatasets);
+
+  if (!evaluatedDatasets) return null;
 
   return (
     <div
@@ -64,7 +64,7 @@ export const BarChart: React.FC<ChartProps> = (props) => {
       <Bar
         data={{
           labels: values?.labels,
-          datasets: evaluatedDatasets || [],
+          datasets: evaluatedDatasets as ChartDataSets[],
         }}
         options={{
           ...options,
