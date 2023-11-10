@@ -39,14 +39,16 @@ View:
                           [
                             {
                               label: "Matched",
-                              data: [190, 200, 210, 145, 230, 240, 220, 190, 120],
+                              data:
+                                [190, 200, 210, 145, 230, 240, 220, 190, 120],
                               backgroundColor: "#5542f6",
                               barPercentage: 0.8,
                               borderRadius: 3,
                             },
                             {
                               label: "Enrolled",
-                              data: [160, 170, 170, 105, 190, 170, 155, 160, 110],
+                              data:
+                                [160, 170, 170, 105, 190, 170, 155, 160, 110],
                               backgroundColor: "#01a4ff",
                               barPercentage: 0.8,
                               borderRadius: 3,
@@ -199,21 +201,21 @@ View:
                                 borderRadius: 30
                                 padding: 8
                                 backgroundColor: white
+                          - Text:
+                              text: ${step.name}
+                              styles:
+                                fontSize: 14
+                                fontWeight: 600
                           - Conditional:
                               conditions:
-                                - if: ${!state.completed}
+                                - if: ${!step.completed}
                                   Text:
-                                    text: ${state.active ? "In Progress" :step.name}
+                                    text: ${step.active ? "In Progress" :""}
                                 - else:
                                   Column:
                                     gap: 4
                                     crossAxis: center
                                     children:
-                                      - Text:
-                                          text: ${step.name}
-                                          styles:
-                                            fontSize: 14
-                                            fontWeight: 600
                                       - Row:
                                           gap: 3
                                           children:
