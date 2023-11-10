@@ -1,6 +1,7 @@
 import type { EnsembleWidget } from "@ensembleui/react-framework";
 import { CustomScopeProvider } from "@ensembleui/react-framework";
 import { EnsembleRuntime } from "../../runtime";
+import React from "react";
 
 export interface StepTypeProps {
   scopeName?: string;

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback } from "react";
 import {
   Stepper as MUIStepper,
   Step,
@@ -21,7 +21,7 @@ import {
   TemplateData,
 } from "@ensembleui/react-framework";
 import Alert from "@mui/material/Alert";
-import type { EnsembleWidgetProps } from "../../util/types";
+import type { EnsembleWidgetProps } from "../../shared/types";
 import { WidgetRegistry } from "../../registry";
 import { EnsembleRuntime } from "../../runtime";
 import { StepType, StepTypeProps } from "./StepType";
