@@ -42,6 +42,9 @@ export type StepperProps = {
   styles: {
     connectorColor?: string;
     connectorHeight?: number;
+    backgroundColor?: string;
+    borderRadius?: string;
+    padding?: string;
   };
 } & EnsembleWidgetProps;
 
@@ -88,6 +91,15 @@ const Stepper: React.FC<StepperProps> = (props) => {
         }
         sx={{
           justifyContent: "center",
+          backgroundColor: props?.styles?.backgroundColor,
+          padding: `${
+            props?.styles?.padding ? `${props.styles.padding}px` : ""
+          }`,
+          borderRadius: `${
+            props?.styles?.borderRadius
+              ? `${props.styles.borderRadius}px`
+              : "0px"
+          }`,
         }}
       >
         {values?.["item-template"] ? (

@@ -144,6 +144,9 @@ View:
             styles:
               connectorColor: "#31C48D"
               connectorHeight: 4
+              backgroundColor: "#FBFAFC"
+              borderRadius: 10
+              padding: 10
             steps:
               - stepLabel: Match
                 contentWidget:
