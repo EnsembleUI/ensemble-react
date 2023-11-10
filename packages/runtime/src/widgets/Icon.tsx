@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-import {
-  useRegisterBindings,
-  evaluate,
-  useScreenContext,
-} from "@ensembleui/react-framework";
+import { useRegisterBindings } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import type { IconProps } from "../shared/types";
 import { getColor, getIcon } from "../shared/styles";

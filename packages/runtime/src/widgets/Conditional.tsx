@@ -63,7 +63,7 @@ export const Conditional: React.FC<ConditionalProps> = (props) => {
 WidgetRegistry.register("Conditional", Conditional);
 
 export const hasProperStructure = (
-  conditions: CondtionalElement[]
+  conditions: CondtionalElement[],
 ): [boolean, string] => {
   if (isEmpty(conditions) || !("if" in head(conditions)!))
     return [

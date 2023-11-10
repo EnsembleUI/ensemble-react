@@ -18,7 +18,7 @@ export interface RegisterBindingsResult<T> {
 export const useRegisterBindings = <T extends Record<string, unknown>>(
   values: T,
   id?: string,
-  methods?: InvokableMethods
+  methods?: InvokableMethods,
 ): RegisterBindingsResult<T> => {
   const { resolvedWidgetId, rootRef } = useWidgetId(id);
   const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
@@ -31,12 +31,12 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
           if (isExpression(value)) {
             return [key, value];
           }
-        })
+        }),
       );
     },
     // FIXME: update expressions if props change without creating new atom
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [],
   );
 
   const customScope = useCustomScope();
@@ -48,13 +48,13 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
         const valueAtom = createBindingAtom(
           expr,
           customScope,
-          resolvedWidgetId
+          resolvedWidgetId,
         );
         if (!valueAtom) {
           return;
         }
         return { name, valueAtom };
-      })
+      }),
     );
     return atom((get) => {
       // console.log(`get bindings for ${resolvedWidgetId}`);

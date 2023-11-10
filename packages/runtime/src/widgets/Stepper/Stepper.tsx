@@ -158,13 +158,13 @@ const CustomConnector = styled(StepConnector)(
       borderTopWidth: props?.connector_height ?? 3,
       borderRadius: 1,
     },
-  })
+  }),
 );
 
 const CustomStepIcon = (
   props: { stepTypes: EnsembleWidget } & StepIconProps & {
       data: object;
-    } & { index: number } & { stepsLength: number } & { name: string }
+    } & { index: number } & { stepsLength: number } & { name: string },
 ): React.ReactElement<StepTypeProps> => {
   const { active, completed, stepsLength, index } = props;
   const stateData = { active, completed, stepsLength, index };
@@ -179,7 +179,7 @@ const CustomStepIcon = (
 };
 
 const unwrapContent = (
-  steps: StepProps[]
+  steps: StepProps[],
 ): { stepLabel: string; contentWidget: EnsembleWidget }[] => {
   const unwrappedChildren = map(steps, ({ stepLabel, contentWidget }) => {
     const deepCopy = cloneDeep(contentWidget);

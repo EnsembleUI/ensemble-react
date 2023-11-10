@@ -44,14 +44,14 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
   const context = useScreenContext();
   const renderLabel = (
     label: Expression<string>,
-    icon?: IconProps
+    icon?: IconProps,
   ): ReactElement => {
     let labelEvaluated = "";
     if (containsExpression(label)) {
       const cleanedExpression = label.replace(/\${|}/g, "");
       labelEvaluated = evaluate(
         context as ScreenContextDefinition,
-        cleanedExpression
+        cleanedExpression,
       ) as string;
     }
     return (
