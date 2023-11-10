@@ -107,7 +107,6 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
     }
     return props.items[0].label;
   };
-
   return (
     <ConfigProvider
       theme={{

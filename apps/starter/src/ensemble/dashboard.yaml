@@ -39,14 +39,16 @@ View:
                           [
                             {
                               label: "Matched",
-                              data: [190, 200, 210, 145, 230, 240, 220, 190, 120],
+                              data:
+                                [190, 200, 210, 145, 230, 240, 220, 190, 120],
                               backgroundColor: "#5542f6",
                               barPercentage: 0.8,
                               borderRadius: 3,
                             },
                             {
                               label: "Enrolled",
-                              data: [160, 170, 170, 105, 190, 170, 155, 160, 110],
+                              data:
+                                [160, 170, 170, 105, 190, 170, 155, 160, 110],
                               backgroundColor: "#01a4ff",
                               barPercentage: 0.8,
                               borderRadius: 3,
@@ -133,14 +135,152 @@ View:
         - Text:
             id: myText
             text: Peter Parker
-        - Button:
-            label: Click Me
-            onTap:
-              executeCode: myText.setText("Spiderman")
         - Text:
             text: ${myText.text}
         - Text:
             text: ${getDummyJson.body.total}
+        - Stepper:
+            id: stepper1
+            styles:
+              connectorColor: "#31C48D"
+              connectorHeight: 4
+              backgroundColor: "#FBFAFC"
+              borderRadius: 10
+              padding: 10
+            steps:
+              - stepLabel: Match
+                contentWidget:
+                  Column:
+                    crossAxis: center
+                    mainAxis: spaceBetween
+                    children:
+                      - Text:
+                          text: Hello
+                      - Button:
+                          label: Doing Good
+              - stepLabel: SubmitDocs
+                contentWidget:
+                  Column:
+                    crossAxis: center
+                    mainAxis: spaceBetween
+                    children:
+                      - Text:
+                          text: Doing asd
+                      - Button:
+                          label: Doing Good
+              - stepLabel: Check
+                contentWidget:
+                  Column:
+                    crossAxis: center
+                    mainAxis: spaceBetween
+                    children:
+                      - Text:
+                          text: Doing asd
+                      - Button:
+                          label: Doing Good
+            item-template:
+              data:
+                - name: Match
+                  iconName: ScaleOutlined
+                - name: SubmitDocs
+                  iconName: FindInPageOutlined
+                - name: Review
+                  iconName: Check
+                - name: Enroll
+                  iconName: Search
+              name: step
+              template:
+                Conditional:
+                  conditions:
+                    - if: ${step.index < step.stepsLength - 1}
+                      Column:
+                        crossAxis: center
+                        children:
+                          - Icon:
+                              name: ${step.iconName}
+                              color: ${!step.active ? step.completed ? "#31C48D" :"grey" :"#1D1C21"}
+                              styles:
+                                borderWidth: 2
+                                borderRadius: 30
+                                padding: 8
+                                backgroundColor: white
+                          - Text:
+                              text: ${step.name}
+                              styles:
+                                fontSize: 14
+                                fontWeight: 600
+                          - Conditional:
+                              conditions:
+                                - if: ${!step.completed}
+                                  Text:
+                                    text: ${step.active ? "In Progress" :""}
+                                - else:
+                                  Column:
+                                    gap: 4
+                                    crossAxis: center
+                                    children:
+                                      - Row:
+                                          gap: 3
+                                          children:
+                                            - Text:
+                                                text: 12/31/3131
+                                                styles:
+                                                  fontSize: 12
+                                                  color: "#747184"
+                                                  fontWeight: 500
+                                            - Icon:
+                                                name: Check
+                                                color: "#31C48D"
+                                                size: 16
+                    - else:
+                      Column:
+                        crossAxis: center
+                        children:
+                          - Icon:
+                              name: ${step.iconName}
+                              color: "#31C48D"
+                              styles:
+                                borderWidth: 2
+                                borderRadius: 30
+                                padding: 8
+                                backgroundColor: white
+                          - Column:
+                              gap: 4
+                              crossAxis: center
+                              children:
+                                - Text:
+                                    text: ${step.name}
+                                    styles:
+                                      fontSize: 14
+                                      fontWeight: 600
+                                - Row:
+                                    gap: 3
+                                    children:
+                                      - Text:
+                                          text: 12/31/3131
+                                          styles:
+                                            fontSize: 12
+                                            color: "#747184"
+                                            fontWeight: 500
+                                      - Icon:
+                                          name: Check
+                                          color: "#31C48D"
+                                          size: 16
+
+        - Row:
+            children:
+              - Button:
+                  label: Previous
+                  onTap:
+                    executeCode: |
+                      console.log("From Previous Yaml",stepper1);
+                      stepper1.handleBack()
+              - Button:
+                  label: Next
+                  onTap:
+                    executeCode: |
+                      console.log("From Next Yaml",stepper1);
+                      stepper1.handleNext()
 
 API:
   getDummyJson:

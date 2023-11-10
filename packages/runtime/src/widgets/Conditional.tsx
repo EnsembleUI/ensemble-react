@@ -5,6 +5,7 @@ import type {
 import {
   evaluate,
   unwrapWidget,
+  useCustomScope,
   useScreenContext,
 } from "@ensembleui/react-framework";
 import { cloneDeep, head, isEmpty, last } from "lodash-es";
@@ -28,15 +29,14 @@ export interface ConditionalProps {
 
 export const Conditional: React.FC<ConditionalProps> = (props) => {
   const context = useScreenContext();
-
+  const scope = useCustomScope();
   const [isValid, errorMessage] = hasProperStructure(props.conditions);
   if (!isValid) throw Error(errorMessage);
 
   let element = props.conditions.find((condition) => {
     const conditionString = extractCondition(condition);
     if (typeof conditionString !== "string") return false;
-
-    return evaluate(context as ScreenContextDefinition, conditionString);
+    return evaluate(context as ScreenContextDefinition, conditionString, scope);
   });
 
   if (!element) {

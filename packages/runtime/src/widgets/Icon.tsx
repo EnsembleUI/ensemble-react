@@ -19,7 +19,7 @@ export const Icon: React.FC<IconProps> = (props) => {
       setBackgroundColor,
     },
   );
-  const IconComponent = getIcon(props.name);
+  const IconComponent = getIcon(values?.name ? values.name : "");
   if (IconComponent) {
     return (
       <IconComponent
@@ -42,6 +42,13 @@ export const Icon: React.FC<IconProps> = (props) => {
               ? `${props.styles.borderRadius}px`
               : "0px"
           }`,
+          borderWidth: `${
+            props.styles?.borderWidth ? `${props.styles.borderWidth}px` : "0px"
+          }`,
+          borderColor: props.styles?.borderColor
+            ? getColor(props.styles.borderColor)
+            : undefined,
+          borderStyle: props.styles?.borderWidth ? "solid" : undefined,
         }}
       />
     );

@@ -69,9 +69,11 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   const [bindings] = useAtom(bindingsAtom);
 
   const newValues = merge({}, values, bindings) as T;
-
   useEffect(() => {
-    if (isEqual(newValues, widgetState?.values)) {
+    if (
+      isEqual(newValues, widgetState?.values) &&
+      isEqual(methods, widgetState?.invokable?.methods)
+    ) {
       return;
     }
 

@@ -27,7 +27,7 @@ export type FlexboxProps = {
   EnsembleWidgetProps;
 
 export type IconProps = {
-  name: string;
+  name: Expression<string>;
   size?: number;
   color?: string;
   styles?: {
