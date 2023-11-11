@@ -12,6 +12,7 @@ export type SearchStyles = {
   width?: number;
   height?: number;
   margin?: number | string;
+  backgroundColor?: string;
 } & HasBorder;
 
 export type SearchProps = {
@@ -56,33 +57,44 @@ export const Search: React.FC<SearchProps> = ({
   };
 
   return (
-    <AutoComplete
-      allowClear
-      onSearch={handleSearch}
-      // TODO: Handle on search result select
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      onSelect={() => {}}
-      options={options}
-      popupMatchSelectWidth={styles?.width}
-      size="large"
-    >
-      <Input
-        placeholder={placeholder}
-        prefix={<SearchOutlined />}
-        style={{
-          width: styles?.width,
-          height: styles?.height,
-          margin: styles?.margin,
-          borderRadius: styles?.borderRadius,
-          borderWidth: styles?.borderWidth,
-          borderStyle: styles?.borderStyle,
-          borderColor: styles?.borderColor
-            ? getColor(styles.borderColor)
-            : undefined,
-          boxShadow: "none",
-        }}
-      />
-    </AutoComplete>
+    <div>
+      <AutoComplete
+        allowClear
+        onSearch={handleSearch}
+        // TODO: Handle on search result select
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        onSelect={() => {}}
+        options={options}
+        popupMatchSelectWidth={styles?.width}
+        size="large"
+      >
+        <Input
+          placeholder={placeholder}
+          prefix={<SearchOutlined />}
+          style={{
+            width: styles?.width,
+            height: styles?.height,
+            margin: styles?.margin,
+            borderRadius: styles?.borderRadius,
+            borderWidth: styles?.borderWidth,
+            borderStyle: styles?.borderStyle,
+            borderColor: styles?.borderColor
+              ? getColor(styles.borderColor)
+              : undefined,
+            backgroundColor: styles?.backgroundColor,
+            boxShadow: "none",
+          }}
+        />
+      </AutoComplete>
+      <style>
+        {`
+			/* Linear loader animation */
+			.ant-input {
+				background-color: ${styles?.backgroundColor ? styles.backgroundColor : ""}
+			}
+		  `}
+      </style>
+    </div>
   );
 };
 
