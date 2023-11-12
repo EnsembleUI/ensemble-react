@@ -13,6 +13,17 @@ export interface TagProps {
     backgroundColor?: Expression<string>;
     borderRadius?: string;
     fontSize?: string;
+    textColor?: string;
+    fontWeight?: number | string;
+    fontFamily: string;
+    textAlign:
+      | "start"
+      | "end"
+      | "left"
+      | "right"
+      | "center"
+      | "justify"
+      | "match-parent";
   };
   icon?: IconProps;
 }
@@ -21,12 +32,14 @@ export const Tag: React.FC<TagProps> = (props) => {
   const [backgroundColor, setBackgroundColor] = useState(
     props.styles?.backgroundColor,
   );
+  const [textColor, setTextColor] = useState(props.styles?.textColor);
   const { values } = useRegisterBindings(
-    { ...props, text, backgroundColor },
+    { ...props, text, backgroundColor, textColor },
     props.id,
     {
       setText,
       setBackgroundColor,
+      setTextColor,
     },
   );
   const [expanded, setExpanded] = useState(false);
@@ -46,9 +59,15 @@ export const Tag: React.FC<TagProps> = (props) => {
         backgroundColor: values?.backgroundColor ?? "#e6e7e8",
         paddingLeft: "10px",
         paddingRight: "10px",
-        textAlign: "left",
+        textAlign: props.styles?.textAlign ? props.styles.textAlign : "center",
+        color: values?.textColor,
         borderRadius: props.styles?.borderRadius ?? 10,
-        fontWeight: "normal",
+        fontWeight: props.styles?.fontWeight
+          ? props.styles.fontWeight
+          : "normal",
+        fontFamily: props.styles?.fontFamily
+          ? props.styles.fontFamily
+          : "Poppins",
         fontSize: props.styles?.fontSize ?? 12,
         display: "inline-flex",
         alignItems: "center",
