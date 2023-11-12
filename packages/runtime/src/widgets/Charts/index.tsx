@@ -67,9 +67,7 @@ export const Chart: React.FC<ChartProps> = (props) => {
   }
 
   return (
-    <div ref={rootRef} style={{ height: "100%", width: "100%" }}>
-      {cloneElement(tabsConfig[type], { ...props })}
-    </div>
+    <div ref={rootRef}>{cloneElement(tabsConfig[type], { ...props })}</div>
   );
 };
 
