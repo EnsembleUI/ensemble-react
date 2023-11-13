@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import type { ApplicationDTO } from "@ensembleui/react-framework";
 import {
   ApplicationContextProvider,
@@ -28,17 +28,18 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
   appId,
   application,
 }) => {
-  const resolvedApp = application ?? ApplicationLoader.load(appId);
-  const app = EnsembleParser.parseApplication(resolvedApp);
-
-  useEffect(() => {
-    app.customWidgets.forEach((customWidget) => {
+  // BUG: runs twice https://github.com/facebook/react/issues/24935
+  const app = useMemo(() => {
+    const resolvedApp = application ?? ApplicationLoader.load(appId);
+    const parsedApp = EnsembleParser.parseApplication(resolvedApp);
+    parsedApp.customWidgets.forEach((customWidget) => {
       WidgetRegistry.register(
         customWidget.name,
         createCustomWidget(customWidget),
       );
     });
-  }, [app.customWidgets]);
+    return parsedApp;
+  }, [appId, application]);
 
   const router = useMemo(
     () =>

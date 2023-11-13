@@ -30,6 +30,14 @@ export interface EnsembleScreenYAML {
   ViewGroup?: Record<string, unknown>;
 }
 
+interface EnsembleWidgetYAML {
+  Widget: {
+    inputs?: string[];
+    onLoad?: EnsembleAction;
+    body: Record<string, unknown>;
+  };
+}
+
 export const EnsembleParser = {
   parseApplication: (app: ApplicationDTO): EnsembleAppModel => {
     const screens = app.screens.map(({ name, content: yaml }) => {
@@ -47,12 +55,19 @@ export const EnsembleParser = {
     const customWidgets = app.widgets.map(({ name, content: yaml }) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const yamlObj = parse(yaml);
+      const widget = get(yamlObj, "Widget") as EnsembleWidgetYAML;
 
+      const rawBody = get(widget, "body");
+      if (!rawBody) {
+        throw Error("Widget must have a body");
+      }
+
+      const body = unwrapWidget(rawBody);
       return {
         name,
-        onLoad: get(yamlObj, "onLoad") as EnsembleAction,
-        inputs: (get(yamlObj, "inputs") ?? []) as string[],
-        body: unwrapWidget(get(yamlObj, "body") as Record<string, unknown>),
+        onLoad: get(widget, "onLoad"),
+        inputs: get(widget, "inputs") ?? [],
+        body,
       };
     });
 
@@ -181,7 +196,7 @@ export const unwrapWidget = (obj: Record<string, unknown>): EnsembleWidget => {
   }
   return {
     name,
-    properties: properties as Record<string, unknown>,
+    properties: (properties ?? {}) as Record<string, unknown>,
   };
 };
 

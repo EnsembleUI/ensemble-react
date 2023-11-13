@@ -2,7 +2,9 @@ View:
   onLoad:
     invokeApi:
       name: getDummyJson
-
+  header:
+    title:
+      Header:
   body:
     Column:
       crossAxis: stretch
@@ -18,7 +20,7 @@ View:
                   styles:
                     gap: 20
                     margin: 20px
-                    width: 50%
+                    width: 45%
                   children:
                     - Chart:
                         type: bar
