@@ -1,13 +1,8 @@
 import { Bar } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
-import {
-  evaluate,
-  useScreenContext,
-  ScreenContextDefinition,
-  useRegisterBindings,
-} from "@ensembleui/react-framework";
-import { useMemo, useState } from "react";
-import { ChartDataSets, ChartProps } from ".";
+import { useRegisterBindings } from "@ensembleui/react-framework";
+import { useState } from "react";
+import type { ChartDataSets, ChartProps } from "..";
 
 const options: ChartOptions<"bar"> = {
   maintainAspectRatio: false,
@@ -56,19 +51,11 @@ export const StackBarChart: React.FC<ChartProps> = (props) => {
 
   const [title, setTitle] = useState(config?.title);
   const [labels, setLabels] = useState<string[]>(config?.data?.labels || []);
-  const context = useScreenContext();
-
-  const evaluatedDatasets = useMemo(
-    () => evaluate(context as ScreenContextDefinition, config?.data?.datasets),
-    [config?.data?.datasets],
-  );
 
   const { values } = useRegisterBindings({ labels, title }, id, {
     setLabels,
     setTitle,
   });
-
-  if (!evaluatedDatasets) return null;
 
   return (
     <div
@@ -80,7 +67,7 @@ export const StackBarChart: React.FC<ChartProps> = (props) => {
       <Bar
         data={{
           labels: values?.labels,
-          datasets: evaluatedDatasets as ChartDataSets[],
+          datasets: config?.data?.datasets as ChartDataSets[],
         }}
         options={{
           ...options,

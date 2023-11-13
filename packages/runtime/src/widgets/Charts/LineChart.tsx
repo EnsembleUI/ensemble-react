@@ -1,12 +1,7 @@
 import { Line } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
-import { useMemo, useState } from "react";
-import {
-  type ScreenContextDefinition,
-  evaluate,
-  useRegisterBindings,
-  useScreenContext,
-} from "@ensembleui/react-framework";
+import { useState } from "react";
+import { useRegisterBindings } from "@ensembleui/react-framework";
 import type { ChartDataSets, ChartProps } from "..";
 
 const defaultOptions: ChartOptions<"line"> = {
@@ -38,19 +33,11 @@ export const LineChart: React.FC<ChartProps> = (props) => {
 
   const [title, setTitle] = useState(config?.title);
   const [labels, setLabels] = useState<string[]>(config?.data?.labels || []);
-  const context = useScreenContext();
-
-  const evaluatedDatasets = useMemo(
-    () => evaluate(context as ScreenContextDefinition, config?.data?.datasets),
-    [config?.data?.datasets, context],
-  );
 
   const { values } = useRegisterBindings({ labels, title }, id, {
     setLabels,
     setTitle,
   });
-
-  if (!evaluatedDatasets) return null;
 
   return (
     <div
@@ -62,7 +49,7 @@ export const LineChart: React.FC<ChartProps> = (props) => {
       <Line
         data={{
           labels: values?.labels,
-          datasets: evaluatedDatasets as ChartDataSets[],
+          datasets: config?.data?.datasets as ChartDataSets[],
         }}
         options={{
           ...defaultOptions,

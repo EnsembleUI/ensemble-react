@@ -1,13 +1,8 @@
 import { Doughnut } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
-import {
-  type ScreenContextDefinition,
-  evaluate,
-  useScreenContext,
-  useRegisterBindings,
-} from "@ensembleui/react-framework";
+import { useRegisterBindings } from "@ensembleui/react-framework";
 import { get } from "lodash-es";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import type { ChartDataSets, ChartProps } from "..";
 
 const options: ChartOptions<"doughnut"> = {
@@ -20,19 +15,11 @@ export const DoughnutChart: React.FC<ChartProps> = (props) => {
 
   const [title, setTitle] = useState(config?.title);
   const [labels, setLabels] = useState<string[]>(config?.data?.labels || []);
-  const context = useScreenContext();
-
-  const evaluatedDatasets = useMemo(
-    () => evaluate(context as ScreenContextDefinition, config?.data?.datasets),
-    [config?.data?.datasets, context],
-  );
 
   const { values } = useRegisterBindings({ labels, title }, id, {
     setLabels,
     setTitle,
   });
-
-  if (!evaluatedDatasets) return null;
 
   return (
     <div
@@ -44,7 +31,7 @@ export const DoughnutChart: React.FC<ChartProps> = (props) => {
       <Doughnut
         data={{
           labels: values?.labels,
-          datasets: evaluatedDatasets as ChartDataSets[],
+          datasets: config?.data?.datasets as ChartDataSets[],
         }}
         options={{
           ...options,

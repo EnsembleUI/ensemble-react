@@ -4,7 +4,7 @@ import { EnsembleStorage } from "./storage";
 
 export const buildEvaluateFn = (
   screen: ScreenContextDefinition,
-  js?: unknown,
+  js?: string,
   context?: Record<string, unknown>,
 ): (() => unknown) => {
   const widgets: [string, InvokableMethods | undefined][] = Object.entries(
@@ -31,14 +31,21 @@ export const buildEvaluateFn = (
   return () => jsFunc(...Object.values(invokableObj));
 };
 
-const formatJs = (js?: unknown): string => {
+const formatJs = (js?: string): string => {
   if (!js || isEmpty(js)) {
     return "console.log('No expression was given')";
-  } else if (isObjectLike(js)) {
-    const parsedJs = JSON.stringify(js);
-    const replaced = parsedJs.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"); // replace "${...}" or '${...}' with ...
+  }
 
-    return `return ${replaced}`;
+  try {
+    const obj: unknown = JSON.parse(js);
+
+    if (isObjectLike(obj)) {
+      const replaced = js.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"); // replace "${...}" or '${...}' with ...
+
+      return `return ${replaced}`;
+    }
+  } catch (e) {
+    /* empty */
   }
 
   const sanitizedJs = sanitizeJs(toString(js));
@@ -67,7 +74,7 @@ const sanitizeJs = (string: string): string => {
 
 export const evaluate = (
   screen: ScreenContextDefinition,
-  js?: unknown,
+  js?: string,
   context?: Record<string, unknown>,
 ): unknown => {
   try {
