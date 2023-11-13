@@ -1,4 +1,7 @@
-import { useRegisterBindings } from "@ensembleui/react-framework";
+import {
+  useRegisterBindings,
+  type Expression,
+} from "@ensembleui/react-framework";
 import { useState } from "react";
 import { Typography } from "antd";
 import { WidgetRegistry } from "../registry";
@@ -8,7 +11,7 @@ import { getTextAlign } from "../shared/styles";
 export interface TextStyles {
   fontSize?: string | number;
   fontWeight?: string | number;
-  color: string;
+  color: Expression<string>;
   fontFamily: string;
   backgroundColor: string;
 }
@@ -19,8 +22,10 @@ export type TextProps = {
 
 export const Text: React.FC<TextProps> = (props) => {
   const [text, setText] = useState(props.text);
-  const { values } = useRegisterBindings({ ...props, text }, props.id, {
+  const [color, setColor] = useState(props?.styles?.color);
+  const { values } = useRegisterBindings({ ...props, text, color }, props.id, {
     setText,
+    setColor,
   });
   return (
     <Typography.Text
@@ -28,7 +33,7 @@ export const Text: React.FC<TextProps> = (props) => {
         textAlign: getTextAlign(props.textAlign),
         fontSize: props.styles?.fontSize,
         fontWeight: props.styles?.fontWeight,
-        color: props.styles?.color,
+        color: values?.color,
         fontFamily: props.styles?.fontFamily,
         backgroundColor: props.styles?.backgroundColor,
         padding: props.styles?.padding,
