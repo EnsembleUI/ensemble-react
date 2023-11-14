@@ -1,5 +1,12 @@
 # @ensembleui/react-runtime
 
+## 0.0.6
+
+### Patch Changes
+
+- 59d32b0: Add support for custom widgets
+- b3968f8: Various bug fixes for chart sizing, custom widgets, and testids
+
 ## 0.0.5
 
 ### Patch Changes
