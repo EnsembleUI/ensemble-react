@@ -3,7 +3,7 @@ import { useTemplateData, type Expression } from "@ensembleui/react-framework";
 import type { SelectProps } from "antd";
 import { AutoComplete, Input } from "antd";
 import { SearchOutlined } from "@mui/icons-material";
-import { get, isObject } from "lodash-es";
+import { get, isObject, noop } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps, HasBorder } from "../shared/types";
 import { getColor } from "../shared/styles";
@@ -26,6 +26,7 @@ export const Search: React.FC<SearchProps> = ({
   data,
   searchKey,
   styles,
+  id,
 }) => {
   const [options, setOptions] = useState<SelectProps<object>["options"]>([]);
 
@@ -57,34 +58,47 @@ export const Search: React.FC<SearchProps> = ({
   };
 
   return (
-    <AutoComplete
-      allowClear
-      onSearch={handleSearch}
-      // TODO: Handle on search result select
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      onSelect={() => {}}
-      options={options}
-      popupMatchSelectWidth={styles?.width}
-      size="large"
-    >
-      <Input
-        placeholder={placeholder}
-        prefix={<SearchOutlined />}
-        style={{
-          width: styles?.width,
-          height: styles?.height,
-          margin: styles?.margin,
-          borderRadius: styles?.borderRadius,
-          borderWidth: styles?.borderWidth,
-          borderStyle: styles?.borderStyle,
-          borderColor: styles?.borderColor
-            ? getColor(styles.borderColor)
-            : undefined,
-          boxShadow: "none",
-          backgroundColor: styles?.backgroundColor,
-        }}
-      />
-    </AutoComplete>
+    <div>
+      <AutoComplete
+        id={id}
+        allowClear
+        onSearch={handleSearch}
+        // TODO: Handle on search result select
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        onSelect={noop}
+        options={options}
+        popupMatchSelectWidth={styles?.width}
+        size="large"
+      >
+        <Input
+          placeholder={placeholder}
+          prefix={<SearchOutlined />}
+          style={{
+            width: styles?.width,
+            height: styles?.height,
+            margin: styles?.margin,
+            borderRadius: styles?.borderRadius,
+            borderWidth: styles?.borderWidth,
+            borderStyle: styles?.borderStyle,
+            borderColor: styles?.borderColor
+              ? getColor(styles.borderColor)
+              : undefined,
+            backgroundColor: styles?.backgroundColor,
+            boxShadow: "none",
+          }}
+        />
+      </AutoComplete>
+      {id ? (
+        <style>
+          {`
+			/* Linear loader animation */
+			#${id ?? ""} {
+				background-color: ${styles?.backgroundColor ? styles.backgroundColor : ""}
+			}
+		  `}
+        </style>
+      ) : null}
+    </div>
   );
 };
 

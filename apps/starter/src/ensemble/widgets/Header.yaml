@@ -11,6 +11,7 @@ Widget:
         width: "100%"
       children:
         - Search:
+            id: mySearch
             styles:
               width: 320px
               height: 40px
