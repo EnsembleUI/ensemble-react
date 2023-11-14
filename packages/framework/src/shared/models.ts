@@ -22,6 +22,7 @@ export interface EnsembleAppModel {
   id: string;
   menu?: EnsembleMenuModel;
   screens: EnsembleScreenModel[];
+  customWidgets: CustomWidgetModel[];
   home: EnsembleEntryPoint;
   theme?: ThemeDTO;
 }
@@ -75,4 +76,11 @@ export interface EnsembleFooterModel {
     width?: string | number;
     [key: string]: unknown;
   };
+}
+
+export interface CustomWidgetModel {
+  name: string;
+  inputs: string[];
+  onLoad?: EnsembleAction;
+  body: EnsembleWidget;
 }

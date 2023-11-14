@@ -40,7 +40,11 @@ test("Renders error page", () => {
   const consoleErr = console.error;
   console.error = jest.fn();
   loadAppMock.mockReturnValue({});
-  parseApplicationMock.mockReturnValue({ home: {}, screens: [] });
+  parseApplicationMock.mockReturnValue({
+    home: {},
+    screens: [],
+    customWidgets: [],
+  });
   try {
     render(<EnsembleApp appId="test" />);
   } catch (e) {
@@ -71,10 +75,13 @@ test("Renders view widget of home screen", () => {
       },
     },
   };
-  loadAppMock.mockReturnValue({ screens: [{ content: "" }] });
+  loadAppMock.mockReturnValue({
+    screens: [{ content: "" }],
+  });
   parseApplicationMock.mockReturnValue({
     home: mockScreen,
     screens: [mockScreen],
+    customWidgets: [],
   });
   render(<EnsembleApp appId="test" />);
 
@@ -106,10 +113,13 @@ test("Bind data from other widgets", async () => {
       },
     },
   };
-  loadAppMock.mockReturnValue({ screens: [{ content: "" }] });
+  loadAppMock.mockReturnValue({
+    screens: [{ content: "" }],
+  });
   parseApplicationMock.mockReturnValue({
     home: mockScreen,
     screens: [mockScreen],
+    customWidgets: [],
   });
   render(<EnsembleApp appId="test" />);
 
@@ -145,10 +155,13 @@ test("Updates values through Ensemble state", async () => {
       },
     },
   };
-  loadAppMock.mockReturnValue({ screens: [{ content: "" }] });
+  loadAppMock.mockReturnValue({
+    screens: [{ content: "" }],
+  });
   parseApplicationMock.mockReturnValue({
     home: mockScreen,
     screens: [mockScreen],
+    customWidgets: [],
   });
   render(<EnsembleApp appId="test" />);
 

@@ -7,55 +7,19 @@ View:
           // ensemble.storage.set("arrayOfUsers",response.body.records)
           const groups = new Set(response.body.records.flatMap(record => record.fields.groups))
           // ensemble.storage.set("arrayOfGroups", Array.from(groups))
+  header:
+    title:
+      Header:
   body:
     Column:
       styles:
         height: 100%
         crossAxis: stretch
       children:
-        - Row:
-            backgroundColor: white
-            mainAxis: spaceBetween
-            crossAxis: center
-            padding: 10
-            styles:
-              borderBottom: "1px #D5DAEA solid"
-            children:
-              - Search:
-                  id: mySearch
-                  styles:
-                    width: 320px
-                    height: 40px
-                    borderRadius: 12
-                    borderWidth: 2
-                    borderStyle: solid
-                    borderColor: "#B8BED6"
-                    backgroundColor: red
-                  placeholder: Search
-                  data: getData.body.users
-                  searchKey: email
-              - Row:
-                  styles:
-                    gap: 10
-                  children:
-                    - Avatar:
-                        styles:
-                          backgroundColor: "#171B2A"
-                        alt: abc
-                        name: Adam
-                        menu:
-                          - label: Personal Information
-                            icon: Person
-                            onTap:
-                              executeCode: myText.setText("Spiderman")
-                          - label: Collections
-                            icon: Settings
-                            onTap:
-                              navigateScreen: Collections
         - Column:
             styles:
               padding: 0 40px
-              backgroundColor: "#FAFAFA"
+              backgroundColor: "#FEFEFE"
             children:
               - Markdown:
                   text: "# User Management"

@@ -15,6 +15,8 @@ import { ErrorPage } from "./runtime/error";
 // Register built in widgets;
 import "./widgets";
 import { ModalWrapper } from "./runtime/modal";
+import { WidgetRegistry } from "./registry";
+import { createCustomWidget } from "./runtime/customWidget";
 
 injectStyle();
 export interface EnsembleAppProps {
@@ -26,8 +28,18 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
   appId,
   application,
 }) => {
-  const resolvedApp = application ?? ApplicationLoader.load(appId);
-  const app = EnsembleParser.parseApplication(resolvedApp);
+  // BUG: runs twice https://github.com/facebook/react/issues/24935
+  const app = useMemo(() => {
+    const resolvedApp = application ?? ApplicationLoader.load(appId);
+    const parsedApp = EnsembleParser.parseApplication(resolvedApp);
+    parsedApp.customWidgets.forEach((customWidget) => {
+      WidgetRegistry.register(
+        customWidget.name,
+        createCustomWidget(customWidget),
+      );
+    });
+    return parsedApp;
+  }, [appId, application]);
 
   const router = useMemo(
     () =>

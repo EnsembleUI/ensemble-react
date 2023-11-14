@@ -1,21 +1,31 @@
 import { EnsembleApp } from "@ensembleui/react-runtime";
 import type { ApplicationDTO } from "@ensembleui/react-framework";
-import HomeYAML from "./ensemble/home.yaml";
-import CollectionsYAML from "./ensemble/collections.yaml";
-import UsersAndGroupsYAML from "./ensemble/usersAndGroups.yaml";
-import DashboardYAML from "./ensemble/dashboard.yaml";
-import AskEmbraceYAML from "./ensemble/askEmbrace.yaml";
-import CreateGroupYAML from "./ensemble/createGroup.yaml";
-import InviteYAML from "./ensemble/invite.yaml";
-import ProductAndDevelopmentYAML from "./ensemble/productAndDevelopment.yaml";
-import CreateCollectionYAML from "./ensemble/createCollection.yaml";
-import AddGroupsYAML from "./ensemble/addGroups.yaml";
+// Screens
+import HomeYAML from "./ensemble/screens/home.yaml";
+import CollectionsYAML from "./ensemble/screens/collections.yaml";
+import UsersAndGroupsYAML from "./ensemble/screens/usersAndGroups.yaml";
+import DashboardYAML from "./ensemble/screens/dashboard.yaml";
+import AskEmbraceYAML from "./ensemble/screens/askEmbrace.yaml";
+import CreateGroupYAML from "./ensemble/screens/createGroup.yaml";
+import InviteYAML from "./ensemble/screens/invite.yaml";
+import ProductAndDevelopmentYAML from "./ensemble/screens/productAndDevelopment.yaml";
+import CreateCollectionYAML from "./ensemble/screens/createCollection.yaml";
+import AddGroupsYAML from "./ensemble/screens/addGroups.yaml";
+// Widgets
+import HeaderWidgetYAML from "./ensemble/widgets/Header.yaml";
 
 import "./App.css";
 
 const testApp: ApplicationDTO = {
   id: "test",
   name: "My App",
+  widgets: [
+    {
+      id: "Header",
+      name: "Header",
+      content: String(HeaderWidgetYAML),
+    },
+  ],
   screens: [
     {
       id: "home",
@@ -73,7 +83,7 @@ const testApp: ApplicationDTO = {
 const App: React.FC = () => {
   return (
     <div className="App">
-      <EnsembleApp appId="test" application={testApp} />
+      <EnsembleApp appId="test" application={testApp} key="test" />
     </div>
   );
 };
