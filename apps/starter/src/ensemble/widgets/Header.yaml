@@ -19,7 +19,6 @@ Widget:
               borderWidth: 2
               borderStyle: solid
               borderColor: "#B8BED6"
-              backgroundColor: red
             placeholder: Search
             data: getData.body.users
             searchKey: email
