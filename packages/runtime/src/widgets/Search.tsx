@@ -26,6 +26,7 @@ export const Search: React.FC<SearchProps> = ({
   data,
   searchKey,
   styles,
+  id,
 }) => {
   const [options, setOptions] = useState<SelectProps<object>["options"]>([]);
 
@@ -59,6 +60,7 @@ export const Search: React.FC<SearchProps> = ({
   return (
     <div>
       <AutoComplete
+        id={id}
         allowClear
         onSearch={handleSearch}
         // TODO: Handle on search result select
@@ -89,7 +91,7 @@ export const Search: React.FC<SearchProps> = ({
       <style>
         {`
 			/* Linear loader animation */
-			.ant-input {
+			#${id ?? ""} {
 				background-color: ${styles?.backgroundColor ? styles.backgroundColor : ""}
 			}
 		  `}

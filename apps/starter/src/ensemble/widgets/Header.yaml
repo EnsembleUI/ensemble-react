@@ -11,6 +11,7 @@ Widget:
         width: "100%"
       children:
         - Search:
+            id: mySearch
             styles:
               width: 320px
               height: 40px
@@ -18,6 +19,7 @@ Widget:
               borderWidth: 2
               borderStyle: solid
               borderColor: "#B8BED6"
+              backgroundColor: red
             placeholder: Search
             data: getData.body.users
             searchKey: email
