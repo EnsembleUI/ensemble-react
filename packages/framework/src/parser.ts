@@ -17,6 +17,7 @@ import type {
   EnsembleMenuModel,
   EnsembleHeaderModel,
   EnsembleFooterModel,
+  CustomWidgetModel,
 } from "./shared/models";
 import type { ApplicationDTO } from "./shared/dto";
 import type { EnsembleAction } from "./shared";
@@ -30,7 +31,7 @@ export interface EnsembleScreenYAML {
   ViewGroup?: Record<string, unknown>;
 }
 
-interface EnsembleWidgetYAML {
+export interface EnsembleWidgetYAML {
   Widget: {
     inputs?: string[];
     onLoad?: EnsembleAction;
@@ -52,24 +53,9 @@ export const EnsembleParser = {
       throw Error("Application must have at least one screen");
     }
 
-    const customWidgets = app.widgets.map(({ name, content: yaml }) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const yamlObj = parse(yaml);
-      const widget = get(yamlObj, "Widget") as EnsembleWidgetYAML;
-
-      const rawBody = get(widget, "body");
-      if (!rawBody) {
-        throw Error("Widget must have a body");
-      }
-
-      const body = unwrapWidget(rawBody);
-      return {
-        name,
-        onLoad: get(widget, "onLoad"),
-        inputs: get(widget, "inputs") ?? [],
-        body,
-      };
-    });
+    const customWidgets = (app.widgets ?? []).map(({ name, content: yaml }) =>
+      EnsembleParser.parseWidget(name, parse(yaml) as EnsembleWidgetYAML),
+    );
 
     const menu = screens.find((screen) => "items" in screen) as
       | EnsembleMenuModel
@@ -117,6 +103,23 @@ export const EnsembleParser = {
       footer: unwrapFooter(footer),
       body: viewWidget,
       apis,
+    };
+  },
+
+  parseWidget: (name: string, yaml: EnsembleWidgetYAML): CustomWidgetModel => {
+    const widget = get(yaml, "Widget");
+
+    const rawBody = get(widget, "body");
+    if (!rawBody) {
+      throw Error("Widget must have a body");
+    }
+
+    const body = unwrapWidget(rawBody);
+    return {
+      name,
+      onLoad: get(widget, "onLoad"),
+      inputs: get(widget, "inputs") ?? [],
+      body,
     };
   },
 

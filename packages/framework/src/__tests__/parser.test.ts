@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import { parse } from "yaml";
-import type { EnsembleScreenYAML } from "../parser";
+import type { EnsembleScreenYAML, EnsembleWidgetYAML } from "../parser";
 import { EnsembleParser } from "../parser";
-import type { EnsembleScreenModel } from "../shared";
+import type { ApplicationDTO, EnsembleScreenModel } from "../shared";
 
 test("parses simple view widget", () => {
   const testFile = fs.readFileSync(
@@ -26,5 +26,47 @@ test("parses simple view widget", () => {
         },
       ],
     },
+  });
+});
+
+test("parses custom widget", () => {
+  const testFile = fs.readFileSync(
+    `${__dirname}/__resources__/mycustomwidget.yaml`,
+  );
+  const widget = EnsembleParser.parseWidget(
+    "mycustomwidget",
+    parse(testFile.toString()) as EnsembleWidgetYAML,
+  );
+
+  expect(widget.name).toEqual("mycustomwidget");
+  expect(widget.inputs).toEqual(["name"]);
+  expect(widget.onLoad).toMatchObject({ executeCode: 'console.log("foo")\n' });
+  expect(widget.body).toMatchObject({
+    name: "Text",
+    properties: {
+      text: "bar",
+    },
+  });
+});
+
+test("parses application with no custom widgets", () => {
+  const app = EnsembleParser.parseApplication({
+    screens: [
+      {
+        name: "home",
+        content: fs
+          .readFileSync(`${__dirname}/__resources__/helloworld.yaml`)
+          .toString(),
+      },
+    ],
+    name: "test",
+    id: "test",
+  } as unknown as ApplicationDTO);
+
+  expect(app).toMatchObject({
+    id: "test",
+    menu: undefined,
+    customWidgets: [],
+    theme: undefined,
   });
 });
