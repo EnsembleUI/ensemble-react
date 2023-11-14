@@ -62,31 +62,24 @@ type BarChartProps = {
 } & EnsembleWidgetProps;
 
 export const StackBarChart: React.FC<BarChartProps> = (props) => {
-  const { labels, datasets, styles, title } = props;
+  const { labels, datasets, title } = props;
 
   return (
-    <div
-      style={{
-        width: styles?.width || "100%",
-        height: styles?.height || "50px",
+    <Bar
+      data={{
+        labels,
+        datasets: datasets!,
       }}
-    >
-      <Bar
-        data={{
-          labels,
-          datasets: datasets!,
-        }}
-        options={{
-          ...options,
-          plugins: {
-            ...options.plugins,
-            title: {
-              display: Boolean(title),
-              text: title,
-            },
+      options={{
+        ...options,
+        plugins: {
+          ...options.plugins,
+          title: {
+            display: Boolean(title),
+            text: title,
           },
-        }}
-      />
-    </div>
+        },
+      }}
+    />
   );
 };
