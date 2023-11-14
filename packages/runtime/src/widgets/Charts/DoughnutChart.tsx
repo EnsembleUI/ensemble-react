@@ -22,30 +22,23 @@ export type DoughnutChartProps = {
 } & EnsembleWidgetProps;
 
 export const DoughnutChart: React.FC<DoughnutChartProps> = (props) => {
-  const { labels, datasets, title, styles } = props;
+  const { labels, datasets, title } = props;
 
   return (
-    <div
-      style={{
-        height: styles?.height || "100%",
-        width: styles?.width || "100%",
+    <Doughnut
+      data={{
+        labels,
+        datasets: datasets!,
       }}
-    >
-      <Doughnut
-        data={{
-          labels,
-          datasets: datasets!,
-        }}
-        options={{
-          ...options,
-          plugins: {
-            title: {
-              display: Boolean(title),
-              text: title,
-            },
+      options={{
+        ...options,
+        plugins: {
+          title: {
+            display: Boolean(title),
+            text: title,
           },
-        }}
-      />
-    </div>
+        },
+      }}
+    />
   );
 };

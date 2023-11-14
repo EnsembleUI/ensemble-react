@@ -44,34 +44,27 @@ export type LineChartProps = {
 } & EnsembleWidgetProps;
 
 export const LineChart: React.FC<LineChartProps> = (props) => {
-  const { labels, datasets, title, styles, options } = props;
+  const { labels, datasets, title, options } = props;
 
   return (
-    <div
-      style={{
-        height: styles?.height || "100%",
-        width: styles?.width || "100%",
+    <Line
+      data={{
+        labels,
+        datasets: datasets!,
       }}
-    >
-      <Line
-        data={{
-          labels,
-          datasets: datasets!,
-        }}
-        options={{
-          ...defaultOptions,
-          ...(options as ChartOptions<"line">),
-          plugins: {
-            title: {
-              display: Boolean(title),
-              text: title,
-            },
-            legend: {
-              display: false,
-            },
+      options={{
+        ...defaultOptions,
+        ...(options as ChartOptions<"line">),
+        plugins: {
+          title: {
+            display: Boolean(title),
+            text: title,
           },
-        }}
-      />
-    </div>
+          legend: {
+            display: false,
+          },
+        },
+      }}
+    />
   );
 };
