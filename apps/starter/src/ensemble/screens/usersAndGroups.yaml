@@ -12,6 +12,7 @@ View:
       Header:
   body:
     Column:
+      id: root
       styles:
         height: 100%
         crossAxis: stretch
