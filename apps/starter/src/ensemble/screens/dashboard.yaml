@@ -283,6 +283,63 @@ View:
                     executeCode: |
                       console.log("From Next Yaml",stepper1);
                       stepper1.handleNext()
+        - Column:
+            children:
+              - Chart:
+                  type: stackbar
+                  styles:
+                    height: 60
+                  labels: ["January", "February"]
+                  datasets:
+                    [
+                      {
+                        label: "Matched",
+                        data: [15],
+                        backgroundColor: "green",
+                        borderSkipped: false,
+                        borderRadius: { topLeft: 4, bottomLeft: 4 },
+                        datalabels:
+                          {
+                            clamp: true,
+                            color: "white",
+                            align: start,
+                            anchor: start,
+                            offset: 10,
+                            font: { size: 14, weight: bold },
+                          },
+                      },
+                      {
+                        label: "Enrolled",
+                        data: [35],
+                        backgroundColor: "blue",
+                        borderSkipped: false,
+                        datalabels:
+                          {
+                            clamp: true,
+                            color: "white",
+                            anchor: start,
+                            align: start,
+                            offset: 10,
+                            font: { size: 14, weight: bold },
+                          },
+                      },
+                      {
+                        label: "Award",
+                        data: [3],
+                        backgroundColor: "grey",
+                        borderSkipped: false,
+                        borderRadius: { topRight: 4, bottomRight: 4 },
+                        datalabels:
+                          {
+                            color: "white",
+                            clamp: true,
+                            anchor: start,
+                            align: start,
+                            offset: 10,
+                            font: { size: 14, weight: bold },
+                          },
+                      },
+                    ]
 
 API:
   getDummyJson:

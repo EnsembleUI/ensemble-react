@@ -136,6 +136,7 @@ importers:
       '@types/react-dom': ^18.2.0
       antd: ^5.9.0
       chart.js: ^4.4.0
+      chartjs-plugin-datalabels: ^2.2.0
       eslint-config-custom: workspace:*
       jest: 27.5.1
       lodash-es: ^4.17.21
@@ -145,6 +146,8 @@ importers:
       react-toastify: ^9.1.3
       tsconfig: workspace:*
       tsup: ^7.2.0
+    dependencies:
+      chartjs-plugin-datalabels: 2.2.0_chart.js@4.4.0
     devDependencies:
       '@ant-design/icons': 5.2.6
       '@emotion/react': 11.11.1_@types+react@18.2.21
@@ -5397,6 +5400,14 @@ packages:
     dependencies:
       '@kurkle/color': 0.3.2
     dev: true
+
+  /chartjs-plugin-datalabels/2.2.0_chart.js@4.4.0:
+    resolution: {integrity: sha512-14ZU30lH7n89oq+A4bWaJPnAG8a7ZTk7dKf48YAzMvJjQtjrgg5Dpk9f+LbjCF6bpx3RAGTeL13IXpKQYyRvlw==}
+    peerDependencies:
+      chart.js: '>=3.0.0'
+    dependencies:
+      chart.js: 4.4.0
+    dev: false
 
   /check-types/11.2.3:
     resolution: {integrity: sha512-+67P1GkJRaxQD6PKK0Et9DhwQB+vGg3PM5+aavopCpZT1lj9jeqfvpgTLAWErNj8qApkkmXlu/Ug74kmhagkXg==}
