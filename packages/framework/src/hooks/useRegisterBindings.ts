@@ -1,4 +1,4 @@
-import type { RefObject } from "react";
+import type { RefCallback } from "react";
 import { useEffect, useMemo } from "react";
 import { compact, isEqual, map, merge } from "lodash-es";
 import { atom, useAtom } from "jotai";
@@ -12,7 +12,7 @@ import { useWidgetState } from "./useWidgetState";
 export interface RegisterBindingsResult<T> {
   id: string;
   values?: T;
-  rootRef: RefObject<never>;
+  rootRef: RefCallback<never>;
 }
 
 export const useRegisterBindings = <T extends Record<string, unknown>>(
@@ -72,7 +72,7 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   useEffect(() => {
     if (
       isEqual(newValues, widgetState?.values) &&
-      isEqual(methods, widgetState?.invokable?.methods)
+      isEqual(methods, widgetState?.invokable.methods)
     ) {
       return;
     }

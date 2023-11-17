@@ -1,10 +1,10 @@
-import type { RefObject } from "react";
-import { useEffect, useMemo, useRef } from "react";
+import type { RefCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { error } from "../shared";
 
 export const useWidgetId = (
   id?: string,
-): { resolvedWidgetId: string; rootRef: RefObject<never> } => {
+): { resolvedWidgetId: string; rootRef: RefCallback<never> } => {
   const resolvedWidgetId = useMemo<string>(() => {
     if (id && JS_ID_REGEX.test(id)) {
       return id;
@@ -17,17 +17,14 @@ export const useWidgetId = (
     return generateRandomString(6);
   }, [id]);
 
-  const rootRef = useRef(null);
-
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (rootRef.current && "setAttribute" in rootRef.current) {
-      (rootRef.current as HTMLElement).setAttribute(
-        "data-testid",
-        resolvedWidgetId,
-      );
-    }
-  }, [rootRef, resolvedWidgetId]);
+  const rootRef = useCallback(
+    (node: never) => {
+      if (node && "setAttribute" in node) {
+        (node as HTMLElement).setAttribute("data-testid", resolvedWidgetId);
+      }
+    },
+    [resolvedWidgetId],
+  );
 
   return { resolvedWidgetId, rootRef };
 };
