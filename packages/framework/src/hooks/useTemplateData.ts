@@ -37,7 +37,11 @@ export const useTemplateData = ({
           if (!isExpression) {
             return data;
           }
-          return evaluate(screenContext, String(data)) as TemplateData;
+          try {
+            return evaluate(screenContext, String(data)) as TemplateData;
+          } catch (e) {
+            return {};
+          }
         },
         isEqual,
       ),

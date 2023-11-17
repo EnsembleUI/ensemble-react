@@ -2,7 +2,7 @@ import { isEmpty, last, merge } from "lodash-es";
 import type { ScreenContextDefinition } from "./state/screen";
 import type { InvokableMethods } from "./state/widget";
 import { EnsembleStorage } from "./storage";
-import { sanitizeJs } from "./shared";
+import { sanitizeJs, debug } from "./shared";
 
 export const buildEvaluateFn = (
   screen: ScreenContextDefinition,
@@ -30,7 +30,7 @@ export const buildEvaluateFn = (
 
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
   const jsFunc = new Function(...[...Object.keys(invokableObj)], formatJs(js));
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-argument
   return () => jsFunc(...Object.values(invokableObj));
 };
 
@@ -62,6 +62,7 @@ export const evaluate = (
     const fn = buildEvaluateFn(screen, js, context);
     return fn();
   } catch (e) {
-    return null;
+    debug(e);
+    throw e;
   }
 };

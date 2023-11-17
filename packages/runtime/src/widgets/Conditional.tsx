@@ -36,7 +36,15 @@ export const Conditional: React.FC<ConditionalProps> = (props) => {
   let element = props.conditions.find((condition) => {
     const conditionString = extractCondition(condition);
     if (typeof conditionString !== "string") return false;
-    return evaluate(context as ScreenContextDefinition, conditionString, scope);
+    try {
+      return evaluate(
+        context as ScreenContextDefinition,
+        conditionString,
+        scope,
+      );
+    } catch (e) {
+      return false;
+    }
   });
 
   if (!element) {

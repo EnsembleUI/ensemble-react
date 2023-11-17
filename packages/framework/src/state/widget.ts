@@ -4,7 +4,7 @@ import type { Atom } from "jotai";
 import { atom } from "jotai";
 import { merge } from "lodash-es";
 import type { Expression } from "../shared";
-import { isExpression, sanitizeJs, debug } from "../shared";
+import { isExpression, sanitizeJs, debug, error } from "../shared";
 import { evaluate } from "../evaluate";
 import { defaultScreenContext, screenAtom } from "./screen";
 
@@ -31,7 +31,6 @@ export const createBindingAtom = (
   const rawJsExpression = sanitizeJs(expression);
   const identifiers: string[] = [];
 
-  debug(`raw expression for ${String(widgetId)}: ${rawJsExpression}`);
   try {
     parseExpressionAt(rawJsExpression, 0, {
       ecmaVersion: 6,
@@ -50,7 +49,7 @@ export const createBindingAtom = (
       },
     });
   } catch (e) {
-    debug(e);
+    error(e);
     return;
   }
 
@@ -78,17 +77,21 @@ export const createBindingAtom = (
       Object.fromEntries(valueEntries),
       context,
     ) as Record<string, unknown>;
-    const result = evaluate(
-      defaultScreenContext,
-      rawJsExpression,
-      evaluationContext,
-    );
-    debug(
-      `result for ${rawJsExpression} at ${String(widgetId)}: ${JSON.stringify(
-        result,
-      )}`,
-    );
-    return result;
+    try {
+      const result = evaluate(
+        defaultScreenContext,
+        rawJsExpression,
+        evaluationContext,
+      );
+      debug(
+        `result for ${rawJsExpression} at ${String(widgetId)}: ${JSON.stringify(
+          result,
+        )}`,
+      );
+      return result;
+    } catch (e) {
+      debug(e);
+    }
   });
 
   return bindingAtom;
