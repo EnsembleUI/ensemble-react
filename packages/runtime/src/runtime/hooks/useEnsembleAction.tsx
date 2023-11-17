@@ -4,6 +4,7 @@ import {
   evaluate,
   isExpression,
   useRegisterBindings,
+  error as logError,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -61,9 +62,13 @@ export const useExecuteCode: EnsembleActionHook<
     }
 
     return (args: unknown) => {
-      const retVal = evaluate(screen, js, merge({}, options?.context, args));
-      onCompleteAction?.callback();
-      return retVal;
+      try {
+        const retVal = evaluate(screen, js, merge({}, options?.context, args));
+        onCompleteAction?.callback();
+        return retVal;
+      } catch (e) {
+        logError(e);
+      }
     };
   }, [screen, js, options?.context, onCompleteAction]);
   return execute ? { callback: execute } : undefined;

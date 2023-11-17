@@ -3,6 +3,7 @@ import {
   useRegisterBindings,
   useScreenContext,
   evaluate,
+  isExpression,
 } from "@ensembleui/react-framework";
 import type {
   Expression,
@@ -10,6 +11,7 @@ import type {
   EnsembleWidget,
 } from "@ensembleui/react-framework";
 import { Tabs, ConfigProvider } from "antd";
+import { noop } from "lodash-es";
 import { type IconProps } from "../shared/types";
 import { EnsembleRuntime } from "../runtime";
 import { WidgetRegistry } from "../registry";
@@ -47,12 +49,15 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
     icon?: IconProps,
   ): ReactElement => {
     let labelEvaluated = "";
-    if (containsExpression(label)) {
-      const cleanedExpression = label.replace(/\${|}/g, "");
-      labelEvaluated = evaluate(
-        context as ScreenContextDefinition,
-        cleanedExpression,
-      ) as string;
+    if (isExpression(label)) {
+      try {
+        labelEvaluated = evaluate(
+          context as ScreenContextDefinition,
+          label,
+        ) as string;
+      } catch (e) {
+        noop();
+      }
     }
     return (
       <div
@@ -136,11 +141,3 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
 };
 
 WidgetRegistry.register("TabBar", TabBar);
-
-function containsExpression(str: string): boolean {
-  // Regular expression to match expressions within `${}`
-  const expressionPattern = /\${[^}]*}/;
-
-  // Check if the string contains the expression pattern
-  return expressionPattern.test(str);
-}

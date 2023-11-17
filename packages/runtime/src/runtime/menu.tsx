@@ -27,6 +27,7 @@ type TypeColors =
   | "orange";
 
 interface MenuItem {
+  id?: string;
   icon?: string;
   iconLibrary?: "default" | "fontAwesome";
   label: string;
@@ -139,9 +140,11 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
           flexDirection: "column",
         }}
       >
+        {/* FIXME: just use props here https://ant.design/components/menu#examples */}
         {props.items.map((item) => (
           <>
             <AntMenu.Item
+              data-testid={item.id}
               icon={renderMuiIcon(
                 item.icon,
                 props.styles?.iconWidth,
