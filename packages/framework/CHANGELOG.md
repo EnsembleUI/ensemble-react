@@ -1,5 +1,12 @@
 # @ensembleui/react-framework
 
+## 0.0.7
+
+### Patch Changes
+
+- 3ce8327: Improve error handling
+- 6a4d3fd: Improve data-testid ref handling
+
 ## 0.0.6
 
 ### Patch Changes
