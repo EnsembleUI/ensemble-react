@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.0.7
+
+### Patch Changes
+
+- 3ce8327: Improve error handling
+
 ## 0.0.6
 
 ### Patch Changes
