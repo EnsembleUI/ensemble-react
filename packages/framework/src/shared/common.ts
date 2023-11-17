@@ -1,4 +1,4 @@
-import { isString } from "lodash-es";
+import { isObject, isString } from "lodash-es";
 
 export type Expression<T> = string | T;
 
@@ -14,6 +14,21 @@ export const sanitizeJs = (string: string): string => {
     return string.substring(2, string.length - 1);
   }
   return string.trim();
+};
+
+export const findExpressions = (
+  obj: object,
+  path: string[] = [],
+  expressionMap: string[][] = [],
+): void => {
+  Object.entries(obj).forEach(([key, value]) => {
+    const curPath = path.concat(key);
+    if (isExpression(value)) {
+      expressionMap.push([curPath.join("."), value]);
+    } else if (isObject(value)) {
+      findExpressions(value, curPath, expressionMap);
+    }
+  });
 };
 
 export const debug = (value: unknown): void => {
