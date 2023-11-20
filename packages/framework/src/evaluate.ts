@@ -23,15 +23,41 @@ export const buildEvaluateFn = (
     ...Object.entries(screen.data),
     ...Object.entries(context ?? {}),
   ]);
+  const globalBlock = screen.model?.global;
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  const parsedGlobalFunctions: Record<string, Function> = {};
 
-  invokableObj.ensemble = {
+  if (typeof globalBlock === "string") {
+    // Regular expression to extract functions defined in the Global block
+    const functionRegex =
+      // eslint-disable-next-line prefer-named-capture-group
+      /function\s+([\w$]+)\s*\(([\w\s,$]*)\)\s*{([\s\S]*?)}/g;
+
+    let match;
+    while ((match = functionRegex.exec(globalBlock)) !== null) {
+      const functionName = match[1];
+      const args = match[2];
+      const functionBody = match[3];
+      // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
+      parsedGlobalFunctions[functionName] = new Function(args, functionBody);
+    }
+  }
+
+  const updatedInvokableObj = {
+    ...invokableObj,
+    ...parsedGlobalFunctions,
+  };
+  updatedInvokableObj.ensemble = {
     storage: EnsembleStorage,
   };
 
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
-  const jsFunc = new Function(...[...Object.keys(invokableObj)], formatJs(js));
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-argument
-  return () => jsFunc(...Object.values(invokableObj));
+  const jsFunc = new Function(
+    ...[...Object.keys(updatedInvokableObj)],
+    formatJs(js),
+  );
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return () => jsFunc(...Object.values(updatedInvokableObj));
 };
 
 const formatJs = (js?: string): string => {

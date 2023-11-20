@@ -14,6 +14,7 @@ export interface EnsembleScreenModel {
   header?: EnsembleHeaderModel;
   footer?: EnsembleFooterModel;
   apis?: EnsembleAPIModel[];
+  global: string | undefined;
 }
 
 export type EnsembleEntryPoint = EnsembleScreenModel | EnsembleMenuModel;
