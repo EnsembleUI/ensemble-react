@@ -34,6 +34,7 @@
     "@types/react-dom": "^18.2.0",
     "antd": "^5.9.0",
     "chart.js": "^4.4.0",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "eslint-config-custom": "workspace:*",
     "jest": "27.5.1",
     "lodash-es": "^4.17.21",
@@ -43,8 +44,5 @@
     "react-toastify": "^9.1.3",
     "tsconfig": "workspace:*",
     "tsup": "^7.2.0"
-  },
-  "dependencies": {
-    "chartjs-plugin-datalabels": "^2.2.0"
   }
 }
