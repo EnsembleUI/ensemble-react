@@ -136,6 +136,7 @@ importers:
       '@types/react-dom': ^18.2.0
       antd: ^5.9.0
       chart.js: ^4.4.0
+      chartjs-plugin-datalabels: ^2.2.0
       eslint-config-custom: workspace:*
       jest: 27.5.1
       lodash-es: ^4.17.21
@@ -159,6 +160,7 @@ importers:
       '@types/react-dom': 18.2.7
       antd: 5.9.0
       chart.js: 4.4.0
+      chartjs-plugin-datalabels: 2.2.0_chart.js@4.4.0
       eslint-config-custom: link:../eslint-config-custom
       jest: 27.5.1
       lodash-es: 4.17.21
@@ -5396,6 +5398,14 @@ packages:
     engines: {pnpm: '>=7'}
     dependencies:
       '@kurkle/color': 0.3.2
+    dev: true
+
+  /chartjs-plugin-datalabels/2.2.0_chart.js@4.4.0:
+    resolution: {integrity: sha512-14ZU30lH7n89oq+A4bWaJPnAG8a7ZTk7dKf48YAzMvJjQtjrgg5Dpk9f+LbjCF6bpx3RAGTeL13IXpKQYyRvlw==}
+    peerDependencies:
+      chart.js: '>=3.0.0'
+    dependencies:
+      chart.js: 4.4.0
     dev: true
 
   /check-types/11.2.3:

@@ -1,6 +1,7 @@
 import { Bar } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
 import type { Expression } from "@ensembleui/react-framework";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import type { EnsembleWidgetProps } from "../../shared/types";
 
 const options: ChartOptions<"bar"> = {
@@ -37,7 +38,6 @@ const options: ChartOptions<"bar"> = {
       stacked: true,
       border: {
         display: false,
-        dash: [2, 2],
       },
       grid: {
         lineWidth: 0,
@@ -80,6 +80,7 @@ export const StackBarChart: React.FC<BarChartProps> = (props) => {
           },
         },
       }}
+      plugins={[ChartDataLabels]}
     />
   );
 };
