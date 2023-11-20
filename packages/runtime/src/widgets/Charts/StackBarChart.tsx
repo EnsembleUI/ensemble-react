@@ -1,7 +1,6 @@
 import { Bar } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
 import type { Expression } from "@ensembleui/react-framework";
-// eslint-disable-next-line import/no-extraneous-dependencies
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import type { EnsembleWidgetProps } from "../../shared/types";
 
