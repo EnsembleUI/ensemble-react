@@ -20,10 +20,8 @@ interface CardStyles {
 }
 
 export type CardProps = {
-  [key: string]: unknown;
   children: EnsembleWidget[];
-  styles?: CardStyles;
-} & EnsembleWidgetProps;
+} & EnsembleWidgetProps<CardStyles>;
 
 const defaultStyles: CardStyles = {
   border: "1px solid lightgrey",

@@ -23,6 +23,8 @@ View:
               backgroundColor: "#FEFEFE"
             children:
               - Markdown:
+                  styles:
+                    names: font-black
                   text: "# User Management"
               - TabBar:
                   id: tababr1
@@ -192,6 +194,7 @@ View:
                                                 name: Invite
                                                 maskClosable: false
                                   - DataGrid:
+                                      id: myGrid
                                       DataColumns:
                                         - label: User
                                         - label: Role

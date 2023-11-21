@@ -3,23 +3,16 @@ import { useTemplateData, type Expression } from "@ensembleui/react-framework";
 import type { SelectProps } from "antd";
 import { AutoComplete, Input } from "antd";
 import { SearchOutlined } from "@mui/icons-material";
-import { get, isObject, noop } from "lodash-es";
+import { get, isNumber, isObject, noop } from "lodash-es";
 import { WidgetRegistry } from "../registry";
-import type { EnsembleWidgetProps, HasBorder } from "../shared/types";
+import type { EnsembleWidgetProps } from "../shared/types";
 import { getColor } from "../shared/styles";
-
-export type SearchStyles = {
-  width?: number;
-  height?: number;
-  margin?: number | string;
-  backgroundColor?: string;
-} & HasBorder;
 
 export type SearchProps = {
   placeholder?: string;
   data?: Expression<object>;
   searchKey?: string;
-} & EnsembleWidgetProps<SearchStyles>;
+} & EnsembleWidgetProps;
 
 export const Search: React.FC<SearchProps> = ({
   placeholder,
@@ -60,14 +53,14 @@ export const Search: React.FC<SearchProps> = ({
   return (
     <div>
       <AutoComplete
-        id={id}
         allowClear
+        id={id}
         onSearch={handleSearch}
         // TODO: Handle on search result select
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
+
         onSelect={noop}
         options={options}
-        popupMatchSelectWidth={styles?.width}
+        popupMatchSelectWidth={isNumber(styles?.width) ? styles?.width : false}
         size="large"
       >
         <Input

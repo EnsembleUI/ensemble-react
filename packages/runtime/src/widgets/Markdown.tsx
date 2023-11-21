@@ -26,7 +26,10 @@ export const Markdown: React.FC<MarkdownProps> = (props) => {
     setText,
   });
   return (
-    <div style={{ textAlign: getTextAlign(props.textAlign) }}>
+    <div
+      className={values?.styles?.names}
+      style={{ ...values?.styles, textAlign: getTextAlign(props.textAlign) }}
+    >
       <ReactMarkdown components={components}>
         {values?.text ?? ""}
       </ReactMarkdown>

@@ -12,6 +12,7 @@ import { cloneDeep, head, isEmpty, last } from "lodash-es";
 import { useMemo } from "react";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
+import type { EnsembleWidgetProps } from "../shared/types";
 
 export type CondtionalElement = Record<
   Capitalize<string>,
@@ -23,7 +24,7 @@ export type CondtionalElement = Record<
     | { else: null; if?: never; elseif?: never }
   );
 
-export interface ConditionalProps {
+export interface ConditionalProps extends EnsembleWidgetProps {
   conditions: CondtionalElement[];
 }
 

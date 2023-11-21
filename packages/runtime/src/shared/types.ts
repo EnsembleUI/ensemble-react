@@ -1,15 +1,18 @@
 import type { EnsembleWidget, Expression } from "@ensembleui/react-framework";
 
-export type EnsembleWidgetStyles = Record<string, string | number>;
+export type EnsembleWidgetStyles = Omit<React.CSSProperties, "direction"> & {
+  names?: Expression<string>;
+};
 
-export interface EnsembleWidgetProps<T = EnsembleWidgetStyles> {
+export interface EnsembleWidgetProps<
+  T extends Partial<EnsembleWidgetStyles> = EnsembleWidgetStyles,
+> {
   id?: string;
   [key: string]: unknown;
   styles?: T;
 }
 
 export type BaseTextProps = {
-  [key: string]: unknown;
   text?: Expression<string>;
   textAlign?: string;
 } & EnsembleWidgetProps;

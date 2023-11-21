@@ -26,9 +26,8 @@ type PopupMenuProps = {
   [key: string]: unknown;
   items: PopupMenuItem[];
   widget?: Record<string, unknown>;
-  styles?: PopupMenuStyles;
   onItemSelect?: EnsembleAction;
-} & EnsembleWidgetProps;
+} & EnsembleWidgetProps<PopupMenuStyles>;
 
 export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
   const action = useEnsembleAction(props.onItemSelect);

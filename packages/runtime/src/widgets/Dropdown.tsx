@@ -29,7 +29,12 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     setSelectedValue(value);
   };
   return (
-    <AntForm.Item label={values?.label} name={values?.id}>
+    <AntForm.Item
+      className={values?.styles?.names}
+      label={values?.label}
+      name={values?.id}
+      style={values?.styles}
+    >
       <Select
         onChange={handleChange}
         placeholder={values?.hintText ? values.hintText : ""}
