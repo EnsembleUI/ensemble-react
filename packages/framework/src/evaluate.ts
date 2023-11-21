@@ -1,4 +1,4 @@
-import { isEmpty, isObjectLike, last, merge, toString } from "lodash-es";
+import { isEmpty, last, merge, toString } from "lodash-es";
 import type { InvokableMethods, ScreenContextDefinition } from "./state";
 import { EnsembleStorage } from "./storage";
 
@@ -36,19 +36,15 @@ const formatJs = (js?: string): string => {
     return "console.log('No expression was given')";
   }
 
-  try {
-    const obj: unknown = JSON.parse(js);
-
-    if (isObjectLike(obj)) {
-      const replaced = js.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"); // replace "${...}" or '${...}' with ...
-
-      return `return ${replaced}`;
-    }
-  } catch (e) {
-    /* empty */
-  }
-
   const sanitizedJs = sanitizeJs(toString(js));
+
+  // js object
+  if (
+    (sanitizedJs.startsWith("{") && sanitizedJs.endsWith("}")) ||
+    (sanitizedJs.startsWith("[") && sanitizedJs.endsWith("]"))
+  )
+    return `return ${js}`;
+
   // multiline js
   if (sanitizedJs.includes("\n")) {
     const lines = sanitizedJs.split("\n");

@@ -72,32 +72,21 @@ const tabsConfig = {
 export const Chart: React.FC<ChartProps> = (props) => {
   const context = useScreenContext();
 
-  // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
-  const config = new Function(
-    `return ${props.config?.toString() || "{}"}`,
-  )() as ChartConfigs;
-
-  const evaluatedDatasets = useMemo(
+  const config = useMemo(
     () =>
       evaluate(
         context as ScreenContextDefinition,
-        JSON.stringify(config?.data?.datasets),
-      ),
-    [config?.data?.datasets, context],
+        props?.config?.toString()?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"),
+      ) as ChartConfigs,
+    [props.config, context],
   );
 
+  if (!config) return null;
   if (!config.type) return <b>Chart type missing</b>;
-  if (!evaluatedDatasets) return null;
 
   return cloneElement(tabsConfig[config.type], {
     ...props,
-    config: {
-      ...config,
-      data: {
-        ...config.data,
-        datasets: evaluatedDatasets,
-      },
-    },
+    config,
   });
 };
 
