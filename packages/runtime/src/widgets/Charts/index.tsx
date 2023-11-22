@@ -24,6 +24,7 @@ import { BarChart } from "./BarChart";
 import { DoughnutChart } from "./DoughnutChart";
 import { StackBarChart } from "./StackBarChart";
 import { LineChart } from "./LineChart";
+import { Alert } from "antd";
 
 ChartJS.register(
   CategoryScale,
@@ -76,12 +77,19 @@ export const Chart: React.FC<ChartProps> = (props) => {
     () =>
       evaluate(
         context as ScreenContextDefinition,
-        props?.config?.toString()?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"),
+        props?.config?.toString()?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
       ) as ChartConfigs,
     [props.config, context],
   );
 
-  if (!config) return null;
+  if (!config || !props?.config)
+    return (
+      <Alert
+        message={`config is ${!props?.config ? "missing" : "bad"}`}
+        type="error"
+      />
+    );
+
   if (!config.type) return <b>Chart type missing</b>;
 
   return cloneElement(tabsConfig[config.type], {
