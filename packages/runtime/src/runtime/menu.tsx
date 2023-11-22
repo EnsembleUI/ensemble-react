@@ -4,7 +4,7 @@ import { Menu as AntMenu, Col, Divider, Row } from "antd";
 import * as MuiIcons from "@mui/icons-material";
 import type { EnsembleWidget } from "@ensembleui/react-framework";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getColor } from "../util/utils";
+import { getColor } from "../shared/styles";
 import { EnsembleRuntime } from "./runtime";
 
 type TypeColors =
@@ -27,6 +27,7 @@ type TypeColors =
   | "orange";
 
 interface MenuItem {
+  id?: string;
   icon?: string;
   iconLibrary?: "default" | "fontAwesome";
   label: string;
@@ -112,6 +113,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
 
   return (
     <Col
+      id="ensemble-sidebar"
       style={{
         backgroundColor,
         borderRight: "1px solid lightgrey",
@@ -138,9 +140,11 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
           flexDirection: "column",
         }}
       >
+        {/* FIXME: just use props here https://ant.design/components/menu#examples */}
         {props.items.map((item) => (
           <>
             <AntMenu.Item
+              data-testid={item.id}
               icon={renderMuiIcon(
                 item.icon,
                 props.styles?.iconWidth,

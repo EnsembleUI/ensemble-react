@@ -15,14 +15,28 @@ import type {
   EnsembleWidget,
   EnsembleAppModel,
   EnsembleMenuModel,
+  EnsembleHeaderModel,
+  EnsembleFooterModel,
+  CustomWidgetModel,
 } from "./shared/models";
 import type { ApplicationDTO } from "./shared/dto";
+import type { EnsembleAction } from "./shared";
 
 export interface EnsembleScreenYAML {
   View?: {
+    header?: Record<string, unknown>;
     body: Record<string, unknown>;
+    footer?: Record<string, unknown>;
   };
   ViewGroup?: Record<string, unknown>;
+}
+
+export interface EnsembleWidgetYAML {
+  Widget: {
+    inputs?: string[];
+    onLoad?: EnsembleAction;
+    body: Record<string, unknown>;
+  };
 }
 
 export const EnsembleParser = {
@@ -39,6 +53,10 @@ export const EnsembleParser = {
       throw Error("Application must have at least one screen");
     }
 
+    const customWidgets = (app.widgets ?? []).map(({ name, content: yaml }) =>
+      EnsembleParser.parseWidget(name, parse(yaml) as EnsembleWidgetYAML),
+    );
+
     const menu = screens.find((screen) => "items" in screen) as
       | EnsembleMenuModel
       | undefined;
@@ -54,8 +72,10 @@ export const EnsembleParser = {
     }
 
     return {
+      id: app.id,
       menu,
       screens: screens as EnsembleScreenModel[],
+      customWidgets,
       home: menu ?? screens[0],
       theme: app.theme,
     };
@@ -67,19 +87,39 @@ export const EnsembleParser = {
   ): EnsembleScreenModel | EnsembleMenuModel => {
     const view = get(screen, "View");
     const viewNode = get(view, "body");
-    const header = get(view, "header") as Record<string, unknown> | undefined;
+    const header = get(view, "header");
+    const footer = get(view, "footer");
 
     if (!viewNode) {
       throw new Error("Invalid screen: missing view widget");
     }
     const viewWidget = unwrapWidget(viewNode);
     const apis = unwrapApiModels(screen);
+
     return {
       ...(view ?? {}),
       name,
-      header: header ? unwrapWidget(header) : undefined,
+      header: unwrapHeader(header),
+      footer: unwrapFooter(footer),
       body: viewWidget,
       apis,
+    };
+  },
+
+  parseWidget: (name: string, yaml: EnsembleWidgetYAML): CustomWidgetModel => {
+    const widget = get(yaml, "Widget");
+
+    const rawBody = get(widget, "body");
+    if (!rawBody) {
+      throw Error("Widget must have a body");
+    }
+
+    const body = unwrapWidget(rawBody);
+    return {
+      name,
+      onLoad: get(widget, "onLoad"),
+      inputs: get(widget, "inputs") ?? [],
+      body,
     };
   },
 
@@ -159,6 +199,41 @@ export const unwrapWidget = (obj: Record<string, unknown>): EnsembleWidget => {
   }
   return {
     name,
-    properties: properties as Record<string, unknown>,
+    properties: (properties ?? {}) as Record<string, unknown>,
   };
+};
+
+export const unwrapHeader = (
+  header: Record<string, unknown> | undefined,
+): EnsembleHeaderModel | undefined => {
+  const title = get(header, "title") as
+    | Record<string, unknown>
+    | string
+    | undefined;
+
+  if (!header || !title) return;
+
+  return {
+    title: typeof title === "string" ? title : unwrapWidget(title),
+    styles: get(header, "styles") as Record<string, unknown>,
+  };
+};
+
+const unwrapFooter = (
+  footer: Record<string, unknown> | undefined,
+): EnsembleFooterModel | undefined => {
+  if (!footer) return;
+
+  const children = get(footer, "children");
+  if (isArray(children)) {
+    const unwrappedChildren = map(children, (child) =>
+      unwrapWidget(child as Record<string, unknown>),
+    );
+    set(footer as object, "children", unwrappedChildren);
+
+    return {
+      children: unwrappedChildren,
+      styles: get(footer, "styles") as Record<string, unknown>,
+    };
+  }
 };

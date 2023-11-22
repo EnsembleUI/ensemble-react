@@ -1,6 +1,7 @@
 import { isEmpty, last, merge, toString } from "lodash-es";
 import type { InvokableMethods, ScreenContextDefinition } from "./state";
 import { EnsembleStorage } from "./storage";
+import { sanitizeJs, debug } from "./shared";
 
 export const buildEvaluateFn = (
   screen: ScreenContextDefinition,
@@ -17,6 +18,7 @@ export const buildEvaluateFn = (
 
   const invokableObj = Object.fromEntries([
     ...widgets,
+    ...Object.entries(screen.inputs ?? {}),
     ...Object.entries(screen.data),
     ...Object.entries(context ?? {}),
   ]);
@@ -27,7 +29,7 @@ export const buildEvaluateFn = (
 
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
   const jsFunc = new Function(...[...Object.keys(invokableObj)], formatJs(js));
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-argument
   return () => jsFunc(...Object.values(invokableObj));
 };
 
@@ -61,13 +63,6 @@ const formatJs = (js?: string): string => {
   return `return ${sanitizedJs}`;
 };
 
-const sanitizeJs = (string: string): string => {
-  if (string.startsWith("${") && string.endsWith("}")) {
-    return string.substring(2, string.length - 1);
-  }
-  return string.trim();
-};
-
 export const evaluate = (
   screen: ScreenContextDefinition,
   js?: string,
@@ -76,6 +71,7 @@ export const evaluate = (
   try {
     return buildEvaluateFn(screen, js, context)();
   } catch (e) {
-    return null;
+    debug(e);
+    throw e;
   }
 };

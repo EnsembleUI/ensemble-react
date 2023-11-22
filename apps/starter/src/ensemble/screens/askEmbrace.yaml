@@ -1,0 +1,168 @@
+View:
+  header:
+    # title: Ask Embrace string
+    title:
+      Text:
+        text: Ask Embrace header
+        styles:
+          fontSize: 25
+    styles:
+      titleBarHeight: 100
+      backgroundColor: "#f0f0f0"
+      centerTitle: true
+      color: "#00f0f0"
+      titleColor: "#0000f0"
+
+  body:
+    Column:
+      children:
+        # - Markdown:
+        #     id: askText
+        #     text: "## Ask Embrace"
+        # - Text:
+        #     id: he
+        #     text: hehe
+        - Form:
+            styles:
+              labelPosition: start
+            onSubmit:
+              executeCode: console.log("Hello")
+            children:
+              - TextInput:
+                  label: Name
+                  value: foo
+              - Checkbox:
+                  id: myCheckbox
+                  trailingText: I can be set to checked
+                  value: false
+                  enabled: true
+              - Button:
+                  label: Submit
+                  submitForm: true
+                  onTap:
+                    executeCode: console.log(myCheckbox)
+              - Button:
+                  label: Cancel
+                  onTap:
+                    closeAllDialogs:
+
+        # Not working (potential cause: id of pickFiles hasn't yet registered when uploadFiles is using it)
+        - Column:
+            children:
+              - Button:
+                  label: Upload Files
+                  onTap:
+                    pickFiles:
+                      id: myFiles
+                      allowMultiple: true
+                      allowedExtensions:
+                        - jpg
+                        - png
+                        - mov
+                      onComplete:
+                        uploadFiles:
+                          id: myUploader
+                          files: ${myFiles.files}
+                          uploadApi: uploadFile
+                          onComplete:
+                            executeCode: console.log(myUploader.body)
+                          onError:
+                            executeCode: console.log('Upload error')
+
+              # working fine
+              # - Column:
+              #     children:
+              #       - Button:
+              #           label: Pick Files
+              #           onTap:
+              #             pickFiles:
+              #               id: myFiles
+              #               allowMultiple: true
+              #               allowedExtensions:
+              #                 - jpg
+              #                 - png
+              #                 - mov
+              #               onComplete:
+              #                 executeCode: console.log('Files picked')
+              #       - Conditional:
+              #           conditions:
+              #             - if: ${myFiles.files.length > 0}
+              #               Column:
+              #                 children:
+              #                   - Markdown:
+              #                       text: "## Picked files"
+              #                   - DataGrid:
+              #                       DataColumns:
+              #                         - label: Name
+              #                         - label: Size
+              #                         - label: Type
+              #                         - label: Last Modified
+              #                       item-template:
+              #                         data: myFiles.files
+              #                         name: f
+              #                         template:
+              #                           DataRow:
+              #                             children:
+              #                               - Text:
+              #                                   text: ${f.name}
+              #                               - Text:
+              #                                   text: ${f.size}
+              #                               - Text:
+              #                                   text: ${f.type}
+              #                               - Text:
+              #                                   text: ${f.lastModified}
+
+              #       - Button:
+              #           label: Upload Files
+              #           onTap:
+              #             uploadFiles:
+              #               id: myUploader
+              #               files: ${myFiles.files}
+              #               uploadApi: uploadFile
+              #               # inputs:
+              #               #   dummy: 123
+              #               # fieldName: xyz-2
+              #               onComplete:
+              #                 executeCode: console.log('Upload complete')
+              #               onError:
+              #                 executeCode: console.log('Upload error')
+              - Text:
+                  text: ${myUploader.progress}
+              - Text:
+                  text: ${myUploader.status}
+              - Button:
+                  label: tap me to log body
+                  onTap:
+                    executeCode: console.log(myUploader.body)
+              - Button:
+                  label: tap me to log headers
+                  onTap:
+                    executeCode: console.log(myUploader.headers)
+              - GridView:
+                  styles:
+                    horizontalTileCount: 1
+                  item-template:
+                    data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+                    name: i
+                    template:
+                      Text:
+                        text: ${i}
+
+  footer:
+    children:
+      - Button:
+          label: Let's Go
+    styles:
+      backgroundColor: "#f0f0f0"
+      height: 100px
+
+API:
+  uploadFile:
+    # inputs:
+    #   - dummy
+    uri: https://upload.uploadcare.com/base/
+    #?sjn=${he.text}&dummy=${dummy}
+    method: POST
+    body:
+      UPLOADCARE_PUB_KEY: be316c999f9ffdf188a8
+      # dummy: ${askText.text}

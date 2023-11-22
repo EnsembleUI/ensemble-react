@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Progress as AntProgress } from "antd";
 import { WidgetRegistry } from "../registry";
-import type { EnsembleWidgetProps } from "../util/types";
+import type { EnsembleWidgetProps } from "../shared/types";
 
 export type ProgressProps = {
   display?: "linear" | "circular";
@@ -43,9 +43,8 @@ const Progress: React.FC<ProgressProps> = (props) => {
         (countdown * 1000) / targetPercent,
       );
       return () => clearInterval(interval);
-    } else {
-      setPercent(-1);
     }
+    setPercent(-1);
   }, [countdown]);
 
   if (isCircular && countdown) {
@@ -68,19 +67,19 @@ const Progress: React.FC<ProgressProps> = (props) => {
     return (
       <div>
         <svg
-          width={radius * 2}
           height={radius * 2}
+          width={radius * 2}
           xmlns="http://www.w3.org/2000/svg"
         >
           <g>
             <circle
               cx={radius}
               cy={radius}
-              r={radius - thickness / 2}
               fill="none"
+              r={radius - thickness / 2}
               stroke={`${styles?.color ? styles.color : "#000"}`}
-              strokeWidth={thickness}
               strokeLinecap="round"
+              strokeWidth={thickness}
             >
               <animate
                 attributeName="stroke-dasharray"

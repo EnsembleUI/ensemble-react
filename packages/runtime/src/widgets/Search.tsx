@@ -3,16 +3,17 @@ import { useTemplateData, type Expression } from "@ensembleui/react-framework";
 import type { SelectProps } from "antd";
 import { AutoComplete, Input } from "antd";
 import { SearchOutlined } from "@mui/icons-material";
-import { get, isObject } from "lodash-es";
+import { get, isObject, noop } from "lodash-es";
 import { WidgetRegistry } from "../registry";
-import type { SearchStyles } from "../util/types";
-import { getColor } from "../util/utils";
+import type { EnsembleWidgetProps, HasBorder } from "../shared/types";
+import { getColor } from "../shared/styles";
 
-interface EnsembleWidgetProps<T> {
-  id?: string;
-  [key: string]: unknown;
-  styles?: T;
-}
+export type SearchStyles = {
+  width?: number;
+  height?: number;
+  margin?: number | string;
+  backgroundColor?: string;
+} & HasBorder;
 
 export type SearchProps = {
   placeholder?: string;
@@ -25,24 +26,25 @@ export const Search: React.FC<SearchProps> = ({
   data,
   searchKey,
   styles,
+  id,
 }) => {
   const [options, setOptions] = useState<SelectProps<object>["options"]>([]);
 
-  const templateData = useTemplateData(data!);
+  const { rawData } = useTemplateData({ data: data! });
 
   // TODO: Pass in search predicate function via props or filter via API
   const handleSearch = (value: string) => {
-    if (Array.isArray(templateData)) {
+    if (Array.isArray(rawData)) {
       setOptions(
         value
-          ? templateData
+          ? rawData
               .filter(
                 (item) =>
                   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
                   (isObject(item) ? get(item, searchKey ?? "") : item)
                     ?.toString()
                     ?.toLowerCase()
-                    ?.includes(value.toLowerCase())
+                    ?.includes(value.toLowerCase()),
               )
               .map((item) => ({
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -50,40 +52,53 @@ export const Search: React.FC<SearchProps> = ({
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 label: isObject(item) ? get(item, searchKey ?? "") : item,
               }))
-          : []
+          : [],
       );
     }
   };
 
   return (
-    <AutoComplete
-      allowClear
-      onSearch={handleSearch}
-      // TODO: Handle on search result select
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      onSelect={() => {}}
-      options={options}
-      popupMatchSelectWidth={styles?.width}
-      size="large"
-    >
-      <Input
-        placeholder={placeholder}
-        prefix={<SearchOutlined />}
-        style={{
-          width: styles?.width,
-          height: styles?.height,
-          margin: styles?.margin,
-          borderRadius: styles?.borderRadius,
-          borderWidth: styles?.borderWidth,
-          borderStyle: styles?.borderStyle,
-          borderColor: styles?.borderColor
-            ? getColor(styles.borderColor)
-            : undefined,
-          boxShadow: "none",
-          backgroundColor: styles?.backgroundColor,
-        }}
-      />
-    </AutoComplete>
+    <div>
+      <AutoComplete
+        id={id}
+        allowClear
+        onSearch={handleSearch}
+        // TODO: Handle on search result select
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        onSelect={noop}
+        options={options}
+        popupMatchSelectWidth={styles?.width}
+        size="large"
+      >
+        <Input
+          placeholder={placeholder}
+          prefix={<SearchOutlined />}
+          style={{
+            width: styles?.width,
+            height: styles?.height,
+            margin: styles?.margin,
+            borderRadius: styles?.borderRadius,
+            borderWidth: styles?.borderWidth,
+            borderStyle: styles?.borderStyle,
+            borderColor: styles?.borderColor
+              ? getColor(styles.borderColor)
+              : undefined,
+            backgroundColor: styles?.backgroundColor,
+            boxShadow: "none",
+          }}
+        />
+      </AutoComplete>
+      {id ? (
+        <style>
+          {`
+			/* Linear loader animation */
+			#${id ?? ""} {
+				background-color: ${styles?.backgroundColor ? styles.backgroundColor : ""}
+			}
+		  `}
+        </style>
+      ) : null}
+    </div>
   );
 };
 

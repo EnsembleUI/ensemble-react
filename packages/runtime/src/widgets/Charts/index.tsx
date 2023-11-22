@@ -19,7 +19,7 @@ import {
   useScreenContext,
 } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../../registry";
-import type { EnsembleWidgetProps } from "../../util/types";
+import type { EnsembleWidgetProps } from "../../shared/types";
 import { BarChart } from "./BarChart";
 import { DoughnutChart } from "./DoughnutChart";
 import { StackBarChart } from "./StackBarChart";
@@ -81,6 +81,7 @@ export const Chart: React.FC<ChartProps> = (props) => {
       ) as ChartConfigs,
     [props.config, context],
   );
+  const { rootRef } = useWidgetId(props.id);
 
   if (!config || !props?.config)
     return (
@@ -92,10 +93,17 @@ export const Chart: React.FC<ChartProps> = (props) => {
 
   if (!config.type) return <b>Chart type missing</b>;
 
-  return cloneElement(tabsConfig[config.type], {
-    ...props,
-    config,
-  });
+  return (
+    <div
+      ref={rootRef}
+      style={{
+        height: props.styles?.height ?? "100%",
+        width: props.styles?.width ?? "100%",
+      }}
+    >
+      {cloneElement(tabsConfig[type], { ...props })}
+    </div>
+  );
 };
 
 WidgetRegistry.register("Chart", Chart);

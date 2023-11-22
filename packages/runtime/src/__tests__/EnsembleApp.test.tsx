@@ -36,14 +36,23 @@ Object.defineProperty(window, "matchMedia", {
 });
 
 test("Renders error page", () => {
+  /* eslint-disable no-console */
+  const consoleErr = console.error;
+  console.error = jest.fn();
   loadAppMock.mockReturnValue({});
-  parseApplicationMock.mockReturnValue({ screens: [] });
+  parseApplicationMock.mockReturnValue({
+    home: {},
+    screens: [],
+    customWidgets: [],
+  });
   try {
     render(<EnsembleApp appId="test" />);
   } catch (e) {
     // no-op
   }
 
+  console.error = consoleErr;
+  /* eslint-enable no-console */
   expect(
     screen.getByText("Sorry, an unexpected error has occurred."),
   ).not.toBeNull();
@@ -66,10 +75,13 @@ test("Renders view widget of home screen", () => {
       },
     },
   };
-  loadAppMock.mockReturnValue({ screens: [{ content: "" }] });
+  loadAppMock.mockReturnValue({
+    screens: [{ content: "" }],
+  });
   parseApplicationMock.mockReturnValue({
     home: mockScreen,
     screens: [mockScreen],
+    customWidgets: [],
   });
   render(<EnsembleApp appId="test" />);
 
@@ -101,10 +113,13 @@ test("Bind data from other widgets", async () => {
       },
     },
   };
-  loadAppMock.mockReturnValue({ screens: [{ content: "" }] });
+  loadAppMock.mockReturnValue({
+    screens: [{ content: "" }],
+  });
   parseApplicationMock.mockReturnValue({
     home: mockScreen,
     screens: [mockScreen],
+    customWidgets: [],
   });
   render(<EnsembleApp appId="test" />);
 
@@ -140,10 +155,13 @@ test("Updates values through Ensemble state", async () => {
       },
     },
   };
-  loadAppMock.mockReturnValue({ screens: [{ content: "" }] });
+  loadAppMock.mockReturnValue({
+    screens: [{ content: "" }],
+  });
   parseApplicationMock.mockReturnValue({
     home: mockScreen,
     screens: [mockScreen],
+    customWidgets: [],
   });
   render(<EnsembleApp appId="test" />);
 

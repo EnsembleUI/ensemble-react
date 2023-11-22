@@ -1,17 +1,20 @@
 import { useMemo } from "react";
 import { Col } from "antd";
 import { get } from "lodash-es";
+import { useRegisterBindings } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
-import type { FlexboxProps } from "../util/types";
-import { getColor, getCrossAxis, getMainAxis } from "../util/utils";
+import type { FlexboxProps } from "../shared/types";
+import { getColor, getCrossAxis, getMainAxis } from "../shared/styles";
 
 export const Column: React.FC<FlexboxProps> = (props) => {
   const renderedChildren = useMemo(() => {
     return EnsembleRuntime.render(props.children);
   }, [props.children]);
+  const { rootRef } = useRegisterBindings({}, props.id);
   return (
     <Col
+      ref={rootRef}
       style={{
         flexDirection: "column",
         justifyContent: props.mainAxis && getMainAxis(props.mainAxis),

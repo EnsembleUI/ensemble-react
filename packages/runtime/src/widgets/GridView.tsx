@@ -1,4 +1,3 @@
-import { map } from "lodash-es";
 import type {
   CustomScope,
   EnsembleWidget,
@@ -11,12 +10,12 @@ import {
 import { Col, Row } from "antd";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
-import type { GridViewStyles } from "../util/types";
+import type { EnsembleWidgetProps } from "../shared/types";
 
-interface EnsembleWidgetProps<T> {
-  id?: string;
-  [key: string]: unknown;
-  styles?: T;
+export interface GridViewStyles {
+  horizontalTileCount?: number;
+  horizontalGap?: number;
+  verticalGap?: number;
 }
 
 export type GridViewProps = {
@@ -32,11 +31,7 @@ export const GridView: React.FC<GridViewProps> = ({
   styles,
 }) => {
   const defaultColumnCount = 4;
-  const templateData = useTemplateData(data);
-
-  const namedData = map(templateData, (value) => ({
-    [name]: value,
-  }));
+  const { namedData } = useTemplateData({ data, name });
 
   const rows = [];
   const colCount = styles?.horizontalTileCount ?? defaultColumnCount;

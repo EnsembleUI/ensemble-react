@@ -3,10 +3,11 @@ import {
   useTemplateData,
   type Expression,
   type EnsembleWidget,
+  useWidgetId,
 } from "@ensembleui/react-framework";
-import { map } from "lodash-es";
-import type { ReactElement } from "react";
+import { type ReactElement } from "react";
 import { WidgetRegistry } from "../../registry";
+import type { EnsembleWidgetProps } from "../../shared/types";
 import { DataCell } from "./DataCell";
 
 interface DataColumn {
@@ -17,7 +18,7 @@ interface DataColumn {
   sortKey?: string;
 }
 
-export interface GridProps {
+export interface GridProps extends EnsembleWidgetProps {
   DataColumns: DataColumn[];
   "item-template": {
     data: Expression<object>;
@@ -26,7 +27,7 @@ export interface GridProps {
   };
 }
 
-export interface DataGridRowTemplate extends EnsembleWidget {
+export interface DataGridRowTemplate {
   name: "DataRow";
   properties: {
     children: EnsembleWidget[];
@@ -36,15 +37,18 @@ export interface DataGridRowTemplate extends EnsembleWidget {
 export const DataGrid: React.FC<GridProps> = ({
   DataColumns,
   "item-template": itemTemplate,
+  id,
 }) => {
-  const templateData = useTemplateData(itemTemplate.data);
-  const namedData = map(templateData, (value) => {
-    const namedObj: Record<string, unknown> = {};
-    namedObj[itemTemplate.name] = value;
-    return namedObj;
-  });
+  const { resolvedWidgetId, rootRef } = useWidgetId(id);
+  const { namedData } = useTemplateData({ ...itemTemplate });
+
   return (
-    <Table dataSource={namedData} style={{ width: "100%" }}>
+    <Table
+      dataSource={namedData}
+      key={resolvedWidgetId}
+      ref={rootRef}
+      style={{ width: "100%" }}
+    >
       {DataColumns.map((col, index) => {
         return (
           <Table.Column

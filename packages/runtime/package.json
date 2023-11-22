@@ -1,6 +1,6 @@
 {
   "name": "@ensembleui/react-runtime",
-  "version": "0.0.3",
+  "version": "0.0.7",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "tsup src/index.tsx --format cjs --watch --dts --external react",
     "build": "tsup src/index.tsx --format cjs --dts --external react",
-    "test": "jest --silent",
+    "test": "jest",
     "lint": "eslint ."
   },
   "lint-staged": {
@@ -34,6 +34,7 @@
     "@types/react-dom": "^18.2.0",
     "antd": "^5.9.0",
     "chart.js": "^4.4.0",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "eslint-config-custom": "workspace:*",
     "jest": "27.5.1",
     "lodash-es": "^4.17.21",

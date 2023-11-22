@@ -1,0 +1,9 @@
+Widget:
+  onLoad:
+    executeCode: |
+      console.log("foo")
+  inputs:
+    - name
+  body:
+    Text:
+      text: "bar"

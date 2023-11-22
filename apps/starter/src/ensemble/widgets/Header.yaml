@@ -1,0 +1,42 @@
+Widget:
+  body:
+    Row:
+      backgroundColor: white
+      mainAxis: spaceBetween
+      crossAxis: center
+      padding: 8
+      styles:
+        borderWidth: "0 0 1px 0"
+        borderColor: "#D5DAEA"
+        width: "100%"
+      children:
+        - Search:
+            id: mySearch
+            styles:
+              width: 320px
+              height: 40px
+              borderRadius: 12
+              borderWidth: 2
+              borderStyle: solid
+              borderColor: "#B8BED6"
+            placeholder: Search
+            data: getData.body.users
+            searchKey: email
+        - Row:
+            styles:
+              gap: 10
+            children:
+              - Avatar:
+                  styles:
+                    backgroundColor: "#171B2A"
+                  alt: abc
+                  name: Adam
+                  menu:
+                    - label: Personal Information
+                      icon: Person
+                      onTap:
+                        executeCode: myText.setText("Spiderman")
+                    - label: Collections
+                      icon: Settings
+                      onTap:
+                        navigateScreen: Collections

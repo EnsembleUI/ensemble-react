@@ -2,6 +2,8 @@
 
 This is a monorepo containing the React elements for Ensemble, built with Turborepo.
 
+To get started integrating Ensemble to your React App, see the [starter app and README](https://github.com/EnsembleUI/ensemble-react/blob/main/apps/starter).
+
 ## Getting Started
 
 Clone the repo and then cd into the root directory of the repo.

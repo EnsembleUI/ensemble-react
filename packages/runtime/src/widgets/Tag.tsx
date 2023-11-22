@@ -3,30 +3,49 @@ import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useState } from "react";
 import { Typography } from "antd";
 import { WidgetRegistry } from "../registry";
-import type { IconProps } from "../util/types";
+import type { IconProps } from "../shared/types";
 import { Icon } from "./Icon";
 
 export interface TagProps {
   id?: string;
   label: Expression<string> | Expression<string[]>;
   styles?: {
-    backgroundColor: string;
-    borderRadius: string;
-    fontSize: string;
+    backgroundColor?: Expression<string>;
+    borderRadius?: string;
+    fontSize?: string;
+    textColor?: string;
+    fontWeight?: number | string;
+    fontFamily: string;
+    textAlign:
+      | "start"
+      | "end"
+      | "left"
+      | "right"
+      | "center"
+      | "justify"
+      | "match-parent";
   };
   icon?: IconProps;
 }
-
 export const Tag: React.FC<TagProps> = (props) => {
   const [text, setText] = useState(props.label);
-  const { values } = useRegisterBindings({ ...props, text }, props.id, {
-    setText,
-  });
+  const [backgroundColor, setBackgroundColor] = useState(
+    props.styles?.backgroundColor,
+  );
+  const [textColor, setTextColor] = useState(props.styles?.textColor);
+  const { values } = useRegisterBindings(
+    { ...props, text, backgroundColor, textColor },
+    props.id,
+    {
+      setText,
+      setBackgroundColor,
+      setTextColor,
+    },
+  );
   const [expanded, setExpanded] = useState(false);
   const toggleExpansion = (): void => {
     setExpanded(!expanded);
   };
-
   const labels =
     values?.label && Array.isArray(values.label)
       ? values.label
@@ -37,12 +56,18 @@ export const Tag: React.FC<TagProps> = (props) => {
     <Typography.Text
       key={index}
       style={{
-        backgroundColor: props.styles?.backgroundColor ?? "#e6e7e8",
+        backgroundColor: values?.backgroundColor ?? "#e6e7e8",
         paddingLeft: "10px",
         paddingRight: "10px",
-        textAlign: "left",
+        textAlign: props.styles?.textAlign ? props.styles.textAlign : "center",
+        color: values?.textColor,
         borderRadius: props.styles?.borderRadius ?? 10,
-        fontWeight: "normal",
+        fontWeight: props.styles?.fontWeight
+          ? props.styles.fontWeight
+          : "normal",
+        fontFamily: props.styles?.fontFamily
+          ? props.styles.fontFamily
+          : "Poppins",
         fontSize: props.styles?.fontSize ?? 12,
         display: "inline-flex",
         alignItems: "center",

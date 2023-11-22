@@ -3,6 +3,8 @@ import { renderHook } from "@testing-library/react";
 import { ScreenContextProvider } from "@ensembleui/react-framework";
 import { useExecuteCode } from "../useEnsembleAction";
 
+jest.mock("react-markdown", jest.fn());
+
 const wrapper: React.FC<React.PropsWithChildren> = ({ children }) => (
   <ScreenContextProvider
     context={{

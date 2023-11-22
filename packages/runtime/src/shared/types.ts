@@ -1,9 +1,11 @@
 import type { EnsembleWidget, Expression } from "@ensembleui/react-framework";
 
-export interface EnsembleWidgetProps {
+export type EnsembleWidgetStyles = Record<string, string | number>;
+
+export interface EnsembleWidgetProps<T = EnsembleWidgetStyles> {
   id?: string;
   [key: string]: unknown;
-  styles?: Record<string, string | number>;
+  styles?: T;
 }
 
 export type BaseTextProps = {
@@ -25,23 +27,15 @@ export type FlexboxProps = {
   EnsembleWidgetProps;
 
 export type IconProps = {
-  name: string;
+  name: Expression<string>;
   size?: number;
   color?: string;
+  styles?: {
+    backgroundColor?: string;
+    padding?: number | string;
+    margin?: number | string;
+  } & HasBorder;
 } & EnsembleWidgetProps;
-
-export interface GridViewStyles {
-  horizontalTileCount?: number;
-  horizontalGap?: number;
-  verticalGap?: number;
-}
-
-export type SearchStyles = {
-  width?: number;
-  height?: number;
-  margin?: number | string;
-  backgroundColor?: string;
-} & HasBorder;
 
 // composable types
 export interface HasBorder {

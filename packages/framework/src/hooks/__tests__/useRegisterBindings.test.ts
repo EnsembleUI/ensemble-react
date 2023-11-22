@@ -31,7 +31,7 @@ test("instantiates state from props", () => {
     useRegisterBindings(mockValues, mockInvokable.id, mockInvokable.methods),
   );
 
-  expect(result.current).toEqual({
+  expect(result.current).toMatchObject({
     id: "test",
     values: {
       foo: "bar",
@@ -69,7 +69,7 @@ test("updates bindings when incoming values update", () => {
   };
   rerender();
 
-  expect(result.current).toEqual({
+  expect(result.current).toMatchObject({
     id: "test",
     values: {
       foo: "deadbeef",

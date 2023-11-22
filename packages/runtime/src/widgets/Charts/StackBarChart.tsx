@@ -10,6 +10,7 @@ const options: ChartOptions<"bar"> = {
   plugins: {
     legend: {
       display: false,
+      position: "top",
     },
     tooltip: {
       enabled: false,
@@ -37,7 +38,6 @@ const options: ChartOptions<"bar"> = {
       stacked: true,
       border: {
         display: false,
-        dash: [2, 2],
       },
       grid: {
         lineWidth: 0,

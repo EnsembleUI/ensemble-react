@@ -94,9 +94,11 @@ importers:
       '@testing-library/react': ^13.4.0
       '@types/lodash-es': ^4.17.8
       '@types/react': ^18.2.21
+      acorn: ^8.11.2
       axios: 0.27.2
       eslint-config-custom: workspace:*
       jotai: ^2.4.2
+      jotai-location: ^0.5.2
       jotai-optics: ^0.3.1
       lodash-es: ^4.17.21
       optics-ts: ^2.4.1
@@ -107,9 +109,11 @@ importers:
       '@testing-library/react': 13.4.0
       '@types/lodash-es': 4.17.9
       '@types/react': 18.2.21
+      acorn: 8.11.2
       axios: 0.27.2
       eslint-config-custom: link:../eslint-config-custom
       jotai: 2.4.2_@types+react@18.2.21
+      jotai-location: 0.5.2_jotai@2.4.2
       jotai-optics: 0.3.1_jotai@2.4.2+optics-ts@2.4.1
       lodash-es: 4.17.21
       optics-ts: 2.4.1
@@ -132,6 +136,7 @@ importers:
       '@types/react-dom': ^18.2.0
       antd: ^5.9.0
       chart.js: ^4.4.0
+      chartjs-plugin-datalabels: ^2.2.0
       eslint-config-custom: workspace:*
       jest: 27.5.1
       lodash-es: ^4.17.21
@@ -155,6 +160,7 @@ importers:
       '@types/react-dom': 18.2.7
       antd: 5.9.0
       chart.js: 4.4.0
+      chartjs-plugin-datalabels: 2.2.0_chart.js@4.4.0
       eslint-config-custom: link:../eslint-config-custom
       jest: 27.5.1
       lodash-es: 4.17.21
@@ -4318,6 +4324,12 @@ packages:
     hasBin: true
     dev: true
 
+  /acorn/8.11.2:
+    resolution: {integrity: sha512-nc0Axzp/0FILLEVsm4fNwLCwMttvhEI263QtVPQcbpfZZ3ts0hLsZGOpE6czNlid7CJ9MlyH8reXkpsf3YUY4w==}
+    engines: {node: '>=0.4.0'}
+    hasBin: true
+    dev: true
+
   /address/1.2.2:
     resolution: {integrity: sha512-4B/qKCfeE/ODUaAUpSwfzazo5x29WD4r3vXiWsB7I2mSDAihwEqKO+g8GELZUQSSAo5e1XTYh3ZVfLyxBc12nA==}
     engines: {node: '>= 10.0.0'}
@@ -5386,6 +5398,14 @@ packages:
     engines: {pnpm: '>=7'}
     dependencies:
       '@kurkle/color': 0.3.2
+    dev: true
+
+  /chartjs-plugin-datalabels/2.2.0_chart.js@4.4.0:
+    resolution: {integrity: sha512-14ZU30lH7n89oq+A4bWaJPnAG8a7ZTk7dKf48YAzMvJjQtjrgg5Dpk9f+LbjCF6bpx3RAGTeL13IXpKQYyRvlw==}
+    peerDependencies:
+      chart.js: '>=3.0.0'
+    dependencies:
+      chart.js: 4.4.0
     dev: true
 
   /check-types/11.2.3:
@@ -9419,6 +9439,14 @@ packages:
 
   /jju/1.4.0:
     resolution: {integrity: sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA==}
+    dev: true
+
+  /jotai-location/0.5.2_jotai@2.4.2:
+    resolution: {integrity: sha512-4S9hDh1wYp4SG4Laq3+Xd0GdW7jwnWlbEuL8U22kv3wUZW892n6gXlNhwU0LaoXnWoGG0gtjSLBuFm5iodFKLg==}
+    peerDependencies:
+      jotai: '>=1.11.0'
+    dependencies:
+      jotai: 2.4.2_@types+react@18.2.21
     dev: true
 
   /jotai-optics/0.3.1_jotai@2.4.2+optics-ts@2.4.1:

@@ -19,5 +19,6 @@ export const useWidgetState = <T extends Record<string, unknown>>(
     [id],
   );
 
-  return useAtom(widgetStateAtom);
+  const widgetState = useAtom(widgetStateAtom);
+  return widgetState;
 };

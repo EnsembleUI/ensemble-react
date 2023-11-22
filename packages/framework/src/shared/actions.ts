@@ -22,15 +22,19 @@ export interface NavigateModalScreenStyles {
   padding?: string;
 }
 
+interface NavigateScreenOptions {
+  name: string;
+  inputs: Record<string, unknown>;
+}
+
 export type NavigateModalScreenAction =
   | string
-  | {
-      name?: string;
+  | (NavigateScreenOptions & {
       maskClosable?: boolean;
       styles?: NavigateModalScreenStyles;
-    };
+    });
 
-export type NavigateScreenAction = string | { name: string };
+export type NavigateScreenAction = string | NavigateScreenOptions;
 
 export interface ShowToastAction {
   message: string;
