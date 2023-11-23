@@ -27,7 +27,7 @@ export const buildEvaluateFn = (
   invokableObj.ensemble = {
     storage: EnsembleStorage,
   };
-  const mergedJs = `${globalBlock}\n\n${js ?? ""}`;
+  const mergedJs = `${globalBlock ?? ""}\n\n${js ?? ""}`;
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
   const jsFunc = new Function(
     ...[...Object.keys(invokableObj)],

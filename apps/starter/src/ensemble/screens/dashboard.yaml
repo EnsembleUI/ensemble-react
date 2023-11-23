@@ -1,6 +1,6 @@
 View:
   onLoad:
-    invokeAPI:
+    invokeApi:
       name: getDummyJson
   header:
     title:
