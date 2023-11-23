@@ -23,14 +23,17 @@ export const buildEvaluateFn = (
     ...Object.entries(screen.data),
     ...Object.entries(context ?? {}),
   ]);
-
+  const globalBlock = screen.model?.global;
   invokableObj.ensemble = {
     storage: EnsembleStorage,
   };
-
+  const mergedJs = `${globalBlock ?? ""}\n\n${js ?? ""}`;
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
-  const jsFunc = new Function(...[...Object.keys(invokableObj)], formatJs(js));
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-argument
+  const jsFunc = new Function(
+    ...[...Object.keys(invokableObj)],
+    formatJs(mergedJs),
+  );
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return () => jsFunc(...Object.values(invokableObj));
 };
 

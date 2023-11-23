@@ -460,6 +460,7 @@ View:
                                               fontWeight: normal
                                               fontSize: 12px
                                               color: "#767676"
+
 API:
   getData:
     uri: https://api.airtable.com/v0/app0FnT5yUsW9fjn6/tblWGM6o7vqlTfB8b

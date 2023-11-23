@@ -70,7 +70,6 @@ export const EnsembleParser = {
           ) as EnsembleScreenModel),
       );
     }
-
     return {
       id: app.id,
       menu,
@@ -95,10 +94,11 @@ export const EnsembleParser = {
     }
     const viewWidget = unwrapWidget(viewNode);
     const apis = unwrapApiModels(screen);
-
+    const global = get(screen, "Global");
     return {
       ...(view ?? {}),
       name,
+      global,
       header: unwrapHeader(header),
       footer: unwrapFooter(footer),
       body: viewWidget,
