@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import type { ChartDataSets, ChartProps } from "..";
 
+
 const defaultOptions: ChartOptions<"line"> = {
   maintainAspectRatio: false,
   scales: {
@@ -40,31 +41,24 @@ export const LineChart: React.FC<ChartProps> = (props) => {
   });
 
   return (
-    <div
-      style={{
-        height: styles?.height || "100%",
-        width: styles?.width || "100%",
+    <Line
+      data={{
+        labels: values?.labels,
+        datasets: config?.data?.datasets as ChartDataSets[],
       }}
-    >
-      <Line
-        data={{
-          labels: values?.labels,
-          datasets: config?.data?.datasets as ChartDataSets[],
-        }}
-        options={{
-          ...defaultOptions,
-          ...(config?.options as ChartOptions<"line">),
-          plugins: {
-            title: {
-              display: Boolean(values?.title),
-              text: values?.title,
-            },
-            legend: {
-              display: false,
-            },
+      options={{
+        ...defaultOptions,
+        ...(config?.options as ChartOptions<"line">),
+        plugins: {
+          title: {
+            display: Boolean(values?.title),
+            text: values?.title,
           },
-        }}
-      />
-    </div>
+          legend: {
+            display: false,
+          },
+        },
+      }}
+    />
   );
 };

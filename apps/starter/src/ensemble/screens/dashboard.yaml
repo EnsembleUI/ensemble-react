@@ -9,7 +9,7 @@ View:
   header:
     title:
       Header:
-
+      
   body:
     Column:
       crossAxis: stretch
@@ -104,6 +104,7 @@ View:
                                   ]
                               }
                           }
+
 
         - DataGrid:
             DataColumns:
@@ -286,8 +287,8 @@ View:
                   label: Next
                   onTap:
                     executeCode: |
-                      console.log("From Next Yaml",stepper1);
-                      stepper1.handleNext()
+                      stepper1.handleNext();
+                      callMeAsYouSee();
         - Column:
             children:
               - Chart:
@@ -352,6 +353,18 @@ View:
                         }
                     }
 
+
+Global: |
+  function callMeAsYouSee(){
+    console.log("See ya it works");
+  }
+
+  function manipulateData(dataArr){
+    let newData = dataArr;
+    console.log(dataArr);
+  }
+  
+
 API:
   getDummyJson:
     method: GET
@@ -359,3 +372,4 @@ API:
   getDummyNumbers:
     method: GET
     uri: https://mocki.io/v1/c1f19d68-e6c8-4ae3-848d-d99e588cf224
+

@@ -11,7 +11,7 @@ import {
   LineElement,
   type ChartOptions,
 } from "chart.js";
-import React, { cloneElement, useEffect, useMemo, useState } from "react";
+import React, { cloneElement, useEffect, useState } from "react";
 import {
   evaluate,
   type ScreenContextDefinition,

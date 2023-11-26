@@ -1,5 +1,6 @@
 import { isEmpty, last, merge, toString } from "lodash-es";
-import type { InvokableMethods, ScreenContextDefinition } from "./state";
+import type { ScreenContextDefinition } from "./state/screen";
+import type { InvokableMethods } from "./state/widget";
 import { EnsembleStorage } from "./storage";
 import { sanitizeJs, debug } from "./shared";
 
@@ -22,14 +23,17 @@ export const buildEvaluateFn = (
     ...Object.entries(screen.data),
     ...Object.entries(context ?? {}),
   ]);
-
+  const globalBlock = screen.model?.global;
   invokableObj.ensemble = {
     storage: EnsembleStorage,
   };
-
+  const mergedJs = `${globalBlock ?? ""}\n\n${js ?? ""}`;
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
-  const jsFunc = new Function(...[...Object.keys(invokableObj)], formatJs(js));
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-argument
+  const jsFunc = new Function(
+    ...[...Object.keys(invokableObj)],
+    formatJs(mergedJs),
+  );
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return () => jsFunc(...Object.values(invokableObj));
 };
 
@@ -59,7 +63,7 @@ const formatJs = (js?: string): string => {
       }())
     `;
   }
-
+  
   return `return ${sanitizedJs}`;
 };
 

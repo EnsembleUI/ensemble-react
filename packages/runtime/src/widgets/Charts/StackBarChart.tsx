@@ -3,6 +3,7 @@ import type { ChartOptions } from "chart.js";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useState } from "react";
 import type { ChartDataSets, ChartProps } from "..";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 
 const options: ChartOptions<"bar"> = {
   maintainAspectRatio: false,
@@ -58,28 +59,22 @@ export const StackBarChart: React.FC<ChartProps> = (props) => {
   });
 
   return (
-    <div
-      style={{
-        height: styles?.height || "20px",
-        width: styles?.width || "100%",
+    <Bar
+      data={{
+        labels: values?.labels,
+        datasets: config?.data?.datasets as ChartDataSets[],
       }}
-    >
-      <Bar
-        data={{
-          labels: values?.labels,
-          datasets: config?.data?.datasets as ChartDataSets[],
-        }}
-        options={{
-          ...options,
-          plugins: {
-            ...options.plugins,
-            title: {
-              display: Boolean(values?.title),
-              text: values?.title,
-            },
+      options={{
+        ...options,
+        plugins: {
+          ...options.plugins,
+          title: {
+            display: Boolean(values?.title),
+            text: values?.title,
           },
-        }}
-      />
-    </div>
+        },
+      }}
+      plugins={[ChartDataLabels]}
+    />
   );
 };
