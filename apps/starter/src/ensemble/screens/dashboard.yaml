@@ -9,7 +9,7 @@ View:
   header:
     title:
       Header:
-      
+
   body:
     Column:
       crossAxis: stretch
@@ -104,7 +104,6 @@ View:
                                   ]
                               }
                           }
-
 
         - DataGrid:
             DataColumns:
@@ -353,7 +352,6 @@ View:
                         }
                     }
 
-
 Global: |
   function callMeAsYouSee(){
     console.log("See ya it works");
@@ -363,7 +361,6 @@ Global: |
     let newData = dataArr;
     console.log(dataArr);
   }
-  
 
 API:
   getDummyJson:
@@ -372,4 +369,3 @@ API:
   getDummyNumbers:
     method: GET
     uri: https://mocki.io/v1/c1f19d68-e6c8-4ae3-848d-d99e588cf224
-

@@ -24,14 +24,15 @@ export const buildEvaluateFn = (
     ...Object.entries(context ?? {}),
   ]);
   const globalBlock = screen.model?.global;
+  // console.log("globalBlock", globalBlock);
   invokableObj.ensemble = {
     storage: EnsembleStorage,
   };
-  const mergedJs = `${globalBlock ?? ""}\n\n${js ?? ""}`;
+
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
   const jsFunc = new Function(
     ...[...Object.keys(invokableObj)],
-    formatJs(mergedJs),
+    addGlobalBlock(formatJs(js), globalBlock),
   );
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return () => jsFunc(...Object.values(invokableObj));
@@ -59,13 +60,16 @@ const formatJs = (js?: string): string => {
 
     return `
       return (function() {
-        ${lines.join("\n")}
+         ${lines.join("\n")}
       }())
     `;
   }
-  
+
   return `return ${sanitizedJs}`;
 };
+
+const addGlobalBlock = (js: string, globalBlock?: string): string =>
+  globalBlock ? `${globalBlock}\n\n${js}` : js;
 
 export const evaluate = (
   screen: ScreenContextDefinition,

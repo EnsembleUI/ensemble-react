@@ -19,14 +19,14 @@ import {
   useScreenContext,
   useWidgetId,
 } from "@ensembleui/react-framework";
+import { Alert } from "antd";
+import { noop } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { BarChart } from "./BarChart";
 import { DoughnutChart } from "./DoughnutChart";
 import { StackBarChart } from "./StackBarChart";
 import { LineChart } from "./LineChart";
-import { Alert } from "antd";
-import { noop } from "lodash-es";
 
 ChartJS.register(
   CategoryScale,
@@ -79,7 +79,7 @@ export const Chart: React.FC<ChartProps> = (props) => {
   const [config, setConfig] = useState<ChartConfigs | undefined>(undefined);
 
   useEffect(() => {
-    const evaluateConfig = () => {
+    const evaluateConfig = (): void => {
       try {
         const evaluatedVal = evaluate(
           context as ScreenContextDefinition,
@@ -93,7 +93,7 @@ export const Chart: React.FC<ChartProps> = (props) => {
     };
 
     if (!evaluationsDone) evaluateConfig();
-  }, [props.config, context, evaluate, evaluationsDone]);
+  }, [props.config, context, evaluationsDone]);
 
   if (!evaluationsDone) return null; // evaluating ...
 
