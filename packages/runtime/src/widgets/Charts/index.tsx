@@ -11,12 +11,13 @@ import {
   LineElement,
   type ChartOptions,
 } from "chart.js";
-import React, { cloneElement, useMemo } from "react";
+import React, { cloneElement, useEffect, useMemo, useState } from "react";
 import {
   evaluate,
   type ScreenContextDefinition,
   type Expression,
   useScreenContext,
+  useWidgetId,
 } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetProps } from "../../shared/types";
@@ -25,6 +26,7 @@ import { DoughnutChart } from "./DoughnutChart";
 import { StackBarChart } from "./StackBarChart";
 import { LineChart } from "./LineChart";
 import { Alert } from "antd";
+import { noop } from "lodash-es";
 
 ChartJS.register(
   CategoryScale,
@@ -72,18 +74,30 @@ const tabsConfig = {
 
 export const Chart: React.FC<ChartProps> = (props) => {
   const context = useScreenContext();
-
-  const config = useMemo(
-    () =>
-      evaluate(
-        context as ScreenContextDefinition,
-        props?.config?.toString()?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
-      ) as ChartConfigs,
-    [props.config, context],
-  );
   const { rootRef } = useWidgetId(props.id);
+  const [evaluationsDone, setEvaluationsDone] = useState(false);
+  const [config, setConfig] = useState<ChartConfigs | undefined>(undefined);
 
-  if (!config || !props?.config)
+  useEffect(() => {
+    const evaluateConfig = () => {
+      try {
+        const evaluatedVal = evaluate(
+          context as ScreenContextDefinition,
+          props?.config?.toString()?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
+        ) as ChartConfigs;
+        setConfig(evaluatedVal);
+        setEvaluationsDone(true);
+      } catch (e) {
+        noop();
+      }
+    };
+
+    if (!evaluationsDone) evaluateConfig();
+  }, [props.config, context, evaluate, evaluationsDone]);
+
+  if (!evaluationsDone) return null; // evaluating ...
+
+  if (!props?.config || !config)
     return (
       <Alert
         message={`config is ${!props?.config ? "missing" : "bad"}`}
@@ -101,7 +115,7 @@ export const Chart: React.FC<ChartProps> = (props) => {
         width: props.styles?.width ?? "100%",
       }}
     >
-      {cloneElement(tabsConfig[type], { ...props })}
+      {cloneElement(tabsConfig[config.type], { ...props, config })}
     </div>
   );
 };
