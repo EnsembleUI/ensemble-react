@@ -83,6 +83,7 @@ export const Chart: React.FC<ChartProps> = (props) => {
       try {
         const evaluatedVal = evaluate(
           context as ScreenContextDefinition,
+          // eslint-disable-next-line prefer-named-capture-group
           props?.config?.toString()?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
         ) as ChartConfigs;
         setConfig(evaluatedVal);

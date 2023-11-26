@@ -3,7 +3,7 @@ import type { ChartOptions } from "chart.js";
 import { useState } from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import type { ChartDataSets, ChartProps } from "..";
-
+import { get } from "lodash-es";
 
 const defaultOptions: ChartOptions<"line"> = {
   maintainAspectRatio: false,
@@ -30,7 +30,7 @@ const defaultOptions: ChartOptions<"line"> = {
 };
 
 export const LineChart: React.FC<ChartProps> = (props) => {
-  const { id, styles, config } = props;
+  const { id, config } = props;
 
   const [title, setTitle] = useState(config?.title);
   const [labels, setLabels] = useState<string[]>(config?.data?.labels || []);
@@ -58,6 +58,9 @@ export const LineChart: React.FC<ChartProps> = (props) => {
             display: false,
           },
         },
+      }}
+      style={{
+        ...(get(props, "styles") as object),
       }}
     />
   );

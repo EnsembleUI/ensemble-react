@@ -4,6 +4,7 @@ import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useState } from "react";
 import type { ChartDataSets, ChartProps } from "..";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import { get } from "lodash-es";
 
 const options: ChartOptions<"bar"> = {
   maintainAspectRatio: false,
@@ -48,7 +49,7 @@ const options: ChartOptions<"bar"> = {
 };
 
 export const StackBarChart: React.FC<ChartProps> = (props) => {
-  const { id, styles, config } = props;
+  const { id, config } = props;
 
   const [title, setTitle] = useState(config?.title);
   const [labels, setLabels] = useState<string[]>(config?.data?.labels || []);
@@ -75,6 +76,9 @@ export const StackBarChart: React.FC<ChartProps> = (props) => {
         },
       }}
       plugins={[ChartDataLabels]}
+      style={{
+        ...(get(props, "styles") as object),
+      }}
     />
   );
 };
