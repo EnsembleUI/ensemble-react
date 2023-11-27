@@ -6,7 +6,9 @@ interface EnsembleFooterProps {
 }
 
 export const EnsembleFooter: React.FC<EnsembleFooterProps> = ({ footer }) => {
-  if (!footer) return;
+  if (!footer) {
+    return null;
+  }
 
   return (
     <Column

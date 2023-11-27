@@ -1,0 +1,11 @@
+Tokens:
+  Colors:
+    crimson: '#DC143C'
+  Spacing:
+    bigValue: 80px
+  Animation:
+  Typography:
+    fontFamily: 'Arial'
+Styles:
+  testName:
+    borderRadius: ${spacing.bigValue}

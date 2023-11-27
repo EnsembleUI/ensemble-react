@@ -18,6 +18,7 @@ import type {
   EnsembleHeaderModel,
   EnsembleFooterModel,
   CustomWidgetModel,
+  EnsembleThemeModel,
 } from "./shared/models";
 import type { ApplicationDTO } from "./shared/dto";
 import type { EnsembleAction } from "./shared";
@@ -70,13 +71,18 @@ export const EnsembleParser = {
           ) as EnsembleScreenModel),
       );
     }
+
+    const theme = app.theme
+      ? (parse(app.theme.content) as EnsembleThemeModel)
+      : undefined;
+
     return {
       id: app.id,
       menu,
       screens: screens as EnsembleScreenModel[],
       customWidgets,
       home: menu ?? screens[0],
-      theme: app.theme,
+      theme,
     };
   },
 

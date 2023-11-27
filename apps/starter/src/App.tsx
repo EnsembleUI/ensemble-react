@@ -13,12 +13,18 @@ import CreateCollectionYAML from "./ensemble/screens/createCollection.yaml";
 import AddGroupsYAML from "./ensemble/screens/addGroups.yaml";
 // Widgets
 import HeaderWidgetYAML from "./ensemble/widgets/Header.yaml";
+// Theme
+import ThemeYAML from "./ensemble/theme.yaml";
 
 import "./App.css";
 
 const testApp: ApplicationDTO = {
   id: "test",
   name: "My App",
+  theme: {
+    id: "theme",
+    content: String(ThemeYAML),
+  },
   widgets: [
     {
       id: "Header",

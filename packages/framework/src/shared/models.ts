@@ -1,5 +1,5 @@
+import type { CSSProperties } from "react";
 import type { EnsembleAction } from "./actions";
-import type { ThemeDTO } from "./dto";
 
 /**
  * Models
@@ -25,7 +25,7 @@ export interface EnsembleAppModel {
   screens: EnsembleScreenModel[];
   customWidgets: CustomWidgetModel[];
   home: EnsembleEntryPoint;
-  theme?: ThemeDTO;
+  theme?: EnsembleThemeModel;
 }
 
 export interface EnsembleMenuModel {
@@ -84,4 +84,18 @@ export interface CustomWidgetModel {
   inputs: string[];
   onLoad?: EnsembleAction;
   body: EnsembleWidget;
+}
+
+export interface EnsembleThemeModel {
+  Tokens: {
+    Colors: {
+      primary?: string;
+    } & Record<string, string>;
+    Spacing: Record<string, string>;
+    Animation: Record<string, string>;
+    Typography: {
+      fontFamily?: string;
+    } & Record<string, string>;
+  };
+  Styles: Record<string, CSSProperties>;
 }

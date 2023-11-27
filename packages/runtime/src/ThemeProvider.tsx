@@ -2,6 +2,8 @@ import type { PropsWithChildren } from "react";
 import { ConfigProvider } from "antd";
 import { useApplicationContext } from "@ensembleui/react-framework";
 
+const DEFAULT_FONT_FAMILY = "sans-serif";
+
 export const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const context = useApplicationContext();
   const theme = context?.application?.theme;
@@ -13,9 +15,7 @@ export const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
     <ConfigProvider
       theme={{
         token: {
-          colorPrimary: theme.Colors.primary,
-          colorPrimaryText: theme.Colors.onPrimary,
-          colorTextDisabled: theme.Colors.disabled,
+          fontFamily: theme.Tokens.Typography.fontFamily ?? DEFAULT_FONT_FAMILY,
         },
       }}
     >
