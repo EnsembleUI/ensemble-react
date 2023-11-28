@@ -22,13 +22,14 @@ export type TextProps = {
 
 export const Text: React.FC<TextProps> = (props) => {
   const [text, setText] = useState(props.text);
-  const [color, setColor] = useState(props?.styles?.color);
+  const [color, setColor] = useState(props.styles?.color);
   const { values } = useRegisterBindings({ ...props, text, color }, props.id, {
     setText,
     setColor,
   });
   return (
     <Typography.Text
+      className={values?.styles?.names}
       style={{
         textAlign: getTextAlign(props.textAlign),
         fontSize: props.styles?.fontSize,

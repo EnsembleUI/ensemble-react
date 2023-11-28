@@ -23,6 +23,7 @@ export const Icon: React.FC<IconProps> = (props) => {
   if (IconComponent) {
     return (
       <IconComponent
+        className={values?.styles?.names}
         sx={{
           color: props.color && getColor(String(values?.color)),
           fontSize: props.size,

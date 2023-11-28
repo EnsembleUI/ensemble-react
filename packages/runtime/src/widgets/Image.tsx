@@ -33,8 +33,10 @@ export const Image: React.FC<ImageProps> = (props) => {
   return (
     <img
       alt=""
+      className={values?.styles?.names}
       src={values?.source}
       style={{
+        ...values?.styles,
         width: props.width,
         height: props.height,
         objectFit: props.fit,

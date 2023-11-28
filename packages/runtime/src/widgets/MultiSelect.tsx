@@ -9,20 +9,13 @@ import { PlusCircleOutlined } from "@ant-design/icons";
 import { Form as AntForm, Select as SelectComponent, Space } from "antd";
 import { get } from "lodash-es";
 import { WidgetRegistry } from "../registry";
-import type { EnsembleWidgetProps, HasBorder } from "../shared/types";
+import type { EnsembleWidgetProps } from "../shared/types";
 import { getColor } from "../shared/styles";
 
 interface SelectOption {
   label: Expression<string>;
   value: Expression<string | number>;
 }
-
-export type MultiSelectStyles = {
-  width?: number;
-  height?: number;
-  margin?: number | string;
-  backgroundColor?: string;
-} & HasBorder;
 
 export type MultiSelectProps = {
   data: Expression<SelectOption[]>;
@@ -31,7 +24,7 @@ export type MultiSelectProps = {
   valueKey?: string;
   default?: SelectOption[];
   placeholder?: Expression<string>;
-} & EnsembleWidgetProps<MultiSelectStyles>;
+} & EnsembleWidgetProps;
 
 const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   const {

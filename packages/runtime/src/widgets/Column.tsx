@@ -11,11 +11,13 @@ export const Column: React.FC<FlexboxProps> = (props) => {
   const renderedChildren = useMemo(() => {
     return EnsembleRuntime.render(props.children);
   }, [props.children]);
-  const { rootRef } = useRegisterBindings({}, props.id);
+  const { values, rootRef } = useRegisterBindings({ ...props }, props.id);
   return (
     <Col
+      className={values?.styles?.names}
       ref={rootRef}
       style={{
+        ...values?.styles,
         flexDirection: "column",
         justifyContent: props.mainAxis && getMainAxis(props.mainAxis),
         alignItems: props.crossAxis && getCrossAxis(props.crossAxis),

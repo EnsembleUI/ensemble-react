@@ -46,6 +46,7 @@ export const ScreenContextProvider: React.FC<ScreenContextProviderProps> = ({
             {},
             defaultScreenContext,
             {
+              app: appContext.application,
               model: screen,
               inputs: Object.fromEntries(location.searchParams ?? []),
             },

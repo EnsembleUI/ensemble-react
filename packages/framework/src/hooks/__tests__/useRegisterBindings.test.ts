@@ -40,6 +40,43 @@ test("instantiates state from props", () => {
   });
 });
 
+test("evaluates nested bindings", () => {
+  store.set(screenAtom, {
+    widgets: {
+      test: {
+        values: mockValues,
+        invokable: mockInvokable,
+      },
+    },
+    data: {},
+    storage: {
+      paddingValue: 2,
+    },
+  });
+  const { result } = renderHook(() =>
+    useRegisterBindings(
+      {
+        ...mockValues,
+        // eslint-disable-next-line no-template-curly-in-string
+        styles: { padding: "${ensemble.storage.get('paddingValue')}" },
+      },
+      mockInvokable.id,
+      mockInvokable.methods,
+    ),
+  );
+
+  expect(result.current).toMatchObject({
+    id: "test",
+    values: {
+      foo: "bar",
+      baz: "deadbeef",
+      styles: {
+        padding: 2,
+      },
+    },
+  });
+});
+
 test("updates bindings when incoming values update", () => {
   let mockMutableValues = {
     foo: "bar",

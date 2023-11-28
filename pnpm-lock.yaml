@@ -102,6 +102,7 @@ importers:
       jotai-optics: ^0.3.1
       lodash-es: ^4.17.21
       optics-ts: ^2.4.1
+      react-fast-compare: ^3.2.2
       tsconfig: workspace:*
       tsup: ^7.2.0
       yaml: ^2.3.2
@@ -117,6 +118,7 @@ importers:
       jotai-optics: 0.3.1_jotai@2.4.2+optics-ts@2.4.1
       lodash-es: 4.17.21
       optics-ts: 2.4.1
+      react-fast-compare: 3.2.2
       tsconfig: link:../tsconfig
       tsup: 7.2.0
       yaml: 2.3.2
@@ -12615,6 +12617,10 @@ packages:
 
   /react-error-overlay/6.0.11:
     resolution: {integrity: sha512-/6UZ2qgEyH2aqzYZgQPxEnz33NJ2gNsnHA2o5+o4wW9bLM/JYQitNP9xPhsXwC08hMMovfGe/8retsdDsczPRg==}
+    dev: true
+
+  /react-fast-compare/3.2.2:
+    resolution: {integrity: sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==}
     dev: true
 
   /react-is/16.13.1:

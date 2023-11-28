@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from "react";
+import type { StepOwnProps } from "@mui/material";
 import {
   Stepper as MUIStepper,
   Step,
   StepLabel,
   StepButton,
-  StepOwnProps,
   styled,
 } from "@mui/material";
 import type { StepIconProps } from "@mui/material/StepIcon";
@@ -13,18 +13,21 @@ import StepConnector, {
 } from "@mui/material/StepConnector";
 import { map, cloneDeep } from "lodash-es";
 import {
-  type EnsembleWidget,
   useRegisterBindings,
-  type Expression,
   useTemplateData,
   unwrapWidget,
+} from "@ensembleui/react-framework";
+import type {
   TemplateData,
+  EnsembleWidget,
+  Expression,
 } from "@ensembleui/react-framework";
 import Alert from "@mui/material/Alert";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { WidgetRegistry } from "../../registry";
 import { EnsembleRuntime } from "../../runtime";
-import { StepType, StepTypeProps } from "./StepType";
+import type { StepTypeProps } from "./StepType";
+import { StepType } from "./StepType";
 
 export interface StepProps {
   stepLabel: string;
@@ -58,12 +61,12 @@ const Stepper: React.FC<StepperProps> = (props) => {
   const itemTemplate = props["item-template"];
   const { namedData } = useTemplateData({ ...itemTemplate });
   const stepsLength = namedData.length;
-  const stepTypes = itemTemplate?.template;
+  const stepTypes = itemTemplate.template;
   const handleNext = useCallback(() => {
     if (activeStep < namedData.length - 1) {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
-  }, [activeStep, namedData?.length]);
+  }, [activeStep, namedData.length]);
 
   const handleBack = useCallback(() => {
     if (activeStep !== 0) {
@@ -77,7 +80,7 @@ const Stepper: React.FC<StepperProps> = (props) => {
     handleNext,
     handleBack,
   });
-  const steps = unwrapContent(props?.steps);
+  const steps = unwrapContent(props.steps);
   return (
     <div>
       <MUIStepper
@@ -85,25 +88,21 @@ const Stepper: React.FC<StepperProps> = (props) => {
         alternativeLabel
         connector={
           <CustomConnector
-            connector_color={props?.styles.connectorColor}
-            connector_height={props?.styles.connectorHeight}
+            connector_color={props.styles.connectorColor}
+            connector_height={props.styles.connectorHeight}
           />
         }
         sx={{
           justifyContent: "center",
-          backgroundColor: props?.styles?.backgroundColor,
-          padding: `${
-            props?.styles?.padding ? `${props.styles.padding}px` : ""
-          }`,
+          backgroundColor: props.styles.backgroundColor,
+          padding: `${props.styles.padding ? `${props.styles.padding}px` : ""}`,
           borderRadius: `${
-            props?.styles?.borderRadius
-              ? `${props.styles.borderRadius}px`
-              : "0px"
+            props.styles.borderRadius ? `${props.styles.borderRadius}px` : "0px"
           }`,
         }}
       >
         {values?.["item-template"] ? (
-          namedData?.map((data, index) => (
+          namedData.map((data, index) => (
             <Step key={index}>
               <StepButton onClick={handleStep(index)}>
                 <StepLabel
@@ -114,7 +113,7 @@ const Stepper: React.FC<StepperProps> = (props) => {
                       data,
                       index: values.activeStep,
                       stepsLength,
-                      name: itemTemplate?.name,
+                      name: itemTemplate.name,
                     };
                     return CustomStepIcon(newProps);
                   }}
@@ -157,7 +156,7 @@ const CustomConnector = styled(StepConnector)(
     },
     [`&.${stepConnectorClasses.active}`]: {
       [`& .${stepConnectorClasses.line}`]: {
-        borderColor: props?.connector_color ?? "grey",
+        borderColor: props.connector_color ?? "grey",
       },
     },
     [`&.${stepConnectorClasses.completed}`]: {
@@ -167,7 +166,7 @@ const CustomConnector = styled(StepConnector)(
     },
     [`& .${stepConnectorClasses.line}`]: {
       borderColor: "#eaeaf0",
-      borderTopWidth: props?.connector_height ?? 3,
+      borderTopWidth: props.connector_height ?? 3,
       borderRadius: 1,
     },
   }),
@@ -183,9 +182,9 @@ const CustomStepIcon = (
   return (
     <StepType
       data={props.data}
-      stateData={stateData}
-      template={props?.stepTypes}
       name={props.name}
+      stateData={stateData}
+      template={props.stepTypes}
     />
   );
 };

@@ -15,12 +15,6 @@ export type ButtonProps = {
   endingIcon?: IconProps;
   styles?: {
     textColor: string;
-    borderColor: string;
-    borderRadius: string;
-    borderWidth: string;
-    gap?: number | string;
-    backgroundColor?: number | string;
-    padding?: number | string;
   };
 } & EnsembleWidgetProps;
 

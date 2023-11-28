@@ -10,18 +10,6 @@ export const EnsembleHeader: React.FC<EnsembleHeaderProps> = ({ header }) => {
   if (!header?.title) {
     return null;
   }
-  // default header styles
-  const defaultStyles = {
-    styles: {
-      position: "static",
-      width: "100%",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: header.styles?.centerTitle ? "center" : "flex-start",
-      backgroundColor: header.styles?.backgroundColor || "white",
-      height: header.styles?.titleBarHeight || 56,
-    },
-  };
 
   const titleWidget = isObject(header.title)
     ? header.title
@@ -35,5 +23,19 @@ export const EnsembleHeader: React.FC<EnsembleHeaderProps> = ({ header }) => {
         },
       };
 
-  return <Column {...defaultStyles}>{[titleWidget]}</Column>;
+  return (
+    <Column
+      styles={{
+        position: "static",
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: header.styles?.centerTitle ? "center" : "flex-start",
+        backgroundColor: header.styles?.backgroundColor || "white",
+        height: header.styles?.titleBarHeight || 56,
+      }}
+    >
+      {[titleWidget]}
+    </Column>
+  );
 };
