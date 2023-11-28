@@ -59,6 +59,7 @@ test("parses application with no custom widgets", () => {
           .toString(),
       },
     ],
+    scripts: [],
     name: "test",
     id: "test",
   } as unknown as ApplicationDTO);

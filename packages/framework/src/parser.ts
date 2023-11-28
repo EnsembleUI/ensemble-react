@@ -76,6 +76,10 @@ export const EnsembleParser = {
     }
 
     const theme = unwrapTheme(app.theme?.content);
+    const scripts = app.scripts.map(({ name, content }) => ({
+      name,
+      body: content,
+    }));
 
     return {
       id: app.id,
@@ -84,6 +88,7 @@ export const EnsembleParser = {
       customWidgets,
       home: menu ?? screens[0],
       theme,
+      scripts,
     };
   },
 
