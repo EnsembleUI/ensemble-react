@@ -30,7 +30,7 @@ export const buildEvaluateFn = (
   invokableObj.ensemble = {
     storage: EnsembleStorage,
   };
-  
+
   const globalBlock = screen.model?.global;
 
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
@@ -38,8 +38,8 @@ export const buildEvaluateFn = (
     ...[...Object.keys(invokableObj)],
     addGlobalBlock(formatJs(js), globalBlock),
   );
-  
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-argument
   return () => jsFunc(...Object.values(invokableObj));
 };
 
