@@ -6,6 +6,7 @@ import {
   isEmpty,
   isObject,
   map,
+  mapKeys,
   remove,
   set,
 } from "lodash-es";
@@ -21,7 +22,9 @@ import type {
   EnsembleThemeModel,
 } from "./shared/models";
 import type { ApplicationDTO } from "./shared/dto";
-import type { EnsembleAction } from "./shared";
+import { findExpressions, type EnsembleAction } from "./shared";
+import { evaluate } from "./evaluate";
+import { defaultScreenContext } from "./state";
 
 export interface EnsembleScreenYAML {
   View?: {
@@ -72,9 +75,7 @@ export const EnsembleParser = {
       );
     }
 
-    const theme = app.theme
-      ? (parse(app.theme.content) as EnsembleThemeModel)
-      : undefined;
+    const theme = unwrapTheme(app.theme?.content);
 
     return {
       id: app.id,
@@ -242,4 +243,35 @@ const unwrapFooter = (
       styles: get(footer, "styles") as Record<string, unknown>,
     };
   }
+};
+
+const unwrapTheme = (theme?: string): EnsembleThemeModel | undefined => {
+  if (!theme || isEmpty(theme)) {
+    return;
+  }
+
+  const workingTheme = parse(theme) as EnsembleThemeModel;
+  if (!workingTheme.Styles) {
+    return workingTheme;
+  }
+
+  const expressionMap: string[][] = [];
+  findExpressions(workingTheme.Styles, [], expressionMap);
+
+  const resolvedProps: [string, unknown][] = expressionMap.map(
+    ([path, expression]) => {
+      const result = evaluate(
+        defaultScreenContext,
+        expression,
+        mapKeys(workingTheme.Tokens ?? {}, (_, key) => key.toLowerCase()),
+      );
+      return [path, result];
+    },
+  );
+
+  resolvedProps.forEach(([path, value]) =>
+    set(workingTheme.Styles!, path, value),
+  );
+
+  return workingTheme;
 };

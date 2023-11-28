@@ -15,7 +15,8 @@ export const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
     <ConfigProvider
       theme={{
         token: {
-          fontFamily: theme.Tokens.Typography.fontFamily ?? DEFAULT_FONT_FAMILY,
+          fontFamily:
+            theme.Tokens?.Typography?.fontFamily ?? DEFAULT_FONT_FAMILY,
         },
       }}
     >

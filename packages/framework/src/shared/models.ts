@@ -87,15 +87,15 @@ export interface CustomWidgetModel {
 }
 
 export interface EnsembleThemeModel {
-  Tokens: {
-    Colors: {
+  Tokens?: {
+    Colors?: {
       primary?: string;
     } & Record<string, string>;
-    Spacing: Record<string, string>;
-    Animation: Record<string, string>;
-    Typography: {
+    Spacing?: Record<string, string>;
+    Animation?: Record<string, string>;
+    Typography?: {
       fontFamily?: string;
     } & Record<string, string>;
   };
-  Styles: Record<string, CSSProperties>;
+  Styles?: Record<string, CSSProperties>;
 }

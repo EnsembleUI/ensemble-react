@@ -10,10 +10,11 @@ export const isExpression = (
   maybeExpression.endsWith("}");
 
 export const sanitizeJs = (string: string): string => {
-  if (string.startsWith("${") && string.endsWith("}")) {
-    return string.substring(2, string.length - 1);
+  const trimmedString = string.trim();
+  if (trimmedString.startsWith("${") && trimmedString.endsWith("}")) {
+    return trimmedString.substring(2, trimmedString.length - 1);
   }
-  return string.trim();
+  return trimmedString;
 };
 
 export const findExpressions = (
