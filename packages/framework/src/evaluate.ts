@@ -1,4 +1,4 @@
-import { isEmpty, last, mapKeys, merge } from "lodash-es";
+import { isEmpty, last, mapKeys, merge, toString } from "lodash-es";
 import type { ScreenContextDefinition } from "./state/screen";
 import type { InvokableMethods } from "./state/widget";
 import { EnsembleStorage } from "./storage";
@@ -27,16 +27,18 @@ export const buildEvaluateFn = (
     ...Object.entries(screen.data),
     ...Object.entries(context ?? {}),
   ]);
-  const globalBlock = screen.model?.global;
   invokableObj.ensemble = {
     storage: EnsembleStorage,
   };
-  const mergedJs = `${globalBlock ?? ""}\n\n${js ?? ""}`;
+  
+  const globalBlock = screen.model?.global;
+
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
   const jsFunc = new Function(
     ...[...Object.keys(invokableObj)],
-    formatJs(mergedJs),
+    addGlobalBlock(formatJs(js), globalBlock),
   );
+  
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return () => jsFunc(...Object.values(invokableObj));
 };
@@ -45,20 +47,34 @@ const formatJs = (js?: string): string => {
   if (!js || isEmpty(js)) {
     return "console.log('No expression was given')";
   }
-  const sanitizedJs = sanitizeJs(js);
+
+  const sanitizedJs = sanitizeJs(toString(js));
+
+  // js object
+  if (
+    (sanitizedJs.startsWith("{") && sanitizedJs.endsWith("}")) ||
+    (sanitizedJs.startsWith("[") && sanitizedJs.endsWith("]"))
+  )
+    return `return ${js}`;
+
   // multiline js
   if (sanitizedJs.includes("\n")) {
     const lines = sanitizedJs.split("\n");
     const lastLine = last(lines);
     lines.splice(lines.length - 1, 1, `return ${String(lastLine)}`);
+
     return `
       return (function() {
-        ${lines.join("\n")}
+         ${lines.join("\n")}
       }())
     `;
   }
+
   return `return ${sanitizedJs}`;
 };
+
+const addGlobalBlock = (js: string, globalBlock?: string): string =>
+  globalBlock ? `${globalBlock}\n\n${js}` : js;
 
 export const evaluate = (
   screen: ScreenContextDefinition,
@@ -66,8 +82,7 @@ export const evaluate = (
   context?: Record<string, unknown>,
 ): unknown => {
   try {
-    const fn = buildEvaluateFn(screen, js, context);
-    return fn();
+    return buildEvaluateFn(screen, js, context)();
   } catch (e) {
     debug(e);
     throw e;

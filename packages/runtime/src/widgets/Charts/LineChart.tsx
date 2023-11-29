@@ -1,7 +1,9 @@
 import { Line } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
-import type { Expression } from "@ensembleui/react-framework";
-import type { EnsembleWidgetProps } from "../../shared/types";
+import { useState } from "react";
+import { useRegisterBindings } from "@ensembleui/react-framework";
+import type { ChartDataSets, ChartProps } from "..";
+import { get } from "lodash-es";
 
 const defaultOptions: ChartOptions<"line"> = {
   maintainAspectRatio: false,
@@ -27,43 +29,38 @@ const defaultOptions: ChartOptions<"line"> = {
   },
 };
 
-interface ChartDataSets {
-  label?: string;
-  data: number[];
-  backgroundColor?: string;
-  linePercentage?: number;
-  borderRadius?: number;
-}
+export const LineChart: React.FC<ChartProps> = (props) => {
+  const { id, config } = props;
 
-export type LineChartProps = {
-  labels?: string[] | undefined;
-  datasets?: ChartDataSets[];
-  title?: Expression<string>;
-  options?: ChartOptions;
-  [key: string]: unknown;
-} & EnsembleWidgetProps;
+  const [title, setTitle] = useState(config?.title);
+  const [labels, setLabels] = useState<string[]>(config?.data?.labels || []);
 
-export const LineChart: React.FC<LineChartProps> = (props) => {
-  const { labels, datasets, title, options } = props;
+  const { values } = useRegisterBindings({ labels, title }, id, {
+    setLabels,
+    setTitle,
+  });
 
   return (
     <Line
       data={{
-        labels,
-        datasets: datasets!,
+        labels: values?.labels,
+        datasets: config?.data?.datasets as ChartDataSets[],
       }}
       options={{
         ...defaultOptions,
-        ...(options as ChartOptions<"line">),
+        ...(config?.options as ChartOptions<"line">),
         plugins: {
           title: {
-            display: Boolean(title),
-            text: title,
+            display: Boolean(values?.title),
+            text: values?.title,
           },
           legend: {
             display: false,
           },
         },
+      }}
+      style={{
+        ...(get(props, "styles") as object),
       }}
     />
   );

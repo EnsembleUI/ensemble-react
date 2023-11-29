@@ -2,9 +2,14 @@ View:
   onLoad:
     invokeApi:
       name: getDummyJson
+      onResponse:
+        invokeApi:
+          name: getDummyNumbers
+
   header:
     title:
       Header:
+
   body:
     Column:
       crossAxis: stretch
@@ -23,46 +28,47 @@ View:
                     width: 45%
                   children:
                     - Chart:
-                        type: bar
-                        title: Bar Chart
-                        labels:
-                          [
-                            "Jan",
-                            "Feb",
-                            "Mar",
-                            "Apr",
-                            "May",
-                            "Jun",
-                            "Jul",
-                            "Aug",
-                            "Sep",
-                          ]
-                        datasets:
-                          [
-                            {
-                              label: "Matched",
-                              data:
-                                [190, 200, 210, 145, 230, 240, 220, 190, 120],
-                              backgroundColor: "#5542f6",
-                              barPercentage: 0.8,
-                              borderRadius: 3,
-                            },
-                            {
-                              label: "Enrolled",
-                              data:
-                                [160, 170, 170, 105, 190, 170, 155, 160, 110],
-                              backgroundColor: "#01a4ff",
-                              barPercentage: 0.8,
-                              borderRadius: 3,
-                            },
-                            {
-                              label: "Award",
-                              data: [140, 130, 90, 90, 150, 170, 140, 80, 110],
-                              backgroundColor: "#22c9ac",
-                              barPercentage: 0.8,
-                              borderRadius: 3,
-                            },
-                          ]
+                        id: myBarChart
+                        styles:
+                          width: 90%
+                        config: |-
+                          {
+                            type: 'bar',
+                            title: "I am Bar",
+                            data:
+                              {
+                                labels:
+                                  [
+                                    "Jan",
+                                    "Feb",
+                                    "Mar",
+                                    "Apr",
+                                    "May",
+                                    "Jun",
+                                    "Jul",
+                                    "Aug",
+                                    "Sep",
+                                  ],
+                                datasets:
+                                  [
+                                    {
+                                      label: 'Matched',
+                                      data: "${getDummyNumbers.body}",
+                                      backgroundColor: '#5542f6',
+                                      barPercentage: 0.8,
+                                      borderRadius: 3,
+                                    },
+                                    {
+                                      label: "Enrolled",
+                                      data: [65, 59, 80, 81, 56, 55, 40, 50, 60],
+                                      backgroundColor: "${getDummyNumbers.body.length > 1 ? '#01a4ff' : 'yellow'}",
+                                      barPercentage: 0.4,
+                                      borderRadius: 10,
+                                    },
+                                  ],
+                              }
+                          }
+
               - Column:
                   styles:
                     width: 50%
@@ -73,24 +79,31 @@ View:
                     padding: 10px 20px 30px 20px
                   children:
                     - Chart:
-                        type: doughnut
-                        labels: ["Red", "Blue", "Yellow"]
-                        title: Doughnut Chart
-                        datasets:
-                          [
-                            {
-                              label: "",
-                              data: [300, 50, 100],
-                              backgroundColor:
-                                [
-                                  "rgb(255, 99, 132)",
-                                  "rgb(54, 162, 235)",
-                                  "rgb(255, 205, 86)",
-                                ],
-                              hoverOffset: 4,
-                              borderWidth: 1,
-                            },
-                          ]
+                        id: myDoughnutChart
+                        config: |
+                          {
+                            type: 'doughnut',
+                            title: "I am Doughnut",
+                            data:
+                              {
+                                labels: ["Red", "Blue", "Yellow"],
+                                datasets:
+                                  [
+                                    {
+                                      label: "",
+                                      data: "${getDummyNumbers.body?.slice(0, 3)}",
+                                      backgroundColor:
+                                        [
+                                          "rgb(255, 99, 132)",
+                                          "rgb(54, 162, 235)",
+                                          "rgb(255, 205, 86)",
+                                        ],
+                                      hoverOffset: 4,
+                                      borderWidth: 1,
+                                    },
+                                  ]
+                              }
+                          }
 
         - DataGrid:
             DataColumns:
@@ -111,8 +124,6 @@ View:
                         children:
                           - Avatar:
                               name: ${user.firstName}
-                          #                                                      borderColor: grey
-                          #                                                      borderWidth: 1px
                           - Column:
                               crossAxis: start
                               children:
@@ -134,13 +145,7 @@ View:
 
                     - Text:
                         text: ${user.weight}
-        - Text:
-            id: myText
-            text: Peter Parker
-        - Text:
-            text: ${myText.text}
-        - Text:
-            text: ${getDummyJson.body.total}
+
         - Stepper:
             id: stepper1
             styles:
@@ -283,6 +288,69 @@ View:
                     executeCode: |
                       stepper1.handleNext();
                       callMeAsYouSee();
+        - Column:
+            children:
+              - Chart:
+                  type: stackbar
+                  styles:
+                    height: 60
+                  config: |-
+                    {
+                      data:
+                        {
+                          labels: ["January", "February"],
+                          datasets:
+                            [
+                              {
+                                label: "Matched",
+                                data: [15],
+                                backgroundColor: "green",
+                                borderSkipped: false,
+                                borderRadius: { topLeft: 4, bottomLeft: 4 },
+                                datalabels:
+                                  {
+                                    clamp: true,
+                                    color: "white",
+                                    align: start,
+                                    anchor: start,
+                                    offset: 10,
+                                    font: { size: 14, weight: bold },
+                                  },
+                              },
+                              {
+                                label: "Enrolled",
+                                data: [35],
+                                backgroundColor: "blue",
+                                borderSkipped: false,
+                                datalabels:
+                                  {
+                                    clamp: true,
+                                    color: "white",
+                                    anchor: start,
+                                    align: start,
+                                    offset: 10,
+                                    font: { size: 14, weight: bold },
+                                  },
+                              },
+                              {
+                                label: "Award",
+                                data: [3],
+                                backgroundColor: "grey",
+                                borderSkipped: false,
+                                borderRadius: { topRight: 4, bottomRight: 4 },
+                                datalabels:
+                                  {
+                                    color: "white",
+                                    clamp: true,
+                                    anchor: start,
+                                    align: start,
+                                    offset: 10,
+                                    font: { size: 14, weight: bold },
+                                  },
+                              },
+                            ]
+                        }
+                    }
 
 Global: |
   function callMeAsYouSee(){
@@ -298,3 +366,6 @@ API:
   getDummyJson:
     method: GET
     uri: https://dummyjson.com/users
+  getDummyNumbers:
+    method: GET
+    uri: https://mocki.io/v1/c1f19d68-e6c8-4ae3-848d-d99e588cf224

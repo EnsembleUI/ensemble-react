@@ -101,6 +101,7 @@ export const EnsembleParser = {
     }
     const viewWidget = unwrapWidget(viewNode);
     const apis = unwrapApiModels(screen);
+
     const global = get(screen, "Global");
     return {
       ...(view ?? {}),

@@ -7,6 +7,7 @@ View:
           // ensemble.storage.set("arrayOfUsers",response.body.records)
           const groups = new Set(response.body.records.flatMap(record => record.fields.groups))
           // ensemble.storage.set("arrayOfGroups", Array.from(groups))
+
   header:
     title:
       Header:
@@ -470,3 +471,4 @@ API:
     method: GET
     headers:
       Authorization: Bearer patN2XAiLVZQ8Yp3h.2bddb84031b2be89b576f01869dc17c3826e16ae7daa8895f92c05a0799004ab
+

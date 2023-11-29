@@ -1,8 +1,10 @@
 import { Bar } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
-import type { Expression } from "@ensembleui/react-framework";
+import { useRegisterBindings } from "@ensembleui/react-framework";
+import { useState } from "react";
+import type { ChartDataSets, ChartProps } from "..";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import type { EnsembleWidgetProps } from "../../shared/types";
+import { get } from "lodash-es";
 
 const options: ChartOptions<"bar"> = {
   maintainAspectRatio: false,
@@ -46,41 +48,37 @@ const options: ChartOptions<"bar"> = {
   },
 };
 
-interface ChartDataSets {
-  label?: string;
-  data: number[];
-  backgroundColor?: string;
-  barPercentage?: number;
-  borderRadius?: number;
-}
+export const StackBarChart: React.FC<ChartProps> = (props) => {
+  const { id, config } = props;
 
-type BarChartProps = {
-  labels?: string[] | undefined;
-  datasets?: ChartDataSets[];
-  title?: Expression<string>;
-  [key: string]: unknown;
-} & EnsembleWidgetProps;
+  const [title, setTitle] = useState(config?.title);
+  const [labels, setLabels] = useState<string[]>(config?.data?.labels || []);
 
-export const StackBarChart: React.FC<BarChartProps> = (props) => {
-  const { labels, datasets, title } = props;
+  const { values } = useRegisterBindings({ labels, title }, id, {
+    setLabels,
+    setTitle,
+  });
 
   return (
     <Bar
       data={{
-        labels,
-        datasets: datasets!,
+        labels: values?.labels,
+        datasets: config?.data?.datasets as ChartDataSets[],
       }}
       options={{
         ...options,
         plugins: {
           ...options.plugins,
           title: {
-            display: Boolean(title),
-            text: title,
+            display: Boolean(values?.title),
+            text: values?.title,
           },
         },
       }}
       plugins={[ChartDataLabels]}
+      style={{
+        ...(get(props, "styles") as object),
+      }}
     />
   );
 };
