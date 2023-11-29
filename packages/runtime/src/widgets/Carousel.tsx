@@ -9,11 +9,11 @@ import type {
 } from "@ensembleui/react-framework";
 import { Carousel as AntCarousel } from "antd"; // Assuming you have imported Ant Design's Carousel
 import { useEffect, useRef, useState } from "react";
-import type { HasBorder } from "../shared/types";
+import type { EnsembleWidgetProps } from "../shared/types";
 import { EnsembleRuntime } from "../runtime";
 import { WidgetRegistry } from "../registry";
 
-export type CarouselWidgetStyles = {
+export interface CarouselWidgetStyles {
   layout?: "auto" | "single" | "multiple";
   autoLayoutBreakpoint?: number;
   height?: number;
@@ -32,9 +32,10 @@ export type CarouselWidgetStyles = {
   autoplay?: boolean;
   autoplayInterval?: number;
   indicatorMargin?: string | number;
-} & HasBorder;
+}
 
-export interface CarouselProps {
+export interface CarouselProps
+  extends EnsembleWidgetProps<CarouselWidgetStyles> {
   children: EnsembleWidget[];
   styles?: CarouselWidgetStyles;
   "item-template": {

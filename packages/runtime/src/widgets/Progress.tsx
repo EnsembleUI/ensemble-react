@@ -3,15 +3,16 @@ import { Progress as AntProgress } from "antd";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from "../shared/types";
 
+export interface ProgressStyle {
+  size?: number;
+  thickness?: number;
+  color?: string;
+}
+
 export type ProgressProps = {
   display?: "linear" | "circular";
   countdown?: number;
-  styles?: {
-    size?: number;
-    thickness?: number;
-    color?: string;
-  };
-} & EnsembleWidgetProps;
+} & EnsembleWidgetProps<ProgressStyle>;
 
 const Progress: React.FC<ProgressProps> = (props) => {
   const { display, countdown, styles } = props;

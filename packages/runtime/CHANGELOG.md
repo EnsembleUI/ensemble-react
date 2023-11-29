@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.0.8
+
+### Patch Changes
+
+- 55dc0ff: Share styling across app with theme config file
+
 ## 0.0.7
 
 ### Patch Changes

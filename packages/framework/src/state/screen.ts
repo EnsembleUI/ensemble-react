@@ -1,10 +1,11 @@
 import { atom } from "jotai";
 import { focusAtom } from "jotai-optics";
 import type { Response } from "../data";
-import type { EnsembleScreenModel } from "../shared";
+import type { EnsembleAppModel, EnsembleScreenModel } from "../shared";
 import type { WidgetState } from "./widget";
 
 export interface ScreenContextDefinition {
+  app?: EnsembleAppModel;
   model?: EnsembleScreenModel;
   data: Record<string, Response | undefined>;
   widgets: Record<string, WidgetState | undefined>;

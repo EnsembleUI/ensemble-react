@@ -1,4 +1,4 @@
-import { isEmpty, last, merge, toString } from "lodash-es";
+import { isEmpty, last, mapKeys, merge, toString } from "lodash-es";
 import type { ScreenContextDefinition } from "./state/screen";
 import type { InvokableMethods } from "./state/widget";
 import { EnsembleStorage } from "./storage";
@@ -19,21 +19,26 @@ export const buildEvaluateFn = (
 
   const invokableObj = Object.fromEntries([
     ...widgets,
+    ...Object.entries(
+      mapKeys(screen.app?.theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
+    ),
+    ...Object.entries({ styles: screen.app?.theme?.Styles }),
     ...Object.entries(screen.inputs ?? {}),
     ...Object.entries(screen.data),
     ...Object.entries(context ?? {}),
   ]);
-  const globalBlock = screen.model?.global;
-  // console.log("globalBlock", globalBlock);
   invokableObj.ensemble = {
     storage: EnsembleStorage,
   };
+  
+  const globalBlock = screen.model?.global;
 
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
   const jsFunc = new Function(
     ...[...Object.keys(invokableObj)],
     addGlobalBlock(formatJs(js), globalBlock),
   );
+  
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return () => jsFunc(...Object.values(invokableObj));
 };

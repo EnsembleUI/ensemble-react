@@ -3,30 +3,34 @@ import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useState } from "react";
 import { Typography } from "antd";
 import { WidgetRegistry } from "../registry";
-import type { IconProps } from "../shared/types";
+import type {
+  EnsembleWidgetProps,
+  EnsembleWidgetStyles,
+  IconProps,
+} from "../shared/types";
 import { Icon } from "./Icon";
 
-export interface TagProps {
-  id?: string;
+export interface TagStyles extends EnsembleWidgetStyles {
+  backgroundColor?: Expression<string>;
+  borderRadius?: string;
+  fontSize?: string;
+  textColor?: string;
+  fontWeight?: number | string;
+  fontFamily: string;
+  textAlign:
+    | "start"
+    | "end"
+    | "left"
+    | "right"
+    | "center"
+    | "justify"
+    | "match-parent";
+}
+export interface TagProps extends EnsembleWidgetProps<TagStyles> {
   label: Expression<string> | Expression<string[]>;
-  styles?: {
-    backgroundColor?: Expression<string>;
-    borderRadius?: string;
-    fontSize?: string;
-    textColor?: string;
-    fontWeight?: number | string;
-    fontFamily: string;
-    textAlign:
-      | "start"
-      | "end"
-      | "left"
-      | "right"
-      | "center"
-      | "justify"
-      | "match-parent";
-  };
   icon?: IconProps;
 }
+
 export const Tag: React.FC<TagProps> = (props) => {
   const [text, setText] = useState(props.label);
   const [backgroundColor, setBackgroundColor] = useState(
@@ -54,6 +58,7 @@ export const Tag: React.FC<TagProps> = (props) => {
   const additionalTagsCount = labels.length - truncatedLabels.length;
   const tagElements = truncatedLabels.map((item, index) => (
     <Typography.Text
+      className={values?.styles?.names}
       key={index}
       style={{
         backgroundColor: values?.backgroundColor ?? "#e6e7e8",

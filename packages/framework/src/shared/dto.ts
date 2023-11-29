@@ -24,14 +24,6 @@ export interface WidgetDTO {
 }
 
 export interface ThemeDTO {
-  Colors: {
-    seed: string;
-    primary: string;
-    onPrimary: string;
-    secondary: string;
-    onSecondary: string;
-    disabled: string;
-    loadingScreenBackgroundColor: string;
-    loadingScreenIndicatorColor: string;
-  };
+  id: string;
+  content: string;
 }

@@ -1,10 +1,11 @@
 import type { RefCallback } from "react";
 import { useEffect, useMemo } from "react";
-import { compact, isEqual, map, merge } from "lodash-es";
+import { compact, merge, set } from "lodash-es";
+import isEqual from "react-fast-compare";
 import { atom, useAtom } from "jotai";
 import type { InvokableMethods } from "../state";
 import { createBindingAtom } from "../state";
-import { isExpression } from "../shared";
+import { findExpressions } from "../shared";
 import { useWidgetId } from "./useWidgetId";
 import { useCustomScope } from "./useCustomScope";
 import { useWidgetState } from "./useWidgetState";
@@ -23,26 +24,16 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   const { resolvedWidgetId, rootRef } = useWidgetId(id);
   const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
 
-  const expressions = useMemo(
-    () => {
-      // console.log(`getting expressions for ${resolvedWidgetId}`);
-      return compact(
-        map(Object.entries(values), ([key, value]) => {
-          if (isExpression(value)) {
-            return [key, value];
-          }
-        }),
-      );
-    },
-    // FIXME: update expressions if props change without creating new atom
+  const expressions = useMemo(() => {
+    const expressionMap: string[][] = [];
+    findExpressions(values, [], expressionMap);
+    return expressionMap;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
+  }, []);
 
   const customScope = useCustomScope();
 
   const bindingsAtom = useMemo(() => {
-    // console.log(`creating binding for ${resolvedWidgetId}`);
     const bindingsEntries = compact(
       expressions.map(([name, expr]) => {
         const valueAtom = createBindingAtom(
@@ -57,15 +48,17 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
       }),
     );
     return atom((get) => {
-      // console.log(`get bindings for ${resolvedWidgetId}`);
-      const valueEntries = bindingsEntries.map(({ name, valueAtom }) => {
-        return [name, get(valueAtom)];
-      });
-      return Object.fromEntries(valueEntries) as Record<string, unknown>;
+      const valueEntries: [string, unknown][] = bindingsEntries.map(
+        ({ name, valueAtom }) => {
+          return [name, get(valueAtom)];
+        },
+      );
+      const result = {};
+      valueEntries.forEach(([name, value]) => set(result, name, value));
+      return result;
     });
-  }, [customScope, expressions]);
+  }, [customScope, expressions, resolvedWidgetId]);
 
-  // console.log(`render: ${resolvedWidgetId}`);
   const [bindings] = useAtom(bindingsAtom);
 
   const newValues = merge({}, values, bindings) as T;
@@ -87,6 +80,7 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
     setWidgetState,
     newValues,
     widgetState?.values,
+    widgetState?.invokable.methods,
   ]);
 
   return {
