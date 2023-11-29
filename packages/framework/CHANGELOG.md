@@ -1,5 +1,12 @@
 # @ensembleui/react-framework
 
+## 0.0.9
+
+### Patch Changes
+
+- 2c1bb2a: Support executing code from script file
+- eee9851: Evaluate widget ids as expressions
+
 ## 0.0.8
 
 ### Patch Changes
