@@ -1,6 +1,6 @@
 import { Provider, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useCallback } from "react";
-import { merge } from "lodash-es";
+import { clone, merge } from "lodash-es";
 import { useHydrateAtoms } from "jotai/utils";
 import {
   appAtom,
@@ -83,7 +83,7 @@ export const useScreenContext = ():
     (name: string, response: Response) => {
       const data = screenContext.data;
       data[name] = response;
-      setDataAtom(data);
+      setDataAtom(clone(data));
     },
     [screenContext.data, setDataAtom],
   );

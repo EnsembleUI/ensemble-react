@@ -7,6 +7,7 @@ export interface EnsembleStorage {
   delete: (key: string) => unknown;
 }
 
+// FIXME: updating storage does not trigger atom update, need atomEffect or something else to make reactive
 export const EnsembleStorage: EnsembleStorage = {
   set: (key: string, value: unknown): void => {
     const screenContext = ensembleStore.get(screenAtom);
