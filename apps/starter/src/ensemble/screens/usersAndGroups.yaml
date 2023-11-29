@@ -154,6 +154,7 @@ View:
                                                                 crossAxis: start
                                                               children:
                                                                 - Text:
+                                                                    id: ${"name" + user.id}
                                                                     text: ${user.fields.name}
                                                                 - Text:
                                                                     text: ${user.fields.email}

@@ -1,21 +1,32 @@
 import type { RefCallback } from "react";
 import { useCallback, useMemo } from "react";
-import { error } from "../shared";
+import type { Expression } from "../shared";
+import { error, isExpression } from "../shared";
+import { evaluate } from "../evaluate";
+import { defaultScreenContext } from "../state";
+import { useCustomScope } from "./useCustomScope";
 
 export const useWidgetId = (
-  id?: string,
+  id?: Expression<string>,
 ): { resolvedWidgetId: string; rootRef: RefCallback<never> } => {
+  const customScope = useCustomScope();
   const resolvedWidgetId = useMemo<string>(() => {
-    if (id && JS_ID_REGEX.test(id)) {
-      return id;
+    let workingId = id;
+    if (isExpression(workingId)) {
+      workingId = String(
+        evaluate(defaultScreenContext, workingId, customScope),
+      );
     }
-    if (id) {
+    if (workingId && JS_ID_REGEX.test(workingId)) {
+      return workingId;
+    }
+    if (workingId) {
       error(
-        `${id} is not a valid javascript identifier. generating a random one`,
+        `${workingId} is not a valid javascript identifier. generating a random one`,
       );
     }
     return generateRandomString(6);
-  }, [id]);
+  }, [customScope, id]);
 
   const rootRef = useCallback(
     (node: never) => {
