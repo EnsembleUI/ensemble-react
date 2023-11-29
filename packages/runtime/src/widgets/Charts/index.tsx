@@ -11,7 +11,7 @@ import {
   LineElement,
   type ChartOptions,
 } from "chart.js";
-import React, { cloneElement, useEffect, useState } from "react";
+import React, { cloneElement, useMemo, useState } from "react";
 import {
   evaluate,
   type ScreenContextDefinition,
@@ -20,7 +20,6 @@ import {
   useWidgetId,
 } from "@ensembleui/react-framework";
 import { Alert } from "antd";
-import { noop } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { BarChart } from "./BarChart";
@@ -75,38 +74,30 @@ const tabsConfig = {
 export const Chart: React.FC<ChartProps> = (props) => {
   const context = useScreenContext();
   const { rootRef } = useWidgetId(props.id);
-  const [evaluationsDone, setEvaluationsDone] = useState(false);
-  const [config, setConfig] = useState<ChartConfigs | undefined>(undefined);
+  const [error, setError] = useState<unknown>(null);
 
-  useEffect(() => {
-    const evaluateConfig = (): void => {
-      try {
-        const evaluatedVal = evaluate(
-          context as ScreenContextDefinition,
-          // eslint-disable-next-line prefer-named-capture-group
-          props?.config?.toString()?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
-        ) as ChartConfigs;
-        setConfig(evaluatedVal);
-        setEvaluationsDone(true);
-      } catch (e) {
-        noop();
-      }
-    };
+  const config = useMemo(() => {
+    try {
+      return evaluate(
+        context as ScreenContextDefinition,
+        // eslint-disable-next-line prefer-named-capture-group
+        props.config?.toString()?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
+      ) as ChartConfigs;
+    } catch (e) {
+      setError(e);
+    }
+  }, [props.config, context]);
 
-    if (!evaluationsDone) evaluateConfig();
-  }, [props.config, context, evaluationsDone]);
-
-  if (!evaluationsDone) return null; // evaluating ...
-
-  if (!props?.config || !config)
+  if (error) {
     return (
       <Alert
-        message={`config is ${!props?.config ? "missing" : "bad"}`}
+        message={`config is ${!props.config ? "missing" : "bad"}`}
         type="error"
       />
     );
+  }
 
-  if (!config.type) return <b>Chart type missing</b>;
+  if (!config?.type) return <b>Chart type missing</b>;
 
   return (
     <div
