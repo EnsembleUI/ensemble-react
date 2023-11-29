@@ -26,6 +26,7 @@ export interface EnsembleAppModel {
   customWidgets: CustomWidgetModel[];
   home: EnsembleEntryPoint;
   theme?: EnsembleThemeModel;
+  scripts: EnsembleScriptModel[];
 }
 
 export interface EnsembleMenuModel {
@@ -98,4 +99,9 @@ export interface EnsembleThemeModel {
     } & Record<string, string>;
   };
   Styles?: Record<string, CSSProperties>;
+}
+
+export interface EnsembleScriptModel {
+  name: string;
+  body: string;
 }

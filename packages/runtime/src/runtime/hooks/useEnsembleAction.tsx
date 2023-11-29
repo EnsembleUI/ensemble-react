@@ -50,8 +50,25 @@ export const useExecuteCode: EnsembleActionHook<
   UseExecuteCodeActionOptions
 > = (action, options) => {
   const isCodeString = isString(action);
-  const js = isCodeString ? action : action?.body;
   const screen = useScreenContext();
+  const js = useMemo(() => {
+    if (!action) {
+      return;
+    }
+    if (isCodeString) {
+      return action;
+    }
+
+    if ("body" in action) {
+      return action.body;
+    }
+
+    if ("scriptName" in action) {
+      return screen?.app?.scripts.find(
+        (script) => script.name === action.scriptName,
+      )?.body;
+    }
+  }, [action, isCodeString, screen]);
 
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,

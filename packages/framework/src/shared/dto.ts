@@ -8,6 +8,7 @@ export interface ApplicationDTO {
   id: string;
   screens: ScreenDTO[];
   widgets: WidgetDTO[];
+  scripts: ScriptDTO[];
   theme?: ThemeDTO;
 }
 
@@ -25,5 +26,11 @@ export interface WidgetDTO {
 
 export interface ThemeDTO {
   id: string;
+  content: string;
+}
+
+export interface ScriptDTO {
+  id: string;
+  name: string;
   content: string;
 }

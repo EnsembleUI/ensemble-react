@@ -5,6 +5,10 @@ export type ExecuteCodeAction =
   | {
       body: string;
       onComplete?: EnsembleAction;
+    }
+  | {
+      scriptName: string;
+      onComplete?: EnsembleAction;
     };
 
 export interface InvokeAPIAction {

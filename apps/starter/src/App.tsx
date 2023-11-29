@@ -13,6 +13,10 @@ import CreateCollectionYAML from "./ensemble/screens/createCollection.yaml";
 import AddGroupsYAML from "./ensemble/screens/addGroups.yaml";
 // Widgets
 import HeaderWidgetYAML from "./ensemble/widgets/Header.yaml";
+// Scripts
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+import FirstScript from "./ensemble/scripts/test.js?raw";
 // Theme
 import ThemeYAML from "./ensemble/theme.yaml";
 
@@ -25,6 +29,13 @@ const testApp: ApplicationDTO = {
     id: "theme",
     content: String(ThemeYAML),
   },
+  scripts: [
+    {
+      id: "test",
+      name: "test.js",
+      content: String(FirstScript),
+    },
+  ],
   widgets: [
     {
       id: "Header",
