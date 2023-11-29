@@ -1,5 +1,14 @@
 # @ensembleui/react-starter
 
+## 0.1.8
+
+### Patch Changes
+
+- Updated dependencies [2c1bb2a]
+- Updated dependencies [eee9851]
+  - @ensembleui/react-framework@0.0.9
+  - @ensembleui/react-runtime@0.0.9
+
 ## 0.1.7
 
 ### Patch Changes
