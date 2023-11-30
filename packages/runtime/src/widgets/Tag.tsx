@@ -74,7 +74,7 @@ export const Tag: React.FC<TagProps> = (props) => {
         fontSize: props.styles?.fontSize ?? 12,
         display: "inline-flex",
         alignItems: "center",
-        margin: "5px",
+        margin: props.styles?.margin ?? "5px",
         whiteSpace: "nowrap",
       }}
     >
