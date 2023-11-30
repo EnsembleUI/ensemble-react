@@ -291,11 +291,11 @@ View:
         - Column:
             children:
               - Chart:
-                  type: stackbar
                   styles:
                     height: 60
                   config: |-
                     {
+                      type: "stackbar",
                       data:
                         {
                           labels: ["January", "February"],
@@ -311,10 +311,10 @@ View:
                                   {
                                     clamp: true,
                                     color: "white",
-                                    align: start,
-                                    anchor: start,
+                                    align: "start",
+                                    anchor: "start",
                                     offset: 10,
-                                    font: { size: 14, weight: bold },
+                                    font: { size: 14, weight: "bold" },
                                   },
                               },
                               {
@@ -326,10 +326,10 @@ View:
                                   {
                                     clamp: true,
                                     color: "white",
-                                    anchor: start,
-                                    align: start,
+                                    anchor: "start",
+                                    align: "start",
                                     offset: 10,
-                                    font: { size: 14, weight: bold },
+                                    font: { size: 14, weight: "bold" },
                                   },
                               },
                               {
@@ -342,10 +342,10 @@ View:
                                   {
                                     color: "white",
                                     clamp: true,
-                                    anchor: start,
-                                    align: start,
+                                    anchor: "start",
+                                    align: "start",
                                     offset: 10,
-                                    font: { size: 14, weight: bold },
+                                    font: { size: 14, weight: "bold" },
                                   },
                               },
                             ]
