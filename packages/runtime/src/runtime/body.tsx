@@ -10,12 +10,14 @@ interface EnsembleBodyProps {
   body: EnsembleWidget;
   header?: EnsembleHeaderModel;
   footer?: EnsembleFooterModel;
+  isModal?: boolean;
 }
 
 export const EnsembleBody: React.FC<EnsembleBodyProps> = ({
   body,
   header,
   footer,
+  isModal,
 }) => {
   const BodyFn = WidgetRegistry.find(body.name);
   if (!(BodyFn instanceof Function))
@@ -46,7 +48,9 @@ export const EnsembleBody: React.FC<EnsembleBodyProps> = ({
   // default body styles
   const defaultStyles = {
     styles: {
-      height: `calc(100vh - ${marginTop} - ${marginBottom})`,
+      height: !isModal
+        ? `calc(100vh - ${marginTop} - ${marginBottom})`
+        : undefined,
       overflow: "auto",
     },
   };

@@ -14,11 +14,13 @@ import { EnsembleBody } from "./body";
 export interface EnsembleScreenProps {
   screen: EnsembleScreenModel;
   inputs?: Record<string, unknown>;
+  isModal?: boolean;
 }
 
 export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
   screen,
   inputs,
+  isModal,
 }) => {
   return (
     <ScreenContextProvider
@@ -31,6 +33,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
           body={screen.body}
           footer={screen.footer}
           header={screen.header}
+          isModal={isModal}
         />
       </OnLoadAction>
       <EnsembleFooter footer={screen.footer} />

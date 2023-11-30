@@ -39,6 +39,7 @@ export const useNavigateModalScreen: EnsembleActionHook<
       openModal?.(
         <EnsembleScreen
           inputs={isStringAction ? undefined : action?.inputs}
+          isModal
           screen={screen}
         />,
         {
