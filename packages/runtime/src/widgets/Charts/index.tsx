@@ -78,11 +78,11 @@ export const Chart: React.FC<ChartProps> = (props) => {
 
   const config = useMemo(() => {
     try {
-      return evaluate(
+      return evaluate<ChartConfigs>(
         context as ScreenContextDefinition,
         // eslint-disable-next-line prefer-named-capture-group
         props.config?.toString()?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
-      ) as ChartConfigs;
+      );
     } catch (e) {
       setError(e);
     }
