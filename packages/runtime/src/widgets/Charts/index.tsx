@@ -11,7 +11,7 @@ import {
   LineElement,
   type ChartOptions,
 } from "chart.js";
-import React, { cloneElement, useMemo, useState } from "react";
+import React, { cloneElement, useEffect, useMemo, useState } from "react";
 import {
   evaluate,
   type ScreenContextDefinition,
@@ -71,33 +71,59 @@ const tabsConfig = {
   line: <LineChart />,
 };
 
+const CONFIG_EVAL_EXPIRY = 5000;
+
 export const Chart: React.FC<ChartProps> = (props) => {
   const context = useScreenContext();
   const { rootRef } = useWidgetId(props.id);
   const [error, setError] = useState<unknown>(null);
+  const [isExpired, setIsExpired] = useState(false);
+  const [config, setConfig] = useState<ChartConfigs>();
 
-  const config = useMemo(() => {
+  useEffect(() => {
+    setTimeout(() => setIsExpired(true), CONFIG_EVAL_EXPIRY);
+  }, []);
+
+  useMemo(() => {
+    if (config) {
+      return;
+    }
+
     try {
-      return evaluate<ChartConfigs>(
+      const evaluatedConfig = evaluate<ChartConfigs>(
         context as ScreenContextDefinition,
         // eslint-disable-next-line prefer-named-capture-group
         props.config?.toString()?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
       );
+      setConfig(evaluatedConfig);
+      setError(null);
     } catch (e) {
-      setError(e);
+      if (!error) {
+        setError(e);
+      }
     }
-  }, [props.config, context]);
+  }, [config, context, error, props.config]);
 
-  if (error) {
+  if (!props.config) {
+    return <Alert message="Configuration is missing" type="error" />;
+  }
+
+  if (isExpired && error) {
     return (
       <Alert
-        message={`config is ${!props.config ? "missing" : "bad"}`}
-        type="error"
+        message={`Error evaluating configuration: ${String(error)}`}
+        type="info"
       />
     );
   }
 
-  if (!config?.type) return <b>Chart type missing</b>;
+  if (isExpired && !config?.type) {
+    return <Alert message="Chart type is missing" type="error" />;
+  }
+
+  if (!config) {
+    return null;
+  }
 
   return (
     <div
