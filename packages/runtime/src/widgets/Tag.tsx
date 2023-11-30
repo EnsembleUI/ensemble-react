@@ -70,13 +70,11 @@ export const Tag: React.FC<TagProps> = (props) => {
         fontWeight: props.styles?.fontWeight
           ? props.styles.fontWeight
           : "normal",
-        fontFamily: props.styles?.fontFamily
-          ? props.styles.fontFamily
-          : "Poppins",
+        fontFamily: props.styles?.fontFamily,
         fontSize: props.styles?.fontSize ?? 12,
         display: "inline-flex",
         alignItems: "center",
-        margin: "5px",
+        margin: props.styles?.margin ?? "5px",
         whiteSpace: "nowrap",
       }}
     >

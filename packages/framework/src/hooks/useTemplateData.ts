@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useAtomValue } from "jotai";
-import { isEqual, isString, map } from "lodash-es";
+import { isString, map } from "lodash-es";
+import isEqual from "react-fast-compare";
 import { selectAtom } from "jotai/utils";
 import type { ScreenContextDefinition } from "../state";
 import { screenAtom } from "../state";

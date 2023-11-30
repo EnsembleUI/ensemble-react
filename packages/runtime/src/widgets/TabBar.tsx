@@ -12,7 +12,11 @@ import type {
 } from "@ensembleui/react-framework";
 import { Tabs, ConfigProvider } from "antd";
 import { noop } from "lodash-es";
-import { type IconProps } from "../shared/types";
+import type {
+  EnsembleWidgetProps,
+  EnsembleWidgetStyles,
+  IconProps,
+} from "../shared/types";
 import { EnsembleRuntime } from "../runtime";
 import { WidgetRegistry } from "../registry";
 import { Icon } from "./Icon";
@@ -24,23 +28,25 @@ export interface TabBarItem {
   icon?: IconProps;
   widget: EnsembleWidget;
 }
-export interface TabBarProps {
+
+export interface TabBarStyles extends EnsembleWidgetStyles {
+  tabPosition: "start" | "stretch";
+  tabPadding: string;
+  tabFontSize: number;
+  tabFontWeight: string;
+  tabBackgroundColor: string;
+  activeTabColor: string;
+  dividerColor: string;
+  inactiveTabColor: string;
+  indicatorColor: string;
+  indicatorThickness: string;
+}
+export interface TabBarProps extends EnsembleWidgetProps<TabBarStyles> {
   id?: string;
   selectedIndex?: number;
   items: TabBarItem[];
-  styles?: {
-    tabPosition: "start" | "stretch";
-    tabPadding: string;
-    tabFontSize: number;
-    tabFontWeight: string;
-    tabBackgroundColor: string;
-    activeTabColor: string;
-    dividerColor: string;
-    inactiveTabColor: string;
-    indicatorColor: string;
-    indicatorThickness: string;
-  };
 }
+
 export const TabBar: React.FC<TabBarProps> = (props) => {
   const { values } = useRegisterBindings({ ...props }, props.id);
   const context = useScreenContext();
@@ -126,7 +132,10 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
       }}
     >
       <style>{customStyles}</style>
-      <Tabs defaultActiveKey={setDefaultSelectedTab()}>
+      <Tabs
+        defaultActiveKey={setDefaultSelectedTab()}
+        style={{ ...props.styles }}
+      >
         {values?.items.map((tabItem) => (
           <TabPane
             key={tabItem.label}

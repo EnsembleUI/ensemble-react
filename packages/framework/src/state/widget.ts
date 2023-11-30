@@ -6,7 +6,7 @@ import { merge } from "lodash-es";
 import type { Expression } from "../shared";
 import { isExpression, sanitizeJs, debug, error } from "../shared";
 import { evaluate } from "../evaluate";
-import { defaultScreenContext, screenAtom } from "./screen";
+import { defaultScreenContext, screenAtom, screenDataAtom } from "./screen";
 
 export interface WidgetState<T = Record<string, unknown>> {
   values: T;
@@ -63,6 +63,7 @@ export const createBindingAtom = (
   });
 
   const bindingAtom = atom((get) => {
+    const data = get(screenDataAtom);
     const valueEntries = dependencyEntries.map(({ name, dependencyAtom }) => {
       const value = get(dependencyAtom);
       debug(
@@ -72,14 +73,13 @@ export const createBindingAtom = (
       );
       return [name, value?.values];
     });
-    // const screenContext = get(screenAtom);
     const evaluationContext = merge(
       Object.fromEntries(valueEntries),
       context,
     ) as Record<string, unknown>;
     try {
       const result = evaluate(
-        defaultScreenContext,
+        { ...defaultScreenContext, data },
         rawJsExpression,
         evaluationContext,
       );
