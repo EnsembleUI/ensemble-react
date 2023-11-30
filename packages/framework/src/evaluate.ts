@@ -76,13 +76,13 @@ const formatJs = (js?: string): string => {
 const addGlobalBlock = (js: string, globalBlock?: string): string =>
   globalBlock ? `${globalBlock}\n\n${js}` : js;
 
-export const evaluate = (
+export const evaluate = <T = unknown>(
   screen: ScreenContextDefinition,
   js?: string,
   context?: Record<string, unknown>,
-): unknown => {
+): T => {
   try {
-    return buildEvaluateFn(screen, js, context)();
+    return buildEvaluateFn(screen, js, context)() as T;
   } catch (e) {
     debug(e);
     throw e;

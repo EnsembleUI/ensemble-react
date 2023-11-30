@@ -15,7 +15,7 @@ import type {
   UploadFilesAction,
   ScreenContextDefinition,
 } from "@ensembleui/react-framework";
-import { head, isEmpty, isString, merge } from "lodash-es";
+import { isEmpty, isString, merge } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigateScreen } from "./useNavigateScreen";
 // FIXME: refactor
@@ -258,15 +258,15 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
       setProgress(percentCompleted);
     };
 
-    const files = evaluate(
+    const files = evaluate<FileList>(
       screenContext as ScreenContextDefinition,
       action?.files,
-    ) as FileList | undefined;
+    );
     if (!files || files.length === 0) throw Error("Files not found");
 
     const formData = new FormData();
     if (files.length === 1)
-      formData.append(action?.fieldName ?? "files", head(files) as Blob);
+      formData.append(action?.fieldName ?? "files", files[0]);
     else
       for (let i = 0; i < files.length; i++) {
         formData.append(action?.fieldName ?? `file${i}`, files[i]);
@@ -284,11 +284,11 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
       formData.append(key, evaluatedValue as string);
     }
 
-    const apiUrl = evaluate(
+    const apiUrl = evaluate<string>(
       screenContext as ScreenContextDefinition,
       `\`${apiModel.uri}\``,
       action?.inputs,
-    ) as string;
+    );
 
     try {
       setStatus("running");

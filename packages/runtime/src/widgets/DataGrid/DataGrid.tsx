@@ -4,8 +4,11 @@ import {
   type Expression,
   type EnsembleWidget,
   useWidgetId,
+  evaluate,
+  defaultScreenContext,
 } from "@ensembleui/react-framework";
 import { type ReactElement } from "react";
+import { get } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { DataCell } from "./DataCell";
@@ -14,8 +17,16 @@ interface DataColumn {
   label: string;
   type: string;
   tooltip?: string;
-  sortable?: boolean;
-  sortKey?: string;
+  sort?: {
+    compareFn: string;
+  };
+  filter?: {
+    values: {
+      label: string;
+      value: string | number | boolean;
+    }[];
+    onFilter: string;
+  };
 }
 
 export interface GridProps extends EnsembleWidgetProps {
@@ -53,7 +64,26 @@ export const DataGrid: React.FC<GridProps> = ({
         return (
           <Table.Column
             dataIndex={itemTemplate.name}
+            filters={col.filter?.values.map(({ label, value }) => ({
+              text: label,
+              value,
+            }))}
             key={col.label}
+            onFilter={
+              col.filter?.onFilter
+                ? (value, record): boolean =>
+                    Boolean(
+                      evaluate(defaultScreenContext, col.filter?.onFilter, {
+                        value,
+                        record,
+                        [itemTemplate.name]: get(
+                          record,
+                          itemTemplate.name,
+                        ) as unknown,
+                      }),
+                    )
+                : undefined
+            }
             render={(_: unknown, record: unknown): ReactElement => {
               return (
                 <DataCell
@@ -64,6 +94,17 @@ export const DataGrid: React.FC<GridProps> = ({
                 />
               );
             }}
+            sorter={
+              col.sort?.compareFn
+                ? (a, b): number =>
+                    Number(
+                      evaluate(defaultScreenContext, col.sort?.compareFn, {
+                        a,
+                        b,
+                      }),
+                    )
+                : undefined
+            }
             title={col.label}
           />
         );

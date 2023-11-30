@@ -39,7 +39,7 @@ export const useTemplateData = ({
             return data;
           }
           try {
-            return evaluate(screenContext, String(data)) as TemplateData;
+            return evaluate(screenContext, String(data));
           } catch (e) {
             return {};
           }

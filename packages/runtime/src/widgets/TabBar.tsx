@@ -57,10 +57,7 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
     let labelEvaluated = "";
     if (isExpression(label)) {
       try {
-        labelEvaluated = evaluate(
-          context as ScreenContextDefinition,
-          label,
-        ) as string;
+        labelEvaluated = evaluate(context as ScreenContextDefinition, label);
       } catch (e) {
         noop();
       }
