@@ -1,5 +1,12 @@
 # @ensembleui/react-framework
 
+## 0.0.10
+
+### Patch Changes
+
+- 58316cc: Add sorting and filter to grid
+- 8f77365: Update bindings on data change
+
 ## 0.0.9
 
 ### Patch Changes
