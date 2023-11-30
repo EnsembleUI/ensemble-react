@@ -154,6 +154,7 @@ export const ModalWrapper: React.FC = () => {
                   height: endsWith(options.height, "%")
                     ? `clamp(0vh, ${parseInt(options.height!, 10)}vh, 92vh`
                     : options.height,
+                  overflowY: "auto",
                 }}
                 centered={!isFullScreen}
                 closable={false}
@@ -163,7 +164,7 @@ export const ModalWrapper: React.FC = () => {
                 open={visible}
                 style={{
                   position: options.position ? "absolute" : "unset",
-                  margin: options.margin || 0,
+                  margin: (!isFullScreen && options.margin) || 0,
                 }}
                 title={titleElement}
                 width={options.width}
