@@ -35,7 +35,7 @@ export const buildEvaluateFn = (
 
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
   const jsFunc = new Function(
-    ...[...Object.keys(invokableObj)],
+    ...Object.keys(invokableObj),
     addGlobalBlock(formatJs(js), globalBlock),
   );
 
