@@ -9,6 +9,10 @@ module.exports = {
             test: /\.yaml$/i,
             type: "asset/source",
           },
+          {
+            resourceQuery: /raw/,
+            type: "asset/source",
+          },
         ],
       },
       resolve: {

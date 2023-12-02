@@ -96,6 +96,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
 
   const [response, setResponse] = useState<Response>();
   const [error, setError] = useState<unknown>();
+  const [isComplete, setIsComplete] = useState(false);
 
   const invokeApi = useMemo(() => {
     if (!screenContext?.model || !action) {
@@ -135,21 +136,23 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
 
   const onResponseAction = useEnsembleAction(action?.onResponse);
   useEffect(() => {
-    if (!response) {
+    if (!response || isComplete) {
       return;
     }
 
     onResponseAction?.callback({ response });
-  }, [action?.onResponse, onResponseAction, response]);
+    setIsComplete(true);
+  }, [isComplete, onResponseAction, response]);
 
   const onErrorAction = useEnsembleAction(action?.onError);
   useEffect(() => {
-    if (!error) {
+    if (!error || isComplete) {
       return;
     }
 
     onErrorAction?.callback({ error });
-  }, [action?.onError, error, onErrorAction]);
+    setIsComplete(true);
+  }, [error, isComplete, onErrorAction]);
 
   return invokeApi;
 };
