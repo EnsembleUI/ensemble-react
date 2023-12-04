@@ -1,10 +1,13 @@
 import { parse } from "yaml";
 import {
   get,
+  has,
   head,
   isArray,
   isEmpty,
   isObject,
+  isString,
+  isTypedArray,
   map,
   mapKeys,
   remove,
@@ -197,17 +200,31 @@ export const unwrapWidget = (obj: Record<string, unknown>): EnsembleWidget => {
     const unwrappedTemplate = unwrapWidget(template as Record<string, unknown>);
     set(properties as object, ["item-template", "template"], unwrappedTemplate);
   }
-  if (isArray(items) && !isEmpty(items)) {
-    if ("widget" in items[0]) {
-      const valueItems = (items as Record<string, unknown>[]).map(
-        ({ label, widget, icon }) => {
-          const unwrappedWidget = unwrapWidget(
-            widget as Record<string, unknown>,
-          );
-          return { label, icon, widget: unwrappedWidget };
-        },
-      );
-      set(properties as object, "items", valueItems);
+  if (!isEmpty(items) && isArray(items)) {
+    if (isString(items[0])) {
+      set(properties as object, "items", items);
+    } else if (isObject(items[0])) {
+      // TabBar
+      if (has(items[0], "widget") && has(items[0], "label")) {
+        const valueItems = (items as Record<string, unknown>[]).map(
+          ({ label, widget, icon }) => {
+            const unwrappedWidget = unwrapWidget(
+              widget as Record<string, unknown>,
+            );
+            return { label, icon, widget: unwrappedWidget };
+          },
+        );
+        set(properties as object, "items", valueItems);
+      }
+      // Others
+      else if (has(items[0], "value") && has(items[0], "label")) {
+        const valueItems = (items as Record<string, unknown>[]).map(
+          ({ label, value, icon }) => {
+            return { label, value, icon };
+          },
+        );
+        set(properties as object, "items", valueItems);
+      }
     }
   }
   return {

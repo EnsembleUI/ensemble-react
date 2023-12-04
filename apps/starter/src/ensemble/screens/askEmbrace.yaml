@@ -16,12 +16,45 @@ View:
   body:
     Column:
       children:
-        # - Markdown:
-        #     id: askText
-        #     text: "## Ask Embrace"
-        # - Text:
-        #     id: he
-        #     text: hehe
+        - Markdown:
+            id: askText
+            text: "### Toggle Buttons"
+
+        - ToggleButton:
+            id: myToggleButton
+            styles:
+              margin: 5
+              spacing: 10
+              runSpacing: 3
+              color: black
+              selectedColor: yellow
+              backgroundColor: white
+              selectedBackgroundColor: pink
+              selectedBorderColor: blue
+              borderColor: green
+            value: red
+            items:
+              # - red
+              # - green
+              # - blue
+              # - yellow
+              - { "label": "Red", "value": "red", "icon": { "name": "Star" } }
+              - {
+                  "label": "Green",
+                  "value": "green",
+                  "icon": { "name": "Add", "color": "blue", "size": 22 },
+                }
+              - { "label": "Yellow", "value": "yellow" }
+              - { "label": "Blue", "value": "blue" }
+              - { "label": "Orange", "value": "orange" }
+              # - { "label": "Purple", "value": "purple" }
+              # - { "label": "Pink", "value": "pink" }
+              # - { "label": "Brown", "value": "brown" }
+            onChange:
+              executeCode:
+                body: |-
+                  console.log('toggle button changed: ' + myToggleButton.value);
+
         - Form:
             styles:
               labelPosition: start
