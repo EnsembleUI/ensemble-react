@@ -2,7 +2,7 @@ import { parseExpressionAt, tokTypes } from "acorn";
 import { focusAtom } from "jotai-optics";
 import type { Atom } from "jotai";
 import { atom } from "jotai";
-import { merge } from "lodash-es";
+import { isNil, merge, omitBy } from "lodash-es";
 import type { Expression } from "../shared";
 import { isExpression, sanitizeJs, debug, error } from "../shared";
 import { evaluate } from "../evaluate";
@@ -74,7 +74,7 @@ export const createBindingAtom = (
       return [name, value?.values];
     });
     const evaluationContext = merge(
-      Object.fromEntries(valueEntries),
+      omitBy(Object.fromEntries(valueEntries), isNil),
       context,
     ) as Record<string, unknown>;
     try {
