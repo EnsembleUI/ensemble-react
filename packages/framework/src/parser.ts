@@ -7,7 +7,6 @@ import {
   isEmpty,
   isObject,
   isString,
-  isTypedArray,
   map,
   mapKeys,
   remove,
