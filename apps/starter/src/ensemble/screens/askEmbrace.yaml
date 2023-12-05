@@ -22,6 +22,64 @@ View:
         # - Text:
         #     id: he
         #     text: hehe
+        - Row:
+            item-template:
+              data: [0, 2, 4, 6, 8]
+              name: i
+              template:
+                Text:
+                  text: ${i}
+                  styles:
+                    color: "red"
+                    fontSize: 20
+            children:
+              - Text:
+                  text: row
+                  styles:
+                    color: "green"
+        - Row:
+            children:
+              - Text:
+                  text: row
+                  styles:
+                    color: "green"
+            item-template:
+              data: [0, 2, 4, 6, 8]
+              name: i
+              template:
+                Text:
+                  text: ${i}
+                  styles:
+                    color: "red"
+                    fontSize: 20
+        - Column:
+            children:
+              - Text:
+                  text: head
+                  styles:
+                    color: "purple"
+            item-template:
+              data: [1, 3, 5]
+              name: i
+              template:
+                Text:
+                  text: ${i}
+                  styles:
+                    color: "blue"
+        - Column:
+            item-template:
+              data: [7, 9]
+              name: i
+              template:
+                Text:
+                  text: ${i}
+                  styles:
+                    color: "violet"
+            children:
+              - Text:
+                  text: foot
+                  styles:
+                    color: "orange"
         - Form:
             styles:
               labelPosition: start
