@@ -1,6 +1,6 @@
 import type { RefCallback } from "react";
 import { useEffect, useMemo } from "react";
-import { compact, merge, set } from "lodash-es";
+import { compact, isEmpty, merge, set } from "lodash-es";
 import isEqual from "react-fast-compare";
 import { atom, useAtom } from "jotai";
 import type { InvokableMethods } from "../state";
@@ -63,6 +63,11 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
 
   const newValues = merge({}, values, bindings) as T;
   useEffect(() => {
+    // Improves performance greatly: o need to store state in global if there's no explicit ID to reference it with
+    if (isEmpty(id)) {
+      return;
+    }
+
     if (
       isEqual(newValues, widgetState?.values) &&
       isEqual(methods, widgetState?.invokable.methods)
@@ -81,11 +86,12 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
     newValues,
     widgetState?.values,
     widgetState?.invokable.methods,
+    id,
   ]);
 
   return {
     id: resolvedWidgetId,
-    values: widgetState?.values,
+    values: widgetState?.values ?? newValues,
     rootRef,
   };
 };

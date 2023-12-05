@@ -140,7 +140,6 @@ importers:
       chart.js: ^4.4.0
       chartjs-plugin-datalabels: ^2.2.0
       eslint-config-custom: workspace:*
-      jest: 27.5.1
       lodash-es: ^4.17.21
       react-chartjs-2: ^5.2.0
       react-markdown: ^8.0.7
@@ -164,7 +163,6 @@ importers:
       chart.js: 4.4.0
       chartjs-plugin-datalabels: 2.2.0_chart.js@4.4.0
       eslint-config-custom: link:../eslint-config-custom
-      jest: 27.5.1
       lodash-es: 4.17.21
       react-chartjs-2: 5.2.0_chart.js@4.4.0
       react-markdown: 8.0.7_@types+react@18.2.21
