@@ -2,7 +2,8 @@ import { parseExpressionAt, tokTypes } from "acorn";
 import { focusAtom } from "jotai-optics";
 import type { Atom } from "jotai";
 import { atom } from "jotai";
-import { merge } from "lodash-es";
+import { isNil, merge, omitBy } from "lodash-es";
+import { atomFamily } from "jotai/utils";
 import type { Expression } from "../shared";
 import { isExpression, sanitizeJs, debug, error } from "../shared";
 import { evaluate } from "../evaluate";
@@ -18,6 +19,10 @@ export interface Invokable {
   id: string;
   methods?: InvokableMethods;
 }
+
+export const widgetFamilyAtom = atomFamily((id: string) =>
+  focusAtom(screenAtom, (optics) => optics.path("widgets", id)),
+);
 
 export const createBindingAtom = (
   expression?: Expression<unknown>,
@@ -56,9 +61,7 @@ export const createBindingAtom = (
   const dependencyEntries = identifiers.map((identifier) => {
     debug(`found dependency for ${String(widgetId)}: ${identifier}`);
     // TODO: Account for data bindings also
-    const dependencyAtom = focusAtom(screenAtom, (optic) =>
-      optic.path("widgets", identifier),
-    );
+    const dependencyAtom = widgetFamilyAtom(identifier);
     return { name: identifier, dependencyAtom };
   });
 
@@ -74,7 +77,7 @@ export const createBindingAtom = (
       return [name, value?.values];
     });
     const evaluationContext = merge(
-      Object.fromEntries(valueEntries),
+      omitBy(Object.fromEntries(valueEntries), isNil),
       context,
     ) as Record<string, unknown>;
     try {

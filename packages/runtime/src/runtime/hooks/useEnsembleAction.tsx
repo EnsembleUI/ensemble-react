@@ -5,6 +5,9 @@ import {
   isExpression,
   useRegisterBindings,
   error as logError,
+  ensembleStore,
+  screenAtom,
+  useScreenData,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -92,19 +95,18 @@ export const useExecuteCode: EnsembleActionHook<
 };
 
 export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
-  const screenContext = useScreenContext();
+  const { apis, setData } = useScreenData();
 
   const [response, setResponse] = useState<Response>();
   const [error, setError] = useState<unknown>();
+  const [isComplete, setIsComplete] = useState(false);
 
   const invokeApi = useMemo(() => {
-    if (!screenContext?.model || !action) {
+    if (!apis || !action) {
       return;
     }
 
-    const apiModel = screenContext.model.apis?.find(
-      (model) => model.name === action.name,
-    );
+    const apiModel = apis.find((model) => model.name === action.name);
     if (!apiModel) {
       return;
     }
@@ -113,7 +115,8 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
     const callback = async (): Promise<void> => {
       const resolvedInputs = Object.entries(inputs).map(([key, value]) => {
         if (isExpression(value)) {
-          const resolvedValue = evaluate(screenContext, value);
+          const evalContext = ensembleStore.get(screenAtom);
+          const resolvedValue = evaluate(evalContext, value);
           return [key, resolvedValue];
         }
         return [key, value];
@@ -123,33 +126,34 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
           apiModel,
           Object.fromEntries(resolvedInputs) as Record<string, unknown>,
         );
-        screenContext.setData(apiModel.name, res);
+        setData(apiModel.name, res);
         setResponse(res);
       } catch (e) {
         setError(e);
       }
     };
     return { callback };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [action, screenContext?.model]);
+  }, [action, apis, setData]);
 
   const onResponseAction = useEnsembleAction(action?.onResponse);
   useEffect(() => {
-    if (!response) {
+    if (!response || isComplete) {
       return;
     }
 
     onResponseAction?.callback({ response });
-  }, [action?.onResponse, onResponseAction, response]);
+    setIsComplete(true);
+  }, [isComplete, onResponseAction, response]);
 
   const onErrorAction = useEnsembleAction(action?.onError);
   useEffect(() => {
-    if (!error) {
+    if (!error || isComplete) {
       return;
     }
 
     onErrorAction?.callback({ error });
-  }, [action?.onError, error, onErrorAction]);
+    setIsComplete(true);
+  }, [error, isComplete, onErrorAction]);
 
   return invokeApi;
 };

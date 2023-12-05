@@ -6,6 +6,7 @@ View:
         executeCode: 
           body: |
             // ensemble.storage.set("arrayOfUsers",response.body.records)
+            console.log("bye")
             const groups = new Set(response.body.records.flatMap(record => record.fields.groups))
             // ensemble.storage.set("arrayOfGroups", Array.from(groups))
           onComplete:
