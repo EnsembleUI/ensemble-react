@@ -3,7 +3,7 @@ import {
   useRegisterBindings,
 } from "@ensembleui/react-framework";
 import { useCallback, useState } from "react";
-import { isString } from "lodash-es";
+import { isEqual, isNil, isString } from "lodash-es";
 import MUIToggleButton from "@mui/material/ToggleButton";
 import MUIToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import type { EnsembleWidgetProps, IconProps } from "../shared/types";
@@ -11,6 +11,7 @@ import { WidgetRegistry } from "../registry";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { Text } from "./Text";
 import { Icon } from "./Icon";
+import { Alert } from "antd";
 
 interface ToggleButtonPropsStyles {
   margin?: number;
@@ -48,37 +49,38 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
   styles,
 }) => {
   const [value, setValue] = useState(givenValue);
-  const { values } = useRegisterBindings({ value }, id, { setValue });
+  const { values } = useRegisterBindings({ value, styles }, id, { setValue });
   const action = useEnsembleAction(onChange);
-
-  const handleChange = (
-    _event: React.MouseEvent<HTMLElement>,
-    newValue: string,
-  ): void => {
-    setValue(newValue);
-    onChangeCallback(newValue);
-  };
-
   const onChangeCallback = useCallback(
-    (newValue: string) => {
+    (_event: React.MouseEvent<HTMLElement>, newValue: string) => {
       if (!action) {
         return;
       }
-      action.callback({
-        [id as string]: {
-          value: newValue,
-          setValue,
-        },
-      });
+
+      if (!isNil(newValue) && !isEqual(value, newValue)) {
+        setValue(newValue);
+
+        action.callback({
+          [id as string]: {
+            value: newValue,
+            setValue,
+          },
+        });
+      }
     },
     [action, id],
   );
+
+  if (isNil(items))
+    return <Alert message="ToggleButton: items is required" type="error" />;
+
+  const structuredItems = structureItems(items);
 
   return (
     <MUIToggleButtonGroup
       value={values?.value}
       exclusive
-      onChange={handleChange}
+      onChange={onChangeCallback}
       sx={{
         display: "flex",
         flexDirection: "row",
@@ -87,15 +89,18 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
         margin: `${styles?.margin ?? 0}px`,
       }}
     >
-      {items.map((item, index) => (
+      {structuredItems.map((item, index) => (
         <MUIToggleButton
-          value={isString(item) ? item : item.value}
+          value={item.value}
+          key={item.value}
           sx={{
             color: styles?.color,
             backgroundColor: styles?.backgroundColor,
             marginRight:
-              index !== items.length - 1 ? `${styles?.spacing}px` : 0,
-            boxShadow: `0 0 0 1px ${styles?.shadowColor}`,
+              index !== items.length - 1 ? `${styles?.spacing ?? 0}px` : 0,
+            boxShadow: `1px 2px 5px 1px ${
+              styles?.shadowColor ?? "transparent"
+            }`,
             border: `${styles?.borderWidth ?? 1}px solid ${
               styles?.borderColor ?? "transparent"
             } !important`,
@@ -108,7 +113,9 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
               border: `${styles?.selectedBorderWidth ?? 1}px solid ${
                 styles?.selectedBorderColor ?? "transparent"
               } !important`,
-              boxShadow: `0 0 0 1px ${styles?.shadowColor}`,
+              boxShadow: `1px 2px 5px 1px ${
+                styles?.shadowColor ?? "transparent"
+              }`,
               "& .ant-typography": {
                 color: styles?.selectedColor,
               },
@@ -119,11 +126,9 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
             },
           }}
         >
-          {!isString(item) && isString(item?.icon?.name) && (
-            <Icon {...item.icon!} />
-          )}
+          {isString(item?.icon?.name) && <Icon {...item.icon!} />}
           &nbsp;
-          <Text text={isString(item) ? item : item.label} />
+          <Text text={item.label} />
         </MUIToggleButton>
       ))}
     </MUIToggleButtonGroup>
@@ -131,3 +136,12 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
 };
 
 WidgetRegistry.register("ToggleButton", ToggleButton);
+
+const structureItems = (
+  items: ToggleButtonProps["items"],
+): Exclude<ToggleButtonProps["items"], string[]> =>
+  items.map((item) => {
+    return isString(item)
+      ? { label: item, value: item }
+      : { label: item.label, value: item.value, icon: item.icon };
+  });

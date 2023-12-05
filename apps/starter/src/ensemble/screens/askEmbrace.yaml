@@ -35,21 +35,27 @@ View:
             value: red
             items:
               # - red
-              # - green
-              # - blue
               # - yellow
+              - blue
               - { "label": "Red", "value": "red", "icon": { "name": "Star" } }
-              - {
-                  "label": "Green",
-                  "value": "green",
-                  "icon": { "name": "Add", "color": "blue", "size": 22 },
-                }
-              - { "label": "Yellow", "value": "yellow" }
-              - { "label": "Blue", "value": "blue" }
-              - { "label": "Orange", "value": "orange" }
-              # - { "label": "Purple", "value": "purple" }
-              # - { "label": "Pink", "value": "pink" }
-              # - { "label": "Brown", "value": "brown" }
+              # - {
+              #     "label": "Green",
+              #     "value": "green",
+              #     "icon": { "name": "Add", "color": "blue", "size": 22 },
+              #   }
+              # - { "label": "Orange", "value": "orange" }
+              # - label: Red
+              #   value: red
+              #   icon:
+              #     name: Star
+              - label: Green
+                value: green
+                icon:
+                  name: Add
+                  color: blue
+                  size: 22
+              # - label: Yellow
+              #   value: yellow
             onChange:
               executeCode:
                 body: |-
