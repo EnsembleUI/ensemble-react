@@ -20,6 +20,7 @@ import {
   useWidgetId,
 } from "@ensembleui/react-framework";
 import { Alert } from "antd";
+import { isEqual } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { BarChart } from "./BarChart";
@@ -85,10 +86,6 @@ export const Chart: React.FC<ChartProps> = (props) => {
   }, []);
 
   useMemo(() => {
-    if (config) {
-      return;
-    }
-
     try {
       const evaluatedConfig = evaluate<ChartConfigs>(
         context as ScreenContextDefinition,
@@ -100,8 +97,9 @@ export const Chart: React.FC<ChartProps> = (props) => {
           },
         },
       );
-      setConfig(evaluatedConfig);
-      setError(null);
+      if (!isEqual(evaluatedConfig, config)) {
+        setConfig(evaluatedConfig);
+      }
     } catch (e) {
       if (!error) {
         setError(e);
