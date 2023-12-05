@@ -1,5 +1,5 @@
 import type { EnsembleEntryPoint } from "@ensembleui/react-framework";
-import { Outlet, useNavigate, useSearchParams } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { SideBarMenu } from "./menu";
 import { EnsembleScreen } from "./screen";
@@ -8,19 +8,21 @@ interface EnsembleEntryProps {
   entry: EnsembleEntryPoint;
 }
 export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({ entry }) => {
-  const [searchParams] = useSearchParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const hasMenu = "items" in entry;
   useEffect(() => {
-    if (hasMenu) {
-      const selectedItem =
-        entry.items.find((item) => item.selected) ?? entry.items[0];
-      navigate({
-        pathname: `/${selectedItem.page.toLowerCase()}`,
-        search: searchParams.toString(),
-      });
+    if (!(hasMenu && location.pathname === "/")) {
+      return;
     }
-  }, [entry, hasMenu, navigate, searchParams]);
+
+    const selectedItem =
+      entry.items.find((item) => item.selected) ?? entry.items[0];
+    navigate({
+      pathname: `/${selectedItem.page.toLowerCase()}`,
+      search: location.search,
+    });
+  }, [entry, hasMenu, navigate, location]);
 
   if (hasMenu) {
     return (
