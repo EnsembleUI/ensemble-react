@@ -7,6 +7,7 @@ import { atomFamily } from "jotai/utils";
 import type { Expression } from "../shared";
 import { isExpression, sanitizeJs, debug, error } from "../shared";
 import { evaluate } from "../evaluate";
+import { screenStorageAtom } from "../storage";
 import { defaultScreenContext, screenAtom, screenDataAtom } from "./screen";
 
 export interface WidgetState<T = Record<string, unknown>> {
@@ -67,6 +68,10 @@ export const createBindingAtom = (
 
   const bindingAtom = atom((get) => {
     const data = get(screenDataAtom);
+    let storage: Record<string, unknown> | undefined;
+    if (rawJsExpression.includes("ensemble.storage")) {
+      storage = get(screenStorageAtom);
+    }
     const valueEntries = dependencyEntries.map(({ name, dependencyAtom }) => {
       const value = get(dependencyAtom);
       debug(
@@ -79,6 +84,11 @@ export const createBindingAtom = (
     const evaluationContext = merge(
       omitBy(Object.fromEntries(valueEntries), isNil),
       context,
+      {
+        ensemble: {
+          storage: { get: (key: string) => storage?.[key] },
+        },
+      },
     ) as Record<string, unknown>;
     try {
       const result = evaluate(

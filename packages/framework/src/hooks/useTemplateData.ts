@@ -39,7 +39,11 @@ export const useTemplateData = ({
             return data;
           }
           try {
-            return evaluate(screenContext, String(data));
+            return evaluate(screenContext, String(data), {
+              ensemble: {
+                storage: { get: (key: string) => screenContext.storage[key] },
+              },
+            });
           } catch (e) {
             return {};
           }

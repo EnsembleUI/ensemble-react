@@ -94,6 +94,11 @@ export const Chart: React.FC<ChartProps> = (props) => {
         context as ScreenContextDefinition,
         // eslint-disable-next-line prefer-named-capture-group
         props.config?.toString()?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
+        {
+          ensemble: {
+            storage: { get: (key: string) => context?.storage[key] },
+          },
+        },
       );
       setConfig(evaluatedConfig);
       setError(null);

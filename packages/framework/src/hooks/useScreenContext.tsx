@@ -76,6 +76,16 @@ const HydrateAtoms: React.FC<
   return <>{children}</>;
 };
 
+/**
+ * @deprecated Re-renders component each time screen context changes which
+ * can be very expensive. Only used for rare cases where full context is
+ * needed.
+ *
+ * Consider using `createBinding` instead which will construct a custom scope
+ * of just the referenced dependencies in the expression/script.
+ *
+ * @returns the full state of the current screen
+ */
 export const useScreenContext = ():
   | (ScreenContextDefinition & Pick<ScreenContextActions, "setData">)
   | null => {
