@@ -147,12 +147,11 @@ importers:
       react-toastify: ^9.1.3
       tsconfig: workspace:*
       tsup: ^7.2.0
-    dependencies:
-      '@ensembleui/react-framework': link:../framework
     devDependencies:
       '@ant-design/icons': 5.2.6
       '@emotion/react': 11.11.1_@types+react@18.2.21
       '@emotion/styled': 11.11.0_c72d46d8cf0ba927b8e02bc6bacd5ece
+      '@ensembleui/react-framework': link:../framework
       '@mui/icons-material': 5.14.9_7a9d7cd1c1ccd641db9a1a8448d7dca7
       '@mui/material': 5.14.9_3d3cbc9acde92a282521d713187e74c3
       '@testing-library/react': 13.4.0
