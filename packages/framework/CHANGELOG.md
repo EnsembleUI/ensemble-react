@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.0.12
+
+### Patch Changes
+
+- 84f691a: Fix stale storage reference
+
 ## 0.0.11
 
 ### Patch Changes
