@@ -124,6 +124,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
         height: "100vh",
         position: "fixed",
         alignItems: "center",
+        zIndex: 1,
       }}
     >
       {props.header ? (

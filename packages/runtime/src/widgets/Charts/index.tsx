@@ -101,6 +101,7 @@ export const Chart: React.FC<ChartProps> = (props) => {
       );
       if (!isEqual(evaluatedConfig, config)) {
         setConfig(evaluatedConfig);
+        setError(null);
       }
     } catch (e) {
       if (!error) {

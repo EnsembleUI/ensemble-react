@@ -56,6 +56,7 @@ export const useExecuteCode: EnsembleActionHook<
   const isCodeString = isString(action);
   const screen = useScreenContext();
   const storage = useEnsembleStorage();
+  const [isComplete, setIsComplete] = useState(false);
   const js = useMemo(() => {
     if (!action) {
       return;
@@ -79,7 +80,7 @@ export const useExecuteCode: EnsembleActionHook<
     isCodeString ? undefined : action?.onComplete,
   );
   const execute = useMemo(() => {
-    if (!screen || !js) {
+    if (!screen || !js || isComplete) {
       return;
     }
 
@@ -91,12 +92,13 @@ export const useExecuteCode: EnsembleActionHook<
           merge({ ensemble: { storage } }, options?.context, args),
         );
         onCompleteAction?.callback();
+        setIsComplete(true);
         return retVal;
       } catch (e) {
         logError(e);
       }
     };
-  }, [screen, js, storage, options?.context, onCompleteAction]);
+  }, [screen, js, isComplete, storage, options?.context, onCompleteAction]);
   return execute ? { callback: execute } : undefined;
 };
 
