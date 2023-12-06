@@ -16,6 +16,9 @@
   "lint-staged": {
     "*.{ts,tsx}": "eslint --fix"
   },
+  "dependencies": {
+    "@ensembleui/react-framework": "workspace:*"
+  },
   "peerDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
@@ -24,7 +27,6 @@
     "@ant-design/icons": "^5.2.6",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@ensembleui/react-framework": "workspace:*",
     "@mui/icons-material": "^5.14.9",
     "@mui/material": "^5.14.9",
     "@testing-library/react": "^13.4.0",
