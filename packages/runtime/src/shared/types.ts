@@ -18,7 +18,12 @@ export type BaseTextProps = {
 } & EnsembleWidgetProps;
 
 export type FlexboxProps = {
-  children: EnsembleWidget[];
+  "item-template"?: {
+    data: Expression<object>;
+    name: string;
+    template: EnsembleWidget;
+  };
+  children?: EnsembleWidget[];
   mainAxis?: string;
   crossAxis?: string;
   gap?: number;

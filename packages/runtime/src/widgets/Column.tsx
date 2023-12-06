@@ -1,17 +1,33 @@
 import { useMemo } from "react";
 import { Col } from "antd";
-import { get } from "lodash-es";
-import { useRegisterBindings } from "@ensembleui/react-framework";
+import { get, indexOf, keys } from "lodash-es";
+import {
+  type CustomScope,
+  CustomScopeProvider,
+  useRegisterBindings,
+  useTemplateData,
+  Expression,
+} from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import type { FlexboxProps } from "../shared/types";
 import { getColor, getCrossAxis, getMainAxis } from "../shared/styles";
 
 export const Column: React.FC<FlexboxProps> = (props) => {
-  const renderedChildren = useMemo(() => {
-    return EnsembleRuntime.render(props.children);
-  }, [props.children]);
+  const itemTemplate = props["item-template"];
+  const childrenFirst =
+    indexOf(keys(props), "children") < indexOf(keys(props), "item-template");
+
   const { values, rootRef } = useRegisterBindings({ ...props }, props.id);
+  const { namedData } = useTemplateData({
+    data: itemTemplate?.data as Expression<object>,
+    name: itemTemplate?.name,
+  });
+
+  const renderedChildren = useMemo(() => {
+    return props.children ? EnsembleRuntime.render(props?.children) : null;
+  }, [props.children]);
+
   return (
     <Col
       className={values?.styles?.names}
@@ -30,12 +46,19 @@ export const Column: React.FC<FlexboxProps> = (props) => {
           ? getColor(props.styles.borderColor)
           : undefined,
         borderStyle: props.styles?.borderWidth ? "solid" : undefined,
-
         display: "flex",
+        minHeight: "unset",
         ...(get(props, "styles") as object),
       }}
     >
-      {renderedChildren}
+      {childrenFirst && renderedChildren}
+      {namedData?.map((n, index) => (
+        <CustomScopeProvider key={index} value={n as CustomScope}>
+          {itemTemplate?.template &&
+            EnsembleRuntime.render([itemTemplate.template])}
+        </CustomScopeProvider>
+      ))}
+      {!childrenFirst && renderedChildren}
     </Col>
   );
 };
