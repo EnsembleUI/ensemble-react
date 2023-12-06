@@ -41,9 +41,6 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
           customScope,
           resolvedWidgetId,
         );
-        if (!valueAtom) {
-          return;
-        }
         return { name, valueAtom };
       }),
     );

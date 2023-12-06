@@ -24,3 +24,4 @@ export * from "./Carousel";
 export * from "./PopupMenu";
 export * from "./Dropdown";
 export * from "./Stepper";
+export * from "./ToggleButton";

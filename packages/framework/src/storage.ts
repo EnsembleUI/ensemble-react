@@ -1,5 +1,6 @@
-import { screenAtom } from "./state/screen";
+import { focusAtom } from "jotai-optics";
 import { ensembleStore } from "./state/platform";
+import { screenAtom } from "./state/screen";
 
 export interface EnsembleStorage {
   set: (key: string, value: unknown) => void;
@@ -7,7 +8,9 @@ export interface EnsembleStorage {
   delete: (key: string) => unknown;
 }
 
-// FIXME: updating storage does not trigger atom update, need atomEffect or something else to make reactive
+/**
+ * @deprecated For most cases use `useEnsembleStorage` hook instead
+ */
 export const EnsembleStorage: EnsembleStorage = {
   set: (key: string, value: unknown): void => {
     const screenContext = ensembleStore.get(screenAtom);
@@ -26,3 +29,7 @@ export const EnsembleStorage: EnsembleStorage = {
     return oldValue;
   },
 };
+
+export const screenStorageAtom = focusAtom(screenAtom, (optic) => {
+  return optic.prop("storage");
+});

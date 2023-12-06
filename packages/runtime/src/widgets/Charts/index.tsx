@@ -18,8 +18,10 @@ import {
   type Expression,
   useScreenContext,
   useWidgetId,
+  useEnsembleStorage,
 } from "@ensembleui/react-framework";
 import { Alert } from "antd";
+import { isEqual } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { BarChart } from "./BarChart";
@@ -75,6 +77,7 @@ const CONFIG_EVAL_EXPIRY = 5000;
 
 export const Chart: React.FC<ChartProps> = (props) => {
   const context = useScreenContext();
+  const storage = useEnsembleStorage();
   const { rootRef } = useWidgetId(props.id);
   const [error, setError] = useState<unknown>(null);
   const [isExpired, setIsExpired] = useState(false);
@@ -85,24 +88,26 @@ export const Chart: React.FC<ChartProps> = (props) => {
   }, []);
 
   useMemo(() => {
-    if (config) {
-      return;
-    }
-
     try {
       const evaluatedConfig = evaluate<ChartConfigs>(
         context as ScreenContextDefinition,
         // eslint-disable-next-line prefer-named-capture-group
         props.config?.toString()?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
+        {
+          ensemble: {
+            storage,
+          },
+        },
       );
-      setConfig(evaluatedConfig);
-      setError(null);
+      if (!isEqual(evaluatedConfig, config)) {
+        setConfig(evaluatedConfig);
+      }
     } catch (e) {
       if (!error) {
         setError(e);
       }
     }
-  }, [config, context, error, props.config]);
+  }, [config, context, error, props.config, storage]);
 
   if (!props.config) {
     return <Alert message="Configuration is missing" type="error" />;
