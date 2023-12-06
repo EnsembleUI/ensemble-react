@@ -7,6 +7,7 @@ import type { ScreenContextDefinition } from "../state";
 import { screenAtom } from "../state";
 import { evaluate } from "../evaluate";
 import type { Expression } from "../shared/common";
+import { useEnsembleStorage } from "./useEnsembleStorage";
 
 export type TemplateData = object | unknown[];
 export interface TemplateDataProps {
@@ -30,6 +31,7 @@ export const useTemplateData = ({
   namedData: object[];
 } => {
   const isExpression = isString(data);
+  const storage = useEnsembleStorage();
   const dataAtom = useMemo(
     () =>
       selectAtom<ScreenContextDefinition, TemplateData>(
@@ -41,7 +43,7 @@ export const useTemplateData = ({
           try {
             return evaluate(screenContext, String(data), {
               ensemble: {
-                storage: { get: (key: string) => screenContext.storage[key] },
+                storage,
               },
             });
           } catch (e) {
@@ -50,7 +52,7 @@ export const useTemplateData = ({
         },
         isEqual,
       ),
-    [data, isExpression],
+    [data, isExpression, storage],
   );
   const rawData = useAtomValue(dataAtom);
   const namedData = useMemo(

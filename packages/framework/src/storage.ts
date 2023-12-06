@@ -1,7 +1,4 @@
-import { useAtom } from "jotai";
 import { focusAtom } from "jotai-optics";
-import { clone } from "lodash-es";
-import { useCallback } from "react";
 import { ensembleStore } from "./state/platform";
 import { screenAtom } from "./state/screen";
 
@@ -11,7 +8,9 @@ export interface EnsembleStorage {
   delete: (key: string) => unknown;
 }
 
-// FIXME: updating storage does not trigger atom update, need atomEffect or something else to make reactive
+/**
+ * @deprecated For most cases use `useEnsembleStorage` hook instead
+ */
 export const EnsembleStorage: EnsembleStorage = {
   set: (key: string, value: unknown): void => {
     const screenContext = ensembleStore.get(screenAtom);
@@ -34,35 +33,3 @@ export const EnsembleStorage: EnsembleStorage = {
 export const screenStorageAtom = focusAtom(screenAtom, (optic) => {
   return optic.prop("storage");
 });
-
-export const useScreenStorage = (): EnsembleStorage => {
-  const [storage, setStorage] = useAtom(screenStorageAtom);
-
-  const set = useCallback(
-    (key: string, value: unknown) => {
-      storage[key] = value;
-      // console.log(`set${key}`);
-      setStorage(clone(storage));
-    },
-    [setStorage, storage],
-  );
-
-  const get = useCallback((key: string) => {
-    // console.log(`get${key}`);
-    // console.log(storage);
-    return EnsembleStorage.get(key);
-  }, []);
-
-  const _delete = useCallback(
-    (key: string) => {
-      delete storage[key];
-      setStorage(clone(storage));
-    },
-    [setStorage, storage],
-  );
-  return {
-    set,
-    get,
-    delete: _delete,
-  };
-};

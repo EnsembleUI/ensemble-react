@@ -25,13 +25,13 @@ export const widgetFamilyAtom = atomFamily((id: string) =>
   focusAtom(screenAtom, (optics) => optics.path("widgets", id)),
 );
 
-export const createBindingAtom = (
+export const createBindingAtom = <T = unknown>(
   expression?: Expression<unknown>,
   context?: Record<string, unknown>,
   widgetId?: string,
-): Atom<unknown> | undefined => {
+): Atom<T | undefined> => {
   if (!isExpression(expression)) {
-    return;
+    return atom(undefined);
   }
 
   const rawJsExpression = sanitizeJs(expression);
@@ -56,7 +56,7 @@ export const createBindingAtom = (
     });
   } catch (e) {
     error(e);
-    return;
+    return atom(undefined);
   }
 
   const dependencyEntries = identifiers.map((identifier) => {
@@ -91,7 +91,7 @@ export const createBindingAtom = (
       },
     ) as Record<string, unknown>;
     try {
-      const result = evaluate(
+      const result = evaluate<T>(
         { ...defaultScreenContext, data },
         rawJsExpression,
         evaluationContext,
@@ -104,6 +104,7 @@ export const createBindingAtom = (
       return result;
     } catch (e) {
       debug(e);
+      return undefined;
     }
   });
 

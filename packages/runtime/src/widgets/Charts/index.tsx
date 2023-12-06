@@ -18,6 +18,7 @@ import {
   type Expression,
   useScreenContext,
   useWidgetId,
+  useEnsembleStorage,
 } from "@ensembleui/react-framework";
 import { Alert } from "antd";
 import { isEqual } from "lodash-es";
@@ -76,6 +77,7 @@ const CONFIG_EVAL_EXPIRY = 5000;
 
 export const Chart: React.FC<ChartProps> = (props) => {
   const context = useScreenContext();
+  const storage = useEnsembleStorage();
   const { rootRef } = useWidgetId(props.id);
   const [error, setError] = useState<unknown>(null);
   const [isExpired, setIsExpired] = useState(false);
@@ -93,7 +95,7 @@ export const Chart: React.FC<ChartProps> = (props) => {
         props.config?.toString()?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
         {
           ensemble: {
-            storage: { get: (key: string) => context?.storage[key] },
+            storage,
           },
         },
       );
@@ -105,7 +107,7 @@ export const Chart: React.FC<ChartProps> = (props) => {
         setError(e);
       }
     }
-  }, [config, context, error, props.config]);
+  }, [config, context, error, props.config, storage]);
 
   if (!props.config) {
     return <Alert message="Configuration is missing" type="error" />;

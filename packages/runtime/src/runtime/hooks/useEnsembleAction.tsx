@@ -8,7 +8,7 @@ import {
   ensembleStore,
   screenAtom,
   useScreenData,
-  useScreenStorage,
+  useEnsembleStorage,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -55,7 +55,7 @@ export const useExecuteCode: EnsembleActionHook<
 > = (action, options) => {
   const isCodeString = isString(action);
   const screen = useScreenContext();
-  const storage = useScreenStorage();
+  const storage = useEnsembleStorage();
   const js = useMemo(() => {
     if (!action) {
       return;
