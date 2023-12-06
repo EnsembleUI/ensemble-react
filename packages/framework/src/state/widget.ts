@@ -7,6 +7,7 @@ import { atomFamily } from "jotai/utils";
 import type { Expression } from "../shared";
 import { isExpression, sanitizeJs, debug, error } from "../shared";
 import { evaluate } from "../evaluate";
+import { screenStorageAtom } from "../storage";
 import { defaultScreenContext, screenAtom, screenDataAtom } from "./screen";
 
 export interface WidgetState<T = Record<string, unknown>> {
@@ -24,13 +25,13 @@ export const widgetFamilyAtom = atomFamily((id: string) =>
   focusAtom(screenAtom, (optics) => optics.path("widgets", id)),
 );
 
-export const createBindingAtom = (
+export const createBindingAtom = <T = unknown>(
   expression?: Expression<unknown>,
   context?: Record<string, unknown>,
   widgetId?: string,
-): Atom<unknown> | undefined => {
+): Atom<T | undefined> => {
   if (!isExpression(expression)) {
-    return;
+    return atom(undefined);
   }
 
   const rawJsExpression = sanitizeJs(expression);
@@ -55,7 +56,7 @@ export const createBindingAtom = (
     });
   } catch (e) {
     error(e);
-    return;
+    return atom(undefined);
   }
 
   const dependencyEntries = identifiers.map((identifier) => {
@@ -67,6 +68,10 @@ export const createBindingAtom = (
 
   const bindingAtom = atom((get) => {
     const data = get(screenDataAtom);
+    let storage: Record<string, unknown> | undefined;
+    if (rawJsExpression.includes("ensemble.storage")) {
+      storage = get(screenStorageAtom);
+    }
     const valueEntries = dependencyEntries.map(({ name, dependencyAtom }) => {
       const value = get(dependencyAtom);
       debug(
@@ -79,9 +84,14 @@ export const createBindingAtom = (
     const evaluationContext = merge(
       omitBy(Object.fromEntries(valueEntries), isNil),
       context,
+      {
+        ensemble: {
+          storage: { get: (key: string) => storage?.[key] },
+        },
+      },
     ) as Record<string, unknown>;
     try {
-      const result = evaluate(
+      const result = evaluate<T>(
         { ...defaultScreenContext, data },
         rawJsExpression,
         evaluationContext,
@@ -94,6 +104,7 @@ export const createBindingAtom = (
       return result;
     } catch (e) {
       debug(e);
+      return undefined;
     }
   });
 

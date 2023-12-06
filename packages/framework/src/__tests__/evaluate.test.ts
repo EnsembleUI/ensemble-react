@@ -1,5 +1,6 @@
 import { evaluate } from "../evaluate";
 import { ensembleStore, screenAtom } from "../state";
+import { EnsembleStorage } from "../storage";
 
 const TEST_SCREEN_CONTEXT = {
   widgets: {
@@ -40,6 +41,9 @@ test("sets values in storage", () => {
     const value = "foo" + "bar"
     ensemble.storage.set("value", value)
     `,
+    {
+      ensemble: { storage: EnsembleStorage },
+    },
   );
 
   const updatedValue = ensembleStore.get(screenAtom);
@@ -57,6 +61,9 @@ test("reads back values from storage", () => {
     ensemble.storage.set("value", value)
     ensemble.storage.get("value")
     `,
+    {
+      ensemble: { storage: EnsembleStorage },
+    },
   );
 
   expect(result).toEqual("foobaz");

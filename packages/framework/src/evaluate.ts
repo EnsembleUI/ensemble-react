@@ -1,7 +1,6 @@
 import { isEmpty, last, mapKeys, merge, toString } from "lodash-es";
 import type { ScreenContextDefinition } from "./state/screen";
 import type { InvokableMethods } from "./state/widget";
-import { EnsembleStorage } from "./storage";
 import { sanitizeJs, debug } from "./shared";
 
 export const buildEvaluateFn = (
@@ -27,9 +26,6 @@ export const buildEvaluateFn = (
     ...Object.entries(screen.data),
     ...Object.entries(context ?? {}),
   ]);
-  invokableObj.ensemble = {
-    storage: EnsembleStorage,
-  };
 
   const globalBlock = screen.model?.global;
 
@@ -76,6 +72,15 @@ const formatJs = (js?: string): string => {
 const addGlobalBlock = (js: string, globalBlock?: string): string =>
   globalBlock ? `${globalBlock}\n\n${js}` : js;
 
+/**
+ * @deprecated Consider using createBinding which will build a custom scope
+ * rather than requiring full screen state, which can be expensive to update.
+ *
+ * @param screen-the current screen state
+ * @param js- the javascript to evaluate
+ * @param context- any additional context needed for the script
+ * @returns the result of the evaluated expression/script
+ */
 export const evaluate = <T = unknown>(
   screen: ScreenContextDefinition,
   js?: string,
