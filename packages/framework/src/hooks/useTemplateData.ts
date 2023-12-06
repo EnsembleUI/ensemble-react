@@ -4,10 +4,10 @@ import { isString, map } from "lodash-es";
 import isEqual from "react-fast-compare";
 import { selectAtom } from "jotai/utils";
 import type { ScreenContextDefinition } from "../state";
-import { screenAtom } from "../state";
+import { screenAtom } from "../state/screen";
 import { evaluate } from "../evaluate";
 import type { Expression } from "../shared/common";
-import { useEnsembleStorage } from "./useEnsembleStorage";
+import { createStorageApi } from "./useEnsembleStorage";
 
 export type TemplateData = object | unknown[];
 export interface TemplateDataProps {
@@ -31,7 +31,6 @@ export const useTemplateData = ({
   namedData: object[];
 } => {
   const isExpression = isString(data);
-  const storage = useEnsembleStorage();
   const dataAtom = useMemo(
     () =>
       selectAtom<ScreenContextDefinition, TemplateData>(
@@ -43,7 +42,7 @@ export const useTemplateData = ({
           try {
             return evaluate(screenContext, String(data), {
               ensemble: {
-                storage,
+                storage: createStorageApi(screenContext.storage),
               },
             });
           } catch (e) {
@@ -52,7 +51,7 @@ export const useTemplateData = ({
         },
         isEqual,
       ),
-    [data, isExpression, storage],
+    [data, isExpression],
   );
   const rawData = useAtomValue(dataAtom);
   const namedData = useMemo(

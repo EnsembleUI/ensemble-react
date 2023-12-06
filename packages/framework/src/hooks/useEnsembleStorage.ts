@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import { clone, merge } from "lodash-es";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import type { EnsembleStorage } from "../storage";
 import { screenStorageAtom } from "../storage";
 
@@ -9,29 +9,40 @@ export const useEnsembleStorage = (): EnsembleStorage => {
   // Use a buffer so we can perform imperative changes without forcing re-render
   const storageBuffer = useMemo<Record<string, unknown>>(() => ({}), []);
 
-  useEffect(() => {
+  useMemo(() => {
     merge(storageBuffer, storage);
   }, [storageBuffer, storage]);
 
   const storageApi = useMemo(
-    () => ({
-      set: (key: string, value: unknown): void => {
-        storageBuffer[key] = value;
-        setStorage(clone(storageBuffer));
-      },
-      get: (key: string): unknown => {
-        return storageBuffer[key];
-      },
-      delete: (key: string): unknown => {
-        const oldVal = storageBuffer[key];
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-        delete storageBuffer[key];
-        setStorage(clone(storageBuffer));
-        return oldVal;
-      },
-    }),
+    () => createStorageApi(storageBuffer, setStorage),
     [setStorage, storageBuffer],
   );
 
   return storageApi;
+};
+
+export const createStorageApi = (
+  storage?: Record<string, unknown>,
+  setStorage?: (storage: Record<string, unknown>) => void,
+): EnsembleStorage => {
+  return {
+    set: (key: string, value: unknown): void => {
+      if (storage) {
+        storage[key] = value;
+        setStorage?.(clone(storage));
+      }
+    },
+    get: (key: string): unknown => {
+      return storage?.[key];
+    },
+    delete: (key: string): unknown => {
+      const oldVal = storage?.[key];
+      if (storage) {
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+        delete storage[key];
+        setStorage?.(clone(storage));
+      }
+      return oldVal;
+    },
+  };
 };
