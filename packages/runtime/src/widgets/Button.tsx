@@ -15,6 +15,7 @@ export type ButtonProps = {
   endingIcon?: IconProps;
   styles?: {
     textColor: string;
+    gap: string | number;
   };
 } & EnsembleWidgetProps;
 
