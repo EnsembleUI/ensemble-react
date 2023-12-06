@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.0.12
+
+### Patch Changes
+
+- bf12a2e: Fix runtime package dependency
+
 ## 0.0.11
 
 ### Patch Changes
