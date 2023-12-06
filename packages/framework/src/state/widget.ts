@@ -8,6 +8,7 @@ import type { Expression } from "../shared";
 import { isExpression, sanitizeJs, debug, error } from "../shared";
 import { evaluate } from "../evaluate";
 import { screenStorageAtom } from "../storage";
+import { createStorageApi } from "../hooks/useEnsembleStorage";
 import { defaultScreenContext, screenAtom, screenDataAtom } from "./screen";
 
 export interface WidgetState<T = Record<string, unknown>> {
@@ -86,7 +87,7 @@ export const createBindingAtom = <T = unknown>(
       context,
       {
         ensemble: {
-          storage: { get: (key: string) => storage?.[key] },
+          storage: createStorageApi(storage),
         },
       },
     ) as Record<string, unknown>;
