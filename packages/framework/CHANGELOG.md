@@ -1,5 +1,13 @@
 # @ensembleui/react-framework
 
+## 0.0.11
+
+### Patch Changes
+
+- 284be43: Only store state for widgets with explicit ids
+- 284be43: Fix data context keys being overridden by undefined widget keys
+- dbd93e5: Trigger binding updates on storage change
+
 ## 0.0.10
 
 ### Patch Changes

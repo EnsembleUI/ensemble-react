@@ -1,5 +1,16 @@
 # @ensembleui/react-runtime
 
+## 0.0.11
+
+### Patch Changes
+
+- 67bffb7: Skip screen height calculation if modal
+- 284be43: Only store state for widgets with explicit ids
+- b70f000: Skip navigating to selected screen if path is not empty
+- 51bfb7c: Register custom widget inputs as bindings
+- e238827: Improve chart config evaluation
+- dbd93e5: Trigger binding updates on storage change
+
 ## 0.0.10
 
 ### Patch Changes
