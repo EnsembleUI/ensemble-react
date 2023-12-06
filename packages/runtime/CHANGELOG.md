@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.0.13
+
+### Patch Changes
+
+- 84deb25: Normalize dependencies
+
 ## 0.0.12
 
 ### Patch Changes
