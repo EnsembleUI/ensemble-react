@@ -1,4 +1,4 @@
-import { isEmpty, last, mapKeys, merge, toString } from "lodash-es";
+import { isEmpty, last, merge, toString } from "lodash-es";
 import type { ScreenContextDefinition } from "./state/screen";
 import type { InvokableMethods } from "./state/widget";
 import { sanitizeJs, debug } from "./shared";
@@ -18,10 +18,6 @@ export const buildEvaluateFn = (
 
   const invokableObj = Object.fromEntries([
     ...widgets,
-    ...Object.entries(
-      mapKeys(screen.app?.theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
-    ),
-    ...Object.entries({ styles: screen.app?.theme?.Styles }),
     ...Object.entries(screen.inputs ?? {}),
     ...Object.entries(screen.data),
     ...Object.entries(context ?? {}),

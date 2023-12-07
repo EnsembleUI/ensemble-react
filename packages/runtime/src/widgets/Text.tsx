@@ -6,7 +6,6 @@ import { useState } from "react";
 import { Typography } from "antd";
 import { WidgetRegistry } from "../registry";
 import type { BaseTextProps } from "../shared/types";
-import { getTextAlign } from "../shared/styles";
 
 export interface TextStyles {
   fontSize?: string | number;
@@ -35,16 +34,7 @@ export const Text: React.FC<TextProps> = (props) => {
     <Typography.Text
       className={values?.styles?.names}
       ref={rootRef}
-      style={{
-        textAlign: getTextAlign(props.textAlign),
-        fontSize: props.styles?.fontSize,
-        fontWeight: props.styles?.fontWeight,
-        color: values?.color,
-        fontFamily: props.styles?.fontFamily,
-        backgroundColor: props.styles?.backgroundColor,
-        padding: props.styles?.padding,
-        borderRadius: props.styles?.borderRadius,
-      }}
+      style={{ ...values?.styles }}
     >
       {values?.text}
     </Typography.Text>

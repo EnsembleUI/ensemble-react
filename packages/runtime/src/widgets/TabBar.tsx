@@ -131,7 +131,7 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
       <style>{customStyles}</style>
       <Tabs
         defaultActiveKey={setDefaultSelectedTab()}
-        style={{ ...props.styles }}
+        style={{ ...values?.styles }}
       >
         {values?.items.map((tabItem) => (
           <TabPane

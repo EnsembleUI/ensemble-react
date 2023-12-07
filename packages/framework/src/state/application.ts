@@ -1,4 +1,5 @@
 import { atom } from "jotai";
+import { selectAtom } from "jotai/utils";
 import type { EnsembleAppModel } from "../shared";
 
 export interface ApplicationContextDefinition {
@@ -26,3 +27,7 @@ export const defaultApplicationContext = {
 export const appAtom = atom<ApplicationContextDefinition>(
   defaultApplicationContext,
 );
+
+export const themeAtom = selectAtom(appAtom, (appContext) => {
+  return appContext.application?.theme;
+});

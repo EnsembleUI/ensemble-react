@@ -32,7 +32,6 @@ export const Row: React.FC<FlexboxProps> = (props) => {
       className={values?.styles?.names}
       ref={rootRef}
       style={{
-        ...values?.styles,
         justifyContent: props.mainAxis && getMainAxis(props.mainAxis),
         alignItems: props.crossAxis && getCrossAxis(props.crossAxis),
         margin: props.margin,
@@ -47,12 +46,12 @@ export const Row: React.FC<FlexboxProps> = (props) => {
           ? getColor(props.styles.borderColor)
           : undefined,
         borderStyle: props.styles?.borderWidth ? "solid" : undefined,
-        ...(get(props, "styles") as object),
         maxWidth: props.maxWidth ?? "100%",
         minWidth: props.minWidth,
         flexDirection: "row",
         flexFlow: "unset",
         flexGrow: "unset",
+        ...values?.styles,
       }}
     >
       {childrenFirst ? renderedChildren : null}
