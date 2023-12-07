@@ -1,6 +1,11 @@
 import type { NavigateModalScreenAction } from "@ensembleui/react-framework";
-import { useApplicationContext } from "@ensembleui/react-framework";
-import { isString } from "lodash-es";
+import {
+  createStorageApi,
+  evaluate,
+  findExpressions,
+  useScreenContext,
+} from "@ensembleui/react-framework";
+import { isString, set } from "lodash-es";
 import { useCallback, useContext, useMemo } from "react";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
@@ -12,7 +17,7 @@ export const useNavigateModalScreen: EnsembleActionHook<
   NavigateModalScreenAction
 > = (action?: NavigateModalScreenAction) => {
   const { openModal } = useContext(ModalContext) || {};
-  const app = useApplicationContext();
+  const screenContext = useScreenContext();
 
   const isStringAction = isString(action);
   const screenName = isStringAction ? action : action?.name;
@@ -27,35 +32,47 @@ export const useNavigateModalScreen: EnsembleActionHook<
     } = {},
   } = isStringAction ? {} : action || {};
 
-  const { screen } = useMemo(() => {
-    const matchingScreen = app?.application?.screens.find(
+  const { matchingScreen } = useMemo(() => {
+    const screen = screenContext?.app?.screens.find(
       (s) => s.name.toLowerCase() === screenName?.toLowerCase(),
     );
-    return { screen: matchingScreen };
-  }, [app, screenName]);
+    return { matchingScreen: screen };
+  }, [screenContext, screenName]);
 
   const callback = useCallback(() => {
-    if (screen)
-      openModal?.(
-        <EnsembleScreen
-          inputs={isStringAction ? undefined : action?.inputs}
-          isModal
-          screen={screen}
-        />,
-        {
-          maskClosable,
-          position,
-          height,
-          width,
-          margin,
-          padding,
-        },
-      );
+    if (!matchingScreen) {
+      return;
+    }
+
+    const inputs = !isString(action) && action?.inputs ? action.inputs : {};
+    if (screenContext) {
+      const expressionMap: string[][] = [];
+      const storage = createStorageApi(screenContext.storage);
+      findExpressions(inputs, [], expressionMap);
+      expressionMap.forEach(([path, value]) => {
+        const result = evaluate(screenContext, value, {
+          ensemble: { storage },
+        });
+        set(inputs, path, result);
+      });
+    }
+
+    openModal?.(
+      <EnsembleScreen inputs={inputs} isModal screen={matchingScreen} />,
+      {
+        maskClosable,
+        position,
+        height,
+        width,
+        margin,
+        padding,
+      },
+    );
   }, [
-    screen,
-    openModal,
-    isStringAction,
+    matchingScreen,
     action,
+    screenContext,
+    openModal,
     maskClosable,
     position,
     height,

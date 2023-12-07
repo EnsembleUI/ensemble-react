@@ -9,7 +9,12 @@ import { isExpression, sanitizeJs, debug, error } from "../shared";
 import { evaluate } from "../evaluate";
 import { screenStorageAtom } from "../storage";
 import { createStorageApi } from "../hooks/useEnsembleStorage";
-import { defaultScreenContext, screenAtom, screenDataAtom } from "./screen";
+import {
+  defaultScreenContext,
+  screenAtom,
+  screenDataAtom,
+  screenInputAtom,
+} from "./screen";
 
 export interface WidgetState<T = Record<string, unknown>> {
   values: T;
@@ -69,6 +74,7 @@ export const createBindingAtom = <T = unknown>(
 
   const bindingAtom = atom((get) => {
     const data = get(screenDataAtom);
+    const inputs = get(screenInputAtom);
     let storage: Record<string, unknown> | undefined;
     if (rawJsExpression.includes("ensemble.storage")) {
       storage = get(screenStorageAtom);
@@ -83,6 +89,7 @@ export const createBindingAtom = <T = unknown>(
       return [name, value?.values];
     });
     const evaluationContext = merge(
+      inputs,
       omitBy(Object.fromEntries(valueEntries), isNil),
       context,
       {

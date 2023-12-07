@@ -68,7 +68,7 @@ View:
                                         navigateModalScreen:
                                           name: Create Group
                                           inputs:
-                                            message: hello world
+                                            message: ${"hello" + getData.body.records.length}
                                           maskClosable: false
                                           styles:
                                             position: right
@@ -122,6 +122,8 @@ View:
                                                     navigateModalScreen:
                                                       name: Create Group
                                                       maskClosable: false
+                                                      inputs:
+                                                        message: ${"hello" + getData.body.records.length}
 
                                   - else:
                                     GridView:
