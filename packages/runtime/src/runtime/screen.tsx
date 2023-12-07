@@ -4,6 +4,8 @@ import type {
 } from "@ensembleui/react-framework";
 import { ScreenContextProvider } from "@ensembleui/react-framework";
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { merge } from "lodash-es";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { useEnsembleAction } from "./hooks/useEnsembleAction";
@@ -22,11 +24,11 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
   inputs,
   isModal,
 }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { state } = useLocation();
+  const mergedInputs = merge({}, state as Record<string, unknown>, inputs);
   return (
-    <ScreenContextProvider
-      context={inputs ? { inputs } : undefined}
-      screen={screen}
-    >
+    <ScreenContextProvider context={{ inputs: mergedInputs }} screen={screen}>
       <OnLoadAction action={screen.onLoad}>
         <EnsembleHeader header={screen.header} />
         <EnsembleBody

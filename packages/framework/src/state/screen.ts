@@ -42,6 +42,10 @@ export const screenApiAtom = focusAtom(screenAtom, (optic) => {
   return optic.prop("model").optional().prop("apis");
 });
 
+export const screenInputAtom = focusAtom(screenAtom, (optic) =>
+  optic.prop("inputs"),
+);
+
 export const useScreenData = (): { apis?: EnsembleAPIModel[] } & Pick<
   ScreenContextDefinition,
   "data"
