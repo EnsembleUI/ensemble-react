@@ -1,5 +1,16 @@
 # @ensembleui/react-runtime
 
+## 0.1.0
+
+### Minor Changes
+
+- c59e366: added ToggleButton widget
+
+### Patch Changes
+
+- afdf178: Add item-template support in Row and Column widgets
+- e37dece: Evaluate inputs before navigating screen
+
 ## 0.0.13
 
 ### Patch Changes
