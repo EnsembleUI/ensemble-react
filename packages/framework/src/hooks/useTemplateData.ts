@@ -9,9 +9,9 @@ import { evaluate } from "../evaluate";
 import type { Expression } from "../shared/common";
 import { createStorageApi } from "./useEnsembleStorage";
 
-export type TemplateData = object | unknown[];
+export type TemplateData = object | unknown[] | undefined;
 export interface TemplateDataProps {
-  data: Expression<TemplateData>;
+  data?: Expression<TemplateData>;
   name?: string;
 }
 
@@ -40,11 +40,6 @@ export const useTemplateData = ({
             return data;
           }
           try {
-            if (Array.isArray(data)) {
-              return data.map((item) => {
-                return String(item);
-              });
-            }
             return evaluate(screenContext, String(data), {
               ensemble: {
                 storage: createStorageApi(screenContext.storage),
