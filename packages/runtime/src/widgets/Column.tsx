@@ -2,30 +2,29 @@ import { useMemo } from "react";
 import { Col } from "antd";
 import { get, indexOf, keys } from "lodash-es";
 import {
-  type CustomScope,
   CustomScopeProvider,
   useRegisterBindings,
   useTemplateData,
-  Expression,
 } from "@ensembleui/react-framework";
+import type { CustomScope } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import type { FlexboxProps } from "../shared/types";
 import { getColor, getCrossAxis, getMainAxis } from "../shared/styles";
 
 export const Column: React.FC<FlexboxProps> = (props) => {
-  const itemTemplate = props["item-template"];
+  const { "item-template": itemTemplate, ...rest } = props;
   const childrenFirst =
     indexOf(keys(props), "children") < indexOf(keys(props), "item-template");
 
-  const { values, rootRef } = useRegisterBindings({ ...props }, props.id);
+  const { values, rootRef } = useRegisterBindings({ ...rest }, props.id);
   const { namedData } = useTemplateData({
-    data: itemTemplate?.data as Expression<object>,
+    data: itemTemplate?.data,
     name: itemTemplate?.name,
   });
 
   const renderedChildren = useMemo(() => {
-    return props.children ? EnsembleRuntime.render(props?.children) : null;
+    return props.children ? EnsembleRuntime.render(props.children) : null;
   }, [props.children]);
 
   return (
@@ -51,11 +50,12 @@ export const Column: React.FC<FlexboxProps> = (props) => {
         ...(get(props, "styles") as object),
       }}
     >
-      {childrenFirst && renderedChildren}
-      {namedData?.map((n, index) => (
+      {childrenFirst ? renderedChildren : null}
+      {namedData.map((n, index) => (
         <CustomScopeProvider key={index} value={n as CustomScope}>
-          {itemTemplate?.template &&
-            EnsembleRuntime.render([itemTemplate.template])}
+          {itemTemplate?.template
+            ? EnsembleRuntime.render([itemTemplate.template])
+            : null}
         </CustomScopeProvider>
       ))}
       {!childrenFirst && renderedChildren}

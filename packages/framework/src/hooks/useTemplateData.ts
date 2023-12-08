@@ -9,9 +9,9 @@ import { evaluate } from "../evaluate";
 import type { Expression } from "../shared/common";
 import { createStorageApi } from "./useEnsembleStorage";
 
-export type TemplateData = object | unknown[];
+export type TemplateData = object | unknown[] | undefined;
 export interface TemplateDataProps {
-  data: Expression<TemplateData>;
+  data?: Expression<TemplateData>;
   name?: string;
 }
 
