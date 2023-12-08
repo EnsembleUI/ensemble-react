@@ -1,5 +1,20 @@
 # @ensembleui/react-starter
 
+## 0.2.0
+
+### Minor Changes
+
+- c59e366: added ToggleButton widget
+
+### Patch Changes
+
+- afdf178: Add item-template support in Row and Column widgets
+- Updated dependencies [afdf178]
+- Updated dependencies [e37dece]
+- Updated dependencies [c59e366]
+  - @ensembleui/react-runtime@0.1.0
+  - @ensembleui/react-framework@0.1.0
+
 ## 0.1.13
 
 ### Patch Changes
