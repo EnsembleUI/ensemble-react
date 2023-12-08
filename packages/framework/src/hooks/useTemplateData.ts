@@ -42,11 +42,7 @@ export const useTemplateData = ({
           try {
             if (Array.isArray(data)) {
               return data.map((item) => {
-                return evaluate(screenContext, String(item), {
-                  ensemble: {
-                    storage: createStorageApi(screenContext.storage),
-                  },
-                });
+                return String(item);
               });
             }
             return evaluate(screenContext, String(data), {
