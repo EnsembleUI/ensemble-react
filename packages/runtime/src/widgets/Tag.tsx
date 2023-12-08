@@ -37,7 +37,7 @@ export const Tag: React.FC<TagProps> = (props) => {
     props.styles?.backgroundColor,
   );
   const [textColor, setTextColor] = useState(props.styles?.textColor);
-  const { values } = useRegisterBindings(
+  const { values, rootRef } = useRegisterBindings(
     { ...props, text, backgroundColor, textColor },
     props.id,
     {
@@ -85,6 +85,7 @@ export const Tag: React.FC<TagProps> = (props) => {
 
   return (
     <div
+      ref={rootRef}
       style={{
         display: "flex",
       }}
