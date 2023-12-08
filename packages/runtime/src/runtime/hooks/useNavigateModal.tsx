@@ -3,9 +3,10 @@ import {
   createStorageApi,
   evaluate,
   findExpressions,
+  useCustomScope,
   useScreenContext,
 } from "@ensembleui/react-framework";
-import { isString, set } from "lodash-es";
+import { cloneDeep, isString, set } from "lodash-es";
 import { useCallback, useContext, useMemo } from "react";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
@@ -18,6 +19,7 @@ export const useNavigateModalScreen: EnsembleActionHook<
 > = (action?: NavigateModalScreenAction) => {
   const { openModal } = useContext(ModalContext) || {};
   const screenContext = useScreenContext();
+  const customScope = useCustomScope();
 
   const isStringAction = isString(action);
   const screenName = isStringAction ? action : action?.name;
@@ -44,7 +46,8 @@ export const useNavigateModalScreen: EnsembleActionHook<
       return;
     }
 
-    const inputs = !isString(action) && action?.inputs ? action.inputs : {};
+    const inputs =
+      !isString(action) && action?.inputs ? cloneDeep(action.inputs) : {};
     if (screenContext) {
       const expressionMap: string[][] = [];
       const storage = createStorageApi(screenContext.storage);
@@ -52,6 +55,7 @@ export const useNavigateModalScreen: EnsembleActionHook<
       expressionMap.forEach(([path, value]) => {
         const result = evaluate(screenContext, value, {
           ensemble: { storage },
+          ...customScope,
         });
         set(inputs, path, result);
       });
@@ -79,6 +83,7 @@ export const useNavigateModalScreen: EnsembleActionHook<
     width,
     margin,
     padding,
+    customScope,
   ]);
 
   return { callback };
