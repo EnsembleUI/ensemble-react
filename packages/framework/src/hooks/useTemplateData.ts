@@ -40,6 +40,15 @@ export const useTemplateData = ({
             return data;
           }
           try {
+            if (Array.isArray(data)) {
+              return data.map((item) => {
+                return evaluate(screenContext, String(item), {
+                  ensemble: {
+                    storage: createStorageApi(screenContext.storage),
+                  },
+                });
+              });
+            }
             return evaluate(screenContext, String(data), {
               ensemble: {
                 storage: createStorageApi(screenContext.storage),
