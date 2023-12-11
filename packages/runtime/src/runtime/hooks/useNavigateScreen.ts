@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import {
   useScreenContext,
   type NavigateScreenAction,
-  createStorageApi,
   evaluate,
   findExpressions,
   useCustomScope,
+  useEnsembleStorage,
 } from "@ensembleui/react-framework";
 import { cloneDeep, isString, set } from "lodash-es";
 import type { EnsembleActionHook } from "./useEnsembleAction";
@@ -19,6 +19,7 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
   const screenName = hasOptions ? action?.name : action;
   const screenContext = useScreenContext();
   const customScope = useCustomScope();
+  const storage = useEnsembleStorage();
 
   const { matchingScreen } = useMemo(() => {
     const screen = screenContext?.app?.screens.find(
@@ -35,7 +36,6 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
       !isString(action) && action?.inputs ? cloneDeep(action.inputs) : {};
     if (screenContext) {
       const expressionMap: string[][] = [];
-      const storage = createStorageApi(screenContext.storage);
       findExpressions(inputs, [], expressionMap);
       expressionMap.forEach(([path, value]) => {
         const result = evaluate(screenContext, value, {
@@ -48,6 +48,6 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
     return () => {
       navigate(`/${matchingScreen.name.toLowerCase()}`, { state: inputs });
     };
-  }, [matchingScreen, action, screenContext, customScope, navigate]);
+  }, [matchingScreen, action, screenContext, storage, customScope, navigate]);
   return callback ? { callback } : undefined;
 };

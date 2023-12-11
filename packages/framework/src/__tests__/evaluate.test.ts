@@ -1,6 +1,6 @@
 import { evaluate } from "../evaluate";
+import { createStorageApi } from "../hooks";
 import { ensembleStore, screenAtom } from "../state";
-import { EnsembleStorage } from "../storage";
 
 const TEST_SCREEN_CONTEXT = {
   widgets: {
@@ -16,6 +16,7 @@ const TEST_SCREEN_CONTEXT = {
   data: {},
   storage: {},
 };
+
 test("returns values from single line expressions", () => {
   const result = evaluate(TEST_SCREEN_CONTEXT, "test.value");
   expect(result).toEqual("foo");
@@ -34,6 +35,7 @@ test.value.concat(bar)
 
 test("sets values in storage", () => {
   const value = ensembleStore.get(screenAtom);
+  const store: Record<string, unknown> = {};
 
   evaluate(
     value,
@@ -42,17 +44,16 @@ test("sets values in storage", () => {
     ensemble.storage.set("value", value)
     `,
     {
-      ensemble: { storage: EnsembleStorage },
+      ensemble: { storage: createStorageApi(store) },
     },
   );
 
-  const updatedValue = ensembleStore.get(screenAtom);
-
-  expect(updatedValue.storage.value).toEqual("foobar");
+  expect(store.value).toEqual("foobar");
 });
 
 test("reads back values from storage", () => {
   const value = ensembleStore.get(screenAtom);
+  const store: Record<string, unknown> = {};
 
   const result = evaluate(
     value,
@@ -62,7 +63,7 @@ test("reads back values from storage", () => {
     ensemble.storage.get("value")
     `,
     {
-      ensemble: { storage: EnsembleStorage },
+      ensemble: { storage: createStorageApi(store) },
     },
   );
 
