@@ -74,7 +74,7 @@ View:
                   text: foot
                   styles:
                     color: "orange"
-                    
+
         - Markdown:
             id: askText
             text: "### Toggle Buttons"
@@ -134,6 +134,17 @@ View:
                   trailingText: I can be set to checked
                   value: false
                   enabled: true
+              - Date:
+                  id: myDate
+                  label: Example 1 - Date picker
+                  hintText: Placeholder value
+                  initialValue: "2023-12-20"
+                  # firstDate: "2023-12-15"
+                  # lastDate: "2023-12-25"
+                  onChange:
+                    executeCode:
+                      body: |-
+                        console.log(myDate)
               - Button:
                   label: Submit
                   submitForm: true
