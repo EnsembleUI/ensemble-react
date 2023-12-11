@@ -1,13 +1,8 @@
 import { useMemo } from "react";
-import { useAtomValue } from "jotai";
+import { type Atom, atom, useAtomValue } from "jotai";
 import { isString, map } from "lodash-es";
-import isEqual from "react-fast-compare";
-import { selectAtom } from "jotai/utils";
-import type { ScreenContextDefinition } from "../state";
-import { screenAtom } from "../state/screen";
-import { evaluate } from "../evaluate";
-import type { Expression } from "../shared/common";
-import { createStorageApi } from "./useEnsembleStorage";
+import { createBindingAtom } from "../state";
+import { isExpression, type Expression } from "../shared/common";
 
 export type TemplateData = object | unknown[] | undefined;
 export interface TemplateDataProps {
@@ -30,29 +25,17 @@ export const useTemplateData = ({
   rawData: TemplateData;
   namedData: object[];
 } => {
-  const isExpression = isString(data);
-  const dataAtom = useMemo(
-    () =>
-      selectAtom<ScreenContextDefinition, TemplateData>(
-        screenAtom,
-        (screenContext: ScreenContextDefinition) => {
-          if (!isExpression) {
-            return data;
-          }
-          try {
-            return evaluate(screenContext, String(data), {
-              ensemble: {
-                storage: createStorageApi(screenContext.storage),
-              },
-            });
-          } catch (e) {
-            return {};
-          }
-        },
-        isEqual,
-      ),
-    [data, isExpression],
-  );
+  const isDataString = isString(data);
+  const dataAtom = useMemo<Atom<TemplateData>>(() => {
+    if (!isDataString) {
+      return atom(data);
+    }
+    if (isExpression(data)) {
+      return createBindingAtom(data);
+    }
+    // Support legacy case where we don't always require curly braces
+    return createBindingAtom(`\${${String(data)}}`);
+  }, [data, isDataString]);
   const rawData = useAtomValue(dataAtom);
   const namedData = useMemo(
     () => map(rawData, (value: unknown) => ({ [name]: value })),

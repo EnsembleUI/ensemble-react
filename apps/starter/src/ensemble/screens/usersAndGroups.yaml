@@ -128,7 +128,7 @@ View:
                                   - else:
                                     GridView:
                                       item-template:
-                                        data: getData.body.records
+                                        data: ${getData.body.records}
                                         name: user
                                         template:
                                           Card:

@@ -1,8 +1,26 @@
 import { useAtom } from "jotai";
+import { createJSONStorage, atomWithStorage } from "jotai/utils";
 import { clone, merge } from "lodash-es";
 import { useMemo } from "react";
-import type { EnsembleStorage } from "../storage";
-import { screenStorageAtom } from "../storage";
+
+export interface EnsembleStorage {
+  set: (key: string, value: unknown) => void;
+  get: (key: string) => unknown;
+  delete: (key: string) => unknown;
+}
+
+const backingStorage = createJSONStorage<Record<string, unknown>>(
+  () => sessionStorage,
+);
+
+export const screenStorageAtom = atomWithStorage<Record<string, unknown>>(
+  "ensemble",
+  {},
+  backingStorage,
+  {
+    unstable_getOnInit: true,
+  },
+);
 
 export const useEnsembleStorage = (): EnsembleStorage => {
   const [storage, setStorage] = useAtom(screenStorageAtom);
