@@ -106,11 +106,20 @@ View:
                           }
 
         - DataGrid:
+            styles:
+              headerStyle:
+                backgroundColor: "white"
+                fontFamily: "Inter"
+                fontSize: "12px"
+                textColor: "#747184"
+                isDivider: true
+                borderBottom: false
             DataColumns:
               - label: Name
               - label: Performance
               - label: MoM
               - label: Progress
+
             item-template:
               data: getDummyJson.body.users
               name: user
