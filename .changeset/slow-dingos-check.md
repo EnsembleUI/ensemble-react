@@ -1,5 +1,5 @@
 ---
-"@ensembleui/react-runtime": minor
+"@ensembleui/react-runtime": patch
 "@ensembleui/react-starter": patch
 ---
 

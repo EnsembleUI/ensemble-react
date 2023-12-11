@@ -19,7 +19,7 @@ import { Button, IconButton, TextField } from "@mui/material";
 import dayjs from "dayjs";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { Edit } from "@mui/icons-material";
-import { toString } from "lodash";
+import { toString } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
@@ -69,16 +69,13 @@ export const Date: React.FC<DateProps> = (props) => {
 
   const action = useEnsembleAction(props.onChange);
   const onChangeCallback = useCallback(
-    (date: any) => {
-      const formattedDate = dayjs(toString(date))?.format(DateDisplayFormat);
-      formattedDate !== "Invalid Date" && setEnteredDate(formattedDate);
-
+    (date: string) => {
       if (!action) {
         return;
       }
       action.callback({
         [props?.id as string]: {
-          value: formattedDate,
+          value: date,
           setValue,
           ...props,
         },
@@ -86,6 +83,13 @@ export const Date: React.FC<DateProps> = (props) => {
     },
     [action, props],
   );
+
+  const onDateChange = (date: any): void => {
+    const formattedDate = dayjs(toString(date))?.format(DateDisplayFormat);
+    formattedDate !== "Invalid Date" && setEnteredDate(formattedDate);
+
+    onChangeCallback(formattedDate);
+  };
 
   const onDateAccept = (date: any): void => {
     setValue(dayjs(toString(date)));
@@ -126,15 +130,12 @@ export const Date: React.FC<DateProps> = (props) => {
             minDate={props.firstDate ? dayjs(props.firstDate) : undefined}
             onClose={(): void => setOpenPicker(false)}
             onAccept={onDateAccept}
-            onChange={onChangeCallback}
+            onChange={onDateChange}
             slots={{
               calendarHeader: CustomCalendarHeader,
               actionBar: CustomActionBar,
             }}
             slotProps={{
-              calendarHeader: {
-                labelId: value?.format(DateHeaderFormat),
-              },
               actionBar: {
                 actions: ["cancel", "accept"],
               },
