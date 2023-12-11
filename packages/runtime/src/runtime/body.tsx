@@ -48,9 +48,11 @@ export const EnsembleBody: React.FC<EnsembleBodyProps> = ({
   // default body styles
   const defaultStyles = {
     styles: {
-      height: !isModal
-        ? `calc(100vh - ${marginTop} - ${marginBottom})`
-        : undefined,
+      height:
+        // We only need to do this calculation if there's a footer otherwise, page can flow freely
+        !isModal && footer
+          ? `calc(100vh - ${marginTop} - ${marginBottom})`
+          : undefined,
       overflow: "auto",
     },
   };

@@ -1,4 +1,8 @@
-import type { EnsembleWidget, Expression } from "@ensembleui/react-framework";
+import type {
+  EnsembleWidget,
+  Expression,
+  TemplateData,
+} from "@ensembleui/react-framework";
 
 export type EnsembleWidgetStyles = Omit<React.CSSProperties, "direction"> & {
   names?: Expression<string>;
@@ -19,7 +23,7 @@ export type BaseTextProps = {
 
 export type FlexboxProps = {
   "item-template"?: {
-    data: Expression<object>;
+    data: Expression<TemplateData>;
     name: string;
     template: EnsembleWidget;
   };

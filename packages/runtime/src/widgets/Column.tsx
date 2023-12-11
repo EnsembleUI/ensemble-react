@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Col } from "antd";
-import { get, indexOf, keys } from "lodash-es";
+import { indexOf, keys } from "lodash-es";
 import {
   CustomScopeProvider,
   useRegisterBindings,
@@ -32,7 +32,6 @@ export const Column: React.FC<FlexboxProps> = (props) => {
       className={values?.styles?.names}
       ref={rootRef}
       style={{
-        ...values?.styles,
         flexDirection: "column",
         justifyContent: props.mainAxis && getMainAxis(props.mainAxis),
         alignItems: props.crossAxis && getCrossAxis(props.crossAxis),
@@ -47,7 +46,7 @@ export const Column: React.FC<FlexboxProps> = (props) => {
         borderStyle: props.styles?.borderWidth ? "solid" : undefined,
         display: "flex",
         minHeight: "unset",
-        ...(get(props, "styles") as object),
+        ...values?.styles,
       }}
     >
       {childrenFirst ? renderedChildren : null}

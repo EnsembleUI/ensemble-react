@@ -2,7 +2,7 @@ import { parseExpressionAt, tokTypes } from "acorn";
 import { focusAtom } from "jotai-optics";
 import type { Atom } from "jotai";
 import { atom } from "jotai";
-import { isNil, merge, omitBy } from "lodash-es";
+import { isNil, mapKeys, merge, omitBy } from "lodash-es";
 import { atomFamily } from "jotai/utils";
 import type { Expression } from "../shared";
 import { isExpression, sanitizeJs, debug, error } from "../shared";
@@ -15,6 +15,7 @@ import {
   screenDataAtom,
   screenInputAtom,
 } from "./screen";
+import { themeAtom } from "./application";
 
 export interface WidgetState<T = Record<string, unknown>> {
   values: T;
@@ -75,6 +76,7 @@ export const createBindingAtom = <T = unknown>(
   const bindingAtom = atom((get) => {
     const data = get(screenDataAtom);
     const inputs = get(screenInputAtom);
+    const theme = get(themeAtom);
     let storage: Record<string, unknown> | undefined;
     if (rawJsExpression.includes("ensemble.storage")) {
       storage = get(screenStorageAtom);
@@ -91,6 +93,8 @@ export const createBindingAtom = <T = unknown>(
     const evaluationContext = merge(
       inputs,
       omitBy(Object.fromEntries(valueEntries), isNil),
+      mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
+      { styles: theme?.Styles },
       context,
       {
         ensemble: {
