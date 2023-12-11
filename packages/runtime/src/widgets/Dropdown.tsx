@@ -34,7 +34,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
       label={values?.label}
       name={values?.id}
       style={{
-        margin: "0px",
+        ...values?.styles,
       }}
     >
       <Select

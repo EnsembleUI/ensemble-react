@@ -148,6 +148,7 @@ View:
 
         - Stepper:
             id: stepper1
+            activeStepIndex: 2
             styles:
               connectorColor: "#31C48D"
               connectorHeight: 4
