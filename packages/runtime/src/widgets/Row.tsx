@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Row as AntRow } from "antd";
-import { get, indexOf, keys } from "lodash-es";
+import { indexOf, keys } from "lodash-es";
 import {
   type CustomScope,
   CustomScopeProvider,
