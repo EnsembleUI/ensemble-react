@@ -19,6 +19,7 @@ import { Button, IconButton, TextField } from "@mui/material";
 import dayjs from "dayjs";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { Edit } from "@mui/icons-material";
+import { toString } from "lodash";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
@@ -69,7 +70,7 @@ export const Date: React.FC<DateProps> = (props) => {
   const action = useEnsembleAction(props.onChange);
   const onChangeCallback = useCallback(
     (date: any) => {
-      const formattedDate = dayjs(date)?.format(DateDisplayFormat);
+      const formattedDate = dayjs(toString(date))?.format(DateDisplayFormat);
       formattedDate !== "Invalid Date" && setEnteredDate(formattedDate);
 
       if (!action) {
@@ -87,7 +88,7 @@ export const Date: React.FC<DateProps> = (props) => {
   );
 
   const onDateAccept = (date: any): void => {
-    setValue(dayjs(date));
+    setValue(dayjs(toString(date)));
     setOpenPicker(false);
   };
 
@@ -138,7 +139,7 @@ export const Date: React.FC<DateProps> = (props) => {
                 actions: ["cancel", "accept"],
               },
               field: {
-                clearable: !!value,
+                clearable: Boolean(value),
                 onClear: () => setValue(undefined),
               },
               textField: {
@@ -295,7 +296,7 @@ const CustomCalendarHeader: React.FC<PickersCalendarHeaderProps<any>> = (
             value={context?.enteredDate}
             placeholder={DateDisplayFormat.toLowerCase()}
             InputLabelProps={{ shrink: true }}
-            error={!!context?.errorText && context?.errorText !== ""}
+            error={Boolean(context?.errorText) && context?.errorText !== ""}
             label="Enter Date"
             helperText={context?.errorText}
             variant="standard"
@@ -325,15 +326,14 @@ const CustomActionBar: React.FC<PickersActionBarProps> = (props) => {
         dateToCheck?.isBefore(dayjs(context?.firstDate))) ||
       (context?.lastDate && dateToCheck?.isAfter(dayjs(context?.lastDate)));
 
-    if (isOutOfDateRange || isInvalidFormat)
-      context?.setErrorText?.(
-        isOutOfDateRange
-          ? "Out of range."
-          : isInvalidFormat
-          ? "Invalid format."
-          : "",
-      );
-    else {
+    if (isOutOfDateRange || isInvalidFormat) {
+      let errorMessage = "";
+
+      if (isOutOfDateRange) errorMessage = "Out of range.";
+      else if (isInvalidFormat) errorMessage = "Invalid format.";
+
+      context?.setErrorText?.(errorMessage);
+    } else {
       context?.setValue?.(dayjs(context?.enteredDate));
       context?.setErrorText?.("");
       props.onAccept();
@@ -357,4 +357,5 @@ const CustomActionBar: React.FC<PickersActionBarProps> = (props) => {
 
 // returns true if date is in mm/dd/yyyy format
 const isDateValid = (date?: string): boolean =>
-  !!date && /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/.test(date);
+  Boolean(date) &&
+  /^(?:0[1-9]|1[0-2])\/(?:0[1-9]|[12][0-9]|3[01])\/\d{4}$/.test(date);
