@@ -1,7 +1,7 @@
 import type { EnsembleAction, Expression } from "@ensembleui/react-framework";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { Button as AntButton, Form as AntForm } from "antd";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps, IconProps } from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
@@ -27,6 +27,30 @@ export const Button: React.FC<ButtonProps> = (props) => {
     }
     action.callback();
   }, [action]);
+
+  const ButtonComponent = useMemo(() => {
+    return (
+      <AntButton
+        htmlType="submit"
+        onClick={onClickCallback}
+        ref={rootRef}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "auto",
+          color: values?.styles?.textColor ?? "black",
+          ...values?.styles,
+        }}
+      >
+        {values?.startingIcon ? <Icon {...values.startingIcon} /> : null}
+        &nbsp;
+        {values?.label}
+        {values?.endingIcon ? <Icon {...values.endingIcon} /> : null}
+      </AntButton>
+    );
+  }, [onClickCallback, rootRef, values]);
+
   if (values?.submitForm) {
     return (
       <AntForm.Item
@@ -34,53 +58,11 @@ export const Button: React.FC<ButtonProps> = (props) => {
           margin: "0px",
         }}
       >
-        <AntButton
-          htmlType="submit"
-          onClick={onClickCallback}
-          ref={rootRef}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "auto",
-            backgroundColor: String(props.styles?.backgroundColor),
-            padding: props.styles?.padding,
-            color: props.styles?.textColor ?? "black",
-            borderColor: props.styles?.borderColor,
-            borderWidth: props.styles?.borderWidth,
-            borderRadius: props.styles?.borderRadius,
-          }}
-        >
-          {props.startingIcon ? <Icon {...props.startingIcon} /> : null}
-          &nbsp;
-          {values.label}
-          {props.endingIcon ? <Icon {...props.endingIcon} /> : null}
-        </AntButton>
+        {ButtonComponent}
       </AntForm.Item>
     );
   }
-  return (
-    <AntButton
-      onClick={onClickCallback}
-      ref={rootRef}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        width: "auto",
-        backgroundColor: String(props.styles?.backgroundColor),
-        padding: props.styles?.padding,
-        color: props.styles?.textColor ?? "black",
-        borderColor: props.styles?.borderColor,
-        borderWidth: props.styles?.borderWidth,
-        borderRadius: props.styles?.borderRadius,
-      }}
-    >
-      {props.startingIcon ? <Icon {...props.startingIcon} /> : null}
-      &nbsp;
-      {values?.label}
-      {props.endingIcon ? <Icon {...props.endingIcon} /> : null}
-    </AntButton>
-  );
+  return ButtonComponent;
 };
+
 WidgetRegistry.register("Button", Button);

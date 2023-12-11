@@ -1,12 +1,15 @@
 import React, { useState } from "react";
-import { useTemplateData, type Expression } from "@ensembleui/react-framework";
+import {
+  useTemplateData,
+  type Expression,
+  useRegisterBindings,
+} from "@ensembleui/react-framework";
 import type { SelectProps } from "antd";
 import { AutoComplete, Input } from "antd";
 import { SearchOutlined } from "@mui/icons-material";
 import { get, isNumber, isObject, noop } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from "../shared/types";
-import { getColor } from "../shared/styles";
 
 export type SearchProps = {
   placeholder?: string;
@@ -24,6 +27,7 @@ export const Search: React.FC<SearchProps> = ({
   const [options, setOptions] = useState<SelectProps<object>["options"]>([]);
 
   const { rawData } = useTemplateData({ data: data! });
+  const { values } = useRegisterBindings({ styles }, id);
 
   // TODO: Pass in search predicate function via props or filter via API
   const handleSearch = (value: string) => {
@@ -60,24 +64,17 @@ export const Search: React.FC<SearchProps> = ({
 
         onSelect={noop}
         options={options}
-        popupMatchSelectWidth={isNumber(styles?.width) ? styles?.width : false}
+        popupMatchSelectWidth={
+          isNumber(values?.styles?.width) ? values?.styles?.width : false
+        }
         size="large"
       >
         <Input
           placeholder={placeholder}
           prefix={<SearchOutlined />}
           style={{
-            width: styles?.width,
-            height: styles?.height,
-            margin: styles?.margin,
-            borderRadius: styles?.borderRadius,
-            borderWidth: styles?.borderWidth,
-            borderStyle: styles?.borderStyle,
-            borderColor: styles?.borderColor
-              ? getColor(styles.borderColor)
-              : undefined,
-            backgroundColor: styles?.backgroundColor,
             boxShadow: "none",
+            ...values?.styles,
           }}
         />
       </AutoComplete>
@@ -86,7 +83,9 @@ export const Search: React.FC<SearchProps> = ({
           {`
 			/* Linear loader animation */
 			#${id ?? ""} {
-				background-color: ${styles?.backgroundColor ? styles.backgroundColor : ""}
+				background-color: ${
+          values?.styles?.backgroundColor ? values.styles.backgroundColor : ""
+        }
 			}
 		  `}
         </style>

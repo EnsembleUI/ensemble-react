@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Col } from "antd";
-import { get, indexOf, keys } from "lodash-es";
+import { indexOf, keys } from "lodash-es";
 import {
   CustomScopeProvider,
   useRegisterBindings,
