@@ -10,7 +10,10 @@ import {
 import { type ReactElement } from "react";
 import { get } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
-import type { EnsembleWidgetProps } from "../../shared/types";
+import type {
+  EnsembleWidgetProps,
+  EnsembleWidgetStyles,
+} from "../../shared/types";
 import { DataCell } from "./DataCell";
 
 interface DataColumn {
@@ -29,25 +32,26 @@ interface DataColumn {
   };
 }
 
+export interface DataGridStyles extends Partial<EnsembleWidgetStyles> {
+  headerStyle?: {
+    backgroundColor: string;
+    fontSize: string;
+    fontFamily: string;
+    fontWeight: string;
+    textColor: string;
+    hasDivider: boolean;
+    borderBottom: string;
+  };
+}
+
 export type GridProps = {
   DataColumns: DataColumn[];
-  styles?: {
-    headerStyle: {
-      backgroundColor: string;
-      fontSize: string;
-      fontFamily: string;
-      fontWeight: string;
-      textColor: string;
-      isDivider: boolean;
-      borderBottom: string;
-    };
-  };
   "item-template": {
     data: Expression<object>;
     name: string;
     template: DataGridRowTemplate;
   };
-} & EnsembleWidgetProps;
+} & EnsembleWidgetProps<DataGridStyles>;
 
 export interface DataGridRowTemplate {
   name: "DataRow";
@@ -65,7 +69,6 @@ export const DataGrid: React.FC<GridProps> = ({
   const { resolvedWidgetId, rootRef } = useWidgetId(id);
   const { namedData } = useTemplateData({ ...itemTemplate });
   const headerStyle = styles?.headerStyle;
-  console.log(headerStyle);
   return (
     <>
       <Table
@@ -150,7 +153,7 @@ export const DataGrid: React.FC<GridProps> = ({
 		${headerStyle?.textColor ? `color : ${headerStyle.textColor} !important;` : ""}
 			}
 			.ant-table-thead > tr > th::before{
-				${headerStyle?.isDivider ? `position : unset !important;` : ""}
+				${headerStyle?.hasDivider ? `position : unset !important;` : ""}
 			}
 			.ant-table-thead > tr > th {
 				${!headerStyle?.borderBottom ? "border-bottom: none !important" : ""}

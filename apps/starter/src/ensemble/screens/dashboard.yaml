@@ -112,7 +112,7 @@ View:
                 fontFamily: "Inter"
                 fontSize: "12px"
                 textColor: "#747184"
-                isDivider: true
+                hasDivider: true
                 borderBottom: false
             DataColumns:
               - label: Name
