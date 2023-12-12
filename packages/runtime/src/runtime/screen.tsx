@@ -2,8 +2,8 @@ import type {
   EnsembleAction,
   EnsembleScreenModel,
 } from "@ensembleui/react-framework";
-import { ScreenContextProvider } from "@ensembleui/react-framework";
-import { useEffect } from "react";
+import { ScreenContextProvider, error } from "@ensembleui/react-framework";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { merge } from "lodash-es";
 // FIXME: refactor
@@ -47,13 +47,20 @@ const OnLoadAction: React.FC<
   React.PropsWithChildren<{ action?: EnsembleAction }>
 > = ({ action, children }) => {
   const onLoadAction = useEnsembleAction(action);
+  const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
-    if (!onLoadAction?.callback) {
+    if (!onLoadAction?.callback || isComplete) {
       return;
     }
-    onLoadAction.callback();
-  }, [onLoadAction, onLoadAction?.callback]);
+    try {
+      onLoadAction.callback();
+    } catch (e) {
+      error(e);
+    } finally {
+      setIsComplete(true);
+    }
+  }, [isComplete, onLoadAction, onLoadAction?.callback]);
 
   return <>{children}</>;
 };

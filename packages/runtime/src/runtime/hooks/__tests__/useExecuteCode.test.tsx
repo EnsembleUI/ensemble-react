@@ -1,5 +1,5 @@
 /* eslint import/first: 0 */
-import { renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { ScreenContextProvider } from "@ensembleui/react-framework";
 import { useExecuteCode } from "../useEnsembleAction";
 
@@ -32,7 +32,10 @@ test("populates screen invokables in function context", () => {
     wrapper,
   });
 
-  const execResult = result.current?.callback();
+  let execResult;
+  act(() => {
+    execResult = result.current?.callback();
+  });
   expect(execResult).toBe(2);
 });
 
@@ -45,9 +48,30 @@ test("populates context passed in", () => {
     { wrapper },
   );
 
-  const execResult = result.current?.callback();
+  let execResult;
+  act(() => {
+    execResult = result.current?.callback();
+  });
   expect(execResult).toBe(4);
 });
+
+test("can be invoked multiple times", () => {
+  const { result } = renderHook(() => useExecuteCode("myWidget.value"), {
+    wrapper,
+  });
+
+  let execResult;
+  act(() => {
+    execResult = result.current?.callback();
+  });
+  expect(execResult).toBe(2);
+  let execResult2;
+  act(() => {
+    execResult2 = result.current?.callback();
+  });
+  expect(execResult2).toBe(2);
+});
+
 test.todo("populates application invokables");
 
 test.todo("resolves values in order of scoping");
