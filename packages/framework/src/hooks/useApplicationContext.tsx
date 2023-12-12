@@ -6,7 +6,6 @@ import {
   defaultApplicationContext,
 } from "../state";
 import type { EnsembleAppModel } from "../shared/models";
-import { EnsembleStorage } from "../storage";
 
 interface ApplicationContextProps {
   app: EnsembleAppModel;
@@ -24,7 +23,6 @@ export const ApplicationContextProvider: React.FC<
         appContext={{
           ...defaultApplicationContext,
           application: app,
-          storage: EnsembleStorage,
         }}
       >
         {children}

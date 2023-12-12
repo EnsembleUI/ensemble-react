@@ -15,7 +15,6 @@ export interface ScreenContextDefinition {
   model?: EnsembleScreenModel;
   data: Record<string, Response | undefined>;
   widgets: Record<string, WidgetState | undefined>;
-  storage: Record<string, unknown>;
   [key: string]: unknown;
 }
 
@@ -29,7 +28,6 @@ export const defaultScreenContext = {
   model: undefined,
   data: {},
   widgets: {},
-  storage: {},
 };
 
 export const screenAtom = atom<ScreenContextDefinition>(defaultScreenContext);

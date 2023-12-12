@@ -4,6 +4,7 @@ View:
       name: getData
       onResponse:
         executeCode: |
+          console.log(ensemble.storage.get("arrayOfUsers"))
           ensemble.storage.set("arrayOfCollections",response.body.records)
           const groups = new Set(response.body.records.flatMap(record => record.fields.Tags[0]))
           ensemble.storage.set("arrayOfGroups", Array.from(groups))
