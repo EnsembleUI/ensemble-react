@@ -139,6 +139,7 @@ View:
                   label: Example 1 - Date picker
                   hintText: Placeholder value
                   initialValue: "2023-12-20"
+                  # enabled: false
                   # firstDate: "2023-12-15"
                   # lastDate: "2023-12-25"
                   onChange:
