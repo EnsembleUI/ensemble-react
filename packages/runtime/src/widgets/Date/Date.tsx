@@ -6,7 +6,7 @@ import { Form as AntForm } from "antd";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { useState, createContext, useCallback } from "react";
+import { useState, useCallback } from "react";
 import dayjs from "dayjs";
 import { toString } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
@@ -15,9 +15,8 @@ import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import type { FormInputProps } from "../Form/types";
 import { CalendarHeader } from "./CalendarHeader";
 import { ActionBar } from "./ActionBar";
-
-export const DateHeaderFormat = "ddd, MMM DD";
-export const DateDisplayFormat = "MM/DD/YYYY";
+import { DateDisplayFormat } from "./utils/DateConstants";
+import { DatePickerContext } from "./utils/DatePickerContext";
 
 type DateProps = {
   initialValue?: string;
@@ -27,23 +26,6 @@ type DateProps = {
   onChange?: EnsembleAction;
 } & EnsembleWidgetProps &
   FormInputProps<string>;
-
-interface DatePickerProps {
-  firstDate?: string;
-  lastDate?: string;
-  value?: dayjs.Dayjs | undefined;
-  setValue?: (value: dayjs.Dayjs | undefined) => void;
-  isCalendarOpen?: boolean;
-  setIsCalendarOpen?: (value: boolean) => void;
-  enteredDate?: string;
-  setEnteredDate?: (value: string) => void;
-  errorText?: string;
-  setErrorText?: (value: string) => void;
-}
-
-export const DatePickerContext = createContext<DatePickerProps | undefined>(
-  undefined,
-);
 
 export const Date: React.FC<DateProps> = (props) => {
   const [value, setValue] = useState<dayjs.Dayjs | undefined>(
