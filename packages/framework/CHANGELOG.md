@@ -1,5 +1,12 @@
 # @ensembleui/react-framework
 
+## 0.1.1
+
+### Patch Changes
+
+- e46acd9: Update widgets to use evaluated styles
+- 9f64fc0: Implement ensemble storage with session storage
+
 ## 0.1.0
 
 ### Minor Changes
