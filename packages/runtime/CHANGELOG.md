@@ -1,5 +1,14 @@
 # @ensembleui/react-runtime
 
+## 0.1.1
+
+### Patch Changes
+
+- 03fc15c: Deep clone inputs before evaluation
+- e46acd9: Update widgets to use evaluated styles
+- 9f64fc0: Implement ensemble storage with session storage
+- 2b8cbce: Add Date widget
+
 ## 0.1.0
 
 ### Minor Changes

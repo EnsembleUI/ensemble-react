@@ -1,5 +1,17 @@
 # @ensembleui/react-starter
 
+## 0.2.1
+
+### Patch Changes
+
+- 2b8cbce: Add Date widget
+- Updated dependencies [03fc15c]
+- Updated dependencies [e46acd9]
+- Updated dependencies [9f64fc0]
+- Updated dependencies [2b8cbce]
+  - @ensembleui/react-runtime@0.1.1
+  - @ensembleui/react-framework@0.1.1
+
 ## 0.2.0
 
 ### Minor Changes
