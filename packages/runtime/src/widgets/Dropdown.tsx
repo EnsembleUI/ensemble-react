@@ -33,7 +33,9 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
       className={values?.styles?.names}
       label={values?.label}
       name={values?.id}
-      style={values?.styles}
+      style={{
+        ...values?.styles,
+      }}
     >
       <Select
         onChange={handleChange}

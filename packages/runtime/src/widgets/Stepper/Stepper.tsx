@@ -41,6 +41,7 @@ export interface TemplateProps {
 
 export type StepperProps = {
   steps: StepProps[];
+  activeStepIndex?: number;
   "item-template": TemplateProps;
   styles: {
     connectorColor?: string;
@@ -57,7 +58,7 @@ interface CustomConnectorProps {
 }
 
 const Stepper: React.FC<StepperProps> = (props) => {
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(props?.activeStepIndex ?? 0);
   const itemTemplate = props["item-template"];
   const { namedData } = useTemplateData({ ...itemTemplate });
   const stepsLength = namedData.length;
