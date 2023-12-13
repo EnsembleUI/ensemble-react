@@ -19,7 +19,7 @@ import type {
   UploadFilesAction,
   ScreenContextDefinition,
 } from "@ensembleui/react-framework";
-import { isEmpty, isString, merge } from "lodash-es";
+import { isEmpty, isString, merge, isObject } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigateScreen } from "./useNavigateScreen";
 // FIXME: refactor
@@ -139,6 +139,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
         setData(apiModel.name, res);
         setResponse(res);
       } catch (e) {
+        logError(e);
         setError(e);
       }
     };
@@ -286,16 +287,18 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
         formData.append(action?.fieldName ?? `file${i}`, files[i]);
       }
 
-    const apiModelBody = apiModel.body ?? {};
-    for (const key in apiModelBody) {
-      const evaluatedValue = isExpression(apiModelBody[key])
-        ? evaluate(
-            screenContext as ScreenContextDefinition,
-            apiModelBody[key] as string,
-            action?.inputs,
-          )
-        : apiModelBody[key];
-      formData.append(key, evaluatedValue as string);
+    if (isObject(apiModel.body)) {
+      const apiModelBody = apiModel.body as Record<string, unknown>;
+      for (const key in apiModelBody) {
+        const evaluatedValue = isExpression(apiModelBody[key])
+          ? evaluate(
+              screenContext as ScreenContextDefinition,
+              apiModelBody[key] as string,
+              action?.inputs,
+            )
+          : apiModelBody[key];
+        formData.append(key, evaluatedValue as string);
+      }
     }
 
     const apiUrl = evaluate<string>(

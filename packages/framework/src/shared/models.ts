@@ -49,7 +49,7 @@ export interface EnsembleAPIModel {
   uri: string;
   method: "GET" | "POST" | "PUT" | "PATCH";
   headers?: Record<string, string | number | boolean>;
-  body?: Record<string, unknown>;
+  body?: string | object;
   onResponse?: EnsembleAction;
   onError?: EnsembleAction;
 }
