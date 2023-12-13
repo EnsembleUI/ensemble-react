@@ -1,5 +1,13 @@
 # @ensembleui/react-runtime
 
+## 0.1.2
+
+### Patch Changes
+
+- 776c865: Resolve API body paylods of text type
+- 776c865: Enhance Search widget to search via API
+- 8640c16: Fix issue with executeCode only running once
+
 ## 0.1.1
 
 ### Patch Changes
