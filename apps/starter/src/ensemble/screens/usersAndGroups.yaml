@@ -494,3 +494,8 @@ API:
     method: GET
     headers:
       Authorization: Bearer patN2XAiLVZQ8Yp3h.2bddb84031b2be89b576f01869dc17c3826e16ae7daa8895f92c05a0799004ab
+  searchUsers:
+    uri: https://dummyjson.com/users/search?q=${search}
+    method: GET
+    inputs:
+      - search

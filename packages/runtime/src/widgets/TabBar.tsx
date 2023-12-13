@@ -1,17 +1,8 @@
 import React, { type ReactElement } from "react";
-import {
-  useRegisterBindings,
-  useScreenContext,
-  evaluate,
-  isExpression,
-} from "@ensembleui/react-framework";
-import type {
-  Expression,
-  ScreenContextDefinition,
-  EnsembleWidget,
-} from "@ensembleui/react-framework";
+import { useRegisterBindings } from "@ensembleui/react-framework";
+import type { Expression, EnsembleWidget } from "@ensembleui/react-framework";
 import { Tabs, ConfigProvider } from "antd";
-import { noop } from "lodash-es";
+import { zip } from "lodash-es";
 import type {
   EnsembleWidgetProps,
   EnsembleWidgetStyles,
@@ -48,20 +39,16 @@ export interface TabBarProps extends EnsembleWidgetProps<TabBarStyles> {
 }
 
 export const TabBar: React.FC<TabBarProps> = (props) => {
-  const { values } = useRegisterBindings({ ...props }, props.id);
-  const context = useScreenContext();
-  const renderLabel = (
-    label: Expression<string>,
-    icon?: IconProps,
-  ): ReactElement => {
-    let labelEvaluated = "";
-    if (isExpression(label)) {
-      try {
-        labelEvaluated = evaluate(context as ScreenContextDefinition, label);
-      } catch (e) {
-        noop();
-      }
-    }
+  const bindings = {
+    ...props,
+    items: props.items.map(({ label, icon }) => ({
+      label,
+      icon,
+    })),
+  };
+  const { values } = useRegisterBindings({ ...bindings }, props.id);
+  const tabs = zip(values?.items ?? [], props.items);
+  const renderLabel = (label: string, icon?: IconProps): ReactElement => {
     return (
       <div
         style={{
@@ -73,7 +60,7 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
         {icon ? (
           <Icon color={icon.color} name={icon.name} size={icon.size} />
         ) : null}{" "}
-        &nbsp; {labelEvaluated ? labelEvaluated : label}
+        &nbsp; {label}
       </div>
     );
   };
@@ -133,12 +120,12 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
         defaultActiveKey={setDefaultSelectedTab()}
         style={{ ...values?.styles }}
       >
-        {values?.items.map((tabItem) => (
+        {tabs.map(([tabItem, widget]) => (
           <TabPane
-            key={tabItem.label}
-            tab={renderLabel(tabItem.label, tabItem.icon)}
+            key={tabItem?.label}
+            tab={renderLabel(tabItem?.label ?? "", tabItem?.icon)}
           >
-            {tabItem.widget ? EnsembleRuntime.render([tabItem.widget]) : null}
+            {widget?.widget ? EnsembleRuntime.render([widget.widget]) : null}
           </TabPane>
         ))}
       </Tabs>

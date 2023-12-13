@@ -1,8 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import type {
-  ConditionalProps,
-  CondtionalElement as ConditionalElement,
-} from "../Conditional";
+import type { ConditionalProps, ConditionalElement } from "../Conditional";
 import {
   Conditional,
   hasProperStructure,

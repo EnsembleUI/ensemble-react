@@ -38,16 +38,21 @@ class EnsembleResponse implements Response {
 export const DataFetcher = {
   fetch: async (
     api: EnsembleAPIModel,
-    params?: Record<string, unknown>,
+    context?: Record<string, unknown>,
   ): Promise<Response> => {
-    resolveBody(api.body);
+    const resolvedBody = resolveBody(api.body, context);
+    const url = new URL(api.uri);
+    const resolvedParams = resolveBody(
+      Object.fromEntries(url.searchParams.entries()),
+      context,
+    );
 
     const axRes = await axios({
-      url: api.uri,
+      url: api.uri.replace(url.search, ""),
       method: api.method,
       headers: api.headers,
-      params,
-      data: api.body,
+      params: resolvedParams,
+      data: resolvedBody,
     });
     return EnsembleResponse.fromAxiosResponse(axRes);
   },
@@ -72,6 +77,7 @@ export const DataFetcher = {
 
 const resolveBody = (
   body?: Record<string, Expression<unknown>>,
+  context?: Record<string, unknown>,
 ): Record<string, unknown> | undefined => {
   if (!body) {
     return;
@@ -79,7 +85,11 @@ const resolveBody = (
 
   const resolvedValues = Object.entries(body).map(([key, value]) => {
     if (isExpression(value)) {
-      const resolvedValue = evaluate(ensembleStore.get(screenAtom), value);
+      const resolvedValue = evaluate(
+        ensembleStore.get(screenAtom),
+        value,
+        context,
+      );
       return [key, resolvedValue];
     }
     if (isObject(value)) {

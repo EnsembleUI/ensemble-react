@@ -13,7 +13,7 @@ import type { FlexboxProps } from "../shared/types";
 import { getColor, getCrossAxis, getMainAxis } from "../shared/styles";
 
 export const Column: React.FC<FlexboxProps> = (props) => {
-  const { "item-template": itemTemplate, ...rest } = props;
+  const { "item-template": itemTemplate, children, ...rest } = props;
   const childrenFirst =
     indexOf(keys(props), "children") < indexOf(keys(props), "item-template");
 
@@ -24,8 +24,8 @@ export const Column: React.FC<FlexboxProps> = (props) => {
   });
 
   const renderedChildren = useMemo(() => {
-    return props.children ? EnsembleRuntime.render(props.children) : null;
-  }, [props.children]);
+    return children ? EnsembleRuntime.render(children) : null;
+  }, [children]);
 
   return (
     <Col

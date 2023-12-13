@@ -118,11 +118,15 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
     }
 
     const inputs = action.inputs ?? {};
-    const callback = async (): Promise<void> => {
+    const callback = async (context: unknown): Promise<void> => {
       const resolvedInputs = Object.entries(inputs).map(([key, value]) => {
         if (isExpression(value)) {
           const evalContext = ensembleStore.get(screenAtom);
-          const resolvedValue = evaluate(evalContext, value);
+          const resolvedValue = evaluate(
+            evalContext,
+            value,
+            context as Record<string, unknown>,
+          );
           return [key, resolvedValue];
         }
         return [key, value];
@@ -349,31 +353,37 @@ export const useEnsembleAction = (
   if (!action) {
     return;
   }
-  const invokeApi = useInvokeApi(action.invokeApi, options);
-  const executeCode = useExecuteCode(
-    action.executeCode,
-    options as UseExecuteCodeActionOptions,
-  );
-  const navigateScreen = useNavigateScreen(action.navigateScreen, options);
-  const showToast = useShowToast(action.showToast);
-  const navigateModalScreen = useNavigateModalScreen(
-    action.navigateModalScreen,
-    options as null,
-  );
-  const closeAllDialogs = useCloseAllDialogs();
+  if (action.invokeApi) {
+    return useInvokeApi(action.invokeApi, options);
+  }
 
-  const pickFiles = usePickFiles(action.pickFiles);
-  const uploadFiles = useUploadFiles(action.uploadFiles);
+  if (action.executeCode) {
+    return useExecuteCode(
+      action.executeCode,
+      options as UseExecuteCodeActionOptions,
+    );
+  }
+  if (action.navigateScreen) {
+    return useNavigateScreen(action.navigateScreen, options);
+  }
 
-  return (
-    (action.invokeApi && invokeApi) ||
-    (action.executeCode && executeCode) ||
-    (action.navigateScreen && navigateScreen) ||
-    (action.showToast && showToast) ||
-    (action.navigateModalScreen && navigateModalScreen) ||
-    ("closeAllDialogs" in action && closeAllDialogs) ||
-    (action.pickFiles && pickFiles) ||
-    (action.uploadFiles && uploadFiles)
-  );
+  if (action.navigateModalScreen) {
+    return useNavigateModalScreen(action.navigateModalScreen, options);
+  }
+
+  if (action.showToast) {
+    return useShowToast(action.showToast);
+  }
+
+  if ("closeAllDialogs" in action) {
+    return useCloseAllDialogs();
+  }
+
+  if (action.pickFiles) {
+    return usePickFiles(action.pickFiles);
+  }
+  if (action.uploadFiles) {
+    return useUploadFiles(action.uploadFiles);
+  }
 };
 /* eslint-enable react-hooks/rules-of-hooks */
