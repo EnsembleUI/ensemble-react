@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import React, { useCallback, useEffect, useState } from "react";
+import { useDebounce } from "react-use";
 import {
   useTemplateData,
   useRegisterBindings,
@@ -21,7 +22,9 @@ import { EnsembleRuntime } from "../runtime";
 export type SearchProps = {
   placeholder?: string;
   searchKey?: string;
-  onSearch?: EnsembleAction;
+  onSearch?: {
+    debounceMs: number;
+  } & EnsembleAction;
   onChange?: EnsembleAction;
   onSelect?: EnsembleAction;
 } & EnsembleWidgetProps &
@@ -40,6 +43,7 @@ export const Search: React.FC<SearchProps> = ({
   const [options, setOptions] = useState<{ label: string; value: unknown }[]>(
     [],
   );
+  const [searchValue, setSearchValue] = useState("");
   const [value, setValue] = useState("");
   const [filteredOptions, setFilteredOptions] = useState<
     { label: string; value: unknown }[]
@@ -89,10 +93,7 @@ export const Search: React.FC<SearchProps> = ({
   // TODO: Pass in search predicate function via props or filter via API
   const handleSearch = useCallback(
     (search: string): void => {
-      if (onSearchAction?.callback) {
-        onSearchAction.callback({ search });
-        return;
-      }
+      setSearchValue(search);
 
       const matchingOptions = options.filter(
         (item) =>
@@ -100,7 +101,17 @@ export const Search: React.FC<SearchProps> = ({
       );
       setFilteredOptions(matchingOptions);
     },
-    [onSearchAction, options],
+    [options],
+  );
+
+  useDebounce(
+    () => {
+      if (onSearchAction?.callback) {
+        onSearchAction.callback({ search: searchValue });
+      }
+    },
+    onSearch?.debounceMs,
+    [onSearchAction, searchValue],
   );
 
   const handleChange = useCallback(
