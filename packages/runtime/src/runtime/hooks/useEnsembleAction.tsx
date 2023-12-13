@@ -19,7 +19,7 @@ import type {
   UploadFilesAction,
   ScreenContextDefinition,
 } from "@ensembleui/react-framework";
-import { isEmpty, isString, merge } from "lodash-es";
+import { isEmpty, isString, merge, isObject } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigateScreen } from "./useNavigateScreen";
 // FIXME: refactor
@@ -118,11 +118,15 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
     }
 
     const inputs = action.inputs ?? {};
-    const callback = async (): Promise<void> => {
+    const callback = async (context: unknown): Promise<void> => {
       const resolvedInputs = Object.entries(inputs).map(([key, value]) => {
         if (isExpression(value)) {
           const evalContext = ensembleStore.get(screenAtom);
-          const resolvedValue = evaluate(evalContext, value);
+          const resolvedValue = evaluate(
+            evalContext,
+            value,
+            context as Record<string, unknown>,
+          );
           return [key, resolvedValue];
         }
         return [key, value];
@@ -135,6 +139,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
         setData(apiModel.name, res);
         setResponse(res);
       } catch (e) {
+        logError(e);
         setError(e);
       }
     };
@@ -282,16 +287,18 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
         formData.append(action?.fieldName ?? `file${i}`, files[i]);
       }
 
-    const apiModelBody = apiModel.body ?? {};
-    for (const key in apiModelBody) {
-      const evaluatedValue = isExpression(apiModelBody[key])
-        ? evaluate(
-            screenContext as ScreenContextDefinition,
-            apiModelBody[key] as string,
-            action?.inputs,
-          )
-        : apiModelBody[key];
-      formData.append(key, evaluatedValue as string);
+    if (isObject(apiModel.body)) {
+      const apiModelBody = apiModel.body as Record<string, unknown>;
+      for (const key in apiModelBody) {
+        const evaluatedValue = isExpression(apiModelBody[key])
+          ? evaluate(
+              screenContext as ScreenContextDefinition,
+              apiModelBody[key] as string,
+              action?.inputs,
+            )
+          : apiModelBody[key];
+        formData.append(key, evaluatedValue as string);
+      }
     }
 
     const apiUrl = evaluate<string>(
@@ -349,31 +356,37 @@ export const useEnsembleAction = (
   if (!action) {
     return;
   }
-  const invokeApi = useInvokeApi(action.invokeApi, options);
-  const executeCode = useExecuteCode(
-    action.executeCode,
-    options as UseExecuteCodeActionOptions,
-  );
-  const navigateScreen = useNavigateScreen(action.navigateScreen, options);
-  const showToast = useShowToast(action.showToast);
-  const navigateModalScreen = useNavigateModalScreen(
-    action.navigateModalScreen,
-    options as null,
-  );
-  const closeAllDialogs = useCloseAllDialogs();
+  if (action.invokeApi) {
+    return useInvokeApi(action.invokeApi, options);
+  }
 
-  const pickFiles = usePickFiles(action.pickFiles);
-  const uploadFiles = useUploadFiles(action.uploadFiles);
+  if (action.executeCode) {
+    return useExecuteCode(
+      action.executeCode,
+      options as UseExecuteCodeActionOptions,
+    );
+  }
+  if (action.navigateScreen) {
+    return useNavigateScreen(action.navigateScreen, options);
+  }
 
-  return (
-    (action.invokeApi && invokeApi) ||
-    (action.executeCode && executeCode) ||
-    (action.navigateScreen && navigateScreen) ||
-    (action.showToast && showToast) ||
-    (action.navigateModalScreen && navigateModalScreen) ||
-    ("closeAllDialogs" in action && closeAllDialogs) ||
-    (action.pickFiles && pickFiles) ||
-    (action.uploadFiles && uploadFiles)
-  );
+  if (action.navigateModalScreen) {
+    return useNavigateModalScreen(action.navigateModalScreen, options);
+  }
+
+  if (action.showToast) {
+    return useShowToast(action.showToast);
+  }
+
+  if ("closeAllDialogs" in action) {
+    return useCloseAllDialogs();
+  }
+
+  if (action.pickFiles) {
+    return usePickFiles(action.pickFiles);
+  }
+  if (action.uploadFiles) {
+    return useUploadFiles(action.uploadFiles);
+  }
 };
 /* eslint-enable react-hooks/rules-of-hooks */

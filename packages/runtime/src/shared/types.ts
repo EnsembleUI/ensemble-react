@@ -16,6 +16,14 @@ export interface EnsembleWidgetProps<
   styles?: T;
 }
 
+export interface HasItemTemplate {
+  "item-template"?: {
+    data: Expression<TemplateData>;
+    name: string;
+    template: EnsembleWidget;
+  };
+}
+
 export type BaseTextProps = {
   text?: Expression<string>;
   textAlign?: string;

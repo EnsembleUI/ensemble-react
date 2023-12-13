@@ -1,8 +1,8 @@
 import type { AxiosResponse, AxiosResponseHeaders } from "axios";
 import axios from "axios";
-import { isObject } from "lodash-es";
+import { cloneDeep, get, isObject, isString, set } from "lodash-es";
 import type { EnsembleAPIModel } from "../shared/models";
-import { isExpression, type Expression } from "../shared";
+import { type Expression } from "../shared";
 import { evaluate } from "../evaluate";
 import { ensembleStore, screenAtom } from "../state";
 import type { Response } from "./index";
@@ -38,16 +38,21 @@ class EnsembleResponse implements Response {
 export const DataFetcher = {
   fetch: async (
     api: EnsembleAPIModel,
-    params?: Record<string, unknown>,
+    context?: Record<string, unknown>,
   ): Promise<Response> => {
-    resolveBody(api.body);
+    const resolvedBody = resolve(api.body, context);
+    const url = new URL(api.uri);
+    const resolvedParams = resolve(
+      Object.fromEntries(url.searchParams.entries()),
+      context,
+    );
 
     const axRes = await axios({
-      url: api.uri,
+      url: api.uri.replace(url.search, ""),
       method: api.method,
       headers: api.headers,
-      params,
-      data: api.body,
+      params: resolvedParams,
+      data: resolvedBody,
     });
     return EnsembleResponse.fromAxiosResponse(axRes);
   },
@@ -70,24 +75,44 @@ export const DataFetcher = {
   },
 };
 
-const resolveBody = (
-  body?: Record<string, Expression<unknown>>,
-): Record<string, unknown> | undefined => {
+const resolve = (
+  body?: string | object,
+  context?: Record<string, unknown>,
+): unknown => {
   if (!body) {
     return;
   }
 
-  const resolvedValues = Object.entries(body).map(([key, value]) => {
-    if (isExpression(value)) {
-      const resolvedValue = evaluate(ensembleStore.get(screenAtom), value);
-      return [key, resolvedValue];
-    }
-    if (isObject(value)) {
-      const resolvedValue = resolveBody(value as Record<string, unknown>);
-      return [key, resolvedValue];
-    }
-    return [key, value];
-  });
+  const screenContext = ensembleStore.get(screenAtom);
+  const replace = (val: string): string =>
+    val.replace(/\$\{[^}]+\}/, (expression) => {
+      return evaluate(screenContext, expression, context);
+    });
+  const resolvedBody = visitAndReplaceExpressions(body, replace);
+  return resolvedBody;
+};
 
-  return Object.fromEntries(resolvedValues) as Record<string, unknown>;
+const visitAndReplaceExpressions = (
+  obj: unknown,
+  replace: (expr: string) => unknown,
+): unknown => {
+  let clonedObj = cloneDeep(obj);
+  if (isObject(clonedObj)) {
+    if (Array.isArray(clonedObj)) {
+      // If obj is an array, recursively visit and replace elements
+      for (let i = 0; i < clonedObj.length; i++) {
+        clonedObj[i] = visitAndReplaceExpressions(clonedObj[i], replace);
+      }
+    } else {
+      // If obj is an object, recursively visit and replace values
+      for (const key in clonedObj) {
+        const result = visitAndReplaceExpressions(get(clonedObj, key), replace);
+        set(clonedObj, key, result);
+      }
+    }
+  } else if (isString(obj)) {
+    clonedObj = replace(obj);
+  }
+
+  return clonedObj;
 };

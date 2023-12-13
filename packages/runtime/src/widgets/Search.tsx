@@ -1,73 +1,147 @@
-import React, { useState } from "react";
+import type { ReactElement } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { useDebounce } from "react-use";
 import {
   useTemplateData,
-  type Expression,
   useRegisterBindings,
+  CustomScopeProvider,
 } from "@ensembleui/react-framework";
-import type { SelectProps } from "antd";
+import type {
+  CustomScope,
+  EnsembleAction,
+  EnsembleWidget,
+} from "@ensembleui/react-framework";
 import { AutoComplete, Input } from "antd";
 import { SearchOutlined } from "@mui/icons-material";
-import { get, isNumber, isObject, noop } from "lodash-es";
+import { get, isArray, isNumber, isObject } from "lodash-es";
 import { WidgetRegistry } from "../registry";
-import type { EnsembleWidgetProps } from "../shared/types";
+import type { EnsembleWidgetProps, HasItemTemplate } from "../shared/types";
+import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
+import { EnsembleRuntime } from "../runtime";
 
 export type SearchProps = {
   placeholder?: string;
-  data?: Expression<object>;
   searchKey?: string;
-} & EnsembleWidgetProps;
+  onSearch?: {
+    debounceMs: number;
+  } & EnsembleAction;
+  onChange?: EnsembleAction;
+  onSelect?: EnsembleAction;
+} & EnsembleWidgetProps &
+  HasItemTemplate;
 
 export const Search: React.FC<SearchProps> = ({
   placeholder,
-  data,
+  "item-template": itemTemplate,
   searchKey,
   styles,
   id,
+  onSearch,
+  onChange,
+  onSelect,
 }) => {
-  const [options, setOptions] = useState<SelectProps<object>["options"]>([]);
+  const [options, setOptions] = useState<{ label: string; value: unknown }[]>(
+    [],
+  );
+  const [searchValue, setSearchValue] = useState("");
+  const [value, setValue] = useState("");
+  const [filteredOptions, setFilteredOptions] = useState<
+    { label: string; value: unknown }[]
+  >([]);
 
-  const { rawData } = useTemplateData({ data: data! });
-  const { values } = useRegisterBindings({ styles }, id);
+  const { namedData } = useTemplateData({
+    data: itemTemplate?.data,
+    name: itemTemplate?.name,
+  });
+  const { rootRef, values } = useRegisterBindings(
+    { styles, value, options },
+    id,
+    {
+      setValue,
+      setOptions,
+    },
+  );
+  const onSearchAction = useEnsembleAction(onSearch);
+  const onChangeAction = useEnsembleAction(onChange);
+  const onSelectAction = useEnsembleAction(onSelect);
+
+  useEffect(() => {
+    if (!isArray(namedData)) {
+      return;
+    }
+    const newOptions = namedData.map((item) => {
+      const option = {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        value: isObject(item) ? get(item, searchKey ?? "") : item,
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        label: itemTemplate?.template ? (
+          <SearchOption
+            context={item as CustomScope}
+            template={itemTemplate.template}
+          />
+        ) : (
+          get(item, searchKey ?? "")
+        ),
+      };
+      return option;
+    });
+    setOptions(newOptions);
+    setFilteredOptions(newOptions);
+  }, [itemTemplate?.template, namedData, searchKey, setOptions, value]);
 
   // TODO: Pass in search predicate function via props or filter via API
-  const handleSearch = (value: string) => {
-    if (Array.isArray(rawData)) {
-      setOptions(
-        value
-          ? rawData
-              .filter(
-                (item) =>
-                  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-                  (isObject(item) ? get(item, searchKey ?? "") : item)
-                    ?.toString()
-                    ?.toLowerCase()
-                    ?.includes(value.toLowerCase()),
-              )
-              .map((item) => ({
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                value: isObject(item) ? get(item, searchKey ?? "") : item,
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                label: isObject(item) ? get(item, searchKey ?? "") : item,
-              }))
-          : [],
+  const handleSearch = useCallback(
+    (search: string): void => {
+      setSearchValue(search);
+
+      const matchingOptions = options.filter(
+        (item) =>
+          item.value?.toString()?.toLowerCase()?.includes(search.toLowerCase()),
       );
-    }
-  };
+      setFilteredOptions(matchingOptions);
+    },
+    [options],
+  );
+
+  useDebounce(
+    () => {
+      if (onSearchAction?.callback) {
+        onSearchAction.callback({ search: searchValue });
+      }
+    },
+    onSearch?.debounceMs,
+    [onSearchAction, searchValue],
+  );
+
+  const handleChange = useCallback(
+    (newValue: string): void => {
+      onChangeAction?.callback({ value: newValue });
+    },
+    [onChangeAction],
+  );
+
+  const handleSelect = useCallback(
+    (selectedValue: string): void => {
+      setValue(selectedValue);
+      onSelectAction?.callback({ value: selectedValue });
+    },
+    [onSelectAction],
+  );
 
   return (
-    <div>
+    <>
       <AutoComplete
         allowClear
         id={id}
+        onChange={handleChange}
         onSearch={handleSearch}
-        // TODO: Handle on search result select
-
-        onSelect={noop}
-        options={options}
+        onSelect={handleSelect}
+        options={filteredOptions}
         popupMatchSelectWidth={
           isNumber(values?.styles?.width) ? values?.styles?.width : false
         }
-        size="large"
+        ref={rootRef}
       >
         <Input
           placeholder={placeholder}
@@ -90,7 +164,21 @@ export const Search: React.FC<SearchProps> = ({
 		  `}
         </style>
       ) : null}
-    </div>
+    </>
+  );
+};
+
+const SearchOption = ({
+  template,
+  context,
+}: {
+  template: EnsembleWidget;
+  context: CustomScope;
+}): ReactElement => {
+  return (
+    <CustomScopeProvider value={context}>
+      {EnsembleRuntime.render([template])}
+    </CustomScopeProvider>
   );
 };
 

@@ -1,51 +1,34 @@
-import type {
-  Expression,
-  ScreenContextDefinition,
-} from "@ensembleui/react-framework";
-import {
-  evaluate,
-  unwrapWidget,
-  useCustomScope,
-  useScreenContext,
-} from "@ensembleui/react-framework";
+import type { Expression } from "@ensembleui/react-framework";
+import { unwrapWidget, useRegisterBindings } from "@ensembleui/react-framework";
 import { cloneDeep, head, isEmpty, last } from "lodash-es";
 import { useMemo } from "react";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import type { EnsembleWidgetProps } from "../shared/types";
 
-export type CondtionalElement = Record<
+export type ConditionalElement = Record<
   Capitalize<string>,
   Record<string, unknown>
 > &
   (
-    | { if: Expression<string>; elseif?: never; else?: never }
-    | { elseif: Expression<string>; if?: never; else?: never }
+    | { if: Expression<boolean>; elseif?: never; else?: never }
+    | { elseif: Expression<boolean>; if?: never; else?: never }
     | { else: null; if?: never; elseif?: never }
   );
 
 export interface ConditionalProps extends EnsembleWidgetProps {
-  conditions: CondtionalElement[];
+  conditions: ConditionalElement[];
 }
 
 export const Conditional: React.FC<ConditionalProps> = (props) => {
-  const context = useScreenContext();
-  const scope = useCustomScope();
   const [isValid, errorMessage] = hasProperStructure(props.conditions);
   if (!isValid) throw Error(errorMessage);
 
-  let element = props.conditions.find((condition) => {
-    const conditionString = extractCondition(condition);
-    if (typeof conditionString !== "string") return false;
-    try {
-      return evaluate(
-        context as ScreenContextDefinition,
-        conditionString,
-        scope,
-      );
-    } catch (e) {
-      return false;
-    }
+  const { values } = useRegisterBindings({ ...props }, props.id);
+
+  let element = values?.conditions.find((condition) => {
+    const conditionValue = extractCondition(condition);
+    return conditionValue === "true" || conditionValue === true;
   });
 
   if (!element) {
@@ -72,7 +55,7 @@ export const Conditional: React.FC<ConditionalProps> = (props) => {
 WidgetRegistry.register("Conditional", Conditional);
 
 export const hasProperStructure = (
-  conditions: CondtionalElement[],
+  conditions: ConditionalElement[],
 ): [boolean, string] => {
   if (isEmpty(conditions) || !("if" in head(conditions)!))
     return [
@@ -101,7 +84,7 @@ export const hasProperStructure = (
   return [true, ""];
 };
 
-export const extractWidget = (condition: CondtionalElement) => {
+export const extractWidget = (condition: ConditionalElement) => {
   for (const key in condition)
     if (key !== "if" && key !== "elseif" && key !== "else")
       return unwrapWidget({
@@ -111,7 +94,7 @@ export const extractWidget = (condition: CondtionalElement) => {
   throw Error("Improper structure, make sure every condition has a widget");
 };
 
-export const extractCondition = (condition: CondtionalElement) => {
+export const extractCondition = (condition: ConditionalElement) => {
   for (const key in condition)
     if (key === "if" || key === "elseif" || key === "else")
       return condition[key];
