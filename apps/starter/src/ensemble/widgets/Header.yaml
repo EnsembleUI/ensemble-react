@@ -20,7 +20,12 @@ Widget:
               borderStyle: solid
               borderColor: "#B8BED6"
             placeholder: Search
-            data: searchUsers.body.users
+            item-template:
+              data: searchUsers.body.users
+              name: user
+              template:
+                Text:
+                  text: ${user.firstName}
             searchKey: email
             onSearch:
               invokeApi:

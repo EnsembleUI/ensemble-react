@@ -1,28 +1,35 @@
+import type { ReactElement } from "react";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   useTemplateData,
   useRegisterBindings,
+  CustomScopeProvider,
 } from "@ensembleui/react-framework";
-import type { EnsembleAction, Expression } from "@ensembleui/react-framework";
+import type {
+  CustomScope,
+  EnsembleAction,
+  EnsembleWidget,
+} from "@ensembleui/react-framework";
 import { AutoComplete, Input } from "antd";
 import { SearchOutlined } from "@mui/icons-material";
 import { get, isArray, isNumber, isObject } from "lodash-es";
 import { WidgetRegistry } from "../registry";
-import type { EnsembleWidgetProps } from "../shared/types";
+import type { EnsembleWidgetProps, HasItemTemplate } from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
+import { EnsembleRuntime } from "../runtime";
 
 export type SearchProps = {
   placeholder?: string;
-  data?: Expression<object>;
   searchKey?: string;
   onSearch?: EnsembleAction;
   onChange?: EnsembleAction;
   onSelect?: EnsembleAction;
-} & EnsembleWidgetProps;
+} & EnsembleWidgetProps &
+  HasItemTemplate;
 
 export const Search: React.FC<SearchProps> = ({
   placeholder,
-  data,
+  "item-template": itemTemplate,
   searchKey,
   styles,
   id,
@@ -38,7 +45,10 @@ export const Search: React.FC<SearchProps> = ({
     { label: string; value: unknown }[]
   >([]);
 
-  const { rawData } = useTemplateData({ data });
+  const { namedData } = useTemplateData({
+    data: itemTemplate?.data,
+    name: itemTemplate?.name,
+  });
   const { rootRef, values } = useRegisterBindings(
     { styles, value, options },
     id,
@@ -52,18 +62,29 @@ export const Search: React.FC<SearchProps> = ({
   const onSelectAction = useEnsembleAction(onSelect);
 
   useEffect(() => {
-    if (!isArray(rawData)) {
+    if (!isArray(namedData)) {
       return;
     }
-    const newOptions = rawData.map((item) => ({
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      value: isObject(item) ? get(item, searchKey ?? "") : item,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      label: isObject(item) ? get(item, searchKey ?? "") : item,
-    }));
+    const newOptions = namedData.map((item) => {
+      const option = {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        value: isObject(item) ? get(item, searchKey ?? "") : item,
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        label: itemTemplate?.template ? (
+          <SearchOption
+            context={item as CustomScope}
+            template={itemTemplate.template}
+          />
+        ) : (
+          get(item, searchKey ?? "")
+        ),
+      };
+      return option;
+    });
     setOptions(newOptions);
     setFilteredOptions(newOptions);
-  }, [rawData, searchKey, setOptions, value]);
+  }, [itemTemplate?.template, namedData, searchKey, setOptions, value]);
 
   // TODO: Pass in search predicate function via props or filter via API
   const handleSearch = useCallback(
@@ -133,6 +154,20 @@ export const Search: React.FC<SearchProps> = ({
         </style>
       ) : null}
     </>
+  );
+};
+
+const SearchOption = ({
+  template,
+  context,
+}: {
+  template: EnsembleWidget;
+  context: CustomScope;
+}): ReactElement => {
+  return (
+    <CustomScopeProvider value={context}>
+      {EnsembleRuntime.render([template])}
+    </CustomScopeProvider>
   );
 };
 
