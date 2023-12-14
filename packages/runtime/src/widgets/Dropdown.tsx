@@ -1,14 +1,16 @@
 import { Form as AntForm, Select } from "antd";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
-import type { Expression } from "@ensembleui/react-framework";
+import type { EnsembleAction, Expression } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from "../shared/types";
+import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
 export type DropdownProps = {
   label?: string;
   hintText?: string;
   items: SelectOption[];
+  onItemSelect: EnsembleAction;
 } & EnsembleWidgetProps;
 
 interface SelectOption {
@@ -25,9 +27,16 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
       setSelectedValue,
     },
   );
-  const handleChange = (value: string): void => {
-    setSelectedValue(value);
-  };
+  const action = useEnsembleAction(props.onItemSelect);
+  const onItemSelectCallback = useCallback(
+    (value: string) => {
+      setSelectedValue(value);
+      if (action) {
+        action.callback({ selectedValue: value });
+      }
+    },
+    [action],
+  );
   return (
     <AntForm.Item
       className={values?.styles?.names}
@@ -38,11 +47,11 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
       }}
     >
       <Select
-        onChange={handleChange}
+        onSelect={onItemSelectCallback}
         placeholder={values?.hintText ? values.hintText : ""}
         value={values?.selectedValue}
       >
-        {props.items.map((option, index) => (
+        {values?.items.map((option, index) => (
           <Select.Option key={index} value={option.value}>
             {option.label}
           </Select.Option>
