@@ -20,9 +20,6 @@ interface SelectOption {
 
 const Dropdown: React.FC<DropdownProps> = (props) => {
   const [selectedValue, setSelectedValue] = useState<string>();
-  const handleChange = (value: string): void => {
-    setSelectedValue(value);
-  };
   const { values } = useRegisterBindings(
     { ...props, selectedValue },
     props.id,
@@ -33,6 +30,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   const action = useEnsembleAction(props.onItemSelect);
   const onItemSelectCallback = useCallback(
     (value: string) => {
+      setSelectedValue(value);
       if (action) {
         action.callback({ selectedValue: value });
       }
@@ -49,7 +47,6 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
       }}
     >
       <Select
-        onChange={handleChange}
         onSelect={onItemSelectCallback}
         placeholder={values?.hintText ? values.hintText : ""}
         value={values?.selectedValue}
