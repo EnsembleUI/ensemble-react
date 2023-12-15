@@ -82,39 +82,26 @@ View:
         - ToggleButton:
             id: myToggleButton
             styles:
-              margin: 5
-              spacing: 10
+              margin: 5px 20px
+              spacing: 0
+              padding: 2
               runSpacing: 3
               color: black
-              selectedColor: yellow
-              backgroundColor: white
-              selectedBackgroundColor: pink
-              selectedBorderColor: blue
               borderColor: green
+              backgroundColor: blue
+              selectedColor: white
+              selectedBackgroundColor: black
+              selectedBorderColor: blue
             value: red
             items:
-              # - red
-              # - yellow
               - blue
               - { "label": "Red", "value": "red", "icon": { "name": "Star" } }
-              # - {
-              #     "label": "Green",
-              #     "value": "green",
-              #     "icon": { "name": "Add", "color": "blue", "size": 22 },
-              #   }
-              # - { "label": "Orange", "value": "orange" }
-              # - label: Red
-              #   value: red
-              #   icon:
-              #     name: Star
               - label: Green
                 value: green
                 icon:
                   name: Add
                   color: blue
                   size: 22
-              # - label: Yellow
-              #   value: yellow
             onChange:
               executeCode:
                 body: |-

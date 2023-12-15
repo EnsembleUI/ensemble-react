@@ -1,6 +1,7 @@
 import {
   type EnsembleAction,
   useRegisterBindings,
+  Expression,
 } from "@ensembleui/react-framework";
 import { useCallback, useState } from "react";
 import { isEqual, isNil, isString } from "lodash-es";
@@ -14,18 +15,19 @@ import { Icon } from "./Icon";
 import { Alert } from "antd";
 
 interface ToggleButtonPropsStyles {
-  margin?: number;
+  margin?: string;
+  padding?: number;
   spacing?: number;
   runSpacing?: number;
-  color?: string;
-  selectedColor?: string;
-  shadowColor?: string;
+  color?: Expression<string>;
+  selectedColor?: Expression<string>;
+  shadowColor?: Expression<string>;
   borderRadius?: number;
-  backgroundColor?: string;
-  selectedBackgroundColor?: string;
-  borderColor?: string;
+  backgroundColor?: Expression<string>;
+  selectedBackgroundColor?: Expression<string>;
+  borderColor?: Expression<string>;
   borderWidth?: number;
-  selectedBorderColor?: string;
+  selectedBorderColor?: Expression<string>;
   selectedBorderWidth?: number;
 }
 
@@ -86,7 +88,7 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
         flexDirection: "row",
         flexWrap: "wrap",
         rowGap: `${styles?.runSpacing ?? 0}px`,
-        margin: `${styles?.margin ?? 0}px`,
+        margin: `${styles?.margin ?? 0}`,
       }}
     >
       {structuredItems.map((item, index) => (
@@ -94,34 +96,36 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
           value={item.value}
           key={item.value}
           sx={{
-            color: styles?.color,
-            backgroundColor: styles?.backgroundColor,
+            padding: values?.styles?.padding,
+            color: values?.styles?.color,
+            backgroundColor: values?.styles?.backgroundColor,
             marginRight:
               index !== items.length - 1 ? `${styles?.spacing ?? 0}px` : 0,
             boxShadow: `1px 2px 5px 1px ${
-              styles?.shadowColor ?? "transparent"
+              values?.styles?.shadowColor ?? "transparent"
             }`,
             border: `${styles?.borderWidth ?? 1}px solid ${
-              styles?.borderColor ?? "transparent"
+              values?.styles?.borderColor ?? "transparent"
             } !important`,
-            borderRadius: `${styles?.borderRadius ?? 4}px !important`,
+            borderRadius: `${values?.styles?.borderRadius ?? 4}px !important`,
             "&.Mui-selected": {
-              color: styles?.selectedColor,
+              color: values?.styles?.selectedColor,
               backgroundColor:
-                styles?.selectedBackgroundColor ?? "rgba(0, 0, 0, 0.08)",
-              borderColor: styles?.selectedBorderColor,
+                values?.styles?.selectedBackgroundColor ??
+                "rgba(0, 0, 0, 0.08)",
+              borderColor: values?.styles?.selectedBorderColor,
               border: `${styles?.selectedBorderWidth ?? 1}px solid ${
-                styles?.selectedBorderColor ?? "transparent"
+                values?.styles?.selectedBorderColor ?? "transparent"
               } !important`,
               boxShadow: `1px 2px 5px 1px ${
                 styles?.shadowColor ?? "transparent"
               }`,
               "& .ant-typography": {
-                color: styles?.selectedColor,
+                color: values?.styles?.selectedColor,
               },
             },
             "&.Mui-selected:hover": {
-              backgroundColor: styles?.selectedBackgroundColor,
+              backgroundColor: values?.styles?.selectedBackgroundColor,
               filter: "brightness(92%)",
             },
           }}

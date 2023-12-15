@@ -28,8 +28,8 @@ export const Icon: React.FC<IconProps> = (props) => {
           color: props.color && getColor(String(values?.color)),
           fontSize: props.size,
           backgroundColor: `${
-            props.styles?.backgroundColor
-              ? props.styles.backgroundColor
+            values?.styles?.backgroundColor
+              ? values.styles.backgroundColor
               : "transparent"
           }`,
           padding: `${
@@ -46,8 +46,8 @@ export const Icon: React.FC<IconProps> = (props) => {
           borderWidth: `${
             props.styles?.borderWidth ? `${props.styles.borderWidth}px` : "0px"
           }`,
-          borderColor: props.styles?.borderColor
-            ? getColor(props.styles.borderColor)
+          borderColor: values?.styles?.borderColor
+            ? getColor(String(values.styles.borderColor))
             : undefined,
           borderStyle: props.styles?.borderWidth ? "solid" : undefined,
         }}
