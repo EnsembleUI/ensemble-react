@@ -1,5 +1,15 @@
 # @ensembleui/react-starter
 
+## 0.2.3
+
+### Patch Changes
+
+- 82375e0: added support for expressions in divider, icon and toggleButton widgets
+- 46d3040: Exposed onItemSelect method for dropdown
+- Updated dependencies [82375e0]
+- Updated dependencies [46d3040]
+  - @ensembleui/react-runtime@0.1.3
+
 ## 0.2.2
 
 ### Patch Changes
