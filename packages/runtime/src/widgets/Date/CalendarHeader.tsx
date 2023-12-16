@@ -29,7 +29,7 @@ export const CalendarHeader: React.FC<PickersCalendarHeaderProps<any>> = (
     const enteredDate = dayjs(context?.enteredDate)?.format(DateHeaderFormat);
 
     return enteredDate === "Invalid Date"
-      ? context?.value?.format(DateHeaderFormat) || ""
+      ? dayjs(context?.value)?.format(DateHeaderFormat) || ""
       : enteredDate;
   };
 
