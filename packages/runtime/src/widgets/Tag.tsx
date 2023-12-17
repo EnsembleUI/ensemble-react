@@ -13,10 +13,10 @@ import { Icon } from "./Icon";
 export interface TagStyles extends EnsembleWidgetStyles {
   backgroundColor?: Expression<string>;
   borderRadius?: string;
-  fontSize?: string;
-  textColor?: string;
-  fontWeight?: number | string;
-  fontFamily: string;
+  fontSize?: Expression<string>;
+  textColor?: Expression<string>;
+  fontWeight?: Expression<string>;
+  fontFamily: Expression<string>;
   textAlign:
     | "start"
     | "end"
@@ -67,11 +67,11 @@ export const Tag: React.FC<TagProps> = (props) => {
         textAlign: props.styles?.textAlign ? props.styles.textAlign : "center",
         color: values?.textColor,
         borderRadius: props.styles?.borderRadius ?? 10,
-        fontWeight: props.styles?.fontWeight
-          ? props.styles.fontWeight
+        fontWeight: values?.styles?.fontWeight
+          ? values?.styles.fontWeight
           : "normal",
-        fontFamily: props.styles?.fontFamily,
-        fontSize: props.styles?.fontSize ?? 12,
+        fontFamily: values?.styles?.fontFamily,
+        fontSize: values?.styles?.fontSize ?? 12,
         display: "inline-flex",
         alignItems: "center",
         margin: props.styles?.margin ?? "5px",
