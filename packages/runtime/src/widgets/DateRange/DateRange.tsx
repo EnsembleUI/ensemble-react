@@ -6,7 +6,7 @@ import { Form as AntForm } from "antd";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import dayjs from "dayjs";
 import { isEmpty, isEqual } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
@@ -40,6 +40,7 @@ export const DateRange: React.FC<DateProps> = (props) => {
   const [calendarMonth, setCalendarMonth] = useState<number>(
     getCalendarMonth(),
   );
+  const datePickerRef = useRef<HTMLDivElement | null>(null);
   const action = useEnsembleAction(props.onChange);
 
   const { values } = useRegisterBindings({ ...props, value }, props.id, {
@@ -108,39 +109,42 @@ export const DateRange: React.FC<DateProps> = (props) => {
     const newCalendarMonth = getCalendarMonth();
     setCalendarMonth(newCalendarMonth);
 
-    document.querySelectorAll(".MuiPickersDay-root").forEach((button) => {
-      const buttonDay = parseInt(button.textContent?.trim() || "");
+    datePickerRef?.current
+      ?.querySelectorAll(".MuiPickersDay-root")
+      ?.forEach((button) => {
+        const buttonDay = parseInt(button.textContent?.trim() || "");
 
-      if (
-        (isEqual(startMonth, newCalendarMonth) &&
-          isEqual(buttonDay, startDay) &&
-          isEqual(startYear, calendarYear)) ||
-        (isEqual(endMonth, newCalendarMonth) &&
-          isEqual(buttonDay, endDay) &&
-          isEqual(endYear, calendarYear))
-      ) {
-        button.classList.add("CustomSelected");
-      } else {
-        button.classList.remove("CustomSelected");
-      }
+        if (
+          (isEqual(startMonth, newCalendarMonth) &&
+            isEqual(buttonDay, startDay) &&
+            isEqual(startYear, calendarYear)) ||
+          (isEqual(endMonth, newCalendarMonth) &&
+            isEqual(buttonDay, endDay) &&
+            isEqual(endYear, calendarYear))
+        ) {
+          button.classList.add("CustomSelected");
+        } else {
+          button.classList.remove("CustomSelected");
+        }
 
-      if (
-        (startYear < calendarYear ||
-          (isEqual(startYear, calendarYear) && startMonth < newCalendarMonth) ||
-          (isEqual(startYear, calendarYear) &&
-            isEqual(startMonth, newCalendarMonth) &&
-            buttonDay > startDay)) &&
-        (endYear > calendarYear ||
-          (isEqual(endYear, calendarYear) && endMonth > newCalendarMonth) ||
-          (isEqual(endYear, calendarYear) &&
-            isEqual(endMonth, newCalendarMonth) &&
-            buttonDay < endDay))
-      ) {
-        button.classList.add("CustomInRange");
-      } else {
-        button.classList.remove("CustomInRange");
-      }
-    });
+        if (
+          (startYear < calendarYear ||
+            (isEqual(startYear, calendarYear) &&
+              startMonth < newCalendarMonth) ||
+            (isEqual(startYear, calendarYear) &&
+              isEqual(startMonth, newCalendarMonth) &&
+              buttonDay > startDay)) &&
+          (endYear > calendarYear ||
+            (isEqual(endYear, calendarYear) && endMonth > newCalendarMonth) ||
+            (isEqual(endYear, calendarYear) &&
+              isEqual(endMonth, newCalendarMonth) &&
+              buttonDay < endDay))
+        ) {
+          button.classList.add("CustomInRange");
+        } else {
+          button.classList.remove("CustomInRange");
+        }
+      });
   }, [startDate, endDate, calendarMonth, isCalendarOpen, openPicker]);
 
   return (
@@ -222,6 +226,7 @@ export const DateRange: React.FC<DateProps> = (props) => {
                 variant: "outlined",
               },
               popper: {
+                ref: datePickerRef,
                 modifiers: [
                   {
                     name: "flip",
