@@ -22,8 +22,10 @@ View:
             console.log(ensemble.formatter.now().getMilliseconds());
             console.log(ensemble.formatter.now().prettyDateTime());
             console.log(ensemble.formatter.now().prettyDate());
+            console.log(ensemble.formatter.now().prettyTime());
             console.log(ensemble.formatter.prettyDateTime("2021-08-10T12:00:00.000Z"));
             console.log(ensemble.formatter.prettyDate("2021-08-10T12:00:00.000Z"));
+            console.log(ensemble.formatter.prettyTime("2021-08-10T12:00:00.000Z"));
             console.log(ensemble.formatter.prettyDuration("100000000"));
           onComplete:
             executeCode:

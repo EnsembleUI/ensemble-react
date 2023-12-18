@@ -9,7 +9,7 @@ import {
   screenAtom,
   useScreenData,
   useEnsembleStorage,
-  useEnsembleFormatter,
+  DateFormatter,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -57,7 +57,8 @@ export const useExecuteCode: EnsembleActionHook<
   const isCodeString = isString(action);
   const screen = useScreenContext();
   const storage = useEnsembleStorage();
-  const formatter = useEnsembleFormatter();
+  const formatter = DateFormatter();
+
   const js = useMemo(() => {
     if (!action) {
       return;
@@ -90,12 +91,7 @@ export const useExecuteCode: EnsembleActionHook<
         const retVal = evaluate(
           screen,
           js,
-          merge(
-            { ensemble: { storage } },
-            { ensemble: { formatter } },
-            options?.context,
-            args,
-          ),
+          merge({ ensemble: { storage, formatter } }, options?.context, args),
         );
         onCompleteAction?.callback();
         return retVal;
