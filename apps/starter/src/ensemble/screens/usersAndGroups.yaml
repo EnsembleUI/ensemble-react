@@ -509,12 +509,12 @@ View:
         - Dropdown:
             id: myDropDown
             hintText: Select a program
-            defaultValue: ${ensemble.storage.get("arrayOfUsers")[0].fields.name}
+            value: ${ensemble.storage.get("arrayOfUsers")[0].fields.name}
             items:
               - label: ${ensemble.storage.get("arrayOfUsers")[0].fields.name}
                 value: ${ensemble.storage.get("arrayOfUsers")[0].fields.name}
-              - label: asdn
-                value: asdn
+              - label: HELLO
+                value: hello
             onItemSelect:
               executeCode: |
                 console.log("New value", selectedValue);

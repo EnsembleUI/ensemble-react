@@ -9,6 +9,7 @@ import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 export type DropdownProps = {
   label?: string;
   hintText?: string;
+  value?: Expression<string | number>;
   items: SelectOption[];
   onItemSelect: EnsembleAction;
 } & EnsembleWidgetProps;
@@ -19,7 +20,9 @@ interface SelectOption {
 }
 
 const Dropdown: React.FC<DropdownProps> = (props) => {
-  const [selectedValue, setSelectedValue] = useState<string>();
+  const [selectedValue, setSelectedValue] = useState<string>(
+    String(props?.value),
+  );
   const { values } = useRegisterBindings(
     { ...props, selectedValue },
     props.id,
@@ -47,6 +50,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
       }}
     >
       <Select
+        defaultValue={String(values?.value)}
         onSelect={onItemSelectCallback}
         placeholder={values?.hintText ? values.hintText : ""}
         value={values?.selectedValue}
