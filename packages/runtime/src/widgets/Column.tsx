@@ -56,8 +56,8 @@ export const Column: React.FC<FlexboxProps> = (props) => {
           value={
             {
               ...n,
-              currentIndex: index,
-              templateLength: namedData.length,
+              index,
+              length: namedData.length,
             } as CustomScope
           }
         >

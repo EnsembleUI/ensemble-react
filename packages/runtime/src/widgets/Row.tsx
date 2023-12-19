@@ -56,7 +56,16 @@ export const Row: React.FC<FlexboxProps> = (props) => {
     >
       {childrenFirst ? renderedChildren : null}
       {namedData.map((n, index) => (
-        <CustomScopeProvider key={index} value={n as CustomScope}>
+        <CustomScopeProvider
+          key={index}
+          value={
+            {
+              ...n,
+              index,
+              length: namedData.length,
+            } as CustomScope
+          }
+        >
           {itemTemplate?.template
             ? EnsembleRuntime.render([itemTemplate.template])
             : null}
