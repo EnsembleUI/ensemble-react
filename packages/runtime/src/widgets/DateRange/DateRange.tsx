@@ -38,7 +38,10 @@ export const DateRange: React.FC<DateProps> = (props) => {
   const [errorText, setErrorText] = useState("");
   const [endDateErrorText, setEndDateErrorText] = useState("");
   const [calendarMonth, setCalendarMonth] = useState<number>(
-    getCalendarMonth(),
+    value ? dayjs(value).month() + 1 : dayjs().month() + 1,
+  );
+  const [calendarYear, setCalendarYear] = useState<number>(
+    value ? dayjs(value).year() : dayjs().year(),
   );
   const datePickerRef = useRef<HTMLDivElement | null>(null);
   const action = useEnsembleAction(props.onChange);
@@ -93,6 +96,11 @@ export const DateRange: React.FC<DateProps> = (props) => {
     setEnteredDate("Start Date - End Date");
   };
 
+  const onMonthOrYearChange = (date: unknown): void => {
+    setCalendarMonth(dayjs(date as string | dayjs.Dayjs).month() + 1);
+    setCalendarYear(dayjs(date as string | dayjs.Dayjs).year());
+  };
+
   useEffect(() => {
     if (!isDateValid(startDate) && !isDateValid(endDate)) {
       return;
@@ -105,20 +113,16 @@ export const DateRange: React.FC<DateProps> = (props) => {
     const startYear = parseInt(startDate.substring(6, 10));
     const endYear = parseInt(endDate.substring(6, 10));
 
-    const calendarYear = getCalendarYear();
-    const newCalendarMonth = getCalendarMonth();
-    setCalendarMonth(newCalendarMonth);
-
     datePickerRef?.current
       ?.querySelectorAll(".MuiPickersDay-root")
       ?.forEach((button) => {
         const buttonDay = parseInt(button.textContent?.trim() || "");
 
         if (
-          (isEqual(startMonth, newCalendarMonth) &&
+          (isEqual(startMonth, calendarMonth) &&
             isEqual(buttonDay, startDay) &&
             isEqual(startYear, calendarYear)) ||
-          (isEqual(endMonth, newCalendarMonth) &&
+          (isEqual(endMonth, calendarMonth) &&
             isEqual(buttonDay, endDay) &&
             isEqual(endYear, calendarYear))
         ) {
@@ -129,15 +133,14 @@ export const DateRange: React.FC<DateProps> = (props) => {
 
         if (
           (startYear < calendarYear ||
+            (isEqual(startYear, calendarYear) && startMonth < calendarMonth) ||
             (isEqual(startYear, calendarYear) &&
-              startMonth < newCalendarMonth) ||
-            (isEqual(startYear, calendarYear) &&
-              isEqual(startMonth, newCalendarMonth) &&
+              isEqual(startMonth, calendarMonth) &&
               buttonDay > startDay)) &&
           (endYear > calendarYear ||
-            (isEqual(endYear, calendarYear) && endMonth > newCalendarMonth) ||
+            (isEqual(endYear, calendarYear) && endMonth > calendarMonth) ||
             (isEqual(endYear, calendarYear) &&
-              isEqual(endMonth, newCalendarMonth) &&
+              isEqual(endMonth, calendarMonth) &&
               buttonDay < endDay))
         ) {
           button.classList.add("CustomInRange");
@@ -145,7 +148,14 @@ export const DateRange: React.FC<DateProps> = (props) => {
           button.classList.remove("CustomInRange");
         }
       });
-  }, [startDate, endDate, calendarMonth, isCalendarOpen, openPicker]);
+  }, [
+    startDate,
+    endDate,
+    calendarMonth,
+    calendarYear,
+    isCalendarOpen,
+    openPicker,
+  ]);
 
   return (
     <DatePickerContext.Provider
@@ -190,9 +200,8 @@ export const DateRange: React.FC<DateProps> = (props) => {
             minDate={props.firstDate ? dayjs(props.firstDate) : undefined}
             onClose={(): void => setOpenPicker(false)}
             onChange={onDateChange}
-            onMonthChange={(date: unknown): void =>
-              setCalendarMonth(dayjs(date as string | dayjs.Dayjs).month() + 1)
-            }
+            onMonthChange={onMonthOrYearChange}
+            onYearChange={onMonthOrYearChange}
             slots={{
               calendarHeader: CalendarHeader,
               actionBar: isCalendarOpen ? undefined : ActionBar,
@@ -285,25 +294,3 @@ const customDateRangeStyles = `
     background-color: rgb(208, 229, 253) !important;
   }
 `;
-
-const getCalendarMonth = (): number =>
-  parseInt(
-    new Date(
-      `${
-        document
-          .querySelector(".MuiPickersCalendarHeader-label")
-          ?.textContent?.split(" ")[0]
-          .trim() || ""
-      } 01 2000`,
-    ).toLocaleDateString(`en`, {
-      month: `2-digit`,
-    }),
-  );
-
-const getCalendarYear = (): number =>
-  parseInt(
-    document
-      .querySelector(".MuiPickersCalendarHeader-label")
-      ?.textContent?.split(" ")[1]
-      .trim() || "",
-  );
