@@ -14,12 +14,21 @@ export interface DividerStyles extends EnsembleWidgetStyles {
   endIndent?: string | number;
   indent?: string | number;
   color?: Expression<string>;
+  width?: string;
 }
 
 export type DividerProps = EnsembleWidgetProps<DividerStyles>;
 
 export const DividerWidget: React.FC<DividerProps> = (props) => {
   const { values } = useRegisterBindings({ ...props }, props.id);
+  let width;
+  if (props?.styles?.direction === "vertical") {
+    width = "0px";
+  } else if (props?.styles?.width) {
+    width = props.styles.width;
+  } else {
+    width = "100%";
+  }
   return (
     <div
       className="divider"
@@ -35,7 +44,7 @@ export const DividerWidget: React.FC<DividerProps> = (props) => {
             ? `0px ${props.styles.endIndent}px 0px ${props.styles.indent}px`
             : "0px"
         }`,
-        width: `${props.styles?.direction === "vertical" ? "0px" : ""}`,
+        width,
       }}
     />
   );

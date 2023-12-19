@@ -518,6 +518,11 @@ View:
             onItemSelect:
               executeCode: |
                 console.log("New value", selectedValue);
+        - Divider:
+            styles:
+              thickness: 1
+              color: black
+              width: 100px
 API:
   getData:
     uri: https://api.airtable.com/v0/app0FnT5yUsW9fjn6/tblWGM6o7vqlTfB8b
