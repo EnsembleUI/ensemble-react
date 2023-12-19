@@ -26,3 +26,4 @@ export * from "./Dropdown";
 export * from "./Stepper";
 export * from "./ToggleButton";
 export * from "./Date";
+export * from "./DateRange";

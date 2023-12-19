@@ -8,7 +8,6 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useState, useCallback } from "react";
 import dayjs from "dayjs";
-import { toString } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
@@ -28,7 +27,7 @@ type DateProps = {
   FormInputProps<string>;
 
 export const Date: React.FC<DateProps> = (props) => {
-  const [value, setValue] = useState<dayjs.Dayjs | undefined>(
+  const [value, setValue] = useState<dayjs.Dayjs | string | undefined>(
     props.initialValue ? dayjs(props.initialValue) : undefined,
   );
   const [openPicker, setOpenPicker] = useState(false);
@@ -57,15 +56,15 @@ export const Date: React.FC<DateProps> = (props) => {
     [action, props],
   );
 
-  const onDateChange = (date: any): void => {
-    const formattedDate = dayjs(toString(date))?.format(DateDisplayFormat);
+  const onDateChange = (date: unknown): void => {
+    const formattedDate = dayjs(date as string).format(DateDisplayFormat);
     formattedDate !== "Invalid Date" && setEnteredDate(formattedDate);
 
     onChangeCallback(formattedDate);
   };
 
-  const onDateAccept = (date: any): void => {
-    setValue(dayjs(toString(date)));
+  const onDateAccept = (date: unknown): void => {
+    setValue(dayjs(date as string));
     setOpenPicker(false);
   };
 
@@ -115,7 +114,7 @@ export const Date: React.FC<DateProps> = (props) => {
               },
               field: {
                 clearable: Boolean(value),
-                onClear: () => setValue(undefined),
+                onClear: (): void => setValue(undefined),
               },
               textField: {
                 InputLabelProps: {
@@ -124,7 +123,7 @@ export const Date: React.FC<DateProps> = (props) => {
                 onClick:
                   props?.enabled === false
                     ? undefined
-                    : () => setOpenPicker(true),
+                    : (): void => setOpenPicker(true),
                 error: false,
                 color: "success",
               },
@@ -150,6 +149,9 @@ export const Date: React.FC<DateProps> = (props) => {
                         isCalendarOpen ? "block" : "none"
                       } !important`,
                     },
+                  "& .Mui-selected": {
+                    backgroundColor: "rgb(81, 177, 145) !important",
+                  },
                 },
               },
             }}
@@ -170,10 +172,6 @@ export const Date: React.FC<DateProps> = (props) => {
                 height: "unset !important",
                 maxHeight: "unset !important",
               },
-              "& .MuiPickersFadeTransitionGroup-root.MuiDateCalendar-viewTransitionContainer":
-                {
-                  display: "none !important",
-                },
             }}
           />
         </LocalizationProvider>
