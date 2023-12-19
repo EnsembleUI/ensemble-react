@@ -9,6 +9,24 @@ View:
             console.log(ensemble.storage.get("arrayOfUsers"))
             const groups = new Set(response.body.records.flatMap(record => record.fields.groups))
             // ensemble.storage.set("arrayOfGroups", Array.from(groups))
+            console.log("ensemble.formatter");
+            console.log(ensemble.formatter.now().getDate());
+            console.log(ensemble.formatter.now().getDateTime());
+            console.log(ensemble.formatter.now().getYear());
+            console.log(ensemble.formatter.now().getMonth());
+            console.log(ensemble.formatter.now().getDay());
+            console.log(ensemble.formatter.now().getDayOfWeek());
+            console.log(ensemble.formatter.now().getHour());
+            console.log(ensemble.formatter.now().getMinute());
+            console.log(ensemble.formatter.now().getSecond());
+            console.log(ensemble.formatter.now().getMilliseconds());
+            console.log(ensemble.formatter.now().prettyDateTime());
+            console.log(ensemble.formatter.now().prettyDate());
+            console.log(ensemble.formatter.now().prettyTime());
+            console.log(ensemble.formatter.prettyDateTime("2021-08-10T12:00:00.000Z"));
+            console.log(ensemble.formatter.prettyDate("2021-08-10T12:00:00.000Z"));
+            console.log(ensemble.formatter.prettyTime("2021-08-10T12:00:00.000Z"));
+            console.log(ensemble.formatter.prettyDuration("100000000"));
           onComplete:
             executeCode:
               scriptName: test.js
