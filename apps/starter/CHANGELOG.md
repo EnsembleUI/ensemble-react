@@ -1,5 +1,15 @@
 # @ensembleui/react-starter
 
+## 0.2.5
+
+### Patch Changes
+
+- 28dd9f4: exposed index and length fot item-template Row and Col
+- Updated dependencies [3ffa150]
+- Updated dependencies [28dd9f4]
+  - @ensembleui/react-framework@0.1.4
+  - @ensembleui/react-runtime@0.1.5
+
 ## 0.2.4
 
 ### Patch Changes
