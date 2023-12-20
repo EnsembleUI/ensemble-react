@@ -70,7 +70,6 @@ export const Tag: React.FC<TagProps> = (props) => {
     cursor: "pointer",
   };
   const tagStyles = merge(defaultStyles, values?.styles);
-  console.log(tagStyles, props?.styles, values?.styles);
   const truncatedLabels = expanded ? labels : labels.slice(0, 4);
   const additionalTagsCount = labels.length - truncatedLabels.length;
   const tagElements = truncatedLabels.map((item, index) => (
