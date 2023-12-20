@@ -11,6 +11,7 @@ import InviteYAML from "./ensemble/screens/invite.yaml";
 import ProductAndDevelopmentYAML from "./ensemble/screens/productAndDevelopment.yaml";
 import CreateCollectionYAML from "./ensemble/screens/createCollection.yaml";
 import AddGroupsYAML from "./ensemble/screens/addGroups.yaml";
+import SocialLoginYAML from "./ensemble/screens/socialLogin.yaml";
 // Widgets
 import HeaderWidgetYAML from "./ensemble/widgets/Header.yaml";
 // Scripts
@@ -93,6 +94,11 @@ const testApp: ApplicationDTO = {
       id: "addGroups",
       name: "Add Groups",
       content: String(AddGroupsYAML),
+    },
+    {
+      id: "socialLogin",
+      name: "Social Login",
+      content: String(SocialLoginYAML),
     },
   ],
 };
