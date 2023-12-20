@@ -30,8 +30,9 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
   appId,
   application,
 }) => {
+  // TODO: need to move this inside env
   const oAuthClientId =
-    "126811761383-3k0ojg0tbuslc1pbhh0vllu1orbr3aml.apps.googleusercontent.com";
+    "726646987043-9i1it0ll0neojkf7f9abkagbe66kqe4a.apps.googleusercontent.com";
 
   // BUG: runs twice https://github.com/facebook/react/issues/24935
   const app = useMemo(() => {

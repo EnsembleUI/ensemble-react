@@ -1,13 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
-import type { Expression } from "@ensembleui/react-framework";
-import {
-  useRegisterBindings,
-  EnsembleWidget,
-  unwrapWidget,
-} from "@ensembleui/react-framework";
+import { useMemo } from "react";
 import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
 import { WidgetRegistry } from "../registry";
-import { cloneDeep } from "lodash-es";
 
 export type SignInWithGoogleProps = {
   type?: "standard" | "icon";
@@ -18,7 +12,9 @@ export type SignInWithGoogleProps = {
 };
 
 export const SignInWithGoogle: React.FC<SignInWithGoogleProps> = (props) => {
-  const { values, rootRef } = useRegisterBindings(props);
+  const handleSuccessfullGoogleLoginResponse = (credentialResponse: any) => {
+    const userDetails = jwtDecode(credentialResponse.credential);
+  };
 
   // google login component
   const SignInWithGoogleComponent = useMemo(() => {
@@ -29,9 +25,7 @@ export const SignInWithGoogle: React.FC<SignInWithGoogleProps> = (props) => {
         size={props.size}
         text={props.text}
         shape={props.shape}
-        onSuccess={(credentialResponse) => {
-          console.log(credentialResponse);
-        }}
+        onSuccess={handleSuccessfullGoogleLoginResponse}
         onError={() => {
           console.log("Login Failed");
         }}
