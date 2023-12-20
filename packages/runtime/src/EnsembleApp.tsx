@@ -8,6 +8,7 @@ import {
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { injectStyle } from "react-toastify/dist/inject-style";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ThemeProvider } from "./ThemeProvider";
 import { EnsembleEntry } from "./runtime/entry";
 import { EnsembleScreen } from "./runtime/screen";
@@ -19,6 +20,7 @@ import { WidgetRegistry } from "./registry";
 import { createCustomWidget } from "./runtime/customWidget";
 
 injectStyle();
+
 export interface EnsembleAppProps {
   appId: string;
   application?: ApplicationDTO;
@@ -28,6 +30,9 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
   appId,
   application,
 }) => {
+  const oAuthClientId =
+    "126811761383-3k0ojg0tbuslc1pbhh0vllu1orbr3aml.apps.googleusercontent.com";
+
   // BUG: runs twice https://github.com/facebook/react/issues/24935
   const app = useMemo(() => {
     const resolvedApp = application ?? ApplicationLoader.load(appId);
@@ -35,7 +40,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
     parsedApp.customWidgets.forEach((customWidget) => {
       WidgetRegistry.register(
         customWidget.name,
-        createCustomWidget(customWidget),
+        createCustomWidget(customWidget)
       );
     });
     return parsedApp;
@@ -62,13 +67,23 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
           ],
         },
       ]),
-    [app],
+    [app]
   );
+
   return (
     <ApplicationContextProvider app={app}>
       <ThemeProvider>
-        <RouterProvider router={router} />
-        <ToastContainer />
+        {oAuthClientId ? (
+          <GoogleOAuthProvider clientId={oAuthClientId}>
+            <RouterProvider router={router} />
+            <ToastContainer />
+          </GoogleOAuthProvider>
+        ) : (
+          <>
+            <RouterProvider router={router} />
+            <ToastContainer />
+          </>
+        )}
       </ThemeProvider>
     </ApplicationContextProvider>
   );

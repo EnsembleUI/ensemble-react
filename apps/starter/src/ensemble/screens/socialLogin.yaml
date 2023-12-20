@@ -1,0 +1,10 @@
+View:
+  header:
+    title:
+      Text:
+        text: Social Login
+
+  body:
+    Column:
+      children:
+        - SignInWithGoogle:
