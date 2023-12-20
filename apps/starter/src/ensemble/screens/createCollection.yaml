@@ -16,10 +16,9 @@ View:
         executeCode: |
           const name = collectionName.value
           const email = description.value
-          console.log(name, email)
-          //const res = ensemble.storage.get("arrayOfCollections")
-          //res.push({"id": res.length+1, "fields": { "title": name, "sources": email }})
-          //ensemble.storage.set("arrayOfCollections",res)
+          const res = ensemble.storage.get("arrayOfCollections")
+          res.push({"id": res.length+1, "fields": { "title": name, "sources": email }})
+          ensemble.storage.set("arrayOfCollections",res)
       children:
         - TextInput:
             id: collectionName

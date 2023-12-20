@@ -9,6 +9,7 @@ import type {
   IconProps,
 } from "../shared/types";
 import { Icon } from "./Icon";
+import { merge } from "lodash-es";
 
 export interface TagStyles extends EnsembleWidgetStyles {
   backgroundColor?: Expression<string>;
@@ -54,29 +55,29 @@ export const Tag: React.FC<TagProps> = (props) => {
     values?.label && Array.isArray(values.label)
       ? values.label
       : [values?.label];
+  const defaultStyles = {
+    backgroundColor: "#e6e7e8",
+    textAlign: "center",
+    paddingLeft: "10px",
+    paddingRight: "10px",
+    display: "inline-flex",
+    alignItems: "center",
+    whiteSpace: "nowrap",
+    borderRadius: 10,
+    fontSize: 12,
+    margin: "5px",
+    fontWeight: "normal",
+    cursor: "pointer",
+  };
+  const tagStyles = merge(defaultStyles, values?.styles);
+  console.log(tagStyles, props?.styles, values?.styles);
   const truncatedLabels = expanded ? labels : labels.slice(0, 4);
   const additionalTagsCount = labels.length - truncatedLabels.length;
   const tagElements = truncatedLabels.map((item, index) => (
     <Typography.Text
       className={values?.styles?.names}
       key={index}
-      style={{
-        backgroundColor: values?.backgroundColor ?? "#e6e7e8",
-        paddingLeft: "10px",
-        paddingRight: "10px",
-        textAlign: props.styles?.textAlign ? props.styles.textAlign : "center",
-        color: values?.textColor,
-        borderRadius: props.styles?.borderRadius ?? 10,
-        fontWeight: values?.styles?.fontWeight
-          ? values?.styles.fontWeight
-          : "normal",
-        fontFamily: values?.styles?.fontFamily,
-        fontSize: values?.styles?.fontSize ?? 12,
-        display: "inline-flex",
-        alignItems: "center",
-        margin: props.styles?.margin ?? "5px",
-        whiteSpace: "nowrap",
-      }}
+      style={{ ...tagStyles, color: values?.textColor }}
     >
       {item} &nbsp;
       {props.icon ? <Icon {...props.icon} /> : null}
@@ -94,19 +95,7 @@ export const Tag: React.FC<TagProps> = (props) => {
       {additionalTagsCount > 0 && (
         <Typography.Text
           onClick={toggleExpansion}
-          style={{
-            backgroundColor: props.styles?.backgroundColor ?? "#e6e7e8",
-            paddingLeft: "10px",
-            paddingRight: "10px",
-            textAlign: "left",
-            borderRadius: props.styles?.borderRadius ?? 10,
-            fontWeight: "bold",
-            display: "inline-flex",
-            alignItems: "center",
-            margin: "5px",
-            whiteSpace: "nowrap",
-            cursor: "pointer",
-          }}
+          style={{ ...tagStyles, color: values?.textColor }}
         >
           +{additionalTagsCount} more
         </Typography.Text>
