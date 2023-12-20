@@ -1,7 +1,10 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
+import { useEnsembleUser } from "@ensembleui/react-framework";
+import type { EnsembleAction } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
+import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
 export type SignInWithGoogleProps = {
   type?: "standard" | "icon";
@@ -9,11 +12,43 @@ export type SignInWithGoogleProps = {
   size?: "large" | "small" | "medium";
   text?: "signin_with" | "signup_with";
   shape?: "rectangular" | "pill" | "circle" | "square";
+  onSignedIn?: EnsembleAction;
+  onError?: EnsembleAction;
 };
 
 export const SignInWithGoogle: React.FC<SignInWithGoogleProps> = (props) => {
+  const [user, setUser] = useEnsembleUser();
+  const onSignInAction = useEnsembleAction(props.onSignedIn);
+  const onErrorAction = useEnsembleAction(props.onError);
+
+  // trigger on signin action
+  const onSignInActionCallback = useCallback(
+    (values: unknown) => {
+      if (!onSignInAction) {
+        return;
+      }
+
+      return onSignInAction.callback({ values });
+    },
+    [onSignInAction]
+  );
+
+  // trigger on error action
+  const onErrorActionCallback = useCallback(() => {
+    if (!onErrorAction) {
+      return;
+    }
+
+    return onErrorAction.callback();
+  }, [onErrorAction]);
+
+  // handle google login resposne
   const handleSuccessfullGoogleLoginResponse = (credentialResponse: any) => {
     const userDetails = jwtDecode(credentialResponse.credential);
+    setUser({ ...user, ...userDetails });
+
+    // trigger the on sign in action
+    onSignInActionCallback(userDetails);
   };
 
   // google login component
@@ -26,9 +61,7 @@ export const SignInWithGoogle: React.FC<SignInWithGoogleProps> = (props) => {
         text={props.text}
         shape={props.shape}
         onSuccess={handleSuccessfullGoogleLoginResponse}
-        onError={() => {
-          console.log("Login Failed");
-        }}
+        onError={onErrorActionCallback}
       />
     );
   }, []);
