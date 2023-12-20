@@ -47,19 +47,20 @@ View:
                     color: "red"
                     fontSize: 20
         - Column:
+            id: templateExample
             children:
               - Text:
                   text: head
                   styles:
                     color: "purple"
             item-template:
-              data: [1, 3, 5]
+              data:
+                [{ "name": "Ali" }, { "name": "Raheem" }, { "name": "Arijit" }]
               name: i
               template:
-                Text:
-                  text: ${i}
-                  styles:
-                    color: "blue"
+                Button:
+                  label: ${i.name}
+
         - Column:
             item-template:
               data: [7, 9]

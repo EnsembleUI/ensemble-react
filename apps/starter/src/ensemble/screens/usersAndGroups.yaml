@@ -509,15 +509,28 @@ View:
         - Dropdown:
             id: myDropDown
             hintText: Select a program
-            defaultValue: ${ensemble.storage.get("arrayOfUsers")[0].fields.name}
+            value: ${ensemble.storage.get("arrayOfUsers")[0].fields.name}
             items:
               - label: ${ensemble.storage.get("arrayOfUsers")[0].fields.name}
                 value: ${ensemble.storage.get("arrayOfUsers")[0].fields.name}
-              - label: asdn
-                value: asdn
+              - label: HELLO
+                value: hello
             onItemSelect:
               executeCode: |
                 console.log("New value", selectedValue);
+        - Divider:
+            styles:
+              thickness: 1
+              color: black
+              width: 100px
+        - Progress:
+            display: linear
+            filledPercentage: 80
+            styles:
+              color: green
+              backgroundColor: black
+              thickness: 24
+              borderRadius: 100px
 API:
   getData:
     uri: https://api.airtable.com/v0/app0FnT5yUsW9fjn6/tblWGM6o7vqlTfB8b

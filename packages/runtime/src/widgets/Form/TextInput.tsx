@@ -19,6 +19,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
       rules={[{ required: values?.required }]}
       style={{
         margin: "0px",
+        width: "100%",
       }}
     >
       {props.multiLine ? (

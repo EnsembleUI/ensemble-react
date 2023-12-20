@@ -1,17 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { Progress as AntProgress } from "antd";
+import {
+  type Expression,
+  useRegisterBindings,
+} from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from "../shared/types";
 
 export interface ProgressStyle {
   size?: number;
   thickness?: number;
-  color?: string;
+  color?: Expression<string>;
+  borderRadius?: Expression<string>;
+  backgroundColor?: Expression<string>;
+  margin?: string;
 }
 
 export type ProgressProps = {
   display?: "linear" | "circular";
   countdown?: number;
+  filledPercentage?: number;
 } & EnsembleWidgetProps<ProgressStyle>;
 
 const Progress: React.FC<ProgressProps> = (props) => {
@@ -26,7 +34,10 @@ const Progress: React.FC<ProgressProps> = (props) => {
   const thickness = styles?.thickness ? styles.thickness : DEFAULT_STROKE_WIDTH;
   // Calculate the percentage based on the countdown value
   const [percent, setPercent] = useState(countdown ? 0 : -1);
-
+  const filledPercentage = props?.filledPercentage
+    ? props.filledPercentage
+    : "40%";
+  const { values } = useRegisterBindings({ ...props }, props.id);
   useEffect(() => {
     // If countdown is present and greater than 0, calculate the target percent for animation
     if (countdown && countdown > 0) {
@@ -51,12 +62,12 @@ const Progress: React.FC<ProgressProps> = (props) => {
   if (isCircular && countdown) {
     // When display is circular
     return (
-      <div>
+      <div style={{ margin: values?.styles?.margin }}>
         <AntProgress
           percent={percent}
           showInfo={false}
-          size={styles?.size || "default"}
-          strokeColor={styles?.color || ""}
+          size={values?.styles?.size || "default"}
+          strokeColor={values?.styles?.color || ""}
           strokeWidth={thickness}
           type="circle"
         />
@@ -66,7 +77,7 @@ const Progress: React.FC<ProgressProps> = (props) => {
 
   if (isCircular) {
     return (
-      <div>
+      <div style={{ margin: values?.styles?.margin }}>
         <svg
           height={radius * 2}
           width={radius * 2}
@@ -78,7 +89,9 @@ const Progress: React.FC<ProgressProps> = (props) => {
               cy={radius}
               fill="none"
               r={radius - thickness / 2}
-              stroke={`${styles?.color ? styles.color : "#000"}`}
+              stroke={`${
+                values?.styles?.color ? values?.styles.color : "#000"
+              }`}
               strokeLinecap="round"
               strokeWidth={thickness}
             >
@@ -130,40 +143,78 @@ const Progress: React.FC<ProgressProps> = (props) => {
     return (
       <div
         style={{
-          width: styles?.size ? `${styles.size}px` : "auto", // Set width only for circular display
+          width: values?.styles?.size ? `${values?.styles.size}px` : "auto", // Set width only for circular display
         }}
       >
         <AntProgress
           percent={percent}
           showInfo={false}
           size="default"
-          strokeColor={styles?.color || ""}
+          strokeColor={values?.styles?.color || ""}
           strokeWidth={thickness}
         />
       </div>
     );
   }
-
-  if (isLinear) {
+  if (isLinear && filledPercentage) {
     return (
-      <div>
-        <div className="loader" />
+      <div style={{ margin: values?.styles?.margin }}>
+        <div className="loader-static" />
         <style>
           {`
+			/* Linear loader */
+			.loader-static {
+			  display: block;
+			  position: relative;
+			  background-color: ${
+          values?.styles?.backgroundColor
+            ? values.styles.backgroundColor
+            : "rgba(0,0,0,0.1)"
+        };
+			  height: ${styles?.thickness ? styles.thickness : 12}px;
+			  width: ${values?.styles?.size ? `${values?.styles.size}px` : "100%"};
+			  border-radius: ${values?.styles?.borderRadius ?? ""};
+			  overflow: hidden;
+			}
+			.loader-static::after {
+			  content: '';
+			  width: ${filledPercentage}%;
+			  height: 100%;
+			  background: ${values?.styles?.color ? values?.styles.color : "#1890ff"};
+			  position: absolute;
+			  top: 0;
+			  left: 0;
+			  box-sizing: border-box;
+			}
+		  `}
+        </style>
+      </div>
+    );
+  }
+  return (
+    <div style={{ margin: values?.styles?.margin }}>
+      <div className="loader" />
+      <style>
+        {`
 			/* Linear loader animation */
 			.loader {
 			  display: block;
 			  position: relative;
-			  background-color: rgba(0,0,0,0.1);
+			  background-color: ${
+          values?.styles?.backgroundColor
+            ? values.styles.backgroundColor
+            : "rgba(0,0,0,0.1)"
+        };
 			  height: ${styles?.thickness ? styles.thickness : 12}px;
-			  width: ${styles?.size ? `${styles.size}px` : "100%"};
+			  width: ${values?.styles?.size ? `${values?.styles.size}px` : "100%"};
+			  border-radius: ${values?.styles?.borderRadius ?? ""};
 			  overflow: hidden;
 			}
 			.loader::after {
 			  content: '';
 			  width: 40%;
 			  height: 100%;
-			  background: ${styles?.color ? styles.color : "#1890ff"};
+			  background: ${values?.styles?.color ? values?.styles.color : "#1890ff"};
 			  position: absolute;
 			  top: 0;
 			  left: 0;
@@ -182,12 +233,9 @@ const Progress: React.FC<ProgressProps> = (props) => {
 			  }
 			}
 		  `}
-        </style>
-      </div>
-    );
-  }
-
-  return null;
+      </style>
+    </div>
+  );
 };
 
 WidgetRegistry.register("Progress", Progress);

@@ -72,6 +72,11 @@ export const ModalWrapper: React.FC = () => {
       left: 0 !important;
       top: calc(50% - ${modalHeight / 2}px) !important;
     `,
+    center: `
+	  top: 50% !important;
+	  left: 50% !important;
+	  transform: translate(-50%, -50%) !important;
+  `,
   };
 
   const positionStyles = `

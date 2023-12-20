@@ -17,6 +17,7 @@ export interface FormProps {
     labelPosition: "top" | "start" | "none";
     labelOverflow: "wrap" | "visible" | "clip" | "ellipsis";
     gap?: string | number;
+    width?: string;
   };
 }
 export const Form: React.FC<FormProps> = (props) => {
@@ -42,6 +43,7 @@ export const Form: React.FC<FormProps> = (props) => {
         display: "flex",
         flexDirection: "column",
         gap: `${props.styles.gap ? `${props.styles.gap}px` : "2px"}`,
+        width: props?.styles?.width,
       }}
     >
       {EnsembleRuntime.render(props.children)}
