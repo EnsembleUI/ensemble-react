@@ -8,3 +8,8 @@ View:
     Column:
       children:
         - SignInWithGoogle:
+        - Conditional:
+            conditions:
+              - if: ${ensemble.user.email}
+                Text:
+                  text: Social Login
