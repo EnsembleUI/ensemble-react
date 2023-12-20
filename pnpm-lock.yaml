@@ -143,6 +143,7 @@ importers:
       chartjs-plugin-datalabels: ^2.2.0
       dayjs: ^1.11.10
       eslint-config-custom: workspace:*
+      jwt-decode: ^4.0.0
       lodash-es: ^4.17.21
       react-chartjs-2: ^5.2.0
       react-markdown: ^8.0.7
@@ -153,6 +154,7 @@ importers:
       tsup: ^7.2.0
     dependencies:
       '@react-oauth/google': 0.12.1
+      jwt-decode: 4.0.0
     devDependencies:
       '@ant-design/icons': 5.2.6
       '@emotion/react': 11.11.1_@types+react@18.2.21
@@ -9813,6 +9815,11 @@ packages:
       object.assign: 4.1.4
       object.values: 1.1.7
     dev: true
+
+  /jwt-decode/4.0.0:
+    resolution: {integrity: sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA==}
+    engines: {node: '>=18'}
+    dev: false
 
   /keyv/4.5.3:
     resolution: {integrity: sha512-QCiSav9WaX1PgETJ+SpNnx2PRRapJ/oRSXM4VO5OGYGSjrxbKPVFVhB3l2OCbLCk329N8qyAtsJjSjvVBWzEug==}
