@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { GoogleLogin } from "@react-oauth/google";
+import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useEnsembleUser } from "@ensembleui/react-framework";
@@ -18,6 +18,10 @@ export type SignInWithGoogleProps = {
 };
 
 export const SignInWithGoogle: React.FC<SignInWithGoogleProps> = (props) => {
+  // TODO: need to move this inside env
+  const oAuthClientId =
+    "726646987043-9i1it0ll0neojkf7f9abkagbe66kqe4a.apps.googleusercontent.com";
+
   const { values, rootRef } = useRegisterBindings(props);
 
   const [user, setUser] = useEnsembleUser();
@@ -33,7 +37,7 @@ export const SignInWithGoogle: React.FC<SignInWithGoogleProps> = (props) => {
 
       return onSignInAction.callback({ values });
     },
-    [onSignInAction]
+    [onSignInAction],
   );
 
   // trigger on error action
@@ -57,15 +61,17 @@ export const SignInWithGoogle: React.FC<SignInWithGoogleProps> = (props) => {
   // google login component
   const SignInWithGoogleComponent = useMemo(() => {
     return (
-      <GoogleLogin
-        type={values?.type}
-        theme={values?.theme}
-        size={values?.size}
-        text={values?.text}
-        shape={values?.shape}
-        onSuccess={handleSuccessfullGoogleLoginResponse}
-        onError={onErrorActionCallback}
-      />
+      <GoogleOAuthProvider clientId={oAuthClientId}>
+        <GoogleLogin
+          type={values?.type}
+          theme={values?.theme}
+          size={values?.size}
+          text={values?.text}
+          shape={values?.shape}
+          onSuccess={handleSuccessfullGoogleLoginResponse}
+          onError={onErrorActionCallback}
+        />
+      </GoogleOAuthProvider>
     );
   }, []);
 

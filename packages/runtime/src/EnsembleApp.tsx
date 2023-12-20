@@ -30,10 +30,6 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
   appId,
   application,
 }) => {
-  // TODO: need to move this inside env
-  const oAuthClientId =
-    "726646987043-9i1it0ll0neojkf7f9abkagbe66kqe4a.apps.googleusercontent.com";
-
   // BUG: runs twice https://github.com/facebook/react/issues/24935
   const app = useMemo(() => {
     const resolvedApp = application ?? ApplicationLoader.load(appId);
@@ -41,7 +37,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
     parsedApp.customWidgets.forEach((customWidget) => {
       WidgetRegistry.register(
         customWidget.name,
-        createCustomWidget(customWidget)
+        createCustomWidget(customWidget),
       );
     });
     return parsedApp;
@@ -68,23 +64,14 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
           ],
         },
       ]),
-    [app]
+    [app],
   );
 
   return (
     <ApplicationContextProvider app={app}>
       <ThemeProvider>
-        {oAuthClientId ? (
-          <GoogleOAuthProvider clientId={oAuthClientId}>
-            <RouterProvider router={router} />
-            <ToastContainer />
-          </GoogleOAuthProvider>
-        ) : (
-          <>
-            <RouterProvider router={router} />
-            <ToastContainer />
-          </>
-        )}
+        <RouterProvider router={router} />
+        <ToastContainer />
       </ThemeProvider>
     </ApplicationContextProvider>
   );
