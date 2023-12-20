@@ -9,12 +9,12 @@ export interface EnsembleStorage {
   delete: (key: string) => unknown;
 }
 
-const backingStorage = createJSONStorage<Record<string, unknown>>(
+export const backingStorage = createJSONStorage<Record<string, unknown>>(
   () => sessionStorage,
 );
 
 export const screenStorageAtom = atomWithStorage<Record<string, unknown>>(
-  "ensemble",
+  "ensemble.storage",
   {},
   backingStorage,
   {
