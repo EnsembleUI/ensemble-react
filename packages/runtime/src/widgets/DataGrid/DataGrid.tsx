@@ -6,6 +6,7 @@ import {
   useWidgetId,
   evaluate,
   defaultScreenContext,
+  useRegisterBindings,
 } from "@ensembleui/react-framework";
 import { type ReactElement } from "react";
 import { get } from "lodash-es";
@@ -34,11 +35,11 @@ interface DataColumn {
 
 export interface DataGridStyles extends Partial<EnsembleWidgetStyles> {
   headerStyle?: {
-    backgroundColor: string;
-    fontSize: string;
-    fontFamily: string;
-    fontWeight: string;
-    textColor: string;
+    backgroundColor: Expression<string>;
+    fontSize: Expression<string>;
+    fontFamily: Expression<string>;
+    fontWeight: Expression<string>;
+    textColor: Expression<string>;
     hasDivider: boolean;
     borderBottom: string;
   };
@@ -60,15 +61,13 @@ export interface DataGridRowTemplate {
   };
 }
 
-export const DataGrid: React.FC<GridProps> = ({
-  DataColumns,
-  "item-template": itemTemplate,
-  id,
-  styles,
-}) => {
-  const { resolvedWidgetId, rootRef } = useWidgetId(id);
+export const DataGrid: React.FC<GridProps> = (props) => {
+  const DataColumns = props?.DataColumns;
+  const itemTemplate = props["item-template"];
+  const { resolvedWidgetId, rootRef } = useWidgetId(props?.id);
   const { namedData } = useTemplateData({ ...itemTemplate });
-  const headerStyle = styles?.headerStyle;
+  const { values } = useRegisterBindings({ ...props }, props?.id);
+  const headerStyle = values?.styles?.headerStyle;
   return (
     <>
       <Table
