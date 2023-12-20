@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
+import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useEnsembleUser } from "@ensembleui/react-framework";
 import type { EnsembleAction } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
@@ -17,6 +18,8 @@ export type SignInWithGoogleProps = {
 };
 
 export const SignInWithGoogle: React.FC<SignInWithGoogleProps> = (props) => {
+  const { values, rootRef } = useRegisterBindings(props);
+
   const [user, setUser] = useEnsembleUser();
   const onSignInAction = useEnsembleAction(props.onSignedIn);
   const onErrorAction = useEnsembleAction(props.onError);
@@ -55,11 +58,11 @@ export const SignInWithGoogle: React.FC<SignInWithGoogleProps> = (props) => {
   const SignInWithGoogleComponent = useMemo(() => {
     return (
       <GoogleLogin
-        type={props.type}
-        theme={props.theme}
-        size={props.size}
-        text={props.text}
-        shape={props.shape}
+        type={values?.type}
+        theme={values?.theme}
+        size={values?.size}
+        text={values?.text}
+        shape={values?.shape}
         onSuccess={handleSuccessfullGoogleLoginResponse}
         onError={onErrorActionCallback}
       />
