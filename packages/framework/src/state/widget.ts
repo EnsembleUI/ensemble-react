@@ -18,6 +18,8 @@ import {
   screenInputAtom,
 } from "./screen";
 import { themeAtom } from "./application";
+import type { EnsembleUser } from "./user";
+import { userAtom } from "./user";
 
 export interface WidgetState<T = Record<string, unknown>> {
   values: T;
@@ -80,8 +82,12 @@ export const createBindingAtom = <T = unknown>(
     const inputs = get(screenInputAtom);
     const theme = get(themeAtom);
     let storage: Record<string, unknown> | undefined;
+    let user: EnsembleUser | undefined;
     if (rawJsExpression.includes("ensemble.storage")) {
       storage = get(screenStorageAtom);
+    }
+    if (rawJsExpression.includes("ensemble.user")) {
+      user = get(userAtom);
     }
     const valueEntries = dependencyEntries.map(({ name, dependencyAtom }) => {
       const value = get(dependencyAtom);
@@ -101,6 +107,7 @@ export const createBindingAtom = <T = unknown>(
       {
         ensemble: {
           storage: createStorageApi(storage),
+          user,
         },
       },
     ) as Record<string, unknown>;
