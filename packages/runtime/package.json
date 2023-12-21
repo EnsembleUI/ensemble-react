@@ -28,6 +28,7 @@
     "@mui/icons-material": "^5.14.9",
     "@mui/material": "^5.14.9",
     "@mui/x-date-pickers": "^6.18.3",
+    "@react-oauth/google": "^0.12.1",
     "@testing-library/react": "^13.4.0",
     "@turbo/gen": "^1.10.12",
     "@types/lodash-es": "^4.17.8",
@@ -48,7 +49,6 @@
     "tsup": "^7.2.0"
   },
   "dependencies": {
-    "@react-oauth/google": "^0.12.1",
     "jwt-decode": "^4.0.0"
   }
 }
