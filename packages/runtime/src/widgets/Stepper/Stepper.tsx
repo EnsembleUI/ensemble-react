@@ -56,7 +56,7 @@ export type StepperProps = {
 interface CustomConnectorProps {
   connector_color?: string;
   connector_height?: number;
-  inActiveConnectorColor?: string;
+  inactive_connector_color?: string;
 }
 
 const Stepper: React.FC<StepperProps> = (props) => {
@@ -93,7 +93,7 @@ const Stepper: React.FC<StepperProps> = (props) => {
           <CustomConnector
             connector_color={values?.styles.connectorColor}
             connector_height={values?.styles.connectorHeight}
-            inActiveConnectorColor={values?.styles?.inActiveConnectorColor}
+            inactive_connector_color={values?.styles?.inActiveConnectorColor}
           />
         }
         sx={{
@@ -174,7 +174,7 @@ const CustomConnector = styled(StepConnector)(
       },
     },
     [`& .${stepConnectorClasses.line}`]: {
-      borderColor: props.inActiveConnectorColor,
+      borderColor: props.inactive_connector_color,
       borderTopWidth: props.connector_height ?? 3,
       borderRadius: 1,
     },
