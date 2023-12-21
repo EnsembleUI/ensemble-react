@@ -9,6 +9,7 @@ import { findExpressions } from "../shared";
 import { useWidgetId } from "./useWidgetId";
 import { useCustomScope } from "./useCustomScope";
 import { useWidgetState } from "./useWidgetState";
+import { useThemeContext } from "./useThemeContext";
 
 export interface RegisterBindingsResult<T> {
   id: string;
@@ -23,6 +24,9 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
 ): RegisterBindingsResult<T> => {
   const { resolvedWidgetId, rootRef } = useWidgetId(id);
   const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
+  const themeContext = useThemeContext(
+    (values?.styles as Record<string, unknown>)?.names as string | string[],
+  );
 
   const expressions = useMemo(() => {
     const expressionMap: string[][] = [];
@@ -58,7 +62,16 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
 
   const [bindings] = useAtom(bindingsAtom);
 
-  const newValues = merge({}, values, bindings) as T;
+  const styles = merge({}, themeContext, values?.styles);
+
+  const newValues = merge(
+    {},
+    {
+      ...values,
+      styles,
+    },
+    bindings,
+  ) as T;
   useEffect(() => {
     // Improves performance greatly: o need to store state in global if there's no explicit ID to reference it with
     if (isEmpty(id)) {

@@ -52,15 +52,17 @@ View:
               - Text:
                   text: head
                   styles:
-                    color: "purple"
+                    names: stop
             item-template:
               data:
                 [{ "name": "Ali" }, { "name": "Raheem" }, { "name": "Arijit" }]
               name: i
               template:
-                Button:
-                  label: ${i.name}
-
+                Text:
+                  text: ${i.name}
+                  styles:
+                    names: wait stop
+                    color: purple
         - Column:
             item-template:
               data: [7, 9]
@@ -69,7 +71,7 @@ View:
                 Text:
                   text: ${i}
                   styles:
-                    color: "violet"
+                    names: go bigFoot
             children:
               - Text:
                   text: foot
