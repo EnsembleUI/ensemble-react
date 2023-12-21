@@ -8,7 +8,6 @@ import {
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { injectStyle } from "react-toastify/dist/inject-style";
-import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ThemeProvider } from "./ThemeProvider";
 import { EnsembleEntry } from "./runtime/entry";
 import { EnsembleScreen } from "./runtime/screen";
@@ -37,7 +36,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
     parsedApp.customWidgets.forEach((customWidget) => {
       WidgetRegistry.register(
         customWidget.name,
-        createCustomWidget(customWidget),
+        createCustomWidget(customWidget)
       );
     });
     return parsedApp;
@@ -64,7 +63,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
           ],
         },
       ]),
-    [app],
+    [app]
   );
 
   return (

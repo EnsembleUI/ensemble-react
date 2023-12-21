@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
+import type { CredentialResponse } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useEnsembleUser } from "@ensembleui/react-framework";
@@ -22,7 +23,7 @@ export const SignInWithGoogle: React.FC<SignInWithGoogleProps> = (props) => {
   const oAuthClientId =
     "726646987043-9i1it0ll0neojkf7f9abkagbe66kqe4a.apps.googleusercontent.com";
 
-  const { values, rootRef } = useRegisterBindings(props);
+  const { values } = useRegisterBindings(props);
 
   const [user, setUser] = useEnsembleUser();
   const onSignInAction = useEnsembleAction(props.onSignedIn);
@@ -30,12 +31,12 @@ export const SignInWithGoogle: React.FC<SignInWithGoogleProps> = (props) => {
 
   // trigger on signin action
   const onSignInActionCallback = useCallback(
-    (values: unknown) => {
+    (data: unknown) => {
       if (!onSignInAction) {
         return;
       }
 
-      return onSignInAction.callback({ values });
+      return onSignInAction.callback({ data });
     },
     [onSignInAction],
   );
@@ -50,8 +51,14 @@ export const SignInWithGoogle: React.FC<SignInWithGoogleProps> = (props) => {
   }, [onErrorAction]);
 
   // handle google login resposne
-  const handleSuccessfullGoogleLoginResponse = (credentialResponse: any) => {
-    const userDetails = jwtDecode(credentialResponse.credential);
+  const handleSuccessfullGoogleLoginResponse = (
+    credentialResponse: CredentialResponse,
+  ) => {
+    if (!credentialResponse?.credential) {
+      return;
+    }
+
+    const userDetails = jwtDecode(credentialResponse?.credential);
     setUser({ ...user, ...userDetails });
 
     // trigger the on sign in action
