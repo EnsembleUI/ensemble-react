@@ -1,4 +1,12 @@
 View:
+  onLoad:
+    invokeApi:
+      name: getData
+      onResponse:
+        executeCode:
+          body: |
+            console.log('>>>>>', ensemble.env.googleOAuthId)
+
   header:
     title:
       Text:
@@ -16,3 +24,10 @@ View:
               - if: ${ensemble.user.email}
                 Text:
                   text: Social Login
+
+API:
+  getData:
+    uri: https://api.airtable.com/v0/app0FnT5yUsW9fjn6/tblWGM6o7vqlTfB8b
+    method: GET
+    headers:
+      Authorization: Bearer patN2XAiLVZQ8Yp3h.2bddb84031b2be89b576f01869dc17c3826e16ae7daa8895f92c05a0799004ab
