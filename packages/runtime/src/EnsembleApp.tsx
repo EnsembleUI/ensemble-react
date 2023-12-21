@@ -36,7 +36,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
     parsedApp.customWidgets.forEach((customWidget) => {
       WidgetRegistry.register(
         customWidget.name,
-        createCustomWidget(customWidget)
+        createCustomWidget(customWidget),
       );
     });
     return parsedApp;
@@ -63,7 +63,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
           ],
         },
       ]),
-    [app]
+    [app],
   );
 
   return (
