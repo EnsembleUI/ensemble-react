@@ -3,6 +3,7 @@
  *
  * Mostly equivalent to raw JSON definition over wire
  */
+
 export interface ApplicationDTO {
   name: string;
   id: string;
@@ -10,6 +11,7 @@ export interface ApplicationDTO {
   widgets: WidgetDTO[];
   scripts: ScriptDTO[];
   theme?: ThemeDTO;
+  config?: string;
 }
 
 export interface ScreenDTO {
@@ -33,4 +35,12 @@ export interface ScriptDTO {
   id: string;
   name: string;
   content: string;
+}
+
+export interface EnsembleEnvironmentDTO {
+  googleOAuthId?: string;
+}
+
+export interface EnsembleConfigYAML {
+  environmentVariables?: EnsembleEnvironmentDTO;
 }

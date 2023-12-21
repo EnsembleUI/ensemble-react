@@ -7,7 +7,10 @@ View:
   body:
     Column:
       children:
+        - Text:
+            text: ${ensemble.env.googleOAuthId}
         - SignInWithGoogle:
+            clientId: ${ensemble.env.googleOAuthId}
         - Conditional:
             conditions:
               - if: ${ensemble.user.email}

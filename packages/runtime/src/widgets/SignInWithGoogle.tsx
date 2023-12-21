@@ -9,6 +9,7 @@ import { WidgetRegistry } from "../registry";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
 export type SignInWithGoogleProps = {
+  clientId: string;
   type?: "standard" | "icon";
   theme?: "outline" | "filled_blue" | "filled_black";
   size?: "large" | "small" | "medium";
@@ -19,12 +20,7 @@ export type SignInWithGoogleProps = {
 };
 
 export const SignInWithGoogle: React.FC<SignInWithGoogleProps> = (props) => {
-  // TODO: need to move this inside env
-  const oAuthClientId =
-    "726646987043-9i1it0ll0neojkf7f9abkagbe66kqe4a.apps.googleusercontent.com";
-
   const { values } = useRegisterBindings(props);
-
   const [user, setUser] = useEnsembleUser();
   const onSignInAction = useEnsembleAction(props.onSignedIn);
   const onErrorAction = useEnsembleAction(props.onError);
@@ -68,7 +64,7 @@ export const SignInWithGoogle: React.FC<SignInWithGoogleProps> = (props) => {
   // google login component
   const SignInWithGoogleComponent = useMemo(() => {
     return (
-      <GoogleOAuthProvider clientId={oAuthClientId}>
+      <GoogleOAuthProvider clientId={props.clientId}>
         <GoogleLogin
           type={values?.type}
           theme={values?.theme}

@@ -4,7 +4,7 @@ import type { Atom } from "jotai";
 import { atom } from "jotai";
 import { isNil, mapKeys, merge, omitBy } from "lodash-es";
 import { atomFamily } from "jotai/utils";
-import type { Expression } from "../shared";
+import type { Expression, EnsembleEnvironmentDTO } from "../shared";
 import { isExpression, sanitizeJs, debug, error } from "../shared";
 import { evaluate } from "../evaluate";
 import {
@@ -20,6 +20,7 @@ import {
 import { themeAtom } from "./application";
 import type { EnsembleUser } from "./user";
 import { userAtom } from "./user";
+import { envAtom } from "./application";
 
 export interface WidgetState<T = Record<string, unknown>> {
   values: T;
@@ -83,11 +84,15 @@ export const createBindingAtom = <T = unknown>(
     const theme = get(themeAtom);
     let storage: Record<string, unknown> | undefined;
     let user: EnsembleUser | undefined;
+    let env: EnsembleEnvironmentDTO | undefined;
     if (rawJsExpression.includes("ensemble.storage")) {
       storage = get(screenStorageAtom);
     }
     if (rawJsExpression.includes("ensemble.user")) {
       user = get(userAtom);
+    }
+    if (rawJsExpression.includes("ensemble.env")) {
+      env = get(envAtom);
     }
     const valueEntries = dependencyEntries.map(({ name, dependencyAtom }) => {
       const value = get(dependencyAtom);
@@ -108,6 +113,7 @@ export const createBindingAtom = <T = unknown>(
         ensemble: {
           storage: createStorageApi(storage),
           user,
+          env,
         },
       },
     ) as Record<string, unknown>;
