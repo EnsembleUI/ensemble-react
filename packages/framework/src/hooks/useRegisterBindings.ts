@@ -66,10 +66,12 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
 
   const newValues = merge(
     {},
-    {
-      ...values,
-      styles,
-    },
+    !isEmpty(styles)
+      ? {
+          ...values,
+          styles,
+        }
+      : values,
     bindings,
   ) as T;
   useEffect(() => {
