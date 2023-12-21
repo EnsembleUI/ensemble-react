@@ -44,10 +44,11 @@ export type StepperProps = {
   activeStepIndex?: number;
   "item-template": TemplateProps;
   styles: {
-    connectorColor?: string;
+    inActiveConnectorColor?: Expression<string>;
+    connectorColor?: Expression<string>;
     connectorHeight?: number;
-    backgroundColor?: string;
-    borderRadius?: string;
+    backgroundColor?: Expression<string>;
+    borderRadius?: Expression<string>;
     padding?: string;
   };
 } & EnsembleWidgetProps;
@@ -55,6 +56,7 @@ export type StepperProps = {
 interface CustomConnectorProps {
   connector_color?: string;
   connector_height?: number;
+  inactive_connector_color?: string;
 }
 
 const Stepper: React.FC<StepperProps> = (props) => {
@@ -89,16 +91,21 @@ const Stepper: React.FC<StepperProps> = (props) => {
         alternativeLabel
         connector={
           <CustomConnector
-            connector_color={props.styles.connectorColor}
-            connector_height={props.styles.connectorHeight}
+            connector_color={values?.styles.connectorColor}
+            connector_height={values?.styles.connectorHeight}
+            inactive_connector_color={values?.styles?.inActiveConnectorColor}
           />
         }
         sx={{
           justifyContent: "center",
-          backgroundColor: props.styles.backgroundColor,
-          padding: `${props.styles.padding ? `${props.styles.padding}px` : ""}`,
+          backgroundColor: values?.styles.backgroundColor,
+          padding: `${
+            values?.styles.padding ? `${values.styles.padding}px` : ""
+          }`,
           borderRadius: `${
-            props.styles.borderRadius ? `${props.styles.borderRadius}px` : "0px"
+            values?.styles.borderRadius
+              ? `${values.styles.borderRadius}px`
+              : "0px"
           }`,
         }}
       >
@@ -154,6 +161,7 @@ const CustomConnector = styled(StepConnector)(
   (props: CustomConnectorProps) => ({
     [`&.${stepConnectorClasses.alternativeLabel}`]: {
       top: 20,
+      left: `calc(-50% + 22px)`,
     },
     [`&.${stepConnectorClasses.active}`]: {
       [`& .${stepConnectorClasses.line}`]: {
@@ -162,11 +170,11 @@ const CustomConnector = styled(StepConnector)(
     },
     [`&.${stepConnectorClasses.completed}`]: {
       [`& .${stepConnectorClasses.line}`]: {
-        borderColor: "#31C48D",
+        borderColor: props?.connector_color,
       },
     },
     [`& .${stepConnectorClasses.line}`]: {
-      borderColor: "#eaeaf0",
+      borderColor: props.inactive_connector_color,
       borderTopWidth: props.connector_height ?? 3,
       borderRadius: 1,
     },
