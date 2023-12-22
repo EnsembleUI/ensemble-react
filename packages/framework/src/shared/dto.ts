@@ -42,5 +42,5 @@ export interface EnsembleEnvironmentDTO {
 }
 
 export interface EnsembleConfigYAML {
-  environmentVariables?: EnsembleEnvironmentDTO;
+  environmentVariables?: Record<string, unknown>;
 }

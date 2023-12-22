@@ -1,13 +1,13 @@
 import { atom } from "jotai";
 import { selectAtom } from "jotai/utils";
 import { focusAtom } from "jotai-optics";
-import type { EnsembleAppModel, EnsembleEnvironmentDTO } from "../shared";
+import type { EnsembleAppModel } from "../shared";
 
 export interface ApplicationContextDefinition {
   application: EnsembleAppModel | null;
   storage: unknown;
   secrets: unknown;
-  env: EnsembleEnvironmentDTO | null;
+  env: Record<string, unknown>;
   auth: unknown;
   user: unknown;
 }
@@ -19,7 +19,7 @@ export interface ApplicationContextActions {
 export const defaultApplicationContext = {
   application: null,
   storage: null,
-  env: null,
+  env: {},
   auth: null,
   user: null,
   secrets: null,

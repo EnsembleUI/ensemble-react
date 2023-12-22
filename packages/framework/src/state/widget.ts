@@ -4,7 +4,7 @@ import type { Atom } from "jotai";
 import { atom } from "jotai";
 import { isNil, mapKeys, merge, omitBy } from "lodash-es";
 import { atomFamily } from "jotai/utils";
-import type { Expression, EnsembleEnvironmentDTO } from "../shared";
+import type { Expression } from "../shared";
 import { isExpression, sanitizeJs, debug, error } from "../shared";
 import { evaluate } from "../evaluate";
 import {
@@ -83,7 +83,7 @@ export const createBindingAtom = <T = unknown>(
     const theme = get(themeAtom);
     let storage: Record<string, unknown> | undefined;
     let user: EnsembleUser | undefined;
-    let env: EnsembleEnvironmentDTO | null = null;
+    let env: Record<string, unknown> | undefined;
     if (rawJsExpression.includes("ensemble.storage")) {
       storage = get(screenStorageAtom);
     }
