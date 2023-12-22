@@ -19,6 +19,7 @@ import { WidgetRegistry } from "./registry";
 import { createCustomWidget } from "./runtime/customWidget";
 
 injectStyle();
+
 export interface EnsembleAppProps {
   appId: string;
   application?: ApplicationDTO;
@@ -64,6 +65,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
       ]),
     [app],
   );
+
   return (
     <ApplicationContextProvider app={app}>
       <ThemeProvider>

@@ -38,10 +38,13 @@ This repo includes the following packages/apps:
 Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
 
 ### How to run the complete project
+
 You can run the app in dev mode using this command
+
 ```sh
 pnpm dev
 ```
+
 This command will start the development server, and it should automatically open your default web browser displaying the app. If it doesn't, you can manually navigate to http://localhost:3000 in your browser.
 
 ### Utilities

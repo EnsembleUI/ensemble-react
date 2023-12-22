@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import type { EnsembleAction } from "./actions";
+import type { EnsembleConfigYAML } from "./dto";
 
 /**
  * Models
@@ -27,6 +28,7 @@ export interface EnsembleAppModel {
   home: EnsembleEntryPoint;
   theme?: EnsembleThemeModel;
   scripts: EnsembleScriptModel[];
+  config?: EnsembleConfigYAML;
 }
 
 export interface EnsembleMenuModel {

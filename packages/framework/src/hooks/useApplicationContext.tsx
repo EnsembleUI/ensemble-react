@@ -23,6 +23,7 @@ export const ApplicationContextProvider: React.FC<
         appContext={{
           ...defaultApplicationContext,
           application: app,
+          env: app.config?.environmentVariables ?? {},
         }}
       >
         {children}

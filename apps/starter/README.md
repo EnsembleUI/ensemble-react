@@ -45,7 +45,7 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 
 # How to Integrate Ensemble
 
-Ensemble is available as npm packages you can install and use in an existing or new React app. 
+Ensemble is available as npm packages you can install and use in an existing or new React app.
 
 ## Authorize Github Packages
 
@@ -142,7 +142,7 @@ export const MyCustomWidget: React.FC = (props) => {
 
   // Call the useRegisterBindings hook to automatically evaluate expressions and expose controls for your component to Ensemble
   const { values} = useRegisterBindings(
-    ...props, 
+    ...props,
     props.id,
     { setValue }
   )

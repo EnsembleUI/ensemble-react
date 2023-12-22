@@ -11,12 +11,15 @@ import InviteYAML from "./ensemble/screens/invite.yaml";
 import ProductAndDevelopmentYAML from "./ensemble/screens/productAndDevelopment.yaml";
 import CreateCollectionYAML from "./ensemble/screens/createCollection.yaml";
 import AddGroupsYAML from "./ensemble/screens/addGroups.yaml";
+import SocialLoginYAML from "./ensemble/screens/socialLogin.yaml";
 // Widgets
 import HeaderWidgetYAML from "./ensemble/widgets/Header.yaml";
 // Scripts
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import FirstScript from "./ensemble/scripts/test.js?raw";
+// ensemble-config
+import EnsembleConfig from "./ensemble-config.yaml";
 // Theme
 import ThemeYAML from "./ensemble/theme.yaml";
 
@@ -94,7 +97,13 @@ const testApp: ApplicationDTO = {
       name: "Add Groups",
       content: String(AddGroupsYAML),
     },
+    {
+      id: "socialLogin",
+      name: "Social Login",
+      content: String(SocialLoginYAML),
+    },
   ],
+  config: EnsembleConfig,
 };
 
 const App: React.FC = () => {

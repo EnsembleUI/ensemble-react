@@ -17,7 +17,7 @@ import {
   screenDataAtom,
   screenInputAtom,
 } from "./screen";
-import { themeAtom } from "./application";
+import { themeAtom, envAtom } from "./application";
 import type { EnsembleUser } from "./user";
 import { userAtom } from "./user";
 
@@ -83,11 +83,15 @@ export const createBindingAtom = <T = unknown>(
     const theme = get(themeAtom);
     let storage: Record<string, unknown> | undefined;
     let user: EnsembleUser | undefined;
+    let env: Record<string, unknown> | undefined;
     if (rawJsExpression.includes("ensemble.storage")) {
       storage = get(screenStorageAtom);
     }
     if (rawJsExpression.includes("ensemble.user")) {
       user = get(userAtom);
+    }
+    if (rawJsExpression.includes("ensemble.env")) {
+      env = get(envAtom);
     }
     const valueEntries = dependencyEntries.map(({ name, dependencyAtom }) => {
       const value = get(dependencyAtom);
@@ -108,6 +112,7 @@ export const createBindingAtom = <T = unknown>(
         ensemble: {
           storage: createStorageApi(storage),
           user,
+          env,
         },
       },
     ) as Record<string, unknown>;

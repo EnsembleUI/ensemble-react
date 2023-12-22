@@ -21,7 +21,7 @@ import type {
   CustomWidgetModel,
   EnsembleThemeModel,
 } from "./shared/models";
-import type { ApplicationDTO } from "./shared/dto";
+import type { ApplicationDTO, EnsembleConfigYAML } from "./shared/dto";
 import { findExpressions, type EnsembleAction } from "./shared";
 import { evaluate } from "./evaluate";
 import { defaultScreenContext } from "./state";
@@ -81,6 +81,12 @@ export const EnsembleParser = {
       body: content,
     }));
 
+    const config = app.config;
+    let ensembleConfigData;
+    if (config) {
+      ensembleConfigData = parse(config) as EnsembleConfigYAML;
+    }
+
     return {
       id: app.id,
       menu,
@@ -89,6 +95,7 @@ export const EnsembleParser = {
       home: menu ?? screens[0],
       theme,
       scripts,
+      config: ensembleConfigData,
     };
   },
 
