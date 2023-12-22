@@ -1,10 +1,11 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import type { CredentialResponse } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useEnsembleUser } from "@ensembleui/react-framework";
 import type { EnsembleAction } from "@ensembleui/react-framework";
+import { Alert } from "antd";
 import { WidgetRegistry } from "../registry";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
@@ -20,7 +21,10 @@ export type SignInWithGoogleProps = {
 };
 
 export const SignInWithGoogle: React.FC<SignInWithGoogleProps> = (props) => {
-  const { values } = useRegisterBindings(props);
+  const [clientId, setClientId] = useState(props.clientId);
+  const { values } = useRegisterBindings({ ...props, clientId }, undefined, {
+    setClientId,
+  });
   const [user, setUser] = useEnsembleUser();
   const onSignInAction = useEnsembleAction(props.onSignedIn);
   const onErrorAction = useEnsembleAction(props.onError);
@@ -64,19 +68,25 @@ export const SignInWithGoogle: React.FC<SignInWithGoogleProps> = (props) => {
   // google login component
   const SignInWithGoogleComponent = useMemo(() => {
     return (
-      <GoogleOAuthProvider clientId={props.clientId}>
-        <GoogleLogin
-          type={values?.type}
-          theme={values?.theme}
-          size={values?.size}
-          text={values?.text}
-          shape={values?.shape}
-          onSuccess={handleSuccessfullGoogleLoginResponse}
-          onError={onErrorActionCallback}
-        />
-      </GoogleOAuthProvider>
+      <>
+        {values?.clientId ? (
+          <GoogleOAuthProvider clientId={values.clientId}>
+            <GoogleLogin
+              type={values?.type}
+              theme={values?.theme}
+              size={values?.size}
+              text={values?.text}
+              shape={values?.shape}
+              onSuccess={handleSuccessfullGoogleLoginResponse}
+              onError={onErrorActionCallback}
+            />
+          </GoogleOAuthProvider>
+        ) : (
+          <Alert message="Cliient id is missing" type="error" />
+        )}
+      </>
     );
-  }, []);
+  }, [values]);
 
   return SignInWithGoogleComponent;
 };

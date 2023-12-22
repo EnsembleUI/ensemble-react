@@ -1,7 +1,7 @@
 import { atom } from "jotai";
-import { selectAtom, atomWithStorage } from "jotai/utils";
+import { selectAtom } from "jotai/utils";
+import { focusAtom } from "jotai-optics";
 import type { EnsembleAppModel, EnsembleEnvironmentDTO } from "../shared";
-import { backingStorage } from "../hooks/useEnsembleStorage";
 
 export interface ApplicationContextDefinition {
   application: EnsembleAppModel | null;
@@ -33,8 +33,4 @@ export const themeAtom = selectAtom(appAtom, (appContext) => {
   return appContext.application?.theme;
 });
 
-export const envAtom = atomWithStorage<
-  EnsembleEnvironmentDTO & Record<string, unknown>
->("ensemble.env", {}, backingStorage, {
-  unstable_getOnInit: true,
-});
+export const envAtom = focusAtom(appAtom, (optic) => optic.prop("env"));
