@@ -7,7 +7,7 @@ import { useCustomScope } from "./useCustomScope";
 
 export const useEvaluate = <T = unknown>(
   expr: Expression<T>,
-): T | undefined => {
+): T | undefined | null => {
   const storage = useEnsembleStorage();
   const customScope = useCustomScope();
   const valueAtom = useMemo(

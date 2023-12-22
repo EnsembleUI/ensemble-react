@@ -40,7 +40,7 @@ export const createBindingAtom = <T = unknown>(
   expression?: Expression<unknown>,
   context?: Record<string, unknown>,
   widgetId?: string,
-): Atom<T | undefined> => {
+): Atom<T | undefined | null> => {
   if (!isExpression(expression)) {
     return atom(undefined);
   }
@@ -130,7 +130,7 @@ export const createBindingAtom = <T = unknown>(
       return result;
     } catch (e) {
       debug(e);
-      return undefined;
+      return null;
     }
   });
 
