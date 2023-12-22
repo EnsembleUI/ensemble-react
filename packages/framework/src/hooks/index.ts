@@ -6,4 +6,4 @@ export * from "./useTemplateData";
 export * from "./useWidgetId";
 export * from "./useEnsembleStorage";
 export * from "./useEvaluate";
-export * from "./useThemeContext";
+export * from "./useStyleNames";

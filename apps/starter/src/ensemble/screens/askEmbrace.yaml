@@ -61,7 +61,7 @@ View:
                 Text:
                   text: ${i.name}
                   styles:
-                    names: ready stop
+                    names: testName stop
                     color: purple
         - Column:
             item-template:

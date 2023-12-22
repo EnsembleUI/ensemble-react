@@ -1,10 +1,10 @@
 import { useAtomValue } from "jotai";
 import type { CSSProperties } from "react";
-import { resolveStyleNames } from "../shared";
+import { type Expression, resolveStyleNames } from "../shared";
 import { themeAtom } from "../state";
 
-export const useThemeContext = (
-  styleNames?: string | string[],
+export const useStyleNames = (
+  styleNames?: Expression<string | string[]>,
 ): CSSProperties | undefined => {
   const themeContext = useAtomValue(themeAtom);
 

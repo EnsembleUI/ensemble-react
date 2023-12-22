@@ -6,12 +6,13 @@ Tokens:
   Animation:
   Typography:
     fontFamily: "Arial"
+    fontSize: 20px
 Styles:
   testName:
     borderRadius: ${spacing.bigValue}
   stop:
     color: red
-    fontSize: 20px
+    fontSize: ${typography.fontSize}
     fontWeight: bold
   ready:
     color: yellow
