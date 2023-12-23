@@ -119,6 +119,8 @@ View:
               - label: Performance
               - label: MoM
               - label: Progress
+            onTap:
+              executeCode: console.log("I am in the ad groups")
 
             item-template:
               data: getDummyJson.body.users
