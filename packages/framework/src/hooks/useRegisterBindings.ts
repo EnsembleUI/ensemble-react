@@ -1,11 +1,11 @@
 import type { RefCallback } from "react";
 import { useEffect, useMemo } from "react";
-import { compact, isEmpty, merge, set } from "lodash-es";
+import { compact, get, isEmpty, merge, set } from "lodash-es";
 import isEqual from "react-fast-compare";
 import { atom, useAtom } from "jotai";
 import type { InvokableMethods } from "../state";
 import { createBindingAtom } from "../state";
-import { type Expression, findExpressions } from "../shared";
+import { findExpressions } from "../shared";
 import { useWidgetId } from "./useWidgetId";
 import { useCustomScope } from "./useCustomScope";
 import { useWidgetState } from "./useWidgetState";
@@ -17,23 +17,14 @@ export interface RegisterBindingsResult<T> {
   rootRef: RefCallback<never>;
 }
 
-interface Bindings {
-  [key: string]: unknown;
-  styles?: {
-    names?: Expression<string | string[]>;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [key: string]: any;
-  };
-}
-
-export const useRegisterBindings = <T extends Bindings>(
+export const useRegisterBindings = <T extends Record<string, unknown>>(
   values: T,
   id?: string,
   methods?: InvokableMethods,
 ): RegisterBindingsResult<T> => {
   const { resolvedWidgetId, rootRef } = useWidgetId(id);
   const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
-  const themeContext = useStyleNames(values?.styles?.names);
+  const themeContext = useStyleNames(String(get(values, ["styles", "names"])));
 
   const styles = merge({}, themeContext, values?.styles);
   merge(
@@ -63,10 +54,10 @@ export const useRegisterBindings = <T extends Bindings>(
         return { name, valueAtom };
       }),
     );
-    return atom((get) => {
+    return atom((getAtom) => {
       const valueEntries: [string, unknown][] = bindingsEntries.map(
         ({ name, valueAtom }) => {
-          return [name, get(valueAtom)];
+          return [name, getAtom(valueAtom)];
         },
       );
       const result = {};
