@@ -137,6 +137,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
 
     const inputs = action.inputs ?? {};
     const callback = async (context: unknown): Promise<void> => {
+      setIsComplete(false);
       const resolvedInputs = Object.entries(inputs).map(([key, value]) => {
         if (isExpression(value)) {
           const evalContext = ensembleStore.get(screenAtom);
@@ -168,7 +169,6 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
     if (!response || isComplete) {
       return;
     }
-
     onResponseAction?.callback({ response });
     setIsComplete(true);
   }, [isComplete, onResponseAction, response]);
@@ -178,7 +178,6 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
     if (!error || isComplete) {
       return;
     }
-
     onErrorAction?.callback({ error });
     setIsComplete(true);
   }, [error, isComplete, onErrorAction]);
