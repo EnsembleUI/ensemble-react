@@ -1,6 +1,6 @@
 import type { RefCallback } from "react";
 import { useEffect, useMemo } from "react";
-import { compact, isEmpty, merge, set } from "lodash-es";
+import { compact, get, isEmpty, isString, merge, set } from "lodash-es";
 import isEqual from "react-fast-compare";
 import { atom, useAtom } from "jotai";
 import type { InvokableMethods } from "../state";
@@ -20,9 +20,13 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   values: T,
   id?: string,
   methods?: InvokableMethods,
-  testId?: string,
 ): RegisterBindingsResult<T> => {
-  const { resolvedWidgetId, rootRef } = useWidgetId(id, testId);
+  const { resolvedWidgetId, rootRef } = useWidgetId(
+    id,
+    isString(get(values, ["testId"]))
+      ? String(get(values, ["testId"]))
+      : undefined,
+  );
   const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
 
   const expressions = useMemo(() => {
@@ -45,10 +49,10 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
         return { name, valueAtom };
       }),
     );
-    return atom((get) => {
+    return atom((getAtom) => {
       const valueEntries: [string, unknown][] = bindingsEntries.map(
         ({ name, valueAtom }) => {
-          return [name, get(valueAtom)];
+          return [name, getAtom(valueAtom)];
         },
       );
       const result = {};
@@ -62,7 +66,7 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   const newValues = merge({}, values, bindings) as T;
   useEffect(() => {
     // Improves performance greatly: o need to store state in global if there's no explicit ID to reference it with
-    if (isEmpty(id) || isEmpty(testId)) {
+    if (isEmpty(id)) {
       return;
     }
 
@@ -85,7 +89,6 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
     widgetState?.values,
     widgetState?.invokable.methods,
     id,
-    testId,
   ]);
 
   return {

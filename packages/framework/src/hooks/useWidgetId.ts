@@ -12,7 +12,7 @@ export const useWidgetId = (
 ): { resolvedWidgetId: string; rootRef: RefCallback<never> } => {
   const customScope = useCustomScope();
   const resolvedWidgetId = useMemo<string>(() => {
-    let workingId = id || testId;
+    let workingId = id;
     if (isExpression(workingId)) {
       workingId = String(
         evaluate(defaultScreenContext, workingId, customScope),
@@ -27,12 +27,12 @@ export const useWidgetId = (
       );
     }
     return generateRandomString(6);
-  }, [customScope, id, testId]);
+  }, [customScope, id]);
 
   const rootRef = useCallback(
     (node: never) => {
       if (node && "setAttribute" in node) {
-        (node as HTMLElement).setAttribute("testid", resolvedWidgetId);
+        (node as HTMLElement).setAttribute("data-testid", id || testId || "");
       }
     },
     [resolvedWidgetId],

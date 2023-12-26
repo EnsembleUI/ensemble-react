@@ -12,7 +12,6 @@ export interface EnsembleWidgetProps<
   T extends Partial<EnsembleWidgetStyles> = EnsembleWidgetStyles,
 > {
   id?: string;
-  testId?: string;
   styles?: T;
   [key: string]: unknown;
 }
