@@ -1,6 +1,6 @@
 import type { RefCallback } from "react";
 import { useEffect, useMemo } from "react";
-import { compact, get, isEmpty, merge, set } from "lodash-es";
+import { compact, get, isEmpty, isString, merge, set } from "lodash-es";
 import isEqual from "react-fast-compare";
 import { atom, useAtom } from "jotai";
 import type { InvokableMethods } from "../state";
@@ -24,16 +24,17 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
 ): RegisterBindingsResult<T> => {
   const { resolvedWidgetId, rootRef } = useWidgetId(id);
   const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
-  const themeContext = useStyleNames(String(get(values, ["styles", "names"])));
+  const themeContext = useStyleNames(
+    isString(get(values, ["styles", "names"]))
+      ? get(values, ["styles", "names"])
+      : "",
+  );
 
   const styles = merge({}, themeContext, values?.styles);
-  merge(
-    values,
-    !isEmpty(styles) && {
-      ...values,
-      styles,
-    },
-  );
+  if (!isEmpty(styles)) {
+    merge(values, { styles });
+  }
+
   const expressions = useMemo(() => {
     const expressionMap: string[][] = [];
     findExpressions(values, [], expressionMap);
