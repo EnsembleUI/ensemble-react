@@ -54,12 +54,12 @@ export type GridProps = {
     name: string;
     template: DataGridRowTemplate;
   };
-  onTap?: EnsembleAction;
 } & EnsembleWidgetProps<DataGridStyles>;
 
 export interface DataGridRowTemplate {
   name: "DataRow";
   properties: {
+    onTap?: EnsembleAction;
     children: EnsembleWidget[];
   };
 }
@@ -71,7 +71,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   const { namedData } = useTemplateData({ ...itemTemplate });
   const { values } = useRegisterBindings({ ...props }, props?.id);
   const headerStyle = values?.styles?.headerStyle;
-  const onTapAction = useEnsembleAction(props.onTap);
+  const onTapAction = useEnsembleAction(itemTemplate.template.properties.onTap);
 
   const onTapActionCallback = useCallback(
     (data: unknown, index?: number) => {
