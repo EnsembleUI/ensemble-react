@@ -142,7 +142,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
         if (isExpression(value)) {
           const evalContext = ensembleStore.get(screenAtom);
           const resolvedValue = evaluate(evalContext, value, {
-            ...context,
+            ...(context as Record<string, unknown>),
             ensemble: { storage },
           } as Record<string, unknown>);
           return [key, resolvedValue];
