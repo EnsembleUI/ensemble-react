@@ -20,8 +20,9 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   values: T,
   id?: string,
   methods?: InvokableMethods,
+  testId?: string,
 ): RegisterBindingsResult<T> => {
-  const { resolvedWidgetId, rootRef } = useWidgetId(id);
+  const { resolvedWidgetId, rootRef } = useWidgetId(id, testId);
   const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
 
   const expressions = useMemo(() => {
@@ -61,7 +62,7 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   const newValues = merge({}, values, bindings) as T;
   useEffect(() => {
     // Improves performance greatly: o need to store state in global if there's no explicit ID to reference it with
-    if (isEmpty(id)) {
+    if (isEmpty(id) || isEmpty(testId)) {
       return;
     }
 
@@ -84,6 +85,7 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
     widgetState?.values,
     widgetState?.invokable.methods,
     id,
+    testId,
   ]);
 
   return {

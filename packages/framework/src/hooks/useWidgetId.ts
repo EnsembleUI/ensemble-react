@@ -8,10 +8,11 @@ import { useCustomScope } from "./useCustomScope";
 
 export const useWidgetId = (
   id?: Expression<string>,
+  testId?: Expression<string>,
 ): { resolvedWidgetId: string; rootRef: RefCallback<never> } => {
   const customScope = useCustomScope();
   const resolvedWidgetId = useMemo<string>(() => {
-    let workingId = id;
+    let workingId = id || testId;
     if (isExpression(workingId)) {
       workingId = String(
         evaluate(defaultScreenContext, workingId, customScope),
@@ -26,12 +27,12 @@ export const useWidgetId = (
       );
     }
     return generateRandomString(6);
-  }, [customScope, id]);
+  }, [customScope, id, testId]);
 
   const rootRef = useCallback(
     (node: never) => {
       if (node && "setAttribute" in node) {
-        (node as HTMLElement).setAttribute("data-testid", resolvedWidgetId);
+        (node as HTMLElement).setAttribute("testid", resolvedWidgetId);
       }
     },
     [resolvedWidgetId],

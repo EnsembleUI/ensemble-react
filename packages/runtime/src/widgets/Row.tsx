@@ -17,7 +17,12 @@ export const Row: React.FC<FlexboxProps> = (props) => {
   const childrenFirst =
     indexOf(keys(props), "children") < indexOf(keys(props), "item-template");
 
-  const { values, rootRef } = useRegisterBindings({ ...rest }, props.id);
+  const { values, rootRef } = useRegisterBindings(
+    { ...rest },
+    props.id,
+    {},
+    props?.testId,
+  );
   const { namedData } = useTemplateData({
     data: itemTemplate?.data,
     name: itemTemplate?.name,
