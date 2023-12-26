@@ -136,9 +136,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
     }
 
     const inputs = action.inputs ?? {};
-    const callback = async (
-      context: Record<string, unknown>,
-    ): Promise<void> => {
+    const callback = async (context: unknown): Promise<void> => {
       const resolvedInputs = Object.entries(inputs).map(([key, value]) => {
         if (isExpression(value)) {
           const evalContext = ensembleStore.get(screenAtom);
