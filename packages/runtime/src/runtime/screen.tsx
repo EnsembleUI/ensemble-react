@@ -29,7 +29,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
   const mergedInputs = merge({}, state as Record<string, unknown>, inputs);
   return (
     <ScreenContextProvider context={{ inputs: mergedInputs }} screen={screen}>
-      <OnLoadAction action={screen.onLoad}>
+      <OnLoadAction action={screen.onLoad} context={{ ...mergedInputs }}>
         <EnsembleHeader header={screen.header} />
         <EnsembleBody
           body={screen.body}
@@ -44,17 +44,19 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
 };
 
 const OnLoadAction: React.FC<
-  React.PropsWithChildren<{ action?: EnsembleAction }>
-> = ({ action, children }) => {
+  React.PropsWithChildren<{
+    action?: EnsembleAction;
+    context: Record<string, unknown>;
+  }>
+> = ({ action, children, context }) => {
   const onLoadAction = useEnsembleAction(action);
   const [isComplete, setIsComplete] = useState(false);
-
   useEffect(() => {
-    if (!onLoadAction?.callback || isComplete) {
+    if (!onLoadAction?.callback(context) || isComplete) {
       return;
     }
     try {
-      onLoadAction.callback();
+      onLoadAction.callback(context);
     } catch (e) {
       error(e);
     } finally {

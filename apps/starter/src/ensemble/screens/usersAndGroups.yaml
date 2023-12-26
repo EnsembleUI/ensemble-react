@@ -86,7 +86,7 @@ View:
                                         navigateModalScreen:
                                           name: Create Group
                                           inputs:
-                                            message: ${"hello" + getData.body.records.length}
+                                            message: ${"hello" + ensemble.storage.get("arrayOfUsers").length}
                                           maskClosable: false
                                           styles:
                                             position: right
@@ -141,7 +141,7 @@ View:
                                                       name: Create Group
                                                       maskClosable: false
                                                       inputs:
-                                                        message: ${"hello" + getData.body.records.length}
+                                                        message: ${ensemble.storage.get("arrayOfUsers").length}
 
                                   - else:
                                     GridView:
