@@ -22,7 +22,6 @@ export const buildEvaluateFn = (
     ...Object.entries(screen.data),
     ...Object.entries(context ?? {}),
   ]);
-  console.log("From evaluate", screen, js, context);
   const globalBlock = screen.model?.global;
 
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
