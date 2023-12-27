@@ -125,6 +125,8 @@ View:
               name: user
               template:
                 DataRow:
+                  onTap:
+                    executeCode: console.log("I am in the ad groups")
                   children:
                     # Person
                     - Row:

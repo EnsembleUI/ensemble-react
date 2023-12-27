@@ -7,8 +7,9 @@ import {
   evaluate,
   defaultScreenContext,
   useRegisterBindings,
+  EnsembleAction,
 } from "@ensembleui/react-framework";
-import { type ReactElement } from "react";
+import { useCallback, type ReactElement } from "react";
 import { get } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type {
@@ -16,6 +17,7 @@ import type {
   EnsembleWidgetStyles,
 } from "../../shared/types";
 import { DataCell } from "./DataCell";
+import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 
 interface DataColumn {
   label: string;
@@ -57,6 +59,7 @@ export type GridProps = {
 export interface DataGridRowTemplate {
   name: "DataRow";
   properties: {
+    onTap?: EnsembleAction;
     children: EnsembleWidget[];
   };
 }
@@ -68,9 +71,25 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   const { namedData } = useTemplateData({ ...itemTemplate });
   const { values } = useRegisterBindings({ ...props }, props?.id);
   const headerStyle = values?.styles?.headerStyle;
+  const onTapAction = useEnsembleAction(itemTemplate.template.properties.onTap);
+
+  const onTapActionCallback = useCallback(
+    (data: unknown, index?: number) => {
+      if (!onTapAction) {
+        return;
+      }
+
+      return onTapAction.callback({ data, index });
+    },
+    [onTapAction],
+  );
+
   return (
     <>
       <Table
+        onRow={(record, recordIndex) => {
+          return { onClick: () => onTapActionCallback(record, recordIndex) };
+        }}
         dataSource={namedData}
         key={resolvedWidgetId}
         ref={rootRef}
