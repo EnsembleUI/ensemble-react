@@ -24,13 +24,12 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
 ): RegisterBindingsResult<T> => {
   const { resolvedWidgetId, rootRef } = useWidgetId(id);
   const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
-  const themeContext = useStyleNames(
-    isString(get(values, ["styles", "names"]))
-      ? String(get(values, ["styles", "names"]))
-      : "",
+  const styleNames = get(values, ["styles", "names"]);
+  const styleProperties = useStyleNames(
+    isString(styleNames) ? String(styleNames) : "",
   );
 
-  const styles = merge({}, themeContext, values?.styles);
+  const styles = merge({}, styleProperties, values?.styles);
   if (!isEmpty(styles)) {
     merge(values, { styles });
   }
