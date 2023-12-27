@@ -23,11 +23,13 @@ injectStyle();
 export interface EnsembleAppProps {
   appId: string;
   application?: ApplicationDTO;
+  path?: string;
 }
 
 export const EnsembleApp: React.FC<EnsembleAppProps> = ({
   appId,
   application,
+  path,
 }) => {
   // BUG: runs twice https://github.com/facebook/react/issues/24935
   const app = useMemo(() => {
@@ -44,26 +46,29 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
 
   const router = useMemo(
     () =>
-      createBrowserRouter([
-        {
-          element: <ModalWrapper />,
-          children: [
-            {
-              path: "/",
-              element: <EnsembleEntry entry={app.home} />,
-              errorElement: <ErrorPage />,
-              children: app.screens.map((screen) => {
-                const screenId = screen.name.toLowerCase();
-                return {
-                  path: `${screenId}`,
-                  element: <EnsembleScreen key={screenId} screen={screen} />,
-                };
-              }),
-            },
-          ],
-        },
-      ]),
-    [app],
+      createBrowserRouter(
+        [
+          {
+            element: <ModalWrapper />,
+            children: [
+              {
+                path: "/",
+                element: <EnsembleEntry entry={app.home} />,
+                errorElement: <ErrorPage />,
+                children: app.screens.map((screen) => {
+                  const screenId = screen.name.toLowerCase();
+                  return {
+                    path: `${screenId}`,
+                    element: <EnsembleScreen key={screenId} screen={screen} />,
+                  };
+                }),
+              },
+            ],
+          },
+        ],
+        { basename: path },
+      ),
+    [app.home, app.screens, path],
   );
 
   return (

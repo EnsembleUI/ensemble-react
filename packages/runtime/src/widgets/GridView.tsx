@@ -1,8 +1,4 @@
-import type {
-  CustomScope,
-  EnsembleWidget,
-  Expression,
-} from "@ensembleui/react-framework";
+import type { EnsembleWidget, Expression } from "@ensembleui/react-framework";
 import {
   CustomScopeProvider,
   useTemplateData,
@@ -61,7 +57,13 @@ export const GridView: React.FC<GridViewProps> = ({
                 }px)`,
               }}
             >
-              <CustomScopeProvider value={namedData[dataIndex] as CustomScope}>
+              <CustomScopeProvider
+                value={{
+                  ...namedData[dataIndex],
+                  index: dataIndex,
+                  length: namedData.length,
+                }}
+              >
                 {EnsembleRuntime.render([template])}
               </CustomScopeProvider>
             </Col>,
