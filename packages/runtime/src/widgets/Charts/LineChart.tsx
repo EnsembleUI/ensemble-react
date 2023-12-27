@@ -3,9 +3,9 @@ import type { ChartOptions } from "chart.js";
 import { useState } from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import type { ChartDataSets, ChartProps } from "..";
-import { get } from "lodash-es";
+import { get, merge } from "lodash-es";
 
-const defaultOptions: ChartOptions<"line"> = {
+const options: ChartOptions<"line"> = {
   maintainAspectRatio: false,
   scales: {
     x: {
@@ -40,25 +40,29 @@ export const LineChart: React.FC<ChartProps> = (props) => {
     setTitle,
   });
 
+  merge(
+    options,
+    {
+      plugins: {
+        title: {
+          display: Boolean(values?.title),
+          text: values?.title,
+        },
+        legend: {
+          display: false,
+        },
+      },
+    },
+    config?.options,
+  );
+
   return (
     <Line
       data={{
         labels: values?.labels,
         datasets: config?.data?.datasets as ChartDataSets[],
       }}
-      options={{
-        ...defaultOptions,
-        ...(config?.options as ChartOptions<"line">),
-        plugins: {
-          title: {
-            display: Boolean(values?.title),
-            text: values?.title,
-          },
-          legend: {
-            display: false,
-          },
-        },
-      }}
+      options={options}
       style={{
         ...(get(props, "styles") as object),
       }}

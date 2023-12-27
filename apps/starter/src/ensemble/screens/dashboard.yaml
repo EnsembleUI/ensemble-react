@@ -66,7 +66,15 @@ View:
                                       borderRadius: 10,
                                     },
                                   ],
-                              }
+                              },
+                            options:
+                              {
+                                plugins: {
+                                  title: {
+                                    "display": false
+                                  },
+                                }
+                              }  
                           }
 
               - Column:
@@ -102,7 +110,16 @@ View:
                                       borderWidth: 1,
                                     },
                                   ]
-                              }
+                              },
+                            options:
+                              {
+                                plugins: {
+                                  legend: {
+                                    "display": false
+                                  },
+                                },
+                                cutout: '50%'
+                              }  
                           }
 
         - DataGrid:

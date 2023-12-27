@@ -3,6 +3,7 @@ import type { ChartOptions } from "chart.js";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useState } from "react";
 import type { ChartDataSets, ChartProps } from "..";
+import { merge } from "lodash-es";
 
 const options: ChartOptions<"bar"> = {
   maintainAspectRatio: false,
@@ -39,6 +40,19 @@ export const BarChart: React.FC<ChartProps> = (props) => {
     setTitle,
   });
 
+  merge(
+    options,
+    {
+      plugins: {
+        title: {
+          display: Boolean(values?.title),
+          text: values?.title,
+        },
+      },
+    },
+    config?.options,
+  );
+
   return (
     <div
       style={{
@@ -51,15 +65,7 @@ export const BarChart: React.FC<ChartProps> = (props) => {
           labels: values?.labels,
           datasets: config?.data?.datasets as ChartDataSets[],
         }}
-        options={{
-          ...options,
-          plugins: {
-            title: {
-              display: Boolean(values?.title),
-              text: values?.title,
-            },
-          },
-        }}
+        options={options}
       />
     </div>
   );

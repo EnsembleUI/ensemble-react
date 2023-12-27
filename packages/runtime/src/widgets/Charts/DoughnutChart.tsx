@@ -1,6 +1,6 @@
 import { Doughnut } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
-import { get } from "lodash-es";
+import { get, merge } from "lodash-es";
 import { useState } from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import type { ChartDataSets, ChartProps } from "..";
@@ -21,21 +21,26 @@ export const DoughnutChart: React.FC<ChartProps> = (props) => {
     setTitle,
   });
 
+  merge(
+    options,
+    {
+      plugins: {
+        title: {
+          display: Boolean(values?.title),
+          text: values?.title,
+        },
+      },
+    },
+    config?.options,
+  );
+
   return (
     <Doughnut
       data={{
         labels: values?.labels,
         datasets: config?.data?.datasets as ChartDataSets[],
       }}
-      options={{
-        ...options,
-        plugins: {
-          title: {
-            display: Boolean(values?.title),
-            text: values?.title,
-          },
-        },
-      }}
+      options={options}
       style={{
         ...(get(props, "styles") as object),
       }}
