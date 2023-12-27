@@ -2,9 +2,9 @@ import { Bar } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useState } from "react";
-import type { ChartDataSets, ChartProps } from "..";
+import { getMergedOptions, type ChartDataSets, type ChartProps } from "..";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import { get, merge } from "lodash-es";
+import { get } from "lodash-es";
 
 const options: ChartOptions<"bar"> = {
   maintainAspectRatio: false,
@@ -59,26 +59,13 @@ export const StackBarChart: React.FC<ChartProps> = (props) => {
     setTitle,
   });
 
-  merge(
-    options,
-    {
-      plugins: {
-        title: {
-          display: Boolean(values?.title),
-          text: values?.title,
-        },
-      },
-    },
-    config?.options,
-  );
-
   return (
     <Bar
       data={{
         labels: values?.labels,
         datasets: config?.data?.datasets as ChartDataSets[],
       }}
-      options={options}
+      options={getMergedOptions(options, values?.title, config?.options)}
       plugins={[ChartDataLabels]}
       style={{
         ...(get(props, "styles") as object),

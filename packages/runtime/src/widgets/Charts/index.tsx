@@ -21,7 +21,7 @@ import {
   useEnsembleStorage,
 } from "@ensembleui/react-framework";
 import { Alert } from "antd";
-import { isEqual } from "lodash-es";
+import { isEqual, merge } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { BarChart } from "./BarChart";
@@ -145,3 +145,22 @@ export const Chart: React.FC<ChartProps> = (props) => {
 };
 
 WidgetRegistry.register("Chart", Chart);
+
+export const getMergedOptions = (
+  defaultOptions: ChartOptions<Exclude<ChartConfigs["type"], "stackbar">>,
+  title?: string,
+  configOptions?: ChartOptions,
+) =>
+  merge(
+    {},
+    defaultOptions,
+    {
+      plugins: {
+        title: {
+          display: Boolean(title),
+          text: title,
+        },
+      },
+    },
+    configOptions,
+  );

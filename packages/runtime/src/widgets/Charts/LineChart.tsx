@@ -2,8 +2,8 @@ import { Line } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
 import { useState } from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
-import type { ChartDataSets, ChartProps } from "..";
-import { get, merge } from "lodash-es";
+import { getMergedOptions, type ChartDataSets, type ChartProps } from "..";
+import { get } from "lodash-es";
 
 const options: ChartOptions<"line"> = {
   maintainAspectRatio: false,
@@ -40,29 +40,13 @@ export const LineChart: React.FC<ChartProps> = (props) => {
     setTitle,
   });
 
-  merge(
-    options,
-    {
-      plugins: {
-        title: {
-          display: Boolean(values?.title),
-          text: values?.title,
-        },
-        legend: {
-          display: false,
-        },
-      },
-    },
-    config?.options,
-  );
-
   return (
     <Line
       data={{
         labels: values?.labels,
         datasets: config?.data?.datasets as ChartDataSets[],
       }}
-      options={options}
+      options={getMergedOptions(options, values?.title, config?.options)}
       style={{
         ...(get(props, "styles") as object),
       }}
