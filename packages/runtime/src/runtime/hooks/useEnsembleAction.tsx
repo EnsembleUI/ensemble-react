@@ -124,7 +124,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const [response, setResponse] = useState<Response>();
   const [error, setError] = useState<unknown>();
   const [isComplete, setIsComplete] = useState(false);
-
+  const storage = useEnsembleStorage();
   const invokeApi = useMemo(() => {
     if (!apis || !action) {
       return;
@@ -137,14 +137,14 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
 
     const inputs = action.inputs ?? {};
     const callback = async (context: unknown): Promise<void> => {
+      setIsComplete(false);
       const resolvedInputs = Object.entries(inputs).map(([key, value]) => {
         if (isExpression(value)) {
           const evalContext = ensembleStore.get(screenAtom);
-          const resolvedValue = evaluate(
-            evalContext,
-            value,
-            context as Record<string, unknown>,
-          );
+          const resolvedValue = evaluate(evalContext, value, {
+            ...(context as Record<string, unknown>),
+            ensemble: { storage },
+          } as Record<string, unknown>);
           return [key, resolvedValue];
         }
         return [key, value];
@@ -169,7 +169,6 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
     if (!response || isComplete) {
       return;
     }
-
     onResponseAction?.callback({ response });
     setIsComplete(true);
   }, [isComplete, onResponseAction, response]);
@@ -179,7 +178,6 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
     if (!error || isComplete) {
       return;
     }
-
     onErrorAction?.callback({ error });
     setIsComplete(true);
   }, [error, isComplete, onErrorAction]);

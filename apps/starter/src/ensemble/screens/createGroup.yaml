@@ -3,6 +3,11 @@ View:
     title:
       Text:
         text: Create a new group
+  onLoad:
+    invokeApi:
+      name: postPatients
+      inputs:
+        mrn: ${message}
   body:
     Form:
       styles:
@@ -46,8 +51,14 @@ View:
                     border: "1px solid black"
                     padding: 12
                   onTap:
-                    executeCode: |
-                      console.log("Hello")
+                    executeCode:
+                      body: |
+                        console.log("Hello")
+                      onComplete: 
+                        invokeApi:
+                          name: postPatients
+                          inputs:
+                            mrn: ${ensemble.storage.get('mrn')}
         - Divider:
             styles:
               thickness: 1
@@ -93,3 +104,64 @@ View:
                     backgroundColor: black
                     color: white
                     padding: 24
+
+API:
+  postPatients:
+    uri: https://api.baseql.com/airtable/graphql/appzJ2PWwpvRLy1P3
+    method: POST
+    inputs:
+      - mrn
+    headers:
+      Authorization: Bearer MmI5ZGQxM2MtOWRjYi00OTEyLWEwNmQtNDEyYTIwZjIwNmQ4
+    body:
+      operationName: 'MyPatient'
+      query: |-
+        query MyPatient($search: String = "${mrn}") {
+          patient(patientMrn:$search){
+            firstName
+            lastName
+            patientMrn
+            dob
+            income
+            encounter {
+              copay
+              responsibility
+              providerId {
+                lastName
+                firstName
+                city
+              }
+              appointment {
+                dateOfService
+              }
+              drugIds {
+                genericName
+                frequency
+                dosage
+              }
+            }
+            task {
+              dueDate
+              createdDate
+              taskPriority
+              taskStatus
+              workFlowStepId {
+                actionRequired
+                workflow {
+                  objective
+                }
+              }
+              atlasMeMatch {
+                matchedProgramId {
+                name
+                  assistanceCap
+                  daysRetro
+                  approvalRate
+                  organization {
+                    name
+                  }
+                }
+              }
+            }
+          }
+        }
