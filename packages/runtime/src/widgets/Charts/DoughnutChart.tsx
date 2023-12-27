@@ -3,7 +3,8 @@ import type { ChartOptions } from "chart.js";
 import { get } from "lodash-es";
 import { useState } from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
-import { getMergedOptions, type ChartDataSets, type ChartProps } from "..";
+import { type ChartDataSets, type ChartProps } from "..";
+import { getMergedOptions } from "./utils/getMergedOptions";
 
 const options: ChartOptions<"doughnut"> = {
   cutout: "90%",
