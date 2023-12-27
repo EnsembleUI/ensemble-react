@@ -26,7 +26,7 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
   const themeContext = useStyleNames(
     isString(get(values, ["styles", "names"]))
-      ? get(values, ["styles", "names"])
+      ? String(get(values, ["styles", "names"]))
       : "",
   );
 
