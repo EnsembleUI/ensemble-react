@@ -1,5 +1,22 @@
 # @ensembleui/react-starter
 
+## 0.2.6
+
+### Patch Changes
+
+- f09c171: fixed context undefined for onLoad action
+- e983a0e: stepper widgte styling updates and fixed
+- 0690646: Added onTap action on each row of datagrid widgets
+- e510d2f: Google signin widget and expose application context env into actions and widgets
+- Updated dependencies [f09c171]
+- Updated dependencies [b28ec5f]
+- Updated dependencies [e983a0e]
+- Updated dependencies [0690646]
+- Updated dependencies [e510d2f]
+- Updated dependencies [b28ec5f]
+  - @ensembleui/react-framework@0.1.5
+  - @ensembleui/react-runtime@0.1.6
+
 ## 0.2.5
 
 ### Patch Changes

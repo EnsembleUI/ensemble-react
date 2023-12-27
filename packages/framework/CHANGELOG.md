@@ -1,5 +1,12 @@
 # @ensembleui/react-framework
 
+## 0.1.5
+
+### Patch Changes
+
+- f09c171: fixed context undefined for onLoad action
+- e510d2f: Google signin widget and expose application context env into actions and widgets
+
 ## 0.1.4
 
 ### Patch Changes
