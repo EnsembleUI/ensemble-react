@@ -21,11 +21,10 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   id?: string,
   methods?: InvokableMethods,
 ): RegisterBindingsResult<T> => {
+  const testId = get(values, ["testId"]);
   const { resolvedWidgetId, rootRef } = useWidgetId(
     id,
-    isString(get(values, ["testId"]))
-      ? String(get(values, ["testId"]))
-      : undefined,
+    isString(testId) ? String(testId) : undefined,
   );
   const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
 

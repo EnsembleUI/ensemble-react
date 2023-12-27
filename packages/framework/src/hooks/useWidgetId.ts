@@ -32,7 +32,10 @@ export const useWidgetId = (
   const rootRef = useCallback(
     (node: never) => {
       if (node && "setAttribute" in node) {
-        (node as HTMLElement).setAttribute("data-testid", id || testId || "");
+        (node as HTMLElement).setAttribute(
+          "data-testid",
+          id ? resolvedWidgetId : testId || "",
+        );
       }
     },
     [resolvedWidgetId],
