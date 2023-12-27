@@ -24,7 +24,7 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
 ): RegisterBindingsResult<T> => {
   const { resolvedWidgetId, rootRef } = useWidgetId(id);
   const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
-  const styleNames = get(values, ["styles", "names"]);
+  const styleNames = get(values, ["styles", "names"]) as unknown;
   const styleProperties = useStyleNames(
     isString(styleNames) ? String(styleNames) : "",
   );
