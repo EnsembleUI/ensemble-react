@@ -1,6 +1,6 @@
 import type { RefCallback } from "react";
 import { useEffect, useMemo } from "react";
-import { compact, isEmpty, merge, set } from "lodash-es";
+import { compact, get, isEmpty, isString, merge, set } from "lodash-es";
 import isEqual from "react-fast-compare";
 import { atom, useAtom } from "jotai";
 import type { InvokableMethods } from "../state";
@@ -9,6 +9,7 @@ import { findExpressions } from "../shared";
 import { useWidgetId } from "./useWidgetId";
 import { useCustomScope } from "./useCustomScope";
 import { useWidgetState } from "./useWidgetState";
+import { useStyleNames } from "./useStyleNames";
 
 export interface RegisterBindingsResult<T> {
   id: string;
@@ -23,6 +24,15 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
 ): RegisterBindingsResult<T> => {
   const { resolvedWidgetId, rootRef } = useWidgetId(id);
   const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
+  const styleNames = get(values, ["styles", "names"]) as unknown;
+  const styleProperties = useStyleNames(
+    isString(styleNames) ? String(styleNames) : "",
+  );
+
+  const styles = merge({}, styleProperties, values?.styles);
+  if (!isEmpty(styles)) {
+    merge(values, { styles });
+  }
 
   const expressions = useMemo(() => {
     const expressionMap: string[][] = [];
@@ -44,10 +54,10 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
         return { name, valueAtom };
       }),
     );
-    return atom((get) => {
+    return atom((getAtom) => {
       const valueEntries: [string, unknown][] = bindingsEntries.map(
         ({ name, valueAtom }) => {
-          return [name, get(valueAtom)];
+          return [name, getAtom(valueAtom)];
         },
       );
       const result = {};
