@@ -126,7 +126,8 @@ View:
               template:
                 DataRow:
                   onTap:
-                    executeCode: console.log("I am in the ad groups")
+                    executeCode: |
+                      ensemble.history.back()
                   children:
                     # Person
                     - Row:

@@ -20,3 +20,7 @@ export const useEnsembleUser = (): [
   const [user, setUser] = useAtom(userAtom);
   return [user, setUser];
 };
+
+export const useEnsembleHistory = (): History => {
+  return history;
+};
