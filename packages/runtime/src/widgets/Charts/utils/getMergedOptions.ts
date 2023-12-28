@@ -6,7 +6,7 @@ export const getMergedOptions = (
   defaultOptions: ChartOptions<Exclude<ChartConfigs["type"], "stackbar">>,
   title?: string,
   configOptions?: ChartOptions,
-) =>
+): typeof defaultOptions & ChartOptions =>
   merge(
     {},
     defaultOptions,

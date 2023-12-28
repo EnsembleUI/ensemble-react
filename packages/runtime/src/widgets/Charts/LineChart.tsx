@@ -2,12 +2,17 @@ import { Line } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
 import { useState } from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
-import { type ChartDataSets, type ChartProps } from "..";
 import { get } from "lodash-es";
+import { type ChartDataSets, type ChartProps } from "..";
 import { getMergedOptions } from "./utils/getMergedOptions";
 
 const options: ChartOptions<"line"> = {
   maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      display: false,
+    },
+  },
   scales: {
     x: {
       border: {

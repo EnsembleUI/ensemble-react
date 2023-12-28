@@ -2,9 +2,9 @@ import { Bar } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useState } from "react";
-import { type ChartDataSets, type ChartProps } from "..";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { get } from "lodash-es";
+import { type ChartDataSets, type ChartProps } from "..";
 import { getMergedOptions } from "./utils/getMergedOptions";
 
 const options: ChartOptions<"bar"> = {
