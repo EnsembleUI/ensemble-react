@@ -127,7 +127,7 @@ View:
                 DataRow:
                   onTap:
                     executeCode: |
-                      ensemble.history.back()
+                      ensemble.navigateScreen('collections')
                   children:
                     # Person
                     - Row:

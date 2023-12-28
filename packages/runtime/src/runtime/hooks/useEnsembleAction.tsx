@@ -11,7 +11,6 @@ import {
   useEnsembleStorage,
   DateFormatter,
   useApplicationContext,
-  useEnsembleLocation,
   useEnsembleHistory,
 } from "@ensembleui/react-framework";
 import type {
@@ -31,6 +30,7 @@ import { useNavigateScreen } from "./useNavigateScreen";
 import { useNavigateModalScreen } from "./useNavigateModal";
 import { useShowToast } from "./useShowToast";
 import { useCloseAllDialogs } from "./useCloseAllDialogs";
+import { browserHistory } from "../history";
 
 export type EnsembleActionHookResult =
   | {
@@ -53,6 +53,7 @@ type UploadStatus =
 export interface UseExecuteCodeActionOptions {
   context?: Record<string, unknown>;
 }
+
 export const useExecuteCode: EnsembleActionHook<
   ExecuteCodeAction,
   UseExecuteCodeActionOptions
@@ -61,7 +62,6 @@ export const useExecuteCode: EnsembleActionHook<
   const screen = useScreenContext();
   const storage = useEnsembleStorage();
   const formatter = DateFormatter();
-  const location = useEnsembleLocation();
   const history = useEnsembleHistory();
 
   const js = useMemo(() => {
@@ -84,10 +84,10 @@ export const useExecuteCode: EnsembleActionHook<
   }, [action, isCodeString, screen]);
 
   const appContext = useApplicationContext();
-
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,
   );
+
   const execute = useMemo(() => {
     if (!screen || !js) {
       return;
@@ -104,8 +104,8 @@ export const useExecuteCode: EnsembleActionHook<
                 storage,
                 formatter,
                 env: appContext?.env,
-                location,
                 history,
+                navigateScreen: browserHistory.navigate,
               },
             },
             options?.context,
@@ -124,7 +124,6 @@ export const useExecuteCode: EnsembleActionHook<
     storage,
     formatter,
     appContext?.env,
-    location,
     history,
     options?.context,
     onCompleteAction,
