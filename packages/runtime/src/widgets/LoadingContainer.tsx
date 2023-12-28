@@ -1,6 +1,7 @@
-import type { EnsembleWidget, Expression } from "@ensembleui/react-framework";
+import type { Expression } from "@ensembleui/react-framework";
 import { unwrapWidget, useRegisterBindings } from "@ensembleui/react-framework";
 import { Skeleton } from "@mui/material";
+import { cloneDeep } from "lodash-es";
 import type { EnsembleWidgetProps } from "../shared/types";
 import { EnsembleRuntime } from "../runtime";
 import { WidgetRegistry } from "../registry";
@@ -12,25 +13,27 @@ export interface LoadingContainerProps extends EnsembleWidgetProps {
   highlightColor?: Expression<string>;
   width?: Expression<number>;
   height?: Expression<number>;
-  widget: EnsembleWidget;
-  loadingWidget?: EnsembleWidget;
+  widget: Record<string, unknown>;
+  loadingWidget?: Record<string, unknown>;
 }
 
 export const LoadingContainer: React.FC<LoadingContainerProps> = (props) => {
   const { widget, loadingWidget, ...rest } = props;
-  const unwrappedWidget = unwrapWidget(
-    widget as unknown as Record<string, unknown>,
-  );
+  const unwrappedWidget = unwrapWidget(cloneDeep(widget));
+  const unwrappedLoadingWidget = loadingWidget
+    ? unwrapWidget(cloneDeep(loadingWidget))
+    : undefined;
   const { values } = useRegisterBindings(rest, props.id);
 
   if (values?.isLoading) {
-    if (loadingWidget) {
-      return <>{EnsembleRuntime.render([loadingWidget])}</>;
+    if (unwrappedLoadingWidget) {
+      return <>{EnsembleRuntime.render([unwrappedLoadingWidget])}</>;
     }
     return (
       <Skeleton
         animation={values.useShimmer ? "wave" : false}
         height={values.height}
+        style={values.styles}
         variant="rectangular"
         width={values.width}
       />
