@@ -149,6 +149,11 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
         }
         return [key, value];
       });
+      setData(apiModel.name, {
+        isLoading: true,
+        isSuccess: false,
+        isError: false,
+      });
       try {
         const res = await DataFetcher.fetch(
           apiModel,
