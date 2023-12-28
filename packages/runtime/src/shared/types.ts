@@ -12,8 +12,8 @@ export interface EnsembleWidgetProps<
   T extends Partial<EnsembleWidgetStyles> = EnsembleWidgetStyles,
 > {
   id?: string;
-  [key: string]: unknown;
   styles?: T;
+  [key: string]: unknown;
 }
 
 export interface HasItemTemplate {

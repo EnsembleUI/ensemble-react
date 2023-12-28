@@ -17,6 +17,7 @@ View:
     Column:
       children:
         - Row:
+            testId: testIdExample
             item-template:
               data: [0, 2, 4, 6, 8]
               name: i

@@ -8,6 +8,7 @@ import { useCustomScope } from "./useCustomScope";
 
 export const useWidgetId = (
   id?: Expression<string>,
+  testId?: Expression<string>,
 ): { resolvedWidgetId: string; rootRef: RefCallback<never> } => {
   const customScope = useCustomScope();
   const resolvedWidgetId = useMemo<string>(() => {
@@ -31,7 +32,10 @@ export const useWidgetId = (
   const rootRef = useCallback(
     (node: never) => {
       if (node && "setAttribute" in node) {
-        (node as HTMLElement).setAttribute("data-testid", resolvedWidgetId);
+        (node as HTMLElement).setAttribute(
+          "data-testid",
+          id ? resolvedWidgetId : testId || "",
+        );
       }
     },
     [resolvedWidgetId],
