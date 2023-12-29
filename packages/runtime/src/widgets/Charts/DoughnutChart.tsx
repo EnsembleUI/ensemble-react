@@ -3,7 +3,8 @@ import type { ChartOptions } from "chart.js";
 import { get } from "lodash-es";
 import { useState } from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
-import type { ChartDataSets, ChartProps } from "..";
+import { type ChartDataSets, type ChartProps } from "..";
+import { getMergedOptions } from "./utils/getMergedOptions";
 
 const options: ChartOptions<"doughnut"> = {
   cutout: "90%",
@@ -27,15 +28,7 @@ export const DoughnutChart: React.FC<ChartProps> = (props) => {
         labels: values?.labels,
         datasets: config?.data?.datasets as ChartDataSets[],
       }}
-      options={{
-        ...options,
-        plugins: {
-          title: {
-            display: Boolean(values?.title),
-            text: values?.title,
-          },
-        },
-      }}
+      options={getMergedOptions(options, values?.title, config?.options)}
       style={{
         ...(get(props, "styles") as object),
       }}

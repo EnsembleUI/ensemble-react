@@ -2,7 +2,8 @@ import { Bar } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useState } from "react";
-import type { ChartDataSets, ChartProps } from "..";
+import { type ChartDataSets, type ChartProps } from "..";
+import { getMergedOptions } from "./utils/getMergedOptions";
 
 const options: ChartOptions<"bar"> = {
   maintainAspectRatio: false,
@@ -51,15 +52,7 @@ export const BarChart: React.FC<ChartProps> = (props) => {
           labels: values?.labels,
           datasets: config?.data?.datasets as ChartDataSets[],
         }}
-        options={{
-          ...options,
-          plugins: {
-            title: {
-              display: Boolean(values?.title),
-              text: values?.title,
-            },
-          },
-        }}
+        options={getMergedOptions(options, values?.title, config?.options)}
       />
     </div>
   );
