@@ -161,6 +161,8 @@ export const EnsembleParser = {
       header: headerDef ? unwrapWidget(headerDef) : undefined,
       footer: footerDef ? unwrapWidget(footerDef) : undefined,
       styles: get(menu, [menuType, "styles"]) as Record<string, unknown>,
+      id: get(menu, [menuType, "id"]) as string,
+      onCollapse: get(menu, [menuType, "onCollapse"]) as EnsembleAction,
     };
   },
 };
