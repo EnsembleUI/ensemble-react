@@ -17,6 +17,7 @@ View:
     Column:
       children:
         - Row:
+            testId: testIdExample
             item-template:
               data: [0, 2, 4, 6, 8]
               name: i
@@ -52,15 +53,17 @@ View:
               - Text:
                   text: head
                   styles:
-                    color: "purple"
+                    names: stop
             item-template:
               data:
                 [{ "name": "Ali" }, { "name": "Raheem" }, { "name": "Arijit" }]
               name: i
               template:
-                Button:
-                  label: ${i.name}
-
+                Text:
+                  text: ${i.name}
+                  styles:
+                    names: testName stop
+                    color: purple
         - Column:
             item-template:
               data: [7, 9]
@@ -69,7 +72,7 @@ View:
                 Text:
                   text: ${i}
                   styles:
-                    color: "violet"
+                    names: go bigFoot
             children:
               - Text:
                   text: foot

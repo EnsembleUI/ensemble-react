@@ -1,5 +1,16 @@
 # @ensembleui/react-runtime
 
+## 0.1.6
+
+### Patch Changes
+
+- f09c171: fixed context undefined for onLoad action
+- b28ec5f: Fix broken index reference for GridView templates
+- e983a0e: stepper widgte styling updates and fixed
+- 0690646: Added onTap action on each row of datagrid widgets
+- e510d2f: Google signin widget and expose application context env into actions and widgets
+- b28ec5f: Support base pathname
+
 ## 0.1.5
 
 ### Patch Changes
