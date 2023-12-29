@@ -11,7 +11,6 @@ import {
   useEnsembleStorage,
   DateFormatter,
   useApplicationContext,
-  useEnsembleHistory,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -62,7 +61,6 @@ export const useExecuteCode: EnsembleActionHook<
   const screen = useScreenContext();
   const storage = useEnsembleStorage();
   const formatter = DateFormatter();
-  const history = useEnsembleHistory();
 
   const js = useMemo(() => {
     if (!action) {
@@ -104,7 +102,6 @@ export const useExecuteCode: EnsembleActionHook<
                 storage,
                 formatter,
                 env: appContext?.env,
-                history,
                 navigateScreen: browserHistory.navigate,
               },
             },
@@ -124,7 +121,6 @@ export const useExecuteCode: EnsembleActionHook<
     storage,
     formatter,
     appContext?.env,
-    history,
     options?.context,
     onCompleteAction,
   ]);
