@@ -3,7 +3,7 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { SideBarMenu } from "./menu";
 import { EnsembleScreen } from "./screen";
-import { browserHistory } from "./history";
+import { browserHistory } from "./navigateApi";
 
 interface EnsembleEntryProps {
   entry: EnsembleEntryPoint;
@@ -12,7 +12,6 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({ entry }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // store copy of navigate and location for the use of outside components
   browserHistory.navigate = navigate;
   browserHistory.location = location;
 

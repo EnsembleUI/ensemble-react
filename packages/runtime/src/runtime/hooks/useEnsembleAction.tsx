@@ -11,6 +11,7 @@ import {
   useEnsembleStorage,
   DateFormatter,
   useApplicationContext,
+  useCustomScope,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -20,16 +21,17 @@ import type {
   PickFilesAction,
   UploadFilesAction,
   ScreenContextDefinition,
+  NavigateScreenAction,
 } from "@ensembleui/react-framework";
 import { isEmpty, isString, merge, isObject } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { navigateApi } from "../navigateApi";
 import { useNavigateScreen } from "./useNavigateScreen";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { useNavigateModalScreen } from "./useNavigateModal";
 import { useShowToast } from "./useShowToast";
 import { useCloseAllDialogs } from "./useCloseAllDialogs";
-import { browserHistory } from "../history";
 
 export type EnsembleActionHookResult =
   | {
@@ -60,6 +62,7 @@ export const useExecuteCode: EnsembleActionHook<
   const isCodeString = isString(action);
   const screen = useScreenContext();
   const storage = useEnsembleStorage();
+  const customScope = useCustomScope();
   const formatter = DateFormatter();
 
   const js = useMemo(() => {
@@ -102,7 +105,8 @@ export const useExecuteCode: EnsembleActionHook<
                 storage,
                 formatter,
                 env: appContext?.env,
-                navigateScreen: browserHistory.navigate,
+                navigateScreen: (targetScreen: NavigateScreenAction) =>
+                  navigateApi(targetScreen, screen, customScope, storage),
               },
             },
             options?.context,
@@ -121,9 +125,11 @@ export const useExecuteCode: EnsembleActionHook<
     storage,
     formatter,
     appContext?.env,
+    customScope,
     options?.context,
     onCompleteAction,
   ]);
+
   return execute ? { callback: execute } : undefined;
 };
 
