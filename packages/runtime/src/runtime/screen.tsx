@@ -52,7 +52,7 @@ const OnLoadAction: React.FC<
   const onLoadAction = useEnsembleAction(action);
   const [isComplete, setIsComplete] = useState(false);
   useEffect(() => {
-    if (!onLoadAction?.callback(context) || isComplete) {
+    if (!onLoadAction?.callback || isComplete) {
       return;
     }
     try {
@@ -62,7 +62,7 @@ const OnLoadAction: React.FC<
     } finally {
       setIsComplete(true);
     }
-  }, [isComplete, onLoadAction, onLoadAction?.callback]);
+  }, [context, isComplete, onLoadAction, onLoadAction?.callback]);
 
   return <>{children}</>;
 };
