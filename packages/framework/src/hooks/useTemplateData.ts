@@ -4,7 +4,7 @@ import { isString, map } from "lodash-es";
 import { createBindingAtom } from "../state";
 import { isExpression, type Expression } from "../shared/common";
 
-export type TemplateData = object | unknown[] | undefined;
+export type TemplateData = object | unknown[] | undefined | null;
 export interface TemplateDataProps {
   data?: Expression<TemplateData>;
   name?: string;

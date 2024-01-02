@@ -14,6 +14,7 @@ class EnsembleResponse implements Response {
   statusCode?: number | undefined;
   headers?: Headers;
   reasonPhrase?: string | undefined;
+  isLoading = false;
   get isSuccess(): boolean {
     return (
       Boolean(this.statusCode) &&
@@ -31,6 +32,7 @@ class EnsembleResponse implements Response {
     response.headers = axRes.headers;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     response.body = axRes.data;
+    response.isLoading = false;
     return response;
   }
 }

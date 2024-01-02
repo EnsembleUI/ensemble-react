@@ -489,23 +489,28 @@ View:
                                               fontWeight: normal
                                               fontSize: 12px
                                               color: "#767676"
-              - Column:
-                  item-template:
-                    data: ensemble.storage.get("arrayOfUsers")
-                    name: usr
-                    template:
-                      Row:
-                        gap: 5
-                        children:
-                          - Text:
-                              text: ${usr.fields.name}
-                          - Column:
-                              item-template:
-                                data: usr.fields.groups
-                                name: n1
-                                template:
-                                  Text:
-                                    text: ${n1}
+              - LoadingContainer:
+                  isLoading: ${getData.isLoading}
+                  useShimmer: true
+                  height: 400
+                  widget:
+                    Column:
+                      item-template:
+                        data: ensemble.storage.get("arrayOfUsers")
+                        name: usr
+                        template:
+                          Row:
+                            gap: 5
+                            children:
+                              - Text:
+                                  text: ${usr.fields.name}
+                              - Column:
+                                  item-template:
+                                    data: usr.fields.groups
+                                    name: n1
+                                    template:
+                                      Text:
+                                        text: ${n1}
         - Dropdown:
             id: myDropDown
             hintText: Select a program
