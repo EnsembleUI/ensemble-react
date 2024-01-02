@@ -103,6 +103,7 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
             boxShadow: `1px 2px 5px 1px ${
               values?.styles?.shadowColor ?? "transparent"
             }`,
+            textTransform: "none",
             border: `${styles?.borderWidth ?? 1}px solid ${
               values?.styles?.borderColor ?? "transparent"
             } !important`,
