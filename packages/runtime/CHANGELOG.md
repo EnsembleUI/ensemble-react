@@ -1,5 +1,13 @@
 # @ensembleui/react-runtime
 
+## 0.1.7
+
+### Patch Changes
+
+- 1f93b5e: fix chart options
+- bfe63ce: Add LoadingContainer widget
+- 25366e6: fixed re-curring call of onResponse under onComplete
+
 ## 0.1.6
 
 ### Patch Changes

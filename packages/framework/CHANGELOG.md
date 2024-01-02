@@ -1,5 +1,12 @@
 # @ensembleui/react-framework
 
+## 0.1.6
+
+### Patch Changes
+
+- bfe63ce: Add LoadingContainer widget
+- 95025ff: fix properties of style names not being applied
+
 ## 0.1.5
 
 ### Patch Changes
