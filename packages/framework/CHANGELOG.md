@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.7
+
+### Patch Changes
+
+- 29def14: Add skeleton widget
+
 ## 0.1.6
 
 ### Patch Changes

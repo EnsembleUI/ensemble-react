@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.1.8
+
+### Patch Changes
+
+- 29def14: Add skeleton widget
+
 ## 0.1.7
 
 ### Patch Changes
