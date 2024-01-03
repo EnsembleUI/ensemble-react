@@ -11,7 +11,6 @@ import {
   useEnsembleStorage,
   DateFormatter,
   useApplicationContext,
-  useCustomScope,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -62,7 +61,6 @@ export const useExecuteCode: EnsembleActionHook<
   const isCodeString = isString(action);
   const screen = useScreenContext();
   const storage = useEnsembleStorage();
-  const customScope = useCustomScope();
   const formatter = DateFormatter();
 
   const js = useMemo(() => {
