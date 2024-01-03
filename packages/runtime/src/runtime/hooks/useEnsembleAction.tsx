@@ -106,7 +106,7 @@ export const useExecuteCode: EnsembleActionHook<
                 formatter,
                 env: appContext?.env,
                 navigateScreen: (targetScreen: NavigateScreenAction) =>
-                  navigateApi(targetScreen, screen, customScope, storage),
+                  navigateApi(targetScreen, screen),
               },
             },
             options?.context,
@@ -125,7 +125,6 @@ export const useExecuteCode: EnsembleActionHook<
     storage,
     formatter,
     appContext?.env,
-    customScope,
     options?.context,
     onCompleteAction,
   ]);

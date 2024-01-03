@@ -21,8 +21,6 @@ export const browserHistory: BrowserHistoryDefinition = {
 export const navigateApi = (
   targetScreen: NavigateScreenAction,
   screenContext: ScreenContextDefinition,
-  customScope: CustomScope | undefined,
-  storage: EnsembleStorage,
 ): void => {
   const hasOptions = !isString(targetScreen);
   const screenName = hasOptions ? targetScreen.name : targetScreen;
@@ -36,30 +34,10 @@ export const navigateApi = (
     return;
   }
 
-  // set additional inputs
-  const inputs =
-    !isString(targetScreen) && targetScreen.inputs
-      ? cloneDeep(targetScreen.inputs)
-      : {};
-
-  if (screenContext) {
-    const expressionMap: string[][] = [];
-    findExpressions(inputs, [], expressionMap);
-    expressionMap.forEach(([path, value]) => {
-      const result = evaluate(screenContext, value, {
-        ensemble: { storage },
-        ...customScope,
-      });
-      set(inputs, path, result);
-    });
-  }
-
   // navigate to target screen
   if (!browserHistory.navigate) {
     return;
   }
 
-  browserHistory.navigate(`/${matchingScreen.name.toLowerCase()}`, {
-    state: inputs,
-  });
+  browserHistory.navigate(`/${matchingScreen.name.toLowerCase()}`);
 };
