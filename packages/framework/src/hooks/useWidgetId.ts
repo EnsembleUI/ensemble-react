@@ -29,16 +29,23 @@ export const useWidgetId = (
     return generateRandomString(6);
   }, [customScope, id]);
 
+  const resolvedTestId = useMemo(() => {
+    if (isExpression(testId)) {
+      return String(evaluate(defaultScreenContext, testId, customScope));
+    }
+    return testId ?? "";
+  }, [customScope, testId]);
+
   const rootRef = useCallback(
     (node: never) => {
       if (node && "setAttribute" in node) {
         (node as HTMLElement).setAttribute(
           "data-testid",
-          id ? resolvedWidgetId : testId || "",
+          id ? resolvedWidgetId : resolvedTestId,
         );
       }
     },
-    [resolvedWidgetId],
+    [id, resolvedTestId, resolvedWidgetId],
   );
 
   return { resolvedWidgetId, rootRef };
