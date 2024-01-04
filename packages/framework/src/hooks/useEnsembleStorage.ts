@@ -17,9 +17,6 @@ export const screenStorageAtom = atomWithStorage<Record<string, unknown>>(
   "ensemble.storage",
   {},
   backingStorage,
-  {
-    unstable_getOnInit: true,
-  },
 );
 
 export const useEnsembleStorage = (): EnsembleStorage => {
