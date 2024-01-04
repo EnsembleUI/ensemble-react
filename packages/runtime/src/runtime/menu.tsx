@@ -28,6 +28,7 @@ type TypeColors =
 
 interface MenuItem {
   id?: string;
+  testId?: string;
   icon?: string;
   iconLibrary?: "default" | "fontAwesome";
   label: string;
@@ -145,7 +146,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
         {props.items.map((item) => (
           <>
             <AntMenu.Item
-              data-testid={item.id}
+              data-testid={item.id ?? item.testId}
               icon={renderMuiIcon(
                 item.icon,
                 props.styles?.iconWidth,
