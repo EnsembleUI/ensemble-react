@@ -10,11 +10,18 @@ import { CloseOutlined } from "@ant-design/icons";
 interface ModalProps {
   title?: string | React.ReactNode;
   maskClosable?: boolean;
+  hideCloseIcon?: boolean;
+  hideFullScreenIcon?: boolean;
+  onClose?: () => void;
   position?: "top" | "right" | "bottom" | "left";
   height?: string;
-  width?: string;
+  width?: string | number;
   margin?: string;
   padding?: string;
+  backgroundColor?: string;
+  horizontalOffset?: number;
+  verticalOffset?: number;
+  showShadow?: boolean;
 }
 
 interface ModalContextProps {
@@ -53,7 +60,10 @@ export const ModalWrapper: React.FC = () => {
     setVisible(true);
   };
 
-  const closeModal = (): void => setVisible(false);
+  const closeModal = (): void => {
+    setVisible(false);
+    options?.onClose?.();
+  };
 
   const positionSelector = {
     top: `
@@ -73,15 +83,25 @@ export const ModalWrapper: React.FC = () => {
       top: calc(50% - ${modalHeight / 2}px) !important;
     `,
     center: `
-	  top: 50% !important;
-	  left: 50% !important;
-	  transform: translate(-50%, -50%) !important;
-  `,
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+    `,
   };
 
   const positionStyles = `
     .ant-modal {
       ${options.position ? positionSelector[options.position] : ""}
+      ${
+        options?.horizontalOffset
+          ? `left: ${(options.horizontalOffset * 100) / 2}% !important;`
+          : ""
+      }
+      ${
+        options?.verticalOffset
+          ? `top: ${(options.verticalOffset * 100) / 2}% !important;`
+          : ""
+      }
     }
   `;
 
@@ -93,6 +113,12 @@ export const ModalWrapper: React.FC = () => {
       padding: ${
         options.padding ? options.padding : "10px 24px 24px"
       } !important;
+      ${
+        options?.backgroundColor
+          ? `background-color: ${options.backgroundColor} !important;`
+          : ""
+      } 
+      ${options?.showShadow === false ? "box-shadow: none !important;" : ""}
     }
   `;
 
@@ -113,32 +139,39 @@ export const ModalWrapper: React.FC = () => {
     cursor: "pointer",
   };
 
-  const titleElement = (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}
-    >
-      {isFullScreen ? (
-        <CloseFullscreenIcon
-          onClick={(): void => setIsFullScreen(false)}
-          style={iconStyles}
-        />
-      ) : (
-        <OpenInFullIcon
-          onClick={(): void => setIsFullScreen(true)}
-          style={iconStyles}
-        />
-      )}
-      {options.title}
-      <CloseOutlined
-        onClick={(): void => setVisible(false)}
-        style={iconStyles}
-      />
-    </div>
+  const fullScreenIcon = isFullScreen ? (
+    <CloseFullscreenIcon
+      onClick={(): void => setIsFullScreen(false)}
+      style={iconStyles}
+    />
+  ) : (
+    <OpenInFullIcon
+      onClick={(): void => setIsFullScreen(true)}
+      style={iconStyles}
+    />
   );
+
+  const titleElement =
+    !options?.title &&
+    options?.hideFullScreenIcon === true &&
+    options?.hideCloseIcon === true ? null : (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        {options?.hideFullScreenIcon ? null : fullScreenIcon}
+        {options.title}
+        {options?.hideCloseIcon ? null : (
+          <CloseOutlined
+            onClick={(): void => setVisible(false)}
+            style={iconStyles}
+          />
+        )}
+      </div>
+    );
 
   return (
     <ModalContext.Provider
@@ -166,13 +199,14 @@ export const ModalWrapper: React.FC = () => {
                 footer={null}
                 key={key}
                 maskClosable={options.maskClosable}
+                onCancel={closeModal}
                 open={visible}
                 style={{
-                  position: options.position ? "absolute" : "unset",
+                  ...(options?.position ? { position: "absolute" } : {}),
                   margin: (!isFullScreen && options.margin) || 0,
                 }}
                 title={titleElement}
-                width={options.width}
+                width={options?.width || "auto"}
               >
                 {content}
               </Modal>

@@ -40,6 +40,22 @@ export type NavigateModalScreenAction =
 
 export type NavigateScreenAction = string | NavigateScreenOptions;
 
+interface ShowDialogOptions {
+  minWidth?: number;
+  maxWidth?: number;
+  minHeight?: number;
+  maxHeight?: number;
+  horizontalOffset?: number;
+  verticalOffset?: number;
+  style?: "default" | "none";
+}
+
+export interface ShowDialogAction {
+  widget: Record<string, unknown>;
+  options?: ShowDialogOptions;
+  onDialogDismiss?: EnsembleAction;
+}
+
 export interface ShowToastAction {
   message: string;
   options: {
@@ -75,4 +91,5 @@ export interface EnsembleAction {
   closeAllDialogs?: null;
   pickFiles?: PickFilesAction;
   uploadFiles?: UploadFilesAction;
+  showDialog?: ShowDialogAction;
 }

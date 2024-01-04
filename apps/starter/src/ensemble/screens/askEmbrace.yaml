@@ -79,6 +79,22 @@ View:
                   styles:
                     color: "orange"
 
+        - Button:
+            label: Show Custom Dialog
+            onTap:
+              showDialog:
+                widget:
+                  # Header:
+                  Text:
+                    text: This dialog declares the widget inline.
+                options:
+                  # style: none
+                  # verticalOffset: -0.5
+                  # horizontalOffset: 0.5
+                onDialogDismiss:
+                  executeCode:
+                    body: |
+                      console.log("dialog dismissed", askText.text);
         - Markdown:
             id: askText
             text: "### Toggle Buttons"
