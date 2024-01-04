@@ -1,5 +1,6 @@
 ViewGroup:
   SideBar:
+    id: mySidebar
     styles:
       width: 240px
       iconWidth: 20px
@@ -8,13 +9,17 @@ ViewGroup:
       labelColor: "#171B2A"
       selectedColor: "#171B2A"
       labelFontSize: 1
+      headerCollapsedWidth: 160px
       onSelectStyles:
         backgroundColor: "#D5DAEA"
         borderRadius: 10px
     header:
+      # Markdown:
+      #   text: "# Ensemble"
       Image:
         height: 50px
         source: https://docs.ensembleui.com/images/logo.svg
+
     items:
       - label: Dashboard
         icon: LegendToggle
@@ -38,3 +43,7 @@ ViewGroup:
     footer:
       Text:
         text: Give us feedback
+    onCollapse:
+      executeCode:
+        body: |-
+          console.log('mySidebar', mySidebar);

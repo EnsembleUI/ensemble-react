@@ -35,14 +35,16 @@ export interface EnsembleMenuModel {
   type: string;
   items: {
     label: string;
-    icon?: string;
     page: string;
+    icon?: string;
     screen?: EnsembleScreenModel;
-    selected: boolean;
+    selected?: boolean;
   }[];
   header?: EnsembleWidget;
   footer?: EnsembleWidget;
-  styles: Record<string, unknown>;
+  styles?: Record<string, unknown>;
+  id?: string;
+  onCollapse?: EnsembleAction;
 }
 
 export interface EnsembleAPIModel {
