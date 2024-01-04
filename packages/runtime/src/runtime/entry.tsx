@@ -3,7 +3,7 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { SideBarMenu } from "./menu";
 import { EnsembleScreen } from "./screen";
-import { browserHistory } from "./navigateApi";
+import { browserHistory } from "./history";
 
 interface EnsembleEntryProps {
   entry: EnsembleEntryPoint;

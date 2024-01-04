@@ -25,6 +25,7 @@ import type {
 import { isEmpty, isString, merge, isObject } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { navigateApi } from "../navigateApi";
+import { locationApi } from "../locationApi";
 import { useNavigateScreen } from "./useNavigateScreen";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
@@ -105,6 +106,7 @@ export const useExecuteCode: EnsembleActionHook<
                 env: appContext?.env,
                 navigateScreen: (targetScreen: NavigateScreenAction) =>
                   navigateApi(targetScreen, screen),
+                location: locationApi(),
               },
             },
             options?.context,
