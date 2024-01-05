@@ -1,10 +1,14 @@
 import { parseExpressionAt, tokTypes } from "acorn";
 import { focusAtom } from "jotai-optics";
 import type { Atom } from "jotai";
-import { atom } from "jotai";
+import { atom, useAtomValue } from "jotai";
 import { isNil, mapKeys, merge, omitBy } from "lodash-es";
 import { atomFamily } from "jotai/utils";
-import type { Expression } from "../shared";
+import type {
+  Expression,
+  EnsembleWidgetModel,
+  EnsembleAPIModel,
+} from "../shared";
 import { isExpression, sanitizeJs, debug, error } from "../shared";
 import { evaluate } from "../evaluate";
 import {
@@ -135,6 +139,28 @@ export const createBindingAtom = <T = unknown>(
   });
 
   return bindingAtom;
+};
+
+export interface WidgetContextDefinition {
+  model?: EnsembleWidgetModel;
+}
+
+export const defaultWidgetContext = {
+  model: undefined,
+};
+
+export const widgetAtom = atom<WidgetContextDefinition>(defaultWidgetContext);
+
+export const widgetApiAtom = focusAtom(widgetAtom, (optic) => {
+  return optic.prop("model").optional().prop("apis");
+});
+
+export const useWidgetData = (): { apis?: EnsembleAPIModel[] } => {
+  const apis = useAtomValue(widgetApiAtom);
+
+  return {
+    apis,
+  };
 };
 
 const DOT_CHARCODE = 46; // .
