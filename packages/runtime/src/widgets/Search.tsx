@@ -54,7 +54,7 @@ export const Search: React.FC<SearchProps> = ({
     name: itemTemplate?.name,
   });
   const { rootRef, values } = useRegisterBindings(
-    { styles, value, options },
+    { styles, value, options, placeholder },
     id,
     {
       setValue,
@@ -144,7 +144,7 @@ export const Search: React.FC<SearchProps> = ({
         ref={rootRef}
       >
         <Input
-          placeholder={placeholder}
+          placeholder={values?.placeholder}
           prefix={<SearchOutlined />}
           style={{
             boxShadow: "none",
