@@ -4,7 +4,7 @@ import { createPortal } from "react-dom";
 import { Outlet } from "react-router-dom";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
-import { endsWith } from "lodash-es";
+import { endsWith, last } from "lodash-es";
 import { CloseOutlined } from "@ant-design/icons";
 
 interface ModalProps {
@@ -25,8 +25,12 @@ interface ModalProps {
 }
 
 interface ModalContextProps {
-  openModal: (content: React.ReactNode, options: ModalProps) => void;
-  closeModal: () => void;
+  openModal: (
+    content: React.ReactNode,
+    options: ModalProps,
+    isDialog?: boolean,
+  ) => void;
+  closeAllModals: () => void;
 }
 
 export const ModalContext = createContext<ModalContextProps | undefined>(
@@ -34,102 +38,208 @@ export const ModalContext = createContext<ModalContextProps | undefined>(
 );
 
 export const ModalWrapper: React.FC = () => {
-  const [visible, setVisible] = useState(false);
-  const [content, setContent] = useState<React.ReactNode>(null);
-  const [options, setOptions] = useState<ModalProps>({});
-  const [isFullScreen, setIsFullScreen] = useState(false);
-  const [modalWidth, setModalWidth] = useState(0);
-  const [modalHeight, setModalHeight] = useState(0);
-  const [key, setKey] = useState(0);
+  const [modalState, setModalState] = useState<{
+    visible: boolean[];
+    content: React.ReactNode[];
+    options: ModalProps[];
+    key: number[];
+    isDialog: boolean[];
+  }>({
+    visible: [],
+    content: [],
+    options: [],
+    key: [],
+    isDialog: [],
+  });
+  const [modalDimensions, setModalDimensions] = useState<{
+    modalWidth: number[];
+    modalHeight: number[];
+  }>({
+    modalWidth: [],
+    modalHeight: [],
+  });
+  const [isFullScreen, setIsFullScreen] = useState<boolean[]>([]);
 
   useLayoutEffect(() => {
-    if (visible && !isFullScreen) {
-      const contentNode = document.querySelector(".ant-modal-content");
-      setModalWidth(contentNode?.clientWidth || 0);
-      setModalHeight(contentNode?.clientHeight || 0);
+    if (
+      modalState.visible.length > 0 &&
+      !isFullScreen[isFullScreen.length - 1]
+    ) {
+      const contentNode = last(document.querySelectorAll(".ant-modal-content"));
+      setModalDimensions((oldModalDimensions) => {
+        const newModalDimensions = { ...oldModalDimensions };
+        newModalDimensions.modalWidth[
+          newModalDimensions.modalWidth.length - 1
+        ] = contentNode?.clientWidth || 0;
+        newModalDimensions.modalHeight[
+          newModalDimensions.modalHeight.length - 1
+        ] = contentNode?.clientHeight || 0;
+        return newModalDimensions;
+      });
     }
-  }, [visible, isFullScreen, content]);
+  }, [modalState.visible, isFullScreen]);
 
   const openModal = (
     newContent: React.ReactNode,
     newOptions: ModalProps,
+    isDialog = false,
   ): void => {
-    setKey((prevKey) => prevKey + 1);
-    setContent(newContent);
-    setOptions(newOptions);
-    setVisible(true);
+    if (!isDialog && modalState.visible.length > 0) {
+      // hide the last modal
+      setModalState((oldModalState) => {
+        const newModalState = { ...oldModalState };
+        newModalState.visible[newModalState.visible.length - 1] = false;
+        return newModalState;
+      });
+    }
+
+    // add a new modal to the end of the arrays
+    setModalState((oldModalState) => ({
+      visible: [...oldModalState.visible, true],
+      content: [...oldModalState.content, newContent],
+      options: [...oldModalState.options, newOptions],
+      key: [
+        ...oldModalState.key,
+        oldModalState.key.length
+          ? oldModalState.key[oldModalState.key.length - 1] + 1
+          : 0,
+      ],
+      isDialog: [...oldModalState.isDialog, isDialog],
+    }));
+
+    setModalDimensions((oldModalDimensions) => ({
+      modalWidth: [...oldModalDimensions.modalWidth, 0],
+      modalHeight: [...oldModalDimensions.modalHeight, 0],
+    }));
+
+    setIsFullScreen((oldIsFullScreen) => [...oldIsFullScreen, false]);
   };
 
-  const closeModal = (): void => {
-    setVisible(false);
-    options?.onClose?.();
+  const closeModal = (index?: number): void => {
+    if (index) {
+      modalState.options[index]?.onClose?.();
+    }
+
+    // remove the last modal from the arrays
+    setModalState((oldModalState) => ({
+      visible: oldModalState.visible.slice(0, -1),
+      content: oldModalState.content.slice(0, -1),
+      options: oldModalState.options.slice(0, -1),
+      key: oldModalState.key.slice(0, -1),
+      isDialog: oldModalState.isDialog.slice(0, -1),
+    }));
+
+    setModalDimensions((oldModalDimensions) => ({
+      modalWidth: oldModalDimensions.modalWidth.slice(0, -1),
+      modalHeight: oldModalDimensions.modalHeight.slice(0, -1),
+    }));
+
+    setIsFullScreen((oldIsFullScreen) => oldIsFullScreen.slice(0, -1));
   };
 
-  const positionSelector = {
-    top: `
-      top: 0 !important;
-      left: calc(50% - ${modalWidth / 2}px) !important;
-    `,
-    right: `
-      right: 0 !important;
-      top: calc(50% - ${modalHeight / 2}px) !important;
-    `,
-    bottom: `
-      bottom: 0 !important;
-      right: calc(50% - ${modalWidth / 2}px) !important;
-    `,
-    left: `
-      left: 0 !important;
-      top: calc(50% - ${modalHeight / 2}px) !important;
-    `,
-    center: `
-      top: 50% !important;
-      left: 50% !important;
-      transform: translate(-50%, -50%) !important;
-    `,
+  const closeAllModals = (): void => {
+    Object.values(modalState.options)
+      .reverse()
+      .forEach((options) => {
+        options?.onClose?.();
+      });
+
+    // remove all modals from the arrays
+    setModalState({
+      visible: [],
+      content: [],
+      options: [],
+      key: [],
+      isDialog: [],
+    });
+
+    setModalDimensions({
+      modalWidth: [],
+      modalHeight: [],
+    });
+
+    setIsFullScreen([]);
   };
 
-  const positionStyles = `
-    .ant-modal {
-      ${options.position ? positionSelector[options.position] : ""}
-      ${
-        options?.horizontalOffset
-          ? `left: ${(options.horizontalOffset * 100) / 2}% !important;`
-          : ""
+  const getPositionSelector = (
+    modalWidth: number,
+    modalHeight: number,
+  ): Record<string, string> => {
+    return {
+      top: `
+        top: 0 !important;
+        left: calc(50% - ${modalWidth / 2}px) !important;
+      `,
+      right: `
+        right: 0 !important;
+        top: calc(50% - ${modalHeight / 2}px) !important;
+      `,
+      bottom: `
+        bottom: 0 !important;
+        right: calc(50% - ${modalWidth / 2}px) !important;
+      `,
+      left: `
+        left: 0 !important;
+        top: calc(50% - ${modalHeight / 2}px) !important;
+      `,
+      center: `
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+      `,
+    };
+  };
+
+  const getPositionStyles = (options: ModalProps, index: number): string =>
+    `
+      .ensemble-modal-${index} {
+        ${
+          options.position
+            ? getPositionSelector(
+                modalDimensions.modalWidth[index],
+                modalDimensions.modalHeight[index],
+              )[options.position]
+            : ""
+        }
+        ${
+          options?.horizontalOffset
+            ? `left: ${(options.horizontalOffset * 100) / 2}% !important;`
+            : ""
+        }
+        ${
+          options?.verticalOffset
+            ? `top: ${(options.verticalOffset * 100) / 2}% !important;`
+            : ""
+        }
       }
-      ${
-        options?.verticalOffset
-          ? `top: ${(options.verticalOffset * 100) / 2}% !important;`
-          : ""
+    `;
+
+  const getCustomStyles = (options: ModalProps, index: number): string =>
+    `
+      .ant-modal-root .ant-modal-centered .ant-modal {
+        top: unset;
       }
-    }
-  `;
+      .ensemble-modal-${index} .ant-modal-content {
+        padding: ${
+          options.padding ? options.padding : "10px 24px 24px"
+        } !important;
+        ${
+          options?.backgroundColor
+            ? `background-color: ${options.backgroundColor} !important;`
+            : ""
+        } 
+        ${options?.showShadow === false ? "box-shadow: none !important;" : ""}
+      }
+    `;
 
-  const customStyles = `
-    .ant-modal-root .ant-modal-centered .ant-modal {
-      top: unset;
-    }
-    .ant-modal-content {
-      padding: ${
-        options.padding ? options.padding : "10px 24px 24px"
-      } !important;
-      ${
-        options?.backgroundColor
-          ? `background-color: ${options.backgroundColor} !important;`
-          : ""
-      } 
-      ${options?.showShadow === false ? "box-shadow: none !important;" : ""}
-    }
-  `;
-
-  const fullScreenStyles = `
-    .ant-modal, .ant-modal-content {
+  const getFullScreenStyles = (index: number): string => `
+    .ensemble-modal-${index}.ant-modal, .ensemble-modal-${index}.ant-modal .ant-modal-content {
       height: 100vh;
       width: 100vw;
       margin: 0;
       top: 0;
     }
-    .ant-modal-body {
+    .ensemble-modal-${index} .ant-modal-body {
       height: calc(100vh - 110px);
     }
   `;
@@ -139,19 +249,35 @@ export const ModalWrapper: React.FC = () => {
     cursor: "pointer",
   };
 
-  const fullScreenIcon = isFullScreen ? (
-    <CloseFullscreenIcon
-      onClick={(): void => setIsFullScreen(false)}
-      style={iconStyles}
-    />
-  ) : (
-    <OpenInFullIcon
-      onClick={(): void => setIsFullScreen(true)}
-      style={iconStyles}
-    />
-  );
+  const getFullScreenIcon = (index: number): React.ReactNode =>
+    isFullScreen[index] ? (
+      <CloseFullscreenIcon
+        onClick={(): void =>
+          setIsFullScreen((oldIsFullScreen) => {
+            const newIsFullScreen = [...oldIsFullScreen];
+            newIsFullScreen[index] = false;
+            return newIsFullScreen;
+          })
+        }
+        style={iconStyles}
+      />
+    ) : (
+      <OpenInFullIcon
+        onClick={(): void =>
+          setIsFullScreen((oldIsFullScreen) => {
+            const newIsFullScreen = [...oldIsFullScreen];
+            newIsFullScreen[index] = true;
+            return newIsFullScreen;
+          })
+        }
+        style={iconStyles}
+      />
+    );
 
-  const titleElement =
+  const getTitleElement = (
+    options: ModalProps,
+    index: number,
+  ): React.ReactNode =>
     !options?.title &&
     options?.hideFullScreenIcon === true &&
     options?.hideCloseIcon === true ? null : (
@@ -162,11 +288,19 @@ export const ModalWrapper: React.FC = () => {
           justifyContent: "space-between",
         }}
       >
-        {options?.hideFullScreenIcon ? null : fullScreenIcon}
+        {options?.hideFullScreenIcon ? null : getFullScreenIcon(index)}
         {options.title}
         {options?.hideCloseIcon ? null : (
           <CloseOutlined
-            onClick={(): void => setVisible(false)}
+            onClick={
+              (): void =>
+                setModalState((oldModalState) => {
+                  const newModalState = { ...oldModalState };
+                  newModalState.visible[index] = false;
+                  return newModalState;
+                })
+              // setVisible((v) => v.map((f, i) => (i === index ? !f : f)))
+            }
             style={iconStyles}
           />
         )}
@@ -177,43 +311,61 @@ export const ModalWrapper: React.FC = () => {
     <ModalContext.Provider
       value={{
         openModal,
-        closeModal,
+        closeAllModals,
       }}
     >
       <Outlet />
 
-      {visible
-        ? createPortal(
-            <>
-              <style> {isFullScreen ? fullScreenStyles : positionStyles}</style>
-              <style>{customStyles}</style>
-              <Modal
-                bodyStyle={{
-                  height: endsWith(options.height, "%")
-                    ? `clamp(0vh, ${parseInt(options.height!, 10)}vh, 92vh`
-                    : options.height,
-                  overflowY: "auto",
-                }}
-                centered={!isFullScreen}
-                closable={false}
-                footer={null}
-                key={key}
-                maskClosable={options.maskClosable}
-                onCancel={closeModal}
-                open={visible}
-                style={{
-                  ...(options?.position ? { position: "absolute" } : {}),
-                  margin: (!isFullScreen && options.margin) || 0,
-                }}
-                title={titleElement}
-                width={options?.width || "auto"}
-              >
-                {content}
-              </Modal>
-            </>,
-            document.body,
-          )
-        : null}
+      {modalState.visible.map((isVisible, index) =>
+        isVisible
+          ? createPortal(
+              <>
+                <style>
+                  {" "}
+                  {isFullScreen[index]
+                    ? getFullScreenStyles(index)
+                    : getPositionStyles(modalState.options[index], index)}
+                </style>
+                <style>
+                  {getCustomStyles(modalState.options[index], index)}
+                </style>
+                <Modal
+                  bodyStyle={{
+                    height: endsWith(modalState.options[index]?.height, "%")
+                      ? `clamp(0vh, ${parseInt(
+                          modalState.options[index]?.height || "0",
+                          10,
+                        )}vh, 92vh`
+                      : modalState.options[index]?.height,
+                    overflowY: "auto",
+                  }}
+                  centered={!isFullScreen[index]}
+                  className={`ensemble-modal-${index}`}
+                  closable={false}
+                  footer={null}
+                  key={modalState.key[index]}
+                  maskClosable={modalState.options[index]?.maskClosable}
+                  onCancel={(): void => closeModal(index)}
+                  open={modalState.visible[index]}
+                  style={{
+                    ...(modalState.options[index]?.position
+                      ? { position: "absolute" }
+                      : {}),
+                    margin:
+                      (!isFullScreen[index] &&
+                        modalState.options[index]?.margin) ||
+                      0,
+                  }}
+                  title={getTitleElement(modalState.options[index], index)}
+                  width={modalState.options[index]?.width || "auto"}
+                >
+                  {modalState.content[index]}
+                </Modal>
+              </>,
+              document.body,
+            )
+          : null,
+      )}
     </ModalContext.Provider>
   );
 };

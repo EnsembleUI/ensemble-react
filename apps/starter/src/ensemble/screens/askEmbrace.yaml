@@ -84,17 +84,48 @@ View:
             onTap:
               showDialog:
                 widget:
-                  # Header:
-                  Text:
-                    text: This dialog declares the widget inline.
+                  Button:
+                    label: This dialog declares the widget inline. Tap me to open default!
+                    styles:
+                      backgroundColor: lime
+                    onTap:
+                      showDialog:
+                        onDialogDismiss:
+                          executeCode:
+                            body: |
+                              console.log("default dialog dismissed");
+                        widget:
+                          Button:
+                            label: Tap me to open blue!
+                            onTap:
+                              showDialog:
+                                onDialogDismiss:
+                                  executeCode:
+                                    body: |
+                                      console.log("blue dialog dismissed");
+                                widget:
+                                  Button:
+                                    label: Tap me to open Text!
+                                    styles:
+                                      backgroundColor: blue
+                                    onTap:
+                                      showDialog:
+                                        widget:
+                                          Text:
+                                            text: Another dialog
+                                        options:
+                                          verticalOffset: 0.5
+                                          horizontalOffset: -0.5
+                                        onDialogDismiss:
+                                          closeAllDialogs:
                 options:
-                  # style: none
-                  # verticalOffset: -0.5
-                  # horizontalOffset: 0.5
+                  style: none
+                  verticalOffset: -0.5
+                  horizontalOffset: 0.5
                 onDialogDismiss:
                   executeCode:
                     body: |
-                      console.log("dialog dismissed", askText.text);
+                      console.log("outer dialog dismissed", askText.text);
         - Markdown:
             id: askText
             text: "### Toggle Buttons"

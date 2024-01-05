@@ -226,16 +226,20 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
       set(noneStyleOption, "backgroundColor", widgetBackgroundColor);
     }
 
-    openModal?.(EnsembleRuntime.render([widget]), {
-      maskClosable: true,
-      hideCloseIcon: true,
-      hideFullScreenIcon: true,
-      onClose: onDismissCallback,
-      verticalOffset: action?.options?.verticalOffset,
-      horizontalOffset: action?.options?.horizontalOffset,
-      padding: "12px",
-      ...(action?.options?.style === "none" ? noneStyleOption : {}),
-    });
+    openModal?.(
+      EnsembleRuntime.render([widget]),
+      {
+        maskClosable: true,
+        hideCloseIcon: true,
+        hideFullScreenIcon: true,
+        onClose: onDismissCallback,
+        verticalOffset: action?.options?.verticalOffset,
+        horizontalOffset: action?.options?.horizontalOffset,
+        padding: "12px",
+        ...(action?.options?.style === "none" ? noneStyleOption : {}),
+      },
+      true,
+    );
   }, [openModal, action.widget, onDismissCallback, action?.options]);
 
   return { callback };
