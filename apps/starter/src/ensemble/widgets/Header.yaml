@@ -19,7 +19,7 @@ Widget:
               borderWidth: 2
               borderStyle: solid
               borderColor: "#B8BED6"
-            placeholder: Search
+            placeholder: ${colors.crimson}
             item-template:
               data: searchUsers.body.users
               name: user
