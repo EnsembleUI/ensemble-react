@@ -3,11 +3,12 @@ import type {
   ScreenContextDefinition,
 } from "@ensembleui/react-framework";
 import { isString } from "lodash-es";
-import { browserHistory } from "./history";
+import type { NavigateFunction } from "react-router-dom";
 
 export const navigateApi = (
   targetScreen: NavigateScreenAction,
   screenContext: ScreenContextDefinition,
+  navigate: NavigateFunction,
 ): void => {
   const hasOptions = !isString(targetScreen);
   const screenName = hasOptions ? targetScreen.name : targetScreen;
@@ -21,10 +22,5 @@ export const navigateApi = (
     return;
   }
 
-  // navigate to target screen
-  if (!browserHistory.navigate) {
-    return;
-  }
-
-  browserHistory.navigate(`/${matchingScreen.name.toLowerCase()}`);
+  navigate(`/${matchingScreen.name.toLowerCase()}`);
 };

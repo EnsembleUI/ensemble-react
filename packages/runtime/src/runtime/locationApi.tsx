@@ -1,4 +1,4 @@
-import { browserHistory } from "./history";
+import type { Location } from "react-router-dom";
 
 export interface EnsembleLocationInterface {
   pathname?: string;
@@ -9,10 +9,10 @@ export interface EnsembleLocation {
   get: (key: keyof EnsembleLocationInterface) => string | undefined;
 }
 
-export const locationApi = (): EnsembleLocation => {
+export const locationApi = (location: Location): EnsembleLocation => {
   return {
     get: (key: keyof EnsembleLocationInterface): string | undefined => {
-      return browserHistory.location?.[key];
+      return location?.[key];
     },
   };
 };

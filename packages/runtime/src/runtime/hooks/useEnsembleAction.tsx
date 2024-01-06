@@ -24,6 +24,7 @@ import type {
 } from "@ensembleui/react-framework";
 import { isEmpty, isString, merge, isObject } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { navigateApi } from "../navigateApi";
 import { locationApi } from "../locationApi";
 import { useNavigateScreen } from "./useNavigateScreen";
@@ -63,6 +64,8 @@ export const useExecuteCode: EnsembleActionHook<
   const screen = useScreenContext();
   const storage = useEnsembleStorage();
   const formatter = DateFormatter();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const js = useMemo(() => {
     if (!action) {
@@ -104,9 +107,9 @@ export const useExecuteCode: EnsembleActionHook<
                 storage,
                 formatter,
                 env: appContext?.env,
-                navigateScreen: (targetScreen: NavigateScreenAction) =>
-                  navigateApi(targetScreen, screen),
-                location: locationApi(),
+                navigateScreen: (targetScreen: NavigateScreenAction): void =>
+                  navigateApi(targetScreen, screen, navigate),
+                location: locationApi(location),
               },
             },
             options?.context,
