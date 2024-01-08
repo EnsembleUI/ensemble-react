@@ -1,8 +1,9 @@
 import { Bar } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useState } from "react";
-import { type ChartDataSets, type ChartProps } from "..";
+import { type ChartProps } from "..";
 import { getMergedOptions } from "./utils/getMergedOptions";
 
 const options: ChartOptions<"bar"> = {
@@ -33,7 +34,7 @@ export const BarChart: React.FC<ChartProps> = (props) => {
   const { id, styles, config } = props;
 
   const [title, setTitle] = useState(config?.title);
-  const [labels, setLabels] = useState<string[]>(config?.data?.labels || []);
+  const [labels, setLabels] = useState<string[]>(config?.data.labels || []);
 
   const { values } = useRegisterBindings({ labels, title }, id, {
     setLabels,
@@ -50,9 +51,10 @@ export const BarChart: React.FC<ChartProps> = (props) => {
       <Bar
         data={{
           labels: values?.labels,
-          datasets: config?.data?.datasets as ChartDataSets[],
+          datasets: config?.data.datasets ?? [],
         }}
         options={getMergedOptions(options, values?.title, config?.options)}
+        plugins={[ChartDataLabels]}
       />
     </div>
   );
