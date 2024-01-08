@@ -128,6 +128,8 @@ export const useExecuteCode: EnsembleActionHook<
     storage,
     formatter,
     appContext?.env,
+    location,
+    navigate,
     options?.context,
     onCompleteAction,
   ]);
