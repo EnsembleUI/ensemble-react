@@ -11,6 +11,7 @@ import {
   createStorageApi,
   screenStorageAtom,
 } from "../hooks/useEnsembleStorage";
+import { DateFormatter } from "../date/dateFormatter";
 import {
   defaultScreenContext,
   screenAtom,
@@ -113,6 +114,7 @@ export const createBindingAtom = <T = unknown>(
           storage: createStorageApi(storage),
           user,
           env,
+          formatter: DateFormatter(),
         },
       },
     ) as Record<string, unknown>;
