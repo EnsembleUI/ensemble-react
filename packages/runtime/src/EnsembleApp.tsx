@@ -35,6 +35,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
   const app = useMemo(() => {
     const resolvedApp = application ?? ApplicationLoader.load(appId);
     const parsedApp = EnsembleParser.parseApplication(resolvedApp);
+
     parsedApp.customWidgets.forEach((customWidget) => {
       WidgetRegistry.register(
         customWidget.name,

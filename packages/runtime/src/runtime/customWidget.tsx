@@ -1,6 +1,7 @@
 import {
   CustomScopeProvider,
   useRegisterBindings,
+  WidgetContextProvider,
 } from "@ensembleui/react-framework";
 import type { CustomWidgetModel } from "@ensembleui/react-framework";
 import React from "react";
@@ -11,16 +12,18 @@ export interface CustomWidgetProps {
 }
 
 export const createCustomWidget = (
-  model: CustomWidgetModel,
+  widget: CustomWidgetModel,
 ): React.FC<CustomWidgetProps> => {
   const CustomWidget: React.FC<CustomWidgetProps> = ({ inputs }) => {
     const { values } = useRegisterBindings<Record<string, unknown>>({
       ...inputs,
     });
     return (
-      <CustomScopeProvider value={values ?? inputs}>
-        {EnsembleRuntime.render([model.body])}
-      </CustomScopeProvider>
+      <WidgetContextProvider widget={widget}>
+        <CustomScopeProvider value={values ?? inputs}>
+          {EnsembleRuntime.render([widget.body])}
+        </CustomScopeProvider>
+      </WidgetContextProvider>
     );
   };
   return CustomWidget;

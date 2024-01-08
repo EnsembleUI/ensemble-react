@@ -135,11 +135,13 @@ export const EnsembleParser = {
     }
 
     const body = unwrapWidget(rawBody);
+    const apis = unwrapApiModels(yaml);
     return {
       name,
       onLoad: get(widget, "onLoad"),
       inputs: get(widget, "inputs") ?? [],
       body,
+      apis,
     };
   },
 
