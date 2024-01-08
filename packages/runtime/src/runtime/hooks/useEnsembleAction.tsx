@@ -128,7 +128,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const storage = useEnsembleStorage();
 
   const invokeApi = useMemo(() => {
-    const apis = (screenApis || []).concat(widgetApis || []);
+    const apis = merge(screenApis || [], widgetApis || []);
 
     if (!apis.length || !action) {
       return;
