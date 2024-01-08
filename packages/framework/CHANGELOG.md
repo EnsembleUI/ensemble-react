@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.9
+
+### Patch Changes
+
+- 71c37db: added navigation api and location api
+
 ## 0.1.8
 
 ### Patch Changes

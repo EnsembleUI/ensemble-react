@@ -1,5 +1,15 @@
 # @ensembleui/react-starter
 
+## 0.2.10
+
+### Patch Changes
+
+- 71c37db: added navigation api and location api
+- Updated dependencies [2aa6524]
+- Updated dependencies [71c37db]
+  - @ensembleui/react-runtime@0.1.10
+  - @ensembleui/react-framework@0.1.9
+
 ## 0.2.9
 
 ### Patch Changes
