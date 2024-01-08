@@ -7,7 +7,7 @@ export interface Response {
   statusCode?: number;
   headers?: fetcher.Headers;
   reasonPhrase?: string;
-
+  isLoading: boolean;
   isSuccess: boolean;
   isError: boolean;
 }

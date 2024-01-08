@@ -2,11 +2,17 @@ import { Line } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
 import { useState } from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
-import type { ChartDataSets, ChartProps } from "..";
 import { get } from "lodash-es";
+import { type ChartDataSets, type ChartProps } from "..";
+import { getMergedOptions } from "./utils/getMergedOptions";
 
-const defaultOptions: ChartOptions<"line"> = {
+const options: ChartOptions<"line"> = {
   maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      display: false,
+    },
+  },
   scales: {
     x: {
       border: {
@@ -46,19 +52,7 @@ export const LineChart: React.FC<ChartProps> = (props) => {
         labels: values?.labels,
         datasets: config?.data?.datasets as ChartDataSets[],
       }}
-      options={{
-        ...defaultOptions,
-        ...(config?.options as ChartOptions<"line">),
-        plugins: {
-          title: {
-            display: Boolean(values?.title),
-            text: values?.title,
-          },
-          legend: {
-            display: false,
-          },
-        },
-      }}
+      options={getMergedOptions(options, values?.title, config?.options)}
       style={{
         ...(get(props, "styles") as object),
       }}

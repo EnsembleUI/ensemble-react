@@ -11,6 +11,7 @@ import {
   createStorageApi,
   screenStorageAtom,
 } from "../hooks/useEnsembleStorage";
+import { DateFormatter } from "../date/dateFormatter";
 import {
   defaultScreenContext,
   screenAtom,
@@ -40,7 +41,7 @@ export const createBindingAtom = <T = unknown>(
   expression?: Expression<unknown>,
   context?: Record<string, unknown>,
   widgetId?: string,
-): Atom<T | undefined> => {
+): Atom<T | undefined | null> => {
   if (!isExpression(expression)) {
     return atom(undefined);
   }
@@ -113,6 +114,7 @@ export const createBindingAtom = <T = unknown>(
           storage: createStorageApi(storage),
           user,
           env,
+          formatter: DateFormatter(),
         },
       },
     ) as Record<string, unknown>;
@@ -130,7 +132,7 @@ export const createBindingAtom = <T = unknown>(
       return result;
     } catch (e) {
       debug(e);
-      return undefined;
+      return null;
     }
   });
 

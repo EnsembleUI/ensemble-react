@@ -1,5 +1,24 @@
 # @ensembleui/react-framework
 
+## 0.1.8
+
+### Patch Changes
+
+- 3ebbee5: Remove getoninit from storage atoms
+
+## 0.1.7
+
+### Patch Changes
+
+- 29def14: Add skeleton widget
+
+## 0.1.6
+
+### Patch Changes
+
+- bfe63ce: Add LoadingContainer widget
+- 95025ff: fix properties of style names not being applied
+
 ## 0.1.5
 
 ### Patch Changes

@@ -8,9 +8,6 @@ export const userAtom = atomWithStorage<EnsembleUser>(
   "ensemble.user",
   {},
   backingStorage,
-  {
-    unstable_getOnInit: true,
-  },
 );
 
 export const useEnsembleUser = (): [

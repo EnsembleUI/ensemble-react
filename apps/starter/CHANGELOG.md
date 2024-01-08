@@ -1,5 +1,36 @@
 # @ensembleui/react-starter
 
+## 0.2.9
+
+### Patch Changes
+
+- Updated dependencies [3ebbee5]
+  - @ensembleui/react-framework@0.1.8
+  - @ensembleui/react-runtime@0.1.9
+
+## 0.2.8
+
+### Patch Changes
+
+- Updated dependencies [29def14]
+  - @ensembleui/react-framework@0.1.7
+  - @ensembleui/react-runtime@0.1.8
+
+## 0.2.7
+
+### Patch Changes
+
+- 1f93b5e: fix chart options
+- bfe63ce: Add LoadingContainer widget
+- 25366e6: fixed re-curring call of onResponse under onComplete
+- 95025ff: fix properties of style names not being applied
+- Updated dependencies [1f93b5e]
+- Updated dependencies [bfe63ce]
+- Updated dependencies [25366e6]
+- Updated dependencies [95025ff]
+  - @ensembleui/react-runtime@0.1.7
+  - @ensembleui/react-framework@0.1.6
+
 ## 0.2.6
 
 ### Patch Changes
