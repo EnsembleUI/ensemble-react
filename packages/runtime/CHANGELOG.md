@@ -1,5 +1,12 @@
 # @ensembleui/react-runtime
 
+## 0.1.10
+
+### Patch Changes
+
+- 2aa6524: Support the expressions in placeholder of search widget
+- 71c37db: added navigation api and location api
+
 ## 0.1.9
 
 ### Patch Changes
