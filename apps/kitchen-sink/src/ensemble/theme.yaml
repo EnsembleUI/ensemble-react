@@ -1,0 +1,22 @@
+Tokens:
+  Colors:
+    crimson: "#DC143C"
+  Spacing:
+    bigValue: 80px
+  Animation:
+  Typography:
+    fontFamily: "Arial"
+    fontSize: 20px
+Styles:
+  testName:
+    borderRadius: ${spacing.bigValue}
+  stop:
+    color: red
+    fontSize: ${typography.fontSize}
+    fontWeight: bold
+  ready:
+    color: yellow
+  go:
+    color: green
+  bigFoot:
+    fontSize: 40px

@@ -1,0 +1,16 @@
+View:
+  header:
+    title:
+      Header:
+      
+  body:
+    Column:
+      styles:
+        names: page
+      children:
+        - Text:
+            styles:
+              names: title
+            text: Help
+        - Markdown:
+            text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).
