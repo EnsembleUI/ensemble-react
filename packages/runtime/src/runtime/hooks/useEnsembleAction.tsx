@@ -22,9 +22,13 @@ import type {
   UploadFilesAction,
   ScreenContextDefinition,
   ShowDialogAction,
+  NavigateScreenAction,
 } from "@ensembleui/react-framework";
 import { isEmpty, isString, merge, isObject, get, set } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { navigateApi } from "../navigateApi";
+import { locationApi } from "../locationApi";
 import { ModalContext } from "../modal";
 import { EnsembleRuntime } from "../runtime";
 // FIXME: refactor
@@ -55,6 +59,7 @@ type UploadStatus =
 export interface UseExecuteCodeActionOptions {
   context?: Record<string, unknown>;
 }
+
 export const useExecuteCode: EnsembleActionHook<
   ExecuteCodeAction,
   UseExecuteCodeActionOptions
@@ -63,6 +68,8 @@ export const useExecuteCode: EnsembleActionHook<
   const screen = useScreenContext();
   const storage = useEnsembleStorage();
   const formatter = DateFormatter();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const js = useMemo(() => {
     if (!action) {
@@ -84,10 +91,10 @@ export const useExecuteCode: EnsembleActionHook<
   }, [action, isCodeString, screen]);
 
   const appContext = useApplicationContext();
-
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,
   );
+
   const execute = useMemo(() => {
     if (!screen || !js) {
       return;
@@ -99,7 +106,16 @@ export const useExecuteCode: EnsembleActionHook<
           screen,
           js,
           merge(
-            { ensemble: { storage, formatter, env: appContext?.env } },
+            {
+              ensemble: {
+                storage,
+                formatter,
+                env: appContext?.env,
+                navigateScreen: (targetScreen: NavigateScreenAction): void =>
+                  navigateApi(targetScreen, screen, navigate),
+                location: locationApi(location),
+              },
+            },
             options?.context,
             args,
           ),
@@ -116,9 +132,12 @@ export const useExecuteCode: EnsembleActionHook<
     storage,
     formatter,
     appContext?.env,
+    location,
+    navigate,
     options?.context,
     onCompleteAction,
   ]);
+
   return execute ? { callback: execute } : undefined;
 };
 

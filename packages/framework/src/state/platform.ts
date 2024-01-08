@@ -1,7 +1,9 @@
 import { getDefaultStore } from "jotai";
 import { atomWithLocation } from "jotai-location";
 
-export const locationAtom = atomWithLocation();
+export const locationAtom = atomWithLocation({
+  replace: true,
+});
 
 /**
  * @deprecated DO NOT USE directly

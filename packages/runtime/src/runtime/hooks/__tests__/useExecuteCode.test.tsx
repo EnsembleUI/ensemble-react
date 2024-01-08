@@ -4,6 +4,7 @@ import { ScreenContextProvider } from "@ensembleui/react-framework";
 import { useExecuteCode } from "../useEnsembleAction";
 
 jest.mock("react-markdown", jest.fn());
+jest.mock("react-router-dom");
 
 const wrapper: React.FC<React.PropsWithChildren> = ({ children }) => (
   <ScreenContextProvider

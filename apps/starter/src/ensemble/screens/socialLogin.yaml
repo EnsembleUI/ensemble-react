@@ -19,3 +19,8 @@ View:
               - else:
                 Text:
                   text: ${ensemble.user.email}
+        - Button:
+            label: Hello
+            onTap:
+              executeCode: |
+                console.log(ensemble.location.get('pathname'))
