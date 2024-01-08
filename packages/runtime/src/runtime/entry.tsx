@@ -10,6 +10,7 @@ interface EnsembleEntryProps {
 export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({ entry }) => {
   const location = useLocation();
   const navigate = useNavigate();
+
   const hasMenu = "items" in entry;
   useEffect(() => {
     if (!(hasMenu && location.pathname === "/")) {

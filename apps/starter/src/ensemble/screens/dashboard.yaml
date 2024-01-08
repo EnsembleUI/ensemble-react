@@ -173,7 +173,8 @@ View:
               template:
                 DataRow:
                   onTap:
-                    executeCode: console.log("I am in the ad groups")
+                    executeCode: |
+                      ensemble.navigateScreen('collections')
                   children:
                     # Person
                     - Row:

@@ -32,7 +32,7 @@ ViewGroup:
       - label: Product and Development
         icon: LegendToggle
         page: Product and Development
-      - label: Sagar
+      - label: Social Login
         icon: LegendToggle
         page: Social Login
     footer:
