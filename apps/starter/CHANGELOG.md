@@ -1,5 +1,11 @@
 # @ensembleui/react-starter
 
+## 0.3.0
+
+### Minor Changes
+
+- 6a8c281: Separate kitchen sink from starter app
+
 ## 0.2.10
 
 ### Patch Changes
