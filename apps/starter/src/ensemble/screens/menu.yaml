@@ -1,0 +1,28 @@
+ViewGroup:
+  SideBar:
+    styles:
+      width: 240px
+      iconWidth: 20px
+      iconHeight: 20px
+      backgroundColor: '#f7fbfa'
+      labelColor: "#171B2A"
+      selectedColor: "#171B2A"
+      labelFontSize: 1
+      onSelectStyles:
+        backgroundColor: "#BBDBD2"
+        borderRadius: 10px
+    header:
+      Image:
+        height: 50px
+        source: https://docs.ensembleui.com/images/logo.svg
+    items:
+      - label: Home
+        icon: HomeOutlined
+        page: home
+        selected: true
+      - label: Help
+        icon: HelpOutlineOutlined
+        page: help
+    footer:
+      Text:
+        text: Give us feedback
