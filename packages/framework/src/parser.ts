@@ -9,6 +9,7 @@ import {
   mapKeys,
   remove,
   set,
+  isString,
 } from "lodash-es";
 import type {
   EnsembleScreenModel,
@@ -116,11 +117,15 @@ export const EnsembleParser = {
     const apis = unwrapApiModels(screen);
 
     const globalBlock = get(screen, "Global");
-    const scriptName = get(globalBlock, "scriptName");
-    let global: string | undefined = globalBlock;
-    if (scriptName) {
-      global = app.scripts?.find((script) => script.name === scriptName)
-        ?.content;
+    let global: string | undefined;
+    if (!isString(globalBlock)) {
+      const scriptName = get(globalBlock, "scriptName");
+      if (isString(scriptName)) {
+        global = app.scripts?.find((script) => script.name === scriptName)
+          ?.content;
+      }
+    } else if (isString(globalBlock)) {
+      global = globalBlock;
     }
 
     return {
