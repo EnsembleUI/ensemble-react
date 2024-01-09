@@ -16,14 +16,13 @@ View:
       children:
         - Text:
             styles:
-              names: title
+              names: heading-1
             text: Hello, world!
         - Markdown:
             text: This screen demonstrates a few patterns to get you started with Ensemble. Here, we fetch data from an API and use control expressions to display a loading state and a list of products. Try making a few changes and see how the screen automatically updates! For more information, see [help](/help).
         - Text:
             styles:
-              names: title
-              fontSize: 24px
+              names: heading-3
             text: My Products
         - LoadingContainer:
             isLoading: ${getDummyProducts.isLoading}

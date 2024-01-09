@@ -4,12 +4,12 @@ ViewGroup:
       width: 240px
       iconWidth: 20px
       iconHeight: 20px
-      backgroundColor: "#fcfeff"
+      backgroundColor: '#f7fbfa'
       labelColor: "#171B2A"
       selectedColor: "#171B2A"
       labelFontSize: 1
       onSelectStyles:
-        backgroundColor: "#D5DAEA"
+        backgroundColor: "#BBDBD2"
         borderRadius: 10px
     header:
       Image:
