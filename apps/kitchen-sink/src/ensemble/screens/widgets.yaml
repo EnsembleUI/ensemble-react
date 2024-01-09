@@ -11,6 +11,6 @@ View:
         - Text:
             styles:
               names: heading-1
-            text: Help
+            text: Widgets
         - Markdown:
             text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).

@@ -1,0 +1,40 @@
+View:
+  onLoad:
+    invokeApi:
+      name: getDummyProducts
+  header:
+    title:
+      Header:
+      
+  body:
+    Column:
+      styles:
+        names: page
+      children:
+        - Text:
+            styles:
+              names: heading-1
+            text: Layouts
+        - Markdown:
+            text: This screen demonstrates a few patterns to get you started with Ensemble. Here, we fetch data from an API and use control expressions to display a loading state and a list of products. Try making a few changes and see how the screen automatically updates! For more information, see [help](/help).
+        - Text:
+            styles:
+              names: heading-3
+            text: My Products
+        - LoadingContainer:
+            isLoading: ${getDummyProducts.isLoading}
+            widget:
+              GridView:
+                item-template:
+                  data: ${getDummyProducts.body.products}
+                  name: product
+                  template:
+                    Card:
+                      children:
+                        - Text:
+                            text: ${product.title}
+
+API:
+  getDummyProducts:
+    method: GET
+    uri: https://dummyjson.com/products

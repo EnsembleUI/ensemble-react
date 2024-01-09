@@ -1,40 +1,16 @@
-ViewGroup:
-  SideBar:
-    styles:
-      width: 240px
-      iconWidth: 20px
-      iconHeight: 20px
-      backgroundColor: "#fcfeff"
-      labelColor: "#171B2A"
-      selectedColor: "#171B2A"
-      labelFontSize: 1
-      onSelectStyles:
-        backgroundColor: "#D5DAEA"
-        borderRadius: 10px
-    header:
-      Image:
-        height: 50px
-        source: https://docs.ensembleui.com/images/logo.svg
-    items:
-      - label: Dashboard
-        icon: LegendToggle
-        page: dashboard
-      - label: Collections
-        icon: PermMediaOutlined
-        page: collections
-      - label: Users + Groups
-        icon: PersonOutlineOutlined
-        page: usersAndGroups
-        selected: true
-      - label: Ask Embrace
-        icon: TextsmsOutlined
-        page: Ask Embrace
-      - label: Product and Development
-        icon: LegendToggle
-        page: Product and Development
-      - label: Social Login
-        icon: LegendToggle
-        page: Social Login
-    footer:
-      Text:
-        text: Give us feedback
+View:
+  header:
+    title:
+      Header:
+
+  body:
+    Column:
+      styles:
+        names: page
+      children:
+        - Text:
+            styles:
+              names: heading-1
+            text: The Kitchen Sink
+        - Markdown:
+            text: This application is built with Ensemble and serves as a guide for how to implement common UI patterns with Ensemble React.
