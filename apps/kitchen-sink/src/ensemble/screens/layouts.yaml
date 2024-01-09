@@ -2,13 +2,10 @@ View:
   onLoad:
     invokeApi:
       name: getDummyProducts
-      onResponse:
-        executeCode:
-          scriptName: hello.js
   header:
     title:
       Header:
-
+      
   body:
     Column:
       styles:
@@ -17,7 +14,7 @@ View:
         - Text:
             styles:
               names: heading-1
-            text: Hello, world!
+            text: Layouts
         - Markdown:
             text: This screen demonstrates a few patterns to get you started with Ensemble. Here, we fetch data from an API and use control expressions to display a loading state and a list of products. Try making a few changes and see how the screen automatically updates! For more information, see [help](/help).
         - Text:
@@ -29,7 +26,7 @@ View:
             widget:
               GridView:
                 item-template:
-                  data: ${ensemble.storage.get("products")}
+                  data: ${getDummyProducts.body.products}
                   name: product
                   template:
                     Card:

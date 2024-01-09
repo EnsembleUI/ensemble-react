@@ -40,4 +40,13 @@ Widget:
                   styles:
                     backgroundColor: "#171B2A"
                   alt: abc
-                  name: Peter Parker
+                  name: Adam
+                  menu:
+                    - label: Personal Information
+                      icon: Person
+                      onTap:
+                        executeCode: myText.setText("Spiderman")
+                    - label: Collections
+                      icon: Settings
+                      onTap:
+                        navigateScreen: Collections

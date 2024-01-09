@@ -1,0 +1,16 @@
+View:
+  header:
+    title:
+      Header:
+
+  body:
+    Column:
+      styles:
+        names: page
+      children:
+        - Text:
+            styles:
+              names: heading-1
+            text: The Kitchen Sink
+        - Markdown:
+            text: This application is built with Ensemble and serves as a guide for how to implement common UI patterns with Ensemble React.

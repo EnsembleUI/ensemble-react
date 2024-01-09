@@ -1,3 +1,3 @@
 import "react";
 
-test.todo("Renders home page");
+test.todo("Renders your Ensemble app");
