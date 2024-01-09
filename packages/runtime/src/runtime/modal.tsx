@@ -4,7 +4,7 @@ import { createPortal } from "react-dom";
 import { Outlet } from "react-router-dom";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
-import { endsWith, last } from "lodash-es";
+import { endsWith } from "lodash-es";
 import { CloseOutlined } from "@ant-design/icons";
 
 interface ModalProps {
