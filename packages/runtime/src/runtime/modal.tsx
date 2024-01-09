@@ -1,5 +1,5 @@
 import { Modal } from "antd";
-import { createContext, useLayoutEffect, useState } from "react";
+import { createContext, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Outlet } from "react-router-dom";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
@@ -37,128 +37,86 @@ export const ModalContext = createContext<ModalContextProps | undefined>(
   undefined,
 );
 
+interface ModalState {
+  visible: boolean;
+  content: React.ReactNode;
+  options: ModalProps;
+  key: number;
+  isDialog: boolean;
+}
+
+interface ModalDimensions {
+  width: number;
+  height: number;
+}
+
 export const ModalWrapper: React.FC = () => {
-  const [modalState, setModalState] = useState<{
-    visible: boolean[];
-    content: React.ReactNode[];
-    options: ModalProps[];
-    key: number[];
-    isDialog: boolean[];
-  }>({
-    visible: [],
-    content: [],
-    options: [],
-    key: [],
-    isDialog: [],
-  });
-  const [modalDimensions, setModalDimensions] = useState<{
-    modalWidth: number[];
-    modalHeight: number[];
-  }>({
-    modalWidth: [],
-    modalHeight: [],
-  });
+  const [modalState, setModalState] = useState<ModalState[]>([]);
+  const [modalDimensions, setModalDimensions] = useState<ModalDimensions[]>([]);
   const [isFullScreen, setIsFullScreen] = useState<boolean[]>([]);
+  const contentRef = useRef<HTMLDivElement | null>(null);
 
   useLayoutEffect(() => {
-    if (
-      modalState.visible.length > 0 &&
-      !isFullScreen[isFullScreen.length - 1]
-    ) {
-      const contentNode = last(document.querySelectorAll(".ant-modal-content"));
-      setModalDimensions((oldModalDimensions) => {
-        const newModalDimensions = { ...oldModalDimensions };
-        newModalDimensions.modalWidth[
-          newModalDimensions.modalWidth.length - 1
-        ] = contentNode?.clientWidth || 0;
-        newModalDimensions.modalHeight[
-          newModalDimensions.modalHeight.length - 1
-        ] = contentNode?.clientHeight || 0;
-        return newModalDimensions;
-      });
-    }
-  }, [modalState.visible, isFullScreen]);
+    if (modalState.length > 0 && !isFullScreen[isFullScreen.length - 1])
+      setModalDimensions((oldModalDimensions) => [
+        ...oldModalDimensions.slice(0, -1),
+        {
+          width: contentRef.current?.offsetParent?.clientWidth || 0, // offsetParent is the .ant-modal-content
+          height: contentRef.current?.offsetParent?.clientHeight || 0,
+        },
+      ]);
+  }, [modalState, isFullScreen, contentRef]);
 
   const openModal = (
     newContent: React.ReactNode,
     newOptions: ModalProps,
     isDialog = false,
   ): void => {
-    if (!isDialog && modalState.visible.length > 0) {
+    if (!isDialog && modalState.length > 0) {
       // hide the last modal
-      setModalState((oldModalState) => {
-        const newModalState = { ...oldModalState };
-        newModalState.visible[newModalState.visible.length - 1] = false;
-        return newModalState;
-      });
+      setModalState((oldModalState) => [
+        ...oldModalState.slice(0, -1),
+        { ...oldModalState[oldModalState.length - 1], visible: false },
+      ]);
     }
 
     // add a new modal to the end of the arrays
-    setModalState((oldModalState) => ({
-      visible: [...oldModalState.visible, true],
-      content: [...oldModalState.content, newContent],
-      options: [...oldModalState.options, newOptions],
-      key: [
-        ...oldModalState.key,
-        oldModalState.key.length
-          ? oldModalState.key[oldModalState.key.length - 1] + 1
+    setModalState((oldModalState) => [
+      ...oldModalState,
+      {
+        visible: true,
+        content: newContent,
+        options: newOptions,
+        key: oldModalState.length
+          ? oldModalState[oldModalState.length - 1].key + 1
           : 0,
-      ],
-      isDialog: [...oldModalState.isDialog, isDialog],
-    }));
-
-    setModalDimensions((oldModalDimensions) => ({
-      modalWidth: [...oldModalDimensions.modalWidth, 0],
-      modalHeight: [...oldModalDimensions.modalHeight, 0],
-    }));
+        isDialog,
+      },
+    ]);
+    setModalDimensions((oldModalDimensions) => [
+      ...oldModalDimensions,
+      { width: 0, height: 0 },
+    ]);
 
     setIsFullScreen((oldIsFullScreen) => [...oldIsFullScreen, false]);
   };
 
   const closeModal = (index?: number): void => {
     if (index) {
-      modalState.options[index]?.onClose?.();
+      modalState[index].options.onClose?.();
     }
 
     // remove the last modal from the arrays
-    setModalState((oldModalState) => ({
-      visible: oldModalState.visible.slice(0, -1),
-      content: oldModalState.content.slice(0, -1),
-      options: oldModalState.options.slice(0, -1),
-      key: oldModalState.key.slice(0, -1),
-      isDialog: oldModalState.isDialog.slice(0, -1),
-    }));
-
-    setModalDimensions((oldModalDimensions) => ({
-      modalWidth: oldModalDimensions.modalWidth.slice(0, -1),
-      modalHeight: oldModalDimensions.modalHeight.slice(0, -1),
-    }));
-
+    setModalState((oldModalState) => oldModalState.slice(0, -1));
+    setModalDimensions((oldModalDimensions) => oldModalDimensions.slice(0, -1));
     setIsFullScreen((oldIsFullScreen) => oldIsFullScreen.slice(0, -1));
   };
 
   const closeAllModals = (): void => {
-    Object.values(modalState.options)
-      .reverse()
-      .forEach((options) => {
-        options?.onClose?.();
-      });
-
-    // remove all modals from the arrays
-    setModalState({
-      visible: [],
-      content: [],
-      options: [],
-      key: [],
-      isDialog: [],
-    });
-
-    setModalDimensions({
-      modalWidth: [],
-      modalHeight: [],
-    });
-
-    setIsFullScreen([]);
+    for (let i = modalState.length - 1; i >= 0; i--) {
+      if (!modalState[i].isDialog) break;
+      else closeModal(i);
+    }
   };
 
   const getPositionSelector = (
@@ -196,8 +154,8 @@ export const ModalWrapper: React.FC = () => {
         ${
           options.position
             ? getPositionSelector(
-                modalDimensions.modalWidth[index],
-                modalDimensions.modalHeight[index],
+                modalDimensions[index].width,
+                modalDimensions[index].height,
               )[options.position]
             : ""
         }
@@ -292,14 +250,11 @@ export const ModalWrapper: React.FC = () => {
         {options.title}
         {options?.hideCloseIcon ? null : (
           <CloseOutlined
-            onClick={
-              (): void =>
-                setModalState((oldModalState) => {
-                  const newModalState = { ...oldModalState };
-                  newModalState.visible[index] = false;
-                  return newModalState;
-                })
-              // setVisible((v) => v.map((f, i) => (i === index ? !f : f)))
+            onClick={(): void =>
+              setModalState((oldModalState) => [
+                ...oldModalState.slice(0, -1),
+                { ...oldModalState[oldModalState.length - 1], visible: false },
+              ])
             }
             style={iconStyles}
           />
@@ -316,51 +271,49 @@ export const ModalWrapper: React.FC = () => {
     >
       <Outlet />
 
-      {modalState.visible.map((isVisible, index) =>
-        isVisible
+      {modalState.map((modal, index) =>
+        modal.visible
           ? createPortal(
               <>
                 <style>
                   {" "}
                   {isFullScreen[index]
                     ? getFullScreenStyles(index)
-                    : getPositionStyles(modalState.options[index], index)}
+                    : getPositionStyles(modal.options, index)}
                 </style>
-                <style>
-                  {getCustomStyles(modalState.options[index], index)}
-                </style>
-                <Modal
-                  bodyStyle={{
-                    height: endsWith(modalState.options[index]?.height, "%")
-                      ? `clamp(0vh, ${parseInt(
-                          modalState.options[index]?.height || "0",
-                          10,
-                        )}vh, 92vh`
-                      : modalState.options[index]?.height,
-                    overflowY: "auto",
-                  }}
-                  centered={!isFullScreen[index]}
-                  className={`ensemble-modal-${index}`}
-                  closable={false}
-                  footer={null}
-                  key={modalState.key[index]}
-                  maskClosable={modalState.options[index]?.maskClosable}
-                  onCancel={(): void => closeModal(index)}
-                  open={modalState.visible[index]}
-                  style={{
-                    ...(modalState.options[index]?.position
-                      ? { position: "absolute" }
-                      : {}),
-                    margin:
-                      (!isFullScreen[index] &&
-                        modalState.options[index]?.margin) ||
-                      0,
-                  }}
-                  title={getTitleElement(modalState.options[index], index)}
-                  width={modalState.options[index]?.width || "auto"}
-                >
-                  {modalState.content[index]}
-                </Modal>
+                <style>{getCustomStyles(modal.options, index)}</style>
+                <>
+                  <Modal
+                    bodyStyle={{
+                      height: endsWith(modal.options?.height, "%")
+                        ? `clamp(0vh, ${parseInt(
+                            modal.options?.height || "0",
+                            10,
+                          )}vh, 92vh`
+                        : modal.options?.height,
+                      overflowY: "auto",
+                    }}
+                    centered={!isFullScreen[index]}
+                    className={`ensemble-modal-${index}`}
+                    closable={false}
+                    footer={null}
+                    key={modal.key}
+                    maskClosable={modal.options?.maskClosable}
+                    onCancel={(): void => closeModal(index)}
+                    open={modal.visible}
+                    style={{
+                      ...(modal.options?.position
+                        ? { position: "absolute" }
+                        : {}),
+                      margin:
+                        (!isFullScreen[index] && modal.options?.margin) || 0,
+                    }}
+                    title={getTitleElement(modal.options, index)}
+                    width={modal.options?.width || "auto"}
+                  >
+                    <span ref={contentRef}>{modal.content}</span>
+                  </Modal>
+                </>
               </>,
               document.body,
             )
