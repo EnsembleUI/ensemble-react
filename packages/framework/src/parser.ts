@@ -51,7 +51,7 @@ export const EnsembleParser = {
       if (viewGroup) {
         return EnsembleParser.parseMenu(viewGroup);
       }
-      return EnsembleParser.parseScreen(name, screen);
+      return EnsembleParser.parseScreen(name, screen, app);
     });
     if (isEmpty(screens)) {
       throw Error("Application must have at least one screen");
@@ -102,6 +102,7 @@ export const EnsembleParser = {
   parseScreen: (
     name: string,
     screen: EnsembleScreenYAML,
+    app: ApplicationDTO,
   ): EnsembleScreenModel | EnsembleMenuModel => {
     const view = get(screen, "View");
     const viewNode = get(view, "body");
@@ -114,7 +115,14 @@ export const EnsembleParser = {
     const viewWidget = unwrapWidget(viewNode);
     const apis = unwrapApiModels(screen);
 
-    const global = get(screen, "Global");
+    const globalBlock = get(screen, "Global");
+    const scriptName = get(globalBlock, "scriptName");
+    let global: string | undefined = globalBlock;
+    if (scriptName) {
+      global = app.scripts?.find((script) => script.name === scriptName)
+        ?.content;
+    }
+
     return {
       ...(view ?? {}),
       name,
