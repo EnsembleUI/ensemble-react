@@ -311,7 +311,7 @@ export const ModalWrapper: React.FC = () => {
                     title={getTitleElement(modal.options, index)}
                     width={modal.options?.width || "auto"}
                   >
-                    <span ref={contentRef}>{modal.content}</span>
+                    <div ref={contentRef}>{modal.content}</div>
                   </Modal>
                 </>
               </>,
