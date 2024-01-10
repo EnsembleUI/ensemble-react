@@ -100,7 +100,7 @@ export const Chart: React.FC<ChartProps> = (props) => {
         },
       );
 
-      if (!AreConfigObjectsEqual(config, evaluatedConfig)) {
+      if (!areConfigObjectsEqual(config, evaluatedConfig)) {
         setConfig(evaluatedConfig);
         setError(null);
       }
@@ -147,10 +147,10 @@ export const Chart: React.FC<ChartProps> = (props) => {
 
 WidgetRegistry.register("Chart", Chart);
 
-const AreConfigObjectsEqual = (
+const areConfigObjectsEqual = (
   evaluatedConfig?: ChartConfigs,
   config?: ChartConfigs,
-) =>
+): boolean =>
   isEqualWith(evaluatedConfig, config, (valueA, valueB) => {
     if (typeof valueA === "function" && typeof valueB === "function") {
       return true;
