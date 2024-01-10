@@ -14,3 +14,6 @@ View:
             text: The Kitchen Sink
         - Markdown:
             text: This application is built with Ensemble and serves as a guide for how to implement common UI patterns with Ensemble React.
+
+Global:
+  scriptName: hello.js
