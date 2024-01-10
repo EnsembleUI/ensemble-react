@@ -13,6 +13,7 @@ export interface EnsembleWidgetProps<
 > {
   id?: string;
   styles?: T;
+  htmlAttributes?: Record<string, unknown>;
   [key: string]: unknown;
 }
 
