@@ -4,7 +4,7 @@ ViewGroup:
       width: 240px
       iconWidth: 20px
       iconHeight: 20px
-      backgroundColor: '#f7fbfa'
+      backgroundColor: "#f7fbfa"
       labelColor: "#171B2A"
       selectedColor: "#171B2A"
       labelFontSize: 1
@@ -23,6 +23,9 @@ ViewGroup:
       - label: Help
         icon: HelpOutlineOutlined
         page: help
+      - label: Charts
+        icon: HelpOutlineOutlined
+        page: charts
     footer:
       Text:
         text: Give us feedback

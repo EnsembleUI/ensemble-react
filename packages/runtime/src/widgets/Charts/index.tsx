@@ -21,13 +21,13 @@ import {
   useEnsembleStorage,
 } from "@ensembleui/react-framework";
 import { Alert } from "antd";
-import { isEqual } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { BarChart } from "./BarChart";
 import { DoughnutChart } from "./DoughnutChart";
 import { StackBarChart } from "./StackBarChart";
 import { LineChart } from "./LineChart";
+import { AreConfigObjectsEqual } from "./utils/areConfigObjectsEqual";
 
 ChartJS.register(
   CategoryScale,
@@ -99,7 +99,8 @@ export const Chart: React.FC<ChartProps> = (props) => {
           },
         },
       );
-      if (!isEqual(evaluatedConfig, config)) {
+
+      if (!AreConfigObjectsEqual(config, evaluatedConfig)) {
         setConfig(evaluatedConfig);
         setError(null);
       }

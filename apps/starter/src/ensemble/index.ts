@@ -1,9 +1,9 @@
-import { ApplicationDTO } from "@ensembleui/react-framework";
-
+import { type ApplicationDTO } from "@ensembleui/react-framework";
 // Screens
 import MenuYAML from "./screens/menu.yaml";
 import HomeYAML from "./screens/home.yaml";
 import HelpYAML from "./screens/help.yaml";
+import ChartsYAML from "./screens/charts.yaml";
 // Widgets
 import HeaderWidgetYAML from "./widgets/Header.yaml";
 // Scripts
@@ -54,6 +54,11 @@ export const starterApp: ApplicationDTO = {
       id: "help",
       name: "Help",
       content: String(HelpYAML),
+    },
+    {
+      id: "charts",
+      name: "Charts",
+      content: String(ChartsYAML),
     },
   ],
 };
