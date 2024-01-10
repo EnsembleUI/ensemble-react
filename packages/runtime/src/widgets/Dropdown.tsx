@@ -12,6 +12,7 @@ export type DropdownProps = {
   value?: Expression<string | number>;
   items: SelectOption[];
   onItemSelect: EnsembleAction;
+  autoComplete: Expression<boolean>;
 } & EnsembleWidgetProps;
 
 interface SelectOption {
@@ -20,10 +21,8 @@ interface SelectOption {
 }
 
 const Dropdown: React.FC<DropdownProps> = (props) => {
-  const [selectedValue, setSelectedValue] = useState<string>(
-    String(props?.value),
-  );
-  const { values } = useRegisterBindings(
+  const [selectedValue, setSelectedValue] = useState(props.value);
+  const { rootRef, values } = useRegisterBindings(
     { ...props, selectedValue },
     props.id,
     {
@@ -32,7 +31,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   );
   const action = useEnsembleAction(props.onItemSelect);
   const onItemSelectCallback = useCallback(
-    (value: string) => {
+    (value?: number | string) => {
       setSelectedValue(value);
       if (action) {
         action.callback({ selectedValue: value });
@@ -49,18 +48,20 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
         ...values?.styles,
       }}
     >
-      <Select
-        defaultValue={String(values?.value)}
-        onSelect={onItemSelectCallback}
-        placeholder={values?.hintText ? values.hintText : ""}
-        value={values?.selectedValue}
-      >
-        {values?.items.map((option, index) => (
-          <Select.Option key={index} value={option.value}>
-            {option.label}
-          </Select.Option>
-        ))}
-      </Select>
+      <div ref={rootRef}>
+        <Select
+          onSelect={onItemSelectCallback}
+          placeholder={values?.hintText ? values.hintText : ""}
+          showSearch={Boolean(values?.autoComplete)}
+          value={values?.selectedValue}
+        >
+          {values?.items.map((option) => (
+            <Select.Option key={option.value} value={option.value}>
+              {option.label}
+            </Select.Option>
+          ))}
+        </Select>
+      </div>
     </AntForm.Item>
   );
 };

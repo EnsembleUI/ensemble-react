@@ -9,6 +9,7 @@ View:
 
   body:
     Column:
+      crossAxis: stretch
       styles:
         names: page
       children:
@@ -18,6 +19,41 @@ View:
             text: Widgets
         - Markdown:
             text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: Dropdown
+              - Dropdown:
+                  label: Simple
+                  hintText: Hint Text
+                  items:
+                    - label: Option 1
+                      value: 1
+                    - label: Option 2
+                      value: 2
+              - Dropdown:
+                  label: With Default Value
+                  value: 1
+                  items:
+                    - label: Option 1
+                      value: 1
+                    - label: Option 2
+                      value: 2
+              - Dropdown:
+                  label: Searchable
+                  hintText: Search
+                  autoComplete: true
+                  items:
+                    - label: Option 1
+                      value: option1
+                    - label: Option 2
+                      value: option2
+
         - Markdown:
             text: "## Charts"
         - Column:
