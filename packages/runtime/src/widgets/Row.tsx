@@ -62,10 +62,10 @@ export const Row: React.FC<FlexboxProps> = (props) => {
           key={index}
           value={
             {
+              ...scope,
               ...n,
               index,
               length: namedData.length,
-              ...scope,
             } as CustomScope
           }
         >

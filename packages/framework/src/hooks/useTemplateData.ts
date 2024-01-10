@@ -38,6 +38,7 @@ export const useTemplateData = ({
     // Support legacy case where we don't always require curly braces
     return createBindingAtom(`\${${String(data)}}`);
   }, [data, isDataString, scope]);
+  console.log("From Template", scope);
   const rawData = useAtomValue(dataAtom);
   const namedData = useMemo(
     () => map(rawData, (value: unknown) => ({ [name]: value })),
