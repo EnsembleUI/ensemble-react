@@ -11,6 +11,7 @@ import {
   useEnsembleStorage,
   DateFormatter,
   useApplicationContext,
+  unwrapWidget,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -21,16 +22,19 @@ import type {
   UploadFilesAction,
   ScreenContextDefinition,
   NavigateScreenAction,
+  ShowDialogAction,
 } from "@ensembleui/react-framework";
-import { isEmpty, isString, merge, isObject } from "lodash-es";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { isEmpty, isString, merge, isObject, get, set } from "lodash-es";
+import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { navigateApi } from "../navigateApi";
 import { locationApi } from "../locationApi";
-import { useNavigateScreen } from "./useNavigateScreen";
+import { ModalContext } from "../modal";
+import { EnsembleRuntime } from "../runtime";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { useNavigateModalScreen } from "./useNavigateModal";
+import { useNavigateScreen } from "./useNavigateScreen";
 import { useShowToast } from "./useShowToast";
 import { useCloseAllDialogs } from "./useCloseAllDialogs";
 
@@ -207,6 +211,57 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
   }, [error, isComplete, onErrorAction]);
 
   return invokeApi;
+};
+
+const noneStyleOption = {
+  backgroundColor: "transparent",
+  showShadow: false,
+};
+
+export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
+  action?: ShowDialogAction,
+) => {
+  const { openModal } = useContext(ModalContext) || {};
+  const ensembleAction = useEnsembleAction(action?.onDialogDismiss);
+
+  const onDismissCallback = useCallback(() => {
+    if (!ensembleAction) {
+      return;
+    }
+    ensembleAction.callback();
+  }, [ensembleAction]);
+
+  if (!action?.widget)
+    throw new Error("ShowDialog Action requires a widget to be specified");
+
+  const callback = useCallback(() => {
+    const widget = unwrapWidget(action.widget);
+
+    const widgetBackgroundColor = get(
+      widget,
+      "properties.styles.backgroundColor", // FIXME: works only for inline widget
+    );
+    if (widgetBackgroundColor && isString(widgetBackgroundColor)) {
+      set(noneStyleOption, "backgroundColor", widgetBackgroundColor);
+    }
+
+    openModal?.(
+      EnsembleRuntime.render([widget]),
+      {
+        maskClosable: true,
+        hideCloseIcon: true,
+        hideFullScreenIcon: true,
+        onClose: onDismissCallback,
+        verticalOffset: action?.options?.verticalOffset,
+        horizontalOffset: action?.options?.horizontalOffset,
+        padding: "12px",
+        ...(action?.options?.style === "none" ? noneStyleOption : {}),
+      },
+      true,
+    );
+  }, [openModal, action.widget, onDismissCallback, action?.options]);
+
+  return { callback };
 };
 
 export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
@@ -416,6 +471,9 @@ export const useEnsembleAction = (
 
   if (action.showToast) {
     return useShowToast(action.showToast);
+  }
+  if (action.showDialog) {
+    return useShowDialog(action.showDialog);
   }
 
   if ("closeAllDialogs" in action) {
