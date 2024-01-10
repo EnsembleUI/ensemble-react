@@ -5,12 +5,27 @@ import { EnsembleParser } from "../parser";
 import type { ApplicationDTO, EnsembleScreenModel } from "../shared";
 
 test("parses simple view widget", () => {
+  const app = {
+    screens: [
+      {
+        name: "test",
+        content: fs
+          .readFileSync(`${__dirname}/__resources__/helloworld.yaml`)
+          .toString(),
+      },
+    ],
+    scripts: [],
+    name: "test",
+    id: "test",
+  } as unknown as ApplicationDTO;
+
   const testFile = fs.readFileSync(
     `${__dirname}/__resources__/helloworld.yaml`,
   );
   const screen = EnsembleParser.parseScreen(
     "test",
     parse(testFile.toString()) as EnsembleScreenYAML,
+    app,
   ) as EnsembleScreenModel;
 
   expect(screen.name).toEqual("test");
