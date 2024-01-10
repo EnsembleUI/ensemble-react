@@ -3,6 +3,7 @@ import { Col } from "antd";
 import { indexOf, keys } from "lodash-es";
 import {
   CustomScopeProvider,
+  useCustomScope,
   useRegisterBindings,
   useTemplateData,
 } from "@ensembleui/react-framework";
@@ -22,10 +23,10 @@ export const Column: React.FC<FlexboxProps> = (props) => {
     data: itemTemplate?.data,
     name: itemTemplate?.name,
   });
-
   const renderedChildren = useMemo(() => {
     return children ? EnsembleRuntime.render(children) : null;
   }, [children]);
+  const scope = useCustomScope();
 
   return (
     <Col
@@ -58,6 +59,7 @@ export const Column: React.FC<FlexboxProps> = (props) => {
               ...n,
               index,
               length: namedData.length,
+              ...scope,
             } as CustomScope
           }
         >

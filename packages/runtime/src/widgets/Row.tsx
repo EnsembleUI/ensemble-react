@@ -6,6 +6,7 @@ import {
   CustomScopeProvider,
   useRegisterBindings,
   useTemplateData,
+  useCustomScope,
 } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
@@ -16,6 +17,7 @@ export const Row: React.FC<FlexboxProps> = (props) => {
   const { "item-template": itemTemplate, children, ...rest } = props;
   const childrenFirst =
     indexOf(keys(props), "children") < indexOf(keys(props), "item-template");
+  const scope = useCustomScope();
 
   const { values, rootRef } = useRegisterBindings({ ...rest }, props.id);
   const { namedData } = useTemplateData({
@@ -63,6 +65,7 @@ export const Row: React.FC<FlexboxProps> = (props) => {
               ...n,
               index,
               length: namedData.length,
+              ...scope,
             } as CustomScope
           }
         >

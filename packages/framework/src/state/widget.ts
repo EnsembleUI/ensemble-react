@@ -47,7 +47,6 @@ export const createBindingAtom = <T = unknown>(
 
   const rawJsExpression = sanitizeJs(expression);
   const identifiers: string[] = [];
-
   try {
     parseExpressionAt(rawJsExpression, 0, {
       ecmaVersion: 6,
@@ -69,7 +68,6 @@ export const createBindingAtom = <T = unknown>(
     error(e);
     return atom(undefined);
   }
-
   const dependencyEntries = identifiers.map((identifier) => {
     debug(`found dependency for ${String(widgetId)}: ${identifier}`);
     // TODO: Account for data bindings also
@@ -102,12 +100,21 @@ export const createBindingAtom = <T = unknown>(
       );
       return [name, value?.values];
     });
+    let mergedInputs = {};
+    if (context) {
+      mergedInputs = {
+        ...(inputs as object),
+        ...context,
+      };
+    } else {
+      mergedInputs = inputs as object;
+    }
     const evaluationContext = merge(
-      inputs,
+      mergedInputs,
       omitBy(Object.fromEntries(valueEntries), isNil),
       mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
-      { styles: theme?.Styles },
       context,
+      { styles: theme?.Styles },
       {
         ensemble: {
           storage: createStorageApi(storage),

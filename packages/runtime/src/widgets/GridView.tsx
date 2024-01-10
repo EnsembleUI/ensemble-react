@@ -1,6 +1,7 @@
 import type { EnsembleWidget, Expression } from "@ensembleui/react-framework";
 import {
   CustomScopeProvider,
+  useCustomScope,
   useTemplateData,
 } from "@ensembleui/react-framework";
 import { Col, Row } from "antd";
@@ -32,6 +33,7 @@ export const GridView: React.FC<GridViewProps> = ({
 }) => {
   const defaultColumnCount = 4;
   const { namedData } = useTemplateData({ data, name });
+  const scope = useCustomScope();
 
   const rows = useMemo(() => {
     const workingRows = [];
@@ -62,6 +64,7 @@ export const GridView: React.FC<GridViewProps> = ({
                   ...namedData[dataIndex],
                   index: dataIndex,
                   length: namedData.length,
+                  ...scope,
                 }}
               >
                 {EnsembleRuntime.render([template])}
@@ -90,6 +93,7 @@ export const GridView: React.FC<GridViewProps> = ({
     styles?.horizontalTileCount,
     styles?.verticalGap,
     template,
+    scope,
   ]);
 
   return <>{rows}</>;

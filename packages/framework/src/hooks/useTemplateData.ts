@@ -3,6 +3,7 @@ import { type Atom, atom, useAtomValue } from "jotai";
 import { isString, map } from "lodash-es";
 import { createBindingAtom } from "../state";
 import { isExpression, type Expression } from "../shared/common";
+import { useCustomScope } from "./useCustomScope";
 
 export type TemplateData = object | unknown[] | undefined | null;
 export interface TemplateDataProps {
@@ -26,22 +27,22 @@ export const useTemplateData = ({
   namedData: object[];
 } => {
   const isDataString = isString(data);
+  const scope = useCustomScope();
   const dataAtom = useMemo<Atom<TemplateData>>(() => {
     if (!isDataString) {
       return atom(data);
     }
     if (isExpression(data)) {
-      return createBindingAtom(data);
+      return createBindingAtom(data, scope);
     }
     // Support legacy case where we don't always require curly braces
     return createBindingAtom(`\${${String(data)}}`);
-  }, [data, isDataString]);
+  }, [data, isDataString, scope]);
   const rawData = useAtomValue(dataAtom);
   const namedData = useMemo(
     () => map(rawData, (value: unknown) => ({ [name]: value })),
     [name, rawData],
   );
-
   return {
     rawData,
     namedData,
