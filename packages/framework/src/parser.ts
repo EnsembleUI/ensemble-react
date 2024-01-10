@@ -117,14 +117,15 @@ export const EnsembleParser = {
     const apis = unwrapApiModels(screen);
 
     const globalBlock = get(screen, "Global");
+    const scriptName = get(globalBlock, "scriptName");
     let global: string | undefined;
-    if (!isString(globalBlock)) {
-      const scriptName = get(globalBlock, "scriptName");
-      if (isString(scriptName)) {
-        global = app.scripts?.find((script) => script.name === scriptName)
-          ?.content;
-      }
-    } else if (isString(globalBlock)) {
+
+    if (isString(scriptName)) {
+      global = app.scripts?.find((script) => script.name === scriptName)
+        ?.content;
+    }
+
+    if (isEmpty(global) && isString(globalBlock)) {
       global = globalBlock;
     }
 
