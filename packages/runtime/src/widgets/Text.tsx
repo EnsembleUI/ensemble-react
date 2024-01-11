@@ -35,7 +35,6 @@ export const Text: React.FC<TextProps> = (props) => {
       className={values?.styles?.names}
       ref={rootRef}
       style={{ ...values?.styles }}
-      {...values?.htmlAttributes}
     >
       {values?.text}
     </Typography.Text>

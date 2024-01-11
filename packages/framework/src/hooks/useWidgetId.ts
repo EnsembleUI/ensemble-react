@@ -1,5 +1,4 @@
-import type { RefCallback } from "react";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import type { Expression } from "../shared";
 import { error, isExpression } from "../shared";
 import { evaluate } from "../evaluate";
@@ -9,7 +8,10 @@ import { useCustomScope } from "./useCustomScope";
 export const useWidgetId = (
   id?: Expression<string>,
   testId?: Expression<string>,
-): { resolvedWidgetId: string; rootRef: RefCallback<never> } => {
+): {
+  resolvedWidgetId: string;
+  resolvedTestId: string;
+} => {
   const customScope = useCustomScope();
   const resolvedWidgetId = useMemo<string>(() => {
     let workingId = id;
@@ -36,19 +38,7 @@ export const useWidgetId = (
     return testId ?? "";
   }, [customScope, testId]);
 
-  const rootRef = useCallback(
-    (node: never) => {
-      if (node && "setAttribute" in node) {
-        (node as HTMLElement).setAttribute(
-          "data-testid",
-          id ? resolvedWidgetId : resolvedTestId,
-        );
-      }
-    },
-    [id, resolvedTestId, resolvedWidgetId],
-  );
-
-  return { resolvedWidgetId, rootRef };
+  return { resolvedWidgetId, resolvedTestId };
 };
 
 const JS_ID_REGEX = /^[_$a-zA-Z\xA0-\uFFFF][_$a-zA-Z0-9\xA0-\uFFFF]*$/;

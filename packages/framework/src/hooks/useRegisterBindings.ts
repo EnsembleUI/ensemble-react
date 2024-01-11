@@ -1,12 +1,21 @@
 import type { RefCallback } from "react";
 import { useEffect, useMemo } from "react";
-import { compact, get, isEmpty, isString, merge, set } from "lodash-es";
+import {
+  compact,
+  get,
+  isEmpty,
+  isString,
+  merge,
+  set,
+  mapKeys,
+} from "lodash-es";
 import isEqual from "react-fast-compare";
 import { atom, useAtom } from "jotai";
 import type { InvokableMethods } from "../state";
 import { createBindingAtom } from "../state";
 import { findExpressions } from "../shared";
 import { useWidgetId } from "./useWidgetId";
+import { useHtmlPassThrough } from "./useHtmlPassThrough";
 import { useCustomScope } from "./useCustomScope";
 import { useWidgetState } from "./useWidgetState";
 import { useStyleNames } from "./useStyleNames";
@@ -23,10 +32,23 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   methods?: InvokableMethods,
 ): RegisterBindingsResult<T> => {
   const testId = get(values, ["testId"]);
-  const { resolvedWidgetId, rootRef } = useWidgetId(
+  let htmlAttributes = get(values, "htmlAttributes") as Record<string, string>;
+
+  if (!isEmpty(htmlAttributes) && !isString(htmlAttributes)) {
+    htmlAttributes = mapKeys(htmlAttributes, (_, key) => key.toLowerCase());
+  }
+
+  const { resolvedWidgetId, resolvedTestId } = useWidgetId(
     id,
     isString(testId) ? String(testId) : undefined,
   );
+  const { rootRef } = useHtmlPassThrough(
+    resolvedWidgetId,
+    resolvedTestId,
+    id,
+    htmlAttributes,
+  );
+
   const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
   const styleNames = get(values, ["styles", "names"]) as unknown;
   const styleProperties = useStyleNames(

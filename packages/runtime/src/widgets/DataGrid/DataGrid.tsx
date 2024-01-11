@@ -4,10 +4,11 @@ import {
   type Expression,
   type EnsembleWidget,
   useWidgetId,
+  useHtmlPassThrough,
   evaluate,
   defaultScreenContext,
   useRegisterBindings,
-  EnsembleAction,
+  type EnsembleAction,
 } from "@ensembleui/react-framework";
 import { useCallback, type ReactElement } from "react";
 import { get } from "lodash-es";
@@ -67,7 +68,8 @@ export interface DataGridRowTemplate {
 export const DataGrid: React.FC<GridProps> = (props) => {
   const DataColumns = props?.DataColumns;
   const itemTemplate = props["item-template"];
-  const { resolvedWidgetId, rootRef } = useWidgetId(props?.id);
+  const { resolvedWidgetId, resolvedTestId } = useWidgetId(props?.id);
+  const { rootRef } = useHtmlPassThrough(resolvedTestId, resolvedWidgetId);
   const { namedData } = useTemplateData({ ...itemTemplate });
   const { values } = useRegisterBindings({ ...props }, props?.id);
   const headerStyle = values?.styles?.headerStyle;

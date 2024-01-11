@@ -18,6 +18,7 @@ import {
   type Expression,
   useScreenContext,
   useWidgetId,
+  useHtmlPassThrough,
   useEnsembleStorage,
 } from "@ensembleui/react-framework";
 import { Alert } from "antd";
@@ -78,7 +79,8 @@ const CONFIG_EVAL_EXPIRY = 5000;
 export const Chart: React.FC<ChartProps> = (props) => {
   const context = useScreenContext();
   const storage = useEnsembleStorage();
-  const { rootRef } = useWidgetId(props.id);
+  const { resolvedTestId, resolvedWidgetId } = useWidgetId(props.id);
+  const { rootRef } = useHtmlPassThrough(resolvedTestId, resolvedWidgetId);
   const [error, setError] = useState<unknown>(null);
   const [isExpired, setIsExpired] = useState(false);
   const [config, setConfig] = useState<ChartConfigs>();
