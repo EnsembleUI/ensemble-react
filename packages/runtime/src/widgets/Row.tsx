@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Row as AntRow } from "antd";
 import { indexOf, keys } from "lodash-es";
 import {
@@ -11,9 +11,11 @@ import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import { getColor, getCrossAxis, getMainAxis } from "../shared/styles";
 import type { FlexboxProps } from "../shared/types";
+import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
 export const Row: React.FC<FlexboxProps> = (props) => {
   const { "item-template": itemTemplate, children, ...rest } = props;
+  const [isHovered, setIsHovered] = useState(false);
   const childrenFirst =
     indexOf(keys(props), "children") < indexOf(keys(props), "item-template");
 
@@ -26,11 +28,19 @@ export const Row: React.FC<FlexboxProps> = (props) => {
   const renderedChildren = useMemo(() => {
     return children ? EnsembleRuntime.render(children) : null;
   }, [children]);
-
+  const action = useEnsembleAction(props?.onTap);
+  const onClickCallback = useCallback(() => {
+    if (!action) {
+      return;
+    }
+    action.callback();
+  }, [action]);
   return (
     <AntRow
       className={values?.styles?.names}
       ref={rootRef}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       style={{
         justifyContent: props.mainAxis && getMainAxis(props.mainAxis),
         alignItems: props.crossAxis && getCrossAxis(props.crossAxis),
@@ -51,8 +61,10 @@ export const Row: React.FC<FlexboxProps> = (props) => {
         flexDirection: "row",
         flexFlow: "unset",
         flexGrow: "unset",
+        cursor: isHovered ? "pointer" : "auto",
         ...values?.styles,
       }}
+      onClick={onClickCallback}
     >
       {childrenFirst ? renderedChildren : null}
       {namedData.map((n, index) => (
