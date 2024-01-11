@@ -1,5 +1,12 @@
 # @ensembleui/react-framework
 
+## 0.1.10
+
+### Patch Changes
+
+- b5abf23: add showDialog action
+- 8c657ab: Fix small issues with Dropdown
+
 ## 0.1.9
 
 ### Patch Changes
