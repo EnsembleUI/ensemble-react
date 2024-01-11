@@ -1,5 +1,13 @@
 # @ensembleui/react-runtime
 
+## 0.1.11
+
+### Patch Changes
+
+- b5abf23: add showDialog action
+- 8c657ab: Fix small issues with Dropdown
+- c8d1932: fix infinite charts re-renders when function is passed in config
+
 ## 0.1.10
 
 ### Patch Changes

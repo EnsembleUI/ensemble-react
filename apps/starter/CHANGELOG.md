@@ -1,5 +1,21 @@
 # @ensembleui/react-starter
 
+## 0.3.0
+
+### Minor Changes
+
+- 6a8c281: Separate kitchen sink from starter app
+
+### Patch Changes
+
+- b5abf23: add showDialog action
+- c8d1932: fix infinite charts re-renders when function is passed in config
+- Updated dependencies [b5abf23]
+- Updated dependencies [8c657ab]
+- Updated dependencies [c8d1932]
+  - @ensembleui/react-framework@0.1.10
+  - @ensembleui/react-runtime@0.1.11
+
 ## 0.2.10
 
 ### Patch Changes
