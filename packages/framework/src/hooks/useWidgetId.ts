@@ -35,7 +35,7 @@ export const useWidgetId = (
     if (isExpression(testId)) {
       return String(evaluate(defaultScreenContext, testId, customScope));
     }
-    return testId ?? "";
+    return testId;
   }, [customScope, testId]);
 
   return { resolvedWidgetId, resolvedTestId };

@@ -1,5 +1,4 @@
-import { ApplicationDTO } from "@ensembleui/react-framework";
-
+import { type ApplicationDTO } from "@ensembleui/react-framework";
 // Screens
 import MenuYAML from "./screens/menu.yaml";
 import HomeYAML from "./screens/home.yaml";
