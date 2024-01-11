@@ -17,13 +17,9 @@ import {
   useTemplateData,
   unwrapWidget,
 } from "@ensembleui/react-framework";
-import type {
-  TemplateData,
-  EnsembleWidget,
-  Expression,
-} from "@ensembleui/react-framework";
+import type { EnsembleWidget, Expression } from "@ensembleui/react-framework";
 import Alert from "@mui/material/Alert";
-import type { EnsembleWidgetProps } from "../../shared/types";
+import type { EnsembleWidgetProps, HasItemTemplate } from "../../shared/types";
 import { WidgetRegistry } from "../../registry";
 import { EnsembleRuntime } from "../../runtime";
 import type { StepTypeProps } from "./StepType";
@@ -33,16 +29,10 @@ export interface StepProps {
   stepLabel: string;
   contentWidget: Record<string, unknown>;
 }
-export interface TemplateProps {
-  data: Expression<TemplateData>;
-  name: string;
-  template: EnsembleWidget;
-}
 
 export type StepperProps = {
   steps: StepProps[];
   activeStepIndex?: number;
-  "item-template": TemplateProps;
   styles: {
     inActiveConnectorColor?: Expression<string>;
     connectorColor?: Expression<string>;
@@ -51,7 +41,8 @@ export type StepperProps = {
     borderRadius?: Expression<string>;
     padding?: string;
   };
-} & EnsembleWidgetProps;
+} & EnsembleWidgetProps &
+  HasItemTemplate;
 
 interface CustomConnectorProps {
   connector_color?: string;
@@ -60,11 +51,11 @@ interface CustomConnectorProps {
 }
 
 const Stepper: React.FC<StepperProps> = (props) => {
-  const [activeStep, setActiveStep] = useState(props?.activeStepIndex ?? 0);
+  const [activeStep, setActiveStep] = useState(props.activeStepIndex ?? 0);
   const itemTemplate = props["item-template"];
   const { namedData } = useTemplateData({ ...itemTemplate });
   const stepsLength = namedData.length;
-  const stepTypes = itemTemplate.template;
+  const stepTypes = itemTemplate?.template;
   const handleNext = useCallback(() => {
     if (activeStep < namedData.length - 1) {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -79,38 +70,61 @@ const Stepper: React.FC<StepperProps> = (props) => {
   const handleStep = (step: number) => () => {
     setActiveStep(step);
   };
-  const { values } = useRegisterBindings({ ...props, activeStep }, props.id, {
-    handleNext,
-    handleBack,
-  });
+  const { values, rootRef } = useRegisterBindings(
+    { ...props, activeStep },
+    props.id,
+    {
+      handleNext,
+      handleBack,
+    },
+  );
   const steps = unwrapContent(props.steps);
-  return (
-    <div>
-      <MUIStepper
-        activeStep={values?.activeStep}
-        alternativeLabel
-        connector={
-          <CustomConnector
-            connector_color={values?.styles.connectorColor}
-            connector_height={values?.styles.connectorHeight}
-            inactive_connector_color={values?.styles?.inActiveConnectorColor}
-          />
-        }
+
+  if (!stepTypes) {
+    return (
+      <Alert
+        severity="error"
         sx={{
+          display: "flex",
           justifyContent: "center",
-          backgroundColor: values?.styles.backgroundColor,
-          padding: `${
-            values?.styles.padding ? `${values.styles.padding}px` : ""
-          }`,
-          borderRadius: `${
-            values?.styles.borderRadius
-              ? `${values.styles.borderRadius}px`
-              : "0px"
-          }`,
+          alignItems: "center",
         }}
       >
-        {values?.["item-template"] ? (
-          namedData.map((data, index) => (
+        Please use correct syntax for the <strong>Stepper widget !</strong>
+      </Alert>
+    );
+  }
+
+  const stepPercentage = 100 / stepsLength;
+  const activeStepPercentage = (activeStep + 1) * stepPercentage;
+
+  return (
+    <div ref={rootRef}>
+      <div style={{ position: "relative" }}>
+        <MUIStepper
+          activeStep={values?.activeStep}
+          alternativeLabel
+          connector={
+            <CustomConnector
+              connector_color={values?.styles.connectorColor}
+              connector_height={values?.styles.connectorHeight}
+              inactive_connector_color={values?.styles.inActiveConnectorColor}
+            />
+          }
+          sx={{
+            justifyContent: "center",
+            backgroundColor: values?.styles.backgroundColor,
+            padding: `${
+              values?.styles.padding ? `${values.styles.padding}px` : ""
+            }`,
+            borderRadius: `${
+              values?.styles.borderRadius
+                ? `${values.styles.borderRadius}px`
+                : "0px"
+            }`,
+          }}
+        >
+          {namedData.map((data, index) => (
             <Step key={index}>
               <StepButton onClick={handleStep(index)}>
                 <StepLabel
@@ -119,7 +133,7 @@ const Stepper: React.FC<StepperProps> = (props) => {
                       stepTypes,
                       ...(iconProps as StepIconProps),
                       data,
-                      index: values.activeStep,
+                      index: values?.activeStep ?? 0,
                       stepsLength,
                       name: itemTemplate.name,
                     };
@@ -128,20 +142,23 @@ const Stepper: React.FC<StepperProps> = (props) => {
                 />
               </StepButton>
             </Step>
-          ))
-        ) : (
-          <Alert
-            severity="error"
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
+          ))}
+        </MUIStepper>
+        <div style={{ position: "absolute", left: "20px", right: "20px" }}>
+          <span
+            style={{
+              position: "absolute",
+              bottom: 0,
+              width: "20px",
+              height: "4px",
+              left: `calc(${
+                activeStepPercentage - stepPercentage / 2
+              }% - 10px)`,
+              backgroundColor: values?.styles.connectorColor,
             }}
-          >
-            Please use correct syntax for the <strong>Stepper widget !</strong>
-          </Alert>
-        )}
-      </MUIStepper>
+          />
+        </div>
+      </div>
       <div>
         {steps.map((step, index) => (
           <div key={step.stepLabel}>
@@ -170,7 +187,7 @@ const CustomConnector = styled(StepConnector)(
     },
     [`&.${stepConnectorClasses.completed}`]: {
       [`& .${stepConnectorClasses.line}`]: {
-        borderColor: props?.connector_color,
+        borderColor: props.connector_color,
       },
     },
     [`& .${stepConnectorClasses.line}`]: {
@@ -182,9 +199,13 @@ const CustomConnector = styled(StepConnector)(
 );
 
 const CustomStepIcon = (
-  props: { stepTypes: EnsembleWidget } & StepIconProps & {
-      data: object;
-    } & { index: number } & { stepsLength: number } & { name: string },
+  props: {
+    index: number;
+    data: object;
+    stepTypes: EnsembleWidget;
+    stepsLength: number;
+    name: string;
+  } & StepIconProps,
 ): React.ReactElement<StepTypeProps> => {
   const { active, completed, stepsLength, index } = props;
   const stateData = { active, completed, stepsLength, index };
