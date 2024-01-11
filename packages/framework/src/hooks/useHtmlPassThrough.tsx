@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import type { Expression } from "../shared";
 
 export const useHtmlPassThrough = (
-  resolvedTestId: string,
+  resolvedTestId: string | undefined,
   resolvedWidgetId: string,
   id?: Expression<string>,
   htmlAttributes?: Record<string, string>,
@@ -14,7 +14,7 @@ export const useHtmlPassThrough = (
       if (node && "setAttribute" in node) {
         (node as HTMLElement).setAttribute(
           "data-testid",
-          id ? resolvedWidgetId : resolvedTestId,
+          id ? resolvedWidgetId : resolvedTestId ?? "",
         );
 
         if (!isEmpty(htmlAttributes)) {

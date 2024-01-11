@@ -10,7 +10,7 @@ export const useWidgetId = (
   testId?: Expression<string>,
 ): {
   resolvedWidgetId: string;
-  resolvedTestId: string;
+  resolvedTestId: string | undefined;
 } => {
   const customScope = useCustomScope();
   const resolvedWidgetId = useMemo<string>(() => {
