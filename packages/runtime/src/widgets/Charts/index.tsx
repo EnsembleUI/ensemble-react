@@ -21,7 +21,7 @@ import {
   useEnsembleStorage,
 } from "@ensembleui/react-framework";
 import { Alert } from "antd";
-import { isEqual } from "lodash-es";
+import { isEqualWith } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { BarChart } from "./BarChart";
@@ -99,7 +99,8 @@ export const Chart: React.FC<ChartProps> = (props) => {
           },
         },
       );
-      if (!isEqual(evaluatedConfig, config)) {
+
+      if (!areConfigObjectsEqual(config, evaluatedConfig)) {
         setConfig(evaluatedConfig);
         setError(null);
       }
@@ -145,3 +146,14 @@ export const Chart: React.FC<ChartProps> = (props) => {
 };
 
 WidgetRegistry.register("Chart", Chart);
+
+const areConfigObjectsEqual = (
+  evaluatedConfig?: ChartConfigs,
+  config?: ChartConfigs,
+): boolean =>
+  isEqualWith(evaluatedConfig, config, (valueA, valueB) => {
+    if (typeof valueA === "function" && typeof valueB === "function") {
+      return true;
+    }
+    return undefined;
+  });

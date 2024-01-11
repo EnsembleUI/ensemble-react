@@ -1,8 +1,12 @@
 View:
+  onLoad:
+    invokeApi:
+      name: getDummyNumbers
+
   header:
     title:
       Header:
-      
+
   body:
     Column:
       crossAxis: stretch
@@ -50,3 +54,154 @@ View:
                     - label: Option 2
                       value: option2
 
+        - Markdown:
+            text: "## Charts"
+        - Column:
+            crossAxis: stretch
+            margin: 20px
+            children:
+              - Row:
+                  children:
+                    - Column:
+                        crossAxis: center
+                        styles:
+                          gap: 20
+                          margin: 20px
+                          width: 45%
+                        children:
+                          - Chart:
+                              id: myBarChart
+                              styles:
+                                width: 90%
+                              config: |-
+                                {
+                                  type: 'bar',
+                                  title: "I am Bar",
+                                  data:
+                                    {
+                                      labels:
+                                        [
+                                          "Jan",
+                                          "Feb",
+                                          "Mar",
+                                          "Apr",
+                                          "May",
+                                          "Jun",
+                                          "Jul",
+                                          "Aug",
+                                          "Sep",
+                                        ],
+                                      datasets:
+                                        [
+                                          {
+                                            label: 'Matched',
+                                            data: "${getDummyNumbers.body}",
+                                            backgroundColor: '#5542f6',
+                                            barPercentage: 0.8,
+                                            borderRadius: 3,
+                                          },
+                                          {
+                                            label: "Enrolled",
+                                            data: [65, 59, 80, 81, 56, 55, 40, 50, 60],
+                                            backgroundColor: "${getDummyNumbers.body.length > 1 ? '#01a4ff' : 'yellow'}",
+                                            barPercentage: 0.4,
+                                            borderRadius: 10,
+                                          },
+                                        ],
+                                    },
+                                  options:
+                                    {
+                                      plugins: {
+                                        title: {
+                                          "display": false
+                                        },
+                                        tooltip: {
+                                          callbacks: {
+                                            label: function (context) {
+                                              let label = context.dataset.label || '';
+
+                                              if (label) {
+                                                  label += ': ';
+                                              }
+                                              if (context.parsed.y !== null) {
+                                                  label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
+                                              }
+                                              return label;
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }  
+                                }
+                    - Column:
+                        styles:
+                          width: 50%
+                          height: 300px
+                          borderColor: "#EBEAED"
+                          borderRadius: 10
+                          borderWidth: 1px
+                          padding: 10px 20px 30px 20px
+                        children:
+                          - Chart:
+                              id: myDoughnutChart
+                              config: |
+                                {
+                                  type: 'doughnut',
+                                  title: "I am Doughnut",
+                                  data:
+                                    {
+                                      labels: ["Red", "Blue", "Yellow"],
+                                      datasets:
+                                        [
+                                          {
+                                            label: "",
+                                            data: "${getDummyNumbers.body?.slice(0, 3)}",
+                                            backgroundColor:
+                                              [
+                                                "rgb(255, 99, 132)",
+                                                "rgb(54, 162, 235)",
+                                                "rgb(255, 205, 86)",
+                                              ],
+                                            hoverOffset: 4,
+                                            borderWidth: 1,
+                                          },
+                                        ]
+                                    },
+                                  options:
+                                    {
+                                      plugins: {
+                                        legend: {
+                                          "display": false
+                                        },
+                                      },
+                                      cutout: '50%'
+                                    }
+                                }
+
+        - Column:
+            styles:
+              margin: 20px 0
+            children:
+              - Chart:
+                  id: myLineChart
+                  config: |
+                    {
+                      type: 'line',
+                      title: "I am Line",
+                      data:
+                        {
+                          labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"],
+                          datasets:
+                            [
+                              {
+                                label: "legend is displayed",
+                                data: [65, 59, 80, 81, 56, 55, 40, 50, 60],
+                              },
+                            ]
+                        }
+                    }
+
+API:
+  getDummyNumbers:
+    method: GET
+    uri: https://mocki.io/v1/c1f19d68-e6c8-4ae3-848d-d99e588cf224
