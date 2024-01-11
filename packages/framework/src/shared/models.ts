@@ -108,10 +108,3 @@ export interface EnsembleScriptModel {
   name: string;
   body: string;
 }
-
-export interface EnsembleWidgetModel {
-  name: string;
-  body: EnsembleWidget;
-  apis?: EnsembleAPIModel[];
-  onLoad?: EnsembleAction;
-}

@@ -1,5 +1,6 @@
 import { parse } from "yaml";
 import {
+  flatMap,
   get,
   head,
   isArray,
@@ -45,21 +46,26 @@ export interface EnsembleWidgetYAML {
 
 export const EnsembleParser = {
   parseApplication: (app: ApplicationDTO): EnsembleAppModel => {
+    const customWidgets = (app.widgets ?? []).map(({ name, content: yaml }) =>
+      EnsembleParser.parseWidget(name, parse(yaml) as EnsembleWidgetYAML),
+    );
+
+    const widgetApis: EnsembleAPIModel[] = flatMap(
+      customWidgets,
+      (widget) => widget.apis ?? [],
+    );
+
     const screens = app.screens.map(({ name, content: yaml }) => {
       const screen = parse(yaml) as EnsembleScreenYAML;
       const viewGroup = get(screen, "ViewGroup");
       if (viewGroup) {
         return EnsembleParser.parseMenu(viewGroup);
       }
-      return EnsembleParser.parseScreen(name, screen);
+      return EnsembleParser.parseScreen(name, screen, widgetApis);
     });
     if (isEmpty(screens)) {
       throw Error("Application must have at least one screen");
     }
-
-    const customWidgets = (app.widgets ?? []).map(({ name, content: yaml }) =>
-      EnsembleParser.parseWidget(name, parse(yaml) as EnsembleWidgetYAML),
-    );
 
     const menu = screens.find((screen) => "items" in screen) as
       | EnsembleMenuModel
@@ -102,6 +108,7 @@ export const EnsembleParser = {
   parseScreen: (
     name: string,
     screen: EnsembleScreenYAML,
+    widgetApis?: EnsembleAPIModel[],
   ): EnsembleScreenModel | EnsembleMenuModel => {
     const view = get(screen, "View");
     const viewNode = get(view, "body");
@@ -112,7 +119,7 @@ export const EnsembleParser = {
       throw new Error("Invalid screen: missing view widget");
     }
     const viewWidget = unwrapWidget(viewNode);
-    const apis = unwrapApiModels(screen);
+    const apis = unwrapApiModels(screen).concat(widgetApis ?? []);
 
     const global = get(screen, "Global");
     return {

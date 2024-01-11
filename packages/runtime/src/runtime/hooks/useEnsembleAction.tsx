@@ -11,7 +11,6 @@ import {
   useEnsembleStorage,
   DateFormatter,
   useApplicationContext,
-  useWidgetData,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -120,17 +119,14 @@ export const useExecuteCode: EnsembleActionHook<
 };
 
 export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
-  const { apis: screenApis, setData } = useScreenData();
-  const { apis: widgetApis } = useWidgetData();
+  const { apis, setData } = useScreenData();
   const [response, setResponse] = useState<Response>();
   const [error, setError] = useState<unknown>();
   const [isComplete, setIsComplete] = useState(false);
   const storage = useEnsembleStorage();
 
   const invokeApi = useMemo(() => {
-    const apis = merge(screenApis || [], widgetApis || []);
-
-    if (!apis.length || !action) {
+    if (!apis || !action) {
       return;
     }
 
@@ -171,7 +167,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
       }
     };
     return { callback };
-  }, [action, storage, screenApis, widgetApis, setData]);
+  }, [action, storage, apis, setData]);
 
   const onResponseAction = useEnsembleAction(action?.onResponse);
   useEffect(() => {

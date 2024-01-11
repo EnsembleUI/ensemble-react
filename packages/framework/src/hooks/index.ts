@@ -7,4 +7,3 @@ export * from "./useWidgetId";
 export * from "./useEnsembleStorage";
 export * from "./useEvaluate";
 export * from "./useStyleNames";
-export * from "./useWidgetContext";
