@@ -1,40 +1,43 @@
-ViewGroup:
-  SideBar:
-    styles:
-      width: 240px
-      iconWidth: 20px
-      iconHeight: 20px
-      backgroundColor: "#fcfeff"
-      labelColor: "#171B2A"
-      selectedColor: "#171B2A"
-      labelFontSize: 1
-      onSelectStyles:
-        backgroundColor: "#D5DAEA"
-        borderRadius: 10px
-    header:
-      Image:
-        height: 50px
-        source: https://docs.ensembleui.com/images/logo.svg
-    items:
-      - label: Dashboard
-        icon: LegendToggle
-        page: dashboard
-      - label: Collections
-        icon: PermMediaOutlined
-        page: collections
-      - label: Users + Groups
-        icon: PersonOutlineOutlined
-        page: usersAndGroups
-        selected: true
-      - label: Ask Embrace
-        icon: TextsmsOutlined
-        page: Ask Embrace
-      - label: Product and Development
-        icon: LegendToggle
-        page: Product and Development
-      - label: Sagar
-        icon: LegendToggle
-        page: Social Login
-    footer:
-      Text:
-        text: Give us feedback
+View:
+  onLoad:
+    invokeApi:
+      name: getDummyProducts
+      onResponse:
+        executeCode:
+          scriptName: hello.js
+  header:
+    title:
+      Header:
+
+  body:
+    Column:
+      styles:
+        names: page
+      children:
+        - Text:
+            styles:
+              names: heading-1
+            text: Hello, world!
+        - Markdown:
+            text: This screen demonstrates a few patterns to get you started with Ensemble. Here, we fetch data from an API and use control expressions to display a loading state and a list of products. Try making a few changes and see how the screen automatically updates! For more information, see [help](/help).
+        - Text:
+            styles:
+              names: heading-3
+            text: My Products
+        - LoadingContainer:
+            isLoading: ${getDummyProducts.isLoading}
+            widget:
+              GridView:
+                item-template:
+                  data: ${ensemble.storage.get("products")}
+                  name: product
+                  template:
+                    Card:
+                      children:
+                        - Text:
+                            text: ${product.title}
+
+API:
+  getDummyProducts:
+    method: GET
+    uri: https://dummyjson.com/products

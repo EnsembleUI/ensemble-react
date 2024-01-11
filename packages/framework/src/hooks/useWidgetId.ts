@@ -33,16 +33,16 @@ export const useWidgetId = (
     if (isExpression(testId)) {
       return String(evaluate(defaultScreenContext, testId, customScope));
     }
-    return testId ?? "";
+    return testId;
   }, [customScope, testId]);
 
   const rootRef = useCallback(
     (node: never) => {
       if (node && "setAttribute" in node) {
-        (node as HTMLElement).setAttribute(
-          "data-testid",
-          id ? resolvedWidgetId : resolvedTestId,
-        );
+        const dataTestId = id ? resolvedWidgetId : resolvedTestId;
+        if (dataTestId) {
+          (node as HTMLElement).setAttribute("data-testid", dataTestId);
+        }
       }
     },
     [id, resolvedTestId, resolvedWidgetId],

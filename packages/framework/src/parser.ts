@@ -10,6 +10,7 @@ import {
   mapKeys,
   remove,
   set,
+  isString,
 } from "lodash-es";
 import type {
   EnsembleScreenModel,
@@ -61,7 +62,8 @@ export const EnsembleParser = {
       if (viewGroup) {
         return EnsembleParser.parseMenu(viewGroup);
       }
-      return EnsembleParser.parseScreen(name, screen, widgetApis);
+
+      return EnsembleParser.parseScreen(name, screen, app, widgetApis);
     });
     if (isEmpty(screens)) {
       throw Error("Application must have at least one screen");
@@ -108,6 +110,7 @@ export const EnsembleParser = {
   parseScreen: (
     name: string,
     screen: EnsembleScreenYAML,
+    app: ApplicationDTO,
     widgetApis?: EnsembleAPIModel[],
   ): EnsembleScreenModel | EnsembleMenuModel => {
     const view = get(screen, "View");
@@ -121,7 +124,19 @@ export const EnsembleParser = {
     const viewWidget = unwrapWidget(viewNode);
     const apis = unwrapApiModels(screen).concat(widgetApis ?? []);
 
-    const global = get(screen, "Global");
+    const globalBlock = get(screen, "Global");
+    const scriptName = get(globalBlock, "scriptName");
+    let global: string | undefined;
+
+    if (isString(scriptName)) {
+      global = app.scripts?.find((script) => script.name === scriptName)
+        ?.content;
+    }
+
+    if (isEmpty(global) && isString(globalBlock)) {
+      global = globalBlock;
+    }
+
     return {
       ...(view ?? {}),
       name,

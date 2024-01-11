@@ -31,7 +31,6 @@ export type SearchProps = {
   HasItemTemplate;
 
 export const Search: React.FC<SearchProps> = ({
-  placeholder,
   "item-template": itemTemplate,
   searchKey,
   styles,
@@ -39,6 +38,7 @@ export const Search: React.FC<SearchProps> = ({
   onSearch,
   onChange,
   onSelect,
+  ...rest
 }) => {
   const [options, setOptions] = useState<{ label: string; value: unknown }[]>(
     [],
@@ -54,7 +54,7 @@ export const Search: React.FC<SearchProps> = ({
     name: itemTemplate?.name,
   });
   const { rootRef, values } = useRegisterBindings(
-    { styles, value, options },
+    { styles, value, options, ...rest },
     id,
     {
       setValue,
@@ -144,7 +144,7 @@ export const Search: React.FC<SearchProps> = ({
         ref={rootRef}
       >
         <Input
-          placeholder={placeholder}
+          placeholder={values?.placeholder}
           prefix={<SearchOutlined />}
           style={{
             boxShadow: "none",

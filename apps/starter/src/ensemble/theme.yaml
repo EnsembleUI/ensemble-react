@@ -1,22 +1,60 @@
 Tokens:
   Colors:
-    crimson: "#DC143C"
+    primary:
+      '900': '#4c1e91'
+      '800': '#5b22b2'
+      '700': '#6d29d4'
+      '600': '#7c3be7'
+      '500': '#8b5df1'
+      '400': '#a78bf6'
+      '300': '#c4b5fa'
+      '200': '#ddd6fc'
+      '100': '#ede9fd'
+      '50': '#f5f3f3'
+    light:
+      '300': '#f7fbfa'
+      '200': '#fafafb'
+      '100': '#ffffff'
+    dark:
+      '300': '#1F5348'
+      '200': '#4E485D'
+      '100': '#000000'
   Spacing:
-    bigValue: 80px
+    pagePadding: 20px
   Animation:
   Typography:
-    fontFamily: "Arial"
-    fontSize: 20px
+    fontFamily: "Roboto"
+    fontSize:
+      '54': 54px
+      '48': 48px
+      '42': 42px
+      '36': 36px
+      '32': 32px
+      '28': 28px
+      '26': 26px
+      '24': 24px
+      '22': 22px
+      '20': 20px
+      '18': 18px
+      '16': 16px
+      '14': 14px
+      '12': 12px
+    fontWeight:
+      black: 900
+      extraBold: 800
+      bold: 700
+      semiBold: 600
+      medium: 500
+      regular: 400
+      light: 300
+      extraLight: 200
+      thin: 100
 Styles:
-  testName:
-    borderRadius: ${spacing.bigValue}
-  stop:
-    color: red
-    fontSize: ${typography.fontSize}
-    fontWeight: bold
-  ready:
-    color: yellow
-  go:
-    color: green
-  bigFoot:
-    fontSize: 40px
+  page:
+    padding: ${spacing.pagePadding}
+  heading-1:
+    fontSize: ${typography.fontSize['32']}
+    fontWeight: ${typography.fontWeight.medium}
+  heading-3:
+    fontSize: ${typography.fontSize['24']}
+    fontWeight: ${typography.fontWeight.bold}

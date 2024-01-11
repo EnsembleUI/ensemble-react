@@ -8,9 +8,9 @@ import type {
 export const useCloseAllDialogs: EnsembleActionHook<
   EnsembleActionHookResult
 > = () => {
-  const { closeModal } = useContext(ModalContext) || {};
+  const { closeAllModals } = useContext(ModalContext) || {};
 
-  const closeAllDialogs: () => void = () => closeModal?.();
+  const closeAllDialogs: () => void = () => closeAllModals?.();
 
   return { callback: closeAllDialogs };
 };

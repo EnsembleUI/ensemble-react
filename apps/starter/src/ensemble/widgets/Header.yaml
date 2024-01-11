@@ -40,20 +40,4 @@ Widget:
                   styles:
                     backgroundColor: "#171B2A"
                   alt: abc
-                  name: Adam
-                  menu:
-                    - label: Personal Information
-                      icon: Person
-                      onTap:
-                        executeCode: myText.setText("Spiderman")
-                    - label: Collections
-                      icon: Settings
-                      onTap:
-                        navigateScreen: Collections
-
-API:
-  findUsers:
-    uri: https://dummyjson.com/users/search?q=${search}
-    method: GET
-    inputs:
-      - search
+                  name: Peter Parker
