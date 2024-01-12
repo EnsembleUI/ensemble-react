@@ -22,7 +22,6 @@ import type {
   PickFilesAction,
   UploadFilesAction,
   ScreenContextDefinition,
-  NavigateScreenAction,
   ShowDialogAction,
 } from "@ensembleui/react-framework";
 import { isEmpty, isString, merge, isObject, get, set } from "lodash-es";
@@ -113,10 +112,7 @@ export const useExecuteCode: EnsembleActionHook<
                 storage,
                 formatter,
                 env: appContext?.env,
-                navigateScreen: (
-                  targetScreen: NavigateScreenAction,
-                  data: unknown,
-                ): void =>
+                navigateScreen: (targetScreen: string, data: unknown): void =>
                   navigateApi(
                     targetScreen,
                     data,
