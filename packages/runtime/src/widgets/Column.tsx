@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { Col } from "antd";
 import { indexOf, keys } from "lodash-es";
 import {
@@ -11,9 +11,10 @@ import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import type { FlexboxProps } from "../shared/types";
 import { getColor, getCrossAxis, getMainAxis } from "../shared/styles";
+import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
 export const Column: React.FC<FlexboxProps> = (props) => {
-  const { "item-template": itemTemplate, children, ...rest } = props;
+  const { "item-template": itemTemplate, children, onTap, ...rest } = props;
   const childrenFirst =
     indexOf(keys(props), "children") < indexOf(keys(props), "item-template");
 
@@ -26,10 +27,17 @@ export const Column: React.FC<FlexboxProps> = (props) => {
   const renderedChildren = useMemo(() => {
     return children ? EnsembleRuntime.render(children) : null;
   }, [children]);
-
+  const action = useEnsembleAction(onTap);
+  const onClickCallback = useCallback(() => {
+    if (!action) {
+      return;
+    }
+    action.callback();
+  }, [action]);
   return (
     <Col
       className={values?.styles?.names}
+      onClick={onClickCallback}
       ref={rootRef}
       style={{
         flexDirection: "column",
@@ -46,6 +54,7 @@ export const Column: React.FC<FlexboxProps> = (props) => {
         borderStyle: props.styles?.borderWidth ? "solid" : undefined,
         display: "flex",
         minHeight: "unset",
+        cursor: "pointer",
         ...values?.styles,
       }}
     >

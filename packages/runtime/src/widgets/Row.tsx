@@ -14,8 +14,7 @@ import type { FlexboxProps } from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
 export const Row: React.FC<FlexboxProps> = (props) => {
-  const { "item-template": itemTemplate, children, ...rest } = props;
-  const [isHovered, setIsHovered] = useState(false);
+  const { "item-template": itemTemplate, children, onTap, ...rest } = props;
   const childrenFirst =
     indexOf(keys(props), "children") < indexOf(keys(props), "item-template");
 
@@ -28,7 +27,7 @@ export const Row: React.FC<FlexboxProps> = (props) => {
   const renderedChildren = useMemo(() => {
     return children ? EnsembleRuntime.render(children) : null;
   }, [children]);
-  const action = useEnsembleAction(props?.onTap);
+  const action = useEnsembleAction(onTap);
   const onClickCallback = useCallback(() => {
     if (!action) {
       return;
@@ -38,9 +37,8 @@ export const Row: React.FC<FlexboxProps> = (props) => {
   return (
     <AntRow
       className={values?.styles?.names}
+      onClick={onClickCallback}
       ref={rootRef}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       style={{
         justifyContent: props.mainAxis && getMainAxis(props.mainAxis),
         alignItems: props.crossAxis && getCrossAxis(props.crossAxis),
@@ -61,10 +59,9 @@ export const Row: React.FC<FlexboxProps> = (props) => {
         flexDirection: "row",
         flexFlow: "unset",
         flexGrow: "unset",
-        cursor: isHovered ? "pointer" : "auto",
+        cursor: "pointer",
         ...values?.styles,
       }}
-      onClick={onClickCallback}
     >
       {childrenFirst ? renderedChildren : null}
       {namedData.map((n, index) => (
