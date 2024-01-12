@@ -12,6 +12,7 @@ import {
   DateFormatter,
   useApplicationContext,
   unwrapWidget,
+  useCustomScope,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -67,6 +68,7 @@ export const useExecuteCode: EnsembleActionHook<
   const isCodeString = isString(action);
   const screen = useScreenContext();
   const storage = useEnsembleStorage();
+  const customScope = useCustomScope();
   const formatter = DateFormatter();
   const navigate = useNavigate();
   const location = useLocation();
@@ -111,8 +113,18 @@ export const useExecuteCode: EnsembleActionHook<
                 storage,
                 formatter,
                 env: appContext?.env,
-                navigateScreen: (targetScreen: NavigateScreenAction): void =>
-                  navigateApi(targetScreen, screen, navigate),
+                navigateScreen: (
+                  targetScreen: NavigateScreenAction,
+                  data: unknown,
+                ): void =>
+                  navigateApi(
+                    targetScreen,
+                    data,
+                    screen,
+                    storage,
+                    customScope,
+                    navigate,
+                  ),
                 location: locationApi(location),
               },
             },
@@ -133,6 +145,7 @@ export const useExecuteCode: EnsembleActionHook<
     formatter,
     appContext?.env,
     location,
+    customScope,
     navigate,
     options?.context,
     onCompleteAction,
