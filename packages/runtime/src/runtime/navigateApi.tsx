@@ -13,8 +13,8 @@ export const navigateApi = (
   data: unknown,
   screenContext: ScreenContextDefinition,
   storage: EnsembleStorage,
-  customScope: Record<string, unknown>,
   navigate: NavigateFunction,
+  customScope?: Record<string, unknown>,
 ): void => {
   const hasOptions = !isString(targetScreen);
   const screenName = hasOptions ? targetScreen.name : targetScreen;
