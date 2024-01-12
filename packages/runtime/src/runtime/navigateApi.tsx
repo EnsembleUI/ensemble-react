@@ -1,7 +1,6 @@
 import {
   evaluate,
   findExpressions,
-  type NavigateScreenAction,
   type ScreenContextDefinition,
   type EnsembleStorage,
 } from "@ensembleui/react-framework";
@@ -9,19 +8,16 @@ import { cloneDeep, isString, set } from "lodash-es";
 import type { NavigateFunction } from "react-router-dom";
 
 export const navigateApi = (
-  targetScreen: NavigateScreenAction,
+  targetScreen: string,
   data: unknown,
   screenContext: ScreenContextDefinition,
   storage: EnsembleStorage,
   navigate: NavigateFunction,
   customScope?: Record<string, unknown>,
 ): void => {
-  const hasOptions = !isString(targetScreen);
-  const screenName = hasOptions ? targetScreen.name : targetScreen;
-
   // find the matching screen
   const matchingScreen = screenContext?.app?.screens.find(
-    (s) => s.name.toLowerCase() === screenName.toLowerCase(),
+    (s) => s.name.toLowerCase() === targetScreen.toLowerCase(),
   );
 
   if (!matchingScreen) {
@@ -29,7 +25,7 @@ export const navigateApi = (
   }
 
   // set additional inputs
-  const inputs = !isString(targetScreen) && data ? cloneDeep(data) : {};
+  const inputs = isString(targetScreen) && data ? cloneDeep(data) : {};
 
   const expressionMap: string[][] = [];
   findExpressions(inputs, [], expressionMap);

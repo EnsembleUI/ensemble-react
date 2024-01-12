@@ -2,7 +2,7 @@ View:
   header:
     title:
       Header:
-      
+
   body:
     Column:
       styles:
@@ -14,3 +14,14 @@ View:
             text: Actions
         - Markdown:
             text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).
+        - Text:
+            styles:
+              names: heading-1
+            text: ensemble.navigateScreen()
+        - Markdown:
+            text: use `ensemble.navigateScreen(screenname, data)` for navigate screen programmatically. click below button to check.
+        - Button:
+            label: navigate screen
+            onTap:
+              executeCode: |
+                ensemble.navigateScreen('home', {name: 'Sagar'})
