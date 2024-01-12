@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.1.12
+
+### Patch Changes
+
+- f9a80b9: Add active step indicator to Stepper widget
+
 ## 0.1.11
 
 ### Patch Changes
