@@ -80,7 +80,9 @@ export const Chart: React.FC<ChartProps> = (props) => {
   const context = useScreenContext();
   const storage = useEnsembleStorage();
   const { resolvedTestId, resolvedWidgetId } = useWidgetId(props.id);
-  const { rootRef } = useHtmlPassThrough(resolvedTestId, resolvedWidgetId);
+  const { rootRef } = useHtmlPassThrough(
+    props.id ? resolvedWidgetId : resolvedTestId ?? "",
+  );
   const [error, setError] = useState<unknown>(null);
   const [isExpired, setIsExpired] = useState(false);
   const [config, setConfig] = useState<ChartConfigs>();

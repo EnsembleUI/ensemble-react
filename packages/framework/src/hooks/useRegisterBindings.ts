@@ -1,14 +1,6 @@
 import type { RefCallback } from "react";
 import { useEffect, useMemo } from "react";
-import {
-  compact,
-  get,
-  isEmpty,
-  isString,
-  merge,
-  set,
-  mapKeys,
-} from "lodash-es";
+import { compact, get, isEmpty, isString, merge, set } from "lodash-es";
 import isEqual from "react-fast-compare";
 import { atom, useAtom } from "jotai";
 import type { InvokableMethods } from "../state";
@@ -32,21 +24,10 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   methods?: InvokableMethods,
 ): RegisterBindingsResult<T> => {
   const testId = get(values, ["testId"]);
-  let htmlAttributes = get(values, "htmlAttributes") as Record<string, string>;
-
-  if (!isEmpty(htmlAttributes) && !isString(htmlAttributes)) {
-    htmlAttributes = mapKeys(htmlAttributes, (_, key) => key.toLowerCase());
-  }
 
   const { resolvedWidgetId, resolvedTestId } = useWidgetId(
     id,
     isString(testId) ? String(testId) : undefined,
-  );
-  const { rootRef } = useHtmlPassThrough(
-    resolvedTestId,
-    resolvedWidgetId,
-    id,
-    htmlAttributes,
   );
 
   const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
@@ -122,9 +103,20 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
     id,
   ]);
 
+  const updatedValues = widgetState?.values ?? newValues;
+  const htmlAttributes = get(updatedValues, "htmlAttributes") as Record<
+    string,
+    string
+  >;
+
+  const { rootRef } = useHtmlPassThrough(
+    id ? resolvedWidgetId : resolvedTestId ?? "",
+    htmlAttributes,
+  );
+
   return {
     id: resolvedWidgetId,
-    values: widgetState?.values ?? newValues,
+    values: updatedValues,
     rootRef,
   };
 };

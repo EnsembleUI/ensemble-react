@@ -69,7 +69,9 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   const DataColumns = props?.DataColumns;
   const itemTemplate = props["item-template"];
   const { resolvedWidgetId, resolvedTestId } = useWidgetId(props?.id);
-  const { rootRef } = useHtmlPassThrough(resolvedTestId, resolvedWidgetId);
+  const { rootRef } = useHtmlPassThrough(
+    props?.id ? resolvedWidgetId : resolvedTestId ?? "",
+  );
   const { namedData } = useTemplateData({ ...itemTemplate });
   const { values } = useRegisterBindings({ ...props }, props?.id);
   const headerStyle = values?.styles?.headerStyle;

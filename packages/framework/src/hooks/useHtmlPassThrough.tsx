@@ -1,33 +1,28 @@
 import type { RefCallback } from "react";
-import { isEmpty } from "lodash-es";
+import { isEmpty, isString, mapKeys } from "lodash-es";
 import { useCallback } from "react";
-import type { Expression } from "../shared";
 
 export const useHtmlPassThrough = (
-  resolvedTestId: string | undefined,
-  resolvedWidgetId: string,
-  id?: Expression<string>,
+  widgetId: string,
   htmlAttributes?: Record<string, string>,
 ): { rootRef: RefCallback<never> } => {
   const rootRef = useCallback(
     (node: never) => {
       if (node && "setAttribute" in node) {
-        (node as HTMLElement).setAttribute(
-          "data-testid",
-          id ? resolvedWidgetId : resolvedTestId ?? "",
-        );
+        if (!isEmpty(htmlAttributes) && !isString(htmlAttributes)) {
+          const htmlAttributesObj = mapKeys(htmlAttributes, (_, key) =>
+            key.toLowerCase(),
+          );
 
-        if (!isEmpty(htmlAttributes)) {
-          Object.keys(htmlAttributes).forEach((key: string) => {
-            (node as HTMLElement).setAttribute(
-              `data-${key}`,
-              htmlAttributes[key],
-            );
+          Object.keys(htmlAttributesObj).forEach((key: string) => {
+            (node as HTMLElement).setAttribute(key, htmlAttributesObj[key]);
           });
         }
+
+        (node as HTMLElement).setAttribute("data-testid", widgetId);
       }
     },
-    [id, resolvedTestId, resolvedWidgetId, htmlAttributes],
+    [widgetId, htmlAttributes],
   );
 
   return { rootRef };
