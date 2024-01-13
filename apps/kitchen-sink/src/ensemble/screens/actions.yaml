@@ -24,4 +24,4 @@ View:
             label: navigate screen
             onTap:
               executeCode: |
-                ensemble.navigateScreen('home', {name: 'Sagar'})
+                ensemble.navigateScreen({name: "home", inputs: {hello: colors.primary['900']}})

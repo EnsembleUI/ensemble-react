@@ -1,23 +1,21 @@
 import {
-  evaluate,
-  findExpressions,
   type ScreenContextDefinition,
-  type EnsembleStorage,
+  type NavigateScreenAction,
 } from "@ensembleui/react-framework";
-import { cloneDeep, isString, set } from "lodash-es";
+import { cloneDeep, isString } from "lodash-es";
 import type { NavigateFunction } from "react-router-dom";
 
 export const navigateApi = (
-  targetScreen: string,
-  data: unknown,
+  action: NavigateScreenAction,
   screenContext: ScreenContextDefinition,
-  storage: EnsembleStorage,
   navigate: NavigateFunction,
-  customScope?: Record<string, unknown>,
 ): void => {
+  const hasOptions = !isString(action);
+  const screenName = hasOptions ? action.name : action;
+
   // find the matching screen
-  const matchingScreen = screenContext?.app?.screens.find(
-    (s) => s.name.toLowerCase() === targetScreen.toLowerCase(),
+  const matchingScreen = screenContext.app?.screens.find(
+    (s) => s.name.toLowerCase() === screenName.toLowerCase(),
   );
 
   if (!matchingScreen) {
@@ -25,17 +23,8 @@ export const navigateApi = (
   }
 
   // set additional inputs
-  const inputs = isString(targetScreen) && data ? cloneDeep(data) : {};
-
-  const expressionMap: string[][] = [];
-  findExpressions(inputs, [], expressionMap);
-  expressionMap.forEach(([path, value]) => {
-    const result = evaluate(screenContext, value, {
-      ensemble: { storage },
-      ...customScope,
-    });
-    set(inputs, path, result);
-  });
+  const inputs =
+    !isString(action) && action.inputs ? cloneDeep(action.inputs) : {};
 
   navigate(`/${matchingScreen.name.toLowerCase()}`, { state: inputs });
 };

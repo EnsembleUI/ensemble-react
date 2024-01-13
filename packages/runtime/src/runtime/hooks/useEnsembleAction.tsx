@@ -12,7 +12,6 @@ import {
   DateFormatter,
   useApplicationContext,
   unwrapWidget,
-  useCustomScope,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -23,6 +22,7 @@ import type {
   UploadFilesAction,
   ScreenContextDefinition,
   ShowDialogAction,
+  NavigateScreenAction,
 } from "@ensembleui/react-framework";
 import { isEmpty, isString, merge, isObject, get, set } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
@@ -67,7 +67,6 @@ export const useExecuteCode: EnsembleActionHook<
   const isCodeString = isString(action);
   const screen = useScreenContext();
   const storage = useEnsembleStorage();
-  const customScope = useCustomScope();
   const formatter = DateFormatter();
   const navigate = useNavigate();
   const location = useLocation();
@@ -112,15 +111,8 @@ export const useExecuteCode: EnsembleActionHook<
                 storage,
                 formatter,
                 env: appContext?.env,
-                navigateScreen: (targetScreen: string, data: unknown): void =>
-                  navigateApi(
-                    targetScreen,
-                    data,
-                    screen,
-                    storage,
-                    navigate,
-                    customScope,
-                  ),
+                navigateScreen: (targetScreen: NavigateScreenAction): void =>
+                  navigateApi(targetScreen, screen, navigate),
                 location: locationApi(location),
               },
             },
@@ -141,7 +133,6 @@ export const useExecuteCode: EnsembleActionHook<
     formatter,
     appContext?.env,
     location,
-    customScope,
     navigate,
     options?.context,
     onCompleteAction,
