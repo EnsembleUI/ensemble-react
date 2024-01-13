@@ -1,15 +1,15 @@
 import type { RefCallback } from "react";
-import { isEmpty, isString, mapKeys } from "lodash-es";
+import { mapKeys, isObject } from "lodash-es";
 import { useCallback } from "react";
 
 export const useHtmlPassThrough = (
-  widgetId: string,
+  testId?: string,
   htmlAttributes?: Record<string, string>,
 ): { rootRef: RefCallback<never> } => {
   const rootRef = useCallback(
     (node: never) => {
       if (node && "setAttribute" in node) {
-        if (!isEmpty(htmlAttributes) && !isString(htmlAttributes)) {
+        if (isObject(htmlAttributes)) {
           const htmlAttributesObj = mapKeys(htmlAttributes, (_, key) =>
             key.toLowerCase(),
           );
@@ -19,10 +19,12 @@ export const useHtmlPassThrough = (
           });
         }
 
-        (node as HTMLElement).setAttribute("data-testid", widgetId);
+        if (testId) {
+          (node as HTMLElement).setAttribute("data-testid", testId);
+        }
       }
     },
-    [widgetId, htmlAttributes],
+    [testId, htmlAttributes],
   );
 
   return { rootRef };
