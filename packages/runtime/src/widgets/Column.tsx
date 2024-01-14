@@ -11,6 +11,7 @@ import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import type { FlexboxProps } from "../shared/types";
 import { getColor, getCrossAxis, getMainAxis } from "../shared/styles";
+// eslint-disable-next-line import/no-cycle
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
 export const Column: React.FC<FlexboxProps> = (props) => {

@@ -14,20 +14,6 @@ View:
             text: The Kitchen Sink
         - Markdown:
             text: This application is built with Ensemble and serves as a guide for how to implement common UI patterns with Ensemble React.
-        - Row:
-            onTap:
-              executeCode:  |
-                console.log('Row Clicked');
-            children:
-              - Text:
-                  text: Testing the Row 
-        - Column:
-            onTap:
-              executeCode:  |
-                console.log('Column Clicked');
-            children:
-              - Text:
-                  text: Testing the Column 
 
 Global:
   scriptName: hello.js
