@@ -29,7 +29,7 @@ Widget:
             searchKey: email
             onSearch:
               invokeApi:
-                name: searchUsers
+                name: findUsers
                 inputs:
                   search: ${search}
         - Row:
@@ -50,3 +50,10 @@ Widget:
                       icon: Settings
                       onTap:
                         navigateScreen: Collections
+
+API:
+  findUsers:
+    uri: https://dummyjson.com/users/search?q=${search}
+    method: GET
+    inputs:
+      - search

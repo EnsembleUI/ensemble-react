@@ -11,6 +11,7 @@ import {
   remove,
   set,
   isString,
+  merge,
 } from "lodash-es";
 import type {
   EnsembleScreenModel,
@@ -63,7 +64,9 @@ export const EnsembleParser = {
         return EnsembleParser.parseMenu(viewGroup);
       }
 
-      return EnsembleParser.parseScreen(name, screen, app, widgetApis);
+      const pageScreen = EnsembleParser.parseScreen(name, screen, app);
+      merge(pageScreen?.apis, widgetApis);
+      return pageScreen;
     });
     if (isEmpty(screens)) {
       throw Error("Application must have at least one screen");
@@ -111,8 +114,7 @@ export const EnsembleParser = {
     name: string,
     screen: EnsembleScreenYAML,
     app: ApplicationDTO,
-    widgetApis?: EnsembleAPIModel[],
-  ): EnsembleScreenModel | EnsembleMenuModel => {
+  ): EnsembleScreenModel => {
     const view = get(screen, "View");
     const viewNode = get(view, "body");
     const header = get(view, "header");
@@ -122,7 +124,7 @@ export const EnsembleParser = {
       throw new Error("Invalid screen: missing view widget");
     }
     const viewWidget = unwrapWidget(viewNode);
-    const apis = unwrapApiModels(screen).concat(widgetApis ?? []);
+    const apis = unwrapApiModels(screen);
 
     const globalBlock = get(screen, "Global");
     const scriptName = get(globalBlock, "scriptName");
