@@ -17,9 +17,8 @@ import {
   type ScreenContextDefinition,
   type Expression,
   useScreenContext,
-  useWidgetId,
-  useHtmlPassThrough,
   useEnsembleStorage,
+  useRegisterBindings,
 } from "@ensembleui/react-framework";
 import { Alert } from "antd";
 import { isEqualWith } from "lodash-es";
@@ -79,10 +78,7 @@ const CONFIG_EVAL_EXPIRY = 5000;
 export const Chart: React.FC<ChartProps> = (props) => {
   const context = useScreenContext();
   const storage = useEnsembleStorage();
-  const { resolvedTestId, resolvedWidgetId } = useWidgetId(props.id);
-  const { rootRef } = useHtmlPassThrough(
-    props.id ? resolvedWidgetId : resolvedTestId ?? "",
-  );
+  const { rootRef } = useRegisterBindings({ ...props }, props.id);
   const [error, setError] = useState<unknown>(null);
   const [isExpired, setIsExpired] = useState(false);
   const [config, setConfig] = useState<ChartConfigs>();

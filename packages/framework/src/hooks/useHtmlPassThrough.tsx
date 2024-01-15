@@ -3,8 +3,8 @@ import { mapKeys, isObject } from "lodash-es";
 import { useCallback } from "react";
 
 export const useHtmlPassThrough = (
-  testId?: string,
   htmlAttributes?: Record<string, string>,
+  testId?: string,
 ): { rootRef: RefCallback<never> } => {
   const rootRef = useCallback(
     (node: never) => {

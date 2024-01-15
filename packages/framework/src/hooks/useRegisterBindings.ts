@@ -110,8 +110,8 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   >;
 
   const { rootRef } = useHtmlPassThrough(
-    id ? resolvedWidgetId : resolvedTestId ?? "",
     htmlAttributes,
+    id ? resolvedWidgetId : resolvedTestId ?? "",
   );
 
   return {
