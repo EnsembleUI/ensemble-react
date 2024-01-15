@@ -1,30 +1,36 @@
-import { EnsembleApp } from "@ensembleui/react-runtime";
-// import { starterApp } from "./ensemble";
+import { initializeApp } from "firebase/app";
+import { initializeFirestore } from "firebase/firestore/lite";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { AppPreview } from "./AppPreview";
+import { AppSelector } from "./AppSelector";
 
 import "./App.css";
 
-import { initializeApp } from "firebase/app";
-import { initializeFirestore } from "firebase/firestore/lite";
-import { getFirestoreApplicationLoader } from "@ensembleui/react-framework";
-
 export const firebaseApp = initializeApp({
-  apiKey: "AIzaSyC3E_Y3y6ufwLNRe32PqmlFRXsiYEZ2-I4",
-  authDomain: "ensemble-web-studio-dev.firebaseapp.com",
-  projectId: "ensemble-web-studio-dev",
-  storageBucket: "ensemble-web-studio-dev.appspot.com",
-  messagingSenderId: "126811761383",
-  appId: "1:126811761383:web:582bde07712c82bec7d042",
-  measurementId: "G-95XC4X2T4S",
+  apiKey: process.env.REACT_APP_apiKey,
+  authDomain: process.env.REACT_APP_authDomain,
+  projectId: process.env.REACT_APP_projectId,
+  storageBucket: process.env.REACT_APP_storageBucket,
+  messagingSenderId: process.env.REACT_APP_messagingSenderId,
+  appId: process.env.REACT_APP_appId,
+  measurementId: process.env.REACT_APP_measurementId,
 });
 export const db = initializeFirestore(firebaseApp, {});
 
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <AppSelector />,
+  },
+  {
+    path: "/preview/:previewId",
+    element: <AppPreview db={db} />,
+  },
+]);
 const App: React.FC = () => {
   return (
     <div className="App">
-      <EnsembleApp
-        appId="0DTXU6S5DzMwTvLAjAeW"
-        loader={getFirestoreApplicationLoader(db)}
-      />
+      <RouterProvider router={router} />
     </div>
   );
 };
