@@ -14,7 +14,7 @@ interface EnsembleEntryProps {
 export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({ entry }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const hasMenu = "items" in entry;
   const isMobileView = window.innerWidth <= 768;
@@ -36,14 +36,15 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({ entry }) => {
     return (
       <div style={{ display: "flex", flexDirection: "row" }}>
         <SideBarMenu
-          collapsed={collapsed}
+          isCollapsed={isCollapsed}
           enableSearch={false}
           footer={entry.footer}
           header={entry.header}
+          isCollapsible={entry.isCollapsible}
           id={entry.id}
           items={entry.items}
           onCollapse={entry.onCollapse}
-          setCollapsed={setCollapsed}
+          setIsCollapsed={setIsCollapsed}
           styles={entry.styles}
         />
         <div
@@ -53,7 +54,7 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({ entry }) => {
             marginTop: isMobileView ? TOP_SIDEBAR_HEIGHT : "0px",
             marginLeft: getBodyMarginLeft(
               isMobileView,
-              collapsed,
+              isCollapsed,
               String(entry?.styles?.width),
             ),
             transition: "margin-left 0.2s",

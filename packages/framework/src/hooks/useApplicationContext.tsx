@@ -1,11 +1,12 @@
 import { Provider, useAtomValue } from "jotai";
-import { useHydrateAtoms } from "jotai/utils";
+import { useAtomCallback, useHydrateAtoms } from "jotai/utils";
 import {
   appAtom,
   type ApplicationContextDefinition,
   defaultApplicationContext,
 } from "../state";
-import type { EnsembleAppModel } from "../shared/models";
+import type { EnsembleAppModel, EnsembleMenuModel } from "../shared/models";
+import { useCallback } from "react";
 
 interface ApplicationContextProps {
   app: EnsembleAppModel;
@@ -37,6 +38,18 @@ export const useApplicationContext =
     const appContext = useAtomValue(appAtom);
     return appContext;
   };
+
+export const useUpdateApplicationContext = (): ((
+  context: Partial<ApplicationContextDefinition>,
+) => void) => {
+  const appContextCallback = useAtomCallback(
+    useCallback((get, set, context: Partial<ApplicationContextDefinition>) => {
+      const appContext = get(appAtom);
+      set(appAtom, { ...appContext, ...context });
+    }, []),
+  );
+  return appContextCallback;
+};
 
 const HydrateAtoms: React.FC<
   React.PropsWithChildren<{ appContext: ApplicationContextDefinition }>

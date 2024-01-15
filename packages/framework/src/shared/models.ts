@@ -44,6 +44,7 @@ export interface EnsembleMenuModel {
   footer?: EnsembleWidget;
   styles?: Record<string, unknown>;
   id?: string;
+  isCollapsible?: boolean;
   onCollapse?: EnsembleAction;
 }
 

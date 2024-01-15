@@ -21,8 +21,8 @@ import type {
   UploadFilesAction,
   ScreenContextDefinition,
 } from "@ensembleui/react-framework";
-import { isEmpty, isString, merge, isObject } from "lodash-es";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { isEmpty, isString, merge, isObject, cloneDeep } from "lodash-es";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useNavigateScreen } from "./useNavigateScreen";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
@@ -80,10 +80,13 @@ export const useExecuteCode: EnsembleActionHook<
   }, [action, isCodeString, screen]);
 
   const appContext = useApplicationContext();
+  localStorage.setItem("appContext", JSON.stringify(appContext));
+  console.log("useExecuteCode appContext", screen, appContext);
 
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,
   );
+
   const execute = useMemo(() => {
     if (!screen || !js) {
       return;
@@ -91,8 +94,21 @@ export const useExecuteCode: EnsembleActionHook<
 
     return (args: unknown) => {
       try {
+        console.log("useExecuteCode callback", screen, appContext);
+        const newScreen = {
+          ...screen,
+          app: {
+            ...screen?.app!,
+            menu: {
+              ...screen?.app?.menu!,
+              ...appContext?.application?.menu!,
+            },
+          },
+        };
+        console.log("newScreen", newScreen);
+
         const retVal = evaluate(
-          screen,
+          newScreen as ScreenContextDefinition,
           js,
           merge(
             { ensemble: { storage, formatter, env: appContext?.env } },
@@ -111,10 +127,11 @@ export const useExecuteCode: EnsembleActionHook<
     js,
     storage,
     formatter,
-    appContext?.env,
+    appContext,
     options?.context,
     onCompleteAction,
   ]);
+
   return execute ? { callback: execute } : undefined;
 };
 

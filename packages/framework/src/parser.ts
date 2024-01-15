@@ -162,6 +162,7 @@ export const EnsembleParser = {
       footer: footerDef ? unwrapWidget(footerDef) : undefined,
       styles: get(menu, [menuType, "styles"]) as Record<string, unknown>,
       id: get(menu, [menuType, "id"]) as string,
+      isCollapsible: get(menu, [menuType, "isCollapsible"]) as boolean,
       onCollapse: get(menu, [menuType, "onCollapse"]) as EnsembleAction,
     };
   },

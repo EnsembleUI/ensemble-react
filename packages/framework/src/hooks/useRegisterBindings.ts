@@ -10,6 +10,10 @@ import { useWidgetId } from "./useWidgetId";
 import { useCustomScope } from "./useCustomScope";
 import { useWidgetState } from "./useWidgetState";
 import { useStyleNames } from "./useStyleNames";
+import {
+  useApplicationContext,
+  useUpdateApplicationContext,
+} from "./useApplicationContext";
 
 export interface RegisterBindingsResult<T> {
   id: string;
@@ -32,6 +36,36 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   const styleProperties = useStyleNames(
     isString(styleNames) ? String(styleNames) : "",
   );
+
+  const appContext = useApplicationContext();
+  console.log("useRegisterBindings", resolvedWidgetId, widgetState, appContext);
+  const updateContext = useUpdateApplicationContext();
+
+  useEffect(() => {
+    const newMenu = {
+      ...appContext?.application?.menu!,
+      ...values,
+      ...methods,
+    };
+    console.log("useRegisterBindings useEffect", id, newMenu);
+    if (
+      id === appContext?.application?.menu?.id &&
+      !isEqual(newMenu, appContext?.application?.menu)
+    ) {
+      console.log("useRegisterBindings updateContext");
+      updateContext({
+        ...appContext,
+        application: {
+          ...appContext?.application!,
+          menu: {
+            ...appContext?.application?.menu!,
+            ...values,
+            ...methods,
+          },
+        },
+      });
+    }
+  }, [id, appContext?.application?.menu, updateContext, values, methods]);
 
   const styles = merge({}, styleProperties, values?.styles);
   if (!isEmpty(styles)) {
@@ -71,6 +105,7 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   }, [customScope, expressions, resolvedWidgetId]);
 
   const [bindings] = useAtom(bindingsAtom);
+  console.log("bindings", bindings);
 
   const newValues = merge({}, values, bindings) as T;
   useEffect(() => {

@@ -5,14 +5,17 @@ ViewGroup:
       width: 240px
       iconWidth: 20px
       iconHeight: 20px
-      backgroundColor: "#fcfeff"
-      labelColor: "#171B2A"
-      selectedColor: "#171B2A"
+      backgroundColor: lime
+      labelColor: blue
       labelFontSize: 1
-      headerCollapsedWidth: 160px
+      borderRadius: 10px
       onSelectStyles:
-        backgroundColor: "#D5DAEA"
-        borderRadius: 10px
+        iconWidth: 30px
+        iconHeight: 30px
+        backgroundColor: red
+        borderRadius: 20px
+        labelColor: green
+        labelFontSize: 2
     header:
       # Markdown:
       #   text: "# Ensemble"
@@ -43,7 +46,8 @@ ViewGroup:
     footer:
       Text:
         text: Give us feedback
+    isCollapsible: true
     onCollapse:
       executeCode:
         body: |-
-          console.log('mySidebar', mySidebar);
+          console.log('sidebar collapsed', mySidebar);

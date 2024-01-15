@@ -114,8 +114,8 @@ View:
         - Form:
             styles:
               labelPosition: start
-            onSubmit:
-              executeCode: console.log("Hello")
+            # onSubmit:
+            #   executeCode: console.log("Hello")
             children:
               - TextInput:
                   label: Name
@@ -141,7 +141,14 @@ View:
                   label: Submit
                   submitForm: true
                   onTap:
-                    executeCode: console.log(myCheckbox)
+                    executeCode:
+                      body: |-
+                        //console.log("mySidebar askEmbrace log", mySidebar.isCollapsed, mySidebar);
+                        //mySidebar.setSelectedItem("Collections");
+                        if (mySidebar.isCollapsed)
+                          mySidebar.expand();
+                        else
+                          mySidebar.collapse();
               - Button:
                   label: Cancel
                   onTap:

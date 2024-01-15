@@ -1,6 +1,6 @@
 import { isEmpty, last, merge, toString } from "lodash-es";
-import type { ScreenContextDefinition } from "./state/screen";
-import type { InvokableMethods } from "./state/widget";
+import { type ScreenContextDefinition } from "./state/screen";
+import { type InvokableMethods } from "./state/widget";
 import { sanitizeJs, debug } from "./shared";
 
 export const buildEvaluateFn = (
@@ -8,6 +8,7 @@ export const buildEvaluateFn = (
   js?: string,
   context?: Record<string, unknown>,
 ): (() => unknown) => {
+  console.log("buildEvaluateFn", screen, js, context);
   const widgets: [string, InvokableMethods | undefined][] = Object.entries(
     screen.widgets,
   ).map(([id, state]) => {
@@ -15,11 +16,16 @@ export const buildEvaluateFn = (
     const values = state?.values;
     return [id, merge({}, values, methods)];
   });
-
+  const menuWidget: Record<string, unknown> = {};
+  if (screen.app?.menu?.id) {
+    menuWidget[screen.app.menu.id] = screen.app.menu;
+  }
+  console.log("menuWidget", menuWidget);
   const invokableObj = Object.fromEntries([
     ...widgets,
     ...Object.entries(screen.inputs ?? {}),
     ...Object.entries(screen.data),
+    ...Object.entries(menuWidget),
     ...Object.entries(context ?? {}),
   ]);
   const globalBlock = screen.model?.global;

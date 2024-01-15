@@ -46,31 +46,30 @@ interface MenuItem {
   divider?: boolean;
   hasNotifications?: boolean;
 }
-interface MenuStyles {
+
+interface MenuSelectedStyles {
   backgroundColor?: TypeColors;
   labelColor?: TypeColors;
-  selectedColor?: TypeColors;
   labelFontSize?: number;
-  searchBoxColor?: TypeColors;
   iconWidth?: string;
   iconHeight?: string;
+  borderRadius?: string;
+}
+
+interface MenuStyles extends MenuSelectedStyles {
   width?: string;
-  headerCollapsedWidth?: string;
-  footerCollapsedWidth?: string;
-  onSelectStyles?: {
-    backgroundColor?: TypeColors;
-    borderRadius?: string;
-  };
+  onSelectStyles?: MenuSelectedStyles;
 }
 
 type MenuBaseProps = {
   items: MenuItem[];
   header?: EnsembleWidget;
   footer?: EnsembleWidget;
+  isCollapsible?: boolean;
   enableSearch?: boolean;
   onCollapse?: EnsembleAction;
-  collapsed: boolean;
-  setCollapsed: (collapsed: boolean) => void;
+  isCollapsed: boolean;
+  setIsCollapsed: (isCollapsed: boolean) => void;
 } & EnsembleWidgetProps<MenuStyles>;
 
 const renderMuiIcon = (
@@ -97,16 +96,40 @@ const renderMuiIcon = (
 };
 
 export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
+  const { setIsCollapsed, onCollapse, ...propsValues } = props;
   const navigate = useNavigate();
   const location = useLocation();
-  const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = useState<string>();
   const headerRef = useRef<HTMLDivElement>(null);
-  const action = useEnsembleAction(props.onCollapse);
+  const action = useEnsembleAction(onCollapse);
+
+  const collapse = useCallback(() => {
+    setIsCollapsed(true);
+  }, [props.isCollapsed, setIsCollapsed]);
+
+  const expand = useCallback(() => {
+    setIsCollapsed(false);
+  }, [props.isCollapsed, setIsCollapsed]);
+
+  const handleClick = useCallback(
+    (page: string, label?: string): void => {
+      setSelectedItem(
+        label ||
+          props.items.find((item) => item.page.toLowerCase() === page)?.label,
+      );
+      navigate(`/${page.toLowerCase()}`);
+    },
+    [props.items, navigate, setSelectedItem],
+  );
+
   const { values, rootRef } = useRegisterBindings(
-    { props, selectedItem },
+    { ...propsValues, selectedItem },
     props?.id,
     {
-      setSelectedItem,
+      setSelectedItem: handleClick,
+      setIsCollapsed,
+      collapse,
+      expand,
     },
   );
 
@@ -132,25 +155,23 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
   }, [location.pathname, props.items]);
 
   const onCollapseCallback = useCallback(() => {
-    props.setCollapsed(!props.collapsed);
+    setIsCollapsed(!props.isCollapsed);
 
     if (!action) {
       return;
     }
     action.callback({
       [props?.id || ""]: {
-        ...props,
-        collapsed: !props.collapsed,
+        ...propsValues,
+        isCollapsed: !props.isCollapsed,
         selectedItem,
-        setSelectedItem,
+        setSelectedItem: handleClick,
+        setIsCollapsed,
+        collapse,
+        expand,
       },
     });
-  }, [action, props, selectedItem, setSelectedItem]);
-
-  const handleClick = (page: string, label: string): void => {
-    setSelectedItem(label);
-    navigate(`/${page.toLowerCase()}`);
-  };
+  }, [action, props, selectedItem, setSelectedItem, collapse, expand]);
 
   const menuItemStyles = `
     .ant-menu-item-selected::after {
@@ -183,7 +204,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
         alignItems: isMobileView ? "flex-start" : "center",
         width: getSidebarWidth(
           isMobileView,
-          props.collapsed,
+          props.isCollapsed,
           props.styles?.width,
         ),
         height: isMobileView ? TOP_SIDEBAR_HEIGHT : "100vh",
@@ -193,14 +214,13 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
       {props.header ? (
         <Row
           style={{
-            padding: isMobileView || props.collapsed ? "0px" : "20px",
+            padding: isMobileView || props.isCollapsed ? "0px" : "20px",
             alignSelf: "center",
             justifyContent: "center",
             ...(isMobileView
               ? {
                   flex: "none",
                   marginRight: "10px",
-                  width: props?.styles?.headerCollapsedWidth,
                 }
               : {}),
           }}
@@ -228,15 +248,20 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
               data-testid={item.id}
               icon={renderMuiIcon(
                 item.icon,
-                props.styles?.iconWidth,
-                props.styles?.iconHeight,
+                values?.selectedItem === item.label
+                  ? props.styles?.onSelectStyles?.iconWidth
+                  : props.styles?.iconWidth,
+                values?.selectedItem === item.label
+                  ? props.styles?.onSelectStyles?.iconHeight
+                  : props.styles?.iconHeight,
               )}
               key={item.page}
               onClick={(): void => handleClick(item.page, item.label)}
               style={{
                 color:
                   values?.selectedItem === item.label
-                    ? (props.styles?.selectedColor as string) ?? "white"
+                    ? (props.styles?.onSelectStyles?.labelColor as string) ??
+                      "white"
                     : (props.styles?.labelColor as string) ?? "grey",
                 display: "flex",
                 justifyContent: "center",
@@ -247,8 +272,8 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
                     ? `${
                         parseInt(
                           `${
-                            props.styles?.labelFontSize
-                              ? props.styles.labelFontSize
+                            props.styles?.onSelectStyles?.labelFontSize
+                              ? props.styles?.onSelectStyles.labelFontSize
                               : 1
                           }` || "1",
                         ) + 0.2
@@ -264,7 +289,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
               }}
             >
               <span>
-                {!props.collapsed && item.label}
+                {!props.isCollapsed && item.label}
                 {item.hasNotifications ? (
                   <div
                     style={{
@@ -302,31 +327,30 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
           style={{
             alignSelf: "center",
             justifyContent: "center",
-            width: isMobileView
-              ? props?.styles?.footerCollapsedWidth
-              : "inherit",
           }}
         >
           <Col>{EnsembleRuntime.render([props.footer])}</Col>
         </span>
       ) : null}
 
-      <Icon
-        onClick={onCollapseCallback}
-        style={{
-          cursor: "pointer",
-          alignSelf: props.collapsed ? "center" : "end",
-          display: isMobileView ? "none" : "flex",
-        }}
-      >
-        {renderMuiIcon(
-          props.collapsed
-            ? "KeyboardDoubleArrowRight"
-            : "KeyboardDoubleArrowLeft",
-          "24px",
-          "24px",
-        )}
-      </Icon>
+      {props?.isCollapsible ? (
+        <Icon
+          onClick={onCollapseCallback}
+          style={{
+            cursor: "pointer",
+            alignSelf: props.isCollapsed ? "center" : "end",
+            display: isMobileView ? "none" : "flex",
+          }}
+        >
+          {renderMuiIcon(
+            props.isCollapsed
+              ? "KeyboardDoubleArrowRight"
+              : "KeyboardDoubleArrowLeft",
+            "24px",
+            "24px",
+          )}
+        </Icon>
+      ) : null}
     </Col>
   );
 };
