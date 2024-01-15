@@ -2,7 +2,10 @@ import type { ReactNode } from "react";
 import React, { useState, useEffect } from "react";
 import { Menu as AntMenu, Col, Divider, Row } from "antd";
 import * as MuiIcons from "@mui/icons-material";
-import type { EnsembleWidget } from "@ensembleui/react-framework";
+import {
+  useRegisterBindings,
+  type EnsembleWidget,
+} from "@ensembleui/react-framework";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getColor } from "../shared/styles";
 import { EnsembleRuntime } from "./runtime";
@@ -83,6 +86,7 @@ const renderMuiIcon = (
 };
 
 export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
+  const { values } = useRegisterBindings({ ...props });
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
@@ -157,8 +161,8 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
               style={{
                 color:
                   selectedItem === item.label
-                    ? (props.styles?.selectedColor as string) ?? "white"
-                    : (props.styles?.labelColor as string) ?? "grey",
+                    ? (values?.styles?.selectedColor as string) ?? "white"
+                    : (values?.styles?.labelColor as string) ?? "grey",
                 display: "flex",
                 justifyContent: "center",
                 borderRadius: 0,
