@@ -17,8 +17,8 @@ import {
   type ScreenContextDefinition,
   type Expression,
   useScreenContext,
-  useWidgetId,
   useEnsembleStorage,
+  useRegisterBindings,
 } from "@ensembleui/react-framework";
 import { Alert } from "antd";
 import { isEqualWith } from "lodash-es";
@@ -76,9 +76,10 @@ const tabsConfig = {
 const CONFIG_EVAL_EXPIRY = 5000;
 
 export const Chart: React.FC<ChartProps> = (props) => {
+  const { config: chartConfig, ...rest } = props;
   const context = useScreenContext();
   const storage = useEnsembleStorage();
-  const { rootRef } = useWidgetId(props.id);
+  const { rootRef } = useRegisterBindings({ ...rest }, props.id);
   const [error, setError] = useState<unknown>(null);
   const [isExpired, setIsExpired] = useState(false);
   const [config, setConfig] = useState<ChartConfigs>();
@@ -92,7 +93,7 @@ export const Chart: React.FC<ChartProps> = (props) => {
       const evaluatedConfig = evaluate<ChartConfigs>(
         context as ScreenContextDefinition,
         // eslint-disable-next-line prefer-named-capture-group
-        props.config?.toString()?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
+        chartConfig?.toString()?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
         {
           ensemble: {
             storage,
@@ -109,9 +110,9 @@ export const Chart: React.FC<ChartProps> = (props) => {
         setError(e);
       }
     }
-  }, [config, context, error, props.config, storage]);
+  }, [config, context, error, chartConfig, storage]);
 
-  if (!props.config) {
+  if (!chartConfig) {
     return <Alert message="Configuration is missing" type="error" />;
   }
 

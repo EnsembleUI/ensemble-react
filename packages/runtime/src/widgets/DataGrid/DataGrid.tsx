@@ -3,11 +3,10 @@ import {
   useTemplateData,
   type Expression,
   type EnsembleWidget,
-  useWidgetId,
   evaluate,
   defaultScreenContext,
   useRegisterBindings,
-  EnsembleAction,
+  type EnsembleAction,
 } from "@ensembleui/react-framework";
 import { useCallback, type ReactElement } from "react";
 import { get } from "lodash-es";
@@ -65,11 +64,13 @@ export interface DataGridRowTemplate {
 }
 
 export const DataGrid: React.FC<GridProps> = (props) => {
-  const DataColumns = props?.DataColumns;
-  const itemTemplate = props["item-template"];
-  const { resolvedWidgetId, rootRef } = useWidgetId(props?.id);
+  const { "item-template": itemTemplate, DataColumns, ...rest } = props;
+  const {
+    rootRef,
+    id: resolvedWidgetId,
+    values,
+  } = useRegisterBindings({ ...rest }, props?.id);
   const { namedData } = useTemplateData({ ...itemTemplate });
-  const { values } = useRegisterBindings({ ...props }, props?.id);
   const headerStyle = values?.styles?.headerStyle;
   const onTapAction = useEnsembleAction(itemTemplate.template.properties.onTap);
 

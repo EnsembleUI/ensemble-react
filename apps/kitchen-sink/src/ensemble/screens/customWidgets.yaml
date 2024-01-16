@@ -2,7 +2,7 @@ View:
   header:
     title:
       Header:
-      
+
   body:
     Column:
       styles:
@@ -12,5 +12,13 @@ View:
             styles:
               names: heading-1
             text: Extending with Custom Widgets
+        - Markdown:
+            text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).
+        - Text:
+            styles:
+              names: heading-1
+            text: Adding HTML Attributes
+            htmlAttributes:
+              value: testvalue
         - Markdown:
             text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).

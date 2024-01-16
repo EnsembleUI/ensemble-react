@@ -7,6 +7,7 @@ import type { InvokableMethods } from "../state";
 import { createBindingAtom } from "../state";
 import { findExpressions } from "../shared";
 import { useWidgetId } from "./useWidgetId";
+import { useHtmlPassThrough } from "./useHtmlPassThrough";
 import { useCustomScope } from "./useCustomScope";
 import { useWidgetState } from "./useWidgetState";
 import { useStyleNames } from "./useStyleNames";
@@ -23,10 +24,12 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   methods?: InvokableMethods,
 ): RegisterBindingsResult<T> => {
   const testId = get(values, ["testId"]);
-  const { resolvedWidgetId, rootRef } = useWidgetId(
+
+  const { resolvedWidgetId, resolvedTestId } = useWidgetId(
     id,
     isString(testId) ? String(testId) : undefined,
   );
+
   const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
   const styleNames = get(values, ["styles", "names"]) as unknown;
   const styleProperties = useStyleNames(
@@ -100,9 +103,20 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
     id,
   ]);
 
+  const updatedValues = widgetState?.values ?? newValues;
+  const htmlAttributes = get(updatedValues, "htmlAttributes") as Record<
+    string,
+    string
+  >;
+
+  const { rootRef } = useHtmlPassThrough(
+    htmlAttributes,
+    id ? resolvedWidgetId : resolvedTestId ?? "",
+  );
+
   return {
     id: resolvedWidgetId,
-    values: widgetState?.values ?? newValues,
+    values: updatedValues,
     rootRef,
   };
 };
