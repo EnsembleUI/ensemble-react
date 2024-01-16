@@ -64,13 +64,12 @@ export interface DataGridRowTemplate {
 }
 
 export const DataGrid: React.FC<GridProps> = (props) => {
-  const DataColumns = props?.DataColumns;
-  const itemTemplate = props["item-template"];
+  const { "item-template": itemTemplate, DataColumns, ...rest } = props;
   const {
     rootRef,
     id: resolvedWidgetId,
     values,
-  } = useRegisterBindings({ ...props }, props?.id);
+  } = useRegisterBindings({ ...rest }, props?.id);
   const { namedData } = useTemplateData({ ...itemTemplate });
   const headerStyle = values?.styles?.headerStyle;
   const onTapAction = useEnsembleAction(itemTemplate.template.properties.onTap);
