@@ -11,7 +11,7 @@ export interface CustomWidgetProps {
 }
 
 export const createCustomWidget = (
-  model: CustomWidgetModel,
+  widget: CustomWidgetModel,
 ): React.FC<CustomWidgetProps> => {
   const CustomWidget: React.FC<CustomWidgetProps> = ({ inputs }) => {
     const { values } = useRegisterBindings<Record<string, unknown>>({
@@ -19,7 +19,7 @@ export const createCustomWidget = (
     });
     return (
       <CustomScopeProvider value={values ?? inputs}>
-        {EnsembleRuntime.render([model.body])}
+        {EnsembleRuntime.render([widget.body])}
       </CustomScopeProvider>
     );
   };

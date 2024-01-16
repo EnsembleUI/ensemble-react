@@ -2,7 +2,7 @@ import fs from "node:fs";
 import { parse } from "yaml";
 import type { EnsembleScreenYAML, EnsembleWidgetYAML } from "../parser";
 import { EnsembleParser } from "../parser";
-import type { ApplicationDTO, EnsembleScreenModel } from "../shared";
+import type { ApplicationDTO } from "../shared";
 
 test("parses simple view widget", () => {
   const app = {
@@ -26,7 +26,7 @@ test("parses simple view widget", () => {
     "test",
     parse(testFile.toString()) as EnsembleScreenYAML,
     app,
-  ) as EnsembleScreenModel;
+  );
 
   expect(screen.name).toEqual("test");
   expect(screen.body).toMatchObject({

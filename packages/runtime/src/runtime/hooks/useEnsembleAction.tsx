@@ -143,17 +143,17 @@ export const useExecuteCode: EnsembleActionHook<
 
 export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const { apis, setData } = useScreenData();
-
   const [response, setResponse] = useState<Response>();
   const [error, setError] = useState<unknown>();
   const [isComplete, setIsComplete] = useState(false);
   const storage = useEnsembleStorage();
+
   const invokeApi = useMemo(() => {
     if (!apis || !action) {
       return;
     }
 
-    const apiModel = apis.find((model) => model.name === action.name);
+    const apiModel = apis?.find((model) => model.name === action.name);
     if (!apiModel) {
       return;
     }
@@ -190,7 +190,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
       }
     };
     return { callback };
-  }, [action, apis, setData]);
+  }, [action, storage, apis, setData]);
 
   const onResponseAction = useEnsembleAction(action?.onResponse);
   useEffect(() => {

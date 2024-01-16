@@ -29,7 +29,7 @@ Widget:
             searchKey: email
             onSearch:
               invokeApi:
-                name: searchUsers
+                name: findUsers
                 inputs:
                   search: ${search}
         - Row:

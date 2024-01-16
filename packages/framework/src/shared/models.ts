@@ -87,6 +87,7 @@ export interface CustomWidgetModel {
   inputs: string[];
   onLoad?: EnsembleAction;
   body: EnsembleWidget;
+  apis?: EnsembleAPIModel[];
 }
 
 export interface EnsembleThemeModel {
