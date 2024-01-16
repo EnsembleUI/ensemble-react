@@ -1,0 +1,24 @@
+{
+  "projects": {
+    "default": "ensemble-web-studio-dev",
+    "dev": "ensemble-web-studio-dev",
+    "prod": "ensemble-web-studio"
+  },
+  "targets": {
+    "ensemble-web-studio-dev": {
+      "hosting": {
+        "react-preview": [
+          "react-preview-dev"
+        ]
+      }
+    },
+    "ensemble-web-studio": {
+      "hosting": {
+        "react-preview": [
+          "react-preview"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
