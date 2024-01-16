@@ -1,5 +1,13 @@
 # @ensembleui/react-framework
 
+## 0.1.11
+
+### Patch Changes
+
+- 768201a: Added support of HTML Attributes passthrough
+- 0d3ccee: Fix the crashing of charts
+- caf9c41: added support of endpoint apis in custom widgets
+
 ## 0.1.10
 
 ### Patch Changes
