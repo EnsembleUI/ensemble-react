@@ -18,7 +18,8 @@ import {
   type Expression,
   useScreenContext,
   useEnsembleStorage,
-  useRegisterBindings,
+  useHtmlPassThrough,
+  useWidgetId,
 } from "@ensembleui/react-framework";
 import { Alert } from "antd";
 import { isEqualWith } from "lodash-es";
@@ -76,10 +77,13 @@ const tabsConfig = {
 const CONFIG_EVAL_EXPIRY = 5000;
 
 export const Chart: React.FC<ChartProps> = (props) => {
-  const { config: chartConfig, ...rest } = props;
   const context = useScreenContext();
   const storage = useEnsembleStorage();
-  const { rootRef } = useRegisterBindings({ ...rest }, props.id);
+  const { resolvedWidgetId, resolvedTestId } = useWidgetId(props?.id);
+  const { rootRef } = useHtmlPassThrough(
+    undefined,
+    props.id ? resolvedWidgetId : resolvedTestId,
+  );
   const [error, setError] = useState<unknown>(null);
   const [isExpired, setIsExpired] = useState(false);
   const [config, setConfig] = useState<ChartConfigs>();
@@ -93,7 +97,7 @@ export const Chart: React.FC<ChartProps> = (props) => {
       const evaluatedConfig = evaluate<ChartConfigs>(
         context as ScreenContextDefinition,
         // eslint-disable-next-line prefer-named-capture-group
-        chartConfig?.toString()?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
+        props.config?.toString()?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
         {
           ensemble: {
             storage,
@@ -110,9 +114,9 @@ export const Chart: React.FC<ChartProps> = (props) => {
         setError(e);
       }
     }
-  }, [config, context, error, chartConfig, storage]);
+  }, [config, context, error, props.config, storage]);
 
-  if (!chartConfig) {
+  if (!props.config) {
     return <Alert message="Configuration is missing" type="error" />;
   }
 

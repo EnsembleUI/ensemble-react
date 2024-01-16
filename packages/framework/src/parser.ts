@@ -11,7 +11,7 @@ import {
   remove,
   set,
   isString,
-  merge,
+  concat,
 } from "lodash-es";
 import type {
   EnsembleScreenModel,
@@ -65,8 +65,10 @@ export const EnsembleParser = {
       }
 
       const pageScreen = EnsembleParser.parseScreen(name, screen, app);
-      merge(pageScreen?.apis, widgetApis);
-      return pageScreen;
+      return {
+        ...pageScreen,
+        apis: concat(pageScreen.apis ?? [], widgetApis),
+      };
     });
     if (isEmpty(screens)) {
       throw Error("Application must have at least one screen");
