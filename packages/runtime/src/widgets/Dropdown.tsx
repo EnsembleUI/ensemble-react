@@ -1,18 +1,40 @@
 import { Form as AntForm, Select } from "antd";
-import { useCallback, useState } from "react";
-import { useRegisterBindings } from "@ensembleui/react-framework";
-import type { EnsembleAction, Expression } from "@ensembleui/react-framework";
+import { useCallback, useMemo, useState } from "react";
+import {
+  CustomScopeProvider,
+  evaluate,
+  useRegisterBindings,
+  useTemplateData,
+  defaultScreenContext,
+} from "@ensembleui/react-framework";
+import type {
+  CustomScope,
+  EnsembleAction,
+  EnsembleWidget,
+  Expression,
+  TemplateData,
+} from "@ensembleui/react-framework";
+import { get, isObject } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
+import { EnsembleRuntime } from "../runtime";
+
+export interface DropdownItemTemplace {
+  data: Expression<TemplateData>;
+  name: string;
+  template: EnsembleWidget;
+  value: Expression<string>;
+}
 
 export type DropdownProps = {
   label?: string;
   hintText?: string;
   value?: Expression<string | number>;
-  items: SelectOption[];
+  items?: SelectOption[];
   onItemSelect: EnsembleAction;
   autoComplete: Expression<boolean>;
+  "item-template"?: DropdownItemTemplace;
 } & EnsembleWidgetProps;
 
 interface SelectOption {
@@ -22,13 +44,15 @@ interface SelectOption {
 
 const Dropdown: React.FC<DropdownProps> = (props) => {
   const [selectedValue, setSelectedValue] = useState(props.value);
+  const { "item-template": itemTemplate, ...rest } = props;
   const { rootRef, values } = useRegisterBindings(
-    { ...props, selectedValue },
+    { ...rest, selectedValue },
     props.id,
     {
       setSelectedValue,
     },
   );
+
   const action = useEnsembleAction(props.onItemSelect);
   const onItemSelectCallback = useCallback(
     (value?: number | string) => {
@@ -39,6 +63,41 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     },
     [action],
   );
+
+  const { namedData } = useTemplateData({
+    data: itemTemplate?.data,
+    name: itemTemplate?.name,
+  });
+
+  const options = useMemo(() => {
+    if (values?.items) {
+      return values.items.map((item) => {
+        return (
+          <Select.Option key={item.value} value={item.value}>
+            {item.label}
+          </Select.Option>
+        );
+      });
+    }
+
+    if (isObject(itemTemplate)) {
+      return namedData.map((item: unknown, index) => {
+        return (
+          <Select.Option
+            key={index}
+            value={evaluate(defaultScreenContext, itemTemplate.value, {
+              [itemTemplate.name]: get(item, itemTemplate.name) as unknown,
+            })}
+          >
+            <CustomScopeProvider key={index} value={item as CustomScope}>
+              {EnsembleRuntime.render([itemTemplate.template])}
+            </CustomScopeProvider>
+          </Select.Option>
+        );
+      });
+    }
+  }, [values?.items, namedData, itemTemplate]);
+
   return (
     <AntForm.Item
       className={values?.styles?.names}
@@ -55,11 +114,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
           showSearch={Boolean(values?.autoComplete)}
           value={values?.selectedValue}
         >
-          {values?.items.map((option) => (
-            <Select.Option key={option.value} value={option.value}>
-              {option.label}
-            </Select.Option>
-          ))}
+          {options}
         </Select>
       </div>
     </AntForm.Item>
