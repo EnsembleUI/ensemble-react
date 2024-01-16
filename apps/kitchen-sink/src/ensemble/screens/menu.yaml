@@ -4,9 +4,9 @@ ViewGroup:
       width: 240px
       iconWidth: 20px
       iconHeight: 20px
-      backgroundColor: '#f7fbfa'
+      backgroundColor: "#f7fbfa"
       labelColor: "#171B2A"
-      selectedColor: "#171B2A"
+      selectedColor: ${colors.primary['900']}
       labelFontSize: 1
       onSelectStyles:
         backgroundColor: "#BBDBD2"
