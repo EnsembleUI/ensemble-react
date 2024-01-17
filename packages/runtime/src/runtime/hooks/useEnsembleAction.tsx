@@ -27,7 +27,7 @@ import type {
 import { isEmpty, isString, merge, isObject, get, set } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { navigateApi, navigateUrl } from "../navigateApi";
+import { navigateApi, navigateUrl } from "../navigation";
 import { locationApi } from "../locationApi";
 import { ModalContext } from "../modal";
 import { EnsembleRuntime } from "../runtime";

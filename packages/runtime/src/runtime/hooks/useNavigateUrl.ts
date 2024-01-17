@@ -1,14 +1,14 @@
-import { useNavigate } from "react-router-dom";
-import { cloneDeep, isString, set } from "lodash-es";
 import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import {
+  type NavigateUrlAction,
   evaluate,
   findExpressions,
   useCustomScope,
   useEnsembleStorage,
   useScreenContext,
-  type NavigateUrlAction,
 } from "@ensembleui/react-framework";
+import { cloneDeep, isString, set } from "lodash-es";
 import type { EnsembleActionHook } from "./useEnsembleAction";
 
 export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
@@ -22,6 +22,10 @@ export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
   const storage = useEnsembleStorage();
 
   const callback = useMemo(() => {
+    if (!screenUrl) {
+      return;
+    }
+
     const inputs =
       !isString(action) && action?.inputs ? cloneDeep(action.inputs) : {};
 
