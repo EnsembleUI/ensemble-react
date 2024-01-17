@@ -6,6 +6,7 @@ import {
   useRegisterBindings,
   useTemplateData,
   defaultScreenContext,
+  unwrapWidget,
 } from "@ensembleui/react-framework";
 import type {
   CustomScope,
@@ -14,7 +15,7 @@ import type {
   Expression,
   TemplateData,
 } from "@ensembleui/react-framework";
-import { get, isObject } from "lodash-es";
+import { get, isObject, isString } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
@@ -38,7 +39,7 @@ export type DropdownProps = {
 } & EnsembleWidgetProps;
 
 interface SelectOption {
-  label: Expression<string>;
+  label: Expression<string> | Record<string, unknown>;
   value: Expression<string | number>;
 }
 
@@ -71,10 +72,12 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
 
   const options = useMemo(() => {
     if (values?.items) {
-      return values.items.map((item) => {
+      return values?.items.map((item) => {
         return (
           <Select.Option key={item.value} value={item.value}>
-            {item.label}
+            {isString(item.label)
+              ? item.label
+              : EnsembleRuntime.render([unwrapWidget(item.label)])}
           </Select.Option>
         );
       });
@@ -85,7 +88,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
         return (
           <Select.Option
             key={index}
-            value={evaluate(defaultScreenContext, itemTemplate.value, {
+            value={evaluate<unknown>(defaultScreenContext, itemTemplate.value, {
               [itemTemplate.name]: get(item, itemTemplate.name) as unknown,
             })}
           >

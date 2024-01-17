@@ -34,7 +34,7 @@ View:
                   items:
                     - label: Option 1
                       value: 1
-                    - label: Option 2
+                    - label:
                       value: 2
               - Dropdown:
                   label: With Default Value
@@ -66,6 +66,18 @@ View:
                     template:
                       Text:
                         text: ${product.name}
+              - Dropdown:
+                  label: With the label widget
+                  hintText: Hint Text
+                  items:
+                    - label:
+                        Text:
+                          text: Here is my label 1
+                      value: 1
+                    - label:
+                        Text:
+                          text: Here is my label 2
+                      value: 2
 
         - Markdown:
             text: "## Charts"
