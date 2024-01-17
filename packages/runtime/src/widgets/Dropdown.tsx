@@ -71,8 +71,9 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   });
 
   const options = useMemo(() => {
+    const dropdownOptions = [];
     if (values?.items) {
-      return values?.items.map((item) => {
+      const tempOptions = values?.items.map((item) => {
         return (
           <Select.Option key={item.value} value={item.value}>
             {isString(item.label)
@@ -81,10 +82,12 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
           </Select.Option>
         );
       });
+
+      dropdownOptions.push(...tempOptions);
     }
 
     if (isObject(itemTemplate)) {
-      return namedData.map((item: unknown, index) => {
+      const tempOptions = namedData.map((item: unknown, index) => {
         return (
           <Select.Option
             key={index}
@@ -98,7 +101,11 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
           </Select.Option>
         );
       });
+
+      dropdownOptions.push(...tempOptions);
     }
+
+    return dropdownOptions;
   }, [values?.items, namedData, itemTemplate]);
 
   return (
