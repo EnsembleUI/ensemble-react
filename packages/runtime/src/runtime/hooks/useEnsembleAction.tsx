@@ -12,6 +12,7 @@ import {
   DateFormatter,
   useApplicationContext,
   unwrapWidget,
+  useEnsembleUser,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -89,7 +90,7 @@ export const useExecuteCode: EnsembleActionHook<
       )?.body;
     }
   }, [action, isCodeString, screen]);
-
+  const [user] = useEnsembleUser();
   const appContext = useApplicationContext();
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,
@@ -109,6 +110,7 @@ export const useExecuteCode: EnsembleActionHook<
             {
               ensemble: {
                 storage,
+                user,
                 formatter,
                 env: appContext?.env,
                 navigateScreen: (targetScreen: NavigateScreenAction): void =>
