@@ -54,10 +54,42 @@ View:
                       value: option1
                     - label: Option 2
                       value: option2
-        - Card:
-            styles:
-              maxWidth: unset
-              width: unset
+              - Dropdown:
+                  label: With item template
+                  item-template:
+                    data:
+                      [
+                        { name: "hello", value: 11 },
+                        { name: "buyyy", value: 22 },
+                      ]
+                    name: product
+                    value: ${product.value}
+                    template:
+                      Text:
+                        text: ${product.name}
+                  items:
+                    - label: Option 1
+                      value: option1
+                    - label: Option 2
+                      value: option2
+              - Dropdown:
+                  label: With the label widget
+                  hintText: Hint Text
+                  items:
+                    - label:
+                        Text:
+                          text: Here is my label 1
+                      value: 111
+                    - label:
+                        Text:
+                          text: Here is my label 2
+                      value: 222
+
+        - Markdown:
+            text: "## Charts"
+        - Column:
+            crossAxis: stretch
+            margin: 20px
             children:
               - Text:
                   styles:
