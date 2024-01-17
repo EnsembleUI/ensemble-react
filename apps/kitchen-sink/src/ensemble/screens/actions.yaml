@@ -19,9 +19,20 @@ View:
               names: heading-1
             text: ensemble.navigateScreen()
         - Markdown:
-            text: use `ensemble.navigateScreen(screenname, data)` for navigate screen programmatically. click below button to check.
+            text: use `ensemble.navigateScreen({screenname, data})` for navigate screen programmatically. click below button to check.
         - Button:
             label: navigate screen
             onTap:
               executeCode: |
                 ensemble.navigateScreen({name: "home", inputs: {hello: colors.primary['900']}})
+        - Text:
+            styles:
+              names: heading-1
+            text: ensemble.navigateUrl()
+        - Markdown:
+            text: use `ensemble.navigateUrl(path, data)` for navigate screen programmatically. click below button to check.
+        - Button:
+            label: navigate url
+            onTap:
+              executeCode: |
+                ensemble.navigateUrl('/widgets')

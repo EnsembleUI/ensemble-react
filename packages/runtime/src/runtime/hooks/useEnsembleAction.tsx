@@ -27,7 +27,7 @@ import type {
 import { isEmpty, isString, merge, isObject, get, set } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { navigateApi } from "../navigateApi";
+import { navigateApi, navigateUrl } from "../navigateApi";
 import { locationApi } from "../locationApi";
 import { ModalContext } from "../modal";
 import { EnsembleRuntime } from "../runtime";
@@ -114,6 +114,8 @@ export const useExecuteCode: EnsembleActionHook<
                 navigateScreen: (targetScreen: NavigateScreenAction): void =>
                   navigateApi(targetScreen, screen, navigate),
                 location: locationApi(location),
+                navigateUrl: (url: string, inputs?: Record<string, unknown>) =>
+                  navigateUrl(url, navigate, inputs),
               },
             },
             options?.context,
