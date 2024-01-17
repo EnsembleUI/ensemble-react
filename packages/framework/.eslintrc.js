@@ -15,5 +15,6 @@ module.exports = {
         allowInGenericTypeArguments: true
       }
     ]
-  }
+  },
+  ignorePatterns: ["tsup.config.ts"]
 };

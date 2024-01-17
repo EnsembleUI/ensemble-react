@@ -34,6 +34,7 @@ export interface EnsembleScreenYAML {
     header?: Record<string, unknown>;
     body: Record<string, unknown>;
     footer?: Record<string, unknown>;
+    [k: string]: Record<string, unknown> | undefined;
   };
   ViewGroup?: Record<string, unknown>;
 }
@@ -118,12 +119,25 @@ export const EnsembleParser = {
     app: ApplicationDTO,
   ): EnsembleScreenModel => {
     const view = get(screen, "View");
-    const viewNode = get(view, "body");
+    let viewNode = get(view, "body");
     const header = get(view, "header");
     const footer = get(view, "footer");
 
     if (!viewNode) {
-      throw new Error("Invalid screen: missing view widget");
+      if (view) {
+        // This is legacy declaration for body, so take our best guess here
+        const {
+          body: _body,
+          header: _header,
+          footer: _footer,
+          title: _title,
+          ...implicitBody
+        } = view;
+        viewNode = implicitBody;
+      }
+      if (isEmpty(viewNode)) {
+        throw new Error("Invalid screen: missing view widget");
+      }
     }
     const viewWidget = unwrapWidget(viewNode);
     const apis = unwrapApiModels(screen);

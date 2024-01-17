@@ -1,0 +1,24 @@
+{
+  "projects": {
+    "default": "ensemble-web-studio-dev",
+    "dev": "ensemble-web-studio-dev",
+    "prod": "ensemble-web-studio"
+  },
+  "targets": {
+    "ensemble-web-studio-dev": {
+      "hosting": {
+        "react-kitchen-sink": [
+          "react-kitchen-sink-dev"
+        ]
+      }
+    },
+    "ensemble-web-studio": {
+      "hosting": {
+        "react-kitchen-sink": [
+          "react-kitchen-sink"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

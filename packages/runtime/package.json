@@ -1,6 +1,6 @@
 {
   "name": "@ensembleui/react-runtime",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
@@ -18,7 +18,8 @@
   },
   "peerDependencies": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "@ensembleui/react-framework": "*"
   },
   "devDependencies": {
     "@ant-design/icons": "^5.2.6",
