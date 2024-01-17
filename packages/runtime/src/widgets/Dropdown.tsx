@@ -11,22 +11,13 @@ import {
 import type {
   CustomScope,
   EnsembleAction,
-  EnsembleWidget,
   Expression,
-  TemplateData,
 } from "@ensembleui/react-framework";
 import { get, isObject, isString } from "lodash-es";
 import { WidgetRegistry } from "../registry";
-import type { EnsembleWidgetProps } from "../shared/types";
+import type { EnsembleWidgetProps, HasItemTemplate } from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { EnsembleRuntime } from "../runtime";
-
-export interface DropdownItemTemplace {
-  data: Expression<TemplateData>;
-  name: string;
-  template: EnsembleWidget;
-  value: Expression<string>;
-}
 
 export type DropdownProps = {
   label?: string;
@@ -35,8 +26,8 @@ export type DropdownProps = {
   items?: SelectOption[];
   onItemSelect: EnsembleAction;
   autoComplete: Expression<boolean>;
-  "item-template"?: DropdownItemTemplace;
-} & EnsembleWidgetProps;
+} & EnsembleWidgetProps &
+  HasItemTemplate & { "item-template": { value: Expression<string> } };
 
 interface SelectOption {
   label: Expression<string> | Record<string, unknown>;
