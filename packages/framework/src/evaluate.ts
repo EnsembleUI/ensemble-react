@@ -49,22 +49,9 @@ const formatJs = (js?: string): string => {
 
   // multiline js
   if (sanitizedJs.includes("\n")) {
-    const lines = sanitizedJs.split("\n");
-
-    let lineIndex = -1;
-    for (let i = lines.length - 1; i >= 0; i--) {
-      if (lines[i].includes("(")) {
-        lineIndex = i;
-        break;
-      }
-    }
-    if (lineIndex !== -1) {
-      lines[lineIndex] = `return ${lines[lineIndex]}`;
-    }
-
     return `
       return (function() {
-         ${lines.join("\n")}
+         ${sanitizedJs}
       }())
     `;
   }
