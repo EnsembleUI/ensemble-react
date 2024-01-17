@@ -37,6 +37,7 @@ import { useNavigateModalScreen } from "./useNavigateModal";
 import { useNavigateScreen } from "./useNavigateScreen";
 import { useShowToast } from "./useShowToast";
 import { useCloseAllDialogs } from "./useCloseAllDialogs";
+import { useNavigateUrl } from "./useNavigateUrl";
 
 export type EnsembleActionHookResult =
   | {
@@ -465,6 +466,10 @@ export const useEnsembleAction = (
   }
   if (action.navigateScreen) {
     return useNavigateScreen(action.navigateScreen, options);
+  }
+
+  if (action.navigateUrl) {
+    return useNavigateUrl(action.navigateUrl, options);
   }
 
   if (action.navigateModalScreen) {
