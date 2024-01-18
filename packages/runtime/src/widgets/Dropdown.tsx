@@ -13,7 +13,7 @@ import type {
   EnsembleAction,
   Expression,
 } from "@ensembleui/react-framework";
-import { get, isObject, isString } from "lodash-es";
+import { get, isEmpty, isObject, isString } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps, HasItemTemplate } from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
@@ -27,7 +27,7 @@ export type DropdownProps = {
   onItemSelect: EnsembleAction;
   autoComplete: Expression<boolean>;
 } & EnsembleWidgetProps &
-  HasItemTemplate & { "item-template": { value: Expression<string> } };
+  HasItemTemplate & { "item-template"?: { value: Expression<string> } };
 
 interface SelectOption {
   label: Expression<string> | Record<string, unknown>;
@@ -64,7 +64,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   const options = useMemo(() => {
     const dropdownOptions = [];
     if (values?.items) {
-      const tempOptions = values?.items.map((item) => {
+      const tempOptions = values.items.map((item) => {
         return (
           <Select.Option key={item.value} value={item.value}>
             {isString(item.label)
@@ -77,16 +77,18 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
       dropdownOptions.push(...tempOptions);
     }
 
-    if (isObject(itemTemplate)) {
-      const tempOptions = namedData.map((item: unknown, index) => {
+    if (isObject(itemTemplate) && !isEmpty(namedData)) {
+      const tempOptions = namedData.map((item: unknown) => {
+        const value = evaluate<string | number>(
+          defaultScreenContext,
+          itemTemplate.value,
+          {
+            [itemTemplate.name]: get(item, itemTemplate.name) as unknown,
+          },
+        );
         return (
-          <Select.Option
-            key={index}
-            value={evaluate<unknown>(defaultScreenContext, itemTemplate.value, {
-              [itemTemplate.name]: get(item, itemTemplate.name) as unknown,
-            })}
-          >
-            <CustomScopeProvider key={index} value={item as CustomScope}>
+          <Select.Option key={value} value={value}>
+            <CustomScopeProvider value={item as CustomScope}>
               {EnsembleRuntime.render([itemTemplate.template])}
             </CustomScopeProvider>
           </Select.Option>
