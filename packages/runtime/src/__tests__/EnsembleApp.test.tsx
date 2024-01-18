@@ -1,18 +1,15 @@
 /* eslint import/first: 0 */
-const loadAppMock = jest.fn();
 const parseApplicationMock = jest.fn();
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const frameworkActual = jest.requireActual("@ensembleui/react-framework");
 
 import { render, screen, act } from "@testing-library/react";
+import type { ApplicationDTO } from "@ensembleui/react-framework";
 import { EnsembleApp } from "../EnsembleApp";
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-return
 jest.mock("@ensembleui/react-framework", () => ({
   ...frameworkActual,
-  ApplicationLoader: {
-    load: loadAppMock,
-  },
   EnsembleParser: {
     parseApplication: parseApplicationMock,
   },
@@ -39,14 +36,13 @@ test("Renders error page", () => {
   /* eslint-disable no-console */
   const consoleErr = console.error;
   console.error = jest.fn();
-  loadAppMock.mockReturnValue({});
   parseApplicationMock.mockReturnValue({
     home: {},
     screens: [],
     customWidgets: [],
   });
   try {
-    render(<EnsembleApp appId="test" />);
+    render(<EnsembleApp appId="test" application={{} as ApplicationDTO} />);
   } catch (e) {
     // no-op
   }
@@ -75,15 +71,21 @@ test("Renders view widget of home screen", () => {
       },
     },
   };
-  loadAppMock.mockReturnValue({
-    screens: [{ content: "" }],
-  });
   parseApplicationMock.mockReturnValue({
     home: mockScreen,
     screens: [mockScreen],
     customWidgets: [],
   });
-  render(<EnsembleApp appId="test" />);
+  render(
+    <EnsembleApp
+      appId="test"
+      application={
+        {
+          screens: [{ content: "" }],
+        } as ApplicationDTO
+      }
+    />,
+  );
 
   expect(screen.getByText("Peter Parker")).not.toBeNull();
 });
@@ -113,15 +115,21 @@ test("Bind data from other widgets", async () => {
       },
     },
   };
-  loadAppMock.mockReturnValue({
-    screens: [{ content: "" }],
-  });
   parseApplicationMock.mockReturnValue({
     home: mockScreen,
     screens: [mockScreen],
     customWidgets: [],
   });
-  render(<EnsembleApp appId="test" />);
+  render(
+    <EnsembleApp
+      appId="test"
+      application={
+        {
+          screens: [{ content: "" }],
+        } as ApplicationDTO
+      }
+    />,
+  );
 
   const components = await screen.findAllByText("Peter Parker");
   expect(components.length).toEqual(2);
@@ -155,15 +163,21 @@ test("Updates values through Ensemble state", async () => {
       },
     },
   };
-  loadAppMock.mockReturnValue({
-    screens: [{ content: "" }],
-  });
   parseApplicationMock.mockReturnValue({
     home: mockScreen,
     screens: [mockScreen],
     customWidgets: [],
   });
-  render(<EnsembleApp appId="test" />);
+  render(
+    <EnsembleApp
+      appId="test"
+      application={
+        {
+          screens: [{ content: "" }],
+        } as ApplicationDTO
+      }
+    />,
+  );
 
   const button = screen.getByText("Click Me");
   expect(button).not.toBeNull();

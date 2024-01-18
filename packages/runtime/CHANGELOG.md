@@ -1,5 +1,19 @@
 # @ensembleui/react-runtime
 
+## 0.1.13
+
+### Patch Changes
+
+- 0e18704: Added support of inputs in navigatescreen api
+- 768201a: Added support of HTML Attributes passthrough
+- a9c0b97: added support of theme values into sidebar menu
+- 0d3ccee: Fix the crashing of charts
+- caf9c41: added support of endpoint apis in custom widgets
+- Updated dependencies [768201a]
+- Updated dependencies [0d3ccee]
+- Updated dependencies [caf9c41]
+  - @ensembleui/react-framework@0.1.11
+
 ## 0.1.12
 
 ### Patch Changes

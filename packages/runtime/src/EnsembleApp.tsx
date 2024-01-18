@@ -1,8 +1,11 @@
-import { useMemo } from "react";
-import type { ApplicationDTO } from "@ensembleui/react-framework";
+import { useEffect, useMemo, useState } from "react";
+import type {
+  ApplicationDTO,
+  EnsembleAppModel,
+  ApplicationLoader,
+} from "@ensembleui/react-framework";
 import {
   ApplicationContextProvider,
-  ApplicationLoader,
   EnsembleParser,
 } from "@ensembleui/react-framework";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -24,53 +27,81 @@ export interface EnsembleAppProps {
   appId: string;
   application?: ApplicationDTO;
   path?: string;
+  loader?: ApplicationLoader;
 }
 
 export const EnsembleApp: React.FC<EnsembleAppProps> = ({
   appId,
   application,
   path,
+  loader,
 }) => {
-  // BUG: runs twice https://github.com/facebook/react/issues/24935
-  const app = useMemo(() => {
-    const resolvedApp = application ?? ApplicationLoader.load(appId);
-    const parsedApp = EnsembleParser.parseApplication(resolvedApp);
+  const [app, setApp] = useState<EnsembleAppModel>();
+  useEffect(() => {
+    if (app) {
+      return;
+    }
 
-    parsedApp.customWidgets.forEach((customWidget) => {
-      WidgetRegistry.register(
-        customWidget.name,
-        createCustomWidget(customWidget),
-      );
-    });
-    return parsedApp;
-  }, [appId, application]);
+    const parseApp = (appDto: ApplicationDTO): void => {
+      const parsedApp = EnsembleParser.parseApplication(appDto);
+      parsedApp.customWidgets.forEach((customWidget) => {
+        WidgetRegistry.register(
+          customWidget.name,
+          createCustomWidget(customWidget),
+        );
+      });
+      setApp(parsedApp);
+    };
+    if (application) {
+      parseApp(application);
+      return;
+    }
+
+    if (!loader) {
+      throw new Error("An application loader must be provided");
+    }
+
+    const resolveApp = async (): Promise<void> => {
+      const remoteApp = await loader.load(appId);
+      parseApp(remoteApp);
+    };
+    void resolveApp();
+  }, [app, appId, application, loader]);
 
   const router = useMemo(
     () =>
-      createBrowserRouter(
-        [
-          {
-            element: <ModalWrapper />,
-            children: [
+      app
+        ? createBrowserRouter(
+            [
               {
-                path: "/",
-                element: <EnsembleEntry entry={app.home} />,
-                errorElement: <ErrorPage />,
-                children: app.screens.map((screen) => {
-                  const screenId = screen.name.toLowerCase();
-                  return {
-                    path: `${screenId}`,
-                    element: <EnsembleScreen key={screenId} screen={screen} />,
-                  };
-                }),
+                element: <ModalWrapper />,
+                children: [
+                  {
+                    path: "/",
+                    element: <EnsembleEntry entry={app.home} />,
+                    errorElement: <ErrorPage />,
+                    children: app.screens.map((screen) => {
+                      const screenId = screen.name.toLowerCase();
+                      return {
+                        path: `${screenId}`,
+                        element: (
+                          <EnsembleScreen key={screenId} screen={screen} />
+                        ),
+                      };
+                    }),
+                  },
+                ],
               },
             ],
-          },
-        ],
-        { basename: path },
-      ),
-    [app.home, app.screens, path],
+            { basename: path },
+          )
+        : null,
+    [app, path],
   );
+
+  if (!app || !router) {
+    return null;
+  }
 
   return (
     <ApplicationContextProvider app={app}>

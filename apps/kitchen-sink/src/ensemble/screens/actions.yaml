@@ -24,7 +24,15 @@ View:
             label: navigate screen
             onTap:
               executeCode: |
-                ensemble.navigateScreen({name: "home", inputs: {hello: colors.primary['900']}})
+                body: |-
+                  const payload = {
+                    name: 'John Doe',
+                    age: 30,
+                  };
+                  ensemble.navigateScreen({
+                    name: 'home', 
+                    inputs: payload
+                  });
         - Text:
             styles:
               names: heading-1

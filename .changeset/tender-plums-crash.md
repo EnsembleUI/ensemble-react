@@ -3,4 +3,4 @@
 "@ensembleui/react-runtime": patch
 ---
 
-Fix the crashing of charts
+Added the support of item-template inside the dropdown widget

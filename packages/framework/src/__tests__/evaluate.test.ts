@@ -27,7 +27,7 @@ test("returns values from multi line blocks", () => {
     TEST_SCREEN_CONTEXT,
     `
 const bar = "bar"
-test.value.concat(bar)
+return test.value.concat(bar)
 `,
   );
   expect(result).toEqual("foobar");
@@ -60,7 +60,7 @@ test("reads back values from storage", () => {
     `
     const value = "foo" + "baz"
     ensemble.storage.set("value", value)
-    ensemble.storage.get("value")
+    return ensemble.storage.get("value")
     `,
     {
       ensemble: { storage: createStorageApi(store) },
