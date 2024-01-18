@@ -19,7 +19,7 @@ View:
               names: heading-1
             text: ensemble.navigateScreen()
         - Markdown:
-            text: use `ensemble.navigateScreen({screenname, data})` for navigate screen programmatically. click below button to check.
+            text: use `ensemble.navigateScreen({name:, inputs:{:}})` for navigate screen programmatically. click below button to check.
         - Button:
             label: navigate screen
             onTap:
