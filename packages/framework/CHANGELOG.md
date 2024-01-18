@@ -1,5 +1,12 @@
 # @ensembleui/react-framework
 
+## 0.1.12
+
+### Patch Changes
+
+- 3a92e56: support returning last multiline statement of multiline js
+- 12c6bb9: Added the support of item-template inside the dropdown widget
+
 ## 0.1.11
 
 ### Patch Changes

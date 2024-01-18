@@ -1,5 +1,16 @@
 # @ensembleui/react-runtime
 
+## 0.1.14
+
+### Patch Changes
+
+- 39d658a: exposed user object to esnemble
+- fbc8646: Handle nullable item template in dropdown
+- 12c6bb9: Added the support of item-template inside the dropdown widget
+- Updated dependencies [3a92e56]
+- Updated dependencies [12c6bb9]
+  - @ensembleui/react-framework@0.1.12
+
 ## 0.1.13
 
 ### Patch Changes
