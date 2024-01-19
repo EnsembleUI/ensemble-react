@@ -29,3 +29,4 @@ export * from "./Date";
 export * from "./SignInWithGoogle";
 export * from "./LoadingContainer";
 export * from "./Skeleton";
+export * from "./Collapsible";

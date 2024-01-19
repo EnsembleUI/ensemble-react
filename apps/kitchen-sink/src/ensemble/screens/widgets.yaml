@@ -20,6 +20,29 @@ View:
             text: Widgets
         - Markdown:
             text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).
+
+        - Markdown:
+            text: "## Collapse"
+        - Collapsible:
+            id: collapseWidget
+            value:
+              - "1"
+            expandIconPosition: "end"
+            items:
+              - key: "1"
+                label:
+                  Text:
+                    text: Here is my label 1
+                children: hiii
+              - key: "2"
+                label: Here is my label 2
+                children:
+                  Text:
+                    text: Here is my value 2
+            onCollapse:
+              executeCode: |
+                console.log('Hello', data, collapseWidget)
+
         - Card:
             styles:
               maxWidth: unset

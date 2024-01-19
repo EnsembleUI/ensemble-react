@@ -1,5 +1,5 @@
-import { EnsembleApp } from "@ensembleui/react-runtime";
 import type { ApplicationDTO } from "@ensembleui/react-framework";
+import { EnsembleApp } from "@ensembleui/react-runtime";
 // Screens
 import MenuYAML from "./ensemble/screens/menu.yaml";
 import HomeYAML from "./ensemble/screens/home.yaml";
