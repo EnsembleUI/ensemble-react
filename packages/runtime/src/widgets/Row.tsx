@@ -59,7 +59,7 @@ export const Row: React.FC<FlexboxProps> = (props) => {
         flexDirection: "row",
         flexFlow: "unset",
         flexGrow: "unset",
-        cursor: "pointer",
+        cursor: props?.onTap ? "pointer" : "auto",
         ...values?.styles,
       }}
     >
