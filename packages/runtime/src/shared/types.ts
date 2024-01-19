@@ -46,6 +46,7 @@ export type FlexboxProps = {
   padding?: number | string;
   maxWidth?: string;
   minWidth?: string;
+  visibility?: "visible" | "hidden" | "collapse";
 } & HasBorder &
   EnsembleWidgetProps;
 

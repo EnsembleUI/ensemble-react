@@ -56,6 +56,7 @@ export const Column: React.FC<FlexboxProps> = (props) => {
         display: "flex",
         minHeight: "unset",
         cursor: props?.onTap ? "pointer" : "auto",
+        visibility: props?.styles?.visibility,
         ...values?.styles,
       }}
     >
