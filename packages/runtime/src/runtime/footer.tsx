@@ -1,4 +1,5 @@
 import type { EnsembleFooterModel } from "@ensembleui/react-framework";
+// eslint-disable-next-line import/no-cycle
 import { Column } from "../widgets/Column";
 
 interface EnsembleFooterProps {
