@@ -281,6 +281,9 @@ View:
             text: "## DataGrids"
         - DataGrid:
             id: "myDataGridExample"
+            onRowsSelected:
+              executeCode:  |
+                console.log("data", selectedRows, selectedRowKeys);
             allowSelection: true
             styles:
               headerStyle:
@@ -299,11 +302,9 @@ View:
                   { key: "2", patient: "Reuben", advocate: "Harvey Dent" },
                 ]
               name: dummyData
+              uniqueIdentifier: ${dummyData.key}
               template:
                 DataRow:
-                  onRowsSelected:
-                    executeCode:  |
-                      console.log("data", selectedRows, selectedRowKeys);
                   children:
                     - Text:
                         id: ${dummyData.patient+"Name"}

@@ -15,8 +15,8 @@ import type {
   EnsembleWidgetProps,
   EnsembleWidgetStyles,
 } from "../../shared/types";
-import { DataCell } from "./DataCell";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
+import { DataCell } from "./DataCell";
 
 interface DataColumn {
   label: string;
@@ -57,10 +57,12 @@ export interface DataGridRowTemplate {
 
 export type GridProps = {
   allowSelection?: boolean;
+  onRowsSelected?: EnsembleAction;
   DataColumns: DataColumn[];
   "item-template": {
     data: Expression<object>;
     name: string;
+    uniqueIdentifier?: Expression<string>;
     template: DataGridRowTemplate;
   };
   hidePagination?: boolean;
@@ -70,7 +72,6 @@ export interface DataGridRowTemplate {
   name: "DataRow";
   properties: {
     onTap?: EnsembleAction;
-    onRowsSelected?: EnsembleAction;
     children: EnsembleWidget[];
   };
 }
@@ -78,19 +79,21 @@ export interface DataGridRowTemplate {
 export const DataGrid: React.FC<GridProps> = (props) => {
   const [selectedRow, setSelectedRow] = useState<object[]>();
   const { "item-template": itemTemplate, DataColumns, ...rest } = props;
+  const [selectionType, setSelectionType] = useState<"checkbox" | "radio">(
+    "checkbox",
+  );
   const {
     rootRef,
     id: resolvedWidgetId,
     values,
-  } = useRegisterBindings({ ...rest, selectedRow }, props?.id, {
+  } = useRegisterBindings({ ...rest, selectedRow, selectionType }, props?.id, {
     setSelectedRow,
+    setSelectionType,
   });
   const { namedData } = useTemplateData({ ...itemTemplate });
   const headerStyle = values?.styles?.headerStyle;
   const onTapAction = useEnsembleAction(itemTemplate.template.properties.onTap);
-  const onRowsSelected = useEnsembleAction(
-    itemTemplate.template.properties.onRowsSelected,
-  );
+  const onRowsSelected = useEnsembleAction(props?.onRowsSelected);
   const onRowsSelectedCallback = useCallback(
     (selectedRowKeys: React.Key[], selectedRows: object[]) => {
       if (!onRowsSelected) {
@@ -99,9 +102,6 @@ export const DataGrid: React.FC<GridProps> = (props) => {
       return onRowsSelected.callback({ selectedRows, selectedRowKeys });
     },
     [onRowsSelected],
-  );
-  const [selectionType, setSelectionType] = useState<"checkbox" | "radio">(
-    "checkbox",
   );
   const onTapActionCallback = useCallback(
     (data: unknown, index?: number) => {
@@ -124,10 +124,14 @@ export const DataGrid: React.FC<GridProps> = (props) => {
         }}
         ref={rootRef}
         rowKey={(data: unknown) => {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          const x = get(data, itemTemplate.name);
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-          return x.key ?? "";
+          const identifier: string = evaluate(
+            defaultScreenContext,
+            itemTemplate.uniqueIdentifier,
+            {
+              [itemTemplate.name]: get(data, itemTemplate.name) as unknown,
+            },
+          );
+          return identifier ?? "";
         }}
         rowSelection={
           values?.allowSelection
