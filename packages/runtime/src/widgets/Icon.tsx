@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import type { IconProps } from "../shared/types";
@@ -10,6 +10,7 @@ export const Icon: React.FC<IconProps> = (props) => {
   const [backgroundColor, setBackgroundColor] = useState(
     props.styles?.backgroundColor,
   );
+
   const { values } = useRegisterBindings(
     { ...props, color, name, backgroundColor },
     props.id,

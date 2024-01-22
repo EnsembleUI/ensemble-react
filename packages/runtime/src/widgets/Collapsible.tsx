@@ -53,12 +53,23 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
     return items;
   }, [values?.items]);
 
+  // tweak the collapsible icons
   const expandIcon = (collapseStat: unknown) => {
     const isActive = get(collapseStat, "isActive");
     if (isActive && values?.expandIcon) {
-      return <Icon {...values.expandIcon} />;
+      return (
+        <Icon
+          key={`${values?.id ?? ""}_${values.expandIcon.name}`}
+          {...values.expandIcon}
+        />
+      );
     } else if (values?.collpaseIcon) {
-      return <Icon {...values.collpaseIcon} />;
+      return (
+        <Icon
+          key={`${values?.id ?? ""}_${values.collpaseIcon.name}`}
+          {...values.collpaseIcon}
+        />
+      );
     }
   };
 
