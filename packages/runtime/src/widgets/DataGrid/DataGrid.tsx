@@ -92,11 +92,11 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     itemTemplate.template.properties.onRowsSelected,
   );
   const onRowsSelectedCallback = useCallback(
-    (selectedRowKeys: React.Key[], data: object[]) => {
+    (selectedRowKeys: React.Key[], selectedRows: object[]) => {
       if (!onRowsSelected) {
         return;
       }
-      return onRowsSelected.callback({ data, selectedRowKeys });
+      return onRowsSelected.callback({ selectedRows, selectedRowKeys });
     },
     [onRowsSelected],
   );
@@ -119,18 +119,23 @@ export const DataGrid: React.FC<GridProps> = (props) => {
       <Table
         dataSource={namedData}
         key={resolvedWidgetId}
-        // onRow={(record, recordIndex) => {
-        //   return { onClick: () => onTapActionCallback(record, recordIndex) };
-        // }}
+        onRow={(record, recordIndex) => {
+          return { onClick: () => onTapActionCallback(record, recordIndex) };
+        }}
         ref={rootRef}
+        rowKey={(data: unknown) => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          const x = get(data, itemTemplate.name);
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
+          return x.key ?? "";
+        }}
         rowSelection={
           values?.allowSelection
             ? {
                 type: selectionType,
                 onChange: (selectedRowKeys, selectedRows) => {
-                  console.log("Rows Selected", selectedRowKeys, selectedRows);
                   setSelectedRow(selectedRows);
-                  onRowsSelectedCallback(selectedRowKeys, selectedRows);
+                  return onRowsSelectedCallback(selectedRowKeys, selectedRows);
                 },
               }
             : undefined

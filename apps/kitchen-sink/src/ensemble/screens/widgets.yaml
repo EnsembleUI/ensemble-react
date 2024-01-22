@@ -301,6 +301,9 @@ View:
               name: dummyData
               template:
                 DataRow:
+                  onRowsSelected:
+                    executeCode:  |
+                      console.log("data", selectedRows, selectedRowKeys);
                   children:
                     - Text:
                         id: ${dummyData.patient+"Name"}
