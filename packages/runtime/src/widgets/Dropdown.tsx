@@ -144,7 +144,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
       >
         {values?.id ? (
           <style>{`
-        [data-testid=${values?.id}] .ant-select .ant-select-selector {
+        .${values?.id}_input .ant-select-selector {
           ${
             values?.styles?.dropdownMaxHeight
               ? `max-height: ${values.styles.dropdownMaxHeight} !important;`
@@ -198,7 +198,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             }
             showSearch={Boolean(values?.autoComplete)}
             value={values?.selectedValue}
-            className={values?.styles?.names}
+            className={`${values?.styles?.names} ${values?.id || ""}_input`}
             dropdownStyle={{ ...values?.styles }}
           >
             {options}

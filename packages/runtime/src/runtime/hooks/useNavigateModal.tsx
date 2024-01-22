@@ -71,20 +71,17 @@ export const useNavigateModalScreen: EnsembleActionHook<
       });
     }
 
-    openModal?.(
-      <EnsembleScreen inputs={inputs} isModal screen={matchingScreen} />,
-      {
-        maskClosable,
-        position,
-        height,
-        width,
-        margin,
-        padding,
-        hideFullScreenIcon,
-        hideCloseIcon,
-        title,
-      },
-    );
+    openModal?.(<EnsembleScreen inputs={inputs} screen={matchingScreen} />, {
+      maskClosable,
+      position,
+      height,
+      width,
+      margin,
+      padding,
+      hideFullScreenIcon,
+      hideCloseIcon,
+      title,
+    });
   }, [
     matchingScreen,
     action,
