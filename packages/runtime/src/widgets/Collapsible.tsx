@@ -7,11 +7,12 @@ import {
 } from "@ensembleui/react-framework";
 import { Collapse } from "antd";
 import type { CollapseProps } from "antd";
-import { isArray, isString } from "lodash-es";
-import type { EnsembleWidgetProps } from "../shared/types";
+import { get, isArray, isString } from "lodash-es";
+import type { EnsembleWidgetProps, IconProps } from "../shared/types";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
+import { Icon } from "./Icon";
 
 interface CollapsibleItem {
   key: Expression<string>;
@@ -25,6 +26,8 @@ export type CollapsibleProps = {
   value: Expression<string>[];
   onCollapse?: EnsembleAction;
   isAccordion?: boolean;
+  collpaseIcon?: IconProps;
+  expandIcon?: IconProps;
 } & EnsembleWidgetProps;
 
 export const Collapsible: React.FC<CollapsibleProps> = (props) => {
@@ -50,6 +53,15 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
     return items;
   }, [values?.items]);
 
+  const expandIcon = (collapseStat: unknown) => {
+    const isActive = get(collapseStat, "isActive");
+    if (isActive && values?.expandIcon) {
+      return <Icon {...values.expandIcon} />;
+    } else if (values?.collpaseIcon) {
+      return <Icon {...values.collpaseIcon} />;
+    }
+  };
+
   // trigger onCollapse action
   const onCallapseActionCallback = useCallback(
     (data: string | string[]) => {
@@ -74,6 +86,7 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
     <Collapse
       accordion={values?.isAccordion}
       activeKey={activeValue}
+      expandIcon={expandIcon}
       expandIconPosition={props?.expandIconPosition}
       items={collapsibleItems}
       onChange={handleCollapsibleChange}
