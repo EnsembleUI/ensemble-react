@@ -228,6 +228,37 @@ View:
                               }
                           }
 
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+              # gap: 20px
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: Date Picker
+              - Date:
+                  label: Example 1 - Date picker
+                  hintText: Placeholder value
+              - Date:
+                  label: Example 2 - Date picker with restricted range
+                  initialValue: "2021-01-20"
+                  firstDate: "2021-01-15"
+                  lastDate: "2021-01-25"
+              - Date:
+                  id: onChangeDemoDate
+                  label: Example 3 - onChange
+                  hintText: Select a date
+                  onChange:
+                    executeCode:
+                      body: |-
+                        console.log(onChangeDemoDate);
+                        onChangeDemo.setText('You selected: ' + onChangeDemoDate.value);
+
+              - Text:
+                  id: onChangeDemo
+
 API:
   getDummyNumbers:
     method: GET

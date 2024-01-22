@@ -8,7 +8,6 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useState, useCallback } from "react";
 import dayjs from "dayjs";
-import { toString } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
@@ -57,15 +56,15 @@ export const Date: React.FC<DateProps> = (props) => {
     [action, props],
   );
 
-  const onDateChange = (date: any): void => {
-    const formattedDate = dayjs(toString(date))?.format(DateDisplayFormat);
+  const onDateChange = (date: unknown): void => {
+    const formattedDate = dayjs(date as string)?.format(DateDisplayFormat);
     formattedDate !== "Invalid Date" && setEnteredDate(formattedDate);
 
     onChangeCallback(formattedDate);
   };
 
-  const onDateAccept = (date: any): void => {
-    setValue(dayjs(toString(date)));
+  const onDateAccept = (date: unknown): void => {
+    setValue(dayjs(date as string));
     setOpenPicker(false);
   };
 
@@ -89,8 +88,7 @@ export const Date: React.FC<DateProps> = (props) => {
         name={props.id ? values?.id : values?.label}
         rules={[{ required: values?.required }]}
         style={{
-          margin: "0px",
-          alignItems: "center",
+          marginBottom: "0px",
         }}
       >
         <LocalizationProvider dateAdapter={AdapterDayjs}>

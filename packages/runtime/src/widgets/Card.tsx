@@ -55,8 +55,8 @@ export const Card: React.FC<CardProps> = ({ children, styles }) => {
             ${
               gap
                 ? `
-                    display: block;
-                    margin-top: ${gap};
+                    display: block !important;
+                    margin-top: ${gap} !important;
                   `
                 : ""
             }

@@ -98,7 +98,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
         style={{ width: "100%" }}
         pagination={values?.hidePagination ? false : undefined}
       >
-        {DataColumns.map((col, index) => {
+        {DataColumns?.map((col, index) => {
           return (
             <Table.Column
               dataIndex={itemTemplate.name}
