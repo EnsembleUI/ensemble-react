@@ -2,6 +2,7 @@ import type { NavigateModalScreenAction } from "@ensembleui/react-framework";
 import {
   evaluate,
   findExpressions,
+  unwrapWidget,
   useCustomScope,
   useEnsembleStorage,
   useScreenContext,
@@ -13,6 +14,7 @@ import { useCallback, useContext, useMemo } from "react";
 import { EnsembleScreen } from "../screen";
 import { ModalContext } from "../modal";
 import type { EnsembleActionHook } from "./useEnsembleAction";
+import { EnsembleRuntime } from "../runtime";
 
 export const useNavigateModalScreen: EnsembleActionHook<
   NavigateModalScreenAction
@@ -26,6 +28,8 @@ export const useNavigateModalScreen: EnsembleActionHook<
   const screenName = isStringAction ? action : action?.name;
   const {
     maskClosable = true,
+    hideFullScreenIcon = false,
+    hideCloseIcon = false,
     styles: {
       position = undefined,
       height = undefined,
@@ -34,6 +38,12 @@ export const useNavigateModalScreen: EnsembleActionHook<
       padding = undefined,
     } = {},
   } = isStringAction ? {} : action || {};
+
+  const title = useMemo(() => {
+    if (!isStringAction && action?.title && !isString(action?.title)) {
+      return EnsembleRuntime.render([unwrapWidget(action?.title)]);
+    }
+  }, [isStringAction, action, EnsembleRuntime.render]);
 
   const { matchingScreen } = useMemo(() => {
     const screen = screenContext?.app?.screens.find(
@@ -70,6 +80,9 @@ export const useNavigateModalScreen: EnsembleActionHook<
         width,
         margin,
         padding,
+        hideFullScreenIcon,
+        hideCloseIcon,
+        title,
       },
     );
   }, [

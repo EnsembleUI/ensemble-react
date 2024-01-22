@@ -31,6 +31,17 @@ export type BaseTextProps = {
   textAlign?: string;
 } & EnsembleWidgetProps;
 
+export type FlexboxStyles = {
+  mainAxis?: string;
+  crossAxis?: string;
+  gap?: number;
+  margin?: number | string;
+  padding?: number | string;
+  maxWidth?: string;
+  minWidth?: string;
+  visible?: boolean;
+};
+
 export type FlexboxProps = {
   "item-template"?: {
     data: Expression<TemplateData>;
@@ -39,16 +50,9 @@ export type FlexboxProps = {
   };
   onTap?: EnsembleAction;
   children?: EnsembleWidget[];
-  mainAxis?: string;
-  crossAxis?: string;
-  gap?: number;
-  margin?: number | string;
-  padding?: number | string;
-  maxWidth?: string;
-  minWidth?: string;
-  visibility?: "visible" | "hidden" | "collapse";
-} & HasBorder &
-  EnsembleWidgetProps;
+} & FlexboxStyles &
+  HasBorder &
+  EnsembleWidgetProps<FlexboxStyles & EnsembleWidgetStyles>;
 
 export type IconProps = {
   name: Expression<string>;

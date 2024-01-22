@@ -42,21 +42,30 @@ export const Column: React.FC<FlexboxProps> = (props) => {
       ref={rootRef}
       style={{
         flexDirection: "column",
-        justifyContent: props.mainAxis && getMainAxis(props.mainAxis),
-        alignItems: props.crossAxis && getCrossAxis(props.crossAxis),
-        margin: props.margin,
-        padding: props.padding,
-        gap: props.gap,
-        borderRadius: props.styles?.borderRadius,
-        borderWidth: props.styles?.borderWidth,
-        borderColor: props.styles?.borderColor
-          ? getColor(props.styles.borderColor)
+        justifyContent:
+          (values?.mainAxis || values?.styles?.mainAxis) &&
+          getMainAxis(values?.mainAxis || values?.styles?.mainAxis || ""),
+        alignItems:
+          values?.crossAxis &&
+          getCrossAxis(values?.crossAxis || values?.styles?.crossAxis || ""),
+        margin: values?.margin || values?.styles?.margin,
+        padding: values?.padding || values?.styles?.padding,
+        gap: values?.gap || values?.styles?.gap,
+        backgroundColor: values?.styles?.backgroundColor
+          ? getColor(values.styles.backgroundColor)
           : undefined,
-        borderStyle: props.styles?.borderWidth ? "solid" : undefined,
+        borderRadius: values?.styles?.borderRadius,
+        borderWidth: values?.styles?.borderWidth,
+        borderColor: values?.styles?.borderColor
+          ? getColor(values.styles.borderColor)
+          : undefined,
+        borderStyle: values?.styles?.borderWidth ? "solid" : undefined,
         display: "flex",
         minHeight: "unset",
         cursor: props?.onTap ? "pointer" : "auto",
-        visibility: props?.styles?.visibility,
+        ...(values?.styles?.visible === false
+          ? { display: "none" }
+          : undefined),
         ...values?.styles,
       }}
     >

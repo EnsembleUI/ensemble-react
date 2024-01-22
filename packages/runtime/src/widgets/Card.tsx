@@ -17,6 +17,7 @@ interface CardStyles {
   padding: string;
   maxWidth: string;
   minWidth: string;
+  gap?: string;
 }
 
 export type CardProps = {
@@ -41,17 +42,37 @@ export const Card: React.FC<CardProps> = ({ children, styles }) => {
   const renderedChildren = useMemo(() => {
     return EnsembleRuntime.render(children);
   }, [children]);
+
   const mergedStyles = merge(defaultStyles, styles);
-  const { shadowOffset, shadowBlur, shadowSpread, shadowColor } = mergedStyles;
+  const { shadowOffset, shadowBlur, shadowSpread, shadowColor, gap } =
+    mergedStyles;
+
   return (
-    <div
-      style={{
-        ...mergedStyles,
-        boxShadow: `${shadowOffset} ${shadowOffset} ${shadowBlur} ${shadowSpread} ${shadowColor}`,
-      }}
-    >
-      {renderedChildren}
-    </div>
+    <>
+      <style>
+        {`
+          #ensemble-card > :not(:first-child) {
+            ${
+              gap
+                ? `
+                    display: block;
+                    margin-top: ${gap};
+                  `
+                : ""
+            }
+          }
+        `}
+      </style>
+      <div
+        id="ensemble-card"
+        style={{
+          ...mergedStyles,
+          boxShadow: `${shadowOffset} ${shadowOffset} ${shadowBlur} ${shadowSpread} ${shadowColor}`,
+        }}
+      >
+        {renderedChildren}
+      </div>
+    </>
   );
 };
 

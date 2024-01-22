@@ -24,6 +24,7 @@ View:
             styles:
               maxWidth: unset
               width: unset
+              gap: 20px
             children:
               - Text:
                   styles:
@@ -38,8 +39,16 @@ View:
                     - label: Option 2
                       value: 2
               - Dropdown:
+                  id: myDropdown
                   label: With Default Value
                   value: 1
+                  styles:
+                    dropdownBackgroundColor: "aqua"
+                    dropdownBorderWidth: 1
+                    dropdownBorderColor: "lime"
+                    backgroundColor: "yellow"
+                    selectedBackgroundColor: "gray"
+                    selectedTextColor: "purple"
                   items:
                     - label: Option 1
                       value: 1
@@ -49,6 +58,9 @@ View:
                   label: Searchable
                   hintText: Search
                   autoComplete: true
+                  hintStyle:
+                    color: "red"
+                    fontSize: 20px
                   items:
                     - label: Option 1
                       value: option1
@@ -85,8 +97,6 @@ View:
                           text: Here is my label 2
                       value: 222
 
-        - Markdown:
-            text: "## Charts"
         - Column:
             crossAxis: stretch
             margin: 20px

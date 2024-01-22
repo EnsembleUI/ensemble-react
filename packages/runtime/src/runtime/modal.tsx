@@ -102,7 +102,7 @@ export const ModalWrapper: React.FC = () => {
   };
 
   const closeModal = (index?: number): void => {
-    if (index) {
+    if (index !== undefined) {
       modalState[index].options.onClose?.();
     }
 

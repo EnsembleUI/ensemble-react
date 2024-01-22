@@ -16,7 +16,7 @@ View:
             text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).
         - Text:
             styles:
-              names: heading-1
+              names: heading-3
             text: ensemble.navigateScreen()
         - Markdown:
             text: use `ensemble.navigateScreen(screenname, data)` for navigate screen programmatically. click below button to check.
@@ -35,15 +35,32 @@ View:
                   });
         - Row:
             onTap:
-              executeCode:  |
+              executeCode: |
                 console.log('Row Clicked');
             children:
               - Text:
-                  text: Click the Row for onTap event 
+                  text: Click the Row for onTap event
         - Column:
             onTap:
-              executeCode:  |
+              executeCode: |
                 console.log('Column Clicked');
             children:
               - Text:
-                  text: Click the Column for onTap event 
+                  text: Click the Column for onTap event
+        - Text:
+            styles:
+              names: heading-3
+            text: Show Dialog
+        - Markdown:
+            text: use `showDialog` to show dialog. click below button to check.
+        - Button:
+            label: Show dialog
+            onTap:
+              showDialog:
+                widget:
+                  Text:
+                    text: "Hello World"
+                onDialogDismiss:
+                  executeCode:
+                    body: |
+                      console.log('Dialog Dismissed');

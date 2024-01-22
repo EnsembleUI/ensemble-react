@@ -46,15 +46,6 @@ export interface DataGridStyles extends Partial<EnsembleWidgetStyles> {
   };
 }
 
-export type GridProps = {
-  DataColumns: DataColumn[];
-  "item-template": {
-    data: Expression<object>;
-    name: string;
-    template: DataGridRowTemplate;
-  };
-} & EnsembleWidgetProps<DataGridStyles>;
-
 export interface DataGridRowTemplate {
   name: "DataRow";
   properties: {
@@ -62,6 +53,16 @@ export interface DataGridRowTemplate {
     children: EnsembleWidget[];
   };
 }
+
+export type GridProps = {
+  DataColumns: DataColumn[];
+  "item-template": {
+    data: Expression<object>;
+    name: string;
+    template: DataGridRowTemplate;
+  };
+  hidePagination?: boolean;
+} & EnsembleWidgetProps<DataGridStyles>;
 
 export const DataGrid: React.FC<GridProps> = (props) => {
   const { "item-template": itemTemplate, DataColumns, ...rest } = props;
@@ -95,6 +96,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
         key={resolvedWidgetId}
         ref={rootRef}
         style={{ width: "100%" }}
+        pagination={values?.hidePagination ? false : undefined}
       >
         {DataColumns.map((col, index) => {
           return (

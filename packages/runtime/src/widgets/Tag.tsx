@@ -78,7 +78,7 @@ export const Tag: React.FC<TagProps> = (props) => {
       key={index}
       style={{ ...tagStyles, color: values?.textColor }}
     >
-      {item} &nbsp;
+      {item}
       {props.icon ? <Icon {...props.icon} /> : null}
     </Typography.Text>
   ));
