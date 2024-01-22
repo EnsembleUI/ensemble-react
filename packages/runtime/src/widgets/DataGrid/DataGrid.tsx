@@ -8,7 +8,7 @@ import {
   useRegisterBindings,
   type EnsembleAction,
 } from "@ensembleui/react-framework";
-import { useCallback, type ReactElement } from "react";
+import { useCallback, type ReactElement, useState } from "react";
 import { get } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type {
@@ -56,6 +56,7 @@ export interface DataGridRowTemplate {
 }
 
 export type GridProps = {
+  allowSelection?: boolean;
   DataColumns: DataColumn[];
   "item-template": {
     data: Expression<object>;
@@ -65,17 +66,43 @@ export type GridProps = {
   hidePagination?: boolean;
 } & EnsembleWidgetProps<DataGridStyles>;
 
+export interface DataGridRowTemplate {
+  name: "DataRow";
+  properties: {
+    onTap?: EnsembleAction;
+    onRowsSelected?: EnsembleAction;
+    children: EnsembleWidget[];
+  };
+}
+
 export const DataGrid: React.FC<GridProps> = (props) => {
+  const [selectedRow, setSelectedRow] = useState<object[]>();
   const { "item-template": itemTemplate, DataColumns, ...rest } = props;
   const {
     rootRef,
     id: resolvedWidgetId,
     values,
-  } = useRegisterBindings({ ...rest }, props?.id);
+  } = useRegisterBindings({ ...rest, selectedRow }, props?.id, {
+    setSelectedRow,
+  });
   const { namedData } = useTemplateData({ ...itemTemplate });
   const headerStyle = values?.styles?.headerStyle;
   const onTapAction = useEnsembleAction(itemTemplate.template.properties.onTap);
-
+  const onRowsSelected = useEnsembleAction(
+    itemTemplate.template.properties.onRowsSelected,
+  );
+  const onRowsSelectedCallback = useCallback(
+    (selectedRowKeys: React.Key[], data: object[]) => {
+      if (!onRowsSelected) {
+        return;
+      }
+      return onRowsSelected.callback({ data, selectedRowKeys });
+    },
+    [onRowsSelected],
+  );
+  const [selectionType, setSelectionType] = useState<"checkbox" | "radio">(
+    "checkbox",
+  );
   const onTapActionCallback = useCallback(
     (data: unknown, index?: number) => {
       if (!onTapAction) {
@@ -90,12 +117,24 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   return (
     <>
       <Table
-        onRow={(record, recordIndex) => {
-          return { onClick: () => onTapActionCallback(record, recordIndex) };
-        }}
         dataSource={namedData}
         key={resolvedWidgetId}
+        // onRow={(record, recordIndex) => {
+        //   return { onClick: () => onTapActionCallback(record, recordIndex) };
+        // }}
         ref={rootRef}
+        rowSelection={
+          values?.allowSelection
+            ? {
+                type: selectionType,
+                onChange: (selectedRowKeys, selectedRows) => {
+                  console.log("Rows Selected", selectedRowKeys, selectedRows);
+                  setSelectedRow(selectedRows);
+                  onRowsSelectedCallback(selectedRowKeys, selectedRows);
+                },
+              }
+            : undefined
+        }
         style={{
           width: "100%",
           ...values?.styles,
