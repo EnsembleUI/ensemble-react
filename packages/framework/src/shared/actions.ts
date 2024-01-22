@@ -31,6 +31,11 @@ interface NavigateScreenOptions {
   inputs: Record<string, unknown>;
 }
 
+interface NavigateUrlOptions {
+  url: string;
+  inputs: Record<string, unknown>;
+}
+
 export type NavigateModalScreenAction =
   | string
   | (NavigateScreenOptions & {
@@ -39,6 +44,8 @@ export type NavigateModalScreenAction =
     });
 
 export type NavigateScreenAction = string | NavigateScreenOptions;
+
+export type NavigateUrlAction = string | NavigateUrlOptions;
 
 interface ShowDialogOptions {
   minWidth?: number;
@@ -86,6 +93,7 @@ export interface EnsembleAction {
   executeCode?: ExecuteCodeAction;
   invokeApi?: InvokeAPIAction;
   navigateScreen?: NavigateScreenAction;
+  navigateUrl?: NavigateUrlAction;
   navigateModalScreen?: NavigateModalScreenAction;
   showToast?: ShowToastAction;
   closeAllDialogs?: null;
