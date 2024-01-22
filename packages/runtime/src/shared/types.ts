@@ -1,4 +1,5 @@
 import type {
+  EnsembleAction,
   EnsembleWidget,
   Expression,
   TemplateData,
@@ -36,6 +37,7 @@ export type FlexboxProps = {
     name: string;
     template: EnsembleWidget;
   };
+  onTap?: EnsembleAction;
   children?: EnsembleWidget[];
   mainAxis?: string;
   crossAxis?: string;
@@ -44,6 +46,7 @@ export type FlexboxProps = {
   padding?: number | string;
   maxWidth?: string;
   minWidth?: string;
+  visibility?: "visible" | "hidden" | "collapse";
 } & HasBorder &
   EnsembleWidgetProps;
 

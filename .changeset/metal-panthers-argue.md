@@ -3,4 +3,4 @@
 "@ensembleui/react-runtime": patch
 ---
 
-exposed user object to esnemble
+added onTap to row widget

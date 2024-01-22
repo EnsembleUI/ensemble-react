@@ -1,5 +1,18 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.5
+
+### Patch Changes
+
+- 39d658a: exposed user object to esnemble
+- 3a92e56: support returning last multiline statement of multiline js
+- Updated dependencies [39d658a]
+- Updated dependencies [3a92e56]
+- Updated dependencies [fbc8646]
+- Updated dependencies [12c6bb9]
+  - @ensembleui/react-runtime@0.1.14
+  - @ensembleui/react-framework@0.1.12
+
 ## 0.0.4
 
 ### Patch Changes

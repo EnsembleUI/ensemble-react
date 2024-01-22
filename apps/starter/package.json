@@ -1,6 +1,6 @@
 {
   "name": "@ensembleui/react-starter",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "private": true,
   "dependencies": {
     "@ensembleui/react-framework": "workspace:*",
@@ -32,7 +32,6 @@
   },
   "scripts": {
     "start": "craco start",
-    "dev": "craco start",
     "build": "craco build",
     "test": "craco test --watchAll=false",
     "eject": "react-scripts eject"

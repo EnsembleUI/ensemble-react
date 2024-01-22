@@ -4,6 +4,7 @@ import type {
   EnsembleWidget,
 } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
+// eslint-disable-next-line import/no-cycle
 import { Column } from "../widgets/Column";
 
 interface EnsembleBodyProps {

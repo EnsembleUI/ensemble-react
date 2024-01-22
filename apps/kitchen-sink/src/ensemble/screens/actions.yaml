@@ -54,3 +54,17 @@ View:
             label: navigate url
             onTap:
               navigateUrl: /widgets
+        - Row:
+            onTap:
+              executeCode:  |
+                console.log('Row Clicked');
+            children:
+              - Text:
+                  text: Click the Row for onTap event 
+        - Column:
+            onTap:
+              executeCode:  |
+                console.log('Column Clicked');
+            children:
+              - Text:
+                  text: Click the Column for onTap event

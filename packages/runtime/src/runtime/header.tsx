@@ -1,5 +1,6 @@
 import type { EnsembleHeaderModel } from "@ensembleui/react-framework";
 import { isObject } from "lodash-es";
+// eslint-disable-next-line import/no-cycle
 import { Column } from "../widgets/Column";
 
 interface EnsembleHeaderProps {
