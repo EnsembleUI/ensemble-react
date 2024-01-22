@@ -25,7 +25,7 @@ View:
               maxWidth: unset
               width: unset
               gap: 20px
-              backgroundColor: "aqua"
+              backgroundColor: "#f5f5f5"
             children:
               - Text:
                   styles:
@@ -233,7 +233,6 @@ View:
             styles:
               maxWidth: unset
               width: unset
-              # gap: 20px
             children:
               - Text:
                   styles:

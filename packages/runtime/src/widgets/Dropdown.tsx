@@ -198,7 +198,9 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             }
             showSearch={Boolean(values?.autoComplete)}
             value={values?.selectedValue}
-            className={`${values?.styles?.names} ${values?.id || ""}_input`}
+            className={`${values?.styles?.names || ""} ${
+              values?.id || ""
+            }_input`}
             dropdownStyle={{ ...values?.styles }}
           >
             {options}

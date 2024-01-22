@@ -1,6 +1,5 @@
 import type { EnsembleWidget } from "@ensembleui/react-framework";
 import { useMemo } from "react";
-import { merge } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type {
   EnsembleWidgetProps,
@@ -46,38 +45,20 @@ export const Card: React.FC<CardProps> = ({ children, styles }) => {
     return EnsembleRuntime.render(children);
   }, [children]);
 
-  const mergedStyles = merge(defaultStyles, styles);
-  const { shadowOffset, shadowBlur, shadowSpread, shadowColor, gap } =
-    mergedStyles;
+  const mergedStyles = { ...defaultStyles, ...styles };
+  const { shadowOffset, shadowBlur, shadowSpread, shadowColor } = mergedStyles;
 
   return (
-    <>
-      <style>
-        {`
-          #ensemble-card > :not(:first-child) {
-            ${
-              gap
-                ? `
-                    display: block !important;
-                    margin-top: ${gap} !important;
-                  `
-                : ""
-            }
-          }
-        `}
-      </style>
-      <div
-        id="ensemble-card"
-        className={styles?.names}
-        style={{
-          ...mergedStyles,
-          boxShadow: `${shadowOffset} ${shadowOffset} ${shadowBlur} ${shadowSpread} ${shadowColor}`,
-          ...styles,
-        }}
-      >
-        {renderedChildren}
-      </div>
-    </>
+    <div
+      className={styles?.names}
+      style={{
+        display: "grid",
+        boxShadow: `${shadowOffset} ${shadowOffset} ${shadowBlur} ${shadowSpread} ${shadowColor}`,
+        ...mergedStyles,
+      }}
+    >
+      {renderedChildren}
+    </div>
   );
 };
 
