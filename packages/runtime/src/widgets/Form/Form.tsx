@@ -9,8 +9,11 @@ import type { FormLayout } from "antd/es/form/Form";
 import { WidgetRegistry } from "../../registry";
 import { EnsembleRuntime } from "../../runtime";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
+import { useRegisterBindings } from "@ensembleui/react-framework";
+import { EnsembleWidgetProps } from "../../shared/types";
 
-export interface FormProps {
+export type FormProps = {
+  id?: string;
   children: EnsembleWidget[];
   enabled: boolean;
   onSubmit?: EnsembleAction;
@@ -21,12 +24,11 @@ export interface FormProps {
     width?: string;
     [key: string]: unknown;
   };
-}
+} & EnsembleWidgetProps;
 export const Form: React.FC<FormProps> = (props) => {
   const { values } = useRegisterBindings({ ...props });
 
   const action = useEnsembleAction(props.onSubmit);
-
   const onFinishCallback = useCallback(
     (vals: unknown) => {
       if (!action) {
