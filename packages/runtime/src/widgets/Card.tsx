@@ -52,7 +52,8 @@ export const Card: React.FC<CardProps> = ({ children, styles }) => {
     <div
       className={styles?.names}
       style={{
-        display: "grid",
+        display: "flex",
+        flexDirection: "column",
         boxShadow: `${shadowOffset} ${shadowOffset} ${shadowBlur} ${shadowSpread} ${shadowColor}`,
         ...mergedStyles,
       }}

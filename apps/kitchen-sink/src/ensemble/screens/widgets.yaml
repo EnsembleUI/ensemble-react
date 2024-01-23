@@ -24,7 +24,7 @@ View:
             styles:
               maxWidth: unset
               width: unset
-              gap: 20px
+              gap: 10px
               backgroundColor: "#f5f5f5"
             children:
               - Text:
@@ -234,30 +234,37 @@ View:
               maxWidth: unset
               width: unset
             children:
-              - Text:
+              - Form:
                   styles:
-                    names: heading-3
-                  text: Date Picker
-              - Date:
-                  label: Example 1 - Date picker
-                  hintText: Placeholder value
-              - Date:
-                  label: Example 2 - Date picker with restricted range
-                  initialValue: "2021-01-20"
-                  firstDate: "2021-01-15"
-                  lastDate: "2021-01-25"
-              - Date:
-                  id: onChangeDemoDate
-                  label: Example 3 - onChange
-                  hintText: Select a date
-                  onChange:
-                    executeCode:
-                      body: |-
-                        console.log(onChangeDemoDate);
-                        onChangeDemo.setText('You selected: ' + onChangeDemoDate.value);
-
-              - Text:
-                  id: onChangeDemo
+                    labelPosition: top
+                    gap: 20px
+                  children:
+                    - Text:
+                        styles:
+                          names: heading-3
+                        text: Date Picker
+                    - Date:
+                        label: Example 1 - Date picker
+                        hintText: Placeholder value
+                        styles:
+                          backgroundColor: "beige"
+                          width: 300px
+                    - Date:
+                        label: Example 2 - Date picker with restricted range
+                        initialValue: "2021-01-20"
+                        firstDate: "2021-01-15"
+                        lastDate: "2021-01-25"
+                    - Date:
+                        id: onChangeDemoDate
+                        label: Example 3 - onChange
+                        hintText: Select a date
+                        onChange:
+                          executeCode:
+                            body: |-
+                              console.log(onChangeDemoDate);
+                              onChangeDemo.setText('You selected: ' + onChangeDemoDate.value);
+                    - Text:
+                        id: onChangeDemo
 
 API:
   getDummyNumbers:

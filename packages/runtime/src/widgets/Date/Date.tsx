@@ -9,7 +9,10 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useState, useCallback } from "react";
 import dayjs from "dayjs";
 import { WidgetRegistry } from "../../registry";
-import type { EnsembleWidgetProps } from "../../shared/types";
+import type {
+  EnsembleWidgetProps,
+  EnsembleWidgetStyles,
+} from "../../shared/types";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import type { FormInputProps } from "../Form/types";
 import { CalendarHeader } from "./CalendarHeader";
@@ -17,14 +20,18 @@ import { ActionBar } from "./ActionBar";
 import { DateDisplayFormat } from "./utils/DateConstants";
 import { DatePickerContext } from "./utils/DatePickerContext";
 
+type DateStyles = {
+  visible?: boolean;
+} & EnsembleWidgetStyles;
+
 type DateProps = {
   initialValue?: string;
   firstDate?: string;
   lastDate?: string;
   showCalendarIcon?: boolean;
   onChange?: EnsembleAction;
-} & EnsembleWidgetProps &
-  FormInputProps<string>;
+} & FormInputProps<string> &
+  EnsembleWidgetProps<DateStyles>;
 
 export const Date: React.FC<DateProps> = (props) => {
   const [value, setValue] = useState<dayjs.Dayjs | undefined>(
@@ -41,7 +48,7 @@ export const Date: React.FC<DateProps> = (props) => {
   });
 
   const onChangeCallback = useCallback(
-    (date: string) => {
+    (date?: string) => {
       if (!action) {
         return;
       }
@@ -58,9 +65,13 @@ export const Date: React.FC<DateProps> = (props) => {
 
   const onDateChange = (date: unknown): void => {
     const formattedDate = dayjs(date as string)?.format(DateDisplayFormat);
-    formattedDate !== "Invalid Date" && setEnteredDate(formattedDate);
 
-    onChangeCallback(formattedDate);
+    if (formattedDate === "Invalid Date") {
+      onChangeCallback("");
+    } else {
+      setEnteredDate(formattedDate);
+      onChangeCallback(formattedDate);
+    }
   };
 
   const onDateAccept = (date: unknown): void => {
@@ -81,14 +92,19 @@ export const Date: React.FC<DateProps> = (props) => {
         setEnteredDate,
         errorText,
         setErrorText,
+        onChangeCallback,
       }}
     >
       <AntForm.Item
         label={values?.label}
         name={props.id ? values?.id : values?.label}
         rules={[{ required: values?.required }]}
+        className={values?.styles?.names}
         style={{
           marginBottom: "0px",
+          ...(values?.styles?.visible === false
+            ? { display: "none" }
+            : undefined),
         }}
       >
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -116,6 +132,7 @@ export const Date: React.FC<DateProps> = (props) => {
                 onClear: () => setValue(undefined),
               },
               textField: {
+                id: values?.id,
                 InputLabelProps: {
                   shrink: false,
                 },
@@ -125,6 +142,9 @@ export const Date: React.FC<DateProps> = (props) => {
                     : () => setOpenPicker(true),
                 error: false,
                 color: "success",
+                style: {
+                  ...values?.styles,
+                },
               },
               popper: {
                 modifiers: [
