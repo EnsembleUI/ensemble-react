@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import type { Expression } from "@ensembleui/react-framework";
 import {
   useRegisterBindings,
@@ -11,6 +11,8 @@ import { get } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from "../shared/types";
 import { getColor } from "../shared/styles";
+import { EnsembleAction } from "@ensembleui/react-framework";
+import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
 interface SelectOption {
   label: Expression<string>;
@@ -24,6 +26,7 @@ export type MultiSelectProps = {
   valueKey?: string;
   default?: SelectOption[];
   placeholder?: Expression<string>;
+  onItemSelect?: EnsembleAction;
 } & EnsembleWidgetProps;
 
 const MultiSelect: React.FC<MultiSelectProps> = (props) => {
@@ -40,7 +43,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   const [selectedValues, setSelectedValues] = useState<string[] | undefined>(
     defaultOptions?.map((item) => item.value.toString()),
   );
-
+  const action = useEnsembleAction(props?.onItemSelect);
   const { rawData } = useTemplateData({ data });
 
   useEffect(() => {
@@ -62,6 +65,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
 
   const handleChange = (value: string[]): void => {
     setSelectedValues(value);
+    onItemSelectCallback(value);
     if (newOption) {
       setOptions([
         ...options,
@@ -81,6 +85,14 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
       setSelectedValues,
       setOptions,
     },
+  );
+  const onItemSelectCallback = useCallback(
+    (value?: string[]) => {
+      if (action) {
+        action.callback({ selectedValues: value });
+      }
+    },
+    [action],
   );
   return (
     <AntForm.Item
@@ -126,6 +138,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
           borderColor: styles?.borderColor
             ? getColor(styles.borderColor)
             : undefined,
+          ...styles,
         }}
         value={values?.value}
       />

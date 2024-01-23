@@ -277,7 +277,41 @@ View:
                                   ]
                               }
                           }
-
+        - Markdown:
+            text: "## DataGrids"
+        - DataGrid:
+            id: "myDataGridExample"
+            onRowsSelected:
+              executeCode:  |
+                console.log("data", selectedRows, selectedRowKeys);
+            allowSelection: true
+            styles:
+              headerStyle:
+                backgroundColor: "white"
+                fontSize: "12px"
+                textColor: "#747184"
+                hasDivider: true
+                borderBottom: false
+            DataColumns:
+              - label: PATIENT
+              - label: ADVOCATE
+            item-template:
+              data:
+                [
+                  { key: "1", patient: "John", advocate: "Mike Ross" },
+                  { key: "2", patient: "Reuben", advocate: "Harvey Dent" },
+                ]
+              name: dummyData
+              key: ${dummyData.key}
+              template:
+                DataRow:
+                  children:
+                    - Text:
+                        id: ${dummyData.patient+"Name"}
+                        text: ${dummyData.patient}
+                    - Text:
+                        id: ${dummyData.patient+"Adv"}
+                        text: ${dummyData.advocate}
         - Card:
             styles:
               maxWidth: unset
