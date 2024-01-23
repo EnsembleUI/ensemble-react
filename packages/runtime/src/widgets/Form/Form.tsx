@@ -9,7 +9,6 @@ import type { FormLayout } from "antd/es/form/Form";
 import { WidgetRegistry } from "../../registry";
 import { EnsembleRuntime } from "../../runtime";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
-import { useRegisterBindings } from "@ensembleui/react-framework";
 import { EnsembleWidgetProps } from "../../shared/types";
 
 export type FormProps = {
