@@ -92,7 +92,15 @@ export const GridView: React.FC<GridViewProps> = ({
     template,
   ]);
 
-  return <>{rows}</>;
+  return (
+    <div
+      style={{
+        ...(styles?.visible === false ? { display: "none" } : undefined),
+      }}
+    >
+      {rows}
+    </div>
+  );
 };
 
 WidgetRegistry.register("GridView", GridView);

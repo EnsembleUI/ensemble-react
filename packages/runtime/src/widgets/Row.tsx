@@ -34,7 +34,7 @@ export const Row: React.FC<FlexboxProps> = (props) => {
     }
     action.callback();
   }, [action]);
-  console.log("Row", values);
+
   return (
     <AntRow
       className={values?.styles?.names}

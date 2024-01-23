@@ -10,7 +10,7 @@ import {
 import { isString } from "lodash-es";
 import { useNavigateScreen } from "../../runtime/hooks/useNavigateScreen";
 import { WidgetRegistry } from "../../registry";
-import type { IconProps } from "../../shared/types";
+import type { EnsembleWidgetStyles, IconProps } from "../../shared/types";
 import { Icon } from "../Icon";
 import { useExecuteCode } from "../../runtime/hooks/useEnsembleAction";
 import { stringToColor } from "./utils/stringToColors";
@@ -29,12 +29,7 @@ export interface AvatarProps {
   src?: Expression<string>;
   name?: Expression<string>;
   icon?: IconProps;
-  styles?: {
-    width?: number | string;
-    height?: number | string;
-    backgroundColor?: string;
-    color: string;
-  };
+  styles?: EnsembleWidgetStyles;
   menu?: AvatarMenu[];
 }
 
@@ -89,6 +84,11 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
           height: props.styles?.height,
           color: props.styles?.color ?? "white",
           cursor: "pointer",
+          ...values?.styles,
+          ...values?.styles,
+          ...(values?.styles?.visible === false
+            ? { display: "none" }
+            : undefined),
         }}
       >
         {props.name ? (

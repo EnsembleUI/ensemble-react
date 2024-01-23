@@ -7,6 +7,7 @@ import type {
 
 export type EnsembleWidgetStyles = Omit<React.CSSProperties, "direction"> & {
   names?: Expression<string>;
+  visible?: boolean;
 };
 
 export interface EnsembleWidgetProps<

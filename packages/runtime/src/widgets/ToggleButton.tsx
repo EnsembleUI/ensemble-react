@@ -5,7 +5,11 @@ import { isEqual, isNil, isString } from "lodash-es";
 import MUIToggleButton from "@mui/material/ToggleButton";
 import MUIToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { Alert } from "antd";
-import type { EnsembleWidgetProps, IconProps } from "../shared/types";
+import type {
+  EnsembleWidgetProps,
+  EnsembleWidgetStyles,
+  IconProps,
+} from "../shared/types";
 import { WidgetRegistry } from "../registry";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { Text } from "./Text";
@@ -38,7 +42,7 @@ type ToggleButtonProps = {
         icon?: IconProps;
       }[];
   onChange?: EnsembleAction;
-} & EnsembleWidgetProps<ToggleButtonPropsStyles>;
+} & EnsembleWidgetProps<ToggleButtonPropsStyles & EnsembleWidgetStyles>;
 
 export const ToggleButton: React.FC<ToggleButtonProps> = ({
   id,
@@ -82,12 +86,16 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
       exclusive
       onChange={onChangeCallback}
       ref={rootRef}
+      className={values?.styles?.names}
       sx={{
         display: "flex",
         flexDirection: "row",
         flexWrap: "wrap",
         rowGap: `${styles?.runSpacing ?? 0}px`,
         margin: `${styles?.margin ?? 0}`,
+        ...(values?.styles?.visible === false
+          ? { display: "none" }
+          : undefined),
       }}
       value={values?.value}
     >

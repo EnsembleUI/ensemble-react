@@ -160,6 +160,9 @@ export const Search: React.FC<SearchProps> = ({
           style={{
             boxShadow: "none",
             ...values?.styles,
+            ...(values?.styles?.visible === false
+              ? { display: "none" }
+              : undefined),
           }}
         />
       </AutoComplete>

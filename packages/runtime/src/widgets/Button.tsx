@@ -42,6 +42,9 @@ export const Button: React.FC<ButtonProps> = (props) => {
           width: "auto",
           color: values?.styles?.textColor ?? "black",
           ...values?.styles,
+          ...(values?.styles?.visible === false
+            ? { display: "none" }
+            : undefined),
         }}
       >
         {values?.startingIcon ? <Icon {...values.startingIcon} /> : null}

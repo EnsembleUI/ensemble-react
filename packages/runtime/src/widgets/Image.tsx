@@ -48,6 +48,9 @@ export const Image: React.FC<ImageProps> = (props) => {
         borderStyle: props.borderWidth ? "solid" : undefined,
         backgroundColor: values?.imageBackgroundColor,
         padding: props.padding,
+        ...(values?.styles?.visible === false
+          ? { display: "none" }
+          : undefined),
       }}
     />
   );

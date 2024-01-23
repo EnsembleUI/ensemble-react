@@ -38,6 +38,10 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
         onChange={(event): void => setChecked(event.target.checked)}
         style={{
           marginLeft: `${props.leadingText ? "4px" : "0px"}`,
+          ...values?.styles,
+          ...(values?.styles?.visible === false
+            ? { display: "none" }
+            : undefined),
         }}
       >
         {values?.trailingText}

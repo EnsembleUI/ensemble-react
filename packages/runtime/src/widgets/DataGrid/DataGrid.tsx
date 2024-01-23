@@ -44,6 +44,7 @@ export interface DataGridStyles extends Partial<EnsembleWidgetStyles> {
     hasDivider: boolean;
     borderBottom: string;
   };
+  styles?: EnsembleWidgetStyles;
 }
 
 export interface DataGridRowTemplate {
@@ -95,7 +96,13 @@ export const DataGrid: React.FC<GridProps> = (props) => {
         dataSource={namedData}
         key={resolvedWidgetId}
         ref={rootRef}
-        style={{ width: "100%" }}
+        style={{
+          width: "100%",
+          ...values?.styles,
+          ...(values?.styles?.visible === false
+            ? { display: "none" }
+            : undefined),
+        }}
         pagination={values?.hidePagination ? false : undefined}
       >
         {DataColumns?.map((col, index) => {
