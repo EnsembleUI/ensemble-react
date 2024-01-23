@@ -10,6 +10,7 @@ export const Icon: React.FC<IconProps> = (props) => {
   const [backgroundColor, setBackgroundColor] = useState(
     props.styles?.backgroundColor,
   );
+
   const { values } = useRegisterBindings(
     { ...props, color, name, backgroundColor },
     props.id,
