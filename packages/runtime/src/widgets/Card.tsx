@@ -1,8 +1,10 @@
 import type { EnsembleWidget } from "@ensembleui/react-framework";
 import { useMemo } from "react";
-import { merge } from "lodash-es";
 import { WidgetRegistry } from "../registry";
-import type { EnsembleWidgetProps } from "../shared/types";
+import type {
+  EnsembleWidgetProps,
+  EnsembleWidgetStyles,
+} from "../shared/types";
 import { EnsembleRuntime } from "../runtime";
 
 interface CardStyles {
@@ -17,11 +19,12 @@ interface CardStyles {
   padding: string;
   maxWidth: string;
   minWidth: string;
+  gap?: string;
 }
 
 export type CardProps = {
   children: EnsembleWidget[];
-} & EnsembleWidgetProps<CardStyles>;
+} & EnsembleWidgetProps<CardStyles & EnsembleWidgetStyles>;
 
 const defaultStyles: CardStyles = {
   border: "1px solid lightgrey",
@@ -41,13 +44,18 @@ export const Card: React.FC<CardProps> = ({ children, styles }) => {
   const renderedChildren = useMemo(() => {
     return EnsembleRuntime.render(children);
   }, [children]);
-  const mergedStyles = merge(defaultStyles, styles);
+
+  const mergedStyles = { ...defaultStyles, ...styles };
   const { shadowOffset, shadowBlur, shadowSpread, shadowColor } = mergedStyles;
+
   return (
     <div
+      className={styles?.names}
       style={{
-        ...mergedStyles,
+        display: "flex",
+        flexDirection: "column",
         boxShadow: `${shadowOffset} ${shadowOffset} ${shadowBlur} ${shadowSpread} ${shadowColor}`,
+        ...mergedStyles,
       }}
     >
       {renderedChildren}

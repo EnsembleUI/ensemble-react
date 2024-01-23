@@ -31,7 +31,7 @@ export const EnsembleHeader: React.FC<EnsembleHeaderProps> = ({ header }) => {
         width: "100%",
         display: "flex",
         justifyContent: "center",
-        alignItems: header.styles?.centerTitle ? "center" : "flex-start",
+        alignItems: header.styles?.centerTitle ? "center" : "normal",
         backgroundColor: header.styles?.backgroundColor || "white",
         height: header.styles?.titleBarHeight || 56,
       }}

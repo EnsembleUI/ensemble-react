@@ -24,6 +24,8 @@ View:
             styles:
               maxWidth: unset
               width: unset
+              gap: 10px
+              backgroundColor: "#f5f5f5"
             children:
               - Text:
                   styles:
@@ -38,8 +40,16 @@ View:
                     - label: Option 2
                       value: 2
               - Dropdown:
+                  id: myDropdown
                   label: With Default Value
                   value: 1
+                  styles:
+                    dropdownBackgroundColor: "aqua"
+                    dropdownBorderWidth: 1
+                    dropdownBorderColor: "lime"
+                    backgroundColor: "yellow"
+                    selectedBackgroundColor: "gray"
+                    selectedTextColor: "purple"
                   items:
                     - label: Option 1
                       value: 1
@@ -49,13 +59,22 @@ View:
                   label: Searchable
                   hintText: Search
                   autoComplete: true
+                  hintStyle:
+                    color: "red"
+                    fontSize: 20px
                   items:
                     - label: Option 1
                       value: option1
                     - label: Option 2
                       value: option2
               - Dropdown:
+                  id: myDropdown4
                   label: With item template
+                  labelStyle:
+                    color: green
+                    fontSize: 20
+                    backgroundColor: "lightgreen"
+                    borderRadius: 10
                   item-template:
                     data:
                       [
@@ -85,8 +104,6 @@ View:
                           text: Here is my label 2
                       value: 222
 
-        - Markdown:
-            text: "## Charts"
         - Column:
             crossAxis: stretch
             margin: 20px
@@ -217,6 +234,43 @@ View:
                                   ]
                               }
                           }
+
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:
+              - Form:
+                  styles:
+                    labelPosition: top
+                    gap: 20px
+                  children:
+                    - Text:
+                        styles:
+                          names: heading-3
+                        text: Date Picker
+                    - Date:
+                        label: Example 1 - Date picker
+                        hintText: Placeholder value
+                        styles:
+                          backgroundColor: "beige"
+                          width: 300px
+                    - Date:
+                        label: Example 2 - Date picker with restricted range
+                        initialValue: "2021-01-20"
+                        firstDate: "2021-01-15"
+                        lastDate: "2021-01-25"
+                    - Date:
+                        id: onChangeDemoDate
+                        label: Example 3 - onChange
+                        hintText: Select a date
+                        onChange:
+                          executeCode:
+                            body: |-
+                              console.log(onChangeDemoDate);
+                              onChangeDemo.setText('You selected: ' + onChangeDemoDate.value);
+                    - Text:
+                        id: onChangeDemo
 
 API:
   getDummyNumbers:

@@ -12,6 +12,7 @@ export interface DatePickerProps {
   setEnteredDate?: (value: string) => void;
   errorText?: string;
   setErrorText?: (value: string) => void;
+  onChangeCallback?: (date?: string) => void;
 }
 
 export const DatePickerContext = createContext<DatePickerProps | undefined>(

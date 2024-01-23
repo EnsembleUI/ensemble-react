@@ -25,7 +25,8 @@ export const Icon: React.FC<IconProps> = (props) => {
       <IconComponent
         className={values?.styles?.names}
         sx={{
-          color: props.color && getColor(String(values?.color)),
+          ...values?.styles,
+          color: values?.color && getColor(String(values?.color)),
           fontSize: props.size,
           backgroundColor: `${
             values?.styles?.backgroundColor
@@ -33,23 +34,28 @@ export const Icon: React.FC<IconProps> = (props) => {
               : "transparent"
           }`,
           padding: `${
-            props.styles?.padding ? `${props.styles.padding}px` : "0px"
+            values?.styles?.padding ? `${values.styles.padding}px` : "0px"
           }`,
           margin: `${
-            props.styles?.margin ? `${props.styles.margin}px` : "0px"
+            values?.styles?.margin ? `${values.styles.margin}px` : "0px"
           }`,
           borderRadius: `${
-            props.styles?.borderRadius
-              ? `${props.styles.borderRadius}px`
+            values?.styles?.borderRadius
+              ? `${values.styles.borderRadius}px`
               : "0px"
           }`,
           borderWidth: `${
-            props.styles?.borderWidth ? `${props.styles.borderWidth}px` : "0px"
+            values?.styles?.borderWidth
+              ? `${values.styles.borderWidth}px`
+              : "0px"
           }`,
           borderColor: values?.styles?.borderColor
             ? getColor(String(values.styles.borderColor))
             : undefined,
-          borderStyle: props.styles?.borderWidth ? "solid" : undefined,
+          borderStyle: values?.styles?.borderWidth ? "solid" : undefined,
+          ...(values?.styles?.visible === false
+            ? { display: "none" }
+            : undefined),
         }}
       />
     );

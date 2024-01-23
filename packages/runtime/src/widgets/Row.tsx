@@ -34,33 +34,40 @@ export const Row: React.FC<FlexboxProps> = (props) => {
     }
     action.callback();
   }, [action]);
+
   return (
     <AntRow
       className={values?.styles?.names}
       onClick={onClickCallback}
       ref={rootRef}
       style={{
-        justifyContent: props.mainAxis && getMainAxis(props.mainAxis),
-        alignItems: props.crossAxis && getCrossAxis(props.crossAxis),
-        margin: props.margin,
-        padding: props.padding,
-        gap: props.gap,
-        backgroundColor: props.styles?.backgroundColor
-          ? getColor(props.styles.backgroundColor)
+        justifyContent:
+          (values?.mainAxis || values?.styles?.mainAxis) &&
+          getMainAxis(props.mainAxis || values?.styles?.mainAxis || ""),
+        alignItems:
+          (values?.crossAxis || values?.styles?.crossAxis) &&
+          getCrossAxis(values?.crossAxis || values?.styles?.crossAxis || ""),
+        margin: values?.margin || values?.styles?.margin,
+        padding: values?.padding || values?.styles?.padding,
+        gap: values?.gap || values?.styles?.gap,
+        backgroundColor: values?.styles?.backgroundColor
+          ? getColor(values.styles.backgroundColor)
           : undefined,
-        borderRadius: props.styles?.borderRadius,
-        borderWidth: props.styles?.borderWidth,
-        borderColor: props.styles?.borderColor
-          ? getColor(props.styles.borderColor)
+        borderRadius: values?.styles?.borderRadius,
+        borderWidth: values?.styles?.borderWidth,
+        borderColor: values?.styles?.borderColor
+          ? getColor(values.styles.borderColor)
           : undefined,
-        borderStyle: props.styles?.borderWidth ? "solid" : undefined,
-        maxWidth: props.maxWidth ?? "100%",
-        minWidth: props.minWidth,
+        borderStyle: values?.styles?.borderWidth ? "solid" : undefined,
+        maxWidth: values?.maxWidth ?? "100%",
+        minWidth: values?.minWidth,
         flexDirection: "row",
         flexFlow: "unset",
         flexGrow: "unset",
         cursor: props?.onTap ? "pointer" : "auto",
-        visibility: props?.styles?.visibility,
+        ...(values?.styles?.visible === false
+          ? { display: "none" }
+          : undefined),
         ...values?.styles,
       }}
     >

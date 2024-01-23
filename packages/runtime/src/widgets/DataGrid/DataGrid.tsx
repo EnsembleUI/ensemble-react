@@ -44,6 +44,15 @@ export interface DataGridStyles extends Partial<EnsembleWidgetStyles> {
     hasDivider: boolean;
     borderBottom: string;
   };
+  styles?: EnsembleWidgetStyles;
+}
+
+export interface DataGridRowTemplate {
+  name: "DataRow";
+  properties: {
+    onTap?: EnsembleAction;
+    children: EnsembleWidget[];
+  };
 }
 
 export type GridProps = {
@@ -53,15 +62,8 @@ export type GridProps = {
     name: string;
     template: DataGridRowTemplate;
   };
+  hidePagination?: boolean;
 } & EnsembleWidgetProps<DataGridStyles>;
-
-export interface DataGridRowTemplate {
-  name: "DataRow";
-  properties: {
-    onTap?: EnsembleAction;
-    children: EnsembleWidget[];
-  };
-}
 
 export const DataGrid: React.FC<GridProps> = (props) => {
   const { "item-template": itemTemplate, DataColumns, ...rest } = props;
@@ -94,9 +96,16 @@ export const DataGrid: React.FC<GridProps> = (props) => {
         dataSource={namedData}
         key={resolvedWidgetId}
         ref={rootRef}
-        style={{ width: "100%" }}
+        style={{
+          width: "100%",
+          ...values?.styles,
+          ...(values?.styles?.visible === false
+            ? { display: "none" }
+            : undefined),
+        }}
+        pagination={values?.hidePagination ? false : undefined}
       >
-        {DataColumns.map((col, index) => {
+        {DataColumns?.map((col, index) => {
           return (
             <Table.Column
               dataIndex={itemTemplate.name}

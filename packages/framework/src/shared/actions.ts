@@ -40,6 +40,9 @@ export type NavigateModalScreenAction =
   | string
   | (NavigateScreenOptions & {
       maskClosable?: boolean;
+      hideFullScreenIcon?: boolean;
+      hideCloseIcon?: boolean;
+      title?: string | Record<string, unknown>;
       styles?: NavigateModalScreenStyles;
     });
 

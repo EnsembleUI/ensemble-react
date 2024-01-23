@@ -34,7 +34,12 @@ export const Text: React.FC<TextProps> = (props) => {
     <Typography.Text
       className={values?.styles?.names}
       ref={rootRef}
-      style={{ ...values?.styles }}
+      style={{
+        ...(values?.styles?.visible === false
+          ? { display: "none" }
+          : undefined),
+        ...values?.styles,
+      }}
     >
       {values?.text}
     </Typography.Text>

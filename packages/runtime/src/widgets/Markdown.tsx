@@ -28,7 +28,13 @@ export const Markdown: React.FC<MarkdownProps> = (props) => {
   return (
     <div
       className={values?.styles?.names}
-      style={{ ...values?.styles, textAlign: getTextAlign(props.textAlign) }}
+      style={{
+        ...values?.styles,
+        textAlign: getTextAlign(props.textAlign),
+        ...(values?.styles?.visible === false
+          ? { display: "none" }
+          : undefined),
+      }}
     >
       <ReactMarkdown components={components}>
         {values?.text ?? ""}

@@ -1,6 +1,7 @@
-import type {
-  EnsembleAction,
-  EnsembleWidget,
+import {
+  useRegisterBindings,
+  type EnsembleAction,
+  type EnsembleWidget,
 } from "@ensembleui/react-framework";
 import { Form as AntForm } from "antd";
 import { useCallback } from "react";
@@ -18,18 +19,21 @@ export interface FormProps {
     labelOverflow: "wrap" | "visible" | "clip" | "ellipsis";
     gap?: string | number;
     width?: string;
+    [key: string]: unknown;
   };
 }
 export const Form: React.FC<FormProps> = (props) => {
+  const { values } = useRegisterBindings({ ...props });
+
   const action = useEnsembleAction(props.onSubmit);
 
   const onFinishCallback = useCallback(
-    (values: unknown) => {
+    (vals: unknown) => {
       if (!action) {
         return;
       }
 
-      return action.callback({ values });
+      return action.callback({ vals });
     },
     [action],
   );
@@ -37,16 +41,17 @@ export const Form: React.FC<FormProps> = (props) => {
   return (
     <AntForm
       colon={false}
-      layout={getLayout(props.styles.labelPosition)}
+      layout={getLayout(values?.styles?.labelPosition)}
       onFinish={onFinishCallback}
       style={{
         display: "flex",
         flexDirection: "column",
-        gap: `${props.styles.gap ? `${props.styles.gap}px` : "2px"}`,
-        width: props?.styles?.width,
+        gap: `${values?.styles?.gap || "2px"}`,
+        width: values?.styles?.width,
+        ...values?.styles,
       }}
     >
-      {EnsembleRuntime.render(props.children)}
+      {EnsembleRuntime.render(values?.children || props.children)}
     </AntForm>
   );
 };

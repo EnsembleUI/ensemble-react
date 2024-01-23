@@ -15,7 +15,11 @@ import { AutoComplete, Input } from "antd";
 import { SearchOutlined } from "@mui/icons-material";
 import { get, isArray, isNumber, isObject } from "lodash-es";
 import { WidgetRegistry } from "../registry";
-import type { EnsembleWidgetProps, HasItemTemplate } from "../shared/types";
+import type {
+  EnsembleWidgetProps,
+  EnsembleWidgetStyles,
+  HasItemTemplate,
+} from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { EnsembleRuntime } from "../runtime";
 
@@ -27,6 +31,7 @@ export type SearchProps = {
   } & EnsembleAction;
   onChange?: EnsembleAction;
   onSelect?: EnsembleAction;
+  iconStyles?: EnsembleWidgetStyles;
 } & EnsembleWidgetProps &
   HasItemTemplate;
 
@@ -145,10 +150,19 @@ export const Search: React.FC<SearchProps> = ({
       >
         <Input
           placeholder={values?.placeholder}
-          prefix={<SearchOutlined />}
+          prefix={
+            <SearchOutlined
+              style={{
+                ...values?.iconStyles,
+              }}
+            />
+          }
           style={{
             boxShadow: "none",
             ...values?.styles,
+            ...(values?.styles?.visible === false
+              ? { display: "none" }
+              : undefined),
           }}
         />
       </AutoComplete>

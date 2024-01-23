@@ -45,6 +45,9 @@ export const DividerWidget: React.FC<DividerProps> = (props) => {
             : "0px"
         }`,
         width,
+        ...(values?.styles?.visible === false
+          ? { display: "none" }
+          : undefined),
       }}
     />
   );

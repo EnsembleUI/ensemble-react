@@ -26,6 +26,7 @@ export interface TagStyles extends EnsembleWidgetStyles {
     | "center"
     | "justify"
     | "match-parent";
+  visible?: boolean;
 }
 export interface TagProps extends EnsembleWidgetProps<TagStyles> {
   label: Expression<string> | Expression<string[]>;
@@ -76,9 +77,15 @@ export const Tag: React.FC<TagProps> = (props) => {
     <Typography.Text
       className={values?.styles?.names}
       key={index}
-      style={{ ...tagStyles, color: values?.textColor }}
+      style={{
+        ...tagStyles,
+        color: values?.textColor,
+        ...(values?.styles?.visible === false
+          ? { display: "none" }
+          : undefined),
+      }}
     >
-      {item} &nbsp;
+      {item}
       {props.icon ? <Icon {...props.icon} /> : null}
     </Typography.Text>
   ));

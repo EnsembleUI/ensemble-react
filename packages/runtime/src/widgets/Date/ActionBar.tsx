@@ -29,6 +29,8 @@ export const ActionBar: React.FC<PickersActionBarProps> = (props) => {
     } else {
       context?.setValue?.(dayjs(context?.enteredDate));
       context?.setErrorText?.("");
+      context?.onChangeCallback?.(context?.enteredDate);
+      context?.setIsCalendarOpen?.(false);
       props.onAccept();
     }
   };
