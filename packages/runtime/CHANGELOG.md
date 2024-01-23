@@ -1,5 +1,16 @@
 # @ensembleui/react-runtime
 
+## 0.1.15
+
+### Patch Changes
+
+- 2f482d3: Render child screens when entering apps without menu
+- f1a513d: added onTap to row widget
+- 7aa7dad: added api for navigateUrl to navigate screen using url
+- 7c51b44: enhance styles to some widgets
+- Updated dependencies [7c51b44]
+  - @ensembleui/react-framework@0.1.13
+
 ## 0.1.14
 
 ### Patch Changes

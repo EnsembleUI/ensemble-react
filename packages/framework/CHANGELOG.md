@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.13
+
+### Patch Changes
+
+- 7c51b44: enhance styles to some widgets
+
 ## 0.1.12
 
 ### Patch Changes
