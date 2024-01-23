@@ -10,7 +10,7 @@ import {
   evaluate,
   defaultScreenContext,
 } from "@ensembleui/react-framework";
-import { Collapse, type CollapseProps } from "antd";
+import { Collapse, type CollapseProps, ConfigProvider } from "antd";
 import { get, isArray, isEmpty, isObject, isString } from "lodash-es";
 import type {
   EnsembleWidgetProps,
@@ -28,6 +28,16 @@ interface CollapsibleItem {
   children: Expression<string> | Record<string, unknown>;
 }
 
+interface CollapsibleHeaderStyles {
+  headerBg?: string;
+  headerPadding?: undefined | string | number;
+}
+
+interface CollapsibleContentStyles {
+  contentBg?: string;
+  contentPadding?: undefined | string | number;
+}
+
 export type CollapsibleProps = {
   items?: CollapsibleItem[];
   expandIconPosition?: "start" | "end";
@@ -36,6 +46,8 @@ export type CollapsibleProps = {
   isAccordion?: boolean;
   collpaseIcon?: IconProps;
   expandIcon?: IconProps;
+  headerStyle?: CollapsibleHeaderStyles;
+  contentStyle?: CollapsibleContentStyles;
 } & EnsembleWidgetProps &
   HasItemTemplate;
 
@@ -166,14 +178,25 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
   };
 
   return (
-    <Collapse
-      accordion={values?.isAccordion}
-      activeKey={activeValue}
-      expandIcon={expandIcon}
-      expandIconPosition={props?.expandIconPosition}
-      items={collapsibleItems}
-      onChange={handleCollapsibleChange}
-    />
+    <ConfigProvider
+      theme={{
+        components: {
+          Collapse: {
+            ...values?.headerStyle,
+            ...values?.contentStyle,
+          },
+        },
+      }}
+    >
+      <Collapse
+        accordion={values?.isAccordion}
+        activeKey={activeValue}
+        expandIcon={expandIcon}
+        expandIconPosition={props?.expandIconPosition}
+        items={collapsibleItems}
+        onChange={handleCollapsibleChange}
+      />
+    </ConfigProvider>
   );
 };
 
