@@ -1,5 +1,12 @@
 # @ensembleui/react-runtime
 
+## 0.1.16
+
+### Patch Changes
+
+- bfa8f2f: Added collapsible widget with item-template
+- 79e4dfe: added ability to select rows in datagird, support for multiselect onItemSelect event
+
 ## 0.1.15
 
 ### Patch Changes

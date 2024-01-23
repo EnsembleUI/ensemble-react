@@ -1,5 +1,15 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.7
+
+### Patch Changes
+
+- bfa8f2f: Added collapsible widget with item-template
+- 79e4dfe: added ability to select rows in datagird, support for multiselect onItemSelect event
+- Updated dependencies [bfa8f2f]
+- Updated dependencies [79e4dfe]
+  - @ensembleui/react-runtime@0.1.16
+
 ## 0.0.6
 
 ### Patch Changes
