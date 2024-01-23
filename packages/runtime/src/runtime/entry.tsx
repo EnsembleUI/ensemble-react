@@ -48,5 +48,9 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({ entry }) => {
     );
   }
 
+  if (location.pathname !== "/") {
+    return <Outlet />;
+  }
+
   return <EnsembleScreen screen={entry} />;
 };
