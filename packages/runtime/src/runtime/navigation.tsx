@@ -2,7 +2,7 @@ import {
   type ScreenContextDefinition,
   type NavigateScreenAction,
 } from "@ensembleui/react-framework";
-import { cloneDeep, isString } from "lodash-es";
+import { cloneDeep, isObject, isString } from "lodash-es";
 import type { NavigateFunction } from "react-router-dom";
 
 export const navigateApi = (
@@ -27,4 +27,15 @@ export const navigateApi = (
     !isString(action) && action.inputs ? cloneDeep(action.inputs) : {};
 
   navigate(`/${matchingScreen.name.toLowerCase()}`, { state: inputs });
+};
+
+export const navigateUrl = (
+  url: string,
+  navigate: NavigateFunction,
+  inputs?: Record<string, unknown>,
+): void => {
+  // set additional inputs
+  const urlInputs = inputs && isObject(inputs) ? cloneDeep(inputs) : {};
+
+  navigate(url, { state: urlInputs });
 };

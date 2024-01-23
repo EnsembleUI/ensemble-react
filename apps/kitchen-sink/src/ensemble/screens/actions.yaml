@@ -19,11 +19,11 @@ View:
               names: heading-3
             text: ensemble.navigateScreen()
         - Markdown:
-            text: use `ensemble.navigateScreen(screenname, data)` for navigate screen programmatically. click below button to check.
+            text: use `ensemble.navigateScreen({name:, inputs:{:}})` for navigate screen programmatically. click below button to check.
         - Button:
             label: navigate screen
             onTap:
-              executeCode:
+              executeCode: |
                 body: |-
                   const payload = {
                     name: 'John Doe',
@@ -33,6 +33,27 @@ View:
                     name: 'home', 
                     inputs: payload
                   });
+        - Text:
+            styles:
+              names: heading-1
+            text: ensemble.navigateUrl()
+        - Markdown:
+            text: use `ensemble.navigateUrl(path, data)` for navigate screen programmatically. click below button to check.
+        - Button:
+            label: navigate url
+            onTap:
+              executeCode: |
+                ensemble.navigateUrl('/widgets')
+        - Text:
+            styles:
+              names: heading-1
+            text: navigateUrl
+        - Markdown:
+            text: "use `navigateUrl: screen_name` for navigate screen programmatically. click below button to check"
+        - Button:
+            label: navigate url
+            onTap:
+              navigateUrl: /widgets
         - Row:
             onTap:
               executeCode: |
