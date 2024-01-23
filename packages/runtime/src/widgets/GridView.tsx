@@ -1,16 +1,22 @@
-import type { EnsembleWidget, Expression } from "@ensembleui/react-framework";
+import type {
+  EnsembleAction,
+  EnsembleWidget,
+  Expression,
+} from "@ensembleui/react-framework";
 import {
   CustomScopeProvider,
   useTemplateData,
+  useWidgetId,
 } from "@ensembleui/react-framework";
 import { Col, Row } from "antd";
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import type {
   EnsembleWidgetProps,
   EnsembleWidgetStyles,
 } from "../shared/types";
+import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
 export interface GridViewStyles extends EnsembleWidgetStyles {
   horizontalTileCount?: number;
@@ -24,14 +30,25 @@ export type GridViewProps = {
     name: string;
     template: EnsembleWidget;
   };
+  onScrollEnd?: EnsembleAction;
 } & EnsembleWidgetProps<GridViewStyles>;
 
 export const GridView: React.FC<GridViewProps> = ({
   "item-template": { data, name, template },
   styles,
+  ...rest
 }) => {
   const defaultColumnCount = 4;
+  const { resolvedWidgetId } = useWidgetId();
   const { namedData } = useTemplateData({ data, name });
+  const onScrollEndAction = useEnsembleAction(rest.onScrollEnd);
+
+  // scroll end action
+  const onScrollEndActionCallback = useCallback(() => {
+    if (onScrollEndAction) {
+      onScrollEndAction.callback();
+    }
+  }, [onScrollEndAction]);
 
   const rows = useMemo(() => {
     const workingRows = [];
@@ -92,11 +109,42 @@ export const GridView: React.FC<GridViewProps> = ({
     template,
   ]);
 
+  // handle scroll event
+  const handleScrollEvent = useCallback(
+    (event: Event): void => {
+      const container = event.target as HTMLDivElement;
+      const { scrollTop, scrollHeight, clientHeight } = container;
+
+      // Check if the user has scrolled to the bottom
+      if (scrollTop + clientHeight === scrollHeight) {
+        onScrollEndActionCallback();
+      }
+    },
+    [onScrollEndActionCallback],
+  );
+
+  useEffect(() => {
+    if (rest.onScrollEnd) {
+      // assign scroll event listener to element
+      document
+        .getElementById(resolvedWidgetId)
+        ?.addEventListener("scroll", handleScrollEvent);
+    }
+
+    return () => {
+      if (rest.onScrollEnd) {
+        // remove scroll event listener from element
+        document
+          .getElementById(resolvedWidgetId)
+          ?.removeEventListener("scroll", handleScrollEvent);
+      }
+    };
+  }, [resolvedWidgetId, rest.onScrollEnd, handleScrollEvent]);
+
   return (
     <div
-      style={{
-        ...(styles?.visible === false ? { display: "none" } : undefined),
-      }}
+      id={resolvedWidgetId}
+      style={{ maxHeight: styles?.maxHeight, overflow: styles?.overflow }}
     >
       {rows}
     </div>
