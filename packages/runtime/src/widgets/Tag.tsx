@@ -34,16 +34,16 @@ export interface TagProps extends EnsembleWidgetProps<TagStyles> {
 }
 
 export const Tag: React.FC<TagProps> = (props) => {
-  const [text, setText] = useState(props.label);
+  const [label, setLabel] = useState(props.label);
   const [backgroundColor, setBackgroundColor] = useState(
     props.styles?.backgroundColor,
   );
   const [textColor, setTextColor] = useState(props.styles?.textColor);
   const { values, rootRef } = useRegisterBindings(
-    { ...props, text, backgroundColor, textColor },
+    { ...props, label, backgroundColor, textColor },
     props.id,
     {
-      setText,
+      setLabel,
       setBackgroundColor,
       setTextColor,
     },
