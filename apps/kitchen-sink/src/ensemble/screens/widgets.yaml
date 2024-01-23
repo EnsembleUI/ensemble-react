@@ -302,7 +302,7 @@ View:
                   { key: "2", patient: "Reuben", advocate: "Harvey Dent" },
                 ]
               name: dummyData
-              uniqueIdentifier: ${dummyData.key}
+              key: ${dummyData.key}
               template:
                 DataRow:
                   children:

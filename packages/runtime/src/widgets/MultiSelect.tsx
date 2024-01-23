@@ -126,6 +126,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
           borderColor: styles?.borderColor
             ? getColor(styles.borderColor)
             : undefined,
+          ...styles,
         }}
         value={values?.value}
       />

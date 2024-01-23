@@ -62,7 +62,7 @@ export type GridProps = {
   "item-template": {
     data: Expression<object>;
     name: string;
-    uniqueIdentifier?: Expression<string>;
+    key?: Expression<string>;
     template: DataGridRowTemplate;
   };
   hidePagination?: boolean;
@@ -76,8 +76,23 @@ export interface DataGridRowTemplate {
   };
 }
 
+function djb2Hash(str: string): number {
+  let hash = 5381;
+
+  for (let i = 0; i < str.length; i++) {
+    // eslint-disable-next-line no-bitwise
+    hash = (hash * 33) ^ str.charCodeAt(i);
+  }
+
+  // eslint-disable-next-line no-bitwise
+  return hash >>> 0; // Ensure the result is an unsigned 32-bit integer
+}
+
 export const DataGrid: React.FC<GridProps> = (props) => {
-  const [selectedRow, setSelectedRow] = useState<object[]>();
+  const [rowsSelected, setRowsSelected] = useState<object[]>();
+  const [allowSelection, setAllowSelection] = useState(
+    props?.allowSelection ?? false,
+  );
   const { "item-template": itemTemplate, DataColumns, ...rest } = props;
   const [selectionType, setSelectionType] = useState<"checkbox" | "radio">(
     "checkbox",
@@ -86,10 +101,15 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     rootRef,
     id: resolvedWidgetId,
     values,
-  } = useRegisterBindings({ ...rest, selectedRow, selectionType }, props?.id, {
-    setSelectedRow,
-    setSelectionType,
-  });
+  } = useRegisterBindings(
+    { ...rest, rowsSelected, selectionType, allowSelection },
+    props?.id,
+    {
+      setRowsSelected,
+      setSelectionType,
+      setAllowSelection,
+    },
+  );
   const { namedData } = useTemplateData({ ...itemTemplate });
   const headerStyle = values?.styles?.headerStyle;
   const onTapAction = useEnsembleAction(itemTemplate.template.properties.onTap);
@@ -126,19 +146,23 @@ export const DataGrid: React.FC<GridProps> = (props) => {
         rowKey={(data: unknown) => {
           const identifier: string = evaluate(
             defaultScreenContext,
-            itemTemplate.uniqueIdentifier,
+            itemTemplate.key,
             {
               [itemTemplate.name]: get(data, itemTemplate.name) as unknown,
             },
           );
-          return identifier ?? "";
+          if (identifier) {
+            return identifier;
+          }
+          const res = djb2Hash(JSON.stringify(data));
+          return String(res);
         }}
         rowSelection={
-          values?.allowSelection
+          allowSelection
             ? {
                 type: selectionType,
                 onChange: (selectedRowKeys, selectedRows) => {
-                  setSelectedRow(selectedRows);
+                  setRowsSelected(selectedRows);
                   return onRowsSelectedCallback(selectedRowKeys, selectedRows);
                 },
               }
