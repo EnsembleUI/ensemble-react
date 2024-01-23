@@ -46,7 +46,7 @@ export const Column: React.FC<FlexboxProps> = (props) => {
           (values?.mainAxis || values?.styles?.mainAxis) &&
           getMainAxis(values?.mainAxis || values?.styles?.mainAxis || ""),
         alignItems:
-          values?.crossAxis &&
+          (values?.crossAxis || values?.styles?.crossAxis) &&
           getCrossAxis(values?.crossAxis || values?.styles?.crossAxis || ""),
         margin: values?.margin || values?.styles?.margin,
         padding: values?.padding || values?.styles?.padding,

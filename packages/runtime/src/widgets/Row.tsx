@@ -34,6 +34,7 @@ export const Row: React.FC<FlexboxProps> = (props) => {
     }
     action.callback();
   }, [action]);
+  console.log("Row", values);
   return (
     <AntRow
       className={values?.styles?.names}
@@ -44,7 +45,7 @@ export const Row: React.FC<FlexboxProps> = (props) => {
           (values?.mainAxis || values?.styles?.mainAxis) &&
           getMainAxis(props.mainAxis || values?.styles?.mainAxis || ""),
         alignItems:
-          props.crossAxis &&
+          (values?.crossAxis || values?.styles?.crossAxis) &&
           getCrossAxis(values?.crossAxis || values?.styles?.crossAxis || ""),
         margin: values?.margin || values?.styles?.margin,
         padding: values?.padding || values?.styles?.padding,
