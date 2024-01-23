@@ -23,6 +23,7 @@ import type {
 } from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { EnsembleRuntime } from "../runtime";
+import { TextStyles } from "./Text";
 
 export type DropdownStyles = {
   visible?: boolean;
@@ -43,7 +44,7 @@ export type DropdownProps = {
   items?: SelectOption[];
   onItemSelect: EnsembleAction;
   autoComplete: Expression<boolean>;
-  labelStyle?: EnsembleWidgetStyles;
+  labelStyle?: TextStyles & HasBorder;
   hintStyle?: EnsembleWidgetStyles;
 } & EnsembleWidgetProps<DropdownStyles> &
   HasItemTemplate & { "item-template"?: { value: Expression<string> } };
@@ -131,7 +132,6 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   return (
     <>
       <AntForm.Item
-        className={values?.labelStyle?.names}
         label={values?.label}
         name={values?.id}
         style={{
@@ -139,7 +139,6 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
           ...(values?.styles?.visible === false
             ? { display: "none" }
             : undefined),
-          ...values?.labelStyle,
         }}
       >
         {values?.id ? (
@@ -183,6 +182,52 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               : ""
           }
         }
+        .ant-col .ant-form-item-label > label[for=${values?.id}] {
+          ${
+            values?.labelStyle?.color
+              ? `color: ${values.labelStyle.color} !important;`
+              : ""
+          }
+          ${
+            values?.labelStyle?.fontSize
+              ? `font-size: ${values.labelStyle.fontSize}px !important;`
+              : ""
+          }
+          ${
+            values?.labelStyle?.fontWeight
+              ? `font-weight: ${values.labelStyle.fontWeight} !important;`
+              : ""
+          }
+          ${
+            values?.labelStyle?.fontFamily
+              ? `font-family: ${values.labelStyle.fontFamily} !important;`
+              : ""
+          }
+          ${
+            values?.labelStyle?.backgroundColor
+              ? `background-color: ${values.labelStyle.backgroundColor} !important;`
+              : ""
+          }
+          ${
+            values?.labelStyle?.borderRadius
+              ? `border-radius: ${values.labelStyle.borderRadius}px !important;`
+              : ""
+          }
+          ${
+            values?.labelStyle?.borderColor
+              ? `border-color: ${values.labelStyle.borderColor} !important;`
+              : ""
+          }
+          ${
+            values?.labelStyle?.borderWidth
+              ? `border-width: ${values.labelStyle.borderWidth}px !important;`
+              : ""
+          }
+          ${
+            values?.labelStyle?.borderStyle
+              ? `border-style: ${values.labelStyle.borderStyle} !important;`
+              : ""
+          }
         `}</style>
         ) : null}
         <div ref={rootRef}>

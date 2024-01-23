@@ -68,7 +68,13 @@ View:
                     - label: Option 2
                       value: option2
               - Dropdown:
+                  id: myDropdown4
                   label: With item template
+                  labelStyle:
+                    color: green
+                    fontSize: 20
+                    backgroundColor: "lightgreen"
+                    borderRadius: 10
                   item-template:
                     data:
                       [
