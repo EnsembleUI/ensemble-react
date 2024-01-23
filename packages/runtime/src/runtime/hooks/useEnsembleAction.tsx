@@ -315,7 +315,7 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
 
   useEffect(() => {
     if (!isEmpty(values?.files) && !isComplete) {
-      onCompleteAction?.callback();
+      onCompleteAction?.callback({ files: values?.files });
       setIsComplete(true);
     }
   }, [values?.files, onCompleteAction, isComplete]);
