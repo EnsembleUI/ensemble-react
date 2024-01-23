@@ -4,11 +4,19 @@ import {
   unwrapWidget,
   useRegisterBindings,
   type EnsembleAction,
+  useTemplateData,
+  CustomScopeProvider,
+  type CustomScope,
+  evaluate,
+  defaultScreenContext,
 } from "@ensembleui/react-framework";
-import { Collapse } from "antd";
-import type { CollapseProps } from "antd";
-import { get, isArray, isString } from "lodash-es";
-import type { EnsembleWidgetProps, IconProps } from "../shared/types";
+import { Collapse, type CollapseProps } from "antd";
+import { get, isArray, isEmpty, isObject, isString } from "lodash-es";
+import type {
+  EnsembleWidgetProps,
+  HasItemTemplate,
+  IconProps,
+} from "../shared/types";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
@@ -21,56 +29,120 @@ interface CollapsibleItem {
 }
 
 export type CollapsibleProps = {
-  items: CollapsibleItem[];
+  items?: CollapsibleItem[];
   expandIconPosition?: "start" | "end";
   value: Expression<string>[];
   onCollapse?: EnsembleAction;
   isAccordion?: boolean;
   collpaseIcon?: IconProps;
   expandIcon?: IconProps;
-} & EnsembleWidgetProps;
+} & EnsembleWidgetProps &
+  HasItemTemplate;
 
 export const Collapsible: React.FC<CollapsibleProps> = (props) => {
+  const { "item-template": itemTemplate, ...rest } = props;
   const [activeValue, setActiveValue] = useState<string[]>(props.value);
-  const { values } = useRegisterBindings({ ...props, activeValue }, props.id, {
+  const { values } = useRegisterBindings({ ...rest, activeValue }, props.id, {
     setActiveValue,
   });
   const onCollapseAction = useEnsembleAction(props.onCollapse);
+  const { namedData } = useTemplateData({
+    data: itemTemplate?.data,
+    name: itemTemplate?.name,
+  });
 
   const collapsibleItems = useMemo(() => {
-    const items = values?.items.map((item) => {
-      return {
-        ...item,
-        label: isString(item.label)
-          ? item.label
-          : EnsembleRuntime.render([unwrapWidget(item.label)]),
-        children: isString(item.children)
-          ? item.children
-          : EnsembleRuntime.render([unwrapWidget(item.children)]),
-      };
-    }) as CollapseProps["items"];
+    const items = [];
+    if (values?.items) {
+      const tempItems = values?.items.map((item) => {
+        return {
+          ...item,
+          label: isString(item.label)
+            ? item.label
+            : EnsembleRuntime.render([unwrapWidget(item.label)]),
+          children: isString(item.children)
+            ? item.children
+            : EnsembleRuntime.render([unwrapWidget(item.children)]),
+        };
+      });
 
-    return items;
-  }, [values?.items]);
+      items.push(...tempItems);
+    }
+
+    if (isObject(itemTemplate) && !isEmpty(namedData)) {
+      const collapsibleTemplate = JSON.stringify(
+        itemTemplate.template.properties,
+      );
+
+      const tempItems = namedData.map((item) => {
+        const evaluatedConfig = evaluate<CollapsibleItem>(
+          defaultScreenContext,
+          collapsibleTemplate
+            ?.toString()
+            // eslint-disable-next-line prefer-named-capture-group
+            ?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
+          {
+            [itemTemplate.name]: get(item, itemTemplate.name) as unknown,
+          },
+        );
+
+        return {
+          ...item,
+          key: evaluatedConfig.key,
+          label: isString(itemTemplate.template.properties.label) ? (
+            evaluatedConfig.label
+          ) : (
+            <CustomScopeProvider value={item as CustomScope}>
+              {EnsembleRuntime.render([
+                unwrapWidget(
+                  itemTemplate.template.properties.label as Record<
+                    string,
+                    unknown
+                  >,
+                ),
+              ])}
+            </CustomScopeProvider>
+          ),
+          children: isString(itemTemplate.template.properties.children) ? (
+            evaluatedConfig.children
+          ) : (
+            <CustomScopeProvider value={item as CustomScope}>
+              {EnsembleRuntime.render([
+                unwrapWidget(
+                  itemTemplate.template.properties.children as Record<
+                    string,
+                    unknown
+                  >,
+                ),
+              ])}
+            </CustomScopeProvider>
+          ),
+        };
+      });
+
+      items.push(...tempItems);
+    }
+
+    return items as CollapseProps["items"];
+  }, [values?.items, itemTemplate, namedData]);
 
   // tweak the collapsible icons
   const expandIcon = (collapseStat: unknown) => {
     const isActive = get(collapseStat, "isActive");
-    if (isActive && values?.expandIcon) {
-      return (
-        <Icon
-          key={`${values?.id ?? ""}_${values.expandIcon.name}`}
-          {...values.expandIcon}
-        />
-      );
-    } else if (values?.collpaseIcon) {
-      return (
-        <Icon
-          key={`${values?.id ?? ""}_${values.collpaseIcon.name}`}
-          {...values.collpaseIcon}
-        />
-      );
-    }
+    const idKey = values?.id ?? "";
+
+    const iconName = isActive
+      ? "default_collapsed_icon"
+      : "default_expand_icon";
+    const iconProps = isActive ? values?.expandIcon : values?.collpaseIcon;
+
+    return (
+      <Icon
+        key={`${idKey}_${iconName}`}
+        name={isActive ? "KeyboardArrowDown" : "KeyboardArrowRight"}
+        {...iconProps}
+      />
+    );
   };
 
   // trigger onCollapse action

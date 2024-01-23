@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import type { IconProps } from "../shared/types";
