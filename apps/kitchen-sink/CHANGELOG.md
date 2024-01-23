@@ -1,5 +1,19 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.6
+
+### Patch Changes
+
+- f1a513d: added onTap to row widget
+- 7aa7dad: added api for navigateUrl to navigate screen using url
+- 7c51b44: enhance styles to some widgets
+- Updated dependencies [2f482d3]
+- Updated dependencies [f1a513d]
+- Updated dependencies [7aa7dad]
+- Updated dependencies [7c51b44]
+  - @ensembleui/react-runtime@0.1.15
+  - @ensembleui/react-framework@0.1.13
+
 ## 0.0.5
 
 ### Patch Changes
