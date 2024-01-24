@@ -15,6 +15,7 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
   const { values } = props;
   return (
     <AntForm.Item
+      className={values?.styles?.names}
       initialValue={values?.value}
       label={
         values?.label ? (

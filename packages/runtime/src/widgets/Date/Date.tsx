@@ -2,7 +2,6 @@ import {
   type EnsembleAction,
   useRegisterBindings,
 } from "@ensembleui/react-framework";
-import { Form as AntForm } from "antd";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -15,6 +14,7 @@ import type {
 } from "../../shared/types";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import type { FormInputProps } from "../Form/types";
+import { EnsembleFormItem } from "../Form/FormItem";
 import { CalendarHeader } from "./CalendarHeader";
 import { ActionBar } from "./ActionBar";
 import { DateDisplayFormat } from "./utils/DateConstants";
@@ -53,7 +53,7 @@ export const Date: React.FC<DateProps> = (props) => {
         return;
       }
       action.callback({
-        [props?.id as string]: {
+        [props.id!]: {
           value: date,
           setValue,
           ...props,
@@ -64,7 +64,7 @@ export const Date: React.FC<DateProps> = (props) => {
   );
 
   const onDateChange = (date: unknown): void => {
-    const formattedDate = dayjs(date as string)?.format(DateDisplayFormat);
+    const formattedDate = dayjs(date as string).format(DateDisplayFormat);
 
     if (formattedDate === "Invalid Date") {
       onChangeCallback("");
@@ -82,8 +82,8 @@ export const Date: React.FC<DateProps> = (props) => {
   return (
     <DatePickerContext.Provider
       value={{
-        firstDate: props?.firstDate,
-        lastDate: props?.lastDate,
+        firstDate: props.firstDate,
+        lastDate: props.lastDate,
         value,
         setValue,
         isCalendarOpen,
@@ -95,34 +95,18 @@ export const Date: React.FC<DateProps> = (props) => {
         onChangeCallback,
       }}
     >
-      <AntForm.Item
-        label={values?.label}
-        name={props.id ? values?.id : values?.label}
-        rules={[{ required: values?.required }]}
-        className={values?.styles?.names}
-        style={{
-          marginBottom: "0px",
-          ...(values?.styles?.visible === false
-            ? { display: "none" }
-            : undefined),
-        }}
-      >
+      <EnsembleFormItem values={values}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
-            label={value ? "" : props?.hintText || "Select a date"}
-            value={value ? dayjs(value) : ""}
-            disabled={props?.enabled === false}
             closeOnSelect={false}
-            open={openPicker}
+            disabled={props.enabled === false}
+            label={value ? "" : props.hintText || "Select a date"}
             maxDate={props.lastDate ? dayjs(props.lastDate) : undefined}
             minDate={props.firstDate ? dayjs(props.firstDate) : undefined}
-            onClose={(): void => setOpenPicker(false)}
             onAccept={onDateAccept}
             onChange={onDateChange}
-            slots={{
-              calendarHeader: CalendarHeader,
-              actionBar: ActionBar,
-            }}
+            onClose={(): void => setOpenPicker(false)}
+            open={openPicker}
             slotProps={{
               actionBar: {
                 actions: ["cancel", "accept"],
@@ -137,7 +121,7 @@ export const Date: React.FC<DateProps> = (props) => {
                   shrink: false,
                 },
                 onClick:
-                  props?.enabled === false
+                  props.enabled === false
                     ? undefined
                     : () => setOpenPicker(true),
                 error: false,
@@ -171,6 +155,10 @@ export const Date: React.FC<DateProps> = (props) => {
                 },
               },
             }}
+            slots={{
+              calendarHeader: CalendarHeader,
+              actionBar: ActionBar,
+            }}
             sx={{
               "& .MuiOutlinedInput-notchedOutline": {
                 top: "0px",
@@ -193,9 +181,10 @@ export const Date: React.FC<DateProps> = (props) => {
                   display: "none !important",
                 },
             }}
+            value={value ? dayjs(value) : ""}
           />
         </LocalizationProvider>
-      </AntForm.Item>
+      </EnsembleFormItem>
     </DatePickerContext.Provider>
   );
 };
