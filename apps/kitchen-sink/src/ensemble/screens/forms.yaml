@@ -1,0 +1,79 @@
+View:
+  header:
+    title:
+      Header:
+
+  body:
+    Column:
+      styles:
+        names: page
+      children:
+        - Text:
+            styles:
+              names: heading-3
+            text: Forms
+        - Markdown:
+            text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).            
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:
+              - Form:
+                  id: myForm
+                  styles:
+                    gap: 8px
+                    labelPosition: top
+                  onSubmit:
+                    executeCode: |
+                      const formattedVals = JSON.stringify(vals, null, 2)
+                      console.log(formattedVals)
+                      result.setText(formattedVals)
+                  children:
+                    - Radio:
+                        id: radio
+                        label: Radio Group
+                        items:
+                          - label: Option 1
+                            value: 1
+                          - label: Option 2
+                            value: 2
+                          - label: Option 3
+                            value: 3
+                    # Build your own checkbox group
+                    - Row:
+                        children:
+                          - Checkbox:
+                              id: checkbox
+                              trailingText: Check me
+                          - Checkbox:
+                              id: checkbox2
+                              trailingText: Check me 2                       
+                    - Dropdown:
+                        id: dropdown
+                        label: Dropdown
+                        hintText: Choose One
+                        items:
+                          - label: Option 1
+                            value: option1
+                          - label: Option 2
+                            value: option2
+                    # If you omit id, the form value key will be the label
+                    - TextInput:
+                        label: Text Input
+                    - MultiSelect:
+                        label: Choose multiple
+                        # FIXME: update this to be consistent with other widgets, i.e. item and item-template
+                        # https://github.com/EnsembleUI/ensemble-react/issues/335
+                        data:
+                          - label: Option 1
+                            value: option1
+                          - label: Option 2
+                            value: option2
+                    - Button:
+                        submitForm: true
+                        label: Submit
+              - Markdown:
+                  id: result
+                  text: Check here for the result!
+          

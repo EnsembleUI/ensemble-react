@@ -1,4 +1,4 @@
-import { Form as AntForm, Select } from "antd";
+import { Select } from "antd";
 import { useCallback, useMemo, useState } from "react";
 import {
   CustomScopeProvider,
@@ -14,16 +14,18 @@ import type {
   Expression,
 } from "@ensembleui/react-framework";
 import { get, isEmpty, isObject, isString } from "lodash-es";
-import { WidgetRegistry } from "../registry";
+import { WidgetRegistry } from "../../registry";
 import type {
   EnsembleWidgetProps,
   EnsembleWidgetStyles,
   HasBorder,
   HasItemTemplate,
-} from "../shared/types";
-import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
-import { EnsembleRuntime } from "../runtime";
-import { TextStyles } from "./Text";
+} from "../../shared/types";
+import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
+import { EnsembleRuntime } from "../../runtime";
+import type { TextStyles } from "../Text";
+import type { FormInputProps } from "./types";
+import { EnsembleFormItem } from "./FormItem";
 
 export type DropdownStyles = {
   visible?: boolean;
@@ -47,7 +49,9 @@ export type DropdownProps = {
   labelStyle?: TextStyles & HasBorder;
   hintStyle?: EnsembleWidgetStyles;
 } & EnsembleWidgetProps<DropdownStyles> &
-  HasItemTemplate & { "item-template"?: { value: Expression<string> } };
+  HasItemTemplate & {
+    "item-template"?: { value: Expression<string> };
+  } & FormInputProps<string | number>;
 
 interface SelectOption {
   label: Expression<string> | Record<string, unknown>;
@@ -87,9 +91,9 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
       const tempOptions = values.items.map((item) => {
         return (
           <Select.Option
+            className={`${values.id || ""}_option`}
             key={item.value}
             value={item.value}
-            className={`${values?.id || ""}_option`}
           >
             {isString(item.label)
               ? item.label
@@ -112,9 +116,9 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
         );
         return (
           <Select.Option
+            className={`${values?.id || ""}_option`}
             key={value}
             value={value}
-            className={`${values?.id || ""}_option`}
           >
             <CustomScopeProvider value={item as CustomScope}>
               {EnsembleRuntime.render([itemTemplate.template])}
@@ -131,127 +135,123 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
 
   return (
     <>
-      <AntForm.Item
-        label={values?.label}
-        name={values?.id}
-        style={{
-          marginBottom: "0px",
-          ...(values?.styles?.visible === false
-            ? { display: "none" }
-            : undefined),
-        }}
-      >
-        {values?.id ? (
-          <style>{`
-        .${values?.id}_input .ant-select-selector {
+      {values?.id ? (
+        <style>{`
+        .${values.id}_input .ant-select-selector {
           ${
-            values?.styles?.dropdownMaxHeight
+            values.styles?.dropdownMaxHeight
               ? `max-height: ${values.styles.dropdownMaxHeight} !important;`
               : ""
           }
           ${
-            values?.styles?.dropdownBackgroundColor
+            values.styles?.dropdownBackgroundColor
               ? `background-color: ${values.styles.dropdownBackgroundColor} !important;`
               : ""
           }
           ${
-            values?.styles?.dropdownBorderRadius
+            values.styles?.dropdownBorderRadius
               ? `border-radius: ${values.styles.dropdownBorderRadius}px !important;`
               : ""
           }
           ${
-            values?.styles?.dropdownBorderColor
+            values.styles?.dropdownBorderColor
               ? `border-color: ${values.styles.dropdownBorderColor} !important;`
               : ""
           }
           ${
-            values?.styles?.dropdownBorderWidth
+            values.styles?.dropdownBorderWidth
               ? `border-width: ${values.styles.dropdownBorderWidth}px !important;`
               : ""
           }
         }
-        .ant-select-item.ant-select-item-option.${values?.id}_option[aria-selected="true"] {
+        .ant-select-item.ant-select-item-option.${
+          values.id
+        }_option[aria-selected="true"] {
           ${
-            values?.styles?.selectedBackgroundColor
-              ? `background-color: ${values?.styles?.selectedBackgroundColor};`
+            values.styles?.selectedBackgroundColor
+              ? `background-color: ${values.styles.selectedBackgroundColor};`
               : ""
           }
           ${
-            values?.styles?.selectedTextColor
-              ? `color: ${values?.styles?.selectedTextColor};`
+            values.styles?.selectedTextColor
+              ? `color: ${values.styles.selectedTextColor};`
               : ""
           }
         }
-        .ant-col .ant-form-item-label > label[for=${values?.id}] {
+        .ant-col .ant-form-item-label > label[for=${values.id}] {
           ${
-            values?.labelStyle?.color
+            values.labelStyle?.color
               ? `color: ${values.labelStyle.color} !important;`
               : ""
           }
           ${
-            values?.labelStyle?.fontSize
+            values.labelStyle?.fontSize
               ? `font-size: ${values.labelStyle.fontSize}px !important;`
               : ""
           }
           ${
-            values?.labelStyle?.fontWeight
+            values.labelStyle?.fontWeight
               ? `font-weight: ${values.labelStyle.fontWeight} !important;`
               : ""
           }
           ${
-            values?.labelStyle?.fontFamily
+            values.labelStyle?.fontFamily
               ? `font-family: ${values.labelStyle.fontFamily} !important;`
               : ""
           }
           ${
-            values?.labelStyle?.backgroundColor
+            values.labelStyle?.backgroundColor
               ? `background-color: ${values.labelStyle.backgroundColor} !important;`
               : ""
           }
           ${
-            values?.labelStyle?.borderRadius
+            values.labelStyle?.borderRadius
               ? `border-radius: ${values.labelStyle.borderRadius}px !important;`
               : ""
           }
           ${
-            values?.labelStyle?.borderColor
+            values.labelStyle?.borderColor
               ? `border-color: ${values.labelStyle.borderColor} !important;`
               : ""
           }
           ${
-            values?.labelStyle?.borderWidth
+            values.labelStyle?.borderWidth
               ? `border-width: ${values.labelStyle.borderWidth}px !important;`
               : ""
           }
           ${
-            values?.labelStyle?.borderStyle
+            values.labelStyle?.borderStyle
               ? `border-style: ${values.labelStyle.borderStyle} !important;`
               : ""
           }
         `}</style>
-        ) : null}
-        <div ref={rootRef}>
+      ) : null}
+      <div ref={rootRef}>
+        <EnsembleFormItem values={values}>
           <Select
+            className={`${values?.styles?.names || ""} ${
+              values?.id || ""
+            }_input`}
+            disabled={
+              values?.enabled === undefined ? false : Boolean(values.enabled)
+            }
+            dropdownStyle={{ ...values?.styles }}
             id={values?.id}
             onSelect={onItemSelectCallback}
             placeholder={
               values?.hintText ? (
-                <span style={{ ...values?.hintStyle }}>{values.hintText}</span>
+                <span style={{ ...values.hintStyle }}>{values.hintText}</span>
               ) : (
                 ""
               )
             }
             showSearch={Boolean(values?.autoComplete)}
             value={values?.selectedValue}
-            className={`${values?.styles?.names || ""} ${
-              values?.id || ""
-            }_input`}
-            dropdownStyle={{ ...values?.styles }}
           >
             {options}
           </Select>
-        </div>
-      </AntForm.Item>
+        </EnsembleFormItem>
+      </div>
     </>
   );
 };

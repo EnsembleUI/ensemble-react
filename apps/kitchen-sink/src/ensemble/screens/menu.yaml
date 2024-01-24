@@ -29,6 +29,9 @@ ViewGroup:
       - label: Actions
         icon: CodeOutlined
         page: actions
+      - label: Forms
+        icon: CodeOutlined
+        page: forms        
       - label: Custom Widgets
         icon: ExtensionOutlined
         page: custom widgets

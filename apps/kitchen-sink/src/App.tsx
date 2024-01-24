@@ -6,6 +6,7 @@ import HomeYAML from "./ensemble/screens/home.yaml";
 import WidgetsYAML from "./ensemble/screens/widgets.yaml";
 import LayoutsYAML from "./ensemble/screens/layouts.yaml";
 import ActionsYAML from "./ensemble/screens/actions.yaml";
+import FormsYAML from "./ensemble/screens/forms.yaml";
 import CustomWidgetsYAML from "./ensemble/screens/customWidgets.yaml";
 import HelpYAML from "./ensemble/screens/help.yaml";
 // Widgets
@@ -67,6 +68,11 @@ const testApp: ApplicationDTO = {
       id: "actions",
       name: "Actions",
       content: String(ActionsYAML),
+    },
+    {
+      id: "forms",
+      name: "Forms",
+      content: String(FormsYAML),
     },
     {
       id: "customWidgets",
