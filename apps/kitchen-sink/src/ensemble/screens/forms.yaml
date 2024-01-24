@@ -70,6 +70,9 @@ View:
                             value: option1
                           - label: Option 2
                             value: option2
+                    - Date:
+                        label: Date
+                        hintText: Choose date
                     - Button:
                         submitForm: true
                         label: Submit
