@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import dayjs from "dayjs";
+import type dayjs from "dayjs";
 
 export interface DatePickerProps {
   firstDate?: string;

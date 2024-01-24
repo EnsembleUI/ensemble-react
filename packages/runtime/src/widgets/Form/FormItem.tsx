@@ -13,6 +13,7 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
   props,
 ) => {
   const { values } = props;
+  const { backgroundColor: _, ...formItemStyles } = values?.styles ?? {};
   return (
     <AntForm.Item
       className={values?.styles?.names}
@@ -37,7 +38,7 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
         ...(values?.styles?.visible === false
           ? { display: "none" }
           : undefined),
-        ...values?.styles,
+        ...formItemStyles,
       }}
       {...props}
     >

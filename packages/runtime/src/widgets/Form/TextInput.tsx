@@ -1,4 +1,5 @@
 import { Input } from "antd";
+import type { Expression } from "@ensembleui/react-framework";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useState } from "react";
 import type { EnsembleWidgetProps } from "../../shared/types";
@@ -10,6 +11,8 @@ import { EnsembleFormItem } from "./FormItem";
 export type TextInputProps = {
   hintStyle?: TextStyles;
   labelStyle?: TextStyles;
+  multiLine?: Expression<boolean>;
+  maxLines?: number;
 } & EnsembleWidgetProps<TextStyles> &
   FormInputProps<string>;
 
@@ -21,13 +24,13 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
 
   return (
     <EnsembleFormItem values={values}>
-      {props.multiLine ? (
+      {values?.multiLine ? (
         <Input.TextArea
           onChange={(event): void => setValue(event.target.value)}
-          placeholder={values?.hintText ?? ""}
-          rows={props.maxLines ? Number(props.maxLines) : 4} // Adjust the number of rows as needed
+          placeholder={values.hintText ?? ""}
+          rows={values.maxLines ? Number(values.maxLines) : 4} // Adjust the number of rows as needed
           style={{
-            ...(values?.value ? values.styles : values?.hintStyle),
+            ...(values.styles ?? values.hintStyle),
           }}
         />
       ) : (
@@ -35,7 +38,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
           onChange={(event): void => setValue(event.target.value)}
           placeholder={values?.hintText ?? ""}
           style={{
-            ...(values?.value ? values.styles : values?.hintStyle),
+            ...(values?.styles ?? values?.hintStyle),
           }}
         />
       )}

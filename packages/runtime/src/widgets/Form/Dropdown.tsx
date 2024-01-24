@@ -61,7 +61,7 @@ interface SelectOption {
 const Dropdown: React.FC<DropdownProps> = (props) => {
   const [selectedValue, setSelectedValue] = useState(props.value);
   const { "item-template": itemTemplate, ...rest } = props;
-  const { rootRef, values } = useRegisterBindings(
+  const { id, rootRef, values } = useRegisterBindings(
     { ...rest, selectedValue },
     props.id,
     {
@@ -133,109 +133,101 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     return dropdownOptions;
   }, [values?.items, namedData, itemTemplate]);
 
+  const { backgroundColor: _, ...formItemStyles } = values?.styles ?? {};
+
   return (
     <>
-      {values?.id ? (
-        <style>{`
-        .${values.id}_input .ant-select-selector {
+      <style>{`
+        .${id}_input .ant-select-selector {
           ${
-            values.styles?.dropdownMaxHeight
+            values?.styles?.dropdownMaxHeight
               ? `max-height: ${values.styles.dropdownMaxHeight} !important;`
               : ""
           }
           ${
-            values.styles?.dropdownBackgroundColor
+            values?.styles?.dropdownBackgroundColor
               ? `background-color: ${values.styles.dropdownBackgroundColor} !important;`
               : ""
           }
           ${
-            values.styles?.dropdownBorderRadius
+            values?.styles?.dropdownBorderRadius
               ? `border-radius: ${values.styles.dropdownBorderRadius}px !important;`
               : ""
           }
           ${
-            values.styles?.dropdownBorderColor
+            values?.styles?.dropdownBorderColor
               ? `border-color: ${values.styles.dropdownBorderColor} !important;`
               : ""
           }
           ${
-            values.styles?.dropdownBorderWidth
+            values?.styles?.dropdownBorderWidth
               ? `border-width: ${values.styles.dropdownBorderWidth}px !important;`
               : ""
           }
         }
-        .ant-select-item.ant-select-item-option.${
-          values.id
-        }_option[aria-selected="true"] {
+        .ant-select-item.ant-select-item-option.${id}_option[aria-selected="true"] {
           ${
-            values.styles?.selectedBackgroundColor
+            values?.styles?.selectedBackgroundColor
               ? `background-color: ${values.styles.selectedBackgroundColor};`
               : ""
           }
           ${
-            values.styles?.selectedTextColor
+            values?.styles?.selectedTextColor
               ? `color: ${values.styles.selectedTextColor};`
               : ""
           }
         }
-        .ant-col .ant-form-item-label > label[for=${values.id}] {
+        .ant-col .ant-form-item-label > label[for=${id}] {
           ${
-            values.labelStyle?.color
+            values?.labelStyle?.color
               ? `color: ${values.labelStyle.color} !important;`
               : ""
           }
           ${
-            values.labelStyle?.fontSize
+            values?.labelStyle?.fontSize
               ? `font-size: ${values.labelStyle.fontSize}px !important;`
               : ""
           }
           ${
-            values.labelStyle?.fontWeight
+            values?.labelStyle?.fontWeight
               ? `font-weight: ${values.labelStyle.fontWeight} !important;`
               : ""
           }
           ${
-            values.labelStyle?.fontFamily
+            values?.labelStyle?.fontFamily
               ? `font-family: ${values.labelStyle.fontFamily} !important;`
               : ""
           }
           ${
-            values.labelStyle?.backgroundColor
+            values?.labelStyle?.backgroundColor
               ? `background-color: ${values.labelStyle.backgroundColor} !important;`
               : ""
           }
           ${
-            values.labelStyle?.borderRadius
+            values?.labelStyle?.borderRadius
               ? `border-radius: ${values.labelStyle.borderRadius}px !important;`
               : ""
           }
           ${
-            values.labelStyle?.borderColor
+            values?.labelStyle?.borderColor
               ? `border-color: ${values.labelStyle.borderColor} !important;`
               : ""
           }
           ${
-            values.labelStyle?.borderWidth
+            values?.labelStyle?.borderWidth
               ? `border-width: ${values.labelStyle.borderWidth}px !important;`
               : ""
           }
           ${
-            values.labelStyle?.borderStyle
+            values?.labelStyle?.borderStyle
               ? `border-style: ${values.labelStyle.borderStyle} !important;`
               : ""
           }
         `}</style>
-      ) : null}
-      <div
-        className={values?.styles?.names}
-        ref={rootRef}
-        style={{ ...values?.styles }}
-      >
+      <div ref={rootRef} style={{ flex: 1, ...formItemStyles }}>
         <EnsembleFormItem values={values}>
           <Select
-            className={`${values?.styles?.names || ""} ${
-              values?.id || ""
-            }_input`}
+            className={`${values?.styles?.names || ""} ${id}_input`}
             disabled={
               values?.enabled === undefined ? false : Boolean(values.enabled)
             }

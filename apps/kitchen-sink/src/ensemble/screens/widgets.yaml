@@ -329,8 +329,8 @@ View:
                     - Date:
                         label: Example 1 - Date picker
                         hintText: Placeholder value
+                        showCalendarIcon: false
                         styles:
-                          backgroundColor: "beige"
                           width: 300px
                     - Date:
                         label: Example 2 - Date picker with restricted range

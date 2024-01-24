@@ -23,7 +23,6 @@ export * from "./Carousel";
 export * from "./PopupMenu";
 export * from "./Stepper";
 export * from "./ToggleButton";
-export * from "./Date";
 export * from "./SignInWithGoogle";
 export * from "./LoadingContainer";
 export * from "./Skeleton";
