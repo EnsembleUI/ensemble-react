@@ -66,7 +66,7 @@ View:
               executeCode: |
                 console.log('Column Clicked');
             children:
-              - Text:                  
+              - Text:
                   text: Click the Column for onTap event
         - Text:
             styles:
@@ -78,13 +78,41 @@ View:
             label: Show dialog
             onTap:
               showDialog:
-                widget:
-                  Text:
-                    text: "Hello World"
+                options:
+                  width: 600px
+                  height: 450px
                 onDialogDismiss:
                   executeCode:
                     body: |
-                      console.log('Dialog Dismissed');
+                      console.log('Dialog 1 Dismissed');
+                widget:
+                  Button:
+                    label: Tap me to open another dialog
+                    onTap:
+                      showDialog:
+                        options:
+                          verticalOffset: 0.6
+                        onDialogDismiss:
+                          executeCode:
+                            body: |
+                              console.log('Dialog 2 Dismissed');
+                        widget:
+                          Button:
+                            label: Tap me to open one more dialog
+                            onTap:
+                              showDialog:
+                                options:
+                                  horizontalOffset: -1
+                                widget:
+                                  Column:
+                                    styles:
+                                      margin: 100px
+                                    children:
+                                      - Button:
+                                          label: Click me to close all dialogs
+                                          onTap:
+                                            closeAllDialogs:
+
         - Markdown:
             text: Upload files
         - Button:

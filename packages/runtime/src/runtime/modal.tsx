@@ -106,10 +106,15 @@ export const ModalWrapper: React.FC = () => {
       modalState[index].options.onClose?.();
     }
 
-    // remove the last modal from the arrays
-    setModalState((oldModalState) => oldModalState.slice(0, -1));
-    setModalDimensions((oldModalDimensions) => oldModalDimensions.slice(0, -1));
-    setIsFullScreen((oldIsFullScreen) => oldIsFullScreen.slice(0, -1));
+    setModalState((oldModalState) =>
+      oldModalState.filter((_, i) => i !== index),
+    );
+    setModalDimensions((oldModalDimensions) =>
+      oldModalDimensions.filter((_, i) => i !== index),
+    );
+    setIsFullScreen((oldIsFullScreen) =>
+      oldIsFullScreen.filter((_, i) => i !== index),
+    );
   };
 
   const closeAllModals = (): void => {
@@ -161,12 +166,16 @@ export const ModalWrapper: React.FC = () => {
         }
         ${
           options?.horizontalOffset
-            ? `left: ${(options.horizontalOffset * 100) / 2}% !important;`
+            ? `left: calc(${(options.horizontalOffset * 100) / 2}% + ${
+                modalDimensions[index].width / 2
+              }px) !important;`
             : ""
         }
         ${
           options?.verticalOffset
-            ? `top: ${(options.verticalOffset * 100) / 2}% !important;`
+            ? `top: calc(${(options.verticalOffset * 100) / 2}% + ${
+                modalDimensions[index].height / 2
+              }px) !important;`
             : ""
         }
       }
