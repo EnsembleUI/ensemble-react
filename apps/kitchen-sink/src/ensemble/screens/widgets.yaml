@@ -282,7 +282,7 @@ View:
         - DataGrid:
             id: "myDataGridExample"
             onRowsSelected:
-              executeCode:  |
+              executeCode: |
                 console.log("data", selectedRows, selectedRowKeys);
             allowSelection: true
             styles:
@@ -348,7 +348,26 @@ View:
                               onChangeDemo.setText('You selected: ' + onChangeDemoDate.value);
                     - Text:
                         id: onChangeDemo
-
+        - PopupMenu:
+            items:
+              - label: Name
+                value: name
+              - label: Location
+                value: location
+            item-template:
+              data: [{ name: "hello", value: 11 }, { name: "buyyy", value: 22 }]
+              name: product
+              value: ${product.value}
+              template:
+                Text:
+                  text: ${product.name}
+            widget:
+              Icon:
+                name: Add
+        - Checkbox:
+            trailingText:
+              Text:
+                text: Hello
 API:
   getDummyNumbers:
     method: GET
