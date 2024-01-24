@@ -24,7 +24,8 @@ export type FormProps = {
   } & EnsembleWidgetStyles;
 } & EnsembleWidgetProps;
 export const Form: React.FC<FormProps> = (props) => {
-  const { values } = useRegisterBindings({ ...props });
+  const { children, ...rest } = props;
+  const { values } = useRegisterBindings({ ...rest });
 
   const action = useEnsembleAction(props.onSubmit);
   const onFinishCallback = useCallback(
@@ -51,7 +52,7 @@ export const Form: React.FC<FormProps> = (props) => {
         ...values?.styles,
       }}
     >
-      {EnsembleRuntime.render(values?.children || props.children)}
+      {EnsembleRuntime.render(children)}
     </AntForm>
   );
 };

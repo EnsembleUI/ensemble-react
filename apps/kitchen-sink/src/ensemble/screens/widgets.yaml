@@ -368,6 +368,7 @@ View:
             trailingText:
               Text:
                 text: Hello
+
 API:
   getDummyNumbers:
     method: GET
