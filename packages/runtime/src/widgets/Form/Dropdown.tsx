@@ -61,7 +61,7 @@ interface SelectOption {
 const Dropdown: React.FC<DropdownProps> = (props) => {
   const [selectedValue, setSelectedValue] = useState(props.value);
   const { "item-template": itemTemplate, ...rest } = props;
-  const { rootRef, values } = useRegisterBindings(
+  const { id, rootRef, values } = useRegisterBindings(
     { ...rest, selectedValue },
     props.id,
     {
@@ -135,9 +135,8 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
 
   return (
     <>
-      {values?.id ? (
-        <style>{`
-        .${values.id}_input .ant-select-selector {
+      <style>{`
+        .${id}_input .ant-select-selector {
           ${
             values.styles?.dropdownMaxHeight
               ? `max-height: ${values.styles.dropdownMaxHeight} !important;`
@@ -164,9 +163,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               : ""
           }
         }
-        .ant-select-item.ant-select-item-option.${
-          values.id
-        }_option[aria-selected="true"] {
+        .ant-select-item.ant-select-item-option.${id}_option[aria-selected="true"] {
           ${
             values.styles?.selectedBackgroundColor
               ? `background-color: ${values.styles.selectedBackgroundColor};`
@@ -178,7 +175,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               : ""
           }
         }
-        .ant-col .ant-form-item-label > label[for=${values.id}] {
+        .ant-col .ant-form-item-label > label[for=${id}] {
           ${
             values.labelStyle?.color
               ? `color: ${values.labelStyle.color} !important;`
@@ -225,17 +222,10 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               : ""
           }
         `}</style>
-      ) : null}
-      <div
-        className={values?.styles?.names}
-        ref={rootRef}
-        style={{ ...values?.styles }}
-      >
+      <div className={values?.styles?.names} ref={rootRef}>
         <EnsembleFormItem values={values}>
           <Select
-            className={`${values?.styles?.names || ""} ${
-              values?.id || ""
-            }_input`}
+            className={`${values?.styles?.names || ""} ${id}_input`}
             disabled={
               values?.enabled === undefined ? false : Boolean(values.enabled)
             }
