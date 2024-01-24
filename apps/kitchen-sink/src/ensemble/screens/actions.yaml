@@ -7,6 +7,7 @@ View:
     Column:
       styles:
         names: page
+        gap: 8px
       children:
         - Text:
             styles:
@@ -14,118 +15,156 @@ View:
             text: Actions
         - Markdown:
             text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).
-        - Text:
+        - Card:
             styles:
-              names: heading-3
-            text: ensemble.navigateScreen()
-        - Markdown:
-            text: use `ensemble.navigateScreen({name:, inputs:{:}})` for navigate screen programmatically. click below button to check.
-        - Button:
-            label: navigate screen
-            onTap:
-              executeCode: |
-                body: |-
-                  const payload = {
-                    name: 'John Doe',
-                    age: 30,
-                  };
-                  ensemble.navigateScreen({
-                    name: 'home', 
-                    inputs: payload
-                  });
-        - Text:
-            styles:
-              names: heading-1
-            text: ensemble.navigateUrl()
-        - Markdown:
-            text: use `ensemble.navigateUrl(path, data)` for navigate screen programmatically. click below button to check.
-        - Button:
-            label: navigate url
-            onTap:
-              executeCode: |
-                ensemble.navigateUrl('/widgets')
-        - Text:
-            styles:
-              names: heading-1
-            text: navigateUrl
-        - Markdown:
-            text: "use `navigateUrl: screen_name` for navigate screen programmatically. click below button to check"
-        - Button:
-            label: navigate url
-            onTap:
-              navigateUrl: /widgets
-        - Row:
-            onTap:
-              executeCode: |
-                console.log('Row Clicked');
+              maxWidth: unset
+              width: unset
             children:
               - Text:
-                  text: Click the Row for onTap event
-        - Column:
-            onTap:
-              executeCode: |
-                console.log('Column Clicked');
+                  styles:
+                    names: heading-3
+                  text: Invoke API
+              - Button:
+                  label: Get Data
+                  onTap:
+                    invokeApi:
+                      name: getDummyProducts
+              - Button:
+                  label: Get Data With Inputs
+                  onTap:
+                    invokeApi:
+                      name: getDummyProduct
+                      inputs:
+                        id: 1                    
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:            
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: ensemble.navigateScreen()
+              - Markdown:
+                  text: use `ensemble.navigateScreen({name:, inputs:{:}})` for navigate screen programmatically. click below button to check.
+              - Button:
+                  label: navigate screen
+                  onTap:
+                    executeCode:
+                      body: |
+                        const payload = {
+                          name: 'John Doe',
+                          age: 30,
+                        };
+                        ensemble.navigateScreen({
+                          name: 'home', 
+                          inputs: payload
+                        });
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:                        
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: ensemble.navigateUrl()
+              - Markdown:
+                  text: use `ensemble.navigateUrl(path, data)` for navigate screen programmatically. click below button to check.
+              - Button:
+                  label: navigate url
+                  onTap:
+                    executeCode: |
+                      ensemble.navigateUrl('/widgets')
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: navigateUrl
+              - Markdown:
+                  text: "use `navigateUrl: screen_name` for navigate screen programmatically. click below button to check"
+              - Button:
+                  label: navigate url
+                  onTap:
+                    navigateUrl: /widgets
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:                    
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: Show Dialog
+              - Markdown:
+                  text: use `showDialog` to show dialog. click below button to check.
+              - Button:
+                  label: Show dialog
+                  onTap:
+                    showDialog:
+                      options:
+                        hideCloseIcon: false
+                        title: first modal
+                        width: 600px
+                        height: 450px
+                      onDialogDismiss:
+                        executeCode:
+                          body: |
+                            console.log('Dialog 1 Dismissed');
+                      widget:
+                        Button:
+                          label: Tap me to open another dialog
+                          onTap:
+                            showDialog:
+                              options:
+                                verticalOffset: 0.6
+                              onDialogDismiss:
+                                executeCode:
+                                  body: |
+                                    console.log('Dialog 2 Dismissed');
+                              widget:
+                                Button:
+                                  label: Tap me to open one more dialog
+                                  onTap:
+                                    showDialog:
+                                      options:
+                                        horizontalOffset: -1
+                                      widget:
+                                        Column:
+                                          styles:
+                                            margin: 100px
+                                          children:
+                                            - Button:
+                                                label: Click me to close all dialogs
+                                                onTap:
+                                                  closeAllDialogs:
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
             children:
               - Text:
-                  text: Click the Column for onTap event
-        - Text:
-            styles:
-              names: heading-3
-            text: Show Dialog
-        - Markdown:
-            text: use `showDialog` to show dialog. click below button to check.
-        - Button:
-            label: Show dialog
-            onTap:
-              showDialog:
-                options:
-                  hideCloseIcon: false
-                  title: first modal
-                  width: 600px
-                  height: 450px
-                onDialogDismiss:
-                  executeCode:
-                    body: |
-                      console.log('Dialog 1 Dismissed');
-                widget:
-                  Button:
-                    label: Tap me to open another dialog
-                    onTap:
-                      showDialog:
-                        options:
-                          verticalOffset: 0.6
-                        onDialogDismiss:
-                          executeCode:
-                            body: |
-                              console.log('Dialog 2 Dismissed');
-                        widget:
-                          Button:
-                            label: Tap me to open one more dialog
-                            onTap:
-                              showDialog:
-                                options:
-                                  horizontalOffset: -1
-                                widget:
-                                  Column:
-                                    styles:
-                                      margin: 100px
-                                    children:
-                                      - Button:
-                                          label: Click me to close all dialogs
-                                          onTap:
-                                            closeAllDialogs:
+                  styles:
+                    names: heading-3
+                  text: Upload files
+              - Button:
+                  label: upload
+                  onTap:
+                    pickFiles:
+                      id: fileUploader
+                      allowMultiple: true
+                      allowedExtensions:
+                        - pdf
+                        - docx
+                      onComplete:
+                        executeCode: |
+                          console.log(fileUploader, "hello", files);
 
-        - Markdown:
-            text: Upload files
-        - Button:
-            label: upload
-            onTap:
-              pickFiles:
-                id: fileUploader
-                allowMultiple: true
-                allowedExtensions:
-                  - pdf
-                  - docx
-                onComplete:
-                  executeCode: |
-                    console.log(fileUploader, "hello", files);
+API:
+  getDummyProducts:
+    method: GET
+    uri: https://dummyjson.com/products
+  getDummyProduct:
+    method: GET
+    uri: https://dummyjson.com/products/${id}
+    inputs:
+      - id    
