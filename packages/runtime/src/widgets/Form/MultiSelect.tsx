@@ -1,18 +1,18 @@
 import type { ReactElement } from "react";
 import React, { useCallback, useEffect, useState } from "react";
-import type { Expression } from "@ensembleui/react-framework";
+import type { Expression, EnsembleAction } from "@ensembleui/react-framework";
 import {
   useRegisterBindings,
   useTemplateData,
 } from "@ensembleui/react-framework";
 import { PlusCircleOutlined } from "@ant-design/icons";
-import { Form as AntForm, Select as SelectComponent, Space } from "antd";
+import { Select as SelectComponent, Space } from "antd";
 import { get } from "lodash-es";
-import { WidgetRegistry } from "../registry";
-import type { EnsembleWidgetProps } from "../shared/types";
-import { getColor } from "../shared/styles";
-import { EnsembleAction } from "@ensembleui/react-framework";
-import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
+import { WidgetRegistry } from "../../registry";
+import { getColor } from "../../shared/styles";
+import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
+import { EnsembleFormItem } from "./FormItem";
+import type { FormInputProps } from "./types";
 
 interface SelectOption {
   label: Expression<string>;
@@ -21,13 +21,12 @@ interface SelectOption {
 
 export type MultiSelectProps = {
   data: Expression<SelectOption[]>;
-  label?: string;
   labelKey?: string;
   valueKey?: string;
   default?: SelectOption[];
   placeholder?: Expression<string>;
   onItemSelect?: EnsembleAction;
-} & EnsembleWidgetProps;
+} & FormInputProps<string[]>;
 
 const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   const {
@@ -43,7 +42,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   const [selectedValues, setSelectedValues] = useState<string[] | undefined>(
     defaultOptions?.map((item) => item.value.toString()),
   );
-  const action = useEnsembleAction(props?.onItemSelect);
+  const action = useEnsembleAction(props.onItemSelect);
   const { rawData } = useTemplateData({ data });
 
   useEffect(() => {
@@ -95,13 +94,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     [action],
   );
   return (
-    <AntForm.Item
-      label={props.label}
-      name={props.id}
-      style={{
-        margin: "0px",
-      }}
-    >
+    <EnsembleFormItem values={props}>
       <SelectComponent
         allowClear
         defaultValue={defaultOptions?.map((item) => item.value.toString())}
@@ -142,7 +135,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
         }}
         value={values?.value}
       />
-    </AntForm.Item>
+    </EnsembleFormItem>
   );
 };
 

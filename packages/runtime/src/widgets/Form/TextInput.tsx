@@ -1,10 +1,11 @@
-import { Form as AntForm, Input } from "antd";
+import { Input } from "antd";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useState } from "react";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { WidgetRegistry } from "../../registry";
+import type { TextStyles } from "../Text";
 import type { FormInputProps } from "./types";
-import { TextStyles } from "../Text";
+import { EnsembleFormItem } from "./FormItem";
 
 export type TextInputProps = {
   hintStyle?: TextStyles;
@@ -19,46 +20,26 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
   });
 
   return (
-    <AntForm.Item
-      label={
-        values?.label ? (
-          <label
-            htmlFor={props.id ? values?.id : values?.label}
-            title={values?.label}
-            style={{
-              ...values?.labelStyle,
-            }}
-          >
-            {values?.label}
-          </label>
-        ) : null
-      }
-      name={props.id ? values?.id : values?.label}
-      rules={[{ required: values?.required }]}
-      style={{
-        margin: "0px",
-        width: "100%",
-      }}
-    >
+    <EnsembleFormItem values={values}>
       {props.multiLine ? (
         <Input.TextArea
           onChange={(event): void => setValue(event.target.value)}
-          placeholder={values?.hintText ? values.hintText : ""}
+          placeholder={values?.hintText ?? ""}
           rows={props.maxLines ? Number(props.maxLines) : 4} // Adjust the number of rows as needed
           style={{
-            ...(values?.value ? values?.styles : values?.hintStyle),
+            ...(values?.value ? values.styles : values?.hintStyle),
           }}
         />
       ) : (
         <Input
           onChange={(event): void => setValue(event.target.value)}
-          placeholder={values?.hintText ? values.hintText : ""}
+          placeholder={values?.hintText ?? ""}
           style={{
-            ...(values?.value ? values?.styles : values?.hintStyle),
+            ...(values?.value ? values.styles : values?.hintStyle),
           }}
         />
       )}
-    </AntForm.Item>
+    </EnsembleFormItem>
   );
 };
 

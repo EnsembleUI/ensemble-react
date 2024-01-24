@@ -19,9 +19,6 @@ const components = {
 
 export const Markdown: React.FC<MarkdownProps> = (props) => {
   const [text, setText] = useState(props.text);
-  if (props.text !== text) {
-    setText(props.text);
-  }
   const { values } = useRegisterBindings({ ...props, text }, props.id, {
     setText,
   });

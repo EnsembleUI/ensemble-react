@@ -9,20 +9,19 @@ import type { FormLayout } from "antd/es/form/Form";
 import { WidgetRegistry } from "../../registry";
 import { EnsembleRuntime } from "../../runtime";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
-import { EnsembleWidgetProps } from "../../shared/types";
+import type {
+  EnsembleWidgetProps,
+  EnsembleWidgetStyles,
+} from "../../shared/types";
 
 export type FormProps = {
-  id?: string;
   children: EnsembleWidget[];
   enabled: boolean;
   onSubmit?: EnsembleAction;
-  styles: {
+  styles?: {
     labelPosition: "top" | "start" | "none";
     labelOverflow: "wrap" | "visible" | "clip" | "ellipsis";
-    gap?: string | number;
-    width?: string;
-    [key: string]: unknown;
-  };
+  } & EnsembleWidgetStyles;
 } & EnsembleWidgetProps;
 export const Form: React.FC<FormProps> = (props) => {
   const { values } = useRegisterBindings({ ...props });
