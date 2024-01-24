@@ -226,7 +226,11 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
           }
         `}</style>
       ) : null}
-      <div ref={rootRef}>
+      <div
+        className={values?.styles?.names}
+        ref={rootRef}
+        style={{ ...values?.styles }}
+      >
         <EnsembleFormItem values={values}>
           <Select
             className={`${values?.styles?.names || ""} ${
