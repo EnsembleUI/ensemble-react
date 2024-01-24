@@ -1,12 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Menu, Dropdown as AntdDropdown } from "antd";
-import { cloneDeep } from "lodash-es";
-import { unwrapWidget } from "@ensembleui/react-framework";
+import { cloneDeep, get, isEmpty, isObject } from "lodash-es";
+import {
+  CustomScopeProvider,
+  defaultScreenContext,
+  evaluate,
+  unwrapWidget,
+  useTemplateData,
+} from "@ensembleui/react-framework";
 import type {
+  CustomScope,
   EnsembleAction,
   EnsembleWidget,
+  Expression,
 } from "@ensembleui/react-framework";
-import type { EnsembleWidgetProps } from "../shared/types";
+import type { EnsembleWidgetProps, HasItemTemplate } from "../shared/types";
 import { WidgetRegistry } from "../registry";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { EnsembleRuntime } from "../runtime";
@@ -24,23 +32,61 @@ interface PopupMenuStyles {
 }
 type PopupMenuProps = {
   [key: string]: unknown;
-  items: PopupMenuItem[];
+  items?: PopupMenuItem[];
   widget?: Record<string, unknown>;
   onItemSelect?: EnsembleAction;
-} & EnsembleWidgetProps<PopupMenuStyles>;
+} & EnsembleWidgetProps<PopupMenuStyles> &
+  HasItemTemplate & { "item-template"?: { value: Expression<string> } };
 
 export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
+  const { "item-template": itemTemplate } = props;
   const action = useEnsembleAction(props.onItemSelect);
   const [widgetProps, setWidgetProps] = useState<EnsembleWidget>();
-  const menuItems = (
-    <Menu>
-      {props.items.map((item) => (
-        <Menu.Item key={item.value} onClick={() => action?.callback(item)}>
-          {item.label}
-        </Menu.Item>
-      ))}
-    </Menu>
-  );
+
+  const { namedData } = useTemplateData({
+    data: itemTemplate?.data,
+    name: itemTemplate?.name,
+  });
+
+  const popupMenuItems = useMemo(() => {
+    const popupItems = [];
+
+    if (props?.items) {
+      const tempItems = props.items.map((item) => {
+        return (
+          <Menu.Item key={item.value} onClick={() => action?.callback(item)}>
+            {item.label}
+          </Menu.Item>
+        );
+      });
+
+      popupItems.push(...tempItems);
+    }
+
+    if (isObject(itemTemplate) && !isEmpty(namedData)) {
+      const tempItems = namedData.map((item) => {
+        const value = evaluate<string | number>(
+          defaultScreenContext,
+          itemTemplate.value,
+          {
+            [itemTemplate.name]: get(item, itemTemplate.name) as unknown,
+          },
+        );
+
+        return (
+          <Menu.Item key={value} onClick={() => action?.callback(item)}>
+            <CustomScopeProvider value={item as CustomScope}>
+              {EnsembleRuntime.render([itemTemplate.template])}
+            </CustomScopeProvider>
+          </Menu.Item>
+        );
+      });
+
+      popupItems.push(...tempItems);
+    }
+
+    return <Menu>{popupItems}</Menu>;
+  }, [props?.items, action, namedData, itemTemplate]);
 
   useEffect((): void => {
     if (!props.widget) {
@@ -55,7 +101,7 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
 
   return (
     <>
-      <AntdDropdown overlay={menuItems} trigger={["click"]}>
+      <AntdDropdown overlay={popupMenuItems} trigger={["click"]}>
         <div>{widgetProps ? EnsembleRuntime.render([widgetProps]) : null}</div>
       </AntdDropdown>
       {action && "Modal" in action ? action.Modal : null}
