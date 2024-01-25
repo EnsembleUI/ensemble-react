@@ -13,7 +13,7 @@ View:
               names: heading-3
             text: Forms
         - Markdown:
-            text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).            
+            text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).
         - Card:
             styles:
               maxWidth: unset
@@ -40,6 +40,9 @@ View:
                             value: 2
                           - label: Option 3
                             value: 3
+                        onChange:
+                          executeCode: |
+                            console.log('radio changed', value)
                     # Build your own checkbox group
                     - Row:
                         children:
@@ -48,7 +51,7 @@ View:
                               trailingText: Check me
                           - Checkbox:
                               id: checkbox2
-                              trailingText: Check me 2                       
+                              trailingText: Check me 2
                     - Dropdown:
                         id: dropdown
                         label: Dropdown
@@ -79,4 +82,3 @@ View:
               - Markdown:
                   id: result
                   text: Check here for the result!
-          
