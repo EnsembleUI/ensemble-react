@@ -49,12 +49,7 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
         }
         onChange={(event): void => handleChange(String(event.target.value))}
         ref={rootRef}
-        style={{
-          ...values?.styles,
-          ...(values?.styles?.visible === false
-            ? { display: "none" }
-            : undefined),
-        }}
+        style={values?.styles}
         value={values?.value}
       >
         {values?.items.map((item) => (
