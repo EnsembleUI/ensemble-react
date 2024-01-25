@@ -1,5 +1,14 @@
 # @ensembleui/react-runtime
 
+## 0.1.17
+
+### Patch Changes
+
+- fea627b: Fix form items and add example usage
+- 7a129f8: fix nested showDialogs
+- 6c04a34: added item-template in popup menu widget
+- 15e89cd: Re-implement Date widget
+
 ## 0.1.16
 
 ### Patch Changes

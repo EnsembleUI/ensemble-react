@@ -1,5 +1,19 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.8
+
+### Patch Changes
+
+- fea627b: Fix form items and add example usage
+- 7a129f8: fix nested showDialogs
+- 6c04a34: added item-template in popup menu widget
+- 15e89cd: Re-implement Date widget
+- Updated dependencies [fea627b]
+- Updated dependencies [7a129f8]
+- Updated dependencies [6c04a34]
+- Updated dependencies [15e89cd]
+  - @ensembleui/react-runtime@0.1.17
+
 ## 0.0.7
 
 ### Patch Changes
