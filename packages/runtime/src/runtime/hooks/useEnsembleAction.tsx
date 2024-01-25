@@ -246,26 +246,26 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
       widget,
       "properties.styles.backgroundColor", // FIXME: works only for inline widget
     );
-    if (widgetBackgroundColor && isString(widgetBackgroundColor)) {
+    if (isString(widgetBackgroundColor)) {
       set(noneStyleOption, "backgroundColor", widgetBackgroundColor);
     }
 
-    openModal?.(
-      EnsembleRuntime.render([widget]),
-      {
-        maskClosable: true,
-        hideCloseIcon: true,
-        hideFullScreenIcon: true,
-        onClose: onDismissCallback,
-        verticalOffset: action?.options?.verticalOffset,
-        horizontalOffset: action?.options?.horizontalOffset,
-        padding: "12px",
-        ...action?.options,
-        ...(action?.options?.style === "none" ? noneStyleOption : {}),
-      },
-      true,
-    );
-  }, [openModal, action.widget, onDismissCallback, action?.options]);
+    const modalOptions = {
+      maskClosable: true,
+      hideCloseIcon: true,
+      hideFullScreenIcon: true,
+      onClose: onDismissCallback,
+      verticalOffset: action.options?.verticalOffset,
+      horizontalOffset: action.options?.horizontalOffset,
+      padding: "12px",
+      ...(action.options?.style === "none" ? noneStyleOption : {}),
+    };
+    if (isObject(action.options)) {
+      merge(modalOptions, action.options);
+    }
+
+    openModal?.(EnsembleRuntime.render([widget]), modalOptions, true);
+  }, [openModal, action.widget, onDismissCallback, action.options]);
 
   return { callback };
 };
