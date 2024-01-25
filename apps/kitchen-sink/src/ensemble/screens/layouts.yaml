@@ -2,10 +2,14 @@ View:
   onLoad:
     invokeApi:
       name: getDummyProducts
+      onResponse:
+        executeCode: |
+          const res = response.body.products;
+          ensemble.storage.set("products", res)
   header:
     title:
       Header:
-      
+
   body:
     Column:
       styles:
@@ -25,8 +29,17 @@ View:
             isLoading: ${getDummyProducts.isLoading}
             widget:
               GridView:
+                styles:
+                  maxHeight: 200px
+                  overflow: auto
+                onScrollEnd:
+                  invokeApi:
+                    name: getDummyProducts
+                    onResponse:
+                      executeCode: |
+                        console.log('ioiop')
                 item-template:
-                  data: ${getDummyProducts.body.products}
+                  data: ${ensemble.storage.get("products")}
                   name: product
                   template:
                     Card:
