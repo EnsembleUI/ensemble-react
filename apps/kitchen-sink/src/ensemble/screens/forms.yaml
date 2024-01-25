@@ -13,7 +13,7 @@ View:
               names: heading-3
             text: Forms
         - Markdown:
-            text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).            
+            text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).
         - Card:
             styles:
               maxWidth: unset
@@ -48,7 +48,7 @@ View:
                               trailingText: Check me
                           - Checkbox:
                               id: checkbox2
-                              trailingText: Check me 2                       
+                              trailingText: Check me 2
                     - Dropdown:
                         id: dropdown
                         label: Dropdown
@@ -60,7 +60,9 @@ View:
                             value: option2
                     # If you omit id, the form value key will be the label
                     - TextInput:
-                        label: Text Input
+                        label:
+                          Text:
+                            text: Text input
                     - MultiSelect:
                         label: Choose multiple
                         # FIXME: update this to be consistent with other widgets, i.e. item and item-template
@@ -79,4 +81,3 @@ View:
               - Markdown:
                   id: result
                   text: Check here for the result!
-          

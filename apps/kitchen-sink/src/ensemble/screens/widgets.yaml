@@ -366,6 +366,11 @@ View:
             widget:
               Icon:
                 name: Add
+        - Checkbox:
+            trailingText:
+              Text:
+                text: Hello
+
 API:
   getDummyNumbers:
     method: GET
