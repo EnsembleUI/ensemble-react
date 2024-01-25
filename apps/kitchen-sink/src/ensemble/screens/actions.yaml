@@ -79,6 +79,8 @@ View:
             onTap:
               showDialog:
                 options:
+                  hideCloseIcon: false
+                  title: first modal
                   width: 600px
                   height: 450px
                 onDialogDismiss:
