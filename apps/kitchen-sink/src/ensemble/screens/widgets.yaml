@@ -350,7 +350,9 @@ View:
                         id: onChangeDemo
         - PopupMenu:
             items:
-              - label: Name
+              - label:
+                  Text:
+                    text: ${spacing.pagePadding}
                 value: name
               - label: Location
                 value: location
