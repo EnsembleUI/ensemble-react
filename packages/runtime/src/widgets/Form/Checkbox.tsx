@@ -24,16 +24,6 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
     },
   );
 
-  const leadingContent = useMemo(() => {
-    if (values?.leadingText) {
-      if (isString(values.leadingText)) {
-        return values.leadingText;
-      }
-
-      return EnsembleRuntime.render([unwrapWidget(values.leadingText)]);
-    }
-  }, [values?.leadingText]);
-
   const trailingContent = useMemo(() => {
     if (values?.trailingText) {
       if (isString(values.trailingText)) {
