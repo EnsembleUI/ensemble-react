@@ -25,27 +25,27 @@ View:
             styles:
               names: heading-3
             text: My Products
-        - LoadingContainer:
-            isLoading: ${getDummyProducts.isLoading}
-            widget:
-              GridView:
-                styles:
-                  maxHeight: 200px
-                  overflow: auto
-                onScrollEnd:
-                  invokeApi:
-                    name: getDummyProducts
-                    onResponse:
-                      executeCode: |
-                        console.log('ioiop')
-                item-template:
-                  data: ${ensemble.storage.get("products")}
-                  name: product
-                  template:
-                    Card:
-                      children:
-                        - Text:
-                            text: ${product.title}
+        # - LoadingContainer:
+        #     isLoading: ${getDummyProducts.isLoading}
+        #     widget:
+        - GridView:
+            styles:
+              maxHeight: 200px
+              overflow: auto
+            onScrollEnd:
+              invokeApi:
+                name: getDummyProducts
+                onResponse:
+                  executeCode: |
+                    console.log('ioiop')
+            item-template:
+              data: ${ensemble.storage.get("products")}
+              name: product
+              template:
+                Card:
+                  children:
+                    - Text:
+                        text: ${product.title}
 
 API:
   getDummyProducts:
