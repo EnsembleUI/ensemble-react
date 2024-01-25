@@ -260,6 +260,7 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
         verticalOffset: action?.options?.verticalOffset,
         horizontalOffset: action?.options?.horizontalOffset,
         padding: "12px",
+        ...action?.options,
         ...(action?.options?.style === "none" ? noneStyleOption : {}),
       },
       true,
