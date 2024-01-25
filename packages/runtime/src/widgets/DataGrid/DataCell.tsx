@@ -1,5 +1,8 @@
 import type { CustomScope } from "@ensembleui/react-framework";
-import { CustomScopeProvider } from "@ensembleui/react-framework";
+import {
+  CustomScopeProvider,
+  useCustomScope,
+} from "@ensembleui/react-framework";
 import { EnsembleRuntime } from "../../runtime";
 import type { DataGridRowTemplate } from "./DataGrid";
 
@@ -15,8 +18,9 @@ export const DataCell: React.FC<DataCellProps> = ({
   columnIndex,
 }) => {
   const cellTemplate = template.properties.children[columnIndex];
+  const parentScope = useCustomScope();
   return (
-    <CustomScopeProvider value={data as CustomScope}>
+    <CustomScopeProvider value={{ ...parentScope, ...(data as CustomScope) }}>
       {EnsembleRuntime.render([cellTemplate])}
     </CustomScopeProvider>
   );

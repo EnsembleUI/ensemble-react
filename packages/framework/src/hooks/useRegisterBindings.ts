@@ -1,16 +1,13 @@
 import type { RefCallback } from "react";
-import { useEffect, useMemo } from "react";
-import { compact, get, isEmpty, isString, merge, set } from "lodash-es";
+import { useEffect } from "react";
+import { get, isEmpty, isString, merge } from "lodash-es";
 import isEqual from "react-fast-compare";
-import { atom, useAtom } from "jotai";
 import type { InvokableMethods } from "../state";
-import { createBindingAtom } from "../state";
-import { findExpressions } from "../shared";
 import { useWidgetId } from "./useWidgetId";
 import { useHtmlPassThrough } from "./useHtmlPassThrough";
-import { useCustomScope } from "./useCustomScope";
 import { useWidgetState } from "./useWidgetState";
 import { useStyleNames } from "./useStyleNames";
+import { useEvaluate } from "./useEvaluate";
 
 export interface RegisterBindingsResult<T> {
   id: string;
@@ -36,44 +33,12 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
     isString(styleNames) ? String(styleNames) : "",
   );
 
-  const styles = merge({}, styleProperties, values?.styles);
+  const styles = merge({}, styleProperties, values.styles);
   if (!isEmpty(styles)) {
     merge(values, { styles });
   }
 
-  const expressions = useMemo(() => {
-    const expressionMap: string[][] = [];
-    findExpressions(values, [], expressionMap);
-    return expressionMap;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const customScope = useCustomScope();
-
-  const bindingsAtom = useMemo(() => {
-    const bindingsEntries = compact(
-      expressions.map(([name, expr]) => {
-        const valueAtom = createBindingAtom(
-          expr,
-          customScope,
-          resolvedWidgetId,
-        );
-        return { name, valueAtom };
-      }),
-    );
-    return atom((getAtom) => {
-      const valueEntries: [string, unknown][] = bindingsEntries.map(
-        ({ name, valueAtom }) => {
-          return [name, getAtom(valueAtom)];
-        },
-      );
-      const result = {};
-      valueEntries.forEach(([name, value]) => set(result, name, value));
-      return result;
-    });
-  }, [customScope, expressions, resolvedWidgetId]);
-
-  const [bindings] = useAtom(bindingsAtom);
+  const bindings = useEvaluate(values, { debugId: resolvedWidgetId });
 
   const newValues = merge({}, values, bindings) as T;
   useEffect(() => {

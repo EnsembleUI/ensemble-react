@@ -104,6 +104,7 @@ export const createBindingAtom = <T = unknown>(
       return [name, value?.values];
     });
     const evaluationContext = merge(
+      {},
       inputs,
       omitBy(Object.fromEntries(valueEntries), isNil),
       mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),

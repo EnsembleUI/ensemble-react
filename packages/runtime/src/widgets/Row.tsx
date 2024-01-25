@@ -6,6 +6,7 @@ import {
   CustomScopeProvider,
   useRegisterBindings,
   useTemplateData,
+  useCustomScope,
 } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
@@ -27,6 +28,7 @@ export const Row: React.FC<FlexboxProps> = (props) => {
   const renderedChildren = useMemo(() => {
     return children ? EnsembleRuntime.render(children) : null;
   }, [children]);
+  const parentScope = useCustomScope();
   const action = useEnsembleAction(onTap);
   const onClickCallback = useCallback(() => {
     if (!action) {
@@ -43,10 +45,10 @@ export const Row: React.FC<FlexboxProps> = (props) => {
       style={{
         justifyContent:
           (values?.mainAxis || values?.styles?.mainAxis) &&
-          getMainAxis(props.mainAxis || values?.styles?.mainAxis || ""),
+          getMainAxis(props.mainAxis || values.styles?.mainAxis || ""),
         alignItems:
           (values?.crossAxis || values?.styles?.crossAxis) &&
-          getCrossAxis(values?.crossAxis || values?.styles?.crossAxis || ""),
+          getCrossAxis(values.crossAxis || values.styles?.crossAxis || ""),
         margin: values?.margin || values?.styles?.margin,
         padding: values?.padding || values?.styles?.padding,
         gap: values?.gap || values?.styles?.gap,
@@ -64,7 +66,7 @@ export const Row: React.FC<FlexboxProps> = (props) => {
         flexDirection: "row",
         flexFlow: "unset",
         flexGrow: "unset",
-        cursor: props?.onTap ? "pointer" : "auto",
+        cursor: props.onTap ? "pointer" : "auto",
         ...(values?.styles?.visible === false
           ? { display: "none" }
           : undefined),
@@ -77,6 +79,7 @@ export const Row: React.FC<FlexboxProps> = (props) => {
           key={index}
           value={
             {
+              ...parentScope,
               ...n,
               index,
               length: namedData.length,

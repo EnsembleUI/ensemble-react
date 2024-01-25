@@ -29,13 +29,23 @@ View:
                   onTap:
                     invokeApi:
                       name: getDummyProducts
+              - TextInput:
+                  id: getDataInputValue
+                  label: Product ID
+                  value: "1"
               - Button:
                   label: Get Data With Inputs
                   onTap:
                     invokeApi:
                       name: getDummyProduct
                       inputs:
-                        id: 1                    
+                        id: ${getDataInputValue.value}
+                      onResponse:
+                        executeCode:
+                          body: |
+                            getDataInputValue.setValue(String(Number(getDataInputValue.value) + 1))
+              - Text:
+                  text: ${JSON.stringify(getDummyProduct.body)}
         - Card:
             styles:
               maxWidth: unset
@@ -52,6 +62,7 @@ View:
                   onTap:
                     executeCode:
                       body: |
+                        console.log(getDataInputValue)
                         const payload = {
                           name: 'John Doe',
                           age: 30,

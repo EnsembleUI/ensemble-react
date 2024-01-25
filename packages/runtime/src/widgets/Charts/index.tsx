@@ -20,9 +20,10 @@ import {
   useEnsembleStorage,
   useHtmlPassThrough,
   useWidgetId,
+  useApplicationContext,
 } from "@ensembleui/react-framework";
 import { Alert } from "antd";
-import { isEqualWith } from "lodash-es";
+import { isEqualWith, mapKeys, merge } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { BarChart } from "./BarChart";
@@ -78,8 +79,10 @@ const CONFIG_EVAL_EXPIRY = 5000;
 
 export const Chart: React.FC<ChartProps> = (props) => {
   const context = useScreenContext();
+  const appContext = useApplicationContext();
+  const theme = appContext?.application?.theme;
   const storage = useEnsembleStorage();
-  const { resolvedWidgetId, resolvedTestId } = useWidgetId(props?.id);
+  const { resolvedWidgetId, resolvedTestId } = useWidgetId(props.id);
   const { rootRef } = useHtmlPassThrough(
     undefined,
     props.id ? resolvedWidgetId : resolvedTestId,
@@ -98,11 +101,15 @@ export const Chart: React.FC<ChartProps> = (props) => {
         context as ScreenContextDefinition,
         // eslint-disable-next-line prefer-named-capture-group
         props.config?.toString()?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
-        {
-          ensemble: {
-            storage,
+        merge(
+          {
+            ensemble: {
+              storage,
+            },
           },
-        },
+          mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
+          { styles: theme?.Styles },
+        ),
       );
 
       if (!areConfigObjectsEqual(config, evaluatedConfig)) {
@@ -143,7 +150,7 @@ export const Chart: React.FC<ChartProps> = (props) => {
       style={{
         height: props.styles?.height ?? "100%",
         width: props.styles?.width ?? "100%",
-        ...(props?.styles?.visible === false ? { display: "none" } : undefined),
+        ...(props.styles?.visible === false ? { display: "none" } : undefined),
       }}
     >
       {cloneElement(tabsConfig[config.type], { ...props, config })}

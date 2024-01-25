@@ -9,6 +9,7 @@ import {
   type CustomScope,
   evaluate,
   defaultScreenContext,
+  useCustomScope,
 } from "@ensembleui/react-framework";
 import { Collapse, type CollapseProps, ConfigProvider } from "antd";
 import { get, isArray, isEmpty, isObject, isString } from "lodash-es";
@@ -63,10 +64,12 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
     name: itemTemplate?.name,
   });
 
+  const parentScope = useCustomScope();
+
   const collapsibleItems = useMemo(() => {
     const items = [];
     if (values?.items) {
-      const tempItems = values?.items.map((item) => {
+      const tempItems = values.items.map((item) => {
         return {
           ...item,
           label: isString(item.label)
@@ -90,9 +93,9 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
         const evaluatedConfig = evaluate<CollapsibleItem>(
           defaultScreenContext,
           collapsibleTemplate
-            ?.toString()
+            .toString()
             // eslint-disable-next-line prefer-named-capture-group
-            ?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
+            .replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
           {
             [itemTemplate.name]: get(item, itemTemplate.name) as unknown,
           },
@@ -104,7 +107,9 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
           label: isString(itemTemplate.template.properties.label) ? (
             evaluatedConfig.label
           ) : (
-            <CustomScopeProvider value={item as CustomScope}>
+            <CustomScopeProvider
+              value={{ ...parentScope, ...(item as CustomScope) }}
+            >
               {EnsembleRuntime.render([
                 unwrapWidget(
                   itemTemplate.template.properties.label as Record<
@@ -118,7 +123,9 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
           children: isString(itemTemplate.template.properties.children) ? (
             evaluatedConfig.children
           ) : (
-            <CustomScopeProvider value={item as CustomScope}>
+            <CustomScopeProvider
+              value={{ ...parentScope, ...(item as CustomScope) }}
+            >
               {EnsembleRuntime.render([
                 unwrapWidget(
                   itemTemplate.template.properties.children as Record<
@@ -192,7 +199,7 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
         accordion={values?.isAccordion}
         activeKey={activeValue}
         expandIcon={expandIcon}
-        expandIconPosition={props?.expandIconPosition}
+        expandIconPosition={props.expandIconPosition}
         items={collapsibleItems}
         onChange={handleCollapsibleChange}
       />
