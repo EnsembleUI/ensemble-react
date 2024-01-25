@@ -38,9 +38,8 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
     merge(values, { styles });
   }
 
-  const bindings = useEvaluate(values, { debugId: resolvedWidgetId });
+  const newValues = useEvaluate(values, { debugId: resolvedWidgetId });
 
-  const newValues = merge({}, values, bindings) as T;
   useEffect(() => {
     // Improves performance greatly: o need to store state in global if there's no explicit ID to reference it with
     if (isEmpty(id)) {

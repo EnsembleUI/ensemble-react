@@ -180,6 +180,7 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
     }
 
     const callback = (args: unknown): void => {
+      // We greedily set data loading state in screen context to update bindings
       setData(api.name, {
         isLoading: true,
         isSuccess: false,

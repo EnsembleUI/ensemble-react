@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import type { Expression } from "../shared";
 import { error, isExpression } from "../shared";
-import { evaluate } from "../evaluate";
+import { evaluate } from "../evaluate/evaluate";
 import { defaultScreenContext } from "../state";
 import { useCustomScope } from "./useCustomScope";
 

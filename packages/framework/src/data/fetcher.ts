@@ -3,7 +3,7 @@ import axios from "axios";
 import { cloneDeep, get, isObject, isString, set } from "lodash-es";
 import type { EnsembleAPIModel } from "../shared/models";
 import { type Expression } from "../shared";
-import { evaluate } from "../evaluate";
+import { evaluate } from "../evaluate/evaluate";
 import { ensembleStore, screenAtom } from "../state";
 import type { Response } from "./index";
 

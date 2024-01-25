@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { atom, useAtom } from "jotai";
 import { compact, merge, set } from "lodash-es";
 import { findExpressions } from "../shared";
-import { createBindingAtom } from "../state";
+import { createBindingAtom } from "../evaluate";
 import { useCustomScope } from "./useCustomScope";
 
 export const useEvaluate = <T extends Record<string, unknown>>(
@@ -11,7 +11,7 @@ export const useEvaluate = <T extends Record<string, unknown>>(
     context?: unknown;
     debugId?: string;
   },
-): T | undefined => {
+): T => {
   const customScope = useCustomScope();
 
   const expressions = useMemo(() => {
@@ -45,5 +45,5 @@ export const useEvaluate = <T extends Record<string, unknown>>(
   }, [expressions, customScope, options?.context, options?.debugId]);
 
   const [bindings] = useAtom(bindingsAtom);
-  return bindings as T;
+  return merge({}, values, bindings);
 };

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { type Atom, atom, useAtomValue } from "jotai";
 import { isString, map } from "lodash-es";
-import { createBindingAtom } from "../state";
+import { createBindingAtom } from "../evaluate";
 import { isExpression, type Expression } from "../shared/common";
 
 export type TemplateData = object | unknown[] | undefined | null;
