@@ -5,19 +5,17 @@ import {
   isExpression,
   useRegisterBindings,
   error as logError,
-  ensembleStore,
-  screenAtom,
   useScreenData,
   useEnsembleStorage,
   DateFormatter,
   useApplicationContext,
   unwrapWidget,
   useEnsembleUser,
+  useEvaluate,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
   ExecuteCodeAction,
-  Response,
   EnsembleAction,
   PickFilesAction,
   UploadFilesAction,
@@ -25,7 +23,15 @@ import type {
   ShowDialogAction,
   NavigateScreenAction,
 } from "@ensembleui/react-framework";
-import { isEmpty, isString, merge, isObject, get, set } from "lodash-es";
+import {
+  isEmpty,
+  isString,
+  merge,
+  isObject,
+  get,
+  set,
+  mapKeys,
+} from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { navigateApi, navigateUrl } from "../navigation";
@@ -96,6 +102,7 @@ export const useExecuteCode: EnsembleActionHook<
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,
   );
+  const theme = appContext?.application?.theme;
 
   const execute = useMemo(() => {
     if (!screen || !js) {
@@ -121,6 +128,8 @@ export const useExecuteCode: EnsembleActionHook<
                   navigateUrl(url, navigate, inputs),
               },
             },
+            mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
+            { styles: theme?.Styles },
             options?.context,
             args,
           ),
@@ -135,12 +144,15 @@ export const useExecuteCode: EnsembleActionHook<
     screen,
     js,
     storage,
+    user,
     formatter,
     appContext?.env,
     location,
-    navigate,
+    theme?.Tokens,
+    theme?.Styles,
     options?.context,
     onCompleteAction,
+    navigate,
   ]);
 
   return execute ? { callback: execute } : undefined;
@@ -148,72 +160,66 @@ export const useExecuteCode: EnsembleActionHook<
 
 export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const { apis, setData } = useScreenData();
-  const [response, setResponse] = useState<Response>();
-  const [error, setError] = useState<unknown>();
-  const [isComplete, setIsComplete] = useState(false);
-  const storage = useEnsembleStorage();
+  const [isComplete, setIsComplete] = useState<boolean>();
+  const [isLoading, setIsLoading] = useState<boolean>();
+
+  const [context, setContext] = useState<unknown>();
+
+  const evaluatedInputs = useEvaluate(action?.inputs, { context });
+  const onResponseAction = useEnsembleAction(action?.onResponse);
+  const onErrorAction = useEnsembleAction(action?.onError);
+
+  const api = useMemo(
+    () => apis?.find((model) => model.name === action?.name),
+    [action?.name, apis],
+  );
 
   const invokeApi = useMemo(() => {
-    if (!apis || !action) {
+    if (!api) {
       return;
     }
 
-    const apiModel = apis?.find((model) => model.name === action.name);
-    if (!apiModel) {
-      return;
-    }
-
-    const inputs = action.inputs ?? {};
-    const callback = async (context: unknown): Promise<void> => {
-      setIsComplete(false);
-      const resolvedInputs = Object.entries(inputs).map(([key, value]) => {
-        if (isExpression(value)) {
-          const evalContext = ensembleStore.get(screenAtom);
-          const resolvedValue = evaluate(evalContext, value, {
-            ...(context as Record<string, unknown>),
-            ensemble: { storage },
-          } as Record<string, unknown>);
-          return [key, resolvedValue];
-        }
-        return [key, value];
-      });
-      setData(apiModel.name, {
+    const callback = (args: unknown): void => {
+      // We greedily set data loading state in screen context to update bindings
+      setData(api.name, {
         isLoading: true,
         isSuccess: false,
         isError: false,
       });
-      try {
-        const res = await DataFetcher.fetch(
-          apiModel,
-          Object.fromEntries(resolvedInputs) as Record<string, unknown>,
-        );
-        setData(apiModel.name, res);
-        setResponse(res);
-      } catch (e) {
-        logError(e);
-        setError(e);
-      }
+      setIsComplete(false);
+      setContext(args);
     };
     return { callback };
-  }, [action, storage, apis, setData]);
+  }, [api, setData]);
 
-  const onResponseAction = useEnsembleAction(action?.onResponse);
   useEffect(() => {
-    if (!response || isComplete) {
+    if (!api || isComplete !== false || isLoading) {
       return;
     }
-    onResponseAction?.callback({ response });
-    setIsComplete(true);
-  }, [isComplete, onResponseAction, response]);
-
-  const onErrorAction = useEnsembleAction(action?.onError);
-  useEffect(() => {
-    if (!error || isComplete) {
-      return;
-    }
-    onErrorAction?.callback({ error });
-    setIsComplete(true);
-  }, [error, isComplete, onErrorAction]);
+    const fireRequest = async (): Promise<void> => {
+      setIsLoading(true);
+      try {
+        const res = await DataFetcher.fetch(api, evaluatedInputs);
+        setData(api.name, res);
+        onResponseAction?.callback({ response: res });
+      } catch (e) {
+        logError(e);
+        onErrorAction?.callback({ error: e });
+      } finally {
+        setIsLoading(false);
+        setIsComplete(true);
+      }
+    };
+    void fireRequest();
+  }, [
+    api,
+    evaluatedInputs,
+    isComplete,
+    isLoading,
+    onErrorAction,
+    onResponseAction,
+    setData,
+  ]);
 
   return invokeApi;
 };
@@ -378,7 +384,7 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
       screenContext as ScreenContextDefinition,
       action?.files,
     );
-    if (!files || files.length === 0) throw Error("Files not found");
+    if (isEmpty(files)) throw Error("Files not found");
 
     const formData = new FormData();
     if (files.length === 1)

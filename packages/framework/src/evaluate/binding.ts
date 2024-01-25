@@ -1,0 +1,129 @@
+import { parseExpressionAt, tokTypes } from "acorn";
+import type { Atom } from "jotai";
+import { atom } from "jotai";
+import { isNil, merge, omitBy } from "lodash-es";
+import type { Expression } from "../shared";
+import { isExpression, sanitizeJs, debug, error } from "../shared";
+import {
+  createStorageApi,
+  screenStorageAtom,
+} from "../hooks/useEnsembleStorage";
+import { DateFormatter } from "../date/dateFormatter";
+import {
+  themeAtom,
+  envAtom,
+  userAtom,
+  defaultScreenContext,
+  screenDataAtom,
+  screenInputAtom,
+  widgetFamilyAtom,
+  screenGlobalScriptAtom,
+} from "../state";
+import { evaluate } from "./evaluate";
+import { createEvaluationContext } from "./context";
+
+export const createBindingAtom = <T = unknown>(
+  expression?: Expression<unknown>,
+  context?: Record<string, unknown>,
+  widgetId?: string,
+): Atom<T | undefined | null> => {
+  if (!isExpression(expression)) {
+    return atom(undefined);
+  }
+
+  const rawJsExpression = sanitizeJs(expression);
+  const identifiers: string[] = [];
+
+  try {
+    parseExpressionAt(rawJsExpression, 0, {
+      ecmaVersion: 6,
+      onToken: (token) => {
+        if (token.type !== tokTypes.name) {
+          return;
+        }
+
+        const name = rawJsExpression.substring(token.start, token.end);
+        const isPrecededByDot =
+          rawJsExpression.charCodeAt(token.start - 1) === DOT_CHARCODE;
+        const isDeclaredInContext = context && name in context;
+        if (!isPrecededByDot && !isDeclaredInContext) {
+          identifiers.push(name);
+        }
+      },
+    });
+  } catch (e) {
+    error(e);
+    return atom(undefined);
+  }
+
+  const dependencyEntries = identifiers.map((identifier) => {
+    debug(`found dependency for ${String(widgetId)}: ${identifier}`);
+    // TODO: Account for data bindings also
+    const dependencyAtom = widgetFamilyAtom(identifier);
+    return { name: identifier, dependencyAtom };
+  });
+
+  const bindingAtom = atom((get) => {
+    const data = get(screenDataAtom);
+    const valueEntries = dependencyEntries.map(({ name, dependencyAtom }) => {
+      const value = get(dependencyAtom);
+      debug(
+        `value for dependency ${name} at ${String(widgetId)}: ${JSON.stringify(
+          value,
+        )}`,
+      );
+      return [name, value?.values];
+    });
+
+    const evaluationContext = createEvaluationContext({
+      applicationContext: {
+        application: {
+          theme: get(themeAtom),
+        },
+      },
+      screenContext: {
+        inputs: get(screenInputAtom),
+        widgets: omitBy(Object.fromEntries(valueEntries), isNil),
+        data,
+      },
+      ensemble: {
+        storage: createStorageApi(
+          rawJsExpression.includes("ensemble.storage")
+            ? get(screenStorageAtom)
+            : undefined,
+        ),
+        user: rawJsExpression.includes("ensemble.user")
+          ? get(userAtom)
+          : undefined,
+        env: rawJsExpression.includes("ensemble.env")
+          ? get(envAtom)
+          : undefined,
+        formatter: DateFormatter(),
+      },
+      context,
+    });
+
+    try {
+      const result = evaluate<T>(
+        merge({}, defaultScreenContext, {
+          model: { global: get(screenGlobalScriptAtom) },
+        }),
+        rawJsExpression,
+        evaluationContext,
+      );
+      debug(
+        `result for ${rawJsExpression} at ${String(widgetId)}: ${JSON.stringify(
+          result,
+        )}`,
+      );
+      return result;
+    } catch (e) {
+      debug(e);
+      return null;
+    }
+  });
+
+  return bindingAtom;
+};
+
+const DOT_CHARCODE = 46; // .

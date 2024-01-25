@@ -15,7 +15,7 @@ export type EnsembleFormItemProps<T> = FormItemProps & {
 export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
   props,
 ) => {
-  const { values } = props;
+  const { values, ...rest } = props;
   const { backgroundColor: _, ...formItemStyles } = values?.styles ?? {};
   return (
     <AntForm.Item
@@ -45,7 +45,7 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
           : undefined),
         ...formItemStyles,
       }}
-      {...props}
+      {...rest}
     >
       {props.children}
     </AntForm.Item>

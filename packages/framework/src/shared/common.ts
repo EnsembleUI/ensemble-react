@@ -18,10 +18,14 @@ export const sanitizeJs = (string: string): string => {
 };
 
 export const findExpressions = (
-  obj: object,
+  obj?: object,
   path: string[] = [],
   expressionMap: string[][] = [],
 ): void => {
+  if (!obj) {
+    return;
+  }
+
   Object.entries(obj).forEach(([key, value]) => {
     const curPath = path.concat(key);
     if (isExpression(value)) {

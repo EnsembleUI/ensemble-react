@@ -2,6 +2,7 @@ import { atom } from "jotai";
 import { selectAtom } from "jotai/utils";
 import { focusAtom } from "jotai-optics";
 import type { EnsembleAppModel } from "../shared";
+import type { EnsembleUser } from "./user";
 
 export interface ApplicationContextDefinition {
   application: EnsembleAppModel | null;
@@ -9,7 +10,7 @@ export interface ApplicationContextDefinition {
   secrets: unknown;
   env: Record<string, unknown>;
   auth: unknown;
-  user: unknown;
+  user: EnsembleUser | null;
 }
 
 export interface ApplicationContextActions {

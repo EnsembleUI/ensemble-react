@@ -15,6 +15,7 @@ export interface ScreenContextDefinition {
   model?: EnsembleScreenModel;
   data: Record<string, Response | undefined>;
   widgets: Record<string, WidgetState | undefined>;
+  inputs?: Record<string, unknown>;
   [key: string]: unknown;
 }
 
@@ -42,6 +43,10 @@ export const screenApiAtom = focusAtom(screenAtom, (optic) => {
 
 export const screenInputAtom = focusAtom(screenAtom, (optic) =>
   optic.prop("inputs"),
+);
+
+export const screenGlobalScriptAtom = focusAtom(screenAtom, (optic) =>
+  optic.prop("model").optional().prop("global"),
 );
 
 export const useScreenData = (): { apis?: EnsembleAPIModel[] } & Pick<
