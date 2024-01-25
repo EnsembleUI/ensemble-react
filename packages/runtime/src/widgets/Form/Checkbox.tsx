@@ -46,7 +46,6 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
 
   return (
     <EnsembleFormItem valuePropName="checked" values={values}>
-      {leadingContent}
       <Checkbox
         checked={Boolean(checked)}
         disabled={
