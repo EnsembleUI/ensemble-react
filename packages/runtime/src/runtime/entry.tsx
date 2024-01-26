@@ -32,14 +32,15 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({ entry }) => {
           enableSearch={false}
           footer={entry.footer}
           header={entry.header}
+          id={entry.id}
           items={entry.items}
           styles={entry.styles}
         />
         <div
           style={{
-            marginLeft: String(entry.styles.width),
             flexGrow: 1,
             height: "100vh",
+            overflow: "auto",
           }}
         >
           <Outlet />

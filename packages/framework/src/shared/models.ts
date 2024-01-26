@@ -32,6 +32,7 @@ export interface EnsembleAppModel {
 }
 
 export interface EnsembleMenuModel {
+  id?: string;
   type: string;
   items: {
     label: string;

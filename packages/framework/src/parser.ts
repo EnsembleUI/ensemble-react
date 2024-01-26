@@ -198,6 +198,7 @@ export const EnsembleParser = {
       | Record<string, unknown>
       | undefined;
     return {
+      id: get(menu, [menuType, "id"]) as string | undefined,
       type: String(menuType),
       items: get(menu, [menuType, "items"]) as [],
       header: headerDef ? unwrapWidget(headerDef) : undefined,
