@@ -31,6 +31,7 @@ import {
   get,
   set,
   mapKeys,
+  cloneDeep,
 } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -246,7 +247,7 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
     throw new Error("ShowDialog Action requires a widget to be specified");
 
   const callback = useCallback(() => {
-    const widget = unwrapWidget(action.widget);
+    const widget = unwrapWidget(cloneDeep(action.widget));
 
     const widgetBackgroundColor = get(
       widget,

@@ -61,7 +61,6 @@ export const Icon: React.FC<IconProps> = ({ onTap, ...props }) => {
         ...(values?.styles?.visible === false
           ? { display: "none" }
           : undefined),
-        ...values?.styles,
       }}
     />
   );
