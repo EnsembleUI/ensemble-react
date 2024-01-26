@@ -40,6 +40,9 @@ View:
                             value: 2
                           - label: Option 3
                             value: 3
+                        onChange:
+                          executeCode: |
+                            console.log('radio changed', value)
                     # Build your own checkbox group
                     - Row:
                         children:

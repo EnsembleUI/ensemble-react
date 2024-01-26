@@ -37,7 +37,7 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
   return (
     <EnsembleFormItem valuePropName="checked" values={values}>
       <Checkbox
-        checked={Boolean(checked)}
+        checked={Boolean(values?.value)}
         disabled={
           values?.enabled === undefined ? false : Boolean(values.enabled)
         }
@@ -45,9 +45,6 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
         style={{
           marginLeft: `${props.leadingText ? "4px" : "0px"}`,
           ...values?.styles,
-          ...(values?.styles?.visible === false
-            ? { display: "none" }
-            : undefined),
         }}
       >
         {trailingContent}

@@ -21,17 +21,20 @@ export type DividerProps = EnsembleWidgetProps<DividerStyles>;
 
 export const DividerWidget: React.FC<DividerProps> = (props) => {
   const { values } = useRegisterBindings({ ...props }, props.id);
+  const { direction, ...restStyles } = values?.styles || {};
+
   let width;
-  if (values?.styles?.direction === "vertical") {
+  if (direction === "vertical") {
     width = "0px";
   } else if (values?.styles?.width) {
     width = values.styles.width;
   } else {
     width = "100%";
   }
+
   return (
     <div
-      className="divider"
+      className={restStyles.names}
       style={{
         border: `${
           values?.styles?.thickness ? `${values.styles.thickness}px` : "1px"
@@ -45,6 +48,7 @@ export const DividerWidget: React.FC<DividerProps> = (props) => {
             : "0px"
         }`,
         width,
+        ...restStyles,
         ...(values?.styles?.visible === false
           ? { display: "none" }
           : undefined),
