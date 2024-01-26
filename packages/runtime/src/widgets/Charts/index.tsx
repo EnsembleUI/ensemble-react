@@ -21,9 +21,11 @@ import {
   useHtmlPassThrough,
   useWidgetId,
   useApplicationContext,
+  createEvaluationContext,
+  useCustomScope,
 } from "@ensembleui/react-framework";
 import { Alert } from "antd";
-import { isEqualWith, mapKeys, merge } from "lodash-es";
+import { isEqualWith } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { BarChart } from "./BarChart";
@@ -78,9 +80,9 @@ const tabsConfig = {
 const CONFIG_EVAL_EXPIRY = 5000;
 
 export const Chart: React.FC<ChartProps> = (props) => {
-  const context = useScreenContext();
-  const appContext = useApplicationContext();
-  const theme = appContext?.application?.theme;
+  const screenContext = useScreenContext();
+  const applicationContext = useApplicationContext();
+  const parentScope = useCustomScope();
   const storage = useEnsembleStorage();
   const { resolvedWidgetId, resolvedTestId } = useWidgetId(props.id);
   const { rootRef } = useHtmlPassThrough(
@@ -98,18 +100,17 @@ export const Chart: React.FC<ChartProps> = (props) => {
   useMemo(() => {
     try {
       const evaluatedConfig = evaluate<ChartConfigs>(
-        context as ScreenContextDefinition,
+        screenContext as ScreenContextDefinition,
         // eslint-disable-next-line prefer-named-capture-group
         props.config?.toString()?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
-        merge(
-          {
-            ensemble: {
-              storage,
-            },
+        createEvaluationContext({
+          applicationContext: applicationContext ?? {},
+          screenContext: screenContext ?? {},
+          ensemble: {
+            storage,
           },
-          mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
-          { styles: theme?.Styles },
-        ),
+          context: parentScope,
+        }),
       );
 
       if (!areConfigObjectsEqual(config, evaluatedConfig)) {
@@ -121,7 +122,15 @@ export const Chart: React.FC<ChartProps> = (props) => {
         setError(e);
       }
     }
-  }, [config, context, error, props.config, storage]);
+  }, [
+    applicationContext,
+    config,
+    error,
+    parentScope,
+    props.config,
+    screenContext,
+    storage,
+  ]);
 
   if (!props.config) {
     return <Alert message="Configuration is missing" type="error" />;
