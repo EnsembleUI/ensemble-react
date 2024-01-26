@@ -24,82 +24,35 @@ View:
         - Text:
             styles:
               names: heading-3
-            text: Grid View
-        - LoadingContainer:
-            isLoading: ${getDummyProducts.isLoading}
-            widget:
-              GridView:
-                styles:
-                  maxHeight: 200px
-                  overflow: auto
-                onScrollEnd:
-                  invokeApi:
-                    name: getDummyProducts
-                    onResponse:
-                      executeCode: |
-                        console.log('ioiop')
-
-                item-template:
-                  data: ${ensemble.storage.get("products")}
-                  name: product
-                  template:
-                    Card:
+            text: My Products
+        - Column:
+            children:
+              - GridView:
+                  styles:
+                    maxHeight: 200px
+                    overflow: auto
+                  onScrollEnd:
+                    # here you can add your page update logic
+                    invokeApi:
+                      name: getDummyProducts
+                      onResponse:
+                        executeCode: |
+                          const prevItem = ensemble.storage.get("products")
+                          const res = response.body.products;
+                          ensemble.storage.set("products", [...prevItem, ...res])
+                  item-template:
+                    data: ${ensemble.storage.get("products")}
+                    name: product
+                    template:
+                      Card:
+                        children:
+                          - Text:
+                              text: ${product.title}
+              - LoadingContainer:
+                  isLoading: ${getDummyProducts.isLoading}
+                  widget:
+                    Column:
                       children:
-                        - Text:
-                            text: ${product.title}
-        - Text:
-            styles:
-              names: heading-3
-            text: Collapsible
-        - Collapsible:
-            id: collapseWidget
-            collpaseIcon:
-              name: HomeOutlined
-            expandIcon:
-              name: WidgetsOutlined
-            expandIconPosition: "end"
-            item-template:
-              data:
-                [
-                  { key: "1", name: "Label 1", std: "Hello" },
-                  { key: "2", name: "Label 2", std: "Hello 123" },
-                  { key: "3", name: "Label 3", std: "Hello 456" },
-                ]
-              name: item
-              template:
-                collapsibleItem:
-                  key: ${item.key}
-                  label: ${item.name}
-                  children: ${item.std}
-            onCollapse:
-              executeCode: |
-                console.log('Hello', data, collapseWidget)
-        - Collapsible:
-            expandIconPosition: "end"
-            value: "1"
-            items:
-              - key: "1"
-                label:
-                  Column:
-                    children:
-                      - Text:
-                          text: Here is my label 1
-                      - Button:
-                          label: this is button
-                          onTap:
-                            showDialog:
-                              widget:
-                                Text:
-                                  text: name
-                children: hiii
-              - key: "2"
-                label: Here is my label 2
-                children:
-                  Text:
-                    text: Here is my value 2
-            onCollapse:
-              executeCode: |
-                console.log('Hello', data)
 
   footer:
     children:
