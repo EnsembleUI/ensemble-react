@@ -13,8 +13,8 @@ import { useCallback, useContext, useMemo } from "react";
 // eslint-disable-next-line import/no-cycle
 import { EnsembleScreen } from "../screen";
 import { ModalContext } from "../modal";
-import type { EnsembleActionHook } from "./useEnsembleAction";
 import { EnsembleRuntime } from "../runtime";
+import type { EnsembleActionHook } from "./useEnsembleAction";
 
 export const useNavigateModalScreen: EnsembleActionHook<
   NavigateModalScreenAction
@@ -40,10 +40,10 @@ export const useNavigateModalScreen: EnsembleActionHook<
   } = isStringAction ? {} : action || {};
 
   const title = useMemo(() => {
-    if (!isStringAction && action?.title && !isString(action?.title)) {
-      return EnsembleRuntime.render([unwrapWidget(action?.title)]);
+    if (!isStringAction && action?.title && !isString(action.title)) {
+      return EnsembleRuntime.render([unwrapWidget(action.title)]);
     }
-  }, [isStringAction, action, EnsembleRuntime.render]);
+  }, [isStringAction, action]);
 
   const { matchingScreen } = useMemo(() => {
     const screen = screenContext?.app?.screens.find(
@@ -95,6 +95,9 @@ export const useNavigateModalScreen: EnsembleActionHook<
     padding,
     storage,
     customScope,
+    hideCloseIcon,
+    hideFullScreenIcon,
+    title,
   ]);
 
   return { callback };

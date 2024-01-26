@@ -40,6 +40,8 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({ entry }) => {
             marginLeft: String(entry.styles.width),
             flexGrow: 1,
             height: "100vh",
+            display: "flex",
+            flexDirection: "column",
           }}
         >
           <Outlet />
