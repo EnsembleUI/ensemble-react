@@ -1,5 +1,17 @@
 # @ensembleui/react-runtime
 
+## 0.1.19
+
+### Patch Changes
+
+- 67ab5d0: Add onTap to Icon
+- 854f51c: add onChange and item styles in radio widget
+- 05b86a8: Fixes for scope propagation refactor
+- 9b06b0e: Make sidebar menu collapsible
+- Updated dependencies [05b86a8]
+- Updated dependencies [9b06b0e]
+  - @ensembleui/react-framework@0.1.15
+
 ## 0.1.18
 
 ### Patch Changes
