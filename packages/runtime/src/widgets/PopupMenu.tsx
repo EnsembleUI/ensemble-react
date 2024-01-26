@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Menu, Dropdown as AntdDropdown } from "antd";
-import { cloneDeep, get, isEmpty, isObject } from "lodash-es";
+import { cloneDeep, get, isEmpty, isObject, isString } from "lodash-es";
 import {
   CustomScopeProvider,
   defaultScreenContext,
@@ -20,7 +20,7 @@ import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { EnsembleRuntime } from "../runtime";
 
 interface PopupMenuItem {
-  label: string;
+  label: Expression<string> | Record<string, unknown>;
   value: string;
 }
 
@@ -55,7 +55,9 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
       const tempItems = props.items.map((item) => {
         return (
           <Menu.Item key={item.value} onClick={() => action?.callback(item)}>
-            {item.label}
+            {isString(item.label)
+              ? item.label
+              : EnsembleRuntime.render([unwrapWidget(item.label)])}
           </Menu.Item>
         );
       });

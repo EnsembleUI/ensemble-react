@@ -23,9 +23,10 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
   });
 
   return (
-    <EnsembleFormItem values={values}>
+    <EnsembleFormItem valuePropName="value" values={values}>
       {values?.multiLine ? (
         <Input.TextArea
+          defaultValue={values.value}
           onChange={(event): void => setValue(event.target.value)}
           placeholder={values.hintText ?? ""}
           rows={values.maxLines ? Number(values.maxLines) : 4} // Adjust the number of rows as needed
@@ -35,9 +36,11 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
               ? { display: "none" }
               : undefined),
           }}
+          value={values.value}
         />
       ) : (
         <Input
+          defaultValue={values?.value}
           onChange={(event): void => setValue(event.target.value)}
           placeholder={values?.hintText ?? ""}
           style={{
@@ -46,6 +49,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
               ? { display: "none" }
               : undefined),
           }}
+          value={values?.value}
         />
       )}
     </EnsembleFormItem>

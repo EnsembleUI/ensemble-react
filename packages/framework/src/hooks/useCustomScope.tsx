@@ -13,8 +13,9 @@ export const CustomScopeProvider: React.FC<CustomScopeProps> = ({
   children,
   value,
 }) => {
+  const parentScope = useCustomScope();
   return (
-    <CustomScopeContext.Provider value={value}>
+    <CustomScopeContext.Provider value={{ ...parentScope, ...value }}>
       {children}
     </CustomScopeContext.Provider>
   );

@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.14
+
+### Patch Changes
+
+- 4114d92: Clean up scope propagation and context creation
+
 ## 0.1.13
 
 ### Patch Changes

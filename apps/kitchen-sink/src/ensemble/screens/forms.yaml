@@ -63,7 +63,9 @@ View:
                             value: option2
                     # If you omit id, the form value key will be the label
                     - TextInput:
-                        label: Text Input
+                        label:
+                          Text:
+                            text: Text input
                     - MultiSelect:
                         label: Choose multiple
                         # FIXME: update this to be consistent with other widgets, i.e. item and item-template

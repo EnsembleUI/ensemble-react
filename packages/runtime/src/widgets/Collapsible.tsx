@@ -66,7 +66,7 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
   const collapsibleItems = useMemo(() => {
     const items = [];
     if (values?.items) {
-      const tempItems = values?.items.map((item) => {
+      const tempItems = values.items.map((item) => {
         return {
           ...item,
           label: isString(item.label)
@@ -90,9 +90,9 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
         const evaluatedConfig = evaluate<CollapsibleItem>(
           defaultScreenContext,
           collapsibleTemplate
-            ?.toString()
+            .toString()
             // eslint-disable-next-line prefer-named-capture-group
-            ?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
+            .replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
           {
             [itemTemplate.name]: get(item, itemTemplate.name) as unknown,
           },
@@ -192,7 +192,7 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
         accordion={values?.isAccordion}
         activeKey={activeValue}
         expandIcon={expandIcon}
-        expandIconPosition={props?.expandIconPosition}
+        expandIconPosition={props.expandIconPosition}
         items={collapsibleItems}
         onChange={handleCollapsibleChange}
       />

@@ -19,9 +19,9 @@ export type ButtonProps = {
   };
 } & EnsembleWidgetProps;
 
-export const Button: React.FC<ButtonProps> = (props) => {
-  const { values, rootRef } = useRegisterBindings(props, props.id);
-  const action = useEnsembleAction(props.onTap);
+export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
+  const { values, rootRef } = useRegisterBindings(rest, id);
+  const action = useEnsembleAction(onTap);
   const onClickCallback = useCallback(() => {
     if (!action) {
       return;

@@ -26,7 +26,7 @@ import type {
 } from "./shared/models";
 import type { ApplicationDTO, EnsembleConfigYAML } from "./shared/dto";
 import { findExpressions, type EnsembleAction } from "./shared";
-import { evaluate } from "./evaluate";
+import { evaluate } from "./evaluate/evaluate";
 import { defaultScreenContext } from "./state";
 
 export interface EnsembleScreenYAML {
@@ -147,7 +147,7 @@ export const EnsembleParser = {
     let global: string | undefined;
 
     if (isString(scriptName)) {
-      global = app.scripts?.find((script) => script.name === scriptName)
+      global = app.scripts.find((script) => script.name === scriptName)
         ?.content;
     }
 

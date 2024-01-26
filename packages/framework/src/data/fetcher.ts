@@ -3,7 +3,7 @@ import axios from "axios";
 import { cloneDeep, get, isObject, isString, set } from "lodash-es";
 import type { EnsembleAPIModel } from "../shared/models";
 import { type Expression } from "../shared";
-import { evaluate } from "../evaluate";
+import { evaluate } from "../evaluate/evaluate";
 import { ensembleStore, screenAtom } from "../state";
 import type { Response } from "./index";
 
@@ -42,19 +42,23 @@ export const DataFetcher = {
     api: EnsembleAPIModel,
     context?: Record<string, unknown>,
   ): Promise<Response> => {
-    const resolvedBody = resolve(api.body, context);
-    const url = new URL(api.uri);
-    const resolvedParams = resolve(
-      Object.fromEntries(url.searchParams.entries()),
+    const uri = new URL(api.uri);
+
+    const resolvedInputs = resolve(
+      {
+        path: api.uri.replace(uri.search, ""),
+        body: api.body,
+        params: uri.searchParams.entries(),
+      },
       context,
     );
 
     const axRes = await axios({
-      url: api.uri.replace(url.search, ""),
+      url: resolvedInputs?.path,
       method: api.method,
       headers: api.headers,
-      params: resolvedParams,
-      data: resolvedBody,
+      params: resolvedInputs?.params,
+      data: resolvedInputs?.body,
     });
     return EnsembleResponse.fromAxiosResponse(axRes);
   },
@@ -77,10 +81,10 @@ export const DataFetcher = {
   },
 };
 
-const resolve = (
-  body?: string | object,
+const resolve = <T>(
+  body?: T,
   context?: Record<string, unknown>,
-): unknown => {
+): T | undefined => {
   if (!body) {
     return;
   }
@@ -91,7 +95,7 @@ const resolve = (
       return evaluate(screenContext, expression, context);
     });
   const resolvedBody = visitAndReplaceExpressions(body, replace);
-  return resolvedBody;
+  return resolvedBody as T;
 };
 
 const visitAndReplaceExpressions = (

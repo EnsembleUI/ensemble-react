@@ -1,14 +1,11 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  useScreenContext,
   type NavigateScreenAction,
-  evaluate,
-  findExpressions,
-  useCustomScope,
-  useEnsembleStorage,
+  useEvaluate,
+  useApplicationContext,
 } from "@ensembleui/react-framework";
-import { cloneDeep, isString, set } from "lodash-es";
+import { cloneDeep, isString } from "lodash-es";
 import type { EnsembleActionHook } from "./useEnsembleAction";
 
 export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
@@ -17,37 +14,40 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
   const navigate = useNavigate();
   const hasOptions = !isString(action);
   const screenName = hasOptions ? action?.name : action;
-  const screenContext = useScreenContext();
-  const customScope = useCustomScope();
-  const storage = useEnsembleStorage();
+  const appContext = useApplicationContext();
+  const [context, setContext] = useState<unknown>();
+  const [isComplete, setIsComplete] = useState<boolean>();
 
   const { matchingScreen } = useMemo(() => {
-    const screen = screenContext?.app?.screens.find(
+    const screen = appContext?.application?.screens.find(
       (s) => s.name.toLowerCase() === screenName?.toLowerCase(),
     );
     return { matchingScreen: screen };
-  }, [screenContext, screenName]);
+  }, [appContext, screenName]);
+
+  const evaluatedInputs = useEvaluate(
+    !isString(action) ? cloneDeep(action?.inputs) : undefined,
+    { context },
+  );
 
   const callback = useMemo(() => {
     if (!matchingScreen) {
       return;
     }
-    const inputs =
-      !isString(action) && action?.inputs ? cloneDeep(action.inputs) : {};
-    if (screenContext) {
-      const expressionMap: string[][] = [];
-      findExpressions(inputs, [], expressionMap);
-      expressionMap.forEach(([path, value]) => {
-        const result = evaluate(screenContext, value, {
-          ensemble: { storage },
-          ...customScope,
-        });
-        set(inputs, path, result);
-      });
-    }
-    return () => {
-      navigate(`/${matchingScreen.name.toLowerCase()}`, { state: inputs });
+    return (args: unknown) => {
+      setIsComplete(false);
+      setContext(args);
     };
-  }, [matchingScreen, action, screenContext, storage, customScope, navigate]);
+  }, [matchingScreen]);
+
+  useEffect(() => {
+    if (!matchingScreen?.name || isComplete !== false) {
+      return;
+    }
+    navigate(`/${matchingScreen.name.toLowerCase()}`, {
+      state: evaluatedInputs,
+    });
+    setIsComplete(true);
+  }, [evaluatedInputs, isComplete, matchingScreen, navigate]);
   return callback ? { callback } : undefined;
 };

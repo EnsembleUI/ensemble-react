@@ -1,5 +1,20 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.9
+
+### Patch Changes
+
+- 4114d92: Clean up scope propagation and context creation
+- 084ffc1: enhance showdialog action options to support title and close icon
+- 0c4bd30: Added widget support inside the label of popup menu
+- 63a81a0: added support of widgets inside the label of form items
+- Updated dependencies [4114d92]
+- Updated dependencies [084ffc1]
+- Updated dependencies [0c4bd30]
+- Updated dependencies [63a81a0]
+  - @ensembleui/react-framework@0.1.14
+  - @ensembleui/react-runtime@0.1.18
+
 ## 0.0.8
 
 ### Patch Changes

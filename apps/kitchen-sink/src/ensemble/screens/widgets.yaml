@@ -21,135 +21,81 @@ View:
         - Markdown:
             text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).
 
-        - Markdown:
-            text: "## Collapse"
-        - Collapsible:
-            id: collapseWidget
-            collpaseIcon:
-              name: HomeOutlined
-            expandIcon:
-              name: WidgetsOutlined
-            expandIconPosition: "end"
-            item-template:
-              data:
-                [
-                  { key: "1", name: "Label 1", std: "Hello" },
-                  { key: "2", name: "Label 2", std: "Hello 123" },
-                  { key: "3", name: "Label 3", std: "Hello 456" },
-                ]
-              name: item
-              template:
-                collapsibleItem:
-                  key: ${item.key}
-                  label: ${item.name}
-                  children: ${item.std}
-            onCollapse:
-              executeCode: |
-                console.log('Hello', data, collapseWidget)
-        - Collapsible:
-            expandIconPosition: "end"
-            items:
-              - key: "1"
-                label:
-                  Text:
-                    text: Here is my label 1
-                children: hiii
-              - key: "2"
-                label: Here is my label 2
-                children:
-                  Text:
-                    text: Here is my value 2
-            onCollapse:
-              executeCode: |
-                console.log('Hello', data)
-
         - Card:
             styles:
               maxWidth: unset
               width: unset
               gap: 10px
-              backgroundColor: "#f5f5f5"
             children:
               - Text:
                   styles:
                     names: heading-3
-                  text: Dropdown
-              - Dropdown:
-                  label: Simple
-                  hintText: Hint Text
-                  items:
-                    - label: Option 1
-                      value: 1
-                    - label: Option 2
-                      value: 2
-              - Dropdown:
-                  id: myDropdown
-                  label: With Default Value
-                  value: 1
+                  text: DataGrid
+              - DataGrid:
+                  id: "myDataGridExample"
+                  onRowsSelected:
+                    executeCode: |
+                      console.log("data", selectedRows, selectedRowKeys);
+                  allowSelection: true
                   styles:
-                    dropdownBackgroundColor: "aqua"
-                    dropdownBorderWidth: 1
-                    dropdownBorderColor: "lime"
-                    backgroundColor: "yellow"
-                    selectedBackgroundColor: "gray"
-                    selectedTextColor: "purple"
-                  items:
-                    - label: Option 1
-                      value: 1
-                    - label: Option 2
-                      value: 2
-              - Dropdown:
-                  label: Searchable
-                  hintText: Search
-                  autoComplete: true
-                  hintStyle:
-                    color: "red"
-                    fontSize: 20px
-                  items:
-                    - label: Option 1
-                      value: option1
-                    - label: Option 2
-                      value: option2
-              - Dropdown:
-                  id: myDropdown4
-                  label: With item template
-                  labelStyle:
-                    color: green
-                    fontSize: 20
-                    backgroundColor: "lightgreen"
-                    borderRadius: 10
+                    headerStyle:
+                      backgroundColor: "white"
+                      fontSize: "12px"
+                      textColor: "#747184"
+                      hasDivider: true
+                      borderBottom: false
+                  DataColumns:
+                    - label: PATIENT
+                    - label: ADVOCATE
+                    - label: ICON
+                    - label: MENU
                   item-template:
                     data:
                       [
-                        { name: "hello", value: 11 },
-                        { name: "buyyy", value: 22 },
+                        { key: "1", patient: "John", advocate: "Mike Ross" },
+                        { key: "2", patient: "Reuben", advocate: "Harvey Dent" },
                       ]
-                    name: product
-                    value: ${product.value}
+                    name: dummyData
+                    key: ${dummyData.key}
                     template:
-                      Text:
-                        text: ${product.name}
-                  items:
-                    - label: Option 1
-                      value: option1
-                    - label: Option 2
-                      value: option2
-              - Dropdown:
-                  label: With the label widget
-                  hintText: Hint Text
-                  items:
-                    - label:
-                        Text:
-                          text: Here is my label 1
-                      value: 111
-                    - label:
-                        Text:
-                          text: Here is my label 2
-                      value: 222
-
-        - Column:
-            crossAxis: stretch
-            margin: 20px
+                      DataRow:
+                        children:
+                          - Text:
+                              id: ${dummyData.patient+"Name"}
+                              text: ${dummyData.patient}
+                          - Text:
+                              id: ${dummyData.patient+"Adv"}
+                              text: ${dummyData.advocate}
+                          - Icon:
+                              name: Add
+                              onTap:
+                                showDialog:
+                                  widget:
+                                    Text:
+                                      text: "Added!"
+                          - PopupMenu:
+                              items:
+                                - label:
+                                    Text:
+                                      text: ${spacing.pagePadding}
+                                  value: name
+                                - label: Location
+                                  value: location
+                              item-template:
+                                data: [{ name: "hello", value: 11 }, { name: "buyyy", value: 22 }]
+                                name: product
+                                value: ${product.value}
+                                template:
+                                  Text:
+                                    text: ${product.name}
+                              widget:
+                                Icon:
+                                  name: QuestionMark                              
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+              gap: 10px
             children:
               - Text:
                   styles:
@@ -277,41 +223,90 @@ View:
                                   ]
                               }
                           }
-        - Markdown:
-            text: "## DataGrids"
-        - DataGrid:
-            id: "myDataGridExample"
-            onRowsSelected:
-              executeCode: |
-                console.log("data", selectedRows, selectedRowKeys);
-            allowSelection: true
+                
+        - Card:
             styles:
-              headerStyle:
-                backgroundColor: "white"
-                fontSize: "12px"
-                textColor: "#747184"
-                hasDivider: true
-                borderBottom: false
-            DataColumns:
-              - label: PATIENT
-              - label: ADVOCATE
-            item-template:
-              data:
-                [
-                  { key: "1", patient: "John", advocate: "Mike Ross" },
-                  { key: "2", patient: "Reuben", advocate: "Harvey Dent" },
-                ]
-              name: dummyData
-              key: ${dummyData.key}
-              template:
-                DataRow:
-                  children:
-                    - Text:
-                        id: ${dummyData.patient+"Name"}
-                        text: ${dummyData.patient}
-                    - Text:
-                        id: ${dummyData.patient+"Adv"}
-                        text: ${dummyData.advocate}
+              maxWidth: unset
+              width: unset
+              gap: 10px
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: Dropdown
+              - Dropdown:
+                  label: Simple
+                  hintText: Hint Text
+                  items:
+                    - label: Option 1
+                      value: 1
+                    - label: Option 2
+                      value: 2
+              - Dropdown:
+                  id: myDropdown
+                  label: With Default Value
+                  value: 1
+                  styles:
+                    dropdownBackgroundColor: "aqua"
+                    dropdownBorderWidth: 1
+                    dropdownBorderColor: "lime"
+                    backgroundColor: "yellow"
+                    selectedBackgroundColor: "gray"
+                    selectedTextColor: "purple"
+                  items:
+                    - label: Option 1
+                      value: 1
+                    - label: Option 2
+                      value: 2
+              - Dropdown:
+                  label: Searchable
+                  hintText: Search
+                  autoComplete: true
+                  hintStyle:
+                    color: "red"
+                    fontSize: 20px
+                  items:
+                    - label: Option 1
+                      value: option1
+                    - label: Option 2
+                      value: option2
+              - Dropdown:
+                  id: myDropdown4
+                  label: With item template
+                  labelStyle:
+                    color: green
+                    fontSize: 20
+                    backgroundColor: "lightgreen"
+                    borderRadius: 10
+                  item-template:
+                    data:
+                      [
+                        { name: "hello", value: 11 },
+                        { name: "buyyy", value: 22 },
+                      ]
+                    name: product
+                    value: ${product.value}
+                    template:
+                      Text:
+                        text: ${product.name}
+                  items:
+                    - label: Option 1
+                      value: option1
+                    - label: Option 2
+                      value: option2
+              - Dropdown:
+                  label: With the label widget
+                  hintText: Hint Text
+                  items:
+                    - label:
+                        Text:
+                          text: Here is my label 1
+                      value: 111
+                    - label:
+                        Text:
+                          text: Here is my label 2
+                      value: 222
+
         - Card:
             styles:
               maxWidth: unset
@@ -348,22 +343,7 @@ View:
                               onChangeDemo.setText('You selected: ' + onChangeDemoDate.value);
                     - Text:
                         id: onChangeDemo
-        - PopupMenu:
-            items:
-              - label: Name
-                value: name
-              - label: Location
-                value: location
-            item-template:
-              data: [{ name: "hello", value: 11 }, { name: "buyyy", value: 22 }]
-              name: product
-              value: ${product.value}
-              template:
-                Text:
-                  text: ${product.name}
-            widget:
-              Icon:
-                name: Add
+
 API:
   getDummyNumbers:
     method: GET

@@ -3,6 +3,7 @@ import { Col } from "antd";
 import { indexOf, keys } from "lodash-es";
 import {
   CustomScopeProvider,
+  useCustomScope,
   useRegisterBindings,
   useTemplateData,
 } from "@ensembleui/react-framework";
@@ -25,6 +26,8 @@ export const Column: React.FC<FlexboxProps> = (props) => {
     name: itemTemplate?.name,
   });
 
+  const parentScope = useCustomScope();
+
   const renderedChildren = useMemo(() => {
     return children ? EnsembleRuntime.render(children) : null;
   }, [children]);
@@ -44,10 +47,10 @@ export const Column: React.FC<FlexboxProps> = (props) => {
         flexDirection: "column",
         justifyContent:
           (values?.mainAxis || values?.styles?.mainAxis) &&
-          getMainAxis(values?.mainAxis || values?.styles?.mainAxis || ""),
+          getMainAxis(values.mainAxis || values.styles?.mainAxis || ""),
         alignItems:
           (values?.crossAxis || values?.styles?.crossAxis) &&
-          getCrossAxis(values?.crossAxis || values?.styles?.crossAxis || ""),
+          getCrossAxis(values.crossAxis || values.styles?.crossAxis || ""),
         margin: values?.margin || values?.styles?.margin,
         padding: values?.padding || values?.styles?.padding,
         gap: values?.gap || values?.styles?.gap,
@@ -62,7 +65,7 @@ export const Column: React.FC<FlexboxProps> = (props) => {
         borderStyle: values?.styles?.borderWidth ? "solid" : undefined,
         display: "flex",
         minHeight: "unset",
-        cursor: props?.onTap ? "pointer" : "auto",
+        cursor: props.onTap ? "pointer" : "auto",
         ...(values?.styles?.visible === false
           ? { display: "none" }
           : undefined),
@@ -75,6 +78,7 @@ export const Column: React.FC<FlexboxProps> = (props) => {
           key={index}
           value={
             {
+              ...parentScope,
               ...n,
               index,
               length: namedData.length,
