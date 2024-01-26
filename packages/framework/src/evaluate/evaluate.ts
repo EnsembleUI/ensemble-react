@@ -35,7 +35,10 @@ export const buildEvaluateFn = (
 
 const formatJs = (js?: string): string => {
   if (!js || isEmpty(js)) {
-    return "console.debug('No expression was given')";
+    if (process.env.NODE_ENV === "debug") {
+      return "console.debug('No expression was given')";
+    }
+    return "";
   }
 
   const sanitizedJs = sanitizeJs(toString(js));
