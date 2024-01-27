@@ -1,5 +1,12 @@
 # @ensembleui/react-framework
 
+## 0.1.15
+
+### Patch Changes
+
+- 05b86a8: Fixes for scope propagation refactor
+- 9b06b0e: Make sidebar menu collapsible
+
 ## 0.1.14
 
 ### Patch Changes
