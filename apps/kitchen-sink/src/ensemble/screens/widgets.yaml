@@ -93,6 +93,7 @@ View:
                                     Text:
                                       text: "Added!"
                           - PopupMenu:
+                              showDivider: true
                               items:
                                 - label:
                                     Text:
