@@ -82,7 +82,7 @@ View:
                                 - label: Location
                                   value: location
                               item-template:
-                                data: [{ name: "hello", value: 11 }, { name: "buyyy", value: 22 }]
+                                data: [{ name: "hello", value: 11 }, {type: divider}, { name: "buyyy", value: 22 }]
                                 name: product
                                 value: ${product.value}
                                 template:

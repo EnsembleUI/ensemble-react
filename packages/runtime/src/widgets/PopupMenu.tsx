@@ -52,13 +52,18 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
     const popupItems = [];
 
     if (props?.items) {
-      const tempItems = props.items.map((item) => {
+      const tempItems = props.items.map((item, index) => {
         return (
-          <Menu.Item key={item.value} onClick={() => action?.callback(item)}>
-            {isString(item.label)
-              ? item.label
-              : EnsembleRuntime.render([unwrapWidget(item.label)])}
-          </Menu.Item>
+          <React.Fragment key={item.value}>
+            <Menu.Item key={item.value} onClick={() => action?.callback(item)}>
+              {isString(item.label)
+                ? item.label
+                : EnsembleRuntime.render([unwrapWidget(item.label)])}
+            </Menu.Item>
+            {props?.items
+              ? index < props.items.length - 1 && <Menu.Divider />
+              : null}
+          </React.Fragment>
         );
       });
 
