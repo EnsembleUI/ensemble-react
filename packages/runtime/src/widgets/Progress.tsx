@@ -34,10 +34,10 @@ const Progress: React.FC<ProgressProps> = (props) => {
   const thickness = styles?.thickness ? styles.thickness : DEFAULT_STROKE_WIDTH;
   // Calculate the percentage based on the countdown value
   const [percent, setPercent] = useState(countdown ? 0 : -1);
-  const filledPercentage = props?.filledPercentage
-    ? props.filledPercentage
-    : "40%";
   const { values } = useRegisterBindings({ ...props }, props.id);
+  const filledPercentage = values?.filledPercentage
+    ? values.filledPercentage
+    : "40%";
   useEffect(() => {
     // If countdown is present and greater than 0, calculate the target percent for animation
     if (countdown && countdown > 0) {
