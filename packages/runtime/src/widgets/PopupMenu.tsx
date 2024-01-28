@@ -71,7 +71,7 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
     }
 
     if (isObject(itemTemplate) && !isEmpty(namedData)) {
-      const tempItems = namedData.map((item) => {
+      const tempItems = namedData.map((item, index) => {
         const value = evaluate<string | number>(
           defaultScreenContext,
           itemTemplate.value,
@@ -81,11 +81,14 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
         );
 
         return (
-          <Menu.Item key={value} onClick={() => action?.callback(item)}>
-            <CustomScopeProvider value={item as CustomScope}>
-              {EnsembleRuntime.render([itemTemplate.template])}
-            </CustomScopeProvider>
-          </Menu.Item>
+          <React.Fragment key={value}>
+            <Menu.Item key={value} onClick={() => action?.callback(item)}>
+              <CustomScopeProvider value={item as CustomScope}>
+                {EnsembleRuntime.render([itemTemplate.template])}
+              </CustomScopeProvider>
+            </Menu.Item>
+            {index < namedData.length - 1 && <Menu.Divider />}
+          </React.Fragment>
         );
       });
 
