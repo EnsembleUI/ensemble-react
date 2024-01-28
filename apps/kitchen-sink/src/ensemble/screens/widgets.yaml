@@ -78,6 +78,7 @@ View:
                                     Text:
                                       text: "Added!"
                           - PopupMenu:
+                              showDivider: true
                               items:
                                 - label:
                                     Text:
@@ -89,7 +90,6 @@ View:
                                 data:
                                   [
                                     { name: "hello", value: 11 },
-                                    { type: divider },
                                     { name: "buyyy", value: 22 },
                                   ]
                                 name: product

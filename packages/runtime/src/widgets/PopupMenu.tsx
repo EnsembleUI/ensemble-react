@@ -6,6 +6,7 @@ import {
   defaultScreenContext,
   evaluate,
   unwrapWidget,
+  useRegisterBindings,
   useTemplateData,
 } from "@ensembleui/react-framework";
 import type {
@@ -35,11 +36,13 @@ type PopupMenuProps = {
   items?: PopupMenuItem[];
   widget?: Record<string, unknown>;
   onItemSelect?: EnsembleAction;
+  showDivider?: boolean | Expression<string>;
 } & EnsembleWidgetProps<PopupMenuStyles> &
   HasItemTemplate & { "item-template"?: { value: Expression<string> } };
 
 export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
-  const { "item-template": itemTemplate } = props;
+  const { "item-template": itemTemplate, ...rest } = props;
+  const { values } = useRegisterBindings({ ...rest }, props?.id);
   const action = useEnsembleAction(props.onItemSelect);
   const [widgetProps, setWidgetProps] = useState<EnsembleWidget>();
 
@@ -51,8 +54,8 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
   const popupMenuItems = useMemo(() => {
     const popupItems = [];
 
-    if (props?.items) {
-      const tempItems = props.items.map((item, index) => {
+    if (values?.items) {
+      const tempItems = values.items.map((item, index) => {
         return (
           <React.Fragment key={item.value}>
             <Menu.Item key={item.value} onClick={() => action?.callback(item)}>
@@ -60,8 +63,8 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
                 ? item.label
                 : EnsembleRuntime.render([unwrapWidget(item.label)])}
             </Menu.Item>
-            {props?.items
-              ? index < props.items.length - 1 && <Menu.Divider />
+            {values?.items && values?.showDivider
+              ? index < values.items.length - 1 && <Menu.Divider />
               : null}
           </React.Fragment>
         );
@@ -87,7 +90,9 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
                 {EnsembleRuntime.render([itemTemplate.template])}
               </CustomScopeProvider>
             </Menu.Item>
-            {index < namedData.length - 1 && <Menu.Divider />}
+            {values?.showDivider
+              ? index < namedData.length - 1 && <Menu.Divider />
+              : null}
           </React.Fragment>
         );
       });
@@ -96,15 +101,15 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
     }
 
     return <Menu>{popupItems}</Menu>;
-  }, [props?.items, action, namedData, itemTemplate]);
+  }, [values?.items, action, namedData, itemTemplate]);
 
   useEffect((): void => {
-    if (!props.widget) {
+    if (values && !values.widget) {
       return;
     }
     // clone value so we're not updating the yaml doc
-    const widget = cloneDeep(props.widget);
-    const actualWidget = unwrapWidget(widget);
+    const widget = cloneDeep(values?.widget);
+    const actualWidget = unwrapWidget(widget as Record<string, unknown>);
     setWidgetProps(actualWidget);
     // Only run once
   }, []);
