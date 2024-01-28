@@ -53,7 +53,11 @@ View:
                     data:
                       [
                         { key: "1", patient: "John", advocate: "Mike Ross" },
-                        { key: "2", patient: "Reuben", advocate: "Harvey Dent" },
+                        {
+                          key: "2",
+                          patient: "Reuben",
+                          advocate: "Harvey Dent",
+                        },
                       ]
                     name: dummyData
                     key: ${dummyData.key}
@@ -82,7 +86,12 @@ View:
                                 - label: Location
                                   value: location
                               item-template:
-                                data: [{ name: "hello", value: 11 }, {type: divider}, { name: "buyyy", value: 22 }]
+                                data:
+                                  [
+                                    { name: "hello", value: 11 },
+                                    { type: divider },
+                                    { name: "buyyy", value: 22 },
+                                  ]
                                 name: product
                                 value: ${product.value}
                                 template:
@@ -90,7 +99,7 @@ View:
                                     text: ${product.name}
                               widget:
                                 Icon:
-                                  name: QuestionMark                              
+                                  name: QuestionMark
         - Card:
             styles:
               maxWidth: unset
@@ -223,7 +232,7 @@ View:
                                   ]
                               }
                           }
-                
+
         - Card:
             styles:
               maxWidth: unset
@@ -343,6 +352,32 @@ View:
                               onChangeDemo.setText('You selected: ' + onChangeDemoDate.value);
                     - Text:
                         id: onChangeDemo
+        - Dropdown:
+            id: clientSelector
+            value: All Clients
+            hintText: Chose Client
+            onItemSelect:
+              executeCode: |
+                console.log(clientSelector, selectedValue);
+            items:
+              - label: All Clients
+                value: all clients
+              - label: Client Name
+                value: client name
+              - label: Location Group
+                type: group
+                items:
+                  - label: Location Name 1
+                    value: location name 1
+                  - label: Location Name 2
+                    value: location name 2
+                  - label: Location Name 3
+                    value: location name 3
+              - label: Client Name 2
+                value: client name 2
+            styles:
+              width: 300px
+              justifySelf: end
 
 API:
   getDummyNumbers:
