@@ -50,7 +50,7 @@ View:
             styles:
               maxWidth: unset
               width: unset
-            children:            
+            children:
               - Text:
                   styles:
                     names: heading-3
@@ -75,7 +75,7 @@ View:
             styles:
               maxWidth: unset
               width: unset
-            children:                        
+            children:
               - Text:
                   styles:
                     names: heading-3
@@ -86,7 +86,7 @@ View:
                   label: navigate url
                   onTap:
                     executeCode: |
-                      ensemble.navigateUrl('/widgets')
+                      ensemble.navigateUrl('/widgets/sagar')
               - Text:
                   styles:
                     names: heading-3
@@ -101,7 +101,7 @@ View:
             styles:
               maxWidth: unset
               width: unset
-            children:                    
+            children:
               - Text:
                   styles:
                     names: heading-3
@@ -178,4 +178,4 @@ API:
     method: GET
     uri: https://dummyjson.com/products/${id}
     inputs:
-      - id    
+      - id

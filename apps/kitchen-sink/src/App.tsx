@@ -56,7 +56,7 @@ const testApp: ApplicationDTO = {
     },
     {
       id: "widgets",
-      name: "Widgets",
+      name: "Widgets/:name",
       content: String(WidgetsYAML),
     },
     {
