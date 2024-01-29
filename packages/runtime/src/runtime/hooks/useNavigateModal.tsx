@@ -66,7 +66,7 @@ export const useNavigateModalScreen: EnsembleActionHook<
       hideFullScreenIcon: true,
     };
     if (isObject(action)) {
-      merge(modalOptions, action, { title });
+      merge(modalOptions, action, { ...action.styles }, { title });
     }
 
     openModal?.(

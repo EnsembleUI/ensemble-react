@@ -97,11 +97,17 @@ View:
                   label: navigate url
                   onTap:
                     navigateUrl: /widgets
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: navigateModalScreen
+              - Markdown:
+                  text: "use `navigateModalScreen: screen_name` for navigate modal screen programmatically. click below button to check"
               - Button:
-                  label: navigate url
+                  label: navigateModalScreen
                   onTap:
                     navigateModalScreen:
-                      name: modalscreen
+                      name: Forms
                       hideCloseIcon: false
                       styles:
                         height: 50%

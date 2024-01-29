@@ -9,7 +9,6 @@ import ActionsYAML from "./ensemble/screens/actions.yaml";
 import FormsYAML from "./ensemble/screens/forms.yaml";
 import CustomWidgetsYAML from "./ensemble/screens/customWidgets.yaml";
 import HelpYAML from "./ensemble/screens/help.yaml";
-import ModalScreenYAML from "./ensemble/screens/modal.yaml";
 // Widgets
 import HeaderWidgetYAML from "./ensemble/widgets/Header.yaml";
 // Scripts
@@ -84,11 +83,6 @@ const testApp: ApplicationDTO = {
       id: "help",
       name: "Help",
       content: String(HelpYAML),
-    },
-    {
-      id: "modalscreen",
-      name: "ModalScreen",
-      content: String(ModalScreenYAML),
     },
   ],
   config: EnsembleConfig,
