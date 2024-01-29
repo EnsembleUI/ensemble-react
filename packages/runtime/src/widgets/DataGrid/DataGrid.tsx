@@ -59,6 +59,8 @@ export type GridProps = {
   allowSelection?: boolean;
   onRowsSelected?: EnsembleAction;
   DataColumns: DataColumn[];
+  scrollable?: boolean;
+  scrollHeight?: number;
   "item-template": {
     data: Expression<object>;
     name: string;
@@ -142,6 +144,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
         onRow={(record, recordIndex) => {
           return { onClick: () => onTapActionCallback(record, recordIndex) };
         }}
+        pagination={values?.hidePagination ? false : undefined}
         ref={rootRef}
         rowKey={(data: unknown) => {
           const identifier: string = evaluate(
@@ -168,6 +171,9 @@ export const DataGrid: React.FC<GridProps> = (props) => {
               }
             : undefined
         }
+        scroll={
+          values?.scrollable ? { y: values.scrollHeight || 150 } : undefined
+        }
         style={{
           width: "100%",
           ...values?.styles,
@@ -175,7 +181,6 @@ export const DataGrid: React.FC<GridProps> = (props) => {
             ? { display: "none" }
             : undefined),
         }}
-        pagination={values?.hidePagination ? false : undefined}
       >
         {DataColumns?.map((col, index) => {
           return (
