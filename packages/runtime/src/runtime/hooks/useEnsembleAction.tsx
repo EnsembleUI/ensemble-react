@@ -235,6 +235,7 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
 ) => {
   const { openModal } = useContext(ModalContext) || {};
   const ensembleAction = useEnsembleAction(action?.onDialogDismiss);
+  const screenContext = useScreenContext();
 
   const onDismissCallback = useCallback(() => {
     if (!ensembleAction) {
@@ -271,8 +272,19 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
       merge(modalOptions, action.options);
     }
 
-    openModal?.(EnsembleRuntime.render([widget]), modalOptions, true);
-  }, [openModal, action.widget, onDismissCallback, action.options]);
+    openModal?.(
+      EnsembleRuntime.render([widget]),
+      modalOptions,
+      true,
+      screenContext || undefined,
+    );
+  }, [
+    openModal,
+    action.widget,
+    onDismissCallback,
+    action.options,
+    screenContext,
+  ]);
 
   return { callback };
 };

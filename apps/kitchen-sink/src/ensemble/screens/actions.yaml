@@ -50,7 +50,7 @@ View:
             styles:
               maxWidth: unset
               width: unset
-            children:            
+            children:
               - Text:
                   styles:
                     names: heading-3
@@ -75,7 +75,7 @@ View:
             styles:
               maxWidth: unset
               width: unset
-            children:                        
+            children:
               - Text:
                   styles:
                     names: heading-3
@@ -101,8 +101,9 @@ View:
             styles:
               maxWidth: unset
               width: unset
-            children:                    
+            children:
               - Text:
+                  id: showDialogText
                   styles:
                     names: heading-3
                   text: Show Dialog
@@ -123,7 +124,7 @@ View:
                             console.log('Dialog 1 Dismissed');
                       widget:
                         Button:
-                          label: Tap me to open another dialog
+                          label: ${'Tap me to ' + showDialogText.text}
                           onTap:
                             showDialog:
                               options:
@@ -178,4 +179,4 @@ API:
     method: GET
     uri: https://dummyjson.com/products/${id}
     inputs:
-      - id    
+      - id
