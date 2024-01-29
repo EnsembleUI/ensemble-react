@@ -32,6 +32,9 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
           rows={values.maxLines ? Number(values.maxLines) : 4} // Adjust the number of rows as needed
           style={{
             ...(values.styles ?? values.hintStyle),
+            ...(values?.styles?.visible === false
+              ? { display: "none" }
+              : undefined),
           }}
           value={values.value}
         />
@@ -42,6 +45,9 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
           placeholder={values?.hintText ?? ""}
           style={{
             ...(values?.styles ?? values?.hintStyle),
+            ...(values?.styles?.visible === false
+              ? { display: "none" }
+              : undefined),
           }}
           value={values?.value}
         />

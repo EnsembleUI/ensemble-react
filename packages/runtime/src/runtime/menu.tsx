@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import React, { useState, useEffect } from "react";
-import { Menu as AntMenu, Col, Divider, Row } from "antd";
+import { Menu as AntMenu, Col, Divider } from "antd";
 import * as MuiIcons from "@mui/icons-material";
 import {
   useRegisterBindings,
@@ -42,6 +42,7 @@ interface MenuItem {
 }
 
 interface MenuBaseProps {
+  id?: string;
   items: MenuItem[];
   styles?: {
     backgroundColor?: TypeColors;
@@ -85,8 +86,11 @@ const renderMuiIcon = (
   return null;
 };
 
-export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
-  const { values } = useRegisterBindings({ ...props });
+export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
+  const [isCollapsed, setCollapsed] = useState<boolean>(false);
+  const { values } = useRegisterBindings({ ...props, isCollapsed }, id, {
+    setCollapsed,
+  });
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
@@ -125,17 +129,16 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
         display: "flex",
         justifyContent: "space-between",
         flexDirection: "column",
-        width: props.styles?.width,
+        width: isCollapsed ? undefined : props.styles?.width,
         height: "100vh",
-        position: "fixed",
         alignItems: "center",
         zIndex: 1,
       }}
     >
       {props.header ? (
-        <Row style={{ padding: "20px" }}>
+        <Col style={{ width: "100%" }}>
           {EnsembleRuntime.render([props.header])}
-        </Row>
+        </Col>
       ) : null}
       <AntMenu
         mode="inline"
@@ -189,7 +192,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
               }}
             >
               <span>
-                {item.label}
+                {!isCollapsed && item.label}
                 {item.hasNotifications ? (
                   <div
                     style={{
@@ -222,7 +225,9 @@ export const SideBarMenu: React.FC<MenuBaseProps> = (props) => {
         ))}
       </AntMenu>
       {props.footer ? (
-        <Col>{EnsembleRuntime.render([props.footer])}</Col>
+        <Col style={{ width: "100%" }}>
+          {EnsembleRuntime.render([props.footer])}
+        </Col>
       ) : null}
     </Col>
   );

@@ -32,7 +32,7 @@ export type BaseTextProps = {
   textAlign?: string;
 } & EnsembleWidgetProps;
 
-export type FlexboxStyles = {
+export interface FlexboxStyles {
   mainAxis?: string;
   crossAxis?: string;
   gap?: number;
@@ -41,7 +41,7 @@ export type FlexboxStyles = {
   maxWidth?: string;
   minWidth?: string;
   visible?: boolean;
-};
+}
 
 export type FlexboxProps = {
   "item-template"?: {
@@ -64,6 +64,7 @@ export type IconProps = {
     padding?: number | string;
     margin?: number | string;
   } & HasBorder;
+  onTap?: EnsembleAction;
 } & EnsembleWidgetProps;
 
 // composable types

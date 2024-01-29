@@ -1,5 +1,6 @@
 ViewGroup:
   SideBar:
+    id: sidebar
     styles:
       width: 240px
       iconWidth: 20px
@@ -12,9 +13,21 @@ ViewGroup:
         backgroundColor: "#BBDBD2"
         borderRadius: 10px
     header:
-      Image:
-        height: 50px
-        source: https://docs.ensembleui.com/images/logo.svg
+      Column:
+        styles:
+          width: "${sidebar.isCollapsed ? '80px' : 'unset'}"
+          marginRight: "${sidebar.isCollapsed ? '-20px': 'unset'}"
+          marginLeft: "${sidebar.isCollapsed ? '20px': 'unset'}"
+          overflow: hidden
+          alignItems: center
+        children:
+          - Image:
+              styles:
+                transform: "${sidebar.isCollapsed ? 'translateX(-44%)' : 'none'}"
+              height: 50px
+              width: 200px
+              padding: 20px 0
+              source: /logo.svg
     items:
       - label: Home
         icon: HomeOutlined
@@ -39,5 +52,15 @@ ViewGroup:
         icon: HelpOutlineOutlined
         page: help
     footer:
-      Text:
-        text: Give us feedback
+      Row:
+        styles:
+          padding: 10px 20px
+          justifyContent: end
+        children:
+          - Icon:
+              styles:
+                transform: "${sidebar.isCollapsed ? 'rotate(180deg)' : 'none'}"
+              name: ArrowBack
+              onTap:
+                executeCode: |
+                  sidebar.setCollapsed(!sidebar.isCollapsed)
