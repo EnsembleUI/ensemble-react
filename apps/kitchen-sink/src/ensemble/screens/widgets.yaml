@@ -6,6 +6,8 @@ View:
   header:
     title:
       Header:
+        inputs:
+          message: "Inputs to header widget"
 
   body:
     Column:
