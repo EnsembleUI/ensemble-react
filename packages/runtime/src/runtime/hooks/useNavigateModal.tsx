@@ -7,7 +7,7 @@ import {
   useEnsembleStorage,
   useScreenContext,
 } from "@ensembleui/react-framework";
-import { cloneDeep, isString, set } from "lodash-es";
+import { cloneDeep, isObject, isString, merge, set } from "lodash-es";
 import { useCallback, useContext, useMemo } from "react";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
@@ -26,18 +26,6 @@ export const useNavigateModalScreen: EnsembleActionHook<
 
   const isStringAction = isString(action);
   const screenName = isStringAction ? action : action?.name;
-  const {
-    maskClosable = true,
-    hideFullScreenIcon = false,
-    hideCloseIcon = false,
-    styles: {
-      position = undefined,
-      height = undefined,
-      width = undefined,
-      margin = undefined,
-      padding = undefined,
-    } = {},
-  } = isStringAction ? {} : action || {};
 
   const title = useMemo(() => {
     if (!isStringAction && action?.title && !isString(action.title)) {
@@ -71,32 +59,27 @@ export const useNavigateModalScreen: EnsembleActionHook<
       });
     }
 
-    openModal?.(<EnsembleScreen inputs={inputs} screen={matchingScreen} />, {
-      maskClosable,
-      position,
-      height,
-      width,
-      margin,
-      padding,
-      hideFullScreenIcon,
-      hideCloseIcon,
-      title,
-    });
+    // modal options
+    const modalOptions = {
+      maskClosable: true,
+      hideCloseIcon: true,
+      hideFullScreenIcon: true,
+    };
+    if (isObject(action)) {
+      merge(modalOptions, action, { title });
+    }
+
+    openModal?.(
+      <EnsembleScreen inputs={inputs} screen={matchingScreen} />,
+      modalOptions,
+    );
   }, [
     matchingScreen,
     action,
     screenContext,
     openModal,
-    maskClosable,
-    position,
-    height,
-    width,
-    margin,
-    padding,
     storage,
     customScope,
-    hideCloseIcon,
-    hideFullScreenIcon,
     title,
   ]);
 

@@ -165,14 +165,14 @@ export const ModalWrapper: React.FC = () => {
             : ""
         }
         ${
-          options?.horizontalOffset
+          options.horizontalOffset
             ? `left: calc(${(options.horizontalOffset * 100) / 2}% + ${
                 modalDimensions[index].width / 2
               }px) !important;`
             : ""
         }
         ${
-          options?.verticalOffset
+          options.verticalOffset
             ? `top: calc(${(options.verticalOffset * 100) / 2}% + ${
                 modalDimensions[index].height / 2
               }px) !important;`
@@ -191,11 +191,11 @@ export const ModalWrapper: React.FC = () => {
           options.padding ? options.padding : "10px 24px 24px"
         } !important;
         ${
-          options?.backgroundColor
+          options.backgroundColor
             ? `background-color: ${options.backgroundColor} !important;`
             : ""
         } 
-        ${options?.showShadow === false ? "box-shadow: none !important;" : ""}
+        ${options.showShadow === false ? "box-shadow: none !important;" : ""}
       }
     `;
 
@@ -245,9 +245,9 @@ export const ModalWrapper: React.FC = () => {
     options: ModalProps,
     index: number,
   ): React.ReactNode =>
-    !options?.title &&
-    options?.hideFullScreenIcon === true &&
-    options?.hideCloseIcon === true ? null : (
+    !options.title &&
+    options.hideFullScreenIcon === true &&
+    options.hideCloseIcon === true ? null : (
       <div
         style={{
           display: "flex",
@@ -255,9 +255,9 @@ export const ModalWrapper: React.FC = () => {
           justifyContent: "space-between",
         }}
       >
-        {options?.hideFullScreenIcon ? null : getFullScreenIcon(index)}
+        {options.hideFullScreenIcon ? null : getFullScreenIcon(index)}
         {options.title}
-        {options?.hideCloseIcon ? null : (
+        {options.hideCloseIcon ? null : (
           <CloseOutlined
             onClick={(): void =>
               setModalState((oldModalState) => [
@@ -291,38 +291,40 @@ export const ModalWrapper: React.FC = () => {
                     : getPositionStyles(modal.options, index)}
                 </style>
                 <style>{getCustomStyles(modal.options, index)}</style>
-                <>
-                  <Modal
-                    bodyStyle={{
-                      height: endsWith(modal.options?.height, "%")
+
+                <Modal
+                  centered={!isFullScreen[index]}
+                  className={`ensemble-modal-${index}`}
+                  closable={false}
+                  footer={null}
+                  key={modal.key}
+                  maskClosable={modal.options.maskClosable}
+                  onCancel={(): void => closeModal(index)}
+                  open={modal.visible}
+                  style={{
+                    ...(modal.options.position ? { position: "absolute" } : {}),
+                    margin: (!isFullScreen[index] && modal.options.margin) || 0,
+                  }}
+                  title={getTitleElement(modal.options, index)}
+                  width={modal.options.width || "auto"}
+                >
+                  <div
+                    ref={contentRef}
+                    style={{
+                      height: endsWith(modal.options.height, "%")
                         ? `clamp(0vh, ${parseInt(
-                            modal.options?.height || "0",
+                            modal.options.height || "0",
                             10,
                           )}vh, 92vh`
-                        : modal.options?.height,
+                        : modal.options.height,
                       overflowY: "auto",
+                      display: "flex",
+                      flexDirection: "column",
                     }}
-                    centered={!isFullScreen[index]}
-                    className={`ensemble-modal-${index}`}
-                    closable={false}
-                    footer={null}
-                    key={modal.key}
-                    maskClosable={modal.options?.maskClosable}
-                    onCancel={(): void => closeModal(index)}
-                    open={modal.visible}
-                    style={{
-                      ...(modal.options?.position
-                        ? { position: "absolute" }
-                        : {}),
-                      margin:
-                        (!isFullScreen[index] && modal.options?.margin) || 0,
-                    }}
-                    title={getTitleElement(modal.options, index)}
-                    width={modal.options?.width || "auto"}
                   >
-                    <div ref={contentRef}>{modal.content}</div>
-                  </Modal>
-                </>
+                    {modal.content}
+                  </div>
+                </Modal>
               </>,
               document.body,
             )

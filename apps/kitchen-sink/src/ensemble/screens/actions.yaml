@@ -50,7 +50,7 @@ View:
             styles:
               maxWidth: unset
               width: unset
-            children:            
+            children:
               - Text:
                   styles:
                     names: heading-3
@@ -75,7 +75,7 @@ View:
             styles:
               maxWidth: unset
               width: unset
-            children:                        
+            children:
               - Text:
                   styles:
                     names: heading-3
@@ -97,11 +97,19 @@ View:
                   label: navigate url
                   onTap:
                     navigateUrl: /widgets
+              - Button:
+                  label: navigate url
+                  onTap:
+                    navigateModalScreen:
+                      name: modalscreen
+                      hideCloseIcon: false
+                      styles:
+                        height: 50%
         - Card:
             styles:
               maxWidth: unset
               width: unset
-            children:                    
+            children:
               - Text:
                   styles:
                     names: heading-3
@@ -178,4 +186,4 @@ API:
     method: GET
     uri: https://dummyjson.com/products/${id}
     inputs:
-      - id    
+      - id
