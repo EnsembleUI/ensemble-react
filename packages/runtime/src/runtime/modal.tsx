@@ -6,6 +6,13 @@ import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
 import { endsWith } from "lodash-es";
 import { CloseOutlined } from "@ant-design/icons";
+import {
+  CustomScopeProvider,
+  useScreenContext,
+  type ScreenContextDefinition,
+  CustomScope,
+} from "@ensembleui/react-framework";
+import { merge } from "lodash-es";
 
 interface ModalProps {
   title?: string | React.ReactNode;
@@ -29,6 +36,7 @@ interface ModalContextProps {
     content: React.ReactNode,
     options: ModalProps,
     isDialog?: boolean,
+    screenContext?: ScreenContextDefinition,
   ) => void;
   closeAllModals: () => void;
 }
@@ -55,6 +63,7 @@ export const ModalWrapper: React.FC = () => {
   const [modalDimensions, setModalDimensions] = useState<ModalDimensions[]>([]);
   const [isFullScreen, setIsFullScreen] = useState<boolean[]>([]);
   const contentRef = useRef<HTMLDivElement | null>(null);
+  const screen = useScreenContext();
 
   useLayoutEffect(() => {
     if (modalState.length > 0 && !isFullScreen[isFullScreen.length - 1])
@@ -71,7 +80,10 @@ export const ModalWrapper: React.FC = () => {
     newContent: React.ReactNode,
     newOptions: ModalProps,
     isDialog = false,
+    screenContext?: ScreenContextDefinition,
   ): void => {
+    merge(screen, screenContext);
+
     if (!isDialog && modalState.length > 0) {
       // hide the last modal
       setModalState((oldModalState) => [
@@ -272,62 +284,64 @@ export const ModalWrapper: React.FC = () => {
     );
 
   return (
-    <ModalContext.Provider
-      value={{
-        openModal,
-        closeAllModals,
-      }}
-    >
-      <Outlet />
+    <CustomScopeProvider value={screen as CustomScope}>
+      <ModalContext.Provider
+        value={{
+          openModal,
+          closeAllModals,
+        }}
+      >
+        <Outlet />
 
-      {modalState.map((modal, index) =>
-        modal.visible
-          ? createPortal(
-              <>
-                <style>
-                  {" "}
-                  {isFullScreen[index]
-                    ? getFullScreenStyles(index)
-                    : getPositionStyles(modal.options, index)}
-                </style>
-                <style>{getCustomStyles(modal.options, index)}</style>
+        {modalState.map((modal, index) =>
+          modal.visible
+            ? createPortal(
                 <>
-                  <Modal
-                    bodyStyle={{
-                      height: endsWith(modal.options?.height, "%")
-                        ? `clamp(0vh, ${parseInt(
-                            modal.options?.height || "0",
-                            10,
-                          )}vh, 92vh`
-                        : modal.options?.height,
-                      overflowY: "auto",
-                    }}
-                    centered={!isFullScreen[index]}
-                    className={`ensemble-modal-${index}`}
-                    closable={false}
-                    footer={null}
-                    key={modal.key}
-                    maskClosable={modal.options?.maskClosable}
-                    onCancel={(): void => closeModal(index)}
-                    open={modal.visible}
-                    style={{
-                      ...(modal.options?.position
-                        ? { position: "absolute" }
-                        : {}),
-                      margin:
-                        (!isFullScreen[index] && modal.options?.margin) || 0,
-                    }}
-                    title={getTitleElement(modal.options, index)}
-                    width={modal.options?.width || "auto"}
-                  >
-                    <div ref={contentRef}>{modal.content}</div>
-                  </Modal>
-                </>
-              </>,
-              document.body,
-            )
-          : null,
-      )}
-    </ModalContext.Provider>
+                  <style>
+                    {" "}
+                    {isFullScreen[index]
+                      ? getFullScreenStyles(index)
+                      : getPositionStyles(modal.options, index)}
+                  </style>
+                  <style>{getCustomStyles(modal.options, index)}</style>
+                  <>
+                    <Modal
+                      bodyStyle={{
+                        height: endsWith(modal.options?.height, "%")
+                          ? `clamp(0vh, ${parseInt(
+                              modal.options?.height || "0",
+                              10,
+                            )}vh, 92vh`
+                          : modal.options?.height,
+                        overflowY: "auto",
+                      }}
+                      centered={!isFullScreen[index]}
+                      className={`ensemble-modal-${index}`}
+                      closable={false}
+                      footer={null}
+                      key={modal.key}
+                      maskClosable={modal.options?.maskClosable}
+                      onCancel={(): void => closeModal(index)}
+                      open={modal.visible}
+                      style={{
+                        ...(modal.options?.position
+                          ? { position: "absolute" }
+                          : {}),
+                        margin:
+                          (!isFullScreen[index] && modal.options?.margin) || 0,
+                      }}
+                      title={getTitleElement(modal.options, index)}
+                      width={modal.options?.width || "auto"}
+                    >
+                      <div ref={contentRef}>{modal.content}</div>
+                    </Modal>
+                  </>
+                </>,
+                document.body,
+              )
+            : null,
+        )}
+      </ModalContext.Provider>
+    </CustomScopeProvider>
   );
 };
