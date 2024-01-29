@@ -131,7 +131,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     }
 
     return dropdownOptions;
-  }, [values?.items, namedData, itemTemplate]);
+  }, [values?.items, values?.id, namedData, itemTemplate]);
 
   const { backgroundColor: _, ...formItemStyles } = values?.styles ?? {};
 
