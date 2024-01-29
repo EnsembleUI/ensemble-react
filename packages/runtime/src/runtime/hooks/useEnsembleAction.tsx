@@ -331,17 +331,22 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
         setFiles(selectedFiles);
       }
     };
+
+    return input;
+  }, [action?.allowMultiple, action?.allowedExtensions]);
+  const scope = useCustomScope();
+  useEffect(() => {
     return () => {
       inputEl.remove();
     };
   }, [inputEl, files]);
 
   useEffect(() => {
-    if (!isEmpty(values?.files) && isComplete === false) {
-      onCompleteAction?.callback({ files: values?.files });
+    if (!isEmpty(values?.files) && !isComplete) {
+      onCompleteAction?.callback({ files: values?.files, ...scope });
       setIsComplete(true);
     }
-  }, [values?.files, onCompleteAction, isComplete]);
+  }, [values?.files, onCompleteAction, isComplete, scope]);
 
   const callback = useCallback((): void => {
     try {
