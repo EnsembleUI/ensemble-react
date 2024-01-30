@@ -53,7 +53,11 @@ View:
                     data:
                       [
                         { key: "1", patient: "John", advocate: "Mike Ross" },
-                        { key: "2", patient: "Reuben", advocate: "Harvey Dent" },
+                        {
+                          key: "2",
+                          patient: "Reuben",
+                          advocate: "Harvey Dent",
+                        },
                       ]
                     name: dummyData
                     key: ${dummyData.key}
@@ -82,7 +86,11 @@ View:
                                 - label: Location
                                   value: location
                               item-template:
-                                data: [{ name: "hello", value: 11 }, { name: "buyyy", value: 22 }]
+                                data:
+                                  [
+                                    { name: "hello", value: 11 },
+                                    { name: "buyyy", value: 22 },
+                                  ]
                                 name: product
                                 value: ${product.value}
                                 template:
@@ -90,7 +98,7 @@ View:
                                     text: ${product.name}
                               widget:
                                 Icon:
-                                  name: QuestionMark                              
+                                  name: QuestionMark
         - Card:
             styles:
               maxWidth: unset
@@ -223,7 +231,7 @@ View:
                                   ]
                               }
                           }
-                
+
         - Card:
             styles:
               maxWidth: unset
@@ -297,6 +305,7 @@ View:
               - Dropdown:
                   label: With the label widget
                   hintText: Hint Text
+                  value: 111
                   items:
                     - label:
                         Text:
