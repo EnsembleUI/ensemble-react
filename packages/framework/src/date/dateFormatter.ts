@@ -1,4 +1,3 @@
-import { toNumber } from "lodash-es";
 import { getPrettyDate } from "./utils/getPrettyDate";
 import {
   type PrettyDurationOptions,
