@@ -66,11 +66,21 @@ View:
                 console.log('Hello', data, collapseWidget)
         - Collapsible:
             expandIconPosition: "end"
+            value: "1"
             items:
               - key: "1"
                 label:
-                  Text:
-                    text: Here is my label 1
+                  Column:
+                    children:
+                      - Text:
+                          text: Here is my label 1
+                      - Button:
+                          label: this is button
+                          onTap:
+                            showDialog:
+                              widget:
+                                Text:
+                                  text: name
                 children: hiii
               - key: "2"
                 label: Here is my label 2
@@ -79,7 +89,7 @@ View:
                     text: Here is my value 2
             onCollapse:
               executeCode: |
-                console.log('Hello', data)                            
+                console.log('Hello', data)
 
   footer:
     children:
