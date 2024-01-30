@@ -265,20 +265,19 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
         set(noneStyleOption, "backgroundColor", widgetBackgroundColor);
       }
 
-    const modalOptions = {
-      maskClosable: true,
-      hideCloseIcon: true,
-      hideFullScreenIcon: true,
-      onClose: onDismissCallback,
-      verticalOffset: action.options?.verticalOffset,
-      horizontalOffset: action.options?.horizontalOffset,
-      padding: "12px",
-      ...action?.options,
-      ...(action.options?.style === "none" ? noneStyleOption : {}),
-    };
-    if (isObject(action.options)) {
-      merge(modalOptions, action.options);
-    }
+      const modalOptions = {
+        maskClosable: true,
+        hideCloseIcon: true,
+        hideFullScreenIcon: true,
+        onClose: onDismissCallback,
+        verticalOffset: action.options?.verticalOffset,
+        horizontalOffset: action.options?.horizontalOffset,
+        padding: "12px",
+        ...(action.options?.style === "none" ? noneStyleOption : {}),
+      };
+      if (isObject(action.options)) {
+        merge(modalOptions, action.options);
+      }
 
       openModal?.(
         EnsembleRuntime.render([widget]),
@@ -332,22 +331,17 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
         setFiles(selectedFiles);
       }
     };
-
-    return input;
-  }, [action?.allowMultiple, action?.allowedExtensions]);
-  const scope = useCustomScope();
-  useEffect(() => {
     return () => {
       inputEl.remove();
     };
   }, [inputEl, files]);
 
   useEffect(() => {
-    if (!isEmpty(values?.files) && !isComplete) {
-      onCompleteAction?.callback({ files: values?.files, ...scope });
+    if (!isEmpty(values?.files) && isComplete === false) {
+      onCompleteAction?.callback({ files: values?.files });
       setIsComplete(true);
     }
-  }, [values?.files, onCompleteAction, isComplete, scope]);
+  }, [values?.files, onCompleteAction, isComplete]);
 
   const callback = useCallback((): void => {
     try {
