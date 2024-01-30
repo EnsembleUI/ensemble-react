@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-import {
-  useCustomScope,
-  useRegisterBindings,
-} from "@ensembleui/react-framework";
+import { useRegisterBindings } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import type { IconProps } from "../shared/types";
 import { getColor, getIcon } from "../shared/styles";
@@ -14,7 +11,6 @@ export const Icon: React.FC<IconProps> = ({ onTap, ...props }) => {
   const [backgroundColor, setBackgroundColor] = useState(
     props.styles?.backgroundColor,
   );
-  const scope = useCustomScope();
   const onTapActionCallback = useEnsembleAction(onTap);
 
   const { values } = useRegisterBindings(
