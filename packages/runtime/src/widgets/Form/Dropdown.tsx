@@ -228,7 +228,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
         <EnsembleFormItem values={values}>
           <Select
             className={`${values?.styles?.names || ""} ${id}_input`}
-            defaultValue={values?.selectedValue}
+            defaultValue={values?.value}
             disabled={
               values?.enabled === undefined ? false : Boolean(values.enabled)
             }
