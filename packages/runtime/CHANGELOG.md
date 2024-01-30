@@ -1,5 +1,14 @@
 # @ensembleui/react-runtime
 
+## 0.1.20
+
+### Patch Changes
+
+- 6cf809f: make showDialog screen aware
+- 6cf809f: Various fixes related to scoping
+- Updated dependencies [6cf809f]
+  - @ensembleui/react-framework@0.1.16
+
 ## 0.1.19
 
 ### Patch Changes
