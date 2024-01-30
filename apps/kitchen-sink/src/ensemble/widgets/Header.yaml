@@ -1,4 +1,9 @@
 Widget:
+  inputs: 
+    - message
+  onLoad:
+    executeCode:  |
+      console.log("hello from header", message);
   body:
     Row:
       backgroundColor: white

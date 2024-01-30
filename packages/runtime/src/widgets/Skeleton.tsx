@@ -6,6 +6,7 @@ import { WidgetRegistry } from "../registry";
 
 export interface SkeletonProps extends EnsembleWidgetProps {
   useShimmer?: Expression<boolean>;
+  variant?: "circular" | "rectangular" | "rounded" | "text";
 }
 
 export const Skeleton: React.FC<SkeletonProps> = (props) => {
@@ -16,7 +17,7 @@ export const Skeleton: React.FC<SkeletonProps> = (props) => {
       animation={values?.useShimmer ? "wave" : false}
       height={values?.styles?.height}
       style={values?.styles}
-      variant="rectangular"
+      variant={values?.variant ?? "rectangular"}
       width={values?.styles?.width}
     />
   );

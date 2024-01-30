@@ -21,6 +21,7 @@ export const EnsembleFooter: React.FC<EnsembleFooterProps> = ({ footer }) => {
         backgroundColor: footer.styles?.backgroundColor || "white",
         height: footer.styles?.height,
         bottom: 0,
+        ...footer?.styles,
       }}
     >
       {footer.children}

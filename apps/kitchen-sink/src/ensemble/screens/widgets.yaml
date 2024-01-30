@@ -21,6 +21,8 @@ View:
   header:
     title:
       Header:
+        inputs:
+          message: "Inputs to header widget"
 
   body:
     Column:
@@ -93,6 +95,7 @@ View:
                                     Text:
                                       text: "Added!"
                           - PopupMenu:
+                              showDivider: true
                               items:
                                 - label:
                                     Text:
@@ -368,6 +371,32 @@ View:
                               onChangeDemo.setText('You selected: ' + onChangeDemoDate.value);
                     - Text:
                         id: onChangeDemo
+        - Dropdown:
+            id: clientSelector
+            value: All Clients
+            hintText: Chose Client
+            onItemSelect:
+              executeCode: |
+                console.log(clientSelector, selectedValue);
+            items:
+              - label: All Clients
+                value: all clients
+              - label: Client Name
+                value: client name
+              - label: Location Group
+                type: group
+                items:
+                  - label: Location Name 1
+                    value: location name 1
+                  - label: Location Name 2
+                    value: location name 2
+                  - label: Location Name 3
+                    value: location name 3
+              - label: Client Name 2
+                value: client name 2
+            styles:
+              width: 300px
+              justifySelf: end
 
 API:
   getDummyNumbers:
