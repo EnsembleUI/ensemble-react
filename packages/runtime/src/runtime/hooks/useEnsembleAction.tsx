@@ -12,6 +12,7 @@ import {
   unwrapWidget,
   useEnsembleUser,
   useEvaluate,
+  useCustomScope,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -79,6 +80,7 @@ export const useExecuteCode: EnsembleActionHook<
   const formatter = DateFormatter();
   const navigate = useNavigate();
   const location = useLocation();
+  const customScope = useCustomScope();
 
   const js = useMemo(() => {
     if (!action) {
@@ -131,9 +133,10 @@ export const useExecuteCode: EnsembleActionHook<
             },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
             { styles: theme?.Styles },
+            customScope,
             options?.context,
             args,
-          ),
+          ) as Record<string, unknown>,
         );
         onCompleteAction?.callback();
         return retVal;
@@ -151,6 +154,7 @@ export const useExecuteCode: EnsembleActionHook<
     location,
     theme?.Tokens,
     theme?.Styles,
+    customScope,
     options?.context,
     onCompleteAction,
     navigate,
@@ -246,45 +250,44 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
 
   if (!action?.widget)
     throw new Error("ShowDialog Action requires a widget to be specified");
+  const widget = useMemo(
+    () => unwrapWidget(cloneDeep(action.widget)),
+    [action.widget],
+  );
+  const callback = useCallback(
+    (args: unknown) => {
+      const widgetBackgroundColor = get(
+        widget,
+        "properties.styles.backgroundColor", // FIXME: works only for inline widget
+      );
+      if (isString(widgetBackgroundColor)) {
+        set(noneStyleOption, "backgroundColor", widgetBackgroundColor);
+      }
 
-  const callback = useCallback(() => {
-    const widget = unwrapWidget(cloneDeep(action.widget));
+      const modalOptions = {
+        maskClosable: true,
+        hideCloseIcon: true,
+        hideFullScreenIcon: true,
+        onClose: onDismissCallback,
+        verticalOffset: action.options?.verticalOffset,
+        horizontalOffset: action.options?.horizontalOffset,
+        padding: "12px",
+        ...(action.options?.style === "none" ? noneStyleOption : {}),
+      };
+      if (isObject(action.options)) {
+        merge(modalOptions, action.options);
+      }
 
-    const widgetBackgroundColor = get(
-      widget,
-      "properties.styles.backgroundColor", // FIXME: works only for inline widget
-    );
-    if (isString(widgetBackgroundColor)) {
-      set(noneStyleOption, "backgroundColor", widgetBackgroundColor);
-    }
-
-    const modalOptions = {
-      maskClosable: true,
-      hideCloseIcon: true,
-      hideFullScreenIcon: true,
-      onClose: onDismissCallback,
-      verticalOffset: action.options?.verticalOffset,
-      horizontalOffset: action.options?.horizontalOffset,
-      padding: "12px",
-      ...(action.options?.style === "none" ? noneStyleOption : {}),
-    };
-    if (isObject(action.options)) {
-      merge(modalOptions, action.options);
-    }
-
-    openModal?.(
-      EnsembleRuntime.render([widget]),
-      modalOptions,
-      true,
-      screenContext || undefined,
-    );
-  }, [
-    openModal,
-    action.widget,
-    onDismissCallback,
-    action.options,
-    screenContext,
-  ]);
+      openModal?.(
+        EnsembleRuntime.render([widget]),
+        modalOptions,
+        true,
+        screenContext || undefined,
+        isObject(args) ? (args as Record<string, unknown>) : undefined,
+      );
+    },
+    [widget, onDismissCallback, action.options, openModal, screenContext],
+  );
 
   return { callback };
 };
