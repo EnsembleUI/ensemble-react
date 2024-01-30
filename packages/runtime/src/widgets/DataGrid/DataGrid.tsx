@@ -55,6 +55,10 @@ export interface DataGridRowTemplate {
   };
 }
 
+export interface DataGridScrollable {
+  scrollHeight: string;
+}
+
 export type GridProps = {
   allowSelection?: boolean;
   onRowsSelected?: EnsembleAction;
@@ -68,6 +72,7 @@ export type GridProps = {
     template: DataGridRowTemplate;
   };
   hidePagination?: boolean;
+  scroll?: DataGridScrollable;
 } & EnsembleWidgetProps<DataGridStyles>;
 
 export interface DataGridRowTemplate {
@@ -172,7 +177,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
             : undefined
         }
         scroll={
-          values?.scrollable ? { y: values.scrollHeight || 150 } : undefined
+          values?.scroll ? { y: values.scroll.scrollHeight || 150 } : undefined
         }
         style={{
           width: "100%",

@@ -49,8 +49,8 @@ View:
                     - label: ADVOCATE
                     - label: ICON
                     - label: MENU
-                  scrollable: true
-                  scrollHeight: 400
+                  scroll:
+                    scrollHeight: 400
                   item-template:
                     data:
                       [
