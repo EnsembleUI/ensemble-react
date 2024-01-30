@@ -20,33 +20,41 @@ export interface ConditionalProps extends EnsembleWidgetProps {
   conditions: ConditionalElement[];
 }
 
-export const Conditional: React.FC<ConditionalProps> = (props) => {
-  const [isValid, errorMessage] = hasProperStructure(props.conditions);
+export const Conditional: React.FC<ConditionalProps> = ({
+  conditions,
+  ...props
+}) => {
+  const [isValid, errorMessage] = hasProperStructure(conditions);
   if (!isValid) throw Error(errorMessage);
 
-  const { values } = useRegisterBindings({ ...props }, props.id);
+  const conditionStatements = conditions.map(extractCondition);
 
-  let element = values?.conditions.find((condition) => {
-    const conditionValue = extractCondition(condition);
+  const { values } = useRegisterBindings(
+    { conditions: conditionStatements, ...props },
+    props.id,
+  );
+
+  let trueIndex = values?.conditions.findIndex((conditionValue) => {
     return conditionValue === "true" || conditionValue === true;
   });
 
-  if (!element) {
+  if (trueIndex === undefined || trueIndex < 0) {
     // check if last condition is 'else'
-    const lastCondition = last(props.conditions);
-    if (lastCondition && "else" in lastCondition) element = lastCondition;
+    const lastCondition = last(conditions);
+    if (lastCondition && "else" in lastCondition)
+      trueIndex = conditions.length - 1;
     // otherwise return empty fragment
   }
 
   const widget = useMemo(() => {
-    if (!element) {
+    if (trueIndex === undefined || trueIndex < 0) {
       return null;
     }
-    return extractWidget(element);
-  }, [element]);
+    return extractWidget(conditions[trueIndex]);
+  }, [conditions, trueIndex]);
 
   if (!widget) {
-    return <></>;
+    return null;
   }
 
   return <>{EnsembleRuntime.render([widget])}</>;
