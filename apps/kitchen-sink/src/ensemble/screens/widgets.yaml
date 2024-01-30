@@ -1,7 +1,22 @@
 View:
   onLoad:
-    invokeApi:
-      name: getDummyNumbers
+    executeCode:
+      body: |-
+        console.log(ensemble.formatter.now().getDaysDifference('01/30/2024'));
+        console.log(ensemble.formatter.now().getDaysDifference('01/20/2024'));
+        console.log(ensemble.formatter.now().getDaysDifference('02/10/2024'));
+
+        console.log(ensemble.formatter.now().getMonthsDifference('01/30/2024'));
+        console.log(ensemble.formatter.now().getMonthsDifference('02/20/2024'));
+        console.log(ensemble.formatter.now().getMonthsDifference('12/10/2023'));
+
+        console.log(ensemble.formatter.now().getYearsDifference('02/30/2024'));
+        console.log(ensemble.formatter.now().getYearsDifference('01/20/2022'));
+        console.log(ensemble.formatter.now().getYearsDifference('02/10/2026'));
+
+      onComplete:
+        invokeApi:
+          name: getDummyNumbers
 
   header:
     title:
@@ -53,7 +68,11 @@ View:
                     data:
                       [
                         { key: "1", patient: "John", advocate: "Mike Ross" },
-                        { key: "2", patient: "Reuben", advocate: "Harvey Dent" },
+                        {
+                          key: "2",
+                          patient: "Reuben",
+                          advocate: "Harvey Dent",
+                        },
                       ]
                     name: dummyData
                     key: ${dummyData.key}
@@ -82,7 +101,11 @@ View:
                                 - label: Location
                                   value: location
                               item-template:
-                                data: [{ name: "hello", value: 11 }, { name: "buyyy", value: 22 }]
+                                data:
+                                  [
+                                    { name: "hello", value: 11 },
+                                    { name: "buyyy", value: 22 },
+                                  ]
                                 name: product
                                 value: ${product.value}
                                 template:
@@ -90,7 +113,7 @@ View:
                                     text: ${product.name}
                               widget:
                                 Icon:
-                                  name: QuestionMark                              
+                                  name: QuestionMark
         - Card:
             styles:
               maxWidth: unset
@@ -223,7 +246,7 @@ View:
                                   ]
                               }
                           }
-                
+
         - Card:
             styles:
               maxWidth: unset
@@ -271,7 +294,7 @@ View:
                     - label: Option 2
                       value: option2
               - Dropdown:
-                  id: myDropdown4
+                  value: 11
                   label: With item template
                   labelStyle:
                     color: green
