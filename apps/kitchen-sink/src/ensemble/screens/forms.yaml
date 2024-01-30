@@ -84,3 +84,10 @@ View:
               - Markdown:
                   id: result
                   text: Check here for the result!
+
+  footer:
+    children:
+      - Text:
+          text: Give support us
+    styles:
+      backgroundColor: red

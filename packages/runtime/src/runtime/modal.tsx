@@ -10,6 +10,7 @@ import {
   ScreenContextProvider,
   type ScreenContextDefinition,
   CustomScopeProvider,
+  type CustomScope,
 } from "@ensembleui/react-framework";
 
 interface ModalProps {
@@ -312,15 +313,6 @@ export const ModalWrapper: React.FC = () => {
             </style>
             <style>{getCustomStyles(modal.options, index)}</style>
             <Modal
-              bodyStyle={{
-                height: endsWith(modal.options.height, "%")
-                  ? `clamp(0vh, ${parseInt(
-                      modal.options.height || "0",
-                      10,
-                    )}vh, 92vh`
-                  : modal.options.height,
-                overflowY: "auto",
-              }}
               centered={!isFullScreen[index]}
               className={`ensemble-modal-${index}`}
               closable={false}
@@ -336,7 +328,22 @@ export const ModalWrapper: React.FC = () => {
               title={getTitleElement(modal.options, index)}
               width={modal.options.width || "auto"}
             >
-              <div ref={contentRef}>{modal.content}</div>
+              <div
+                ref={contentRef}
+                style={{
+                  height: endsWith(modal.options.height, "%")
+                    ? `clamp(0vh, ${parseInt(
+                        modal.options.height || "0",
+                        10,
+                      )}vh, 92vh`
+                    : modal.options.height,
+                  overflowY: "auto",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                {modal.content}
+              </div>
             </Modal>
           </>
         );
@@ -356,7 +363,7 @@ export const ModalWrapper: React.FC = () => {
         }
 
         return createPortal(
-          <CustomScopeProvider value={modal.context}>
+          <CustomScopeProvider value={modal.context as CustomScope}>
             {modalContent}
           </CustomScopeProvider>,
           document.body,

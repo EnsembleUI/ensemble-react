@@ -2,10 +2,14 @@ View:
   onLoad:
     invokeApi:
       name: getDummyProducts
+      onResponse:
+        executeCode: |
+          const res = response.body.products;
+          ensemble.storage.set("products", res)
   header:
     title:
       Header:
-      
+
   body:
     Column:
       styles:
@@ -77,6 +81,12 @@ View:
               executeCode: |
                 console.log('Hello', data)                            
 
+  footer:
+    children:
+      - Text:
+          text: Give support us
+    styles:
+      backgroundColor: red
 API:
   getDummyProducts:
     method: GET

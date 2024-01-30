@@ -22,7 +22,6 @@ export interface EnsembleScreenProps {
 export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
   screen,
   inputs,
-  isModal,
 }) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { state } = useLocation();
@@ -31,12 +30,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
     <ScreenContextProvider context={{ inputs: mergedInputs }} screen={screen}>
       <OnLoadAction action={screen.onLoad} context={{ ...mergedInputs }}>
         <EnsembleHeader header={screen.header} />
-        <EnsembleBody
-          body={screen.body}
-          footer={screen.footer}
-          header={screen.header}
-          isModal={isModal}
-        />
+        <EnsembleBody body={screen.body} />
       </OnLoadAction>
       <EnsembleFooter footer={screen.footer} />
     </ScreenContextProvider>

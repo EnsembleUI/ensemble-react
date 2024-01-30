@@ -7,14 +7,14 @@ import {
   useEnsembleStorage,
   useScreenContext,
 } from "@ensembleui/react-framework";
-import { cloneDeep, isString, set } from "lodash-es";
+import { cloneDeep, isObject, isString, merge, set } from "lodash-es";
 import { useCallback, useContext, useMemo } from "react";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { EnsembleScreen } from "../screen";
 import { ModalContext } from "../modal";
-import type { EnsembleActionHook } from "./useEnsembleAction";
 import { EnsembleRuntime } from "../runtime";
+import type { EnsembleActionHook } from "./useEnsembleAction";
 
 export const useNavigateModalScreen: EnsembleActionHook<
   NavigateModalScreenAction
@@ -26,24 +26,12 @@ export const useNavigateModalScreen: EnsembleActionHook<
 
   const isStringAction = isString(action);
   const screenName = isStringAction ? action : action?.name;
-  const {
-    maskClosable = true,
-    hideFullScreenIcon = false,
-    hideCloseIcon = false,
-    styles: {
-      position = undefined,
-      height = undefined,
-      width = undefined,
-      margin = undefined,
-      padding = undefined,
-    } = {},
-  } = isStringAction ? {} : action || {};
 
   const title = useMemo(() => {
-    if (!isStringAction && action?.title && !isString(action?.title)) {
-      return EnsembleRuntime.render([unwrapWidget(action?.title)]);
+    if (!isStringAction && action?.title && !isString(action.title)) {
+      return EnsembleRuntime.render([unwrapWidget(action.title)]);
     }
-  }, [isStringAction, action, EnsembleRuntime.render]);
+  }, [isStringAction, action]);
 
   const { matchingScreen } = useMemo(() => {
     const screen = screenContext?.app?.screens.find(
@@ -71,30 +59,28 @@ export const useNavigateModalScreen: EnsembleActionHook<
       });
     }
 
-    openModal?.(<EnsembleScreen inputs={inputs} screen={matchingScreen} />, {
-      maskClosable,
-      position,
-      height,
-      width,
-      margin,
-      padding,
-      hideFullScreenIcon,
-      hideCloseIcon,
-      title,
-    });
+    // modal options
+    const modalOptions = {
+      maskClosable: true,
+      hideCloseIcon: true,
+      hideFullScreenIcon: true,
+    };
+    if (isObject(action)) {
+      merge(modalOptions, action, { ...action.styles }, { title });
+    }
+
+    openModal?.(
+      <EnsembleScreen inputs={inputs} screen={matchingScreen} />,
+      modalOptions,
+    );
   }, [
     matchingScreen,
     action,
     screenContext,
     openModal,
-    maskClosable,
-    position,
-    height,
-    width,
-    margin,
-    padding,
     storage,
     customScope,
+    title,
   ]);
 
   return { callback };
