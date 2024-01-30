@@ -25,7 +25,7 @@ export const createCustomWidget = (
     });
     return (
       <CustomScopeProvider value={values ?? inputs}>
-        <OnLoadAction action={widget.onLoad} context={values ?? inputs}>
+        <OnLoadAction action={widget?.onLoad} context={values ?? inputs}>
           {EnsembleRuntime.render([widget.body])}
         </OnLoadAction>
       </CustomScopeProvider>
