@@ -1,7 +1,7 @@
 import type { EnsembleAction, Expression } from "@ensembleui/react-framework";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { Button as AntButton, Form as AntForm } from "antd";
-import { useCallback, useMemo } from "react";
+import { type MouseEvent, useCallback, useMemo } from "react";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps, IconProps } from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
@@ -22,12 +22,16 @@ export type ButtonProps = {
 export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
   const { values, rootRef } = useRegisterBindings(rest, id);
   const action = useEnsembleAction(onTap);
-  const onClickCallback = useCallback(() => {
-    if (!action) {
-      return;
-    }
-    action.callback();
-  }, [action]);
+  const onClickCallback = useCallback(
+    (e: MouseEvent) => {
+      e.stopPropagation();
+      if (!action) {
+        return;
+      }
+      action.callback();
+    },
+    [action],
+  );
 
   const ButtonComponent = useMemo(() => {
     return (
