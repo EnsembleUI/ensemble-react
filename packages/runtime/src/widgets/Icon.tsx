@@ -33,7 +33,7 @@ export const Icon: React.FC<IconProps> = ({ onTap, ...props }) => {
   return (
     <IconComponent
       className={values?.styles?.names}
-      onClick={(): unknown => onTapActionCallback?.callback({ ...scope })}
+      onClick={(): unknown => onTapActionCallback?.callback()}
       sx={{
         ...values?.styles,
         color: values?.color && getColor(String(values.color)),

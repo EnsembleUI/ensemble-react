@@ -17,7 +17,7 @@ export const Skeleton: React.FC<SkeletonProps> = (props) => {
       animation={values?.useShimmer ? "wave" : false}
       height={values?.styles?.height}
       style={values?.styles}
-      variant={values?.variant ? values?.variant : "rectangular"}
+      variant={values?.variant ?? "rectangular"}
       width={values?.styles?.width}
     />
   );

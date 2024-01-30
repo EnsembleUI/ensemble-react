@@ -13,7 +13,6 @@ import { useEnsembleAction } from "./hooks/useEnsembleAction";
 
 export interface CustomWidgetProps {
   inputs: Record<string, unknown>;
-  onLoad: EnsembleAction;
 }
 
 export const createCustomWidget = (
