@@ -33,6 +33,7 @@ import {
   set,
   mapKeys,
   cloneDeep,
+  isEqual,
 } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -296,7 +297,7 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
   action?: PickFilesAction,
 ) => {
   const [files, setFiles] = useState<FileList>();
-  const [isComplete, setIsComplete] = useState(false);
+  const [isComplete, setIsComplete] = useState<boolean>();
   const onCompleteAction = useEnsembleAction(action?.onComplete);
 
   const { values } = useRegisterBindings(
@@ -317,27 +318,26 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
       action?.allowedExtensions?.map((ext) => ".".concat(ext))?.toString() ||
       "*/*";
 
-    input.onchange = (event: Event): void => {
-      const selectedFiles =
-        (event.target as HTMLInputElement).files || undefined;
-
-      if (selectedFiles) {
-        setIsComplete(false);
-        setFiles(selectedFiles);
-      }
-    };
-
     return input;
   }, [action?.allowMultiple, action?.allowedExtensions]);
 
   useEffect(() => {
+    inputEl.onchange = (event: Event): void => {
+      const selectedFiles =
+        (event.target as HTMLInputElement).files || undefined;
+
+      if (!isEqual(selectedFiles, files)) {
+        setIsComplete(false);
+        setFiles(selectedFiles);
+      }
+    };
     return () => {
       inputEl.remove();
     };
-  }, [inputEl]);
+  }, [inputEl, files]);
 
   useEffect(() => {
-    if (!isEmpty(values?.files) && !isComplete) {
+    if (!isEmpty(values?.files) && isComplete === false) {
       onCompleteAction?.callback({ files: values?.files });
       setIsComplete(true);
     }
