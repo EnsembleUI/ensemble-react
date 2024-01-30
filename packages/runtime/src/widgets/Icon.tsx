@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import { useRegisterBindings } from "@ensembleui/react-framework";
+import {
+  useCustomScope,
+  useRegisterBindings,
+} from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import type { IconProps } from "../shared/types";
 import { getColor, getIcon } from "../shared/styles";
@@ -11,7 +14,7 @@ export const Icon: React.FC<IconProps> = ({ onTap, ...props }) => {
   const [backgroundColor, setBackgroundColor] = useState(
     props.styles?.backgroundColor,
   );
-
+  const scope = useCustomScope();
   const onTapActionCallback = useEnsembleAction(onTap);
 
   const { values } = useRegisterBindings(
@@ -30,7 +33,7 @@ export const Icon: React.FC<IconProps> = ({ onTap, ...props }) => {
   return (
     <IconComponent
       className={values?.styles?.names}
-      onClick={(): unknown => onTapActionCallback?.callback()}
+      onClick={(): unknown => onTapActionCallback?.callback({ ...scope })}
       sx={{
         ...values?.styles,
         color: values?.color && getColor(String(values.color)),

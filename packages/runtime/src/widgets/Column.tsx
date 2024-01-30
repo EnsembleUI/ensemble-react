@@ -36,7 +36,7 @@ export const Column: React.FC<FlexboxProps> = (props) => {
     if (!action) {
       return;
     }
-    action.callback();
+    action.callback({ ...parentScope });
   }, [action]);
   return (
     <Col
