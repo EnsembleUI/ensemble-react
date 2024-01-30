@@ -117,6 +117,7 @@ View:
               width: unset
             children:
               - Text:
+                  id: showDialogText
                   styles:
                     names: heading-3
                   text: Show Dialog
@@ -137,7 +138,7 @@ View:
                             console.log('Dialog 1 Dismissed');
                       widget:
                         Button:
-                          label: Tap me to open another dialog
+                          label: ${'Tap me to ' + showDialogText.text}
                           onTap:
                             showDialog:
                               options:

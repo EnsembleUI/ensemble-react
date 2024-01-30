@@ -4,8 +4,13 @@ import { createPortal } from "react-dom";
 import { Outlet } from "react-router-dom";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
-import { endsWith } from "lodash-es";
+import { cloneDeep, endsWith } from "lodash-es";
 import { CloseOutlined } from "@ant-design/icons";
+import {
+  ScreenContextProvider,
+  type ScreenContextDefinition,
+  CustomScopeProvider,
+} from "@ensembleui/react-framework";
 
 interface ModalProps {
   title?: string | React.ReactNode;
@@ -29,6 +34,8 @@ interface ModalContextProps {
     content: React.ReactNode,
     options: ModalProps,
     isDialog?: boolean,
+    screenContext?: ScreenContextDefinition,
+    context?: Record<string, unknown>,
   ) => void;
   closeAllModals: () => void;
 }
@@ -43,6 +50,8 @@ interface ModalState {
   options: ModalProps;
   key: number;
   isDialog: boolean;
+  screenContext?: ScreenContextDefinition;
+  context?: Record<string, unknown>;
 }
 
 interface ModalDimensions {
@@ -71,12 +80,19 @@ export const ModalWrapper: React.FC = () => {
     newContent: React.ReactNode,
     newOptions: ModalProps,
     isDialog = false,
+    screenContext?: ScreenContextDefinition,
+    context?: Record<string, unknown>,
   ): void => {
     if (!isDialog && modalState.length > 0) {
       // hide the last modal
       setModalState((oldModalState) => [
         ...oldModalState.slice(0, -1),
-        { ...oldModalState[oldModalState.length - 1], visible: false },
+        {
+          ...oldModalState[oldModalState.length - 1],
+          visible: false,
+          screenContext,
+          context,
+        },
       ]);
     }
 
@@ -91,6 +107,8 @@ export const ModalWrapper: React.FC = () => {
           ? oldModalState[oldModalState.length - 1].key + 1
           : 0,
         isDialog,
+        screenContext,
+        context,
       },
     ]);
     setModalDimensions((oldModalDimensions) => [

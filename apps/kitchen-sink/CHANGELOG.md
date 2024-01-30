@@ -1,5 +1,16 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.11
+
+### Patch Changes
+
+- 6cf809f: make showDialog screen aware
+- 6cf809f: Various fixes related to scoping
+- Updated dependencies [6cf809f]
+- Updated dependencies [6cf809f]
+  - @ensembleui/react-runtime@0.1.20
+  - @ensembleui/react-framework@0.1.16
+
 ## 0.0.10
 
 ### Patch Changes

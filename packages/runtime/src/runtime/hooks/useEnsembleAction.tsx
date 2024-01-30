@@ -12,6 +12,7 @@ import {
   unwrapWidget,
   useEnsembleUser,
   useEvaluate,
+  useCustomScope,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -32,6 +33,7 @@ import {
   set,
   mapKeys,
   cloneDeep,
+  isEqual,
 } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -79,6 +81,7 @@ export const useExecuteCode: EnsembleActionHook<
   const formatter = DateFormatter();
   const navigate = useNavigate();
   const location = useLocation();
+  const customScope = useCustomScope();
 
   const js = useMemo(() => {
     if (!action) {
@@ -131,9 +134,10 @@ export const useExecuteCode: EnsembleActionHook<
             },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
             { styles: theme?.Styles },
+            customScope,
             options?.context,
             args,
-          ),
+          ) as Record<string, unknown>,
         );
         onCompleteAction?.callback();
         return retVal;
@@ -151,6 +155,7 @@ export const useExecuteCode: EnsembleActionHook<
     location,
     theme?.Tokens,
     theme?.Styles,
+    customScope,
     options?.context,
     onCompleteAction,
     navigate,
@@ -235,6 +240,7 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
 ) => {
   const { openModal } = useContext(ModalContext) || {};
   const ensembleAction = useEnsembleAction(action?.onDialogDismiss);
+  const screenContext = useScreenContext();
 
   const onDismissCallback = useCallback(() => {
     if (!ensembleAction) {
@@ -245,34 +251,44 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
 
   if (!action?.widget)
     throw new Error("ShowDialog Action requires a widget to be specified");
+  const widget = useMemo(
+    () => unwrapWidget(cloneDeep(action.widget)),
+    [action.widget],
+  );
+  const callback = useCallback(
+    (args: unknown) => {
+      const widgetBackgroundColor = get(
+        widget,
+        "properties.styles.backgroundColor", // FIXME: works only for inline widget
+      );
+      if (isString(widgetBackgroundColor)) {
+        set(noneStyleOption, "backgroundColor", widgetBackgroundColor);
+      }
 
-  const callback = useCallback(() => {
-    const widget = unwrapWidget(cloneDeep(action.widget));
+      const modalOptions = {
+        maskClosable: true,
+        hideCloseIcon: true,
+        hideFullScreenIcon: true,
+        onClose: onDismissCallback,
+        verticalOffset: action.options?.verticalOffset,
+        horizontalOffset: action.options?.horizontalOffset,
+        padding: "12px",
+        ...(action.options?.style === "none" ? noneStyleOption : {}),
+      };
+      if (isObject(action.options)) {
+        merge(modalOptions, action.options);
+      }
 
-    const widgetBackgroundColor = get(
-      widget,
-      "properties.styles.backgroundColor", // FIXME: works only for inline widget
-    );
-    if (isString(widgetBackgroundColor)) {
-      set(noneStyleOption, "backgroundColor", widgetBackgroundColor);
-    }
-
-    const modalOptions = {
-      maskClosable: true,
-      hideCloseIcon: true,
-      hideFullScreenIcon: true,
-      onClose: onDismissCallback,
-      verticalOffset: action.options?.verticalOffset,
-      horizontalOffset: action.options?.horizontalOffset,
-      padding: "12px",
-      ...(action.options?.style === "none" ? noneStyleOption : {}),
-    };
-    if (isObject(action.options)) {
-      merge(modalOptions, action.options);
-    }
-
-    openModal?.(EnsembleRuntime.render([widget]), modalOptions, true);
-  }, [openModal, action.widget, onDismissCallback, action.options]);
+      openModal?.(
+        EnsembleRuntime.render([widget]),
+        modalOptions,
+        true,
+        screenContext || undefined,
+        isObject(args) ? (args as Record<string, unknown>) : undefined,
+      );
+    },
+    [widget, onDismissCallback, action.options, openModal, screenContext],
+  );
 
   return { callback };
 };
@@ -281,7 +297,7 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
   action?: PickFilesAction,
 ) => {
   const [files, setFiles] = useState<FileList>();
-  const [isComplete, setIsComplete] = useState(false);
+  const [isComplete, setIsComplete] = useState<boolean>();
   const onCompleteAction = useEnsembleAction(action?.onComplete);
 
   const { values } = useRegisterBindings(
@@ -302,27 +318,26 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
       action?.allowedExtensions?.map((ext) => ".".concat(ext))?.toString() ||
       "*/*";
 
-    input.onchange = (event: Event): void => {
-      const selectedFiles =
-        (event.target as HTMLInputElement).files || undefined;
-
-      if (selectedFiles) {
-        setIsComplete(false);
-        setFiles(selectedFiles);
-      }
-    };
-
     return input;
   }, [action?.allowMultiple, action?.allowedExtensions]);
 
   useEffect(() => {
+    inputEl.onchange = (event: Event): void => {
+      const selectedFiles =
+        (event.target as HTMLInputElement).files || undefined;
+
+      if (!isEqual(selectedFiles, files)) {
+        setIsComplete(false);
+        setFiles(selectedFiles);
+      }
+    };
     return () => {
       inputEl.remove();
     };
-  }, [inputEl]);
+  }, [inputEl, files]);
 
   useEffect(() => {
-    if (!isEmpty(values?.files) && !isComplete) {
+    if (!isEmpty(values?.files) && isComplete === false) {
       onCompleteAction?.callback({ files: values?.files });
       setIsComplete(true);
     }
