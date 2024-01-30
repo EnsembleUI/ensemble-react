@@ -30,7 +30,6 @@ interface ToggleButtonPropsStyles {
   borderWidth?: number;
   selectedBorderColor?: Expression<string>;
   selectedBorderWidth?: number;
-  buttonWidth?: Expression<string>;
 }
 
 type ToggleButtonProps = {
@@ -107,7 +106,6 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
             padding: values?.styles?.padding,
             color: values?.styles?.color,
             backgroundColor: values?.styles?.backgroundColor,
-            width: values?.styles?.buttonWidth,
             marginRight:
               index !== items.length - 1 ? `${styles?.spacing ?? 0}px` : 0,
             boxShadow: `1px 2px 5px 1px ${
