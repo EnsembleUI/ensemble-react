@@ -10,6 +10,7 @@ import {
   ScreenContextProvider,
   type ScreenContextDefinition,
   CustomScopeProvider,
+  type CustomScope,
 } from "@ensembleui/react-framework";
 
 interface ModalProps {
@@ -298,56 +299,76 @@ export const ModalWrapper: React.FC = () => {
     >
       <Outlet />
 
-      {modalState.map((modal, index) =>
-        modal.visible
-          ? createPortal(
-              <>
-                <style>
-                  {" "}
-                  {isFullScreen[index]
-                    ? getFullScreenStyles(index)
-                    : getPositionStyles(modal.options, index)}
-                </style>
-                <style>{getCustomStyles(modal.options, index)}</style>
+      {modalState.map((modal, index) => {
+        if (!modal.visible) {
+          return null;
+        }
 
-                <Modal
-                  centered={!isFullScreen[index]}
-                  className={`ensemble-modal-${index}`}
-                  closable={false}
-                  footer={null}
-                  key={modal.key}
-                  maskClosable={modal.options.maskClosable}
-                  onCancel={(): void => closeModal(index)}
-                  open={modal.visible}
-                  style={{
-                    ...(modal.options.position ? { position: "absolute" } : {}),
-                    margin: (!isFullScreen[index] && modal.options.margin) || 0,
-                  }}
-                  title={getTitleElement(modal.options, index)}
-                  width={modal.options.width || "auto"}
-                >
-                  <div
-                    ref={contentRef}
-                    style={{
-                      height: endsWith(modal.options.height, "%")
-                        ? `clamp(0vh, ${parseInt(
-                            modal.options.height || "0",
-                            10,
-                          )}vh, 92vh`
-                        : modal.options.height,
-                      overflowY: "auto",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    {modal.content}
-                  </div>
-                </Modal>
-              </>,
-              document.body,
-            )
-          : null,
-      )}
+        const modalContent = (
+          <>
+            <style>
+              {isFullScreen[index]
+                ? getFullScreenStyles(index)
+                : getPositionStyles(modal.options, index)}
+            </style>
+            <style>{getCustomStyles(modal.options, index)}</style>
+            <Modal
+              centered={!isFullScreen[index]}
+              className={`ensemble-modal-${index}`}
+              closable={false}
+              footer={null}
+              key={modal.key}
+              maskClosable={modal.options.maskClosable}
+              onCancel={(): void => closeModal(index)}
+              open={modal.visible}
+              style={{
+                ...(modal.options.position ? { position: "absolute" } : {}),
+                margin: (!isFullScreen[index] && modal.options.margin) || 0,
+              }}
+              title={getTitleElement(modal.options, index)}
+              width={modal.options.width || "auto"}
+            >
+              <div
+                ref={contentRef}
+                style={{
+                  height: endsWith(modal.options.height, "%")
+                    ? `clamp(0vh, ${parseInt(
+                        modal.options.height || "0",
+                        10,
+                      )}vh, 92vh`
+                    : modal.options.height,
+                  overflowY: "auto",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                {modal.content}
+              </div>
+            </Modal>
+          </>
+        );
+
+        if (modal.screenContext?.model) {
+          const screenModel = cloneDeep(modal.screenContext.model);
+          const context = {
+            ...modal.screenContext,
+            inputs: { ...modal.screenContext.inputs, ...modal.context },
+          };
+          return createPortal(
+            <ScreenContextProvider context={context} screen={screenModel}>
+              {modalContent}
+            </ScreenContextProvider>,
+            document.body,
+          );
+        }
+
+        return createPortal(
+          <CustomScopeProvider value={modal.context as CustomScope}>
+            {modalContent}
+          </CustomScopeProvider>,
+          document.body,
+        );
+      })}
     </ModalContext.Provider>
   );
 };
