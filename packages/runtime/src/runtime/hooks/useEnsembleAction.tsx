@@ -265,19 +265,20 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
         set(noneStyleOption, "backgroundColor", widgetBackgroundColor);
       }
 
-      const modalOptions = {
-        maskClosable: true,
-        hideCloseIcon: true,
-        hideFullScreenIcon: true,
-        onClose: onDismissCallback,
-        verticalOffset: action.options?.verticalOffset,
-        horizontalOffset: action.options?.horizontalOffset,
-        padding: "12px",
-        ...(action.options?.style === "none" ? noneStyleOption : {}),
-      };
-      if (isObject(action.options)) {
-        merge(modalOptions, action.options);
-      }
+    const modalOptions = {
+      maskClosable: true,
+      hideCloseIcon: true,
+      hideFullScreenIcon: true,
+      onClose: onDismissCallback,
+      verticalOffset: action.options?.verticalOffset,
+      horizontalOffset: action.options?.horizontalOffset,
+      padding: "12px",
+      ...action?.options,
+      ...(action.options?.style === "none" ? noneStyleOption : {}),
+    };
+    if (isObject(action.options)) {
+      merge(modalOptions, action.options);
+    }
 
       openModal?.(
         EnsembleRuntime.render([widget]),

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   useCustomScope,
   useRegisterBindings,
-  useScreenContext,
 } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import type { IconProps } from "../shared/types";
