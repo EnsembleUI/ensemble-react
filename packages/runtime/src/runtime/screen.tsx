@@ -28,10 +28,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
   const { state, search } = useLocation();
   const routeParams = useParams(); // route params
   const params = new URLSearchParams(search); // query params
-  const queryParams: Record<string, unknown> = {};
-  for (const [queryKey, value] of params.entries()) {
-    queryParams[queryKey] = value;
-  }
+  const queryParams: Record<string, unknown> = Object.fromEntries(params);
 
   const mergedInputs = merge(
     {},

@@ -86,7 +86,7 @@ View:
                   label: navigate url
                   onTap:
                     executeCode: |
-                      ensemble.navigateUrl('/widgets/sagar')
+                      ensemble.navigateUrl('/widgets?name=sagar')
               - Text:
                   styles:
                     names: heading-3

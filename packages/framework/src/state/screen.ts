@@ -62,7 +62,7 @@ export const useScreenData = (): { apis?: EnsembleAPIModel[] } & Pick<
       data[name] = response;
       setDataAtom(clone(data));
     },
-    [setDataAtom, data],
+    [setDataAtom],
   );
   return {
     apis,
