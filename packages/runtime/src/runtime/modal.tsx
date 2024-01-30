@@ -4,8 +4,13 @@ import { createPortal } from "react-dom";
 import { Outlet } from "react-router-dom";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
-import { endsWith } from "lodash-es";
+import { cloneDeep, endsWith } from "lodash-es";
 import { CloseOutlined } from "@ant-design/icons";
+import {
+  ScreenContextProvider,
+  type ScreenContextDefinition,
+  CustomScopeProvider,
+} from "@ensembleui/react-framework";
 
 interface ModalProps {
   title?: string | React.ReactNode;
@@ -29,6 +34,8 @@ interface ModalContextProps {
     content: React.ReactNode,
     options: ModalProps,
     isDialog?: boolean,
+    screenContext?: ScreenContextDefinition,
+    context?: Record<string, unknown>,
   ) => void;
   closeAllModals: () => void;
 }
@@ -43,6 +50,8 @@ interface ModalState {
   options: ModalProps;
   key: number;
   isDialog: boolean;
+  screenContext?: ScreenContextDefinition;
+  context?: Record<string, unknown>;
 }
 
 interface ModalDimensions {
@@ -71,12 +80,19 @@ export const ModalWrapper: React.FC = () => {
     newContent: React.ReactNode,
     newOptions: ModalProps,
     isDialog = false,
+    screenContext?: ScreenContextDefinition,
+    context?: Record<string, unknown>,
   ): void => {
     if (!isDialog && modalState.length > 0) {
       // hide the last modal
       setModalState((oldModalState) => [
         ...oldModalState.slice(0, -1),
-        { ...oldModalState[oldModalState.length - 1], visible: false },
+        {
+          ...oldModalState[oldModalState.length - 1],
+          visible: false,
+          screenContext,
+          context,
+        },
       ]);
     }
 
@@ -91,6 +107,8 @@ export const ModalWrapper: React.FC = () => {
           ? oldModalState[oldModalState.length - 1].key + 1
           : 0,
         isDialog,
+        screenContext,
+        context,
       },
     ]);
     setModalDimensions((oldModalDimensions) => [
@@ -165,14 +183,14 @@ export const ModalWrapper: React.FC = () => {
             : ""
         }
         ${
-          options?.horizontalOffset
+          options.horizontalOffset
             ? `left: calc(${(options.horizontalOffset * 100) / 2}% + ${
                 modalDimensions[index].width / 2
               }px) !important;`
             : ""
         }
         ${
-          options?.verticalOffset
+          options.verticalOffset
             ? `top: calc(${(options.verticalOffset * 100) / 2}% + ${
                 modalDimensions[index].height / 2
               }px) !important;`
@@ -191,11 +209,11 @@ export const ModalWrapper: React.FC = () => {
           options.padding ? options.padding : "10px 24px 24px"
         } !important;
         ${
-          options?.backgroundColor
+          options.backgroundColor
             ? `background-color: ${options.backgroundColor} !important;`
             : ""
         } 
-        ${options?.showShadow === false ? "box-shadow: none !important;" : ""}
+        ${options.showShadow === false ? "box-shadow: none !important;" : ""}
       }
     `;
 
@@ -245,9 +263,9 @@ export const ModalWrapper: React.FC = () => {
     options: ModalProps,
     index: number,
   ): React.ReactNode =>
-    !options?.title &&
-    options?.hideFullScreenIcon === true &&
-    options?.hideCloseIcon === true ? null : (
+    !options.title &&
+    options.hideFullScreenIcon === true &&
+    options.hideCloseIcon === true ? null : (
       <div
         style={{
           display: "flex",
@@ -255,9 +273,9 @@ export const ModalWrapper: React.FC = () => {
           justifyContent: "space-between",
         }}
       >
-        {options?.hideFullScreenIcon ? null : getFullScreenIcon(index)}
+        {options.hideFullScreenIcon ? null : getFullScreenIcon(index)}
         {options.title}
-        {options?.hideCloseIcon ? null : (
+        {options.hideCloseIcon ? null : (
           <CloseOutlined
             onClick={(): void =>
               setModalState((oldModalState) => [
@@ -280,54 +298,70 @@ export const ModalWrapper: React.FC = () => {
     >
       <Outlet />
 
-      {modalState.map((modal, index) =>
-        modal.visible
-          ? createPortal(
-              <>
-                <style>
-                  {" "}
-                  {isFullScreen[index]
-                    ? getFullScreenStyles(index)
-                    : getPositionStyles(modal.options, index)}
-                </style>
-                <style>{getCustomStyles(modal.options, index)}</style>
-                <>
-                  <Modal
-                    bodyStyle={{
-                      height: endsWith(modal.options?.height, "%")
-                        ? `clamp(0vh, ${parseInt(
-                            modal.options?.height || "0",
-                            10,
-                          )}vh, 92vh`
-                        : modal.options?.height,
-                      overflowY: "auto",
-                    }}
-                    centered={!isFullScreen[index]}
-                    className={`ensemble-modal-${index}`}
-                    closable={false}
-                    footer={null}
-                    key={modal.key}
-                    maskClosable={modal.options?.maskClosable}
-                    onCancel={(): void => closeModal(index)}
-                    open={modal.visible}
-                    style={{
-                      ...(modal.options?.position
-                        ? { position: "absolute" }
-                        : {}),
-                      margin:
-                        (!isFullScreen[index] && modal.options?.margin) || 0,
-                    }}
-                    title={getTitleElement(modal.options, index)}
-                    width={modal.options?.width || "auto"}
-                  >
-                    <div ref={contentRef}>{modal.content}</div>
-                  </Modal>
-                </>
-              </>,
-              document.body,
-            )
-          : null,
-      )}
+      {modalState.map((modal, index) => {
+        if (!modal.visible) {
+          return null;
+        }
+
+        const modalContent = (
+          <>
+            <style>
+              {isFullScreen[index]
+                ? getFullScreenStyles(index)
+                : getPositionStyles(modal.options, index)}
+            </style>
+            <style>{getCustomStyles(modal.options, index)}</style>
+            <Modal
+              bodyStyle={{
+                height: endsWith(modal.options.height, "%")
+                  ? `clamp(0vh, ${parseInt(
+                      modal.options.height || "0",
+                      10,
+                    )}vh, 92vh`
+                  : modal.options.height,
+                overflowY: "auto",
+              }}
+              centered={!isFullScreen[index]}
+              className={`ensemble-modal-${index}`}
+              closable={false}
+              footer={null}
+              key={modal.key}
+              maskClosable={modal.options.maskClosable}
+              onCancel={(): void => closeModal(index)}
+              open={modal.visible}
+              style={{
+                ...(modal.options.position ? { position: "absolute" } : {}),
+                margin: (!isFullScreen[index] && modal.options.margin) || 0,
+              }}
+              title={getTitleElement(modal.options, index)}
+              width={modal.options.width || "auto"}
+            >
+              <div ref={contentRef}>{modal.content}</div>
+            </Modal>
+          </>
+        );
+
+        if (modal.screenContext?.model) {
+          const screenModel = cloneDeep(modal.screenContext.model);
+          const context = {
+            ...modal.screenContext,
+            inputs: { ...modal.screenContext.inputs, ...modal.context },
+          };
+          return createPortal(
+            <ScreenContextProvider context={context} screen={screenModel}>
+              {modalContent}
+            </ScreenContextProvider>,
+            document.body,
+          );
+        }
+
+        return createPortal(
+          <CustomScopeProvider value={modal.context}>
+            {modalContent}
+          </CustomScopeProvider>,
+          document.body,
+        );
+      })}
     </ModalContext.Provider>
   );
 };
