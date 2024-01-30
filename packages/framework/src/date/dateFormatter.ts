@@ -4,6 +4,7 @@ import {
   getPrettyDuration,
 } from "./utils/getPrettyDuration";
 import { getPrettyTime } from "./utils/getPrettyTime";
+import dayjs from "dayjs";
 
 export interface EnsembleDateTime {
   getDate: () => string;
@@ -19,6 +20,9 @@ export interface EnsembleDateTime {
   getMinute: () => number;
   getSecond: () => number;
   getMilliseconds: () => number;
+  getDaysDifference: (input: string) => number;
+  getMonthsDifference: (input: string) => number;
+  getYearsDifference: (input: string) => number;
 }
 
 export interface EnsembleFormatter {
@@ -35,6 +39,7 @@ export interface EnsembleFormatter {
 export const DateFormatter = (): EnsembleFormatter => {
   const now = (): EnsembleDateTime => {
     const date = new Date();
+    const currentDate = dayjs();
     return {
       getDate: () => date.toISOString().split("T")[0],
       getDateTime: () => date.toISOString(),
@@ -49,6 +54,12 @@ export const DateFormatter = (): EnsembleFormatter => {
       getMinute: () => date.getMinutes(),
       getSecond: () => date.getSeconds(),
       getMilliseconds: () => date.getMilliseconds(),
+      getDaysDifference: (input: string): number =>
+        dayjs(input).diff(currentDate, "day"),
+      getMonthsDifference: (input: string): number =>
+        dayjs(input).diff(currentDate, "month"),
+      getYearsDifference: (input: string): number =>
+        dayjs(input).diff(currentDate, "year"),
     };
   };
 
