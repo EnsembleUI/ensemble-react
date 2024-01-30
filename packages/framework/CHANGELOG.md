@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.16
+
+### Patch Changes
+
+- 6cf809f: Various fixes related to scoping
+
 ## 0.1.15
 
 ### Patch Changes
