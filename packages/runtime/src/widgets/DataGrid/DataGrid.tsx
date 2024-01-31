@@ -56,15 +56,14 @@ export interface DataGridRowTemplate {
 }
 
 export interface DataGridScrollable {
-  scrollHeight: string;
+  scrollHeight?: string;
+  scrollWidth?: string;
 }
 
 export type GridProps = {
   allowSelection?: boolean;
   onRowsSelected?: EnsembleAction;
   DataColumns: DataColumn[];
-  scrollable?: boolean;
-  scrollHeight?: number;
   "item-template": {
     data: Expression<object>;
     name: string;
@@ -177,7 +176,12 @@ export const DataGrid: React.FC<GridProps> = (props) => {
             : undefined
         }
         scroll={
-          values?.scroll ? { y: values.scroll.scrollHeight || 150 } : undefined
+          values?.scroll
+            ? {
+                y: values.scroll.scrollHeight || 150,
+                x: values.scroll.scrollWidth || 0,
+              }
+            : undefined
         }
         style={{
           width: "100%",

@@ -49,200 +49,12 @@ View:
                     - label: ADVOCATE
                     - label: ICON
                     - label: MENU
-                  scroll:
-                    scrollHeight: 400
                   item-template:
                     data:
                       [
                         { key: "1", patient: "John", advocate: "Mike Ross" },
                         {
                           key: "2",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "3", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "4",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "5", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "6",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "7", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "8",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "9", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "10",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "11", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "12",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "13", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "14",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "15", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "16",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "17", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "18",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "19", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "20",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "21", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "22",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "23", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "24",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "25", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "26",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "27", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "28",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "29", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "30",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "31", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "32",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "33", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "34",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "35", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "36",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "37", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "38",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "39", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "40",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "41", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "42",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "43", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "44",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "45", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "46",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "47", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "48",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "49", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "50",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "51", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "52",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "53", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "54",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "55", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "56",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "57", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "58",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "59", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "60",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "61", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "62",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
-                        { key: "63", patient: "John", advocate: "Mike Ross" },
-                        {
-                          key: "64",
                           patient: "Reuben",
                           advocate: "Harvey Dent",
                         },
@@ -287,6 +99,39 @@ View:
                               widget:
                                 Icon:
                                   name: QuestionMark
+
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+              gap: 10px
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: DataGrid
+              - DataGrid:
+                  styles:
+                    headerStyle:
+                      backgroundColor: "white"
+                      fontSize: "12px"
+                      textColor: "#747184"
+                      hasDivider: true
+                      borderBottom: false
+                  hidePagination: true
+                  DataColumns:
+                    - label: Number
+                  scroll:
+                    scrollHeight: 200
+                  item-template:
+                    data: ${getDummyNumbers.body}
+                    name: dummyData
+                    template:
+                      DataRow:
+                        children:
+                          - Text:
+                              id: ${dummyData}
+                              text: ${dummyData}
         - Card:
             styles:
               maxWidth: unset
@@ -541,6 +386,9 @@ View:
                         id: onChangeDemo
 
 API:
+  getDummyProducts:
+    method: GET
+    uri: https://dummyjson.com/products
   getDummyNumbers:
     method: GET
     uri: https://mocki.io/v1/c1f19d68-e6c8-4ae3-848d-d99e588cf224
