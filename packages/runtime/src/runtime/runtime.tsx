@@ -11,7 +11,7 @@ export const EnsembleRuntime = {
         return result;
       }
       const WidgetFn = result as React.FC<unknown>;
-      return <WidgetFn {...child.properties} key={index} />;
+      return <WidgetFn {...child.properties} key={child.key ?? index} />;
     });
   },
 };
