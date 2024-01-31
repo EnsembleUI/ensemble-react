@@ -89,11 +89,7 @@ View:
                       textColor: "#747184"
                       hasDivider: true
                       borderBottom: false
-                  DataColumns:
-                    - label: PATIENT
-                    - label: ADVOCATE
-                    - label: ICON
-                    - label: MENU
+                  DataColumns: ${ensemble.storage.get('dataColumn')}
                   item-template:
                     data:
                       [

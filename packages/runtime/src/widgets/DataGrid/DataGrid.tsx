@@ -12,10 +12,11 @@ import {
   useCallback,
   type ReactElement,
   useState,
+  useMemo,
   useEffect,
   useRef,
 } from "react";
-import { get } from "lodash-es";
+import { get, isArray } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type {
   EnsembleWidgetProps,
@@ -106,12 +107,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   const [allowSelection, setAllowSelection] = useState(
     props?.allowSelection ?? false,
   );
-  const {
-    "item-template": itemTemplate,
-    DataColumns,
-    onScrollEnd,
-    ...rest
-  } = props;
+  const { "item-template": itemTemplate, onScrollEnd, ...rest } = props;
   const [selectionType, setSelectionType] = useState<"checkbox" | "radio">(
     "checkbox",
   );
@@ -195,6 +191,15 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     };
   }, [rootRef, onScrollEnd, handleScrollEvent]);
 
+  // handle datagrid column list
+  const dataColumns = useMemo(() => {
+    if (values?.DataColumns && isArray(values.DataColumns)) {
+      return values.DataColumns;
+    }
+
+    return [];
+  }, [values?.DataColumns]);
+
   return (
     <div ref={containerRef}>
       <Table
@@ -246,7 +251,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
             : undefined),
         }}
       >
-        {DataColumns?.map((col, index) => {
+        {dataColumns.map((col, index) => {
           return (
             <Table.Column
               dataIndex={itemTemplate.name}
