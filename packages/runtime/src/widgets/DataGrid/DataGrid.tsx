@@ -70,7 +70,7 @@ export interface DataGridScrollable {
 export type GridProps = {
   allowSelection?: boolean;
   onRowsSelected?: EnsembleAction;
-  DataColumns: DataColumn[];
+  DataColumns: DataColumn[] | Expression<object>;
   "item-template": {
     data: Expression<object>;
     name: string;
@@ -194,7 +194,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   // handle datagrid column list
   const dataColumns = useMemo(() => {
     if (values?.DataColumns && isArray(values.DataColumns)) {
-      return values.DataColumns;
+      return values.DataColumns as DataColumn[];
     }
 
     return [];
