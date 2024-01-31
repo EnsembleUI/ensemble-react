@@ -12,6 +12,7 @@ import { useEnsembleAction } from "./hooks/useEnsembleAction";
 import { EnsembleHeader } from "./header";
 import { EnsembleFooter } from "./footer";
 import { EnsembleBody } from "./body";
+import { ModalWrapper } from "./modal";
 
 export interface EnsembleScreenProps {
   screen: EnsembleScreenModel;
@@ -38,11 +39,13 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
   );
   return (
     <ScreenContextProvider context={{ inputs: mergedInputs }} screen={screen}>
-      <OnLoadAction action={screen.onLoad} context={{ ...mergedInputs }}>
-        <EnsembleHeader header={screen.header} />
-        <EnsembleBody body={screen.body} />
-      </OnLoadAction>
-      <EnsembleFooter footer={screen.footer} />
+      <ModalWrapper>
+        <OnLoadAction action={screen.onLoad} context={{ ...mergedInputs }}>
+          <EnsembleHeader header={screen.header} />
+          <EnsembleBody body={screen.body} />
+        </OnLoadAction>
+        <EnsembleFooter footer={screen.footer} />
+      </ModalWrapper>
     </ScreenContextProvider>
   );
 };
