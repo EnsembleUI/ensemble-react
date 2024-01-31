@@ -1,17 +1,11 @@
 import { Modal } from "antd";
+import type { PropsWithChildren } from "react";
 import { createContext, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Outlet } from "react-router-dom";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
-import { cloneDeep, endsWith } from "lodash-es";
+import { endsWith } from "lodash-es";
 import { CloseOutlined } from "@ant-design/icons";
-import {
-  ScreenContextProvider,
-  type ScreenContextDefinition,
-  CustomScopeProvider,
-  type CustomScope,
-} from "@ensembleui/react-framework";
 
 interface ModalProps {
   title?: string | React.ReactNode;
@@ -35,8 +29,6 @@ interface ModalContextProps {
     content: React.ReactNode,
     options: ModalProps,
     isDialog?: boolean,
-    screenContext?: ScreenContextDefinition,
-    context?: Record<string, unknown>,
   ) => void;
   closeAllModals: () => void;
 }
@@ -51,8 +43,6 @@ interface ModalState {
   options: ModalProps;
   key: number;
   isDialog: boolean;
-  screenContext?: ScreenContextDefinition;
-  context?: Record<string, unknown>;
 }
 
 interface ModalDimensions {
@@ -60,7 +50,7 @@ interface ModalDimensions {
   height: number;
 }
 
-export const ModalWrapper: React.FC = () => {
+export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
   const [modalState, setModalState] = useState<ModalState[]>([]);
   const [modalDimensions, setModalDimensions] = useState<ModalDimensions[]>([]);
   const [isFullScreen, setIsFullScreen] = useState<boolean[]>([]);
@@ -81,8 +71,6 @@ export const ModalWrapper: React.FC = () => {
     newContent: React.ReactNode,
     newOptions: ModalProps,
     isDialog = false,
-    screenContext?: ScreenContextDefinition,
-    context?: Record<string, unknown>,
   ): void => {
     if (!isDialog && modalState.length > 0) {
       // hide the last modal
@@ -91,8 +79,6 @@ export const ModalWrapper: React.FC = () => {
         {
           ...oldModalState[oldModalState.length - 1],
           visible: false,
-          screenContext,
-          context,
         },
       ]);
     }
@@ -108,8 +94,6 @@ export const ModalWrapper: React.FC = () => {
           ? oldModalState[oldModalState.length - 1].key + 1
           : 0,
         isDialog,
-        screenContext,
-        context,
       },
     ]);
     setModalDimensions((oldModalDimensions) => [
@@ -297,7 +281,7 @@ export const ModalWrapper: React.FC = () => {
         closeAllModals,
       }}
     >
-      <Outlet />
+      {children}
 
       {modalState.map((modal, index) => {
         if (!modal.visible) {
@@ -348,26 +332,7 @@ export const ModalWrapper: React.FC = () => {
           </>
         );
 
-        if (modal.screenContext?.model) {
-          const screenModel = cloneDeep(modal.screenContext.model);
-          const context = {
-            ...modal.screenContext,
-            inputs: { ...modal.screenContext.inputs, ...modal.context },
-          };
-          return createPortal(
-            <ScreenContextProvider context={context} screen={screenModel}>
-              {modalContent}
-            </ScreenContextProvider>,
-            document.body,
-          );
-        }
-
-        return createPortal(
-          <CustomScopeProvider value={modal.context as CustomScope}>
-            {modalContent}
-          </CustomScopeProvider>,
-          document.body,
-        );
+        return createPortal(modalContent, document.body);
       })}
     </ModalContext.Provider>
   );

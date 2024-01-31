@@ -13,6 +13,7 @@ import {
   useEnsembleUser,
   useEvaluate,
   useCustomScope,
+  CustomScopeProvider,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -23,6 +24,7 @@ import type {
   ScreenContextDefinition,
   ShowDialogAction,
   NavigateScreenAction,
+  CustomScope,
 } from "@ensembleui/react-framework";
 import {
   isEmpty,
@@ -240,7 +242,7 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
 ) => {
   const { openModal } = useContext(ModalContext) || {};
   const ensembleAction = useEnsembleAction(action?.onDialogDismiss);
-  const screenContext = useScreenContext();
+  const customScope = useCustomScope();
 
   const onDismissCallback = useCallback(() => {
     if (!ensembleAction) {
@@ -280,14 +282,20 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
       }
 
       openModal?.(
-        EnsembleRuntime.render([widget]),
+        <CustomScopeProvider
+          value={merge(
+            {},
+            customScope,
+            isObject(args) ? (args as CustomScope) : undefined,
+          )}
+        >
+          {EnsembleRuntime.render([widget])}
+        </CustomScopeProvider>,
         modalOptions,
         true,
-        screenContext || undefined,
-        isObject(args) ? (args as Record<string, unknown>) : undefined,
       );
     },
-    [widget, onDismissCallback, action.options, openModal, screenContext],
+    [widget, onDismissCallback, action.options, openModal, customScope],
   );
 
   return { callback };
