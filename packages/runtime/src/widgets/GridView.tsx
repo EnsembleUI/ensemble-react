@@ -35,14 +35,12 @@ export type GridViewProps = {
 
 export const GridView: React.FC<GridViewProps> = ({
   "item-template": { data, name, template },
-  styles,
   onScrollEnd,
   ...rest
 }) => {
   const defaultColumnCount = 4;
   const { id: resolvedWidgetId, values } = useRegisterBindings({
     ...rest,
-    styles,
   });
   const { namedData } = useTemplateData({ data, name });
   const onScrollEndAction = useEnsembleAction(onScrollEnd);
@@ -57,7 +55,7 @@ export const GridView: React.FC<GridViewProps> = ({
 
   const rows = useMemo(() => {
     const workingRows = [];
-    const colCount = styles?.horizontalTileCount ?? defaultColumnCount;
+    const colCount = values?.styles?.horizontalTileCount ?? defaultColumnCount;
     const rowCount = Math.ceil(namedData.length / colCount);
 
     for (let i = 0; i < rowCount; i++) {
@@ -72,11 +70,11 @@ export const GridView: React.FC<GridViewProps> = ({
                 display: "flex",
                 flexGrow: 1,
                 justifyContent: "center",
-                marginLeft: (styles?.horizontalGap ?? 20) / 2,
-                marginRight: (styles?.horizontalGap ?? 20) / 2,
-                maxWidth: `calc(100% / ${styles?.horizontalTileCount ?? 4} - ${
-                  styles?.horizontalGap ?? 20
-                }px)`,
+                marginLeft: (values?.styles?.horizontalGap ?? 20) / 2,
+                marginRight: (values?.styles?.horizontalGap ?? 20) / 2,
+                maxWidth: `calc(100% / ${
+                  values?.styles?.horizontalTileCount ?? 4
+                } - ${values?.styles?.horizontalGap ?? 20}px)`,
               }}
             >
               <CustomScopeProvider
@@ -93,12 +91,15 @@ export const GridView: React.FC<GridViewProps> = ({
       }
       workingRows.push(
         <Row
-          gutter={[styles?.horizontalGap ?? 10, styles?.verticalGap ?? 10]}
+          gutter={[
+            values?.styles?.horizontalGap ?? 10,
+            values?.styles?.verticalGap ?? 10,
+          ]}
           key={i}
           style={{
             alignItems: "center",
-            marginTop: (styles?.verticalGap ?? 20) / 2,
-            marginBottom: (styles?.verticalGap ?? 20) / 2,
+            marginTop: (values?.styles?.verticalGap ?? 20) / 2,
+            marginBottom: (values?.styles?.verticalGap ?? 20) / 2,
           }}
         >
           {cols}
@@ -108,9 +109,9 @@ export const GridView: React.FC<GridViewProps> = ({
     return workingRows;
   }, [
     namedData,
-    styles?.horizontalGap,
-    styles?.horizontalTileCount,
-    styles?.verticalGap,
+    values?.styles?.horizontalGap,
+    values?.styles?.horizontalTileCount,
+    values?.styles?.verticalGap,
     template,
   ]);
 
@@ -151,6 +152,9 @@ export const GridView: React.FC<GridViewProps> = ({
     <div
       ref={containerRef}
       style={{
+        ...(values?.styles?.visible === false
+          ? { display: "none" }
+          : undefined),
         ...values?.styles,
       }}
     >
