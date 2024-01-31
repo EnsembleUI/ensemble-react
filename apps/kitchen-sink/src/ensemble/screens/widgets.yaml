@@ -2,6 +2,8 @@ View:
   onLoad:
     executeCode:
       body: |-
+        ensemble.storage.set('dataColumn', [{label: 'PATIENTS'}, {label: 'ADVOCATE'}, {label: 'ICON'}, {label: 'MENU'}])
+
         console.log(ensemble.formatter.now().getDaysDifference('01/30/2024'));
         console.log(ensemble.formatter.now().getDaysDifference('01/20/2024'));
         console.log(ensemble.formatter.now().getDaysDifference('02/10/2024'));
