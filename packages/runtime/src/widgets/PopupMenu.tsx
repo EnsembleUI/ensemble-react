@@ -6,6 +6,7 @@ import {
   defaultScreenContext,
   evaluate,
   unwrapWidget,
+  useRegisterBindings,
   useTemplateData,
 } from "@ensembleui/react-framework";
 import type {
@@ -35,11 +36,13 @@ type PopupMenuProps = {
   items?: PopupMenuItem[];
   widget?: Record<string, unknown>;
   onItemSelect?: EnsembleAction;
+  showDivider?: boolean | Expression<string>;
 } & EnsembleWidgetProps<PopupMenuStyles> &
   HasItemTemplate & { "item-template"?: { value: Expression<string> } };
 
 export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
-  const { "item-template": itemTemplate } = props;
+  const { "item-template": itemTemplate, ...rest } = props;
+  const { values } = useRegisterBindings({ ...rest }, props?.id);
   const action = useEnsembleAction(props.onItemSelect);
   const [widgetProps, setWidgetProps] = useState<EnsembleWidget>();
 
@@ -51,14 +54,19 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
   const popupMenuItems = useMemo(() => {
     const popupItems = [];
 
-    if (props?.items) {
-      const tempItems = props.items.map((item) => {
+    if (values?.items) {
+      const tempItems = values.items.map((item, index) => {
         return (
-          <Menu.Item key={item.value} onClick={() => action?.callback(item)}>
-            {isString(item.label)
-              ? item.label
-              : EnsembleRuntime.render([unwrapWidget(item.label)])}
-          </Menu.Item>
+          <React.Fragment key={item.value}>
+            <Menu.Item key={item.value} onClick={() => action?.callback(item)}>
+              {isString(item.label)
+                ? item.label
+                : EnsembleRuntime.render([unwrapWidget(item.label)])}
+            </Menu.Item>
+            {values?.items && values?.showDivider
+              ? index < values.items.length - 1 && <Menu.Divider />
+              : null}
+          </React.Fragment>
         );
       });
 
@@ -66,7 +74,7 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
     }
 
     if (isObject(itemTemplate) && !isEmpty(namedData)) {
-      const tempItems = namedData.map((item) => {
+      const tempItems = namedData.map((item, index) => {
         const value = evaluate<string | number>(
           defaultScreenContext,
           itemTemplate.value,
@@ -76,11 +84,16 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
         );
 
         return (
-          <Menu.Item key={value} onClick={() => action?.callback(item)}>
-            <CustomScopeProvider value={item as CustomScope}>
-              {EnsembleRuntime.render([itemTemplate.template])}
-            </CustomScopeProvider>
-          </Menu.Item>
+          <React.Fragment key={value}>
+            <Menu.Item key={value} onClick={() => action?.callback(item)}>
+              <CustomScopeProvider value={item as CustomScope}>
+                {EnsembleRuntime.render([itemTemplate.template])}
+              </CustomScopeProvider>
+            </Menu.Item>
+            {values?.showDivider
+              ? index < namedData.length - 1 && <Menu.Divider />
+              : null}
+          </React.Fragment>
         );
       });
 
@@ -88,15 +101,15 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
     }
 
     return <Menu>{popupItems}</Menu>;
-  }, [props?.items, action, namedData, itemTemplate]);
+  }, [values?.items, action, namedData, itemTemplate]);
 
   useEffect((): void => {
-    if (!props.widget) {
+    if (values && !values.widget) {
       return;
     }
     // clone value so we're not updating the yaml doc
-    const widget = cloneDeep(props.widget);
-    const actualWidget = unwrapWidget(widget);
+    const widget = cloneDeep(values?.widget);
+    const actualWidget = unwrapWidget(widget as Record<string, unknown>);
     setWidgetProps(actualWidget);
     // Only run once
   }, []);

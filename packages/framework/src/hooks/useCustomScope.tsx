@@ -2,7 +2,7 @@ import { createContext, useContext } from "react";
 
 export type CustomScope = Record<string, unknown>;
 type CustomScopeProps = {
-  value: CustomScope;
+  value?: CustomScope;
 } & React.PropsWithChildren<CustomScope>;
 
 export const CustomScopeContext = createContext<CustomScope | undefined>(

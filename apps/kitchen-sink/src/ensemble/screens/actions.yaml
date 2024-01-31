@@ -50,7 +50,7 @@ View:
             styles:
               maxWidth: unset
               width: unset
-            children:            
+            children:
               - Text:
                   styles:
                     names: heading-3
@@ -75,7 +75,7 @@ View:
             styles:
               maxWidth: unset
               width: unset
-            children:                        
+            children:
               - Text:
                   styles:
                     names: heading-3
@@ -86,7 +86,7 @@ View:
                   label: navigate url
                   onTap:
                     executeCode: |
-                      ensemble.navigateUrl('/widgets')
+                      ensemble.navigateUrl('/widgets?name=sagar')
               - Text:
                   styles:
                     names: heading-3
@@ -97,12 +97,27 @@ View:
                   label: navigate url
                   onTap:
                     navigateUrl: /widgets
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: navigateModalScreen
+              - Markdown:
+                  text: "use `navigateModalScreen: screen_name` for navigate modal screen programmatically. click below button to check"
+              - Button:
+                  label: navigateModalScreen
+                  onTap:
+                    navigateModalScreen:
+                      name: Forms
+                      hideCloseIcon: false
+                      styles:
+                        height: 50%
         - Card:
             styles:
               maxWidth: unset
               width: unset
-            children:                    
+            children:
               - Text:
+                  id: showDialogText
                   styles:
                     names: heading-3
                   text: Show Dialog
@@ -123,7 +138,7 @@ View:
                             console.log('Dialog 1 Dismissed');
                       widget:
                         Button:
-                          label: Tap me to open another dialog
+                          label: ${'Tap me to ' + showDialogText.text}
                           onTap:
                             showDialog:
                               options:
@@ -178,4 +193,4 @@ API:
     method: GET
     uri: https://dummyjson.com/products/${id}
     inputs:
-      - id    
+      - id

@@ -11,7 +11,6 @@ export const Icon: React.FC<IconProps> = ({ onTap, ...props }) => {
   const [backgroundColor, setBackgroundColor] = useState(
     props.styles?.backgroundColor,
   );
-
   const onTapActionCallback = useEnsembleAction(onTap);
 
   const { values } = useRegisterBindings(
@@ -58,6 +57,7 @@ export const Icon: React.FC<IconProps> = ({ onTap, ...props }) => {
           ? getColor(String(values.styles.borderColor))
           : undefined,
         borderStyle: values?.styles?.borderWidth ? "solid" : undefined,
+        cursor: onTap ? "pointer" : "auto",
         ...(values?.styles?.visible === false
           ? { display: "none" }
           : undefined),

@@ -4,7 +4,7 @@ import type {
 } from "@ensembleui/react-framework";
 import { ScreenContextProvider, error } from "@ensembleui/react-framework";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { merge } from "lodash-es";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
@@ -22,21 +22,25 @@ export interface EnsembleScreenProps {
 export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
   screen,
   inputs,
-  isModal,
 }) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const { state } = useLocation();
-  const mergedInputs = merge({}, state as Record<string, unknown>, inputs);
+  const { state, search } = useLocation();
+  const routeParams = useParams(); // route params
+  const params = new URLSearchParams(search); // query params
+  const queryParams: Record<string, unknown> = Object.fromEntries(params);
+
+  const mergedInputs = merge(
+    {},
+    state as Record<string, unknown>,
+    routeParams,
+    queryParams,
+    inputs,
+  );
   return (
     <ScreenContextProvider context={{ inputs: mergedInputs }} screen={screen}>
       <OnLoadAction action={screen.onLoad} context={{ ...mergedInputs }}>
         <EnsembleHeader header={screen.header} />
-        <EnsembleBody
-          body={screen.body}
-          footer={screen.footer}
-          header={screen.header}
-          isModal={isModal}
-        />
+        <EnsembleBody body={screen.body} />
       </OnLoadAction>
       <EnsembleFooter footer={screen.footer} />
     </ScreenContextProvider>

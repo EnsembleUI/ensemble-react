@@ -19,8 +19,9 @@ export const EnsembleFooter: React.FC<EnsembleFooterProps> = ({ footer }) => {
         justifyContent: "center",
         width: footer.styles?.width || "100%",
         backgroundColor: footer.styles?.backgroundColor || "white",
-        height: footer.styles?.height || "56px",
+        height: footer.styles?.height,
         bottom: 0,
+        ...footer?.styles,
       }}
     >
       {footer.children}

@@ -56,6 +56,8 @@ export type DropdownProps = {
 interface SelectOption {
   label: Expression<string> | Record<string, unknown>;
   value: Expression<string | number>;
+  type?: string;
+  items?: SelectOption[];
 }
 
 const Dropdown: React.FC<DropdownProps> = (props) => {
@@ -89,6 +91,26 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     const dropdownOptions = [];
     if (values?.items) {
       const tempOptions = values.items.map((item) => {
+        if (item.type === "group") {
+          // Render a group item with sub-items
+          return (
+            <Select.OptGroup
+              key={item.value}
+              label={isString(item.label) ? item.label : ""}
+            >
+              {item.items?.map((subItem) => (
+                <Select.Option
+                  key={subItem.value}
+                  onClick={() => onItemSelectCallback(subItem.value)}
+                >
+                  {isString(subItem.label)
+                    ? subItem.label
+                    : EnsembleRuntime.render([unwrapWidget(subItem.label)])}
+                </Select.Option>
+              ))}
+            </Select.OptGroup>
+          );
+        }
         return (
           <Select.Option
             className={`${values.id || ""}_option`}
@@ -228,6 +250,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
         <EnsembleFormItem values={values}>
           <Select
             className={`${values?.styles?.names || ""} ${id}_input`}
+            defaultValue={values?.value}
             disabled={
               values?.enabled === undefined ? false : Boolean(values.enabled)
             }

@@ -1,11 +1,28 @@
 View:
   onLoad:
-    invokeApi:
-      name: getDummyNumbers
+    executeCode:
+      body: |-
+        console.log(ensemble.formatter.now().getDaysDifference('01/30/2024'));
+        console.log(ensemble.formatter.now().getDaysDifference('01/20/2024'));
+        console.log(ensemble.formatter.now().getDaysDifference('02/10/2024'));
+
+        console.log(ensemble.formatter.now().getMonthsDifference('01/30/2024'));
+        console.log(ensemble.formatter.now().getMonthsDifference('03/20/2024'));
+        console.log(ensemble.formatter.now().getMonthsDifference('12/10/2023'));
+
+        console.log(ensemble.formatter.now().getYearsDifference('02/30/2024'));
+        console.log(ensemble.formatter.now().getYearsDifference('01/20/2022'));
+        console.log(ensemble.formatter.now().getYearsDifference('02/10/2026'));
+
+      onComplete:
+        invokeApi:
+          name: getDummyNumbers
 
   header:
     title:
       Header:
+        inputs:
+          message: "Inputs to header widget"
 
   body:
     Column:
@@ -78,6 +95,7 @@ View:
                                     Text:
                                       text: "Added!"
                           - PopupMenu:
+                              showDivider: true
                               items:
                                 - label:
                                     Text:
@@ -99,7 +117,6 @@ View:
                               widget:
                                 Icon:
                                   name: QuestionMark
-
         - Card:
             styles:
               maxWidth: unset
@@ -312,13 +329,14 @@ View:
                     - label: Option 2
                       value: option2
               - Dropdown:
-                  id: myDropdown4
+                  value: 11
                   label: With item template
                   labelStyle:
                     color: green
                     fontSize: 20
                     backgroundColor: "lightgreen"
                     borderRadius: 10
+                  value: 22
                   item-template:
                     data:
                       [
@@ -338,6 +356,7 @@ View:
               - Dropdown:
                   label: With the label widget
                   hintText: Hint Text
+                  value: 111
                   items:
                     - label:
                         Text:
@@ -384,6 +403,32 @@ View:
                               onChangeDemo.setText('You selected: ' + onChangeDemoDate.value);
                     - Text:
                         id: onChangeDemo
+        - Dropdown:
+            id: clientSelector
+            value: All Clients
+            hintText: Chose Client
+            onItemSelect:
+              executeCode: |
+                console.log(clientSelector, selectedValue);
+            items:
+              - label: All Clients
+                value: all clients
+              - label: Client Name
+                value: client name
+              - label: Location Group
+                type: group
+                items:
+                  - label: Location Name 1
+                    value: location name 1
+                  - label: Location Name 2
+                    value: location name 2
+                  - label: Location Name 3
+                    value: location name 3
+              - label: Client Name 2
+                value: client name 2
+            styles:
+              width: 300px
+              justifySelf: end
 
 API:
   getDummyProducts:
