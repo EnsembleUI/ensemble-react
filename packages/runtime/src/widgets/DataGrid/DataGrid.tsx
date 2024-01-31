@@ -55,6 +55,11 @@ export interface DataGridRowTemplate {
   };
 }
 
+export interface DataGridScrollable {
+  scrollHeight?: string;
+  scrollWidth?: string;
+}
+
 export type GridProps = {
   allowSelection?: boolean;
   onRowsSelected?: EnsembleAction;
@@ -66,6 +71,7 @@ export type GridProps = {
     template: DataGridRowTemplate;
   };
   hidePagination?: boolean;
+  scroll?: DataGridScrollable;
 } & EnsembleWidgetProps<DataGridStyles>;
 
 export interface DataGridRowTemplate {
@@ -142,6 +148,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
         onRow={(record, recordIndex) => {
           return { onClick: () => onTapActionCallback(record, recordIndex) };
         }}
+        pagination={values?.hidePagination ? false : undefined}
         ref={rootRef}
         rowKey={(data: unknown) => {
           const identifier: string = evaluate(
@@ -168,6 +175,14 @@ export const DataGrid: React.FC<GridProps> = (props) => {
               }
             : undefined
         }
+        scroll={
+          values?.scroll
+            ? {
+                y: values.scroll.scrollHeight || 150,
+                x: values.scroll.scrollWidth || 0,
+              }
+            : undefined
+        }
         style={{
           width: "100%",
           ...values?.styles,
@@ -175,7 +190,6 @@ export const DataGrid: React.FC<GridProps> = (props) => {
             ? { display: "none" }
             : undefined),
         }}
-        pagination={values?.hidePagination ? false : undefined}
       >
         {DataColumns?.map((col, index) => {
           return (
