@@ -13,6 +13,7 @@ View:
         console.log(ensemble.formatter.now().getYearsDifference('02/30/2024'));
         console.log(ensemble.formatter.now().getYearsDifference('01/20/2022'));
         console.log(ensemble.formatter.now().getYearsDifference('02/10/2026'));
+        ensemble.storage.set('test', 'bye')
 
       onComplete:
         invokeApi:
@@ -31,6 +32,30 @@ View:
       styles:
         names: page
       children:
+        - Column:
+            item-template:
+              data: ['foo', 'bar']
+              name: value
+              template:
+                Column:
+                  children:
+                    - Text:
+                        text: ${ensemble.storage.get('test')}
+                    - Button:
+                        label: click
+                        onTap:
+                          showDialog:
+                            widget:
+                              Button:
+                                label: ${value}
+                                onTap:
+                                  executeCode: |
+                                    ${ensemble.storage.set('test', 'hello')}
+        - Button:
+            label: click 3
+            onTap:
+              executeCode: |
+                ${ensemble.storage.set('test', 'hello')}                        
         - Text:
             styles:
               names: heading-1

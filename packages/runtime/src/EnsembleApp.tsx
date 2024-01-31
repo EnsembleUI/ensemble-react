@@ -17,7 +17,6 @@ import { EnsembleScreen } from "./runtime/screen";
 import { ErrorPage } from "./runtime/error";
 // Register built in widgets;
 import "./widgets";
-import { ModalWrapper } from "./runtime/modal";
 import { WidgetRegistry } from "./registry";
 import { createCustomWidget } from "./runtime/customWidget";
 
@@ -74,23 +73,16 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
         ? createBrowserRouter(
             [
               {
-                element: <ModalWrapper />,
-                children: [
-                  {
-                    path: "/",
-                    element: <EnsembleEntry entry={app.home} />,
-                    errorElement: <ErrorPage />,
-                    children: app.screens.map((screen) => {
-                      const screenId = screen.name.toLowerCase();
-                      return {
-                        path: `${screenId}`,
-                        element: (
-                          <EnsembleScreen key={screenId} screen={screen} />
-                        ),
-                      };
-                    }),
-                  },
-                ],
+                path: "/",
+                element: <EnsembleEntry entry={app.home} />,
+                errorElement: <ErrorPage />,
+                children: app.screens.map((screen) => {
+                  const screenId = screen.name.toLowerCase();
+                  return {
+                    path: `${screenId}`,
+                    element: <EnsembleScreen key={screenId} screen={screen} />,
+                  };
+                }),
               },
             ],
             { basename: path },
