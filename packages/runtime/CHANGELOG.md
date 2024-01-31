@@ -1,5 +1,13 @@
 # @ensembleui/react-runtime
 
+## 0.1.22
+
+### Patch Changes
+
+- 681408e: Added feature for enable stickey header and footer in data grid widget
+- 84f9610: Ensure dialogs have access to screen scope
+- 4a69bc6: updated styles for some widgets
+
 ## 0.1.21
 
 ### Patch Changes
