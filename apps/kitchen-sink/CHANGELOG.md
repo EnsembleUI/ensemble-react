@@ -1,5 +1,17 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.13
+
+### Patch Changes
+
+- 681408e: Added feature for enable stickey header and footer in data grid widget
+- 84f9610: Ensure dialogs have access to screen scope
+- 4a69bc6: updated styles for some widgets
+- Updated dependencies [681408e]
+- Updated dependencies [84f9610]
+- Updated dependencies [4a69bc6]
+  - @ensembleui/react-runtime@0.1.22
+
 ## 0.0.12
 
 ### Patch Changes
