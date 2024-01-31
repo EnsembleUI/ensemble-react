@@ -36,12 +36,13 @@ export type GridViewProps = {
 export const GridView: React.FC<GridViewProps> = ({
   "item-template": { data, name, template },
   styles,
+  onScrollEnd,
   ...rest
 }) => {
   const defaultColumnCount = 4;
   const { resolvedWidgetId } = useWidgetId();
   const { namedData } = useTemplateData({ data, name });
-  const onScrollEndAction = useEnsembleAction(rest.onScrollEnd);
+  const onScrollEndAction = useEnsembleAction(onScrollEnd);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // scroll end action
