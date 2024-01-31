@@ -2,9 +2,12 @@ View:
   onLoad:
     invokeApi:
       name: getDummyProducts
+      inputs:
+        skip: 10
       onResponse:
         executeCode: |
           const res = response.body.products;
+          ensemble.storage.set("skip", 10)
           ensemble.storage.set("products", res)
   header:
     title:
@@ -35,10 +38,13 @@ View:
                     # here you can add your page update logic
                     invokeApi:
                       name: getDummyProducts
+                      inputs:
+                        skip: ${ensemble.storage.get('skip') + 10}
                       onResponse:
                         executeCode: |
                           const prevItem = ensemble.storage.get("products")
                           const res = response.body.products;
+                          ensemble.storage.set("skip", ensemble.storage.get('skip') + 10)
                           ensemble.storage.set("products", [...prevItem, ...res])
                   item-template:
                     data: ${ensemble.storage.get("products")}
@@ -60,7 +66,10 @@ View:
           text: Give support us
     styles:
       backgroundColor: red
+
 API:
   getDummyProducts:
     method: GET
-    uri: https://dummyjson.com/products
+    uri: https://dummyjson.com/products?skip=${skip}&limit=10
+    inputs:
+      - skip

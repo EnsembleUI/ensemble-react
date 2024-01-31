@@ -5,8 +5,8 @@ import type {
 } from "@ensembleui/react-framework";
 import {
   CustomScopeProvider,
+  useRegisterBindings,
   useTemplateData,
-  useWidgetId,
 } from "@ensembleui/react-framework";
 import { Col, Row } from "antd";
 import { useCallback, useEffect, useMemo, useRef } from "react";
@@ -40,7 +40,10 @@ export const GridView: React.FC<GridViewProps> = ({
   ...rest
 }) => {
   const defaultColumnCount = 4;
-  const { resolvedWidgetId } = useWidgetId();
+  const { id: resolvedWidgetId, values } = useRegisterBindings({
+    ...rest,
+    styles,
+  });
   const { namedData } = useTemplateData({ data, name });
   const onScrollEndAction = useEnsembleAction(onScrollEnd);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -127,7 +130,7 @@ export const GridView: React.FC<GridViewProps> = ({
 
   useEffect(() => {
     const containerElement = containerRef.current;
-    if (rest.onScrollEnd) {
+    if (onScrollEnd) {
       // assign scroll event listener to element
       if (containerElement) {
         containerElement.addEventListener("scroll", handleScrollEvent);
@@ -135,19 +138,21 @@ export const GridView: React.FC<GridViewProps> = ({
     }
 
     return () => {
-      if (rest.onScrollEnd) {
+      if (onScrollEnd) {
         // remove scroll event listener from element
         if (containerElement) {
           containerElement.removeEventListener("scroll", handleScrollEvent);
         }
       }
     };
-  }, [resolvedWidgetId, rest.onScrollEnd, handleScrollEvent]);
+  }, [resolvedWidgetId, onScrollEnd, handleScrollEvent]);
 
   return (
     <div
       ref={containerRef}
-      style={{ maxHeight: styles?.maxHeight, overflow: styles?.overflow }}
+      style={{
+        ...values?.styles,
+      }}
     >
       {rows}
     </div>
