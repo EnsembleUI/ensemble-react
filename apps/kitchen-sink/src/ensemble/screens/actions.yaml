@@ -121,6 +121,17 @@ View:
                   styles:
                     names: heading-3
                   text: Show Dialog
+              - Button:
+                  label: hit me to open dialog programmatically
+                  onTap:
+                    executeCode: |-
+                      ensemble.showDialog({
+                        widget: StyledText,
+                        options: {
+                          width: '400px',
+                          height: '250px',
+                        },
+                      });
               - Markdown:
                   text: use `showDialog` to show dialog. click below button to check.
               - Button:

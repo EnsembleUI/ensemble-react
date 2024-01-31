@@ -1,0 +1,10 @@
+Widget:
+  body:
+    Text:
+      text: Styled Text
+      styles:
+        fontSize: 24px
+        fontWeight: ${typography.fontWeight['bold']}
+        color: blue
+        backgroundColor: ${colors.dark['300']}
+        padding: 8px

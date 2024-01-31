@@ -48,6 +48,9 @@ import { useNavigateScreen } from "./useNavigateScreen";
 import { useShowToast } from "./useShowToast";
 import { useCloseAllDialogs } from "./useCloseAllDialogs";
 import { useNavigateUrl } from "./useNavigateUrl";
+// FIXME: refactor
+// eslint-disable-next-line import/no-cycle
+import { showDialog } from "../showDialog";
 
 export type EnsembleActionHookResult =
   | {
@@ -82,6 +85,7 @@ export const useExecuteCode: EnsembleActionHook<
   const navigate = useNavigate();
   const location = useLocation();
   const customScope = useCustomScope();
+  const { openModal } = useContext(ModalContext) || {};
 
   const js = useMemo(() => {
     if (!action) {
@@ -113,6 +117,11 @@ export const useExecuteCode: EnsembleActionHook<
       return;
     }
 
+    const customWidgets = appContext?.application?.customWidgets.reduce(
+      (acc, widget) => ({ ...acc, [widget.name]: widget }),
+      {},
+    );
+
     return (args: unknown) => {
       try {
         const retVal = evaluate(
@@ -120,6 +129,7 @@ export const useExecuteCode: EnsembleActionHook<
           js,
           merge(
             {
+              ...customWidgets,
               ensemble: {
                 storage,
                 user,
@@ -130,6 +140,8 @@ export const useExecuteCode: EnsembleActionHook<
                 location: locationApi(location),
                 navigateUrl: (url: string, inputs?: Record<string, unknown>) =>
                   navigateUrl(url, navigate, inputs),
+                showDialog: (dialogAction?: ShowDialogAction): void =>
+                  showDialog({ action: dialogAction, openModal }),
               },
             },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),

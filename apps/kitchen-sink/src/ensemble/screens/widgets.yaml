@@ -304,7 +304,6 @@ View:
                     fontSize: 20
                     backgroundColor: "lightgreen"
                     borderRadius: 10
-                  value: 22
                   item-template:
                     data:
                       [
