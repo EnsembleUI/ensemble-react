@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.18
+
+### Patch Changes
+
+- e1a7112: Render conditional widgets with unique keys
+
 ## 0.1.17
 
 ### Patch Changes
