@@ -1,5 +1,13 @@
 # @ensembleui/react-runtime
 
+## 0.1.23
+
+### Patch Changes
+
+- e1a7112: Render conditional widgets with unique keys
+- Updated dependencies [e1a7112]
+  - @ensembleui/react-framework@0.1.18
+
 ## 0.1.22
 
 ### Patch Changes
