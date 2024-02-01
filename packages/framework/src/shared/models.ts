@@ -9,6 +9,7 @@ import type { EnsembleConfigYAML } from "./dto";
  * with additional properties
  */
 export interface EnsembleScreenModel {
+  id: string;
   name: string;
   body: EnsembleWidget;
   onLoad?: EnsembleAction;
