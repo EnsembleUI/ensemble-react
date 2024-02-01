@@ -87,7 +87,7 @@ export const useExecuteCode: EnsembleActionHook<
   const navigate = useNavigate();
   const location = useLocation();
   const customScope = useCustomScope();
-  const { openModal } = useContext(ModalContext) || {};
+  const { openModal, closeAllModals } = useContext(ModalContext) || {};
 
   const js = useMemo(() => {
     if (!action) {
@@ -144,6 +144,7 @@ export const useExecuteCode: EnsembleActionHook<
                   navigateUrl(url, navigate, inputs),
                 showDialog: (dialogAction?: ShowDialogAction): void =>
                   showDialog({ action: dialogAction, openModal }),
+                closeAllDialogs: (): void => closeAllModals?.(),
               },
             },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
