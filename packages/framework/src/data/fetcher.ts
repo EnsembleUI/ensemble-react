@@ -48,7 +48,7 @@ export const DataFetcher = {
       {
         path: api.uri.replace(uri.search, ""),
         body: api.body,
-        params: uri.searchParams.entries(),
+        params: Object.fromEntries(uri.searchParams),
       },
       context,
     );

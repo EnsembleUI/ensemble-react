@@ -167,10 +167,10 @@ View:
                                                 onTap:
                                                   closeAllDialogs:
               - Markdown:
-                  text: You can still access the current screen's scope from a dialog.                                                  
+                  text: You can still access the current screen's scope from a dialog.
               - Column:
                   item-template:
-                    data: ['foo', 'bar']
+                    data: ["foo", "bar"]
                     name: value
                     template:
                       Column:
@@ -186,7 +186,7 @@ View:
                                       label: ${"The value is:" + value + "! Click me"}
                                       onTap:
                                         executeCode: |
-                                          ${ensemble.storage.set('test', value)}                                                  
+                                          ${ensemble.storage.set('test', value)}
         - Card:
             styles:
               maxWidth: unset
