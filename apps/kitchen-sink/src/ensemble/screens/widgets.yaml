@@ -2,20 +2,7 @@ View:
   onLoad:
     executeCode:
       body: |-
-        ensemble.storage.set('dataColumn', [{label: 'PATIENTS'}, {label: 'ADVOCATE'}, {label: 'ICON'}, {label: 'MENU'}])
-
-        console.log(ensemble.formatter.now().getDaysDifference('01/30/2024'));
-        console.log(ensemble.formatter.now().getDaysDifference('01/20/2024'));
-        console.log(ensemble.formatter.now().getDaysDifference('02/10/2024'));
-
-        console.log(ensemble.formatter.now().getMonthsDifference('01/30/2024'));
-        console.log(ensemble.formatter.now().getMonthsDifference('03/20/2024'));
-        console.log(ensemble.formatter.now().getMonthsDifference('12/10/2023'));
-
-        console.log(ensemble.formatter.now().getYearsDifference('02/30/2024'));
-        console.log(ensemble.formatter.now().getYearsDifference('01/20/2022'));
-        console.log(ensemble.formatter.now().getYearsDifference('02/10/2026'));
-        ensemble.storage.set('test', 'bye')
+        ensemble.storage.set('dataColumn', [{key1: "value", key2: 2}, {key1: "foo", key2: 3}])
 
       onComplete:
         invokeApi:
@@ -83,7 +70,6 @@ View:
                   onRowsSelected:
                     executeCode: |
                       console.log("data", selectedRows, selectedRowKeys);
-                  allowSelection: true
                   styles:
                     headerStyle:
                       backgroundColor: "white"
@@ -91,7 +77,34 @@ View:
                       textColor: "#747184"
                       hasDivider: true
                       borderBottom: false
-                  DataColumns: ${ensemble.storage.get('dataColumn')}
+                  DataColumns: ${Object.keys(ensemble.storage.get('dataColumn')[0])}
+                  item-template:
+                    data: ${ensemble.storage.get('dataColumn')}
+                    name: dummyData
+                    key: ${dummyData.key}
+                    template:
+                      DataRow:
+                        item-template:
+                          data: ${Object.values(dummyData)}
+                          name: value
+                          template:
+                            Text:
+                              text: ${value}
+              - DataGrid:
+                  id: "myDataGridExample2"
+                  onRowsSelected:
+                    executeCode: |
+                      console.log("data", selectedRows, selectedRowKeys);
+                  styles:
+                    headerStyle:
+                      backgroundColor: "white"
+                      fontSize: "12px"
+                      textColor: "#747184"
+                      hasDivider: true
+                      borderBottom: false
+                  DataColumns:
+                    - label: patient
+                    - label: advocate
                   item-template:
                     data:
                       [
@@ -111,38 +124,8 @@ View:
                               id: ${dummyData.patient+"Name"}
                               text: ${dummyData.patient}
                           - Text:
-                              id: ${dummyData.patient+"Adv"}
+                              id: ${dummyData.advocate+"Adv"}
                               text: ${dummyData.advocate}
-                          - Icon:
-                              name: Add
-                              onTap:
-                                showDialog:
-                                  widget:
-                                    Text:
-                                      text: "Added!"
-                          - PopupMenu:
-                              showDivider: true
-                              items:
-                                - label:
-                                    Text:
-                                      text: ${spacing.pagePadding}
-                                  value: name
-                                - label: Location
-                                  value: location
-                              item-template:
-                                data:
-                                  [
-                                    { name: "hello", value: 11 },
-                                    { name: "buyyy", value: 22 },
-                                  ]
-                                name: product
-                                value: ${product.value}
-                                template:
-                                  Text:
-                                    text: ${product.name}
-                              widget:
-                                Icon:
-                                  name: QuestionMark
         - Card:
             styles:
               maxWidth: unset

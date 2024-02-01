@@ -7,20 +7,23 @@ import {
   defaultScreenContext,
   useRegisterBindings,
   type EnsembleAction,
+  CustomScopeProvider,
+  type CustomScope,
 } from "@ensembleui/react-framework";
 import {
   useCallback,
   type ReactElement,
   useState,
   useMemo,
-  useEffect,
   useRef,
+  useEffect,
 } from "react";
-import { get, isArray } from "lodash-es";
+import { get, isArray, isString } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type {
   EnsembleWidgetProps,
   EnsembleWidgetStyles,
+  HasItemTemplate,
 } from "../../shared/types";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import { DataCell } from "./DataCell";
@@ -58,8 +61,8 @@ export interface DataGridRowTemplate {
   name: "DataRow";
   properties: {
     onTap?: EnsembleAction;
-    children: EnsembleWidget[];
-  };
+    children?: EnsembleWidget[];
+  } & HasItemTemplate;
 }
 
 export interface DataGridScrollable {
@@ -81,14 +84,6 @@ export type GridProps = {
   scroll?: DataGridScrollable;
   onScrollEnd?: EnsembleAction;
 } & EnsembleWidgetProps<DataGridStyles>;
-
-export interface DataGridRowTemplate {
-  name: "DataRow";
-  properties: {
-    onTap?: EnsembleAction;
-    children: EnsembleWidget[];
-  };
-}
 
 function djb2Hash(str: string): number {
   let hash = 5381;
@@ -194,7 +189,12 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   // handle datagrid column list
   const dataColumns = useMemo(() => {
     if (values?.DataColumns && isArray(values.DataColumns)) {
-      return values.DataColumns as DataColumn[];
+      return values.DataColumns.map((item): unknown => {
+        if (isString(item)) {
+          return { label: item };
+        }
+        return item;
+      }) as DataColumn[];
     }
 
     return [];
@@ -277,12 +277,14 @@ export const DataGrid: React.FC<GridProps> = (props) => {
               }
               render={(_: unknown, record: unknown): ReactElement => {
                 return (
-                  <DataCell
-                    columnIndex={index}
-                    data={record}
-                    scopeName={itemTemplate.name}
-                    template={itemTemplate.template}
-                  />
+                  <CustomScopeProvider value={record as CustomScope}>
+                    <DataCell
+                      columnIndex={index}
+                      data={record}
+                      scopeName={itemTemplate.name}
+                      template={itemTemplate.template}
+                    />
+                  </CustomScopeProvider>
                 );
               }}
               sorter={
