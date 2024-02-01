@@ -5,13 +5,14 @@ import {
   type EnsembleWidget,
   type ShowDialogAction,
   error,
+  unwrapWidget,
 } from "@ensembleui/react-framework";
 import { EnsembleRuntime } from "./runtime";
-import { isObject, merge } from "lodash-es";
+import { cloneDeep, isObject, merge } from "lodash-es";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { useEnsembleAction } from "./hooks/useEnsembleAction";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export type ShowDialogApiProps = {
   action?: ShowDialogAction;
@@ -42,18 +43,25 @@ export const showDialog = (props?: ShowDialogApiProps): void => {
     merge(modalOptions, action.options);
   }
 
-  const widget = (
+  let widget: EnsembleWidget | undefined;
+  if (!action?.widget?.body) {
+    widget = cloneDeep(unwrapWidget(action?.widget));
+  } else {
+    widget = action?.widget?.body as EnsembleWidget;
+  }
+
+  const content = (
     <CustomScopeProvider value={action?.widget?.inputs as CustomScope}>
       <OnLoadAction
         action={action?.widget?.onLoad as EnsembleAction | undefined}
         context={action?.widget?.inputs as Record<string, unknown>}
       >
-        {EnsembleRuntime.render([action?.widget?.body as EnsembleWidget])}
+        {EnsembleRuntime.render([widget])}
       </OnLoadAction>
     </CustomScopeProvider>
   );
 
-  openModal?.(widget, modalOptions, true, screen || undefined);
+  openModal?.(content, modalOptions, true, screen || undefined);
 };
 
 const OnLoadAction: React.FC<
@@ -62,20 +70,21 @@ const OnLoadAction: React.FC<
     context: Record<string, unknown>;
   }>
 > = ({ action, children, context }) => {
-  const onLoadAction = useEnsembleAction(action);
+  const onLoadActionRef = useRef(useEnsembleAction(action));
   const [isComplete, setIsComplete] = useState(false);
+
   useEffect(() => {
-    if (!onLoadAction?.callback || isComplete) {
+    if (!onLoadActionRef.current?.callback || isComplete) {
       return;
     }
     try {
-      onLoadAction.callback(context);
+      onLoadActionRef.current.callback(context);
     } catch (e) {
       error(e);
     } finally {
       setIsComplete(true);
     }
-  }, [context, isComplete, onLoadAction, onLoadAction?.callback]);
+  }, [context, isComplete, onLoadActionRef.current]);
 
   return <>{children}</>;
 };

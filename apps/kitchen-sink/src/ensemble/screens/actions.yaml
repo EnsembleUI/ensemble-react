@@ -121,8 +121,10 @@ View:
                   styles:
                     names: heading-3
                   text: Show Dialog
+              - Markdown:
+                  text: use `ensemble.showDialog` to show dialog programmatically. click below button to check.
               - Button:
-                  label: hit me to open dialog programmatically
+                  label: Custom widget in dialog
                   onTap:
                     executeCode: |-
                       ensemble.showDialog({
@@ -130,6 +132,16 @@ View:
                         options: {
                           width: '400px',
                           height: '250px',
+                        },
+                      });
+              - Button:
+                  label: Inline widget in dialog
+                  onTap:
+                    executeCode: |-
+                      ensemble.showDialog({
+                        widget: {Text: {text: 'Hello World'}},
+                        options: {
+                          backgroundColor: 'aqua',
                         },
                       });
               - Markdown:
@@ -174,6 +186,7 @@ View:
                                                 label: Click me to close all dialogs
                                                 onTap:
                                                   closeAllDialogs:
+
         - Card:
             styles:
               maxWidth: unset

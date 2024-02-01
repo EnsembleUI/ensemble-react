@@ -1,4 +1,8 @@
 Widget:
+  onLoad:
+    executeCode: |
+      console.log('StyledText Widget loaded');
+      console.log(inputText);
   body:
     Text:
       text: Styled Text
