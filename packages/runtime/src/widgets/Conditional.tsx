@@ -27,7 +27,10 @@ export const Conditional: React.FC<ConditionalProps> = ({
   const [isValid, errorMessage] = hasProperStructure(conditions);
   if (!isValid) throw Error(errorMessage);
 
-  const conditionStatements = conditions.map(extractCondition);
+  const conditionStatements = useMemo(
+    () => conditions.map(extractCondition),
+    [conditions],
+  );
 
   const { values } = useRegisterBindings(
     { conditions: conditionStatements, ...props },
@@ -50,8 +53,12 @@ export const Conditional: React.FC<ConditionalProps> = ({
     if (trueIndex === undefined || trueIndex < 0) {
       return null;
     }
-    return extractWidget(conditions[trueIndex]);
-  }, [conditions, trueIndex]);
+    const extractedWidget = extractWidget(conditions[trueIndex]);
+    return {
+      ...extractedWidget,
+      key: conditionStatements[trueIndex]?.toString(),
+    };
+  }, [conditionStatements, conditions, trueIndex]);
 
   if (!widget) {
     return null;
