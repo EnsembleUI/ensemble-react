@@ -7,8 +7,6 @@ import {
   defaultScreenContext,
   useRegisterBindings,
   type EnsembleAction,
-  CustomScopeProvider,
-  type CustomScope,
 } from "@ensembleui/react-framework";
 import {
   useCallback,
