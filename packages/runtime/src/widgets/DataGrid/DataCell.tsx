@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { isEmpty, isObject } from "lodash-es";
 import type { CustomScope } from "@ensembleui/react-framework";
 import {
@@ -24,23 +23,19 @@ export const DataCell: React.FC<DataCellProps> = ({
     ...itemTemplate,
   });
 
-  const cellData = useMemo(() => {
-    if (children) {
-      return (
+  return (
+    <>
+      {children ? (
         <CustomScopeProvider value={data as CustomScope}>
           {EnsembleRuntime.render([children[columnIndex]])}
         </CustomScopeProvider>
-      );
-    }
+      ) : null}
 
-    if (isObject(itemTemplate) && !isEmpty(namedData)) {
-      return (
+      {isObject(itemTemplate) && !isEmpty(namedData) && (
         <CustomScopeProvider value={namedData[columnIndex] as CustomScope}>
           {EnsembleRuntime.render([itemTemplate.template])}
         </CustomScopeProvider>
-      );
-    }
-  }, [children, data, namedData, itemTemplate, columnIndex]);
-
-  return <>{cellData}</>;
+      )}
+    </>
+  );
 };
