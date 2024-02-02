@@ -24,6 +24,7 @@ test("parses simple view widget", () => {
   );
   const screen = EnsembleParser.parseScreen(
     "test",
+    "test",
     parse(testFile.toString()) as EnsembleScreenYAML,
     app,
   );
