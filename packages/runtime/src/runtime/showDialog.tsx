@@ -1,18 +1,14 @@
 import {
-  type CustomScope,
   CustomScopeProvider,
-  type EnsembleAction,
+  unwrapWidget,
+  type CustomScope,
   type EnsembleWidget,
   type ShowDialogAction,
-  error,
-  unwrapWidget,
 } from "@ensembleui/react-framework";
 import { EnsembleRuntime } from "./runtime";
-import { cloneDeep, isObject, merge } from "lodash-es";
-// FIXME: refactor
-// eslint-disable-next-line import/no-cycle
-import { useEnsembleAction } from "./hooks/useEnsembleAction";
-import { useEffect, useRef, useState } from "react";
+import { cloneDeep, findKey, get, isObject, isString } from "lodash-es";
+import { ReactElement } from "react";
+import { WidgetRegistry } from "../registry";
 
 export type ShowDialogApiProps = {
   action?: ShowDialogAction;
@@ -38,53 +34,40 @@ export const showDialog = (props?: ShowDialogApiProps): void => {
           showShadow: false,
         }
       : {}),
+    ...(isObject(action.options) ? action.options : {}),
   };
-  if (isObject(action.options)) {
-    merge(modalOptions, action.options);
+
+  const widget = action?.widget;
+  const widgetKey = findKey(widget, isObject);
+  const widgetInputs = (get(widget, widgetKey || "") as Record<string, unknown>)
+    ?.inputs;
+  let inlineWidget: EnsembleWidget | undefined;
+  let customWidget: React.FC | ReactElement | undefined;
+
+  if (isString(widget?.name)) {
+    customWidget = WidgetRegistry.find(widget?.name);
+  } else if (widgetInputs !== undefined) {
+    customWidget = WidgetRegistry.find(widgetKey || "");
+  } else {
+    inlineWidget = cloneDeep(unwrapWidget(action?.widget));
   }
 
-  let widget: EnsembleWidget | undefined;
-  if (!action?.widget?.body) {
-    widget = cloneDeep(unwrapWidget(action?.widget));
-  } else {
-    widget = action?.widget?.body as EnsembleWidget;
-  }
+  const WidgetFn = customWidget as React.FC<unknown>;
 
   const content = (
-    <CustomScopeProvider value={action?.widget?.inputs as CustomScope}>
-      <OnLoadAction
-        action={action?.widget?.onLoad as EnsembleAction | undefined}
-        context={action?.widget?.inputs as Record<string, unknown>}
-      >
-        {EnsembleRuntime.render([widget])}
-      </OnLoadAction>
+    <CustomScopeProvider
+      value={{
+        ...(widgetInputs as CustomScope),
+        ...(widget?.inputs as CustomScope),
+      }}
+    >
+      {customWidget ? (
+        <WidgetFn />
+      ) : (
+        EnsembleRuntime.render([inlineWidget as EnsembleWidget])
+      )}
     </CustomScopeProvider>
   );
 
   openModal?.(content, modalOptions, true, screen || undefined);
-};
-
-const OnLoadAction: React.FC<
-  React.PropsWithChildren<{
-    action?: EnsembleAction;
-    context: Record<string, unknown>;
-  }>
-> = ({ action, children, context }) => {
-  const onLoadActionRef = useRef(useEnsembleAction(action));
-  const [isComplete, setIsComplete] = useState(false);
-
-  useEffect(() => {
-    if (!onLoadActionRef.current?.callback || isComplete) {
-      return;
-    }
-    try {
-      onLoadActionRef.current.callback(context);
-    } catch (e) {
-      error(e);
-    } finally {
-      setIsComplete(true);
-    }
-  }, [context, isComplete, onLoadActionRef.current]);
-
-  return <>{children}</>;
 };

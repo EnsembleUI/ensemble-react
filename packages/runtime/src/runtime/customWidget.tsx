@@ -7,7 +7,7 @@ import type {
   CustomWidgetModel,
   EnsembleAction,
 } from "@ensembleui/react-framework";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { EnsembleRuntime } from "./runtime";
 import { useEnsembleAction } from "./hooks/useEnsembleAction";
 
@@ -39,20 +39,21 @@ const OnLoadAction: React.FC<
     context: Record<string, unknown>;
   }>
 > = ({ action, children, context }) => {
-  const onLoadAction = useEnsembleAction(action);
+  const onLoadActionRef = useRef(useEnsembleAction(action));
   const [isComplete, setIsComplete] = useState(false);
+
   useEffect(() => {
-    if (!onLoadAction?.callback || isComplete) {
+    if (!onLoadActionRef.current?.callback || isComplete) {
       return;
     }
     try {
-      onLoadAction.callback(context);
+      onLoadActionRef.current.callback(context);
     } catch (e) {
       error(e);
     } finally {
       setIsComplete(true);
     }
-  }, [context, isComplete, onLoadAction, onLoadAction?.callback]);
+  }, [context, isComplete, onLoadActionRef.current]);
 
   return <>{children}</>;
 };
