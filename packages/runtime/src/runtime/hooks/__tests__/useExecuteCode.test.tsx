@@ -22,7 +22,11 @@ const wrapper: React.FC<React.PropsWithChildren> = ({ children }) => (
       data: {},
       storage: {},
     }}
-    screen={{ name: "test", body: { name: "Widget", properties: {} } }}
+    screen={{
+      id: "test",
+      name: "test",
+      body: { name: "Widget", properties: {} },
+    }}
   >
     {children}
   </ScreenContextProvider>

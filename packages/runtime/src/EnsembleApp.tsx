@@ -80,7 +80,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
                   <EnsembleEntry
                     entry={app.home}
                     screen={app.screens.find(
-                      (screen) => screen.id === screenId,
+                      (screen) => Boolean(screenId) && screen.id === screenId,
                     )}
                   />
                 ),
