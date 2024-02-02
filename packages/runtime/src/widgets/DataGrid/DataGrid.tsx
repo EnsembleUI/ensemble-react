@@ -73,7 +73,7 @@ export interface DataGridScrollable {
 export type GridProps = {
   allowSelection?: boolean;
   onRowsSelected?: EnsembleAction;
-  DataColumns: DataColumn[] | Expression<object>;
+  DataColumns: Expression<DataColumn[] | string[]>;
   "item-template": {
     data: Expression<object>;
     name: string;
