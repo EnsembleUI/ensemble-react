@@ -2,8 +2,7 @@ View:
   onLoad:
     executeCode:
       body: |-
-        ensemble.storage.set('dataColumn', [{label: 'PATIENTS'}, {label: 'ADVOCATE'}, {label: 'ICON'}, {label: 'MENU'}])
-        ensemble.storage.set('dataColumn2', [{key1: "value", key2: 2}, {key1: "foo", key2: 3}])
+        ensemble.storage.set('dataColumn', [{key1: "value", key2: 2}, {key1: "foo", key2: 3}])
 
       onComplete:
         invokeApi:
@@ -79,7 +78,11 @@ View:
                       textColor: "#747184"
                       hasDivider: true
                       borderBottom: false
-                  DataColumns: ${ensemble.storage.get('dataColumn')}
+                  DataColumns:
+                    - label: PATIENT
+                    - label: ADVOCATE
+                    - label: ICON
+                    - label: MENU
                   item-template:
                     data:
                       [
@@ -146,9 +149,9 @@ View:
                       hasDivider: true
                       borderBottom: false
                   hidePagination: true
-                  DataColumns: ${Object.keys(ensemble.storage.get('dataColumn2')[0])}
+                  DataColumns: ${Object.keys(ensemble.storage.get('dataColumn')[0])}
                   item-template:
-                    data: ${ensemble.storage.get('dataColumn2')}
+                    data: ${ensemble.storage.get('dataColumn')}
                     name: dummyData
                     key: ${dummyData.key}
                     template:
