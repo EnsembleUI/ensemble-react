@@ -277,14 +277,12 @@ export const DataGrid: React.FC<GridProps> = (props) => {
               }
               render={(_: unknown, record: unknown): ReactElement => {
                 return (
-                  <CustomScopeProvider value={record as CustomScope}>
-                    <DataCell
-                      columnIndex={index}
-                      data={record}
-                      scopeName={itemTemplate.name}
-                      template={itemTemplate.template}
-                    />
-                  </CustomScopeProvider>
+                  <DataCell
+                    columnIndex={index}
+                    data={record}
+                    scopeName={itemTemplate.name}
+                    template={itemTemplate.template}
+                  />
                 );
               }}
               sorter={

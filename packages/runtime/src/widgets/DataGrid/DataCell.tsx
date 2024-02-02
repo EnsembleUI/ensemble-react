@@ -21,6 +21,7 @@ export const DataCell: React.FC<DataCellProps> = ({
   const { "item-template": itemTemplate, children } = template.properties;
   const { namedData } = useTemplateData({
     ...itemTemplate,
+    context: data,
   });
 
   return (
