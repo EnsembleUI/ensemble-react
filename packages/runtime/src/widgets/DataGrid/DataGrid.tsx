@@ -8,7 +8,13 @@ import {
   useRegisterBindings,
   type EnsembleAction,
 } from "@ensembleui/react-framework";
-import { useCallback, type ReactElement, useState } from "react";
+import {
+  useCallback,
+  type ReactElement,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
 import { get } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type {
@@ -72,6 +78,7 @@ export type GridProps = {
   };
   hidePagination?: boolean;
   scroll?: DataGridScrollable;
+  onScrollEnd?: EnsembleAction;
 } & EnsembleWidgetProps<DataGridStyles>;
 
 export interface DataGridRowTemplate {
@@ -99,7 +106,12 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   const [allowSelection, setAllowSelection] = useState(
     props?.allowSelection ?? false,
   );
-  const { "item-template": itemTemplate, DataColumns, ...rest } = props;
+  const {
+    "item-template": itemTemplate,
+    DataColumns,
+    onScrollEnd,
+    ...rest
+  } = props;
   const [selectionType, setSelectionType] = useState<"checkbox" | "radio">(
     "checkbox",
   );
@@ -140,8 +152,51 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     [onTapAction],
   );
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const onScrollEndAction = useEnsembleAction(onScrollEnd);
+  // scroll end action
+  const onScrollEndActionCallback = useCallback(() => {
+    if (onScrollEndAction) {
+      onScrollEndAction.callback();
+    }
+  }, [onScrollEndAction]);
+
+  // handle scroll event
+  const handleScrollEvent = useCallback(
+    (event: Event): void => {
+      const container = event.target as HTMLDivElement;
+      const { scrollTop, scrollHeight, clientHeight } = container;
+
+      // Check if the user has scrolled to the bottom
+      if (scrollTop + clientHeight === scrollHeight) {
+        onScrollEndActionCallback();
+      }
+    },
+    [onScrollEndActionCallback],
+  );
+
+  useEffect(() => {
+    const containerElement = containerRef.current;
+    const targetElem = containerElement?.querySelector(".ant-table-body");
+    if (onScrollEnd) {
+      // assign scroll event listener to element
+      if (targetElem) {
+        targetElem.addEventListener("scroll", handleScrollEvent);
+      }
+    }
+
+    return () => {
+      if (onScrollEnd) {
+        // remove scroll event listener from element
+        if (targetElem) {
+          targetElem.removeEventListener("scroll", handleScrollEvent);
+        }
+      }
+    };
+  }, [rootRef, onScrollEnd, handleScrollEvent]);
+
   return (
-    <>
+    <div ref={containerRef}>
       <Table
         dataSource={namedData}
         key={resolvedWidgetId}
@@ -274,7 +329,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
 			}
 		`}
       </style>
-    </>
+    </div>
   );
 };
 

@@ -60,6 +60,7 @@ export interface EnsembleAPIModel {
 export interface EnsembleWidget {
   name: string;
   properties: Record<string, unknown>;
+  key?: string;
 }
 
 export interface EnsembleHeaderModel {

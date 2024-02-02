@@ -6,10 +6,6 @@ View:
   onLoad:
     executeCode: |
       ensemble.storage.set('test', 'hello')
-      const fn = () => {
-        console.log('hello');
-      }
-      ensemble.storage.set('fnVar', fn);
   body:
     Column:
       styles:
@@ -179,36 +175,32 @@ View:
                           body: |
                             console.log('Dialog 1 Dismissed');
                       widget:
-                        StyledText:
-                          inputs:
-                            inputText: "Hello World bla bla"
-                        # Button:
-                        #   label: ${'Tap me to ' + showDialogText.text}
-                        #   onTap:
-                        #     showDialog:
-                        #       options:
-                        #         verticalOffset: 0.6
-                        #       onDialogDismiss:
-                        #         executeCode:
-                        #           body: |
-                        #             console.log('Dialog 2 Dismissed');
-                        #       widget:
-                        #         Button:
-                        #           label: Tap me to open one more dialog
-                        #           onTap:
-                        #             showDialog:
-                        #               options:
-                        #                 horizontalOffset: -1
-                        #               widget:
-                        #                 Column:
-                        #                   styles:
-                        #                     margin: 100px
-                        #                   children:
-                        #                     - Button:
-                        #                         label: Click me to close all dialogs
-                        #                         onTap:
-                        #                           closeAllDialogs:
-
+                        Button:
+                          label: ${'Tap me to ' + showDialogText.text}
+                          onTap:
+                            showDialog:
+                              options:
+                                verticalOffset: 0.6
+                              onDialogDismiss:
+                                executeCode:
+                                  body: |
+                                    console.log('Dialog 2 Dismissed');
+                              widget:
+                                Button:
+                                  label: Tap me to open one more dialog
+                                  onTap:
+                                    showDialog:
+                                      options:
+                                        horizontalOffset: -1
+                                      widget:
+                                        Column:
+                                          styles:
+                                            margin: 100px
+                                          children:
+                                            - Button:
+                                                label: Click me to close all dialogs
+                                                onTap:
+                                                  closeAllDialogs:
               - Markdown:
                   text: You can still access the current screen's scope from a dialog.
               - Column:
