@@ -87,14 +87,7 @@ export const useExecuteCode: EnsembleActionHook<
   const navigate = useNavigate();
   const location = useLocation();
   const customScope = useCustomScope();
-<<<<<<< HEAD
-  const { openModal } = useContext(ModalContext) || {};
-=======
-<<<<<<< HEAD
-=======
   const { openModal, closeAllModals } = useContext(ModalContext) || {};
->>>>>>> dab78b4 (add closeAllDialogs api)
->>>>>>> 4551e1e (add closeAllDialogs api)
 
   const js = useMemo(() => {
     if (!action) {
@@ -149,17 +142,9 @@ export const useExecuteCode: EnsembleActionHook<
                 location: locationApi(location),
                 navigateUrl: (url: string, inputs?: Record<string, unknown>) =>
                   navigateUrl(url, navigate, inputs),
-<<<<<<< HEAD
-                showDialog: (dialogAction?: ShowDialogAction): void =>
-                  showDialog({ action: dialogAction, openModal }),
-=======
-<<<<<<< HEAD
-=======
                 showDialog: (dialogAction?: ShowDialogAction): void =>
                   showDialog({ action: dialogAction, openModal }),
                 closeAllDialogs: (): void => closeAllModals?.(),
->>>>>>> dab78b4 (add closeAllDialogs api)
->>>>>>> 4551e1e (add closeAllDialogs api)
               },
             },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),

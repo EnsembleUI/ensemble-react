@@ -6,6 +6,10 @@ View:
   onLoad:
     executeCode: |
       ensemble.storage.set('test', 'hello')
+      const fn = () => {
+        console.log('hello');
+      }
+      ensemble.storage.set('fnVar', fn);
   body:
     Column:
       styles:
@@ -30,8 +34,9 @@ View:
               - Button:
                   label: Get Data
                   onTap:
-                    invokeApi:
-                      name: getDummyProducts
+                    executeCode:
+                      body: |
+                        eval(ensemble.storage.get('fnVar'));
               - TextInput:
                   id: getDataInputValue
                   label: Product ID
@@ -138,6 +143,17 @@ View:
                         },
                       });
               - Button:
+                  label: Custom widget with input in dialog
+                  onTap:
+                    executeCode: |-
+                      ensemble.showDialog({
+                        widget: {StyledText: {inputs: {inputText: 'Hello World hiop'}}},
+                        options: {
+                          width: '300px',
+                          height: '200px',
+                        },
+                      });
+              - Button:
                   label: Inline widget in dialog
                   onTap:
                     executeCode: |-
@@ -163,32 +179,36 @@ View:
                           body: |
                             console.log('Dialog 1 Dismissed');
                       widget:
-                        Button:
-                          label: ${'Tap me to ' + showDialogText.text}
-                          onTap:
-                            showDialog:
-                              options:
-                                verticalOffset: 0.6
-                              onDialogDismiss:
-                                executeCode:
-                                  body: |
-                                    console.log('Dialog 2 Dismissed');
-                              widget:
-                                Button:
-                                  label: Tap me to open one more dialog
-                                  onTap:
-                                    showDialog:
-                                      options:
-                                        horizontalOffset: -1
-                                      widget:
-                                        Column:
-                                          styles:
-                                            margin: 100px
-                                          children:
-                                            - Button:
-                                                label: Click me to close all dialogs
-                                                onTap:
-                                                  closeAllDialogs:
+                        StyledText:
+                          inputs:
+                            inputText: "Hello World bla bla"
+                        # Button:
+                        #   label: ${'Tap me to ' + showDialogText.text}
+                        #   onTap:
+                        #     showDialog:
+                        #       options:
+                        #         verticalOffset: 0.6
+                        #       onDialogDismiss:
+                        #         executeCode:
+                        #           body: |
+                        #             console.log('Dialog 2 Dismissed');
+                        #       widget:
+                        #         Button:
+                        #           label: Tap me to open one more dialog
+                        #           onTap:
+                        #             showDialog:
+                        #               options:
+                        #                 horizontalOffset: -1
+                        #               widget:
+                        #                 Column:
+                        #                   styles:
+                        #                     margin: 100px
+                        #                   children:
+                        #                     - Button:
+                        #                         label: Click me to close all dialogs
+                        #                         onTap:
+                        #                           closeAllDialogs:
+
               - Markdown:
                   text: You can still access the current screen's scope from a dialog.
               - Column:
