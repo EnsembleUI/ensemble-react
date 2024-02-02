@@ -100,7 +100,7 @@ function djb2Hash(str: string): number {
 export const DataGrid: React.FC<GridProps> = (props) => {
   const [rowsSelected, setRowsSelected] = useState<object[]>();
   const [allowSelection, setAllowSelection] = useState(
-    props?.allowSelection ?? false,
+    props.allowSelection ?? false,
   );
   const { "item-template": itemTemplate, onScrollEnd, ...rest } = props;
   const [selectionType, setSelectionType] = useState<"checkbox" | "radio">(
@@ -112,7 +112,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     values,
   } = useRegisterBindings(
     { ...rest, rowsSelected, selectionType, allowSelection },
-    props?.id,
+    props.id,
     {
       setRowsSelected,
       setSelectionType,
@@ -122,7 +122,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   const { namedData } = useTemplateData({ ...itemTemplate });
   const headerStyle = values?.styles?.headerStyle;
   const onTapAction = useEnsembleAction(itemTemplate.template.properties.onTap);
-  const onRowsSelected = useEnsembleAction(props?.onRowsSelected);
+  const onRowsSelected = useEnsembleAction(props.onRowsSelected);
   const onRowsSelectedCallback = useCallback(
     (selectedRowKeys: React.Key[], selectedRows: object[]) => {
       if (!onRowsSelected) {
@@ -239,7 +239,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
           values?.scroll
             ? {
                 y: values.scroll.scrollHeight || 150,
-                x: values.scroll.scrollWidth || 0,
+                x: "100px",
               }
             : undefined
         }
