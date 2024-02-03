@@ -52,7 +52,7 @@ import { useCloseAllDialogs } from "./useCloseAllDialogs";
 import { useNavigateUrl } from "./useNavigateUrl";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
-import { showDialog } from "../showDialog";
+import { getShowDialogOptions, showDialog } from "../showDialog";
 
 export type EnsembleActionHookResult =
   | {
@@ -245,11 +245,6 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
   return invokeApi;
 };
 
-const noneStyleOption = {
-  backgroundColor: "transparent",
-  showShadow: false,
-};
-
 export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
   action?: ShowDialogAction,
 ) => {
@@ -272,26 +267,16 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
   );
   const callback = useCallback(
     (args: unknown) => {
+      const modalOptions = getShowDialogOptions(
+        action?.options,
+        onDismissCallback,
+      );
       const widgetBackgroundColor = get(
         widget,
         "properties.styles.backgroundColor", // FIXME: works only for inline widget
       );
       if (isString(widgetBackgroundColor)) {
-        set(noneStyleOption, "backgroundColor", widgetBackgroundColor);
-      }
-
-      const modalOptions = {
-        maskClosable: true,
-        hideCloseIcon: true,
-        hideFullScreenIcon: true,
-        onClose: onDismissCallback,
-        verticalOffset: action.options?.verticalOffset,
-        horizontalOffset: action.options?.horizontalOffset,
-        padding: "12px",
-        ...(action.options?.style === "none" ? noneStyleOption : {}),
-      };
-      if (isObject(action.options)) {
-        merge(modalOptions, action.options);
+        set(modalOptions, "backgroundColor", widgetBackgroundColor);
       }
 
       openModal?.(
