@@ -40,5 +40,5 @@ export const DataCell: React.FC<DataCellProps> = ({
     );
   }
 
-  return <div />;
+  return null;
 };
