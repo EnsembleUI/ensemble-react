@@ -1,4 +1,18 @@
 View:
+  onLoad:
+    executeCode:
+      body: |
+        ensemble.storage.set('dummyData', [
+          { value: "val 1", label: "lab 1" },
+          { value: "val 2", label: "lab 2" },
+          { value: "val 3", label: "lab 3" },
+        ]);
+      onComplete:
+        invokeApi:
+          name: getData
+          onResponse:
+            executeCode: |
+              console.log('getData', response.body)
   header:
     title:
       Header:
@@ -67,9 +81,20 @@ View:
                           Text:
                             text: Text input
                     - MultiSelect:
+                        label: Choose multiple from API or storage
+                        placeholder: "Select From Groups"
+                        value: ["hbingley1@plala.or.jp", "val 2"]
+                        data: getData.body.users
+                        labelKey: firstName
+                        valueKey: email
+                        items: ${ensemble.storage.get('dummyData')}
+                        onItemSelect:
+                          executeCode: |
+                            console.log('selected');
+                            console.log(selectedValues)
+                    - MultiSelect:
                         label: Choose multiple
-                        # FIXME: update this to be consistent with other widgets, i.e. item and item-template
-                        # https://github.com/EnsembleUI/ensemble-react/issues/335
+                        allowNewOption: false
                         data:
                           - label: Option 1
                             value: option1
@@ -91,3 +116,8 @@ View:
           text: Give support us
     styles:
       backgroundColor: red
+
+API:
+  getData:
+    method: GET
+    uri: https://dummyjson.com/users

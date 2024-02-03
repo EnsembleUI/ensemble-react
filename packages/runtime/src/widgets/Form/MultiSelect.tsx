@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import type { Expression, EnsembleAction } from "@ensembleui/react-framework";
 import {
   useRegisterBindings,
@@ -7,60 +7,82 @@ import {
 } from "@ensembleui/react-framework";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { Select as SelectComponent, Space } from "antd";
-import { get } from "lodash-es";
+import { get, isArray, isEmpty, isObject, isString } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import { getColor } from "../../shared/styles";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import { EnsembleFormItem } from "./FormItem";
 import type { FormInputProps } from "./types";
-
-interface SelectOption {
-  label: Expression<string>;
-  value: Expression<string | number>;
-}
+import type { SelectOption } from "./Dropdown";
+import type {
+  EnsembleWidgetProps,
+  EnsembleWidgetStyles,
+  HasItemTemplate,
+} from "../../shared/types";
 
 export type MultiSelectProps = {
   data: Expression<SelectOption[]>;
   labelKey?: string;
   valueKey?: string;
-  default?: SelectOption[];
-  placeholder?: Expression<string>;
+  items?: Expression<SelectOption[]>;
   onItemSelect?: EnsembleAction;
-} & FormInputProps<string[]>;
+  hintStyle?: EnsembleWidgetStyles;
+} & EnsembleWidgetProps &
+  FormInputProps<string[]>;
 
 const MultiSelect: React.FC<MultiSelectProps> = (props) => {
-  const {
-    data,
-    labelKey,
-    valueKey,
-    default: defaultOptions,
-    placeholder,
-    styles,
-  } = props;
+  const { data, ...rest } = props;
   const [options, setOptions] = useState<SelectOption[]>([]);
   const [newOption, setNewOption] = useState("");
   const [selectedValues, setSelectedValues] = useState<string[] | undefined>(
-    defaultOptions?.map((item) => item.value.toString()),
+    isString(props.value) ? [props.value] : props.value,
   );
+
   const action = useEnsembleAction(props.onItemSelect);
   const { rawData } = useTemplateData({ data });
+  const { rootRef, values } = useRegisterBindings(
+    { ...rest, selectedValues, options },
+    props.id,
+    {
+      setSelectedValues,
+      setOptions,
+    },
+  );
 
   useEffect(() => {
-    if (Array.isArray(rawData)) {
-      const initialOptions = rawData.map((item) => ({
-        label: get(item, labelKey ?? "label") as Expression<string>,
-        value: get(item, valueKey ?? "value") as Expression<string | number>,
-      }));
-
-      if (defaultOptions) {
-        defaultOptions.forEach((item) => {
-          if (!initialOptions.some((option) => option.value === item.value))
-            initialOptions.push(item);
-        });
-      }
-      setOptions(initialOptions);
+    if (
+      values?.items &&
+      isArray(values?.items) &&
+      values?.items.every(
+        (item) =>
+          !values?.options.some(
+            (option) => option.value === item.value.toString(),
+          ),
+      )
+    ) {
+      setOptions([
+        ...values.options,
+        ...values.items.map((item) => ({
+          label: item.label,
+          value: item.value,
+        })),
+      ]);
     }
-  }, [rawData, defaultOptions, labelKey, valueKey]);
+  }, [values?.items]);
+
+  useEffect(() => {
+    const tempOptions: SelectOption[] = [];
+    if (isArray(rawData)) {
+      tempOptions.push(
+        ...rawData.map((item) => ({
+          label: get(item, values?.labelKey || "label") as string,
+          value: get(item, values?.valueKey || "value") as string,
+        })),
+      );
+    }
+
+    setOptions(tempOptions);
+  }, [rawData, values?.labelKey, values?.valueKey]);
 
   const handleChange = (value: string[]): void => {
     setSelectedValues(value);
@@ -77,14 +99,22 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     }
   };
 
-  const { values } = useRegisterBindings(
-    { value: selectedValues, options },
-    props.id,
-    {
-      setSelectedValues,
-      setOptions,
-    },
-  );
+  const handleSearch = (value: string): void => {
+    if (
+      values?.options.some(
+        (option) =>
+          option.label
+            ?.toString()
+            ?.toLowerCase()
+            ?.startsWith(value.toLowerCase()),
+      )
+    )
+      setNewOption("");
+    else {
+      setNewOption(value);
+    }
+  };
+
   const onItemSelectCallback = useCallback(
     (value?: string[]) => {
       if (action) {
@@ -93,49 +123,61 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     },
     [action],
   );
+
+  const defaultValue = useMemo(() => {
+    if (isArray(values?.value)) {
+      return values?.value;
+    }
+    if (isString(values?.value)) {
+      return [values?.value || ""];
+    }
+    return;
+  }, [values?.value]);
+
   return (
-    <EnsembleFormItem values={props}>
-      <SelectComponent
-        allowClear
-        defaultValue={defaultOptions?.map((item) => item.value.toString())}
-        // eslint-disable-next-line react/no-unstable-nested-components
-        dropdownRender={(menu): ReactElement => (
-          <Dropdown menu={menu} newOption={newOption} />
-        )}
-        filterOption={(input, option): boolean =>
-          option?.label
-            .toString()
-            .toLowerCase()
-            .startsWith(input.toLowerCase()) || false
-        }
-        mode="tags"
-        notFoundContent="No Results"
-        onChange={handleChange}
-        onSearch={(v): void => {
-          if (
-            options.some((option) =>
-              option.label.toString().toLowerCase().startsWith(v.toLowerCase()),
+    <div ref={rootRef}>
+      <EnsembleFormItem values={values}>
+        <SelectComponent
+          id={values?.id}
+          allowClear
+          defaultValue={defaultValue}
+          // eslint-disable-next-line react/no-unstable-nested-components
+          dropdownRender={(menu): ReactElement => (
+            <Dropdown menu={menu} newOption={newOption} />
+          )}
+          filterOption={(input, option): boolean =>
+            option?.label
+              ?.toString()
+              ?.toLowerCase()
+              ?.startsWith(input.toLowerCase()) || false
+          }
+          mode="tags"
+          notFoundContent="No Results"
+          onChange={handleChange}
+          onSearch={handleSearch}
+          options={values?.options}
+          placeholder={
+            values?.hintText ? (
+              <span style={{ ...values.hintStyle }}>{values.hintText}</span>
+            ) : (
+              ""
             )
-          )
-            setNewOption("");
-          else setNewOption(v);
-        }}
-        options={values?.options}
-        placeholder={placeholder ?? "Select"}
-        style={{
-          width: styles?.width ?? "100%",
-          margin: styles?.margin,
-          borderRadius: styles?.borderRadius,
-          borderWidth: styles?.borderWidth,
-          borderStyle: styles?.borderStyle,
-          borderColor: styles?.borderColor
-            ? getColor(styles.borderColor)
-            : undefined,
-          ...styles,
-        }}
-        value={values?.value}
-      />
-    </EnsembleFormItem>
+          }
+          style={{
+            width: values?.styles?.width ?? "100%",
+            margin: values?.styles?.margin,
+            borderRadius: values?.styles?.borderRadius,
+            borderWidth: values?.styles?.borderWidth,
+            borderStyle: values?.styles?.borderStyle,
+            borderColor: values?.styles?.borderColor
+              ? getColor(values?.styles.borderColor)
+              : undefined,
+            ...values?.styles,
+          }}
+          value={values?.selectedValues}
+        />
+      </EnsembleFormItem>
+    </div>
   );
 };
 

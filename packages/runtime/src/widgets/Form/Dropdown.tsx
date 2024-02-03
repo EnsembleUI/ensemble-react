@@ -23,12 +23,10 @@ import type {
 } from "../../shared/types";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import { EnsembleRuntime } from "../../runtime";
-import type { TextStyles } from "../Text";
 import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
 
 export type DropdownStyles = {
-  visible?: boolean;
   dropdownBackgroundColor?: string;
   dropdownBorderRadius?: number;
   dropdownBorderColor?: string;
@@ -39,26 +37,22 @@ export type DropdownStyles = {
 } & HasBorder &
   EnsembleWidgetStyles;
 
-export type DropdownProps = {
-  label?: string;
-  hintText?: string;
-  value?: Expression<string | number>;
-  items?: SelectOption[];
-  onItemSelect: EnsembleAction;
-  autoComplete: Expression<boolean>;
-  labelStyle?: TextStyles & HasBorder;
-  hintStyle?: EnsembleWidgetStyles;
-} & EnsembleWidgetProps<DropdownStyles> &
-  HasItemTemplate & {
-    "item-template"?: { value: Expression<string> };
-  } & FormInputProps<string | number>;
-
-interface SelectOption {
+export interface SelectOption {
   label: Expression<string> | Record<string, unknown>;
   value: Expression<string | number>;
   type?: string;
   items?: SelectOption[];
 }
+
+export type DropdownProps = {
+  items?: SelectOption[];
+  onItemSelect: EnsembleAction;
+  autoComplete: Expression<boolean>;
+  hintStyle?: EnsembleWidgetStyles;
+} & EnsembleWidgetProps<DropdownStyles> &
+  HasItemTemplate & {
+    "item-template"?: { value: Expression<string> };
+  } & FormInputProps<string | number>;
 
 const Dropdown: React.FC<DropdownProps> = (props) => {
   const [selectedValue, setSelectedValue] = useState(props.value);
