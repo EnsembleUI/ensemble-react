@@ -142,6 +142,8 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
       ) : null}
       <AntMenu
         mode="inline"
+        /* FIXME This is a hack so we can control our own selected styling. Ideally, this should use design tokens */
+        selectedKeys={[]}
         style={{
           flex: "1",
           backgroundColor,
