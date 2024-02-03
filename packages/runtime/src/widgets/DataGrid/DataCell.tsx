@@ -24,19 +24,21 @@ export const DataCell: React.FC<DataCellProps> = ({
     context: data,
   });
 
-  return (
-    <>
-      {children ? (
-        <CustomScopeProvider value={data as CustomScope}>
-          {EnsembleRuntime.render([children[columnIndex]])}
-        </CustomScopeProvider>
-      ) : null}
+  if (children) {
+    return (
+      <CustomScopeProvider value={data as CustomScope}>
+        {EnsembleRuntime.render([children[columnIndex]])}
+      </CustomScopeProvider>
+    );
+  }
 
-      {isObject(itemTemplate) && !isEmpty(namedData) && (
-        <CustomScopeProvider value={namedData[columnIndex] as CustomScope}>
-          {EnsembleRuntime.render([itemTemplate.template])}
-        </CustomScopeProvider>
-      )}
-    </>
-  );
+  if (isObject(itemTemplate) && !isEmpty(namedData)) {
+    return (
+      <CustomScopeProvider value={namedData[columnIndex] as CustomScope}>
+        {EnsembleRuntime.render([itemTemplate.template])}
+      </CustomScopeProvider>
+    );
+  }
+
+  return <div />;
 };

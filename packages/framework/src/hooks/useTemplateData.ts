@@ -23,7 +23,7 @@ export interface TemplateDataProps {
 export const useTemplateData = ({
   data,
   name = "data",
-  context = {},
+  context,
 }: TemplateDataProps): {
   rawData: TemplateData;
   namedData: object[];
