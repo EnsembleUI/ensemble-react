@@ -2,10 +2,10 @@ import {
   unwrapWidget,
   type EnsembleWidget,
   type ShowDialogAction,
-  ShowDialogOptions,
+  type ShowDialogOptions,
 } from "@ensembleui/react-framework";
 import { EnsembleRuntime } from "./runtime";
-import { cloneDeep, findKey, get, isObject, set } from "lodash-es";
+import { cloneDeep, isObject } from "lodash-es";
 
 export type ShowDialogApiProps = {
   action?: ShowDialogAction;
@@ -18,23 +18,12 @@ export const showDialog = (props?: ShowDialogApiProps): void => {
     return;
   }
 
-  const widget = action?.widget;
-  const widgetKey = findKey(widget, isObject) || "";
-  let inlineWidget: EnsembleWidget | undefined;
-
-  if ((get(widget, widgetKey) as Record<string, unknown>)?.inputs) {
-    set(widget, "name", widgetKey);
-    set(widget, "properties", get(widget, widgetKey));
-  } else if (!widget?.name) {
-    inlineWidget = cloneDeep(unwrapWidget(action?.widget));
-  }
-
-  const content = inlineWidget
-    ? EnsembleRuntime.render([inlineWidget])
-    : EnsembleRuntime.render([widget as unknown as EnsembleWidget]);
+  const widget = action?.widget?.name
+    ? (cloneDeep(action?.widget) as unknown as EnsembleWidget)
+    : unwrapWidget(cloneDeep(action?.widget));
 
   openModal?.(
-    content,
+    EnsembleRuntime.render([widget]),
     getShowDialogOptions(action?.options),
     true,
     screen || undefined,
