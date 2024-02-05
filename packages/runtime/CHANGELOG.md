@@ -1,5 +1,17 @@
 # @ensembleui/react-runtime
 
+## 0.1.24
+
+### Patch Changes
+
+- 044367a: added support of infinite scroll in gridview
+- bca1ecf: Fix selected styling on menu
+- c63ab76: allow max-content as default scrollWidth
+- 54702bc: Includ row index in data grid cell context
+- d789ccb: Update preview for studio integration
+- Updated dependencies [d789ccb]
+  - @ensembleui/react-framework@0.1.19
+
 ## 0.1.23
 
 ### Patch Changes
