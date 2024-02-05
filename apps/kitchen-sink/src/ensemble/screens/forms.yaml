@@ -94,7 +94,6 @@ View:
                             console.log(selectedValues)
                     - MultiSelect:
                         label: Choose multiple
-                        allowNewOption: false
                         data:
                           - label: Option 1
                             value: option1

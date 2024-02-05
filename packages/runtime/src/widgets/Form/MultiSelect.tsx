@@ -7,7 +7,7 @@ import {
 } from "@ensembleui/react-framework";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { Select as SelectComponent, Space } from "antd";
-import { get, isArray, isEmpty, isObject, isString } from "lodash-es";
+import { get, isArray, isString } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import { getColor } from "../../shared/styles";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
@@ -17,7 +17,6 @@ import type { SelectOption } from "./Dropdown";
 import type {
   EnsembleWidgetProps,
   EnsembleWidgetStyles,
-  HasItemTemplate,
 } from "../../shared/types";
 
 export type MultiSelectProps = {
