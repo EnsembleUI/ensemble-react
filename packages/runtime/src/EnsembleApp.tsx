@@ -27,6 +27,7 @@ export interface EnsembleAppProps {
   application?: ApplicationDTO;
   path?: string;
   loader?: ApplicationLoader;
+  screenId?: string;
 }
 
 export const EnsembleApp: React.FC<EnsembleAppProps> = ({
@@ -34,6 +35,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
   application,
   path,
   loader,
+  screenId,
 }) => {
   const [app, setApp] = useState<EnsembleAppModel>();
   useEffect(() => {
@@ -74,13 +76,22 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
             [
               {
                 path: "/",
-                element: <EnsembleEntry entry={app.home} />,
+                element: (
+                  <EnsembleEntry
+                    entry={app.home}
+                    screen={app.screens.find(
+                      (screen) => Boolean(screenId) && screen.id === screenId,
+                    )}
+                  />
+                ),
                 errorElement: <ErrorPage />,
                 children: app.screens.map((screen) => {
-                  const screenId = screen.name.toLowerCase();
+                  const screenPath = screen.name.toLowerCase();
                   return {
-                    path: `${screenId}`,
-                    element: <EnsembleScreen key={screenId} screen={screen} />,
+                    path: `${screenPath}`,
+                    element: (
+                      <EnsembleScreen key={screenPath} screen={screen} />
+                    ),
                   };
                 }),
               },

@@ -3,5 +3,5 @@ module.exports = {
   rules: {
     "unicorn/filename-case": "off",
   },
-  ignorePatterns: ["*.config.js"],
+  ignorePatterns: ["*.config.js", "src/ensemble/scripts/*.js"],
 };
