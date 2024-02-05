@@ -246,7 +246,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
             : undefined),
         }}
       >
-        {DataColumns.map((col, index) => {
+        {DataColumns.map((col, colIndex) => {
           return (
             <Table.Column
               dataIndex={itemTemplate.name}
@@ -270,11 +270,12 @@ export const DataGrid: React.FC<GridProps> = (props) => {
                       )
                   : undefined
               }
-              render={(_: unknown, record: unknown): ReactElement => {
+              render={(_, record, rowIndex): ReactElement => {
                 return (
                   <DataCell
-                    columnIndex={index}
+                    columnIndex={colIndex}
                     data={record}
+                    rowIndex={rowIndex}
                     scopeName={itemTemplate.name}
                     template={itemTemplate.template}
                   />

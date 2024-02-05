@@ -8,15 +8,19 @@ export interface DataCellProps {
   data: unknown;
   template: DataGridRowTemplate;
   columnIndex: number;
+  rowIndex: number;
 }
 export const DataCell: React.FC<DataCellProps> = ({
   data,
   template,
   columnIndex,
+  rowIndex,
 }) => {
   const cellTemplate = template.properties.children[columnIndex];
   return (
-    <CustomScopeProvider value={data as CustomScope}>
+    <CustomScopeProvider
+      value={{ ...(data as object), index: rowIndex } as CustomScope}
+    >
       {EnsembleRuntime.render([cellTemplate])}
     </CustomScopeProvider>
   );
