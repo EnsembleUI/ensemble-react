@@ -248,7 +248,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             disabled={
               values?.enabled === undefined ? false : Boolean(values.enabled)
             }
-            dropdownStyle={{ ...values?.styles }}
+            dropdownStyle={values?.styles}
             id={values?.id}
             onSelect={onItemSelectCallback}
             placeholder={

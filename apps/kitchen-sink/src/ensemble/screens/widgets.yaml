@@ -327,6 +327,34 @@ View:
                   styles:
                     names: heading-3
                   text: Dropdown
+              - MultiSelect:
+                  label: Choose multiple
+                  id: multiSelect1
+                  styles:
+                    multiSelectBackgroundColor: "aqua"
+                    multiSelectBorderWidth: 1
+                    multiSelectBorderColor: "lime"
+                    backgroundColor: "yellow"
+                    selectedBackgroundColor: "green"
+                    selectedTextColor: "orange"
+                  data:
+                    - label: Option 1
+                      value: option1
+                    - label: Option 2
+                      value: option2
+              - MultiSelect:
+                  label: Choose multiple 2
+                  id: multiSelect2
+                  styles:
+                    selectedBackgroundColor: "blue"
+                    selectedTextColor: "aqua"
+                  data:
+                    - label: Option 1
+                      value: option1
+                    - label: Option 2
+                      value: option2
+                    - label: Option 3
+                      value: option3
               - Dropdown:
                   label: Simple
                   hintText: Hint Text
