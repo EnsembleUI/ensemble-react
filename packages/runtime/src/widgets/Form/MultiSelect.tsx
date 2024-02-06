@@ -20,6 +20,7 @@ import type {
   HasBorder,
 } from "../../shared/types";
 import { EnsembleRuntime } from "../../runtime";
+import { getComponentStyles } from "../../shared/styles";
 
 export type MultiSelectStyles = {
   multiSelectBackgroundColor?: string;
@@ -170,31 +171,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     <>
       <style>{`
         .${id}_input .ant-select-selector {
-          ${
-            values?.styles?.multiSelectMaxHeight
-              ? `max-height: ${values.styles.multiSelectMaxHeight} !important;`
-              : ""
-          }
-          ${
-            values?.styles?.multiSelectBackgroundColor
-              ? `background-color: ${values.styles.multiSelectBackgroundColor} !important;`
-              : ""
-          }
-          ${
-            values?.styles?.multiSelectBorderRadius
-              ? `border-radius: ${values.styles.multiSelectBorderRadius}px !important;`
-              : ""
-          }
-          ${
-            values?.styles?.multiSelectBorderColor
-              ? `border-color: ${values.styles.multiSelectBorderColor} !important;`
-              : ""
-          }
-          ${
-            values?.styles?.multiSelectBorderWidth
-              ? `border-width: ${values.styles.multiSelectBorderWidth}px !important;`
-              : ""
-          }
+          ${getComponentStyles("multiSelect", values?.styles)}
         }
         .ant-select-item.ant-select-item-option.${id}_option[aria-selected="true"]
         {

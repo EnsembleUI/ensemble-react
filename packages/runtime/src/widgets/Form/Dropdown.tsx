@@ -25,6 +25,7 @@ import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import { EnsembleRuntime } from "../../runtime";
 import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
+import { getComponentStyles } from "../../shared/styles";
 
 export type DropdownStyles = {
   dropdownBackgroundColor?: string;
@@ -155,31 +156,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     <>
       <style>{`
         .${id}_input .ant-select-selector {
-          ${
-            values?.styles?.dropdownMaxHeight
-              ? `max-height: ${values.styles.dropdownMaxHeight} !important;`
-              : ""
-          }
-          ${
-            values?.styles?.dropdownBackgroundColor
-              ? `background-color: ${values.styles.dropdownBackgroundColor} !important;`
-              : ""
-          }
-          ${
-            values?.styles?.dropdownBorderRadius
-              ? `border-radius: ${values.styles.dropdownBorderRadius}px !important;`
-              : ""
-          }
-          ${
-            values?.styles?.dropdownBorderColor
-              ? `border-color: ${values.styles.dropdownBorderColor} !important;`
-              : ""
-          }
-          ${
-            values?.styles?.dropdownBorderWidth
-              ? `border-width: ${values.styles.dropdownBorderWidth}px !important;`
-              : ""
-          }
+          ${getComponentStyles("dropdown", values?.styles)}
         }
         .ant-select-item.ant-select-item-option.${id}_option[aria-selected="true"] {
           ${

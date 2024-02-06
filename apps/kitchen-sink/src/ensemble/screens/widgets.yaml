@@ -334,6 +334,8 @@ View:
                     multiSelectBackgroundColor: "aqua"
                     multiSelectBorderWidth: 1
                     multiSelectBorderColor: "lime"
+                    multiSelectPadding: 10px
+                    multiSelectMaxWidth: 200px
                     backgroundColor: "yellow"
                     selectedBackgroundColor: "green"
                     selectedTextColor: "orange"
@@ -358,6 +360,12 @@ View:
               - Dropdown:
                   label: Simple
                   hintText: Hint Text
+                  styles:
+                    dropdownBorderWidth: 3px
+                    dropdownBorderColor: "lime"
+                    dropdownPadding: 10px
+                    dropdownMaxWidth: 200px
+                    dropdownMinHeight: 50px
                   items:
                     - label: Option 1
                       value: 1
