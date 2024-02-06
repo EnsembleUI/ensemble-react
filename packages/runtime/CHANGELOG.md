@@ -1,5 +1,12 @@
 # @ensembleui/react-runtime
 
+## 0.1.25
+
+### Patch Changes
+
+- ddcc772: update bindings for MultiSelect widget
+- b93fc80: add showDialog and closeAllDialogs api
+
 ## 0.1.24
 
 ### Patch Changes

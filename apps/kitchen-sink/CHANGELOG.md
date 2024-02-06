@@ -1,5 +1,15 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.16
+
+### Patch Changes
+
+- ddcc772: update bindings for MultiSelect widget
+- b93fc80: add showDialog and closeAllDialogs api
+- Updated dependencies [ddcc772]
+- Updated dependencies [b93fc80]
+  - @ensembleui/react-runtime@0.1.25
+
 ## 0.0.15
 
 ### Patch Changes

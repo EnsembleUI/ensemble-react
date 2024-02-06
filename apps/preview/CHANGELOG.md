@@ -1,5 +1,14 @@
 # @ensembleui/react-preview
 
+## 0.0.14
+
+### Patch Changes
+
+- b93fc80: add showDialog and closeAllDialogs api
+- Updated dependencies [ddcc772]
+- Updated dependencies [b93fc80]
+  - @ensembleui/react-runtime@0.1.25
+
 ## 0.0.13
 
 ### Patch Changes
