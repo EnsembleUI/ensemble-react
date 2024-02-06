@@ -50,7 +50,7 @@ export type NavigateScreenAction = string | NavigateScreenOptions;
 
 export type NavigateUrlAction = string | NavigateUrlOptions;
 
-interface ShowDialogOptions {
+export interface ShowDialogOptions {
   minWidth?: number;
   maxWidth?: number;
   minHeight?: number;

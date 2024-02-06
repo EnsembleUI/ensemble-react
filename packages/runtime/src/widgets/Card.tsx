@@ -1,4 +1,7 @@
-import type { EnsembleWidget } from "@ensembleui/react-framework";
+import {
+  useRegisterBindings,
+  type EnsembleWidget,
+} from "@ensembleui/react-framework";
 import { useMemo } from "react";
 import { WidgetRegistry } from "../registry";
 import type {
@@ -41,16 +44,18 @@ const defaultStyles: CardStyles = {
 };
 
 export const Card: React.FC<CardProps> = ({ children, styles }) => {
+  const { values } = useRegisterBindings({ styles });
+
   const renderedChildren = useMemo(() => {
     return EnsembleRuntime.render(children);
   }, [children]);
 
-  const mergedStyles = { ...defaultStyles, ...styles };
+  const mergedStyles = { ...defaultStyles, ...values?.styles };
   const { shadowOffset, shadowBlur, shadowSpread, shadowColor } = mergedStyles;
 
   return (
     <div
-      className={styles?.names}
+      className={values?.styles?.names}
       style={{
         display: "flex",
         flexDirection: "column",
