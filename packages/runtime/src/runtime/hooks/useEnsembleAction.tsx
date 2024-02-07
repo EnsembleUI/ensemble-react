@@ -50,6 +50,9 @@ import { useNavigateScreen } from "./useNavigateScreen";
 import { useShowToast } from "./useShowToast";
 import { useCloseAllDialogs } from "./useCloseAllDialogs";
 import { useNavigateUrl } from "./useNavigateUrl";
+// FIXME: refactor
+// eslint-disable-next-line import/no-cycle
+import { getShowDialogOptions, showDialog } from "../showDialog";
 
 export type EnsembleActionHookResult =
   | {
@@ -84,6 +87,7 @@ export const useExecuteCode: EnsembleActionHook<
   const navigate = useNavigate();
   const location = useLocation();
   const customScope = useCustomScope();
+  const { openModal, closeAllModals } = useContext(ModalContext) || {};
 
   const js = useMemo(() => {
     if (!action) {
@@ -115,6 +119,11 @@ export const useExecuteCode: EnsembleActionHook<
       return;
     }
 
+    const customWidgets = appContext?.application?.customWidgets.reduce(
+      (acc, widget) => ({ ...acc, [widget.name]: widget }),
+      {},
+    );
+
     return (args: unknown) => {
       try {
         const retVal = evaluate(
@@ -122,6 +131,7 @@ export const useExecuteCode: EnsembleActionHook<
           js,
           merge(
             {
+              ...customWidgets,
               ensemble: {
                 storage,
                 user,
@@ -132,6 +142,9 @@ export const useExecuteCode: EnsembleActionHook<
                 location: locationApi(location),
                 navigateUrl: (url: string, inputs?: Record<string, unknown>) =>
                   navigateUrl(url, navigate, inputs),
+                showDialog: (dialogAction?: ShowDialogAction): void =>
+                  showDialog({ action: dialogAction, openModal }),
+                closeAllDialogs: (): void => closeAllModals?.(),
               },
             },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
@@ -232,11 +245,6 @@ export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
   return invokeApi;
 };
 
-const noneStyleOption = {
-  backgroundColor: "transparent",
-  showShadow: false,
-};
-
 export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
   action?: ShowDialogAction,
 ) => {
@@ -259,26 +267,16 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
   );
   const callback = useCallback(
     (args: unknown) => {
+      const modalOptions = getShowDialogOptions(
+        action?.options,
+        onDismissCallback,
+      );
       const widgetBackgroundColor = get(
         widget,
         "properties.styles.backgroundColor", // FIXME: works only for inline widget
       );
       if (isString(widgetBackgroundColor)) {
-        set(noneStyleOption, "backgroundColor", widgetBackgroundColor);
-      }
-
-      const modalOptions = {
-        maskClosable: true,
-        hideCloseIcon: true,
-        hideFullScreenIcon: true,
-        onClose: onDismissCallback,
-        verticalOffset: action.options?.verticalOffset,
-        horizontalOffset: action.options?.horizontalOffset,
-        padding: "12px",
-        ...(action.options?.style === "none" ? noneStyleOption : {}),
-      };
-      if (isObject(action.options)) {
-        merge(modalOptions, action.options);
+        set(modalOptions, "backgroundColor", widgetBackgroundColor);
       }
 
       openModal?.(

@@ -100,3 +100,27 @@ export const getCrossAxis = (crossAxis: string): string | undefined => {
 export const getIcon = (name: string): SvgIconComponent | undefined => {
   return get(Icons, name) as SvgIconComponent;
 };
+
+export const getComponentStyles = (
+  name: string,
+  styles?: React.CSSProperties,
+): string => {
+  const styleNames = Object.keys(styles || {}).filter((key) =>
+    key.startsWith(name),
+  );
+  let result = "";
+
+  styleNames.forEach((property) => {
+    const styleValue = get(styles, property) as string | undefined;
+    if (styleValue) {
+      const cssProperty = property
+        .replace(name, "")
+        // eslint-disable-next-line prefer-named-capture-group
+        .replace(/([a-z])([A-Z])/g, "$1-$2")
+        .toLowerCase(); // convert camelCase to kebab-case
+      result += `${cssProperty}: ${styleValue} !important;`;
+    }
+  });
+
+  return result;
+};

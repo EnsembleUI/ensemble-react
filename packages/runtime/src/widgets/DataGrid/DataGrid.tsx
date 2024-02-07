@@ -237,7 +237,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
           values?.scroll
             ? {
                 y: values.scroll.scrollHeight || 150,
-                x: "100px",
+                x: values.scroll.scrollWidth || "max-content",
               }
             : undefined
         }
@@ -273,11 +273,12 @@ export const DataGrid: React.FC<GridProps> = (props) => {
                       )
                   : undefined
               }
-              render={(_: unknown, record: unknown): ReactElement => {
+              render={(_, record, rowIndex): ReactElement => {
                 return (
                   <DataCell
-                    columnIndex={index}
+                    columnIndex={colIndex}
                     data={record}
+                    rowIndex={rowIndex}
                     scopeName={itemTemplate.name}
                     template={itemTemplate.template}
                   />

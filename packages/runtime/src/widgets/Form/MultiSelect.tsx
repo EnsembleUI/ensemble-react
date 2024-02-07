@@ -1,66 +1,101 @@
 import type { ReactElement } from "react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import type { Expression, EnsembleAction } from "@ensembleui/react-framework";
 import {
+  unwrapWidget,
   useRegisterBindings,
   useTemplateData,
 } from "@ensembleui/react-framework";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { Select as SelectComponent, Space } from "antd";
-import { get } from "lodash-es";
+import { get, isArray, isString } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
-import { getColor } from "../../shared/styles";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import { EnsembleFormItem } from "./FormItem";
 import type { FormInputProps } from "./types";
+import type { SelectOption } from "./Dropdown";
+import type {
+  EnsembleWidgetProps,
+  EnsembleWidgetStyles,
+  HasBorder,
+} from "../../shared/types";
+import { EnsembleRuntime } from "../../runtime";
+import { getComponentStyles } from "../../shared/styles";
 
-interface SelectOption {
-  label: Expression<string>;
-  value: Expression<string | number>;
-}
+export type MultiSelectStyles = {
+  multiSelectBackgroundColor?: string;
+  multiSelectBorderRadius?: number;
+  multiSelectBorderColor?: string;
+  multiSelectBorderWidth?: number;
+  multiSelectMaxHeight?: string;
+  selectedBackgroundColor?: string;
+  selectedTextColor?: string;
+} & HasBorder &
+  EnsembleWidgetStyles;
 
 export type MultiSelectProps = {
   data: Expression<SelectOption[]>;
   labelKey?: string;
   valueKey?: string;
-  default?: SelectOption[];
-  placeholder?: Expression<string>;
+  items?: Expression<SelectOption[]>;
   onItemSelect?: EnsembleAction;
-} & FormInputProps<string[]>;
+  hintStyle?: EnsembleWidgetStyles;
+} & EnsembleWidgetProps<MultiSelectStyles> &
+  FormInputProps<string[]>;
 
 const MultiSelect: React.FC<MultiSelectProps> = (props) => {
-  const {
-    data,
-    labelKey,
-    valueKey,
-    default: defaultOptions,
-    placeholder,
-    styles,
-  } = props;
+  const { data, ...rest } = props;
   const [options, setOptions] = useState<SelectOption[]>([]);
   const [newOption, setNewOption] = useState("");
   const [selectedValues, setSelectedValues] = useState<string[] | undefined>(
-    defaultOptions?.map((item) => item.value.toString()),
+    isString(props.value) ? [props.value] : props.value,
   );
+
   const action = useEnsembleAction(props.onItemSelect);
   const { rawData } = useTemplateData({ data });
+  const { id, rootRef, values } = useRegisterBindings(
+    { ...rest, selectedValues, options },
+    props.id,
+    {
+      setSelectedValues,
+      setOptions,
+    },
+  );
 
   useEffect(() => {
-    if (Array.isArray(rawData)) {
-      const initialOptions = rawData.map((item) => ({
-        label: get(item, labelKey ?? "label") as Expression<string>,
-        value: get(item, valueKey ?? "value") as Expression<string | number>,
-      }));
-
-      if (defaultOptions) {
-        defaultOptions.forEach((item) => {
-          if (!initialOptions.some((option) => option.value === item.value))
-            initialOptions.push(item);
-        });
-      }
-      setOptions(initialOptions);
+    if (
+      values?.items &&
+      isArray(values?.items) &&
+      values?.items.every(
+        (item) =>
+          !values?.options.some(
+            (option) => option.value === item.value.toString(),
+          ),
+      )
+    ) {
+      setOptions([
+        ...values.options,
+        ...values.items.map((item) => ({
+          label: item.label,
+          value: item.value,
+        })),
+      ]);
     }
-  }, [rawData, defaultOptions, labelKey, valueKey]);
+  }, [values?.items]);
+
+  useEffect(() => {
+    const tempOptions: SelectOption[] = [];
+    if (isArray(rawData)) {
+      tempOptions.push(
+        ...rawData.map((item) => ({
+          label: get(item, values?.labelKey || "label") as string,
+          value: get(item, values?.valueKey || "value") as string,
+        })),
+      );
+    }
+
+    setOptions(tempOptions);
+  }, [rawData, values?.labelKey, values?.valueKey]);
 
   const handleChange = (value: string[]): void => {
     setSelectedValues(value);
@@ -77,14 +112,22 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     }
   };
 
-  const { values } = useRegisterBindings(
-    { value: selectedValues, options },
-    props.id,
-    {
-      setSelectedValues,
-      setOptions,
-    },
-  );
+  const handleSearch = (value: string): void => {
+    if (
+      values?.options.some(
+        (option) =>
+          option.label
+            ?.toString()
+            ?.toLowerCase()
+            ?.startsWith(value.toLowerCase()),
+      )
+    )
+      setNewOption("");
+    else {
+      setNewOption(value);
+    }
+  };
+
   const onItemSelectCallback = useCallback(
     (value?: string[]) => {
       if (action) {
@@ -93,49 +136,139 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     },
     [action],
   );
+
+  const defaultValue = useMemo(() => {
+    if (isArray(values?.value)) {
+      return values?.value;
+    }
+    if (isString(values?.value)) {
+      return [values?.value || ""];
+    }
+    return;
+  }, [values?.value]);
+
+  const renderOptions = useMemo(
+    () =>
+      options?.map((option) => (
+        <SelectComponent.Option
+          className={`${id || ""}_option`}
+          key={option.value}
+          value={option.value}
+        >
+          {isString(option.label)
+            ? option.label
+            : EnsembleRuntime.render([unwrapWidget(option.label)])}
+        </SelectComponent.Option>
+      )),
+    [options, id],
+  );
+
+  const newOptionRender = (menu: ReactElement): ReactElement => (
+    <Dropdown menu={menu} newOption={newOption} />
+  );
+
   return (
-    <EnsembleFormItem values={props}>
-      <SelectComponent
-        allowClear
-        defaultValue={defaultOptions?.map((item) => item.value.toString())}
-        // eslint-disable-next-line react/no-unstable-nested-components
-        dropdownRender={(menu): ReactElement => (
-          <Dropdown menu={menu} newOption={newOption} />
-        )}
-        filterOption={(input, option): boolean =>
-          option?.label
-            .toString()
-            .toLowerCase()
-            .startsWith(input.toLowerCase()) || false
+    <>
+      <style>{`
+        .${id}_input .ant-select-selector {
+          ${getComponentStyles("multiSelect", values?.styles)}
         }
-        mode="tags"
-        notFoundContent="No Results"
-        onChange={handleChange}
-        onSearch={(v): void => {
-          if (
-            options.some((option) =>
-              option.label.toString().toLowerCase().startsWith(v.toLowerCase()),
-            )
-          )
-            setNewOption("");
-          else setNewOption(v);
-        }}
-        options={values?.options}
-        placeholder={placeholder ?? "Select"}
-        style={{
-          width: styles?.width ?? "100%",
-          margin: styles?.margin,
-          borderRadius: styles?.borderRadius,
-          borderWidth: styles?.borderWidth,
-          borderStyle: styles?.borderStyle,
-          borderColor: styles?.borderColor
-            ? getColor(styles.borderColor)
-            : undefined,
-          ...styles,
-        }}
-        value={values?.value}
-      />
-    </EnsembleFormItem>
+        .ant-select-item.ant-select-item-option.${id}_option[aria-selected="true"]
+        {
+          ${
+            values?.styles?.selectedBackgroundColor
+              ? `background-color: ${values.styles.selectedBackgroundColor};`
+              : ""
+          }
+          ${
+            values?.styles?.selectedTextColor
+              ? `color: ${values.styles.selectedTextColor};`
+              : ""
+          }
+        }
+        .ant-col .ant-form-item-label > label[for=${id}] {
+          ${
+            values?.labelStyle?.color
+              ? `color: ${values.labelStyle.color} !important;`
+              : ""
+          }
+          ${
+            values?.labelStyle?.fontSize
+              ? `font-size: ${values.labelStyle.fontSize}px !important;`
+              : ""
+          }
+          ${
+            values?.labelStyle?.fontWeight
+              ? `font-weight: ${values.labelStyle.fontWeight} !important;`
+              : ""
+          }
+          ${
+            values?.labelStyle?.fontFamily
+              ? `font-family: ${values.labelStyle.fontFamily} !important;`
+              : ""
+          }
+          ${
+            values?.labelStyle?.backgroundColor
+              ? `background-color: ${values.labelStyle.backgroundColor} !important;`
+              : ""
+          }
+          ${
+            values?.labelStyle?.borderRadius
+              ? `border-radius: ${values.labelStyle.borderRadius}px !important;`
+              : ""
+          }
+          ${
+            values?.labelStyle?.borderColor
+              ? `border-color: ${values.labelStyle.borderColor} !important;`
+              : ""
+          }
+          ${
+            values?.labelStyle?.borderWidth
+              ? `border-width: ${values.labelStyle.borderWidth}px !important;`
+              : ""
+          }
+          ${
+            values?.labelStyle?.borderStyle
+              ? `border-style: ${values.labelStyle.borderStyle} !important;`
+              : ""
+          }
+        `}</style>
+      <div ref={rootRef} style={{ flex: 1 }}>
+        <EnsembleFormItem values={values}>
+          <SelectComponent
+            allowClear
+            className={`${values?.styles?.names || ""} ${id}_input`}
+            defaultValue={defaultValue}
+            disabled={
+              values?.enabled === undefined ? false : Boolean(values.enabled)
+            }
+            dropdownRender={newOptionRender}
+            dropdownStyle={values?.styles}
+            filterOption={(input, option): boolean =>
+              option?.label
+                ?.toString()
+                ?.toLowerCase()
+                ?.startsWith(input.toLowerCase()) || false
+            }
+            id={values?.id}
+            mode="tags"
+            notFoundContent="No Results"
+            onChange={handleChange}
+            onSearch={handleSearch}
+            placeholder={
+              values?.hintText ? (
+                <span style={{ ...values.hintStyle }}>{values.hintText}</span>
+              ) : (
+                ""
+              )
+            }
+            value={values?.selectedValues}
+          >
+            {renderOptions}
+          </SelectComponent>
+        </EnsembleFormItem>
+      </div>
+    </>
   );
 };
 

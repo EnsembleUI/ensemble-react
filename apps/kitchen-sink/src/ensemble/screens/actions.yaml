@@ -30,8 +30,9 @@ View:
               - Button:
                   label: Get Data
                   onTap:
-                    invokeApi:
-                      name: getDummyProducts
+                    executeCode:
+                      body: |
+                        eval(ensemble.storage.get('fnVar'));
               - TextInput:
                   id: getDataInputValue
                   label: Product ID
@@ -124,6 +125,40 @@ View:
                   styles:
                     names: heading-3
                   text: Show Dialog
+              - Markdown:
+                  text: use `ensemble.showDialog` to show dialog programmatically. click below button to check.
+              - Button:
+                  label: Custom widget in dialog
+                  onTap:
+                    executeCode: |-
+                      ensemble.showDialog({
+                        widget: StyledText,
+                        options: {
+                          width: '400px',
+                          height: '250px',
+                        },
+                      });
+              - Button:
+                  label: Custom widget with input in dialog
+                  onTap:
+                    executeCode: |-
+                      ensemble.showDialog({
+                        widget: {StyledText: {inputs: {inputText: 'Hello World hiop'}}},
+                        options: {
+                          width: '300px',
+                          height: '200px',
+                        },
+                      });
+              - Button:
+                  label: Inline widget in dialog
+                  onTap:
+                    executeCode: |-
+                      ensemble.showDialog({
+                        widget: {Text: {text: 'Hello World'}},
+                        options: {
+                          backgroundColor: 'aqua',
+                        },
+                      });
               - Markdown:
                   text: use `showDialog` to show dialog. click below button to check.
               - Button:

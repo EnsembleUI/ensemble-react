@@ -1,5 +1,28 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.16
+
+### Patch Changes
+
+- ddcc772: update bindings for MultiSelect widget
+- b93fc80: add showDialog and closeAllDialogs api
+- Updated dependencies [ddcc772]
+- Updated dependencies [b93fc80]
+  - @ensembleui/react-runtime@0.1.25
+
+## 0.0.15
+
+### Patch Changes
+
+- 044367a: added support of infinite scroll in gridview
+- Updated dependencies [044367a]
+- Updated dependencies [bca1ecf]
+- Updated dependencies [c63ab76]
+- Updated dependencies [54702bc]
+- Updated dependencies [d789ccb]
+  - @ensembleui/react-runtime@0.1.24
+  - @ensembleui/react-framework@0.1.19
+
 ## 0.0.14
 
 ### Patch Changes

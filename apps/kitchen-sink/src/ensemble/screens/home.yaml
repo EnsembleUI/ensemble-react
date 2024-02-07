@@ -14,6 +14,12 @@ View:
             text: The Kitchen Sink
         - Markdown:
             text: This application is built with Ensemble and serves as a guide for how to implement common UI patterns with Ensemble React.
+        - Button:
+            label: Say Hello!
+            onTap:
+              executeCode: |
+                // Calls a function defined in test.js
+                sayHello();
 
 Global:
-  scriptName: hello.js
+  scriptName: test.js

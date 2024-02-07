@@ -23,12 +23,11 @@ import type {
 } from "../../shared/types";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import { EnsembleRuntime } from "../../runtime";
-import type { TextStyles } from "../Text";
 import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
+import { getComponentStyles } from "../../shared/styles";
 
 export type DropdownStyles = {
-  visible?: boolean;
   dropdownBackgroundColor?: string;
   dropdownBorderRadius?: number;
   dropdownBorderColor?: string;
@@ -39,26 +38,22 @@ export type DropdownStyles = {
 } & HasBorder &
   EnsembleWidgetStyles;
 
-export type DropdownProps = {
-  label?: string;
-  hintText?: string;
-  value?: Expression<string | number>;
-  items?: SelectOption[];
-  onItemSelect: EnsembleAction;
-  autoComplete: Expression<boolean>;
-  labelStyle?: TextStyles & HasBorder;
-  hintStyle?: EnsembleWidgetStyles;
-} & EnsembleWidgetProps<DropdownStyles> &
-  HasItemTemplate & {
-    "item-template"?: { value: Expression<string> };
-  } & FormInputProps<string | number>;
-
-interface SelectOption {
+export interface SelectOption {
   label: Expression<string> | Record<string, unknown>;
   value: Expression<string | number>;
   type?: string;
   items?: SelectOption[];
 }
+
+export type DropdownProps = {
+  items?: SelectOption[];
+  onItemSelect: EnsembleAction;
+  autoComplete: Expression<boolean>;
+  hintStyle?: EnsembleWidgetStyles;
+} & EnsembleWidgetProps<DropdownStyles> &
+  HasItemTemplate & {
+    "item-template"?: { value: Expression<string> };
+  } & FormInputProps<string | number>;
 
 const Dropdown: React.FC<DropdownProps> = (props) => {
   const [selectedValue, setSelectedValue] = useState(props.value);
@@ -161,31 +156,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     <>
       <style>{`
         .${id}_input .ant-select-selector {
-          ${
-            values?.styles?.dropdownMaxHeight
-              ? `max-height: ${values.styles.dropdownMaxHeight} !important;`
-              : ""
-          }
-          ${
-            values?.styles?.dropdownBackgroundColor
-              ? `background-color: ${values.styles.dropdownBackgroundColor} !important;`
-              : ""
-          }
-          ${
-            values?.styles?.dropdownBorderRadius
-              ? `border-radius: ${values.styles.dropdownBorderRadius}px !important;`
-              : ""
-          }
-          ${
-            values?.styles?.dropdownBorderColor
-              ? `border-color: ${values.styles.dropdownBorderColor} !important;`
-              : ""
-          }
-          ${
-            values?.styles?.dropdownBorderWidth
-              ? `border-width: ${values.styles.dropdownBorderWidth}px !important;`
-              : ""
-          }
+          ${getComponentStyles("dropdown", values?.styles)}
         }
         .ant-select-item.ant-select-item-option.${id}_option[aria-selected="true"] {
           ${
@@ -254,7 +225,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             disabled={
               values?.enabled === undefined ? false : Boolean(values.enabled)
             }
-            dropdownStyle={{ ...values?.styles }}
+            dropdownStyle={values?.styles}
             id={values?.id}
             onSelect={onItemSelectCallback}
             placeholder={

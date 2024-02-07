@@ -12,6 +12,7 @@ export interface DataCellProps {
   data: unknown;
   template: DataGridRowTemplate;
   columnIndex: number;
+  rowIndex: number;
 }
 export const DataCell: React.FC<DataCellProps> = ({
   template,

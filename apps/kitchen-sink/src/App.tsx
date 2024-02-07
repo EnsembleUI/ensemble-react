@@ -11,6 +11,7 @@ import CustomWidgetsYAML from "./ensemble/screens/customWidgets.yaml";
 import HelpYAML from "./ensemble/screens/help.yaml";
 // Widgets
 import HeaderWidgetYAML from "./ensemble/widgets/Header.yaml";
+import StyledTextWidgetYAML from "./ensemble/widgets/StyledText.yaml";
 // Scripts
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
@@ -41,6 +42,11 @@ const testApp: ApplicationDTO = {
       id: "Header",
       name: "Header",
       content: String(HeaderWidgetYAML),
+    },
+    {
+      id: "StyledText",
+      name: "StyledText",
+      content: String(StyledTextWidgetYAML),
     },
   ],
   screens: [
