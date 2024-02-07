@@ -249,7 +249,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
             : undefined),
         }}
       >
-        {dataColumns.map((col, index) => {
+        {dataColumns.map((col, colIndex) => {
           return (
             <Table.Column
               dataIndex={itemTemplate.name}
