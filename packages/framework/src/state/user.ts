@@ -1,14 +1,8 @@
-import { useAtom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
-import { backingStorage } from "../hooks/useEnsembleStorage";
+import { useAtom, atom } from "jotai";
 
 export type EnsembleUser = { accessToken?: string } & Record<string, unknown>;
 
-export const userAtom = atomWithStorage<EnsembleUser>(
-  "ensemble.user",
-  {},
-  backingStorage,
-);
+export const userAtom = atom<EnsembleUser>({});
 
 export const useEnsembleUser = (): [
   EnsembleUser,

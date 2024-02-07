@@ -26,7 +26,7 @@ View:
       children:
         - Column:
             item-template:
-              data: ['foo', 'bar']
+              data: ["foo", "bar"]
               name: value
               template:
                 Column:
@@ -43,11 +43,18 @@ View:
                                 onTap:
                                   executeCode: |
                                     ${ensemble.storage.set('test', 'hello')}
+
+        - Text:
+            text: ${ensemble.user.email}
+
+        - SignInWithGoogle:
+            clientId: ${ensemble.env.googleOAuthId}
+
         - Button:
             label: click 3
             onTap:
               executeCode: |
-                ${ensemble.storage.set('test', 'hello')}                        
+                ${ensemble.storage.set('test', 'hello')}
         - Text:
             styles:
               names: heading-1
