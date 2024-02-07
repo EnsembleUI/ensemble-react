@@ -117,7 +117,7 @@ View:
                               text: ${dummyData.advocate}
                           - Icon:
                               name: Add
-                              onTap:
+                              onHover:
                                 showDialog:
                                   widget:
                                     Text:
