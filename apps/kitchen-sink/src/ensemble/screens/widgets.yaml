@@ -2,18 +2,7 @@ View:
   onLoad:
     executeCode:
       body: |-
-        console.log(ensemble.formatter.now().getDaysDifference('01/30/2024'));
-        console.log(ensemble.formatter.now().getDaysDifference('01/20/2024'));
-        console.log(ensemble.formatter.now().getDaysDifference('02/10/2024'));
-
-        console.log(ensemble.formatter.now().getMonthsDifference('01/30/2024'));
-        console.log(ensemble.formatter.now().getMonthsDifference('03/20/2024'));
-        console.log(ensemble.formatter.now().getMonthsDifference('12/10/2023'));
-
-        console.log(ensemble.formatter.now().getYearsDifference('02/30/2024'));
-        console.log(ensemble.formatter.now().getYearsDifference('01/20/2022'));
-        console.log(ensemble.formatter.now().getYearsDifference('02/10/2026'));
-        ensemble.storage.set('test', 'bye')
+        ensemble.storage.set('dataColumn', [{key1: "value", key2: 2}, {key1: "foo", key2: 3}])
 
       onComplete:
         invokeApi:
@@ -145,6 +134,34 @@ View:
                               widget:
                                 Icon:
                                   name: QuestionMark
+
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: DataGrid with item-template inside dataRow
+              - DataGrid:
+                  id: "myDataGridExample2"
+                  styles:
+                    headerStyle:
+                      backgroundColor: "white"
+                      fontSize: "12px"
+                      textColor: "#747184"
+                      hasDivider: true
+                      borderBottom: false
+                  hidePagination: true
+                  DataColumns: ${Object.keys(ensemble.storage.get('dataColumn')[0])}
+                  item-template:
+                    data: ${ensemble.storage.get('dataColumn')}
+                    name: dummyData
+                    key: ${dummyData.key}
+                    template:
+                      DataRow:
+                        item-template:
+                          data: ${Object.values(dummyData)}
+                          name: value
+                          template:
+                            Text:
+                              text: ${value}
         - Card:
             styles:
               maxWidth: unset

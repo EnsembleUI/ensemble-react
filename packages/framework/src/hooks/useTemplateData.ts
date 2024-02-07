@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { type Atom, atom, useAtomValue } from "jotai";
-import { isString, map } from "lodash-es";
+import { isString, map, merge } from "lodash-es";
 import { createBindingAtom } from "../evaluate";
 import { isExpression, type Expression } from "../shared/common";
 import { useCustomScope } from "./useCustomScope";
@@ -9,6 +9,7 @@ export type TemplateData = object | unknown[] | undefined | null;
 export interface TemplateDataProps {
   data?: Expression<TemplateData>;
   name?: string;
+  context?: unknown;
 }
 
 /**
@@ -22,6 +23,7 @@ export interface TemplateDataProps {
 export const useTemplateData = ({
   data,
   name = "data",
+  context,
 }: TemplateDataProps): {
   rawData: TemplateData;
   namedData: object[];
@@ -33,11 +35,14 @@ export const useTemplateData = ({
       return atom(data);
     }
     if (isExpression(data)) {
-      return createBindingAtom(data, customScope);
+      return createBindingAtom(data, merge({}, customScope, context));
     }
     // Support legacy case where we don't always require curly braces
-    return createBindingAtom(`\${${String(data)}}`, customScope);
-  }, [customScope, data, isDataString]);
+    return createBindingAtom(
+      `\${${String(data)}}`,
+      merge({}, customScope, context),
+    );
+  }, [customScope, data, isDataString, context]);
   const rawData = useAtomValue(dataAtom);
   const namedData = useMemo(
     () => map(rawData, (value: unknown) => ({ [name]: value })),

@@ -12,14 +12,16 @@ import {
   useCallback,
   type ReactElement,
   useState,
-  useEffect,
+  useMemo,
   useRef,
+  useEffect,
 } from "react";
-import { get } from "lodash-es";
+import { get, isArray, isString } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type {
   EnsembleWidgetProps,
   EnsembleWidgetStyles,
+  HasItemTemplate,
 } from "../../shared/types";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import { DataCell } from "./DataCell";
@@ -57,8 +59,8 @@ export interface DataGridRowTemplate {
   name: "DataRow";
   properties: {
     onTap?: EnsembleAction;
-    children: EnsembleWidget[];
-  };
+    children?: EnsembleWidget[];
+  } & HasItemTemplate;
 }
 
 export interface DataGridScrollable {
@@ -69,7 +71,7 @@ export interface DataGridScrollable {
 export type GridProps = {
   allowSelection?: boolean;
   onRowsSelected?: EnsembleAction;
-  DataColumns: DataColumn[];
+  DataColumns: Expression<DataColumn[] | string[]>;
   "item-template": {
     data: Expression<object>;
     name: string;
@@ -80,14 +82,6 @@ export type GridProps = {
   scroll?: DataGridScrollable;
   onScrollEnd?: EnsembleAction;
 } & EnsembleWidgetProps<DataGridStyles>;
-
-export interface DataGridRowTemplate {
-  name: "DataRow";
-  properties: {
-    onTap?: EnsembleAction;
-    children: EnsembleWidget[];
-  };
-}
 
 function djb2Hash(str: string): number {
   let hash = 5381;
@@ -106,12 +100,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   const [allowSelection, setAllowSelection] = useState(
     props.allowSelection ?? false,
   );
-  const {
-    "item-template": itemTemplate,
-    DataColumns,
-    onScrollEnd,
-    ...rest
-  } = props;
+  const { "item-template": itemTemplate, onScrollEnd, ...rest } = props;
   const [selectionType, setSelectionType] = useState<"checkbox" | "radio">(
     "checkbox",
   );
@@ -195,6 +184,20 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     };
   }, [rootRef, onScrollEnd, handleScrollEvent]);
 
+  // handle datagrid column list
+  const dataColumns = useMemo(() => {
+    if (values?.DataColumns && isArray(values.DataColumns)) {
+      return values.DataColumns.map((item): unknown => {
+        if (isString(item)) {
+          return { label: item };
+        }
+        return item;
+      }) as DataColumn[];
+    }
+
+    return [];
+  }, [values?.DataColumns]);
+
   return (
     <div ref={containerRef}>
       <Table
@@ -246,7 +249,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
             : undefined),
         }}
       >
-        {DataColumns.map((col, colIndex) => {
+        {dataColumns.map((col, colIndex) => {
           return (
             <Table.Column
               dataIndex={itemTemplate.name}
