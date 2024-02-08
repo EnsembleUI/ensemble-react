@@ -39,7 +39,7 @@ export const GridView: React.FC<GridViewProps> = ({
   ...rest
 }) => {
   const defaultColumnCount = 4;
-  const { id: resolvedWidgetId, values } = useRegisterBindings({
+  const { values } = useRegisterBindings({
     ...rest,
   });
   const { namedData } = useTemplateData({ data, name });
@@ -146,7 +146,7 @@ export const GridView: React.FC<GridViewProps> = ({
         }
       }
     };
-  }, [resolvedWidgetId, onScrollEnd, handleScrollEvent]);
+  }, [onScrollEnd, handleScrollEvent]);
 
   return (
     <div

@@ -198,13 +198,26 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     return [];
   }, [values?.DataColumns]);
 
+  // handle onrow click
+  const handleOnRowClick = (
+    event: React.MouseEvent<unknown>,
+    record: unknown,
+    recordIndex?: number,
+  ): void => {
+    const targetElem = event.target as HTMLElement;
+    if (targetElem.tagName !== "TD") {
+      return;
+    }
+    onTapActionCallback(record, recordIndex);
+  };
+
   return (
     <div ref={containerRef}>
       <Table
         dataSource={namedData}
         key={resolvedWidgetId}
         onRow={(record, recordIndex) => {
-          return { onClick: () => onTapActionCallback(record, recordIndex) };
+          return { onClick: (e) => handleOnRowClick(e, record, recordIndex) };
         }}
         pagination={values?.hidePagination ? false : undefined}
         ref={rootRef}
