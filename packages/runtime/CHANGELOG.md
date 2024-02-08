@@ -1,5 +1,15 @@
 # @ensembleui/react-runtime
 
+## 0.1.26
+
+### Patch Changes
+
+- 31583e0: fix progress styles
+- d55d0d2: expose useEnsembleAction hook for outer world
+- e12ddd6: added support of dynamic columns in datagrid
+- Updated dependencies [e12ddd6]
+  - @ensembleui/react-framework@0.1.20
+
 ## 0.1.25
 
 ### Patch Changes
