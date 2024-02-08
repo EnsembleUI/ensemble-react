@@ -35,7 +35,6 @@ const Progress: React.FC<ProgressProps> = (props) => {
   // Calculate the percentage based on the countdown value
   const [percent, setPercent] = useState(countdown ? 0 : -1);
   const { id, values } = useRegisterBindings({ ...props }, props.id);
-  console.log("values", values, props);
   const filledPercentage = values?.filledPercentage || 40;
 
   useEffect(() => {
