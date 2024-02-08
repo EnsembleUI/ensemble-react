@@ -1,5 +1,17 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.17
+
+### Patch Changes
+
+- 31583e0: fix progress styles
+- e12ddd6: added support of dynamic columns in datagrid
+- Updated dependencies [31583e0]
+- Updated dependencies [d55d0d2]
+- Updated dependencies [e12ddd6]
+  - @ensembleui/react-runtime@0.1.26
+  - @ensembleui/react-framework@0.1.20
+
 ## 0.0.16
 
 ### Patch Changes
