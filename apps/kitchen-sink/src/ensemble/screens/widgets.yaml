@@ -572,7 +572,37 @@ View:
                         onCollapse:
                           executeCode: |
                             console.log('HelloC', data)
-
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:
+              - Markdown:
+                  text: |
+                    ### Toggle Button
+              - ToggleButton:
+                  id: toggleButtonWidget
+                  styles:
+                    margin: '12px 0px 10px 0px'
+                    spacing: 0
+                    runSpacing: 3
+                    color: ${colors.gray['900']}
+                    borderColor: ${colors.gray['200']}
+                    backgroundColor: white
+                    selectedColor: ${colors.gray['900']}
+                    selectedBackgroundColor: ${colors.gray['100']}
+                    selectedBorderColor: ${colors.gray['200']}
+                    width: 50%
+                  value: button 1
+                  items:
+                    - label: Button 1
+                      value: button 1
+                    - label: Button 2
+                      value: button 2
+                  onChange:
+                    executeCode:
+                      body: |-
+                        console.log('toggle button changed: ' + toggleButtonWidget.value);
 API:
   getDummyProducts:
     method: GET

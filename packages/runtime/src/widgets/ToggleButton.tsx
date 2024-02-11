@@ -136,6 +136,7 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
               backgroundColor: values?.styles?.selectedBackgroundColor,
               filter: "brightness(92%)",
             },
+            ...values?.styles,
           }}
           value={item.value}
         >
