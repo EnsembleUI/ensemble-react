@@ -188,14 +188,16 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
         },
       }}
     >
-      <Collapse
-        accordion={values?.isAccordion}
-        activeKey={activeValue}
-        expandIcon={expandIcon}
-        expandIconPosition={props.expandIconPosition}
-        items={collapsibleItems}
-        onChange={handleCollapsibleChange}
-      />
+      <div onClick={(e) => e.stopPropagation()}>
+        <Collapse
+          accordion={values?.isAccordion}
+          activeKey={activeValue}
+          expandIcon={expandIcon}
+          expandIconPosition={props.expandIconPosition}
+          items={collapsibleItems}
+          onChange={handleCollapsibleChange}
+        />
+      </div>
     </ConfigProvider>
   );
 };
