@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.18
+
+### Patch Changes
+
+- 70e700d: added onHover to Icon
+- Updated dependencies [70e700d]
+  - @ensembleui/react-runtime@0.1.27
+
 ## 0.0.17
 
 ### Patch Changes
