@@ -1,5 +1,12 @@
 # @ensembleui/react-runtime
 
+## 0.1.28
+
+### Patch Changes
+
+- 36e127e: Added block of passthrough event on collapsible widget
+- 602ac3e: fixed styles for toggle button
+
 ## 0.1.27
 
 ### Patch Changes

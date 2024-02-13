@@ -1,5 +1,15 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.19
+
+### Patch Changes
+
+- 36e127e: Added block of passthrough event on collapsible widget
+- 602ac3e: fixed styles for toggle button
+- Updated dependencies [36e127e]
+- Updated dependencies [602ac3e]
+  - @ensembleui/react-runtime@0.1.28
+
 ## 0.0.18
 
 ### Patch Changes
