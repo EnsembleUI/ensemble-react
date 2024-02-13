@@ -592,7 +592,6 @@ View:
                     selectedColor: ${colors.gray['900']}
                     selectedBackgroundColor: ${colors.gray['100']}
                     selectedBorderColor: ${colors.gray['200']}
-                    width: 50%
                   value: button 1
                   items:
                     - label: Button 1
