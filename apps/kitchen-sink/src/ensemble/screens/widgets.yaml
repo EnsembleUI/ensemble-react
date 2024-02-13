@@ -546,6 +546,32 @@ View:
             styles:
               width: 300px
               justifySelf: end
+        - DataGrid:
+            DataColumns:
+              - label: Number
+              - label: Name
+            item-template:
+              data: [1, 2]
+              name: dummyData
+              template:
+                DataRow:
+                  onTap:
+                    navigateScreen:
+                      name: forms
+                  children:
+                    - Text:
+                        text: ${dummyData}
+                    - Collapsible:
+                        expandIconPosition: "end"
+                        items:
+                          - key: "2"
+                            label: Here is my label 2
+                            children:
+                              Text:
+                                text: Here is my value 2
+                        onCollapse:
+                          executeCode: |
+                            console.log('HelloC', data)
 
 API:
   getDummyProducts:
