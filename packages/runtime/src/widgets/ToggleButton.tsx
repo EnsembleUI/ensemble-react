@@ -88,14 +88,14 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
       ref={rootRef}
       className={values?.styles?.names}
       sx={{
-        display: "flex",
-        flexDirection: "row",
-        flexWrap: "wrap",
+        display: "grid",
+        gridTemplateColumns: `repeat(${structuredItems.length},1fr)`,
         rowGap: `${styles?.runSpacing ?? 0}px`,
         margin: `${styles?.margin ?? 0}`,
         ...(values?.styles?.visible === false
           ? { display: "none" }
           : undefined),
+        ...values?.styles,
       }}
       value={values?.value}
     >
