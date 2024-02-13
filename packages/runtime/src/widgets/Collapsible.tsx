@@ -188,7 +188,12 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
         },
       }}
     >
-      <div onClick={(e) => e.stopPropagation()}>
+      <div
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
+        role="button"
+        tabIndex={0}
+      >
         <Collapse
           accordion={values?.isAccordion}
           activeKey={activeValue}
