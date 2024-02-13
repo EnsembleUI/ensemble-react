@@ -21,17 +21,29 @@ export interface TabBarItem {
 }
 
 export interface TabBarStyles extends EnsembleWidgetStyles {
+  inkBarShow: boolean;
+  activeTabBackgroundColor: string;
   tabPosition: "start" | "stretch";
   tabPadding: string;
   tabFontSize: number;
   tabFontWeight: string;
+  tabNavBackgroundColor: string;
   tabBackgroundColor: string;
+  tabBorderRadius: number;
+  tabNavPadding: string;
+  tabNavBorderRadius: string;
+  tabNavBottomBorderShow: boolean;
+  tabColor: string;
   activeTabColor: string;
   dividerColor: string;
   inactiveTabColor: string;
   indicatorColor: string;
   indicatorThickness: string;
+  tabContentHolderBackgroundColor: string;
+  tabContentHolderBorderRadius: number;
+  tabContentHolderPadding: string;
 }
+
 export interface TabBarProps extends EnsembleWidgetProps<TabBarStyles> {
   id?: string;
   selectedIndex?: number;
@@ -58,9 +70,12 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
         }}
       >
         {icon ? (
-          <Icon color={icon.color} name={icon.name} size={icon.size} />
+          <>
+            <Icon color={icon.color} name={icon.name} size={icon.size} />
+            &nbsp;
+          </>
         ) : null}{" "}
-        &nbsp; {label}
+        {label}
       </div>
     );
   };
@@ -69,6 +84,7 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
     .ant-tabs-ink-bar {
       height: 5px;
       background: transparent;
+      display: ${props.styles?.inkBarShow ? "inherit" : "none"};
     }
 
     .ant-tabs-ink-bar::after {
@@ -84,15 +100,48 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
     }
 
     .ant-tabs-top > .ant-tabs-nav::before {
-      border-bottom: 1px solid ${props.styles?.dividerColor || "grey"};
+      border-bottom: ${
+        props.styles?.tabNavBottomBorderShow !== false
+          ? `1px solid ${props.styles?.dividerColor || "grey"}`
+          : "inherit"
+      };
     }
 
     .ant-tabs > .ant-tabs-nav {
-      background-color: ${props.styles?.tabBackgroundColor || "none"};
+      background-color: ${props.styles?.tabNavBackgroundColor || "none"};
+      border-radius: ${props.styles?.tabNavBorderRadius || 0}px !important;
+      padding: ${props.styles?.tabNavPadding || "inherit"};
     }
 
     .ant-tabs {
       font-weight: ${props.styles?.tabFontWeight || "normal"};
+    }
+
+    .ant-tabs-tab {
+      padding: inherit !important;
+      border-radius: ${props.styles?.tabBorderRadius || 0}px !important;
+      background: ${props.styles?.tabBackgroundColor || "inherit"} !important;
+      color: ${props.styles?.tabColor || "inherit"} !important;
+    }
+
+    .ant-tabs .ant-tabs-tab+.ant-tabs-tab {
+      margin-left: 10px !important;
+    }
+
+    .ant-tabs-tab-active {
+      background: ${
+        props.styles?.activeTabBackgroundColor || "inherit"
+      } !important;
+    }
+
+    .ant-tabs-content-holder {
+      background: ${
+        props.styles?.tabContentHolderBackgroundColor || "inherit"
+      } !important;
+      border-radius: ${
+        props.styles?.tabContentHolderBorderRadius || 0
+      }px !important;
+      padding: ${props.styles?.tabContentHolderPadding || "unset"} !important;
     }
   `;
 
@@ -102,6 +151,7 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
     }
     return props.items[0].label;
   };
+
   return (
     <ConfigProvider
       theme={{

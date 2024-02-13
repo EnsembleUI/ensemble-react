@@ -547,6 +547,29 @@ View:
               width: 300px
               justifySelf: end
 
+        - TabBar:
+            items:
+              - label: Home
+                widget:
+                  Text:
+                    text: Hello
+              - label: About
+                icon:
+                  name: HomeOutlined
+                widget:
+                  Text:
+                    text: Hello 222
+            styles:
+              tabBackgroundColor: orange
+              tabNavBackgroundColor: yellow
+              tabNavPadding: 10px 5px
+              activeTabBackgroundColor: red
+              activeTabColor: white
+              tabBorderRadius: 10
+              inkBarShow: false
+              tabContentHolderBackgroundColor: green
+              tabContentHolderBorderRadius: 10
+              tabContentHolderPadding: 10px 5px
 API:
   getDummyProducts:
     method: GET
