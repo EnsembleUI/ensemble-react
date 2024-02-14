@@ -24,6 +24,11 @@
     "tsconfig": "workspace:*",
     "turbo": "1.9.9"
   },
+  "pnpm": {
+    "overrides": {
+      "typescript": "4.9.5"
+    }
+  },
   "name": "ensemble-react",
   "packageManager": "pnpm@6.32.2",
   "workspaces": [
