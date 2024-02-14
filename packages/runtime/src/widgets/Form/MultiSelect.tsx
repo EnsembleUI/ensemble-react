@@ -135,10 +135,10 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
 
   const defaultValue = useMemo(() => {
     if (isArray(values?.value)) {
-      return values.value;
+      return values?.value;
     }
     if (isString(values?.value)) {
-      return [values.value || ""];
+      return [values?.value || ""];
     }
   }, [values?.value]);
 

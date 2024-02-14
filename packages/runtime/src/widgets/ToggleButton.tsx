@@ -139,7 +139,9 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
           }}
           value={item.value}
         >
-          {isString(item.icon?.name) && <Icon {...item.icon} />}
+          {item.icon && isString(item.icon.name) ? (
+            <Icon {...item.icon} />
+          ) : null}
           &nbsp;
           <Text text={item.label} />
         </MUIToggleButton>
