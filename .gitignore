@@ -39,3 +39,6 @@ yarn-error.log*
 .idea
 
 .firebase
+
+# schemas
+apps/preview/public/schema/react/*.json

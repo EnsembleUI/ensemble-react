@@ -11,16 +11,16 @@ import { Select as SelectComponent, Space } from "antd";
 import { get, isArray, isString } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
-import { EnsembleFormItem } from "./FormItem";
-import type { FormInputProps } from "./types";
-import type { SelectOption } from "./Dropdown";
 import type {
   EnsembleWidgetProps,
   EnsembleWidgetStyles,
-  HasBorder,
 } from "../../shared/types";
 import { EnsembleRuntime } from "../../runtime";
 import { getComponentStyles } from "../../shared/styles";
+import type { HasBorder } from "../../shared/hasSchema";
+import type { SelectOption } from "./Dropdown";
+import type { FormInputProps } from "./types";
+import { EnsembleFormItem } from "./FormItem";
 
 export type MultiSelectStyles = {
   multiSelectBackgroundColor?: string;
@@ -65,10 +65,10 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   useEffect(() => {
     if (
       values?.items &&
-      isArray(values?.items) &&
-      values?.items.every(
+      isArray(values.items) &&
+      values.items.every(
         (item) =>
-          !values?.options.some(
+          !values.options.some(
             (option) => option.value === item.value.toString(),
           ),
       )
@@ -114,12 +114,8 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
 
   const handleSearch = (value: string): void => {
     if (
-      values?.options.some(
-        (option) =>
-          option.label
-            ?.toString()
-            ?.toLowerCase()
-            ?.startsWith(value.toLowerCase()),
+      values?.options.some((option) =>
+        option.label.toString().toLowerCase().startsWith(value.toLowerCase()),
       )
     )
       setNewOption("");
@@ -144,12 +140,11 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     if (isString(values?.value)) {
       return [values?.value || ""];
     }
-    return;
   }, [values?.value]);
 
   const renderOptions = useMemo(
     () =>
-      options?.map((option) => (
+      options.map((option) => (
         <SelectComponent.Option
           className={`${id || ""}_option`}
           key={option.value}
