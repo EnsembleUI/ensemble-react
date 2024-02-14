@@ -32,7 +32,7 @@ interface ToggleButtonPropsStyles {
   selectedBorderWidth?: number;
 }
 
-type ToggleButtonProps = {
+export type ToggleButtonProps = {
   value: string;
   items:
     | string[]
@@ -83,10 +83,10 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
 
   return (
     <MUIToggleButtonGroup
+      className={values?.styles?.names}
       exclusive
       onChange={onChangeCallback}
       ref={rootRef}
-      className={values?.styles?.names}
       sx={{
         display: "grid",
         gridTemplateColumns: `repeat(${structuredItems.length},1fr)`,
@@ -139,7 +139,7 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
           }}
           value={item.value}
         >
-          {isString(item.icon?.name) && <Icon {...item.icon!} />}
+          {isString(item.icon?.name) && <Icon {...item.icon} />}
           &nbsp;
           <Text text={item.label} />
         </MUIToggleButton>

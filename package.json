@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "private": true,
   "scripts": {
     "build": "turbo run build",
@@ -6,7 +7,8 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "release": "turbo run build --filter='./packages/*' && changeset publish"
+    "release": "turbo run build --filter='./packages/*' && changeset publish",
+    "schema:generate": "ts-node --esm ./scripts/generateSchema.ts"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
@@ -14,8 +16,11 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "jest": "^27.5.1",
     "lint-staged": "^14.0.1",
+    "lodash-es": "^4.17.21",
     "prettier": "^3.0.3",
     "ts-jest": "27.1.5",
+    "ts-json-schema-generator": "^1.5.0",
+    "ts-node": "^10.9.2",
     "tsconfig": "workspace:*",
     "turbo": "1.9.9"
   },
