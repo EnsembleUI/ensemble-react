@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.1.27
+
+### Patch Changes
+
+- 70e700d: added onHover to Icon
+
 ## 0.1.26
 
 ### Patch Changes

@@ -3,4 +3,4 @@
 "@ensembleui/react-runtime": patch
 ---
 
-added onHover to Icon
+fixed styles for toggle button
