@@ -113,8 +113,20 @@ View:
                     navigateModalScreen:
                       name: Forms
                       hideCloseIcon: false
+                      hideFullScreenIcon: false
+                      title:
+                        Column:
+                          children:
+                            - Text:
+                                text: Modal Screen title
+                            - Text:
+                                text: Modal Screen subtitle
+                                styles:
+                                  fontSize: ${typography.fontSize['14']}
+                                  fontWeight: ${typography.fontWeight.light}
                       styles:
-                        height: 50%
+                        height: 300px
+                        width: 100%
         - Card:
             styles:
               maxWidth: unset
@@ -166,10 +178,9 @@ View:
                   onTap:
                     showDialog:
                       options:
-                        hideCloseIcon: false
-                        title: first modal
                         width: 600px
-                        height: 450px
+                        height: 100%
+                        position: right
                       onDialogDismiss:
                         executeCode:
                           body: |
@@ -191,7 +202,8 @@ View:
                                   onTap:
                                     showDialog:
                                       options:
-                                        horizontalOffset: -1
+                                        horizontalOffset: -0.8
+                                        height: 100%
                                       widget:
                                         Column:
                                           styles:

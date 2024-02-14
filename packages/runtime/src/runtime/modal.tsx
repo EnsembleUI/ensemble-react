@@ -4,7 +4,6 @@ import { createContext, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
-import { endsWith } from "lodash-es";
 import { CloseOutlined } from "@ant-design/icons";
 
 interface ModalProps {
@@ -55,6 +54,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
   const [modalDimensions, setModalDimensions] = useState<ModalDimensions[]>([]);
   const [isFullScreen, setIsFullScreen] = useState<boolean[]>([]);
   const contentRef = useRef<HTMLDivElement | null>(null);
+  const titleRef = useRef<HTMLDivElement | null>(null);
 
   useLayoutEffect(() => {
     if (modalState.length > 0 && !isFullScreen[isFullScreen.length - 1])
@@ -130,6 +130,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
   const getPositionSelector = (
     modalWidth: number,
     modalHeight: number,
+    isFullHeight = false,
   ): Record<string, string> => {
     return {
       top: `
@@ -138,7 +139,11 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
       `,
       right: `
         right: 0 !important;
-        top: calc(50% - ${modalHeight / 2}px) !important;
+        ${
+          isFullHeight
+            ? ""
+            : `top: calc(50% - ${modalHeight / 2}px) !important;`
+        }
       `,
       bottom: `
         bottom: 0 !important;
@@ -146,7 +151,11 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
       `,
       left: `
         left: 0 !important;
-        top: calc(50% - ${modalHeight / 2}px) !important;
+        ${
+          isFullHeight
+            ? ""
+            : `top: calc(50% - ${modalHeight / 2}px) !important;`
+        }
       `,
       center: `
         top: 50% !important;
@@ -164,6 +173,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
             ? getPositionSelector(
                 modalDimensions[index].width,
                 modalDimensions[index].height,
+                options.height?.includes("100"),
               )[options.position]
             : ""
         }
@@ -184,10 +194,20 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
       }
     `;
 
-  const getCustomStyles = (options: ModalProps, index: number): string =>
-    `
+  const getCustomStyles = (
+    options: ModalProps,
+    index: number,
+    isFullScreenActive: boolean,
+  ): string => {
+    let bodyHeight = options.height || "auto";
+    if (isFullScreenActive) bodyHeight = "100%";
+    else if (options.height?.includes("100"))
+      bodyHeight = getFullHeight(options);
+
+    return `
       .ant-modal-root .ant-modal-centered .ant-modal {
         top: unset;
+        max-width: 100%;
       }
       .ensemble-modal-${index} .ant-modal-content {
         padding: ${
@@ -200,9 +220,16 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
         } 
         ${options.showShadow === false ? "box-shadow: none !important;" : ""}
       }
+      .ensemble-modal-body-${index} {
+        height: ${bodyHeight};
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+      }
     `;
+  };
 
-  const getFullScreenStyles = (index: number): string => `
+  const getFullScreenStyles = (options: ModalProps, index: number): string => `
     .ensemble-modal-${index}.ant-modal, .ensemble-modal-${index}.ant-modal .ant-modal-content {
       height: 100vh;
       width: 100vw;
@@ -210,7 +237,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
       top: 0;
     }
     .ensemble-modal-${index} .ant-modal-body {
-      height: calc(100vh - 110px);
+      height: ${getFullHeight(options)};
     }
   `;
 
@@ -218,6 +245,18 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     color: "rgba(0, 0, 0, 0.45)",
     cursor: "pointer",
   };
+
+  const getFullHeight = (options?: ModalProps): string =>
+    `calc(100vh - ${
+      options?.title ||
+      options?.hideFullScreenIcon === false ||
+      options?.hideCloseIcon === false
+        ? // subtract title bar height (8px is its margin-bottom)
+          `8px - ${titleRef?.current?.offsetHeight || 0}`
+        : 0
+    }px - ${
+      getSumTopBottomPadding(options?.padding || "0px") // subtract content padding
+    }px)`;
 
   const getFullScreenIcon = (index: number): React.ReactNode =>
     isFullScreen[index] ? (
@@ -252,6 +291,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     options.hideFullScreenIcon === true &&
     options.hideCloseIcon === true ? null : (
       <div
+        ref={titleRef}
         style={{
           display: "flex",
           alignItems: "center",
@@ -292,10 +332,12 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
           <>
             <style>
               {isFullScreen[index]
-                ? getFullScreenStyles(index)
+                ? getFullScreenStyles(modal.options, index)
                 : getPositionStyles(modal.options, index)}
             </style>
-            <style>{getCustomStyles(modal.options, index)}</style>
+            <style>
+              {getCustomStyles(modal.options, index, isFullScreen[index])}
+            </style>
             <Modal
               centered={!isFullScreen[index]}
               className={`ensemble-modal-${index}`}
@@ -312,20 +354,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
               title={getTitleElement(modal.options, index)}
               width={modal.options.width || "auto"}
             >
-              <div
-                ref={contentRef}
-                style={{
-                  height: endsWith(modal.options.height, "%")
-                    ? `clamp(0vh, ${parseInt(
-                        modal.options.height || "0",
-                        10,
-                      )}vh, 92vh`
-                    : modal.options.height,
-                  overflowY: "auto",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
+              <div ref={contentRef} className={`ensemble-modal-body-${index}`}>
                 {modal.content}
               </div>
             </Modal>
@@ -337,3 +366,22 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     </ModalContext.Provider>
   );
 };
+
+function getSumTopBottomPadding(cssPadding: string) {
+  const paddings = cssPadding.trim().split(" ");
+
+  if (paddings.length <= 2) {
+    const paddingValue = parseInt(paddings[0], 10);
+    return paddingValue * 2;
+  } else if (paddings.length === 3) {
+    const topPadding = parseInt(paddings[0], 10);
+    const bottomPadding = parseInt(paddings[2], 10);
+    return topPadding + bottomPadding;
+  } else if (paddings.length === 4) {
+    const topPadding = parseInt(paddings[0], 10);
+    const bottomPadding = parseInt(paddings[2], 10);
+    return topPadding + bottomPadding;
+  } else {
+    return 0;
+  }
+}
