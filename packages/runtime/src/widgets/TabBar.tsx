@@ -20,6 +20,15 @@ export interface TabBarItem {
   widget: EnsembleWidget;
 }
 
+export interface TabStyles {
+  tabNavBackgroundColor: string;
+  tabBorderRadius: number;
+  tabNavPadding: string;
+  tabNavBorderRadius: string;
+  tabNavBottomBorderShow: boolean;
+  tabColor: string;
+}
+
 export interface TabBarStyles extends EnsembleWidgetStyles {
   inkBarShow: boolean;
   activeTabBackgroundColor: string;
@@ -27,13 +36,7 @@ export interface TabBarStyles extends EnsembleWidgetStyles {
   tabPadding: string;
   tabFontSize: number;
   tabFontWeight: string;
-  tabNavBackgroundColor: string;
   tabBackgroundColor: string;
-  tabBorderRadius: number;
-  tabNavPadding: string;
-  tabNavBorderRadius: string;
-  tabNavBottomBorderShow: boolean;
-  tabColor: string;
   activeTabColor: string;
   dividerColor: string;
   inactiveTabColor: string;
@@ -44,7 +47,8 @@ export interface TabBarStyles extends EnsembleWidgetStyles {
   tabContentHolderPadding: string;
 }
 
-export interface TabBarProps extends EnsembleWidgetProps<TabBarStyles> {
+export interface TabBarProps
+  extends EnsembleWidgetProps<TabBarStyles & TabStyles> {
   id?: string;
   selectedIndex?: number;
   items: TabBarItem[];
