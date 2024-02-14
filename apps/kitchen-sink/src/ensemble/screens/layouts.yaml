@@ -59,6 +59,55 @@ View:
                   widget:
                     Column:
                       children:
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+              gap: 10
+            children:
+              - Markdown:
+                  text: |
+                    ## Flow 
+                    
+                    It shows with direction **horizontal** and **vertical**
+              - Flow:
+                  styles:
+                    lineGap: 20
+                  item-template:
+                    data: ${new Array(20).fill(Math.floor(Math.random() * 100))}
+                    name: flowChild
+                    template:
+                      Column: 
+                        styles:
+                          borderColor: green
+                          padding: 6
+                          borderWidth: 1
+                          borderRadius: 12
+                        children:
+                          - Icon:
+                              name: Search
+                          - Text:
+                              text: ${"Hello" + flowChild} 
+              - Flow:
+                  styles:
+                    lineGap: 20
+                    direction:  vertical
+                  item-template:
+                    data: ${new Array(10).fill(Math.floor(Math.random() * 100))}
+                    name: flowChild
+                    template:
+                      Column: 
+                        styles:
+                          borderColor: green
+                          padding: 6
+                          borderWidth: 1
+                          borderRadius: 12
+                        children:
+                          - Icon:
+                              name: Search
+                          - Text:
+                              text: ${"Hello" + flowChild} 
+
 
   footer:
     children:
