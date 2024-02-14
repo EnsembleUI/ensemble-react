@@ -61,7 +61,8 @@ export interface ShowDialogOptions {
 }
 
 export interface ShowDialogAction {
-  widget: Record<string, unknown>;
+  widget?: Record<string, unknown>;
+  body?: Record<string, unknown>;
   options?: ShowDialogOptions;
   onDialogDismiss?: EnsembleAction;
 }
