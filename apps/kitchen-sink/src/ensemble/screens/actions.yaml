@@ -154,7 +154,7 @@ View:
                   onTap:
                     executeCode: |-
                       ensemble.showDialog({
-                        widget: {Text: {text: 'Hello World'}},
+                        body: {Text: {text: 'Hello World'}},
                         options: {
                           backgroundColor: 'aqua',
                         },
@@ -174,7 +174,7 @@ View:
                         executeCode:
                           body: |
                             console.log('Dialog 1 Dismissed');
-                      widget:
+                      body:
                         Button:
                           label: ${'Tap me to ' + showDialogText.text}
                           onTap:
