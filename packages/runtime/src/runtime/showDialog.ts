@@ -18,11 +18,11 @@ export const showDialog = (props?: ShowDialogApiProps): void => {
     return;
   }
 
-  const widget = action?.widget || action?.body || {};
+  const widget = action?.widget ?? action?.body;
 
   const content = widget?.name
     ? (cloneDeep(widget) as unknown as EnsembleWidget)
-    : unwrapWidget(cloneDeep(widget));
+    : unwrapWidget(cloneDeep(widget!));
 
   openModal?.(
     EnsembleRuntime.render([content]),

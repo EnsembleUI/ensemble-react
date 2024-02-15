@@ -40,6 +40,7 @@ export type NavigateModalScreenAction =
   | string
   | (NavigateScreenOptions & {
       maskClosable?: boolean;
+      mask?: boolean;
       hideFullScreenIcon?: boolean;
       hideCloseIcon?: boolean;
       title?: string | Record<string, unknown>;
@@ -51,6 +52,7 @@ export type NavigateScreenAction = string | NavigateScreenOptions;
 export type NavigateUrlAction = string | NavigateUrlOptions;
 
 export interface ShowDialogOptions {
+  mask?: boolean;
   minWidth?: number;
   maxWidth?: number;
   minHeight?: number;
