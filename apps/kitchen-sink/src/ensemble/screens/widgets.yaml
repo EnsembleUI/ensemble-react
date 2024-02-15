@@ -198,7 +198,7 @@ View:
                       DataRow:
                         children:
                           - Text:
-                              id: ${'x_'+dummyData}
+                              id: ${'x_'+index}
                               text: ${dummyData}
         - Card:
             styles:
