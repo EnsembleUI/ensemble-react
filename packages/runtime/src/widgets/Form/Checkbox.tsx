@@ -9,7 +9,7 @@ import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
 
 export type CheckBoxProps = {
-  trailingText?: string | Record<string, unknown>;
+  trailingText?: string | { [key: string]: unknown };
   leadingText?: string;
 } & EnsembleWidgetProps &
   FormInputProps<boolean>;

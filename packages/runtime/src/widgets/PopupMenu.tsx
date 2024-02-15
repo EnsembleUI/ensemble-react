@@ -21,7 +21,7 @@ import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { EnsembleRuntime } from "../runtime";
 
 interface PopupMenuItem {
-  label: Expression<string> | Record<string, unknown>;
+  label: Expression<string> | { [key: string]: unknown };
   value: string;
 }
 
@@ -34,7 +34,7 @@ interface PopupMenuStyles {
 export type PopupMenuProps = {
   [key: string]: unknown;
   items?: PopupMenuItem[];
-  widget?: Record<string, unknown>;
+  widget?: { [key: string]: unknown };
   onItemSelect?: EnsembleAction;
   showDivider?: boolean | Expression<string>;
 } & EnsembleWidgetProps<PopupMenuStyles> &

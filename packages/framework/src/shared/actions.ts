@@ -24,7 +24,7 @@ export interface InvokeAPIAction {
   /** Specify the API name to invoke */
   name: string;
   /** Specify the key/value pairs to pass into the API */
-  inputs?: Record<string, Expression<unknown>>;
+  inputs?: { [key: string]: Expression<unknown> };
   /** execute an Action upon successful completion of the API */
   onResponse?: EnsembleAction;
   /** execute an Action upon error */
@@ -43,12 +43,12 @@ interface NavigateScreenOptions {
   /** Specify the screen name or the screen id to navigate to */
   name: string;
   /** Specify the key/value pairs to pass into the next Screen */
-  inputs: Record<string, unknown>;
+  inputs: { [key: string]: unknown };
 }
 
 interface NavigateUrlOptions {
   url: string;
-  inputs: Record<string, unknown>;
+  inputs: { [key: string]: unknown };
 }
 
 export type NavigateModalScreenAction =
@@ -57,7 +57,7 @@ export type NavigateModalScreenAction =
       maskClosable?: boolean;
       hideFullScreenIcon?: boolean;
       hideCloseIcon?: boolean;
-      title?: string | Record<string, unknown>;
+      title?: string | { [key: string]: unknown };
       styles?: NavigateModalScreenStyles;
     });
 
@@ -76,7 +76,7 @@ export interface ShowDialogOptions {
 }
 
 export interface ShowDialogAction {
-  widget: Record<string, unknown>;
+  widget: { [key: string]: unknown };
   options?: ShowDialogOptions;
   onDialogDismiss?: EnsembleAction;
 }
@@ -101,7 +101,7 @@ export interface UploadFilesAction {
   uploadApi: string;
   files: string;
   id?: string;
-  inputs?: Record<string, unknown>;
+  inputs?: { [key: string]: unknown };
   fieldName?: string;
   onComplete?: EnsembleAction;
   onError: EnsembleAction;
