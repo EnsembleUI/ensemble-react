@@ -583,7 +583,7 @@ View:
               - ToggleButton:
                   id: toggleButtonWidget
                   styles:
-                    margin: '12px 0px 10px 0px'
+                    margin: "12px 0px 10px 0px"
                     spacing: 0
                     runSpacing: 3
                     color: ${colors.gray['900']}
@@ -602,6 +602,7 @@ View:
                     executeCode:
                       body: |-
                         console.log('toggle button changed: ' + toggleButtonWidget.value);
+
 API:
   getDummyProducts:
     method: GET
