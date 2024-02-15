@@ -47,11 +47,11 @@ export interface TabBarStyles extends EnsembleWidgetStyles {
   tabContentHolderPadding: string;
 }
 
-export interface TabBarProps
-  extends EnsembleWidgetProps<TabBarStyles & TabStyles> {
+export interface TabBarProps extends EnsembleWidgetProps<TabBarStyles> {
   id?: string;
   selectedIndex?: number;
   items: TabBarItem[];
+  tabStyles?: TabStyles;
 }
 
 export const TabBar: React.FC<TabBarProps> = (props) => {
@@ -105,16 +105,16 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
 
     .ant-tabs-top > .ant-tabs-nav::before {
       border-bottom: ${
-        props.styles?.tabNavBottomBorderShow !== false
+        props.tabStyles?.tabNavBottomBorderShow !== false
           ? `1px solid ${props.styles?.dividerColor || "grey"}`
           : "inherit"
       };
     }
 
     .ant-tabs > .ant-tabs-nav {
-      background-color: ${props.styles?.tabNavBackgroundColor || "none"};
-      border-radius: ${props.styles?.tabNavBorderRadius || 0}px !important;
-      padding: ${props.styles?.tabNavPadding || "inherit"};
+      background-color: ${props.tabStyles?.tabNavBackgroundColor || "none"};
+      border-radius: ${props.tabStyles?.tabNavBorderRadius || 0}px !important;
+      padding: ${props.tabStyles?.tabNavPadding || "inherit"};
     }
 
     .ant-tabs {
@@ -123,9 +123,9 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
 
     .ant-tabs-tab {
       padding: inherit !important;
-      border-radius: ${props.styles?.tabBorderRadius || 0}px !important;
+      border-radius: ${props.tabStyles?.tabBorderRadius || 0}px !important;
       background: ${props.styles?.tabBackgroundColor || "inherit"} !important;
-      color: ${props.styles?.tabColor || "inherit"} !important;
+      color: ${props.tabStyles?.tabColor || "inherit"} !important;
     }
 
     .ant-tabs .ant-tabs-tab+.ant-tabs-tab {
