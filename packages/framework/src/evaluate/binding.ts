@@ -8,11 +8,11 @@ import {
   createStorageApi,
   screenStorageAtom,
 } from "../hooks/useEnsembleStorage";
+import { userAtom } from "../hooks/useEnsembleUser";
 import { DateFormatter } from "../date/dateFormatter";
 import {
   themeAtom,
   envAtom,
-  userAtom,
   defaultScreenContext,
   screenDataAtom,
   screenInputAtom,
@@ -92,9 +92,7 @@ export const createBindingAtom = <T = unknown>(
             ? get(screenStorageAtom)
             : undefined,
         ),
-        user: rawJsExpression.includes("ensemble.user")
-          ? get(userAtom)
-          : undefined,
+        user: get(userAtom),
         env: rawJsExpression.includes("ensemble.env")
           ? get(envAtom)
           : undefined,

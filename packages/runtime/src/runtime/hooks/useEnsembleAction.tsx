@@ -107,7 +107,7 @@ export const useExecuteCode: EnsembleActionHook<
       )?.body;
     }
   }, [action, isCodeString, screen]);
-  const [user] = useEnsembleUser();
+  const user = useEnsembleUser();
   const appContext = useApplicationContext();
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,

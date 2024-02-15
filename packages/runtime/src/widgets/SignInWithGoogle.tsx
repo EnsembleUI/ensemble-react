@@ -2,14 +2,16 @@ import { useCallback, useMemo, useState } from "react";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import type { CredentialResponse } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
-import { useRegisterBindings } from "@ensembleui/react-framework";
-import { useEnsembleUser } from "@ensembleui/react-framework";
+import {
+  useRegisterBindings,
+  useEnsembleUser,
+} from "@ensembleui/react-framework";
 import type { EnsembleAction } from "@ensembleui/react-framework";
 import { Alert } from "antd";
 import { WidgetRegistry } from "../registry";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
-export type SignInWithGoogleProps = {
+export interface SignInWithGoogleProps {
   clientId: string;
   type?: "standard" | "icon";
   theme?: "outline" | "filled_blue" | "filled_black";
@@ -18,14 +20,14 @@ export type SignInWithGoogleProps = {
   shape?: "rectangular" | "pill" | "circle" | "square";
   onSignedIn?: EnsembleAction;
   onError?: EnsembleAction;
-};
+}
 
 export const SignInWithGoogle: React.FC<SignInWithGoogleProps> = (props) => {
   const [clientId, setClientId] = useState(props.clientId);
   const { values } = useRegisterBindings({ ...props, clientId }, undefined, {
     setClientId,
   });
-  const [user, setUser] = useEnsembleUser();
+  const user = useEnsembleUser();
   const onSignInAction = useEnsembleAction(props.onSignedIn);
   const onErrorAction = useEnsembleAction(props.onError);
 
@@ -53,13 +55,13 @@ export const SignInWithGoogle: React.FC<SignInWithGoogleProps> = (props) => {
   // handle google login resposne
   const handleSuccessfullGoogleLoginResponse = (
     credentialResponse: CredentialResponse,
-  ) => {
+  ): void => {
     if (!credentialResponse?.credential) {
       return;
     }
 
-    const userDetails = jwtDecode(credentialResponse?.credential);
-    setUser({ ...user, ...userDetails });
+    const userDetails = jwtDecode(credentialResponse.credential);
+    user.set(userDetails as Record<string, unknown>);
 
     // trigger the on sign in action
     onSignInActionCallback(userDetails);
