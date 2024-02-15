@@ -1,5 +1,35 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.19
+
+### Patch Changes
+
+- 36e127e: Added block of passthrough event on collapsible widget
+- 602ac3e: fixed styles for toggle button
+- Updated dependencies [36e127e]
+- Updated dependencies [602ac3e]
+  - @ensembleui/react-runtime@0.1.28
+
+## 0.0.18
+
+### Patch Changes
+
+- 70e700d: added onHover to Icon
+- Updated dependencies [70e700d]
+  - @ensembleui/react-runtime@0.1.27
+
+## 0.0.17
+
+### Patch Changes
+
+- 31583e0: fix progress styles
+- e12ddd6: added support of dynamic columns in datagrid
+- Updated dependencies [31583e0]
+- Updated dependencies [d55d0d2]
+- Updated dependencies [e12ddd6]
+  - @ensembleui/react-runtime@0.1.26
+  - @ensembleui/react-framework@0.1.20
+
 ## 0.0.16
 
 ### Patch Changes

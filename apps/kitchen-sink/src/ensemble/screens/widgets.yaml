@@ -3,7 +3,6 @@ View:
     executeCode:
       body: |-
         ensemble.storage.set('dataColumn', [{key1: "value", key2: 2}, {key1: "foo", key2: 3}])
-
       onComplete:
         invokeApi:
           name: getDummyNumbers
@@ -55,7 +54,6 @@ View:
             onTap:
               executeCode: |
                 ensemble.user.set({email: 'uuu'})
-
         - Text:
             styles:
               names: heading-1
@@ -114,7 +112,7 @@ View:
                               text: ${dummyData.advocate}
                           - Icon:
                               name: Add
-                              onTap:
+                              onHover:
                                 showDialog:
                                   widget:
                                     Text:
@@ -351,6 +349,37 @@ View:
               - Text:
                   styles:
                     names: heading-3
+                  text: Progress
+              - Progress:
+                  display: linear
+                  filledPercentage: 50
+                  styles:
+                    color: ${colors.primary['600']}
+                    thickness: 4
+                    backgroundColor: lime
+              - Progress:
+                  display: linear
+                  filledPercentage: 75
+                  styles:
+                    color: ${colors.primary['600']}
+                    thickness: 4
+                    backgroundColor: ${colors.light['300']}
+              - Progress:
+                  display: linear
+                  filledPercentage: 33
+                  styles:
+                    color: ${colors.primary['600']}
+                    thickness: 4
+                    backgroundColor: ${colors.light['200']}
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+              gap: 10px
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
                   text: Dropdown
               - MultiSelect:
                   label: Choose multiple
@@ -524,7 +553,62 @@ View:
             styles:
               width: 300px
               justifySelf: end
-
+        - DataGrid:
+            DataColumns:
+              - label: Number
+              - label: Name
+            item-template:
+              data: [1, 2]
+              name: dummyData
+              template:
+                DataRow:
+                  onTap:
+                    navigateScreen:
+                      name: forms
+                  children:
+                    - Text:
+                        text: ${dummyData}
+                    - Collapsible:
+                        expandIconPosition: "end"
+                        items:
+                          - key: "2"
+                            label: Here is my label 2
+                            children:
+                              Text:
+                                text: Here is my value 2
+                        onCollapse:
+                          executeCode: |
+                            console.log('HelloC', data)
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:
+              - Markdown:
+                  text: |
+                    ### Toggle Button
+              - ToggleButton:
+                  id: toggleButtonWidget
+                  styles:
+                    margin: '12px 0px 10px 0px'
+                    spacing: 0
+                    runSpacing: 3
+                    color: ${colors.gray['900']}
+                    borderColor: ${colors.gray['200']}
+                    backgroundColor: white
+                    selectedColor: ${colors.gray['900']}
+                    selectedBackgroundColor: ${colors.gray['100']}
+                    selectedBorderColor: ${colors.gray['200']}
+                  value: button 1
+                  items:
+                    - label: Button 1
+                      value: button 1
+                    - label: Button 2
+                      value: button 2
+                  onChange:
+                    executeCode:
+                      body: |-
+                        console.log('toggle button changed: ' + toggleButtonWidget.value);
 API:
   getDummyProducts:
     method: GET

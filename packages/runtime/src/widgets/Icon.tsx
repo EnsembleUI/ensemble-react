@@ -5,13 +5,14 @@ import type { IconProps } from "../shared/types";
 import { getColor, getIcon } from "../shared/styles";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
-export const Icon: React.FC<IconProps> = ({ onTap, ...props }) => {
+export const Icon: React.FC<IconProps> = ({ onTap, onHover, ...props }) => {
   const [color, setColor] = useState(props.color);
   const [name, setName] = useState(props.name);
   const [backgroundColor, setBackgroundColor] = useState(
     props.styles?.backgroundColor,
   );
   const onTapActionCallback = useEnsembleAction(onTap);
+  const onHoverActionCallback = useEnsembleAction(onHover);
 
   const { values } = useRegisterBindings(
     { ...props, color, name, backgroundColor },
@@ -30,6 +31,7 @@ export const Icon: React.FC<IconProps> = ({ onTap, ...props }) => {
     <IconComponent
       className={values?.styles?.names}
       onClick={(): unknown => onTapActionCallback?.callback()}
+      onMouseEnter={(): unknown => onHoverActionCallback?.callback()}
       sx={{
         ...values?.styles,
         color: values?.color && getColor(String(values.color)),

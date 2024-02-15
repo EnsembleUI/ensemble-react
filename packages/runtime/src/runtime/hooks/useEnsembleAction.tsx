@@ -43,6 +43,7 @@ import { navigateApi, navigateUrl } from "../navigation";
 import { locationApi } from "../locationApi";
 import { ModalContext } from "../modal";
 import { EnsembleRuntime } from "../runtime";
+import { getShowDialogOptions, showDialog } from "../showDialog";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { useNavigateModalScreen } from "./useNavigateModal";
@@ -50,9 +51,6 @@ import { useNavigateScreen } from "./useNavigateScreen";
 import { useShowToast } from "./useShowToast";
 import { useCloseAllDialogs } from "./useCloseAllDialogs";
 import { useNavigateUrl } from "./useNavigateUrl";
-// FIXME: refactor
-// eslint-disable-next-line import/no-cycle
-import { getShowDialogOptions, showDialog } from "../showDialog";
 
 export type EnsembleActionHookResult =
   | {
@@ -268,7 +266,7 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
   const callback = useCallback(
     (args: unknown) => {
       const modalOptions = getShowDialogOptions(
-        action?.options,
+        action.options,
         onDismissCallback,
       );
       const widgetBackgroundColor = get(
@@ -485,32 +483,32 @@ export const useEnsembleAction = (
   if (!action) {
     return;
   }
-  if (action.invokeApi) {
+  if ("invokeApi" in action) {
     return useInvokeApi(action.invokeApi, options);
   }
 
-  if (action.executeCode) {
+  if ("executeCode" in action) {
     return useExecuteCode(
       action.executeCode,
       options as UseExecuteCodeActionOptions,
     );
   }
-  if (action.navigateScreen) {
+  if ("navigateScreen" in action) {
     return useNavigateScreen(action.navigateScreen, options);
   }
 
-  if (action.navigateUrl) {
+  if ("navigateUrl" in action) {
     return useNavigateUrl(action.navigateUrl, options);
   }
 
-  if (action.navigateModalScreen) {
+  if ("navigateModalScreen" in action) {
     return useNavigateModalScreen(action.navigateModalScreen, options);
   }
 
-  if (action.showToast) {
+  if ("showToast" in action) {
     return useShowToast(action.showToast);
   }
-  if (action.showDialog) {
+  if ("showDialog" in action) {
     return useShowDialog(action.showDialog);
   }
 
@@ -518,10 +516,10 @@ export const useEnsembleAction = (
     return useCloseAllDialogs();
   }
 
-  if (action.pickFiles) {
+  if ("pickFiles" in action) {
     return usePickFiles(action.pickFiles);
   }
-  if (action.uploadFiles) {
+  if ("uploadFiles" in action) {
     return useUploadFiles(action.uploadFiles);
   }
 };

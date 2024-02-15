@@ -45,7 +45,7 @@ export const AppPreview: React.FC<{ db: Firestore }> = ({ db }) => {
               (screen) => screen.id === screenId,
             );
             if (matchingScreen) {
-              set(matchingScreen, "content", cachedScreen);
+              set(matchingScreen, "content", JSON.parse(cachedScreen));
             }
           }
         }
@@ -64,10 +64,20 @@ export const AppPreview: React.FC<{ db: Firestore }> = ({ db }) => {
         const msg = JSON.parse(e.data) as {
           type?: string;
           bypassCache: boolean;
+          screen?: {
+            id: string;
+            content: string;
+          };
         };
         if (msg.type === "reload") {
           setBypassCache(msg.bypassCache);
           setRefreshCount(refreshCount + 1);
+          if (msg.screen) {
+            localStorage.setItem(
+              `flutter.${msg.screen.id}`,
+              msg.screen.content,
+            );
+          }
         }
       } catch (err) {
         /* empty */

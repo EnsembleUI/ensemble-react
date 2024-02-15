@@ -34,10 +34,9 @@ const Progress: React.FC<ProgressProps> = (props) => {
   const thickness = styles?.thickness ? styles.thickness : DEFAULT_STROKE_WIDTH;
   // Calculate the percentage based on the countdown value
   const [percent, setPercent] = useState(countdown ? 0 : -1);
-  const { values } = useRegisterBindings({ ...props }, props.id);
-  const filledPercentage = values?.filledPercentage
-    ? values.filledPercentage
-    : "40%";
+  const { id, values } = useRegisterBindings({ ...props }, props.id);
+  const filledPercentage = values?.filledPercentage || 40;
+
   useEffect(() => {
     // If countdown is present and greater than 0, calculate the target percent for animation
     if (countdown && countdown > 0) {
@@ -159,11 +158,11 @@ const Progress: React.FC<ProgressProps> = (props) => {
   if (isLinear && filledPercentage) {
     return (
       <div style={{ margin: values?.styles?.margin }}>
-        <div className="loader-static" />
+        <div className={`${id} loader-static`} />
         <style>
           {`
 			/* Linear loader */
-			.loader-static {
+			.${id}.loader-static {
 			  display: block;
 			  position: relative;
 			  background-color: ${
@@ -176,7 +175,7 @@ const Progress: React.FC<ProgressProps> = (props) => {
 			  border-radius: ${values?.styles?.borderRadius ?? ""};
 			  overflow: hidden;
 			}
-			.loader-static::after {
+			.${id}.loader-static::after {
 			  content: '';
 			  width: ${filledPercentage}%;
 			  height: 100%;
@@ -193,11 +192,11 @@ const Progress: React.FC<ProgressProps> = (props) => {
   }
   return (
     <div style={{ margin: values?.styles?.margin }}>
-      <div className="loader" />
+      <div className={`${id} loader`} />
       <style>
         {`
 			/* Linear loader animation */
-			.loader {
+			.${id}.loader {
 			  display: block;
 			  position: relative;
 			  background-color: ${
@@ -210,7 +209,7 @@ const Progress: React.FC<ProgressProps> = (props) => {
 			  border-radius: ${values?.styles?.borderRadius ?? ""};
 			  overflow: hidden;
 			}
-			.loader::after {
+			.${id}.loader::after {
 			  content: '';
 			  width: 40%;
 			  height: 100%;

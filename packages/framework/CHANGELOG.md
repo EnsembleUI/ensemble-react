@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.20
+
+### Patch Changes
+
+- e12ddd6: added support of dynamic columns in datagrid
+
 ## 0.1.19
 
 ### Patch Changes

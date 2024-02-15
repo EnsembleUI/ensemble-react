@@ -17,7 +17,7 @@ type DateStyles = {
   visible?: boolean;
 } & EnsembleWidgetStyles;
 
-type DateProps = {
+export type DateProps = {
   initialValue?: Expression<string>;
   firstDate?: Expression<string>;
   lastDate?: Expression<string>;
