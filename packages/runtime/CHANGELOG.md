@@ -1,5 +1,28 @@
 # @ensembleui/react-runtime
 
+## 0.1.28
+
+### Patch Changes
+
+- 36e127e: Added block of passthrough event on collapsible widget
+- 602ac3e: fixed styles for toggle button
+
+## 0.1.27
+
+### Patch Changes
+
+- 70e700d: added onHover to Icon
+
+## 0.1.26
+
+### Patch Changes
+
+- 31583e0: fix progress styles
+- d55d0d2: expose useEnsembleAction hook for outer world
+- e12ddd6: added support of dynamic columns in datagrid
+- Updated dependencies [e12ddd6]
+  - @ensembleui/react-framework@0.1.20
+
 ## 0.1.25
 
 ### Patch Changes

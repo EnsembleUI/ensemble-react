@@ -22,6 +22,8 @@ jobs:
           cache: "pnpm"
       - name: Build Packages
         run: pnpm run build --filter=./packages
+      - name: Generate Schema
+        run: pnpm run schema:generate
       - name: Build Preview Dev
         run: pnpm run build:dev
         working-directory: ./apps/preview
