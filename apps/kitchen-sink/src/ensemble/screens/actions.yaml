@@ -114,6 +114,7 @@ View:
                       name: Forms
                       hideCloseIcon: false
                       hideFullScreenIcon: false
+                      mask: false
                       title:
                         Column:
                           children:
@@ -178,9 +179,11 @@ View:
                   onTap:
                     showDialog:
                       options:
+                        mask: false
                         width: 600px
                         height: 100%
                         position: right
+                        backgroundColor: "#f1f1f1"
                       onDialogDismiss:
                         executeCode:
                           body: |

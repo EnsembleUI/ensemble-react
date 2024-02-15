@@ -9,6 +9,7 @@ import { CloseOutlined } from "@ant-design/icons";
 interface ModalProps {
   title?: string | React.ReactNode;
   maskClosable?: boolean;
+  mask?: boolean;
   hideCloseIcon?: boolean;
   hideFullScreenIcon?: boolean;
   onClose?: () => void;
@@ -200,9 +201,11 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     isFullScreenActive: boolean,
   ): string => {
     let bodyHeight = options.height || "auto";
-    if (isFullScreenActive) bodyHeight = "100%";
-    else if (options.height?.includes("100"))
+    if (isFullScreenActive) {
+      bodyHeight = "100%";
+    } else if (options.height?.includes("100")) {
       bodyHeight = getFullHeight(options);
+    }
 
     return `
       .ant-modal-root .ant-modal-centered .ant-modal {
@@ -210,9 +213,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
         max-width: 100%;
       }
       .ensemble-modal-${index} .ant-modal-content {
-        padding: ${
-          options.padding ? options.padding : "10px 24px 24px"
-        } !important;
+        padding: ${options.padding ?? "12px"} !important;
         ${
           options.backgroundColor
             ? `background-color: ${options.backgroundColor} !important;`
@@ -344,6 +345,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
               closable={false}
               footer={null}
               key={modal.key}
+              mask={modal.options.mask}
               maskClosable={modal.options.maskClosable}
               onCancel={(): void => closeModal(index)}
               open={modal.visible}
