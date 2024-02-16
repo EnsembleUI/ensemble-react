@@ -5,6 +5,13 @@ import { createPortal } from "react-dom";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
 import { CloseOutlined } from "@ant-design/icons";
+import { getComponentStyles } from "../shared/styles";
+import {
+  ScreenContextDefinition,
+  evaluate,
+  useScreenContext,
+} from "@ensembleui/react-framework";
+import { isString } from "lodash-es";
 
 interface ModalProps {
   title?: string | React.ReactNode;
@@ -56,6 +63,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
   const [isFullScreen, setIsFullScreen] = useState<boolean[]>([]);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const titleRef = useRef<HTMLDivElement | null>(null);
+  const screen = useScreenContext();
 
   useLayoutEffect(() => {
     if (modalState.length > 0 && !isFullScreen[isFullScreen.length - 1])
@@ -90,7 +98,12 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
       {
         visible: true,
         content: newContent,
-        options: newOptions,
+        options: evaluate(
+          screen as ScreenContextDefinition,
+          (isString(newOptions) ? newOptions : JSON.stringify(newOptions))
+            // eslint-disable-next-line prefer-named-capture-group
+            ?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"),
+        ),
         key: oldModalState.length
           ? oldModalState[oldModalState.length - 1].key + 1
           : 0,
@@ -213,12 +226,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
         max-width: 100%;
       }
       .ensemble-modal-${index} .ant-modal-content {
-        padding: ${options.padding ?? "12px"} !important;
-        ${
-          options.backgroundColor
-            ? `background-color: ${options.backgroundColor} !important;`
-            : ""
-        } 
+        ${getComponentStyles("", options as React.CSSProperties)}
         ${options.showShadow === false ? "box-shadow: none !important;" : ""}
       }
       .ensemble-modal-body-${index} {
