@@ -174,16 +174,20 @@ View:
                       });
               - Markdown:
                   text: use `showDialog` to show dialog. click below button to check.
+              - Text:
+                  text: 700px
+                  id: abcText
               - Button:
                   label: Show dialog
                   onTap:
                     showDialog:
                       options:
                         mask: false
-                        width: 600px
-                        height: 100%
-                        position: right
+                        width: ${abcText.text}
+                        height: 400px
                         backgroundColor: "#f1f1f1"
+                        top: 100px
+                        right: 200px
                       onDialogDismiss:
                         executeCode:
                           body: |
