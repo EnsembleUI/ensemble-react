@@ -119,6 +119,8 @@ View:
 
                     It shows with direction **horizontal** and **vertical**
               - Flex:
+                  styles:
+                    direction: vertical
                   item-template:
                     data: ${new Array(17).fill(Math.floor(Math.random() * 100))}
                     name: flexChild
