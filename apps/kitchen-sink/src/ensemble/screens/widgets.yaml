@@ -546,6 +546,34 @@ View:
             styles:
               width: 300px
               justifySelf: end
+
+        - TabBar:
+            items:
+              - label: Home
+                widget:
+                  Text:
+                    text: Hello
+              - label: About
+                icon:
+                  name: HomeOutlined
+                widget:
+                  Text:
+                    text: Hello 222
+            tabStyles:
+              tabNavBackgroundColor: yellow
+              tabNavPadding: 10px 5px
+              tabBorderRadius: 10
+              tabBackgroundColor: orange
+              tabNavBottomBorderShow: false
+              tabNavBorderRadius: 10
+            styles:
+              activeTabBackgroundColor: red
+              activeTabColor: white
+              inkBarShow: false
+              tabContentHolderBackgroundColor: green
+              tabContentHolderBorderRadius: 10
+              tabContentHolderPadding: 10px 5px
+
         - DataGrid:
             DataColumns:
               - label: Number
@@ -583,7 +611,7 @@ View:
               - ToggleButton:
                   id: toggleButtonWidget
                   styles:
-                    margin: '12px 0px 10px 0px'
+                    margin: "12px 0px 10px 0px"
                     spacing: 0
                     runSpacing: 3
                     color: ${colors.gray['900']}
@@ -602,6 +630,7 @@ View:
                     executeCode:
                       body: |-
                         console.log('toggle button changed: ' + toggleButtonWidget.value);
+
 API:
   getDummyProducts:
     method: GET
