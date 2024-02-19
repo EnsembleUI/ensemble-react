@@ -104,6 +104,7 @@ export const getIcon = (name: string): SvgIconComponent | undefined => {
 export const getComponentStyles = (
   name: string,
   styles?: React.CSSProperties,
+  addImportant = true,
 ): string => {
   const styleNames = Object.keys(styles || {}).filter((key) =>
     key.startsWith(name),
@@ -118,7 +119,9 @@ export const getComponentStyles = (
         // eslint-disable-next-line prefer-named-capture-group
         .replace(/([a-z])([A-Z])/g, "$1-$2")
         .toLowerCase(); // convert camelCase to kebab-case
-      result += `${cssProperty}: ${styleValue} !important;`;
+      result += `${cssProperty}: ${styleValue} ${
+        addImportant ? "!important" : ""
+      };`;
     }
   });
 

@@ -11,7 +11,7 @@ import {
   evaluate,
   useScreenContext,
 } from "@ensembleui/react-framework";
-import { isString } from "lodash-es";
+import { isString, omit } from "lodash-es";
 
 interface ModalProps {
   title?: string | React.ReactNode;
@@ -94,13 +94,20 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
       ]);
     }
 
+    let stringOptions = "";
+    if (isString(newOptions)) {
+      stringOptions = newOptions;
+    } else {
+      stringOptions = JSON.stringify({ ...newOptions, title: "" });
+    }
     const evaluatedOptions = evaluate<ModalProps>(
       screen as ScreenContextDefinition,
-      (isString(newOptions) ? newOptions : JSON.stringify(newOptions))
+      stringOptions
         // eslint-disable-next-line prefer-named-capture-group
         ?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"),
       context,
     );
+    evaluatedOptions.title = newOptions.title;
 
     // add a new modal to the end of the arrays
     setModalState((oldModalState) => [
@@ -230,11 +237,12 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
         top: unset;
         max-width: 100%;
       }
-	  .ant-modal-root .ant-modal-centered{
-		text-align: inherit;
-	  }
       .ensemble-modal-${index} .ant-modal-content {
-        ${getComponentStyles("", options as React.CSSProperties)}
+        ${getComponentStyles(
+          "",
+          omit(options, ["height"]) as React.CSSProperties,
+          false,
+        )}
         ${options.showShadow === false ? "box-shadow: none !important;" : ""}
       }
       .ensemble-modal-body-${index} {
