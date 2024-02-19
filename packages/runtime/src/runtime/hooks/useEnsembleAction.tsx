@@ -289,6 +289,11 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
         </CustomScopeProvider>,
         modalOptions,
         true,
+        merge(
+          {},
+          customScope,
+          isObject(args) ? (args as CustomScope) : undefined,
+        ),
       );
     },
     [widget, onDismissCallback, action.options, openModal, customScope],
