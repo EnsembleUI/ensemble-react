@@ -36,6 +36,7 @@ interface ModalContextProps {
     content: React.ReactNode,
     options: ModalProps,
     isDialog?: boolean,
+    context?: Record<string, unknown>,
   ) => void;
   closeAllModals: () => void;
 }
@@ -80,6 +81,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     newContent: React.ReactNode,
     newOptions: ModalProps,
     isDialog = false,
+    context?: Record<string, unknown>,
   ): void => {
     if (!isDialog && modalState.length > 0) {
       // hide the last modal
@@ -92,18 +94,21 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
       ]);
     }
 
+    const evaluatedOptions = evaluate<ModalProps>(
+      screen as ScreenContextDefinition,
+      (isString(newOptions) ? newOptions : JSON.stringify(newOptions))
+        // eslint-disable-next-line prefer-named-capture-group
+        ?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"),
+      context,
+    );
+
     // add a new modal to the end of the arrays
     setModalState((oldModalState) => [
       ...oldModalState,
       {
         visible: true,
         content: newContent,
-        options: evaluate(
-          screen as ScreenContextDefinition,
-          (isString(newOptions) ? newOptions : JSON.stringify(newOptions))
-            // eslint-disable-next-line prefer-named-capture-group
-            ?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"),
-        ),
+        options: evaluatedOptions,
         key: oldModalState.length
           ? oldModalState[oldModalState.length - 1].key + 1
           : 0,
