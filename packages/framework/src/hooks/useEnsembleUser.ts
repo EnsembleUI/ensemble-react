@@ -15,21 +15,7 @@ const backingStorage = createJSONStorage<Record<string, unknown>>(
 export const userAtom = atomWithStorage<EnsembleUser>(
   "ensemble.user",
   {},
-  {
-    ...backingStorage,
-    subscribe: (key: string, callback: (value: EnsembleUser) => void) => {
-      console.log({ key });
-      const storageEventCallback = (e: StorageEvent) => {
-        if (e.key === key && e.newValue) {
-          callback(JSON.parse(e.newValue) as EnsembleUser);
-        }
-      };
-      window.addEventListener("storage", storageEventCallback);
-      return () => {
-        window.removeEventListener("storage", storageEventCallback);
-      };
-    },
-  },
+  backingStorage,
 );
 
 export const useEnsembleUser = (): EnsembleUser & EnsembleUserBuffer => {
@@ -40,6 +26,9 @@ export const useEnsembleUser = (): EnsembleUser & EnsembleUserBuffer => {
       set: (items: Record<string, unknown>): void => {
         const updatedUser = merge({}, user, items);
         setUser(updatedUser);
+      },
+      get: (key: string): unknown => {
+        return user[key];
       },
     }),
     [setUser, user],
