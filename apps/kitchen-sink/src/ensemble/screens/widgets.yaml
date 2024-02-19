@@ -105,20 +105,21 @@ View:
                               text: ${dummyData.advocate}
                           - Icon:
                               name: Add
-                              onHover:
+                              onMouseEnter:
                                 showDialog:
                                   options:
-                                    mask: true
+                                    mask: false
                                     position: absolute
-                                    top: ${location.y}
-                                    left: ${location.x}
+                                    top: ${location.y + 'px'}
+                                    left: ${(location.x + 100)+ 'px'}
                                     width: max-content
                                   widget:
                                     Column:
                                       children:
                                         - Text:
                                             text: ${location.y}
-                                    
+                              onMouseLeave:
+                                closeAllDialogs:
                           - PopupMenu:
                               showDivider: true
                               items:
@@ -639,7 +640,24 @@ View:
                     executeCode:
                       body: |-
                         console.log('toggle button changed: ' + toggleButtonWidget.value);
-
+        - Icon:
+            name: Add
+            size: 50
+            onMouseEnter:
+              showDialog:
+                options:
+                  mask: false
+                  position: absolute
+                  top: ${location.y + 'px'}
+                  left: ${(location.x + 100)+ 'px'}
+                  width: max-content
+                widget:
+                  Column:
+                    children:
+                      - Text:
+                          text: ${location.y}
+            onMouseLeave:
+              closeAllDialogs:
 API:
   getDummyProducts:
     method: GET
