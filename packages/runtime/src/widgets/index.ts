@@ -27,6 +27,8 @@ export * from "./SignInWithGoogle";
 export * from "./LoadingContainer";
 export * from "./Skeleton";
 export * from "./Collapsible";
+export * from "./FittedRow";
+export * from "./FittedColumn";
 export * from "./Flow";
 export * from "./Lottie";
 export * from "./Slider";
