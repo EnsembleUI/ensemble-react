@@ -108,9 +108,11 @@ View:
                               onHover:
                                 showDialog:
                                   options:
-                                    mask: false
+                                    mask: true
+                                    position: absolute
                                     top: ${location.y}
-                                    left: 200px
+                                    left: ${location.x}
+                                    width: max-content
                                   widget:
                                     Column:
                                       children:

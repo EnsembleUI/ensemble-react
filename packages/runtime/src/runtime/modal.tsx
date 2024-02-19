@@ -230,6 +230,9 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
         top: unset;
         max-width: 100%;
       }
+	  .ant-modal-root .ant-modal-centered{
+		text-align: inherit;
+	  }
       .ensemble-modal-${index} .ant-modal-content {
         ${getComponentStyles("", options as React.CSSProperties)}
         ${options.showShadow === false ? "box-shadow: none !important;" : ""}
