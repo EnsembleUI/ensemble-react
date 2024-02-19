@@ -27,11 +27,19 @@ export const Icon: React.FC<IconProps> = ({ onTap, onHover, ...props }) => {
   if (!IconComponent) {
     return null;
   }
+  const handleMouseEnter = (
+    event: React.MouseEvent<SVGSVGElement, MouseEvent>,
+  ) => {
+    const { clientX, clientY } = event;
+    onHoverActionCallback?.callback({
+      location: { x: `${clientX}px`, y: `${clientY}px` },
+    });
+  };
   return (
     <IconComponent
       className={values?.styles?.names}
       onClick={(): unknown => onTapActionCallback?.callback()}
-      onMouseEnter={(): unknown => onHoverActionCallback?.callback()}
+      onMouseEnter={handleMouseEnter}
       sx={{
         ...values?.styles,
         color: values?.color && getColor(String(values.color)),
