@@ -107,9 +107,16 @@ View:
                               name: Add
                               onHover:
                                 showDialog:
+                                  options:
+                                    mask: false
+                                    top: ${location.y}
+                                    left: 200px
                                   widget:
-                                    Text:
-                                      text: "Added!"
+                                    Column:
+                                      children:
+                                        - Text:
+                                            text: ${location.y}
+                                    
                           - PopupMenu:
                               showDivider: true
                               items:
