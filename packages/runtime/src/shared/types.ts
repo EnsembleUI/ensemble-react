@@ -66,5 +66,6 @@ export type IconProps = {
     margin?: number | string;
   } & HasBorder;
   onTap?: EnsembleAction;
-  onHover?: EnsembleAction;
+  onMouseEnter?: EnsembleAction;
+  onMouseLeave?: EnsembleAction;
 } & EnsembleWidgetProps;
