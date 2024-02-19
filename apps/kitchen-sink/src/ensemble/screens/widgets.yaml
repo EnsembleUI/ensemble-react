@@ -178,6 +178,8 @@ View:
                               text: ${dummyData.advocate}
                           - Icon:
                               name: Add
+                              styles:
+                                zIndex: 100000
                               onMouseEnter:
                                 showDialog:
                                   options:

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import type { IconProps } from "../shared/types";
+import { omit } from "lodash-es";
 import { getColor, getIcon } from "../shared/styles";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
@@ -68,7 +69,6 @@ export const Icon: React.FC<IconProps> = ({
             ? values.styles.backgroundColor
             : "transparent"
         }`,
-        zIndex: "100000",
         padding: `${
           values?.styles?.padding ? `${values.styles.padding}px` : "0px"
         }`,
@@ -91,6 +91,7 @@ export const Icon: React.FC<IconProps> = ({
         ...(values?.styles?.visible === false
           ? { display: "none" }
           : undefined),
+        ...omit(values?.styles, ["padding"]),
       }}
     />
   );
