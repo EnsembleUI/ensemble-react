@@ -39,7 +39,7 @@ export type DropdownStyles = {
   EnsembleWidgetStyles;
 
 export interface SelectOption {
-  label: Expression<string> | Record<string, unknown>;
+  label: Expression<string> | { [key: string]: unknown };
   value: Expression<string | number>;
   type?: string;
   items?: SelectOption[];
