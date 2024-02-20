@@ -2,11 +2,13 @@ import {
   useRegisterBindings,
   type EnsembleWidget,
 } from "@ensembleui/react-framework";
+import { omit } from "lodash-es";
 import { WidgetRegistry } from "../registry";
-import {
-  type EnsembleWidgetStyles,
-  type EnsembleWidgetProps,
-  type HasItemTemplate,
+import type {
+  EnsembleWidgetStyles,
+  EnsembleWidgetProps,
+  HasItemTemplate,
+  FlexboxStyles,
 } from "../shared/types";
 import { Column } from "./Column";
 import { Row } from "./Row";
@@ -19,28 +21,19 @@ interface FlexStyles extends EnsembleWidgetStyles {
 export type FlexProps = {
   children?: EnsembleWidget[];
 } & HasItemTemplate &
-  EnsembleWidgetProps<FlexStyles>;
+  EnsembleWidgetProps<FlexStyles & FlexboxStyles>;
 
 export const FlexWidget: React.FC<FlexProps> = (props) => {
-  const { "item-template": itemTemplate, children, ...rest } = props;
-  const { values } = useRegisterBindings({ ...rest });
+  const { values } = useRegisterBindings({
+    direction: props.styles?.direction,
+  });
 
   return (
     <>
-      {values?.styles?.direction === "vertical" ? (
-        <Column
-          item-template={itemTemplate}
-          styles={{ gap: values.styles.gap || 4 }}
-        >
-          {children}
-        </Column>
+      {values?.direction === "vertical" ? (
+        <Column {...props} styles={{ ...omit(props.styles, ["direction"]) }} />
       ) : (
-        <Row
-          item-template={itemTemplate}
-          styles={{ gap: values?.styles?.gap || 4 }}
-        >
-          {children}
-        </Row>
+        <Row {...props} styles={{ ...omit(props.styles, ["direction"]) }} />
       )}
     </>
   );
