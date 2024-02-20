@@ -42,6 +42,9 @@ export const useEnsembleUser = (): EnsembleUser & EnsembleUserBuffer => {
       set: (items: Record<string, unknown>): void => {
         const updatedUser = merge({}, user, items);
         setUser(updatedUser);
+        window.dispatchEvent(
+          new StorageEvent("storage", { key: "ensemble.user" }),
+        );
       },
       get: (key: string): unknown => {
         return user[key];
