@@ -32,3 +32,4 @@ export * from "./Lottie";
 export * from "./Slider";
 export * from "./Flex";
 export * from "./Switch";
+export * from "./Spacer";
