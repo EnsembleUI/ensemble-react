@@ -10,5 +10,6 @@ module.exports = {
         }
       }
     ]
-  }
+  },
+  ignorePatterns: ["setupTests.ts"]
 };
