@@ -23,6 +23,10 @@ View:
       styles:
         names: page
       children:
+        - Icon:
+            name: ArrowBack
+            onTap:
+              navigateBack:
         - Column:
             item-template:
               data: ["foo", "bar"]

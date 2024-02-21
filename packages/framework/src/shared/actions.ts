@@ -65,6 +65,8 @@ export type NavigateScreenAction = string | NavigateScreenOptions;
 
 export type NavigateUrlAction = string | NavigateUrlOptions;
 
+export type NavigateBackAction = null;
+
 export interface ShowDialogOptions {
   minWidth?: number;
   maxWidth?: number;
@@ -114,7 +116,7 @@ export type EnsembleAction =
       executeCode?: ExecuteCodeAction;
     }
   | { invokeApi?: InvokeAPIAction }
-  // | { navigateBack?: NavigateBack }
+  | { navigateBack?: NavigateBackAction }
   | { navigateScreen?: NavigateScreenAction }
   | { navigateModalScreen?: NavigateModalScreenAction }
   // | { navigateExternalScreen?: NavigateModalScreenAction }
