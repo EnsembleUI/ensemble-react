@@ -1,6 +1,6 @@
 View:
   onLoad:
-    invokeApi:
+    invokeAPI:
       name: getDummyProducts
       onResponse:
         executeCode:

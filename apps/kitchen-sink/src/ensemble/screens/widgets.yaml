@@ -4,7 +4,7 @@ View:
       body: |-
         ensemble.storage.set('dataColumn', [{key1: "value", key2: 2}, {key1: "foo", key2: 3}])
       onComplete:
-        invokeApi:
+        invokeAPI:
           name: getDummyNumbers
           onResponse:
             executeCode: |
@@ -186,7 +186,7 @@ View:
                     scrollHeight: 200
                   onScrollEnd:
                     # here you can add your page update logic
-                    invokeApi:
+                    invokeAPI:
                       name: getDummyNumbers
                       onResponse:
                         executeCode: |

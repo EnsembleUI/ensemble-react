@@ -177,7 +177,7 @@ export const useExecuteCode: EnsembleActionHook<
   return execute ? { callback: execute } : undefined;
 };
 
-export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
+export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const { apis, setData } = useScreenData();
   const [isComplete, setIsComplete] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>();
@@ -483,8 +483,8 @@ export const useEnsembleAction = (
   if (!action) {
     return;
   }
-  if ("invokeApi" in action) {
-    return useInvokeApi(action.invokeApi, options);
+  if ("invokeAPI" in action) {
+    return useInvokeAPI(action.invokeAPI, options);
   }
 
   if ("executeCode" in action) {

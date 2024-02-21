@@ -5,7 +5,7 @@ View:
 
   onLoad:
     executeCode: |
-      ensemble.storage.set('test', 'hello')
+      ensemble.invokoeAPI('getDummyProducts');
   body:
     Column:
       styles:
@@ -40,7 +40,7 @@ View:
               - Button:
                   label: Get Data With Inputs
                   onTap:
-                    invokeApi:
+                    invokeAPI:
                       name: getDummyProduct
                       inputs:
                         id: ${getDataInputValue.value}

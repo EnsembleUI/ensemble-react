@@ -8,7 +8,7 @@ View:
           { value: "val 3", label: "lab 3" },
         ]);
       onComplete:
-        invokeApi:
+        invokeAPI:
           name: getData
           onResponse:
             executeCode: |

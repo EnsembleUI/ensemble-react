@@ -1,6 +1,6 @@
 View:
   onLoad:
-    invokeApi:
+    invokeAPI:
       name: getDummyProducts
       inputs:
         skip: 10
@@ -36,7 +36,7 @@ View:
                     overflow: auto
                   onScrollEnd:
                     # here you can add your page update logic
-                    invokeApi:
+                    invokeAPI:
                       name: getDummyProducts
                       inputs:
                         skip: ${ensemble.storage.get('skip') + 10}
@@ -68,7 +68,7 @@ View:
               - Markdown:
                   text: |
                     ## Flow 
-                    
+
                     It shows with direction **horizontal** and **vertical**
               - Flow:
                   styles:
@@ -77,7 +77,7 @@ View:
                     data: ${new Array(20).fill(Math.floor(Math.random() * 100))}
                     name: flowChild
                     template:
-                      Column: 
+                      Column:
                         styles:
                           borderColor: green
                           padding: 6
@@ -87,16 +87,16 @@ View:
                           - Icon:
                               name: Search
                           - Text:
-                              text: ${"Hello" + flowChild} 
+                              text: ${"Hello" + flowChild}
               - Flow:
                   styles:
                     lineGap: 20
-                    direction:  vertical
+                    direction: vertical
                   item-template:
                     data: ${new Array(10).fill(Math.floor(Math.random() * 100))}
                     name: flowChild
                     template:
-                      Column: 
+                      Column:
                         styles:
                           borderColor: green
                           padding: 6
@@ -106,8 +106,7 @@ View:
                           - Icon:
                               name: Search
                           - Text:
-                              text: ${"Hello" + flowChild} 
-
+                              text: ${"Hello" + flowChild}
 
   footer:
     children:
