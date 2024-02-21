@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Slider } from "antd";
 import {
   useRegisterBindings,
@@ -17,6 +17,7 @@ export type SliderProps = {
   vertical?: boolean;
   reverse?: boolean;
   dots?: boolean;
+  divisions?: number;
 } & FormInputProps<number | number[]>;
 
 const SliderWidget: React.FC<SliderProps> = (props) => {
@@ -49,6 +50,10 @@ const SliderWidget: React.FC<SliderProps> = (props) => {
     [onCompleteAction],
   );
 
+  const steps = useMemo(() => {
+    return ((values?.max || 0) - (values?.min || 0)) / (values?.divisions || 1);
+  }, [values?.max, values?.min, values?.divisions]);
+
   const handleChange = (newValue: number): void => {
     setValue(newValue);
     onChangeActionCallback(newValue);
@@ -71,6 +76,7 @@ const SliderWidget: React.FC<SliderProps> = (props) => {
         onAfterChange={handleAfterChangeComplete}
         onChange={handleChange}
         reverse={values?.reverse}
+        step={steps}
         value={values?.value as number}
         vertical={values?.vertical}
       />
