@@ -277,6 +277,7 @@ importers:
       chartjs-plugin-datalabels: ^2.2.0
       dayjs: ^1.11.10
       eslint-config-custom: workspace:*
+      jest-canvas-mock: ^2.5.2
       jwt-decode: ^4.0.0
       lodash-es: ^4.17.21
       react-chartjs-2: ^5.2.0
@@ -306,6 +307,7 @@ importers:
       chartjs-plugin-datalabels: 2.2.0_chart.js@4.4.0
       dayjs: 1.11.10
       eslint-config-custom: link:../eslint-config-custom
+      jest-canvas-mock: 2.5.2
       jwt-decode: 4.0.0
       lodash-es: 4.17.21
       react-chartjs-2: 5.2.0_chart.js@4.4.0
@@ -6973,6 +6975,10 @@ packages:
     hasBin: true
     dev: true
 
+  /cssfontparser/1.2.1:
+    resolution: {integrity: sha512-6tun4LoZnj7VN6YeegOVb67KBX/7JJsqvj+pv3ZA7F878/eN33AbGa5b/S/wXxS/tcp8nc40xRUrsPlxIyNUPg==}
+    dev: true
+
   /cssnano-preset-default/5.2.14_postcss@8.4.29:
     resolution: {integrity: sha512-t0SFesj/ZV2OTylqQVOrFgEh5uanxbO6ZAdeCrNsUQ6fVuXwYTxJPNAGvGTxHbD68ldIJNec7PyYZDBrfDQ+6A==}
     engines: {node: ^10 || ^12 || >=14.0}
@@ -9926,6 +9932,13 @@ packages:
       minimatch: 3.1.2
     dev: true
 
+  /jest-canvas-mock/2.5.2:
+    resolution: {integrity: sha512-vgnpPupjOL6+L5oJXzxTxFrlGEIbHdZqFU+LFNdtLxZ3lRDCl17FlTMM7IatoRQkrcyOTMlDinjUguqmQ6bR2A==}
+    dependencies:
+      cssfontparser: 1.2.1
+      moo-color: 1.0.3
+    dev: true
+
   /jest-changed-files/27.5.1:
     resolution: {integrity: sha512-buBLMiByfWGCoMsLLzGUUSpAmIAGnbR2KJoMN10ziLhOLvP4e0SlypHnAel8iqQXTrcbmfEY9sSqae5sgUsTvw==}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
@@ -11417,6 +11430,12 @@ packages:
     hasBin: true
     dependencies:
       minimist: 1.2.8
+    dev: true
+
+  /moo-color/1.0.3:
+    resolution: {integrity: sha512-i/+ZKXMDf6aqYtBhuOcej71YSlbjT3wCO/4H1j8rPvxDJEifdwgg5MaFyu6iYAT8GBZJg2z0dkgK4YMzvURALQ==}
+    dependencies:
+      color-name: 1.1.4
     dev: true
 
   /mri/1.2.0:
