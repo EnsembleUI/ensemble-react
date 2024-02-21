@@ -17,15 +17,16 @@
     "*.{ts,tsx}": "eslint --fix"
   },
   "peerDependencies": {
+    "@ensembleui/react-framework": "*",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "@ensembleui/react-framework": "*"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@ant-design/icons": "^5.2.6",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@ensembleui/react-framework": "workspace:*",
+    "@lottiefiles/react-lottie-player": "^3.5.3",
     "@mui/icons-material": "^5.14.9",
     "@mui/material": "^5.14.9",
     "@mui/x-date-pickers": "^6.18.3",
