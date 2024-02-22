@@ -51,6 +51,7 @@ import { useNavigateScreen } from "./useNavigateScreen";
 import { useShowToast } from "./useShowToast";
 import { useCloseAllDialogs } from "./useCloseAllDialogs";
 import { useNavigateUrl } from "./useNavigateUrl";
+import { invokeAPI } from "../invokeApi";
 
 export type EnsembleActionHookResult =
   | {
@@ -107,6 +108,7 @@ export const useExecuteCode: EnsembleActionHook<
   }, [action, isCodeString, screen]);
   const [user] = useEnsembleUser();
   const appContext = useApplicationContext();
+  const screenData = useScreenData();
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,
   );
@@ -143,6 +145,17 @@ export const useExecuteCode: EnsembleActionHook<
                 showDialog: (dialogAction?: ShowDialogAction): void =>
                   showDialog({ action: dialogAction, openModal }),
                 closeAllDialogs: (): void => closeAllModals?.(),
+                invokeAPI: async (
+                  apiName: string,
+                  apiInputs?: Record<string, unknown>,
+                ) =>
+                  invokeAPI(
+                    screen,
+                    screenData,
+                    apiName,
+                    apiInputs,
+                    customScope,
+                  ),
               },
             },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
