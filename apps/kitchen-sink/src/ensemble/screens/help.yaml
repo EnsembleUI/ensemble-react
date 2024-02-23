@@ -2,12 +2,29 @@ View:
   header:
     title:
       Header:
-      
+
   body:
     Column:
       styles:
         names: page
       children:
+        - Row:
+            styles:
+              mainAxis: spaceBetween
+            children:
+              - Icon:
+                  name: ArrowBack
+                  onTap:
+                    executeCode: |-
+                      ensemble.navigateBack();
+              - Button:
+                  label: navigate to widgets
+                  onTap:
+                    navigateScreen:
+                      name: widgets
+                      inputs:
+                        input1: "hello"
+                        input2: "world"
         - Text:
             styles:
               names: heading-1

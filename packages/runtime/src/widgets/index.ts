@@ -29,3 +29,4 @@ export * from "./Skeleton";
 export * from "./Collapsible";
 export * from "./Flow";
 export * from "./Slider";
+export * from "./Switch";
