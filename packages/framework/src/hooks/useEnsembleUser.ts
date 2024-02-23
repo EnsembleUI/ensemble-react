@@ -3,7 +3,8 @@ import { atomWithStorage, createJSONStorage } from "jotai/utils";
 import { merge } from "lodash-es";
 import { useMemo } from "react";
 
-type EnsembleUser = { accessToken?: string } & Record<string, unknown>;
+export type EnsembleUser = { accessToken?: string } & Record<string, unknown>;
+
 type EnsembleUserBuffer = {
   set: (items: Record<string, unknown>) => void;
 };
