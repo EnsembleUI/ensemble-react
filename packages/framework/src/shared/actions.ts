@@ -113,6 +113,7 @@ export type EnsembleAction =
   | {
       executeCode?: ExecuteCodeAction;
     }
+  | { invokeApi?: InvokeAPIAction }
   | { invokeAPI?: InvokeAPIAction }
   // | { navigateBack?: NavigateBack }
   | { navigateScreen?: NavigateScreenAction }

@@ -500,6 +500,11 @@ export const useEnsembleAction = (
     return useInvokeAPI(action.invokeAPI, options);
   }
 
+  // TODO: deprecated - remove usage of "invokeApi"
+  if ("invokeApi" in action) {
+    return useInvokeAPI(action.invokeApi, options);
+  }
+
   if ("executeCode" in action) {
     return useExecuteCode(
       action.executeCode,
