@@ -1,7 +1,4 @@
-import {
-  useRegisterBindings,
-  type EnsembleWidget,
-} from "@ensembleui/react-framework";
+import { type EnsembleWidget } from "@ensembleui/react-framework";
 import { omit } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type {
@@ -24,13 +21,9 @@ export type FlexProps = {
   EnsembleWidgetProps<FlexStyles & FlexboxStyles>;
 
 export const FlexWidget: React.FC<FlexProps> = (props) => {
-  const { values } = useRegisterBindings({
-    direction: props.styles?.direction,
-  });
-
   return (
     <>
-      {values?.direction === "vertical" ? (
+      {props.styles?.direction === "vertical" ? (
         <Column {...props} styles={{ ...omit(props.styles, ["direction"]) }} />
       ) : (
         <Row {...props} styles={{ ...omit(props.styles, ["direction"]) }} />
