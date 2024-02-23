@@ -13,8 +13,8 @@ export interface LoadingContainerProps extends EnsembleWidgetProps {
   highlightColor?: Expression<string>;
   width?: Expression<number>;
   height?: Expression<number>;
-  widget: Record<string, unknown>;
-  loadingWidget?: Record<string, unknown>;
+  widget: { [key: string]: unknown };
+  loadingWidget?: { [key: string]: unknown };
 }
 
 export const LoadingContainer: React.FC<LoadingContainerProps> = (props) => {

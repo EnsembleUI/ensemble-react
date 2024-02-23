@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.1.29
+
+### Patch Changes
+
+- 32281dc: Fix bad merge erasing data grid row index
+
 ## 0.1.28
 
 ### Patch Changes

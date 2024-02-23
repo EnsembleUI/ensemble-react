@@ -17,6 +17,7 @@ export interface DataCellProps {
 export const DataCell: React.FC<DataCellProps> = ({
   template,
   columnIndex,
+  rowIndex,
   data,
 }) => {
   const { "item-template": itemTemplate, children } = template.properties;
@@ -27,7 +28,9 @@ export const DataCell: React.FC<DataCellProps> = ({
 
   if (children) {
     return (
-      <CustomScopeProvider value={data as CustomScope}>
+      <CustomScopeProvider
+        value={{ ...(data as object), index: rowIndex } as CustomScope}
+      >
         {EnsembleRuntime.render([children[columnIndex]])}
       </CustomScopeProvider>
     );
@@ -35,7 +38,14 @@ export const DataCell: React.FC<DataCellProps> = ({
 
   if (isObject(itemTemplate) && !isEmpty(namedData)) {
     return (
-      <CustomScopeProvider value={namedData[columnIndex] as CustomScope}>
+      <CustomScopeProvider
+        value={
+          {
+            ...namedData[columnIndex],
+            index: rowIndex,
+          } as CustomScope
+        }
+      >
         {EnsembleRuntime.render([itemTemplate.template])}
       </CustomScopeProvider>
     );

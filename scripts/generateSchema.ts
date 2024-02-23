@@ -13,6 +13,8 @@ const config: Config = {
 
   // current json parser chokes at $ref at the root
   topRef: false,
+  // enable this if schema docs are broken up into separate URL paths
+  encodeRefs: false,
 
   extraTags: [
     // map to custom UI rendering (e.g. Widget, Padding, ...)
@@ -33,7 +35,9 @@ const config: Config = {
 const output_path = "apps/preview/public/schema/react/ensemble_schema.json";
 
 const schema = tsj.createGenerator(config).createSchema(config.type);
-const schemaString = JSON.stringify(postProcessing(schema), null, 2);
+const schemaString = JSON.stringify(postProcessing(schema), null, 2)
+  // hack because current generator chokes on generics when generating ref
+  // .replace(/%3C/g, "<").replace(/%3E/g, ">").replace(/%2C/g, ",").replace(/%7C/g, '|');
 fs.writeFile(output_path, schemaString, (err) => {
   if (err) throw err;
 });
