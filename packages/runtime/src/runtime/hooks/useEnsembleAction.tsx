@@ -480,8 +480,8 @@ export const useNavigateBack: EnsembleActionHook<NavigateBackAction> = () => {
   const navigate = useNavigate();
 
   const callback = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
+    navigateBack(navigate);
+  }, [navigateBack, navigate]);
 
   return { callback };
 };
