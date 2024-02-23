@@ -44,7 +44,7 @@ export interface EnsembleMenuModel {
   }[];
   header?: EnsembleWidget;
   footer?: EnsembleWidget;
-  styles: Record<string, unknown>;
+  styles: { [key: string]: unknown };
 }
 
 export interface EnsembleAPIModel {
@@ -52,7 +52,7 @@ export interface EnsembleAPIModel {
   inputs?: string[];
   uri: string;
   method: "GET" | "POST" | "PUT" | "PATCH";
-  headers?: Record<string, string | number | boolean>;
+  headers?: { [key: string]: string | number | boolean };
   body?: string | object;
   onResponse?: EnsembleAction;
   onError?: EnsembleAction;
@@ -60,7 +60,7 @@ export interface EnsembleAPIModel {
 
 export interface EnsembleWidget {
   name: string;
-  properties: Record<string, unknown>;
+  properties: { [key: string]: unknown };
   key?: string;
 }
 
@@ -97,14 +97,14 @@ export interface EnsembleThemeModel {
   Tokens?: {
     Colors?: {
       primary?: string;
-    } & Record<string, string>;
-    Spacing?: Record<string, string>;
-    Animation?: Record<string, string>;
+    } & { [key: string]: string };
+    Spacing?: { [key: string]: string };
+    Animation?: { [key: string]: string };
     Typography?: {
       fontFamily?: string;
-    } & Record<string, string>;
+    } & { [key: string]: string };
   };
-  Styles?: Record<string, CSSProperties>;
+  Styles?: { [key: string]: CSSProperties };
 }
 
 export interface EnsembleScriptModel {

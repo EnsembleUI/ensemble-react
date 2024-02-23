@@ -20,9 +20,11 @@ import type {
   CarouselProps,
   TabBarProps,
   GridProps,
+  TabBarItem,
 } from "../widgets";
 import type { Menu, View } from "./screenSchema";
 import type { FlexboxProps, IconProps } from "./types";
+import type { HasChildren } from "./layoutSchema";
 
 export type Root = {
   View?: View;
@@ -33,23 +35,22 @@ export type Root = {
    * */
   Global?: string;
 } & {
-  API?: Record<string, API>;
-} & Record<string, CustomWidget>;
+  API?: { [key: string]: API };
+} & { [key: string]: CustomWidget };
 
 export interface Event {
   name: string;
-  data?: Record<string, unknown>;
+  data?: { [key: string]: unknown };
 }
 /**
  * used by the custom widgets to dispatch events that then are handled by the outside
  */
-export type CustomEvent = Record<
-  string,
-  {
+export interface CustomEvent {
+  [key: string]: {
     /** The event payload to dispatch */
-    data?: Record<string, unknown>;
-  }
->;
+    data?: { [key: string]: unknown };
+  };
+}
 // definition for a Custom Widget
 export interface CustomWidget {
   /** Execute an Action when the widget renders. This will happen after the widget's content has been initially rendered, so you may reference the widget's contents by their IDs. */
@@ -57,15 +58,15 @@ export interface CustomWidget {
   /** Define the list of input names that this widget accepts */
   inputs?: string[];
   /** Define events that this custom widget may dispatch along with their optional data */
-  events?: Record<string, unknown>;
+  events?: { [key: string]: unknown };
   /** Define the widget to render as the body */
   body?: Widget;
 }
 
 // usage of a Custom Widget as a Widget
 export interface CustomWidgetReference {
-  inputs?: Record<string, unknown>;
-  events?: Record<string, EnsembleAction>;
+  inputs?: { [key: string]: unknown };
+  events?: { [key: string]: EnsembleAction };
 }
 
 interface API {
@@ -76,11 +77,11 @@ interface API {
   /** Define the HTTP method to use */
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   /** Specify the key/value pairs to send as the request's headers */
-  headers?: Record<string, unknown>;
+  headers?: { [key: string]: unknown };
   /** Specify the key/value pairs to send along with the URL */
-  parameters?: Record<string, unknown>;
+  parameters?: { [key: string]: unknown };
   /** Specify the body to send along with the request. This can be key/value pairs or a simple text. */
-  body?: Record<string, unknown> | string;
+  body?: { [key: string]: unknown } | string;
   /** Execute an Action on the successful return of the API call (HTTP status code 200-299) */
   onResponse?: EnsembleAction;
   /** Execute an Action if the API returns an error */
@@ -141,6 +142,8 @@ export interface BaseItemTemplate {
   name: string;
 }
 
+type ReplaceChildrenTemplate<T> = Omit<T, "children" | "item-template"> &
+  HasChildren & { "item-template"?: ItemTemplate };
 /**
  * @uiType widget
  */
@@ -165,14 +168,16 @@ export type Widget =
   // | { Toggle?: Toggle }
   // | { ToggleContainer?: ToggleContainer }
   | { LoadingContainer?: LoadingContainerProps }
-  | { PopupMenu?: PopupMenuProps }
+  | {
+      PopupMenu?: ReplaceChildrenTemplate<PopupMenuProps>;
+    }
   | { TextInput?: TextInputProps }
   // | { PasswordInput?: PasswordInput }
   // | { ConfirmationInput?: ConfirmationInput }
   // | { Slider?: Slider }
   // | { Switch?: Switch }
   | { Checkbox?: CheckBoxProps }
-  | { Dropdown?: DropdownProps }
+  | { Dropdown?: ReplaceChildrenTemplate<DropdownProps> }
   // | { DateRange?: DateRange }
   | { Date?: DateProps }
   // | { Time?: Time }
@@ -184,13 +189,21 @@ export type Widget =
   | { Button?: ButtonProps }
   // | { IconButton?: IconButton }
   // | { Address?: Address }
-  | { Column?: FlexboxProps }
-  | { Row?: FlexboxProps }
-  | { Flex?: FlexboxProps }
+  | {
+      Column?: ReplaceChildrenTemplate<FlexboxProps>;
+    }
+  | {
+      Row?: ReplaceChildrenTemplate<FlexboxProps>;
+    }
+  // | { Flex?: FlexboxProps }
   // | { StaggeredGrid?: StaggeredGrid }
-  | { Form?: FormProps }
-  | { Flow?: FlexboxProps }
-  | { GridView?: GridViewProps }
+  | {
+      Form?: ReplaceChildrenTemplate<FormProps>;
+    }
+  // | { Flow?: FlexboxProps }
+  | {
+      GridView?: ReplaceChildrenTemplate<GridViewProps>;
+    }
   // | { WebView?: WebView }
   // | { Calendar?: Calendar }
   // | { Countdown?: Countdown }
@@ -198,13 +211,17 @@ export type Widget =
   // | { FittedRow?: FittedRow }
   // | { FittedColumn?: FittedColumn }
   // | { Map?: Map }
-  | { Carousel?: CarouselProps }
+  | { Carousel?: ReplaceChildrenTemplate<CarouselProps> }
   // | { Conditional?: ConditionalProps };
   // | { ListView?: ListView }
   // | { Stack?: Stack }
-  | { TabBar?: TabBarProps }
+  | {
+      TabBar?: Omit<TabBarProps, "items"> & {
+        items: (Omit<TabBarItem, "widget"> & { widget: Widget })[];
+      };
+    }
   // | { ChartJs?: ChartProps };
-  | { DataGrid?: GridProps };
+  | { DataGrid?: ReplaceChildrenTemplate<GridProps> };
 
 /** All widgets could be children of the Form and as a result can have labels etc.  */
 export interface IsFormField {
