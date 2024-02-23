@@ -179,7 +179,10 @@ View:
                           - Icon:
                               name: Add
                               styles:
-                                zIndex: 100000
+                                borderRadius: 30
+                                borderWidth: 1
+                                borderColor: black
+                                padding: 8
                               onMouseEnter:
                                 showDialog:
                                   options:

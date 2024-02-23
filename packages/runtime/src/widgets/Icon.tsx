@@ -46,13 +46,8 @@ export const Icon: React.FC<IconProps> = ({
   };
   const handleMouseLeave = (event: React.MouseEvent<SVGSVGElement>): void => {
     // Check if the mouse has left the Icon component
-    if (
-      !event.relatedTarget ||
-      !event.currentTarget.contains(event.relatedTarget as Node)
-    ) {
-      onMouseLeaveAction?.callback();
-      setIsMouseOver(false);
-    }
+    onMouseLeaveAction?.callback();
+    setIsMouseOver(false);
   };
   return (
     <IconComponent
@@ -91,7 +86,6 @@ export const Icon: React.FC<IconProps> = ({
         ...(values?.styles?.visible === false
           ? { display: "none" }
           : undefined),
-        ...omit(values?.styles, ["padding"]),
       }}
     />
   );
