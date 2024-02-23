@@ -92,7 +92,9 @@ export const createBindingAtom = <T = unknown>(
             ? get(screenStorageAtom)
             : undefined,
         ),
-        user: get(userAtom),
+        user: rawJsExpression.includes("ensemble.user")
+          ? get(userAtom)
+          : undefined,
         env: rawJsExpression.includes("ensemble.env")
           ? get(envAtom)
           : undefined,
