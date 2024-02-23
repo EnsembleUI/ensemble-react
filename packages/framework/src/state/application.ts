@@ -2,7 +2,7 @@ import { atom } from "jotai";
 import { selectAtom } from "jotai/utils";
 import { focusAtom } from "jotai-optics";
 import type { EnsembleAppModel } from "../shared";
-import type { EnsembleUser } from "../hooks";
+import type { EnsembleUser } from "./user";
 
 export interface ApplicationContextDefinition {
   application: EnsembleAppModel | null;

@@ -8,7 +8,6 @@ import {
   createStorageApi,
   screenStorageAtom,
 } from "../hooks/useEnsembleStorage";
-import { userAtom } from "../hooks/useEnsembleUser";
 import { DateFormatter } from "../date/dateFormatter";
 import {
   themeAtom,
@@ -18,6 +17,7 @@ import {
   screenInputAtom,
   widgetFamilyAtom,
   screenGlobalScriptAtom,
+  userAtom,
 } from "../state";
 import { evaluate } from "./evaluate";
 import { createEvaluationContext } from "./context";
