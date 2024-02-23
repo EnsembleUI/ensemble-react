@@ -25,6 +25,7 @@ import type {
   ShowDialogAction,
   NavigateScreenAction,
   CustomScope,
+  NavigateBackAction,
 } from "@ensembleui/react-framework";
 import {
   isEmpty,
@@ -39,7 +40,7 @@ import {
 } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { navigateApi, navigateUrl } from "../navigation";
+import { navigateApi, navigateBack, navigateUrl } from "../navigation";
 import { locationApi } from "../locationApi";
 import { ModalContext } from "../modal";
 import { EnsembleRuntime } from "../runtime";
@@ -156,6 +157,7 @@ export const useExecuteCode: EnsembleActionHook<
                     apiInputs,
                     customScope,
                   ),
+                navigateBack: (): void => navigateBack(navigate),
               },
             },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
@@ -487,6 +489,16 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
   return { callback };
 };
 
+export const useNavigateBack: EnsembleActionHook<NavigateBackAction> = () => {
+  const navigate = useNavigate();
+
+  const callback = useCallback(() => {
+    navigateBack(navigate);
+  }, [navigateBack, navigate]);
+
+  return { callback };
+};
+
 /* eslint-disable react-hooks/rules-of-hooks */
 export const useEnsembleAction = (
   action?: EnsembleAction,
@@ -521,6 +533,10 @@ export const useEnsembleAction = (
 
   if ("navigateModalScreen" in action) {
     return useNavigateModalScreen(action.navigateModalScreen, options);
+  }
+
+  if ("navigateBack" in action) {
+    return useNavigateBack(action.navigateBack);
   }
 
   if ("showToast" in action) {

@@ -23,6 +23,10 @@ View:
       styles:
         names: page
       children:
+        - Icon:
+            name: ArrowBack
+            onTap:
+              navigateBack:
         - Column:
             item-template:
               data: ["foo", "bar"]
@@ -630,6 +634,21 @@ View:
                     executeCode:
                       body: |-
                         console.log('toggle button changed: ' + toggleButtonWidget.value);
+
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+              gap: 10px
+            children:
+              - Markdown:
+                  text: |
+                    ### Switch
+              - Switch:
+                  enabled: true
+                  size: small
+                  value: true
+                  leadingText: Set to true and requred
 
 API:
   getDummyProducts:
