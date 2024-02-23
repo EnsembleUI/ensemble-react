@@ -6,10 +6,16 @@ import {
 } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import { useEnsembleAction } from "../runtime/hooks";
+import { type EnsembleWidgetProps } from "../shared/types";
 import type { FormInputProps } from "./Form/types";
 import { EnsembleFormItem } from "./Form/FormItem";
 
+interface SliderStyles {
+  maxWidth: string;
+}
+
 export type SliderProps = {
+  initialValue?: number;
   onChange?: EnsembleAction;
   onComplete?: EnsembleAction;
   min?: number;
@@ -18,7 +24,8 @@ export type SliderProps = {
   reverse?: boolean;
   dots?: boolean;
   divisions?: number;
-} & FormInputProps<number | number[]>;
+} & FormInputProps<number | number[]> &
+  EnsembleWidgetProps<SliderStyles>;
 
 const SliderWidget: React.FC<SliderProps> = (props) => {
   const [value, setValue] = useState(props.value);
@@ -64,23 +71,33 @@ const SliderWidget: React.FC<SliderProps> = (props) => {
     onCompleteActionCallback(newValue);
   };
 
+  const customStyle = `
+    .ant-slider {
+      max-width: ${values?.styles?.maxWidth || "unset"}
+    }
+  `;
+
   return (
-    <EnsembleFormItem values={values}>
-      <Slider
-        disabled={
-          values?.enabled === undefined ? false : Boolean(!values.enabled)
-        }
-        dots={values?.dots}
-        max={values?.max}
-        min={values?.min}
-        onAfterChange={handleAfterChangeComplete}
-        onChange={handleChange}
-        reverse={values?.reverse}
-        step={steps}
-        value={values?.value as number}
-        vertical={values?.vertical}
-      />
-    </EnsembleFormItem>
+    <>
+      <style>{customStyle}</style>
+      <EnsembleFormItem values={values}>
+        <Slider
+          defaultValue={values?.initialValue}
+          disabled={
+            values?.enabled === undefined ? false : Boolean(!values.enabled)
+          }
+          dots={values?.dots}
+          max={values?.max}
+          min={values?.min}
+          onAfterChange={handleAfterChangeComplete}
+          onChange={handleChange}
+          reverse={values?.reverse}
+          step={steps}
+          value={values?.value as number}
+          vertical={values?.vertical}
+        />
+      </EnsembleFormItem>
+    </>
   );
 };
 

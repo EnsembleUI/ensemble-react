@@ -640,6 +640,8 @@ View:
                   text: |
                     ### Slider
               - Slider:
+                  styles:
+                    maxWidth: unset
                   dots: true
                   min: 0
                   max: 10
