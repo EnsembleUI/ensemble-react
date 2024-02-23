@@ -167,7 +167,7 @@ export const useExecuteCode: EnsembleActionHook<
             args,
           ) as Record<string, unknown>,
         );
-        onCompleteAction?.callback({ ...customScope });
+        onCompleteAction?.callback();
         return retVal;
       } catch (e) {
         logError(e);
