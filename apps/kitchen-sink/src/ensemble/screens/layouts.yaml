@@ -68,7 +68,7 @@ View:
               - Markdown:
                   text: |
                     ## Flow 
-                    
+
                     It shows with direction **horizontal** and **vertical**
               - Flow:
                   styles:
@@ -77,7 +77,7 @@ View:
                     data: ${new Array(20).fill(Math.floor(Math.random() * 100))}
                     name: flowChild
                     template:
-                      Column: 
+                      Column:
                         styles:
                           borderColor: green
                           padding: 6
@@ -87,16 +87,16 @@ View:
                           - Icon:
                               name: Search
                           - Text:
-                              text: ${"Hello" + flowChild} 
+                              text: ${"Hello" + flowChild}
               - Flow:
                   styles:
                     lineGap: 20
-                    direction:  vertical
+                    direction: vertical
                   item-template:
                     data: ${new Array(10).fill(Math.floor(Math.random() * 100))}
                     name: flowChild
                     template:
-                      Column: 
+                      Column:
                         styles:
                           borderColor: green
                           padding: 6
@@ -106,8 +106,36 @@ View:
                           - Icon:
                               name: Search
                           - Text:
-                              text: ${"Hello" + flowChild} 
+                              text: ${"Hello" + flowChild}
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+              gap: 10
+            children:
+              - Markdown:
+                  text: |
+                    ## Flex 
 
+                    It shows with direction **horizontal** and **vertical**
+              - Flex:
+                  styles:
+                    gap: 4
+                  item-template:
+                    data: ${new Array(17).fill(Math.floor(Math.random() * 100))}
+                    name: flexChild
+                    template:
+                      Column:
+                        styles:
+                          borderColor: green
+                          padding: 6
+                          borderWidth: 1
+                          borderRadius: 12
+                        children:
+                          - Icon:
+                              name: Search
+                          - Text:
+                              text: ${"Hello" + flexChild}
 
   footer:
     children:
