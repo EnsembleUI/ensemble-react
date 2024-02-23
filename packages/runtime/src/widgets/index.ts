@@ -28,3 +28,4 @@ export * from "./LoadingContainer";
 export * from "./Skeleton";
 export * from "./Collapsible";
 export * from "./Flow";
+export * from "./Switch";

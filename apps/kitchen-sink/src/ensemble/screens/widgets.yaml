@@ -635,6 +635,21 @@ View:
                       body: |-
                         console.log('toggle button changed: ' + toggleButtonWidget.value);
 
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+              gap: 10px
+            children:
+              - Markdown:
+                  text: |
+                    ### Switch
+              - Switch:
+                  enabled: true
+                  size: small
+                  value: true
+                  leadingText: Set to true and requred
+
 API:
   getDummyProducts:
     method: GET
