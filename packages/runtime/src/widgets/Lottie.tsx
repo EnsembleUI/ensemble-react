@@ -45,32 +45,24 @@ export const Lottie: React.FC<LottieProps> = (props) => {
     },
     [completeAction],
   );
+
   const onTapCallback = useCallback(() => {
     tapAction?.callback();
   }, [tapAction]);
-  const onForwardCallback = useCallback(() => {
-    forwardAction?.callback();
-  }, [forwardAction]);
-  const onReverseCallback = useCallback(() => {
-    reverseAction?.callback();
-  }, [reverseAction]);
-  const onPauseCallback = useCallback(() => {
-    pauseAction?.callback();
-  }, [pauseAction]);
 
   const forward = useCallback(() => {
     lottieRef.current?.setPlayerDirection(1);
     lottieRef.current?.play();
-    onForwardCallback();
+    forwardAction?.callback();
   }, [lottieRef]);
   const reverse = useCallback(() => {
     lottieRef.current?.setPlayerDirection(-1);
     lottieRef.current?.play();
-    onReverseCallback();
+    reverseAction?.callback();
   }, [lottieRef]);
   const stop = useCallback(() => {
     lottieRef.current?.pause();
-    onPauseCallback();
+    pauseAction?.callback();
   }, [lottieRef]);
   const reset = useCallback(() => {
     lottieRef.current?.stop();
