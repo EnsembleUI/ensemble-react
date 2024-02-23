@@ -8,3 +8,4 @@ export * from "./useEnsembleStorage";
 export * from "./useEvaluate";
 export * from "./useStyleNames";
 export * from "./useHtmlPassThrough";
+export * from "./useEnsembleUser";

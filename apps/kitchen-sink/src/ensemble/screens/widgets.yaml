@@ -46,11 +46,18 @@ View:
                                 onTap:
                                   executeCode: |
                                     ${ensemble.storage.set('test', 'hello')}
+
+        - Text:
+            text: ${ensemble.user.email}
+
+        - SignInWithGoogle:
+            clientId: ${ensemble.env.googleOAuthId}
+
         - Button:
             label: click 3
             onTap:
               executeCode: |
-                ${ensemble.storage.set('test', 'hello')}
+                ensemble.user.set({email: 'uuu'})
         - Text:
             styles:
               names: heading-1
