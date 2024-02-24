@@ -1,17 +1,19 @@
 import { Modal } from "antd";
 import type { PropsWithChildren } from "react";
-import { createContext, useLayoutEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
 import { CloseOutlined } from "@ant-design/icons";
 import { getComponentStyles } from "../shared/styles";
-import {
-  ScreenContextDefinition,
-  evaluate,
-  useScreenContext,
-} from "@ensembleui/react-framework";
-import { isString, omit } from "lodash-es";
+import { useEvaluate } from "@ensembleui/react-framework";
+import { isEmpty, omit } from "lodash-es";
 
 interface ModalProps {
   title?: string | React.ReactNode;
@@ -64,7 +66,12 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
   const [isFullScreen, setIsFullScreen] = useState<boolean[]>([]);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const titleRef = useRef<HTMLDivElement | null>(null);
-  const screen = useScreenContext();
+  const [context, setContext] = useState<unknown>();
+  const [newContent, setNewContent] = useState<React.ReactNode>();
+  const [newOptions, setNewOptions] = useState<Record<string, unknown>>({});
+  const [isDialog, setIsDialog] = useState<boolean>(false);
+  const [isDialogSet, setIsDialogSet] = useState<boolean>(false);
+  const evaluatedOptions = useEvaluate(newOptions, { context });
 
   useLayoutEffect(() => {
     if (modalState.length > 0 && !isFullScreen[isFullScreen.length - 1])
@@ -77,13 +84,37 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
       ]);
   }, [modalState, isFullScreen, contentRef]);
 
+  useEffect(() => {
+    if (!isEmpty(evaluatedOptions) && !isDialogSet) {
+      // add a new modal to the end of the arrays
+      setModalState((oldModalState) => [
+        ...oldModalState,
+        {
+          visible: true,
+          content: newContent,
+          options: evaluatedOptions,
+          key: oldModalState.length
+            ? oldModalState[oldModalState.length - 1].key + 1
+            : 0,
+          isDialog,
+        },
+      ]);
+      setModalDimensions((oldModalDimensions) => [
+        ...oldModalDimensions,
+        { width: 0, height: 0 },
+      ]);
+      setIsFullScreen((oldIsFullScreen) => [...oldIsFullScreen, false]);
+      setIsDialogSet(true);
+    }
+  }, [evaluatedOptions, newContent, isDialogSet, newContent, isDialog]);
+
   const openModal = (
-    newContent: React.ReactNode,
-    newOptions: ModalProps,
-    isDialog = false,
-    context?: Record<string, unknown>,
+    content: React.ReactNode,
+    options: ModalProps,
+    isADialog = false,
+    modalContext?: Record<string, unknown>,
   ): void => {
-    if (!isDialog && modalState.length > 0) {
+    if (!isADialog && modalState.length > 0) {
       // hide the last modal
       setModalState((oldModalState) => [
         ...oldModalState.slice(0, -1),
@@ -92,42 +123,14 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
           visible: false,
         },
       ]);
+      return;
     }
 
-    let stringOptions = "";
-    if (isString(newOptions)) {
-      stringOptions = newOptions;
-    } else {
-      stringOptions = JSON.stringify({ ...newOptions, title: "" });
-    }
-    const evaluatedOptions = evaluate<ModalProps>(
-      screen as ScreenContextDefinition,
-      stringOptions
-        // eslint-disable-next-line prefer-named-capture-group
-        ?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"),
-      context,
-    );
-    evaluatedOptions.title = newOptions.title;
-
-    // add a new modal to the end of the arrays
-    setModalState((oldModalState) => [
-      ...oldModalState,
-      {
-        visible: true,
-        content: newContent,
-        options: evaluatedOptions,
-        key: oldModalState.length
-          ? oldModalState[oldModalState.length - 1].key + 1
-          : 0,
-        isDialog,
-      },
-    ]);
-    setModalDimensions((oldModalDimensions) => [
-      ...oldModalDimensions,
-      { width: 0, height: 0 },
-    ]);
-
-    setIsFullScreen((oldIsFullScreen) => [...oldIsFullScreen, false]);
+    setContext(modalContext);
+    setNewContent(content);
+    setNewOptions(options as Record<string, unknown>);
+    setIsDialog(isADialog);
+    setIsDialogSet(false);
   };
 
   const closeModal = (index?: number): void => {
