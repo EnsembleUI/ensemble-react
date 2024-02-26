@@ -5,7 +5,9 @@ View:
 
   onLoad:
     executeCode: |
-      ensemble.storage.set('test', 'hello')
+      ensemble.invokeAPI('getDummyProducts');
+      ensemble.storage.set('dummyId', '1');
+      ensemble.invokeAPI('getDummyProduct', {id: ensemble.storage.get('dummyId')});
   body:
     Column:
       styles:
@@ -27,12 +29,6 @@ View:
                   styles:
                     names: heading-3
                   text: Invoke API
-              - Button:
-                  label: Get Data
-                  onTap:
-                    executeCode:
-                      body: |
-                        eval(ensemble.storage.get('fnVar'));
               - TextInput:
                   id: getDataInputValue
                   label: Product ID
@@ -40,7 +36,7 @@ View:
               - Button:
                   label: Get Data With Inputs
                   onTap:
-                    invokeApi:
+                    invokeAPI:
                       name: getDummyProduct
                       inputs:
                         id: ${getDataInputValue.value}
@@ -50,6 +46,27 @@ View:
                             getDataInputValue.setValue(String(Number(getDataInputValue.value) + 1))
               - Text:
                   text: ${JSON.stringify(getDummyProduct.body)}
+              - Row:
+                  styles:
+                    gap: 8px
+                  item-template:
+                    data: getDummyProducts.body.products.slice(0, 4)
+                    name: product
+                    template:
+                      Card:
+                        styles:
+                          maxWidth: unset
+                          height: unset
+                        children:
+                          - Text:
+                              text: ${product.title}
+                          - Text:
+                              text: ${product.price}
+                          - Button:
+                              label: View
+                              onTap:
+                                executeCode: |-
+                                  ensemble.invokeAPI('getDummyProduct', {id: product.id});
         - Card:
             styles:
               maxWidth: unset
@@ -253,3 +270,6 @@ API:
     uri: https://dummyjson.com/products/${id}
     inputs:
       - id
+    onResponse:
+      executeCode: |
+        console.log(response.body);

@@ -1,8 +1,8 @@
 Widget:
-  inputs: 
+  inputs:
     - message
   onLoad:
-    executeCode:  |
+    executeCode: |
       console.log("hello from header", message);
   body:
     Row:
@@ -33,7 +33,7 @@ Widget:
                   text: ${user.firstName}
             searchKey: email
             onSearch:
-              invokeApi:
+              invokeAPI:
                 name: findUsers
                 inputs:
                   search: ${search}

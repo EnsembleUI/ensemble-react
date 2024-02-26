@@ -197,7 +197,7 @@ View:
                     scrollHeight: 200
                   onScrollEnd:
                     # here you can add your page update logic
-                    invokeApi:
+                    invokeAPI:
                       name: getDummyNumbers
                       onResponse:
                         executeCode: |

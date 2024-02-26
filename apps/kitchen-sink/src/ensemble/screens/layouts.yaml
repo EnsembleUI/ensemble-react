@@ -1,6 +1,6 @@
 View:
   onLoad:
-    invokeApi:
+    invokeAPI:
       name: getDummyProducts
       inputs:
         skip: 10
@@ -36,7 +36,7 @@ View:
                     overflow: auto
                   onScrollEnd:
                     # here you can add your page update logic
-                    invokeApi:
+                    invokeAPI:
                       name: getDummyProducts
                       inputs:
                         skip: ${ensemble.storage.get('skip') + 10}
