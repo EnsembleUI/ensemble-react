@@ -227,15 +227,8 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     options: ModalProps,
     index: number,
     isFullScreenActive: boolean,
-  ): string => {
-    let bodyHeight = options.height || "auto";
-    if (isFullScreenActive) {
-      bodyHeight = "100%";
-    } else if (options.height?.includes("100")) {
-      bodyHeight = getFullHeight(options);
-    }
-
-    return `
+  ): string =>
+    `
       .ant-modal-root .ant-modal-centered .ant-modal {
         top: unset;
         max-width: 100%;
@@ -249,23 +242,32 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
         ${options.showShadow === false ? "box-shadow: none !important;" : ""}
       }
       .ensemble-modal-${index} .ant-modal-body {
-        height: ${bodyHeight};
+        height: ${
+          isFullScreenActive || options.height?.includes("100")
+            ? `calc(100vh - ${
+                options?.title ||
+                options?.hideFullScreenIcon === false ||
+                options?.hideCloseIcon === false
+                  ? // subtract title bar height (8px is its margin-bottom)
+                    `8px - ${titleRef?.current?.offsetHeight || 0}`
+                  : 0
+              }px - ${
+                getSumTopBottomPadding(options?.padding || "0px") // subtract content padding
+              }px)`
+            : options.height || "auto"
+        };
         overflow-y: auto;
         display: flex;
         flex-direction: column;
       }
     `;
-  };
 
-  const getFullScreenStyles = (options: ModalProps, index: number): string => `
+  const getFullScreenStyles = (index: number): string => `
     .ensemble-modal-${index}.ant-modal, .ensemble-modal-${index}.ant-modal .ant-modal-content {
       height: 100vh;
       width: 100vw;
       margin: 0;
       top: 0;
-    }
-    .ensemble-modal-${index} .ant-modal-body {
-      height: ${getFullHeight(options)};
     }
   `;
 
@@ -363,7 +365,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
             </style>
             <style>
               {isFullScreen[index]
-                ? getFullScreenStyles(modal.options, index)
+                ? getFullScreenStyles(index)
                 : getPositionStyles(modal.options, index)}
             </style>
             <Modal

@@ -108,7 +108,7 @@ View:
               - Markdown:
                   text: "use `navigateModalScreen: screen_name` for navigate modal screen programmatically. click below button to check"
               - Button:
-                  label: navigateModalScreen
+                  label: navigateModalScreen 1
                   onTap:
                     navigateModalScreen:
                       name: Forms
@@ -128,6 +128,26 @@ View:
                       styles:
                         height: 100%
                         # width: 100%
+              - Button:
+                  label: navigateModalScreen 2
+                  onTap:
+                    navigateModalScreen:
+                      name: Forms
+                      hideCloseIcon: false
+                      hideFullScreenIcon: false
+                      mask: false
+                      title:
+                        Column:
+                          children:
+                            - Text:
+                                text: Modal Screen title
+                            - Text:
+                                text: Modal Screen subtitle
+                                styles:
+                                  fontSize: ${typography.fontSize['14']}
+                                  fontWeight: ${typography.fontWeight.light}
+                      styles:
+                        height: 400px
         - Card:
             styles:
               maxWidth: unset
