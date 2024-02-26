@@ -1,5 +1,22 @@
 # @ensembleui/react-runtime
 
+## 0.1.30
+
+### Patch Changes
+
+- 799597a: added switch widget
+- 1e0c49c: added slider widget
+- 8a960d6: added flex widget
+- ced5d5e: add Lottie widget
+- e15a61f: add navigateBack action
+- cc10f29: fix casing of 'invokeApi' to 'invokeAPI' and add invokeAPI in js
+- 1794552: enhance style options for tabBar
+- 1cc168b: added subscribe in useEnsembleUser
+- Updated dependencies [e15a61f]
+- Updated dependencies [cc10f29]
+- Updated dependencies [1cc168b]
+  - @ensembleui/react-framework@0.1.21
+
 ## 0.1.29
 
 ### Patch Changes
