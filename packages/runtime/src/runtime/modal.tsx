@@ -248,7 +248,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
         )}
         ${options.showShadow === false ? "box-shadow: none !important;" : ""}
       }
-      .ensemble-modal-body-${index} {
+      .ensemble-modal-${index} .ant-modal-body {
         height: ${bodyHeight};
         overflow-y: auto;
         display: flex;
@@ -359,12 +359,12 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
         const modalContent = (
           <>
             <style>
+              {getCustomStyles(modal.options, index, isFullScreen[index])}
+            </style>
+            <style>
               {isFullScreen[index]
                 ? getFullScreenStyles(modal.options, index)
                 : getPositionStyles(modal.options, index)}
-            </style>
-            <style>
-              {getCustomStyles(modal.options, index, isFullScreen[index])}
             </style>
             <Modal
               centered={!isFullScreen[index]}
@@ -383,9 +383,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
               title={getTitleElement(modal.options, index)}
               width={modal.options.width || "auto"}
             >
-              <div ref={contentRef} className={`ensemble-modal-body-${index}`}>
-                {modal.content}
-              </div>
+              <div ref={contentRef}>{modal.content}</div>
             </Modal>
           </>
         );
