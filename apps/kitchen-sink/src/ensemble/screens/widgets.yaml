@@ -46,11 +46,18 @@ View:
                                 onTap:
                                   executeCode: |
                                     ${ensemble.storage.set('test', 'hello')}
+
+        - Text:
+            text: ${ensemble.user.email}
+
+        - SignInWithGoogle:
+            clientId: ${ensemble.env.googleOAuthId}
+
         - Button:
             label: click 3
             onTap:
               executeCode: |
-                ${ensemble.storage.set('test', 'hello')}
+                ensemble.user.set({email: 'uuu'})
         - Text:
             styles:
               names: heading-1
@@ -639,6 +646,23 @@ View:
             styles:
               maxWidth: unset
               width: unset
+            children:
+              - Markdown:
+                  text: |
+                    ### Slider
+              - Slider:
+                  styles:
+                    maxWidth: unset
+                  dots: true
+                  min: 0
+                  max: 10
+                  value: 2
+                  divisions: 10
+
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
               gap: 10px
             children:
               - Markdown:
@@ -649,6 +673,7 @@ View:
                   size: small
                   value: true
                   leadingText: Set to true and requred
+
 
 API:
   getDummyProducts:

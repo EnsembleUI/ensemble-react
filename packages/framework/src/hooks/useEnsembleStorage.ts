@@ -9,7 +9,7 @@ export interface EnsembleStorage {
   delete: (key: string) => unknown;
 }
 
-export const backingStorage = createJSONStorage<Record<string, unknown>>(
+const backingStorage = createJSONStorage<Record<string, unknown>>(
   () => sessionStorage,
 );
 
