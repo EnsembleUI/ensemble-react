@@ -736,6 +736,33 @@ View:
                   value: true
                   leadingText: Set to true and requred
 
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+              gap: 10px
+            children:
+              - Markdown:
+                  text: |
+                    ### Image Cropper
+              - ImageCropper:
+                  id: imageCropper
+                  source: https://ensembleui.com/assets/images/hero_social.jpg
+                  styles:
+                    shape: round
+                    strokeColor: red
+                    strokeWidth: 2px
+
+              - Button:
+                  label: Rotate clockwise
+                  onTap:
+                    executeCode: |
+                      imageCropper.setRotate(imageCropper.rotate + 90)
+              - Button:
+                  label: Rotate anti-clockwise
+                  onTap:
+                    executeCode: |
+                      imageCropper.setRotate(imageCropper.rotate - 90)
 
 API:
   getDummyProducts:
