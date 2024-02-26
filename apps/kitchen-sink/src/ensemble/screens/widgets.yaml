@@ -548,6 +548,9 @@ View:
               justifySelf: end
         - DateRange:
             id: dateRange1
+            enabled: true
+            suffixIcon:
+              name: HomeOutlined
             onChange:
               executeCode:
                 body: |-

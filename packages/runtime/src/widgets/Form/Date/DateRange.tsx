@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { ReactNode, useCallback, useState } from "react";
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
 import {
@@ -9,9 +9,10 @@ import {
 import { WidgetRegistry } from "../../../registry";
 import { EnsembleFormItem } from "../FormItem";
 import { type FormInputProps } from "../types";
-import { type EnsembleWidgetProps } from "../../../shared/types";
+import type { IconProps, EnsembleWidgetProps } from "../../../shared/types";
 import { useEnsembleAction } from "../../../runtime/hooks/useEnsembleAction";
 import { DateDisplayFormat } from "./utils/DateConstants";
+import { Icon } from "../../Icon";
 
 interface ShowTimeProps {
   hideDisabledOptions: boolean;
@@ -20,11 +21,10 @@ interface ShowTimeProps {
 type DateRangeProps = {
   fromDate?: Expression<string>;
   toDate?: Expression<string>;
-  fromHintText?: Expression<string>;
-  toHintText?: Expression<string>;
   onChange?: EnsembleAction;
   showCalendarIcon?: boolean;
   showTime?: ShowTimeProps | boolean;
+  suffixIcon?: IconProps;
 } & FormInputProps<string> &
   EnsembleWidgetProps;
 
@@ -70,6 +70,19 @@ export const DateRange: React.FC<DateRangeProps> = (props) => {
     onChangeActionCallback([formattedStartDate, formattedEndDate]);
   };
 
+  // tweak the collapsible icons
+  const suffixIcon = () => {
+    if (values?.showCalendarIcon === false) {
+      return false;
+    }
+
+    if (values?.suffixIcon) {
+      return (<Icon {...values.suffixIcon} />) as ReactNode;
+    }
+
+    return false;
+  };
+
   return (
     <EnsembleFormItem initialValue={undefined} values={values}>
       <RangePicker
@@ -79,16 +92,11 @@ export const DateRange: React.FC<DateRangeProps> = (props) => {
         ]}
         disabled={values?.enabled === false}
         onChange={onDateRangeChange}
-        placeholder={[
-          values?.fromHintText ? values.fromHintText : "Start date",
-          values?.toHintText ? values.toHintText : "End date",
-        ]}
+        placeholder={[values?.hintText ? values.hintText : "Start date", ""]}
         showTime={values?.showTime}
+        suffixIcon={suffixIcon()}
         style={{ width: "100%", ...values?.styles }}
         value={[dayjs(values?.fromValue), dayjs(values?.toValue)]}
-        {...(values?.showCalendarIcon === false
-          ? { suffixIcon: false }
-          : undefined)}
       />
     </EnsembleFormItem>
   );
