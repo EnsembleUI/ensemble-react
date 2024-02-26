@@ -33,7 +33,7 @@ export type BaseTextProps = {
   textAlign?: string;
 } & EnsembleWidgetProps;
 
-export interface FlexboxStyles<IsFitted> {
+export interface FlexboxStyles {
   mainAxis?: string;
   crossAxis?: string;
   gap?: number;
@@ -42,10 +42,9 @@ export interface FlexboxStyles<IsFitted> {
   maxWidth?: string;
   minWidth?: string;
   visible?: boolean;
-  childrenFits?: IsFitted extends true ? string[] : never;
 }
 
-export type FlexboxProps<IsFitted = false> = {
+export type FlexboxProps = {
   "item-template"?: {
     data: Expression<TemplateData>;
     name: string;
@@ -53,9 +52,9 @@ export type FlexboxProps<IsFitted = false> = {
   };
   onTap?: EnsembleAction;
   children?: EnsembleWidget[];
-} & FlexboxStyles<IsFitted> &
+} & FlexboxStyles &
   HasBorder &
-  EnsembleWidgetProps<FlexboxStyles<IsFitted> & EnsembleWidgetStyles>;
+  EnsembleWidgetProps<FlexboxStyles & EnsembleWidgetStyles>;
 
 export type IconProps = {
   name: Expression<string>;

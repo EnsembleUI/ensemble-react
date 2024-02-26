@@ -47,6 +47,9 @@ View:
               names: heading-3
             text: FittedRow
         - FittedRow:
+            onTap:
+              executeCode: |
+                console.log('FittedRow')
             styles: { childrenFits: [10, 1, 4], crossAxis: center, padding: 12 }
             children:
               - Markdown:
