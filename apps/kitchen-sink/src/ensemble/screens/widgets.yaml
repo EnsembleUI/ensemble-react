@@ -27,6 +27,68 @@ View:
             name: ArrowBack
             onTap:
               navigateBack:
+        - Lottie:
+            id: MyLottie
+            source: https://lottie.host/3568da34-6083-42fc-a254-74d9c1e15b2f/wcVmO2igxm.json
+            # source: /images/lottie1.json
+            repeat: false
+            autoPlay: true
+            styles:
+              margin: 20px
+              height: 200px
+            onTap:
+              executeCode: |-
+                console.log("Tapped");
+            onForward:
+              executeCode: |-
+                console.log("Forwarded");
+            onReverse:
+              executeCode: |-
+                console.log("Reversed");
+            onPause:
+              executeCode: |-
+                console.log("Paused");
+            onComplete:
+              executeCode: |-
+                console.log("Completed");
+
+        - Row:
+            styles:
+              gap: 8
+            children:
+              - Button:
+                  styles:
+                    borderRadius: 20
+                  label: Forward
+                  onTap:
+                    executeCode: |-
+                      console.log("Forward");
+                      MyLottie.forward();
+              - Button:
+                  styles:
+                    borderRadius: 20
+                  label: Reverse
+                  onTap:
+                    executeCode: |-
+                      console.log("Reverse");
+                      MyLottie.reverse();
+              - Button:
+                  styles:
+                    borderRadius: 20
+                  label: Reset
+                  onTap:
+                    executeCode: |-
+                      console.log("Reset");
+                      MyLottie.reset();
+              - Button:
+                  styles:
+                    borderRadius: 20
+                  label: Stop
+                  onTap:
+                    executeCode: |-
+                      console.log("Stop");
+                      MyLottie.stop();
+
         - Column:
             item-template:
               data: ["foo", "bar"]

@@ -28,6 +28,7 @@ export * from "./LoadingContainer";
 export * from "./Skeleton";
 export * from "./Collapsible";
 export * from "./Flow";
+export * from "./Lottie";
 export * from "./Slider";
 export * from "./Flex";
 export * from "./Switch";
