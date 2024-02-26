@@ -51,6 +51,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
           createCustomWidget(customWidget),
         );
       });
+
       setApp(parsedApp);
     };
     if (application) {
@@ -88,7 +89,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
                 children: app.screens.map((screen) => {
                   const screenPath = screen.name.toLowerCase();
                   return {
-                    path: `${screenPath}`,
+                    path: screen.path ? screen.path : `${screenPath}`,
                     element: (
                       <EnsembleScreen key={screenPath} screen={screen} />
                     ),

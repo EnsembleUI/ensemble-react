@@ -12,6 +12,7 @@ export interface EnsembleScreenModel {
   id: string;
   name: string;
   body: EnsembleWidget;
+  path?: string;
   onLoad?: EnsembleAction;
   header?: EnsembleHeaderModel;
   footer?: EnsembleFooterModel;
