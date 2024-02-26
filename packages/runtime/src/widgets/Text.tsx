@@ -30,6 +30,7 @@ export const Text: React.FC<TextProps> = (props) => {
       setColor,
     },
   );
+
   return (
     <Typography.Text
       className={values?.styles?.names}

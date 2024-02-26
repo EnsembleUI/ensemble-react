@@ -52,6 +52,7 @@ import { useNavigateScreen } from "./useNavigateScreen";
 import { useShowToast } from "./useShowToast";
 import { useCloseAllDialogs } from "./useCloseAllDialogs";
 import { useNavigateUrl } from "./useNavigateUrl";
+import { invokeAPI } from "../invokeApi";
 
 export type EnsembleActionHookResult =
   | {
@@ -106,8 +107,9 @@ export const useExecuteCode: EnsembleActionHook<
       )?.body;
     }
   }, [action, isCodeString, screen]);
-  const [user] = useEnsembleUser();
+  const user = useEnsembleUser();
   const appContext = useApplicationContext();
+  const screenData = useScreenData();
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,
   );
@@ -144,6 +146,17 @@ export const useExecuteCode: EnsembleActionHook<
                 showDialog: (dialogAction?: ShowDialogAction): void =>
                   showDialog({ action: dialogAction, openModal }),
                 closeAllDialogs: (): void => closeAllModals?.(),
+                invokeAPI: async (
+                  apiName: string,
+                  apiInputs?: Record<string, unknown>,
+                ) =>
+                  invokeAPI(
+                    screen,
+                    screenData,
+                    apiName,
+                    apiInputs,
+                    customScope,
+                  ),
                 navigateBack: (): void => navigateBack(navigate),
               },
             },
@@ -179,7 +192,7 @@ export const useExecuteCode: EnsembleActionHook<
   return execute ? { callback: execute } : undefined;
 };
 
-export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
+export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const { apis, setData } = useScreenData();
   const [isComplete, setIsComplete] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>();
@@ -495,8 +508,13 @@ export const useEnsembleAction = (
   if (!action) {
     return;
   }
+  if ("invokeAPI" in action) {
+    return useInvokeAPI(action.invokeAPI, options);
+  }
+
+  // TODO: deprecated - remove usage of "invokeApi"
   if ("invokeApi" in action) {
-    return useInvokeApi(action.invokeApi, options);
+    return useInvokeAPI(action.invokeApi, options);
   }
 
   if ("executeCode" in action) {
