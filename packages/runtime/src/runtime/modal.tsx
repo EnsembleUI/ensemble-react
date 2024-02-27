@@ -256,9 +256,6 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
               }px)`
             : options.height || "auto"
         };
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
       }
     `;
 
@@ -275,18 +272,6 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     color: "rgba(0, 0, 0, 0.45)",
     cursor: "pointer",
   };
-
-  const getFullHeight = (options?: ModalProps): string =>
-    `calc(100vh - ${
-      options?.title ||
-      options?.hideFullScreenIcon === false ||
-      options?.hideCloseIcon === false
-        ? // subtract title bar height (8px is its margin-bottom)
-          `8px - ${titleRef?.current?.offsetHeight || 0}`
-        : 0
-    }px - ${
-      getSumTopBottomPadding(options?.padding || "0px") // subtract content padding
-    }px)`;
 
   const getFullScreenIcon = (index: number): React.ReactNode =>
     isFullScreen[index] ? (
@@ -385,7 +370,17 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
               title={getTitleElement(modal.options, index)}
               width={modal.options.width || "auto"}
             >
-              <div ref={contentRef}>{modal.content}</div>
+              <div
+                ref={contentRef}
+                style={{
+                  height: "100%",
+                  overflowY: "auto",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                {modal.content}
+              </div>
             </Modal>
           </>
         );
