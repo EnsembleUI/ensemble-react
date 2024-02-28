@@ -2,7 +2,6 @@ View:
   onLoad:
     executeCode:
       body: |-
-        ensemble.storage.set('imageLoader', false)
         ensemble.storage.set('dataColumn', [{key1: "value", key2: 2}, {key1: "foo", key2: 3}])
       onComplete:
         invokeApi:
@@ -752,6 +751,10 @@ View:
                   styles:
                     strokeColor: red
                     strokeWidth: 2px
+                  onCropped:
+                    executeCode: |
+                      console.log('Image Cropped Successfully', file)
+                      croppedImage.setSource(file)
 
               - Button:
                   label: Rotate clockwise
@@ -767,23 +770,12 @@ View:
                   label: Crop
                   onTap:
                     executeCode: |
-                      ensemble.storage.set('imageLoader', true)
-                      imageCropper.getCroppedImg().then((data) => {
-                        croppedImage.setSource(data)
-                        ensemble.storage.set('imageLoader', false)
-                      })
-
-              - LoadingContainer:
-                  isLoading: ${ensemble.storage.get('imageLoader')}
-                  widget:
-                    Column:
-                      children:
+                      imageCropper.crop()
 
               - Image:
                   id: croppedImage
                   styles:
                     maxWidth: 500px
-                    visible: ${!ensemble.storage.get('imageLoader')}
                   source: https://img.huffingtonpost.com/asset/5ab4d4ac2000007d06eb2c56.jpeg?cache=sih0jwle4e&ops=1910_1000
 
 API:

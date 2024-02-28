@@ -22,7 +22,7 @@ type ImageCropperProps = {
 
 export const ImageCropper: React.FC<ImageCropperProps> = (props) => {
   const { onCropped, ...rest } = props;
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [cropPos, setCropPos] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [rotate, setRotate] = useState(0);
   const [croppedAreaPixels, setcroppedAreaPixels] = useState<Area>({
@@ -34,15 +34,18 @@ export const ImageCropper: React.FC<ImageCropperProps> = (props) => {
 
   const onCroppedAction = useEnsembleAction(onCropped);
   const onCroppedActionCallback = useCallback(
-    (croppedArea: Area, croppedAreaPix: Area) => {
-      setcroppedAreaPixels(croppedAreaPix);
+    (file: unknown) => {
       if (!onCroppedAction) {
         return;
       }
-      onCroppedAction.callback({ croppedAreaPix });
+      onCroppedAction.callback({ file });
     },
     [onCroppedAction],
   );
+
+  const onCropComplete = (croppedArea: Area, croppedAreaPix: Area): void => {
+    setcroppedAreaPixels(croppedAreaPix);
+  };
 
   const createImg = (url: string): Promise<HTMLImageElement> => {
     return new Promise((resolve, reject) => {
@@ -137,13 +140,22 @@ export const ImageCropper: React.FC<ImageCropperProps> = (props) => {
     });
   };
 
+  const crop = async () => {
+    const croppedImage = await getCroppedImg();
+    onCroppedActionCallback(croppedImage);
+  };
+
   const { values, id } = useRegisterBindings({ ...rest, rotate }, props.id, {
     setRotate,
     getCroppedImg,
+    crop,
   });
 
-  if (values?.source) {
-    const customStyles = `
+  if (!values?.source) {
+    return null;
+  }
+
+  const customStyles = `
       #${id} {
         display: ${
           values.styles?.visible === false ? "none" : "inherit"
@@ -167,35 +179,32 @@ export const ImageCropper: React.FC<ImageCropperProps> = (props) => {
       }
     `;
 
-    return (
-      <div
-        id={id}
-        style={{
-          position: "relative",
-          height: `${values.styles?.height || "500px"}`,
-          width: `${values.styles?.width || "500px"}`,
-          ...values.styles,
-        }}
-      >
-        <style>{customStyles}</style>
-        <Cropper
-          aspect={values.styles?.cropPercentage ?? 3 / 4}
-          crop={crop}
-          cropShape={values.styles?.shape ?? "rect"}
-          image={values.source}
-          objectFit={values.styles?.fit}
-          onCropChange={setCrop}
-          onCropComplete={onCroppedActionCallback}
-          onRotationChange={setRotate}
-          onZoomChange={setZoom}
-          rotation={rotate}
-          zoom={zoom}
-        />
-      </div>
-    );
-  }
-
-  return <div />;
+  return (
+    <div
+      id={id}
+      style={{
+        position: "relative",
+        height: `${values.styles?.height || "500px"}`,
+        width: `${values.styles?.width || "500px"}`,
+        ...values.styles,
+      }}
+    >
+      <style>{customStyles}</style>
+      <Cropper
+        aspect={values.styles?.cropPercentage ?? 3 / 4}
+        crop={cropPos}
+        cropShape={values.styles?.shape ?? "rect"}
+        image={values.source}
+        objectFit={values.styles?.fit}
+        onCropChange={setCropPos}
+        onCropComplete={onCropComplete}
+        onRotationChange={setRotate}
+        onZoomChange={setZoom}
+        rotation={rotate}
+        zoom={zoom}
+      />
+    </div>
+  );
 };
 
 WidgetRegistry.register("ImageCropper", ImageCropper);
