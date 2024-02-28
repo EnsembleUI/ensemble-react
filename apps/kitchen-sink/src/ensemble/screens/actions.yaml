@@ -114,7 +114,6 @@ View:
                       name: Forms
                       hideCloseIcon: false
                       hideFullScreenIcon: false
-                      mask: false
                       title:
                         Column:
                           children:
@@ -127,7 +126,9 @@ View:
                                   fontWeight: ${typography.fontWeight.light}
                       styles:
                         height: 100%
-                        # width: 100%
+                        width: 500px
+                        right: 100px
+                        backgroundColor: "#f0f0f0"
               - Button:
                   label: navigateModalScreen 2
                   onTap:
@@ -174,6 +175,7 @@ View:
                         options: {
                           width: showDialogWidth.text,
                           height: '250px',
+                          position: 'right',
                         },
                       });
               - Button:
@@ -185,6 +187,7 @@ View:
                         options: {
                           width: '300px',
                           height: showDialogWidth.text,
+                          position: 'bottom',
                         },
                       });
               - Button:
@@ -195,6 +198,7 @@ View:
                         body: {Text: {text: 'Hello World'}},
                         options: {
                           backgroundColor: 'aqua',
+                          position: 'left',
                         },
                       });
               - Markdown:
@@ -211,7 +215,7 @@ View:
                       options:
                         mask: false
                         width: ${abcText.text}
-                        height: 100vh
+                        height: 150px
                         backgroundColor: "#f1f1f1"
                       onDialogDismiss:
                         executeCode:

@@ -13,7 +13,7 @@ import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
 import { CloseOutlined } from "@ant-design/icons";
 import { getComponentStyles } from "../shared/styles";
 import { useEvaluate } from "@ensembleui/react-framework";
-import { isEmpty, omit } from "lodash-es";
+import { isEmpty, omit, pick } from "lodash-es";
 
 interface ModalProps {
   title?: string | React.ReactNode;
@@ -229,25 +229,54 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
         top: unset;
         max-width: 100%;
       }
-      .ensemble-modal-${index} .ant-modal-content {
-        ${getComponentStyles("", options as React.CSSProperties, false)}
-        ${options.showShadow === false ? "box-shadow: none !important;" : ""}
+      .ensemble-modal-${index} {
+        height: 100%;
         max-height: 100vh;
         max-width: 100vw;
+        ${getComponentStyles(
+          "",
+          pick(options, [
+            "height",
+            "width",
+            "position",
+            "top",
+            "left",
+            "bottom",
+            "right",
+          ]) as React.CSSProperties,
+        )}
+      }
+      .ensemble-modal-${index} .ant-modal-content {
         display: flex;
         flex-direction: column;
+        ${getComponentStyles(
+          "",
+          omit(options, [
+            "width",
+            "position",
+            "top",
+            "left",
+            "bottom",
+            "right",
+          ]) as React.CSSProperties,
+        )}
+        ${options.showShadow === false ? "box-shadow: none !important;" : ""}
       }
       .ensemble-modal-${index} .ant-modal-body {
+        height: 100%;
         overflow-y: auto;
       }
     `;
 
   const getFullScreenStyles = (index: number): string => `
-    .ensemble-modal-${index}.ant-modal, .ensemble-modal-${index}.ant-modal .ant-modal-content {
-      height: 100vh;
-      width: 100vw;
-      margin: 0;
-      top: 0;
+    .ensemble-modal-${index}, .ensemble-modal-${index} .ant-modal-content {
+      height: 100vh !important;
+      width: 100vw !important;
+      margin: 0 !important;
+      top: 0 !important;
+      left: 0 !important;
+      bottom: 0 !important;
+      right: 0 !important;
     }
   `;
 
@@ -351,7 +380,16 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
               title={getTitleElement(modal.options, index)}
               width={modal.options.width || "auto"}
             >
-              <div ref={contentRef}>{modal.content}</div>
+              <div
+                ref={contentRef}
+                style={{
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                {modal.content}
+              </div>
             </Modal>
           </>
         );
