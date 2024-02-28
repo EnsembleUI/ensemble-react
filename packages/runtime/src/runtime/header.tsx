@@ -27,13 +27,15 @@ export const EnsembleHeader: React.FC<EnsembleHeaderProps> = ({ header }) => {
   return (
     <Column
       styles={{
-        position: "static",
+        position: "sticky",
         width: "100%",
         display: "flex",
         justifyContent: "center",
         alignItems: header.styles?.centerTitle ? "center" : "normal",
         backgroundColor: header.styles?.backgroundColor || "white",
         height: header.styles?.titleBarHeight || 56,
+        top: 0,
+        zIndex: 1,
       }}
     >
       {[titleWidget]}

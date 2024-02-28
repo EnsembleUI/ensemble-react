@@ -223,39 +223,22 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
       }
     `;
 
-  const getCustomStyles = (
-    options: ModalProps,
-    index: number,
-    isFullScreenActive: boolean,
-  ): string =>
+  const getCustomStyles = (options: ModalProps, index: number): string =>
     `
       .ant-modal-root .ant-modal-centered .ant-modal {
         top: unset;
         max-width: 100%;
       }
       .ensemble-modal-${index} .ant-modal-content {
-        ${getComponentStyles(
-          "",
-          omit(options, ["height"]) as React.CSSProperties,
-          false,
-        )}
+        ${getComponentStyles("", options as React.CSSProperties, false)}
         ${options.showShadow === false ? "box-shadow: none !important;" : ""}
+        max-height: 100vh;
+        max-width: 100vw;
+        display: flex;
+        flex-direction: column;
       }
       .ensemble-modal-${index} .ant-modal-body {
-        height: ${
-          isFullScreenActive || options.height?.includes("100")
-            ? `calc(100vh - ${
-                options?.title ||
-                options?.hideFullScreenIcon === false ||
-                options?.hideCloseIcon === false
-                  ? // subtract title bar height (8px is its margin-bottom)
-                    `8px - ${titleRef?.current?.offsetHeight || 0}`
-                  : 0
-              }px - ${
-                getSumTopBottomPadding(options?.padding || "0px") // subtract content padding
-              }px)`
-            : options.height || "auto"
-        };
+        overflow-y: auto;
       }
     `;
 
@@ -345,9 +328,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
 
         const modalContent = (
           <>
-            <style>
-              {getCustomStyles(modal.options, index, isFullScreen[index])}
-            </style>
+            <style>{getCustomStyles(modal.options, index)}</style>
             <style>
               {isFullScreen[index]
                 ? getFullScreenStyles(index)
@@ -370,17 +351,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
               title={getTitleElement(modal.options, index)}
               width={modal.options.width || "auto"}
             >
-              <div
-                ref={contentRef}
-                style={{
-                  height: "100%",
-                  overflowY: "auto",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                {modal.content}
-              </div>
+              <div ref={contentRef}>{modal.content}</div>
             </Modal>
           </>
         );
@@ -390,22 +361,3 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     </ModalContext.Provider>
   );
 };
-
-function getSumTopBottomPadding(cssPadding: string) {
-  const paddings = cssPadding.trim().split(" ");
-
-  if (paddings.length <= 2) {
-    const paddingValue = parseInt(paddings[0], 10);
-    return paddingValue * 2;
-  } else if (paddings.length === 3) {
-    const topPadding = parseInt(paddings[0], 10);
-    const bottomPadding = parseInt(paddings[2], 10);
-    return topPadding + bottomPadding;
-  } else if (paddings.length === 4) {
-    const topPadding = parseInt(paddings[0], 10);
-    const bottomPadding = parseInt(paddings[2], 10);
-    return topPadding + bottomPadding;
-  } else {
-    return 0;
-  }
-}
