@@ -114,6 +114,7 @@ const ResizableTitle: React.FC<ResizableProps & ResizableState> = (props) => {
     <Resizable
       draggableOpts={{ enableUserSelectHack: false }}
       handle={
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
         <span
           className="react-resizable-handle"
           onClick={(e) => {
