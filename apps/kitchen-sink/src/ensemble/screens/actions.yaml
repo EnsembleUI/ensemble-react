@@ -261,6 +261,24 @@ View:
                         executeCode: |
                           console.log(fileUploader, "hello", files);
 
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: Route properties
+              - Button:
+                  label: Route params
+                  onTap:
+                    navigateUrl: /product/smart-phone
+              - Button:
+                  label: Query params
+                  onTap:
+                    navigateUrl: /widgets?name=hello
+
 API:
   getDummyProducts:
     method: GET
