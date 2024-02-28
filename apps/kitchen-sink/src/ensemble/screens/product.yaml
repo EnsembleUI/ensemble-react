@@ -1,0 +1,14 @@
+View:
+  header:
+    title:
+      Header:
+
+  body:
+    Column:
+      styles:
+        names: page
+      children:
+        - Text:
+            styles:
+              names: heading-1
+            text: ${"Product Name = " + product_name}

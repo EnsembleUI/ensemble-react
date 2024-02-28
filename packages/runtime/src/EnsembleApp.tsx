@@ -38,6 +38,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
   screenId,
 }) => {
   const [app, setApp] = useState<EnsembleAppModel>();
+
   useEffect(() => {
     if (app) {
       return;

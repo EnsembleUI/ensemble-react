@@ -9,6 +9,7 @@ import ActionsYAML from "./ensemble/screens/actions.yaml";
 import FormsYAML from "./ensemble/screens/forms.yaml";
 import CustomWidgetsYAML from "./ensemble/screens/customWidgets.yaml";
 import HelpYAML from "./ensemble/screens/help.yaml";
+import ProductYAML from "./ensemble/screens/product.yaml";
 // Widgets
 import HeaderWidgetYAML from "./ensemble/widgets/Header.yaml";
 import StyledTextWidgetYAML from "./ensemble/widgets/StyledText.yaml";
@@ -89,6 +90,17 @@ const testApp: ApplicationDTO = {
       id: "help",
       name: "Help",
       content: String(HelpYAML),
+    },
+    {
+      id: "help",
+      name: "Help",
+      content: String(HelpYAML),
+    },
+    {
+      id: "product",
+      name: "Product",
+      path: "/product/:product_name",
+      content: String(ProductYAML),
     },
   ],
   config: EnsembleConfig,
