@@ -619,6 +619,20 @@ View:
             styles:
               width: 300px
               justifySelf: end
+        - DateRange:
+            id: dateRange1
+            enabled: true
+            suffixIcon:
+              name: HomeOutlined
+            onChange:
+              executeCode:
+                body: |-
+                  console.log(dateRange1.value);
+        - Button:
+            label: Hello
+            onTap:
+              executeCode: |
+                onChangeDemoDate.setValue("02/12/2024")
 
         - TabBar:
             items:
