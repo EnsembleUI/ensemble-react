@@ -1,5 +1,10 @@
 import { Table } from "antd";
 import {
+  Resizable,
+  type ResizableProps,
+  type ResizableState,
+} from "react-resizable";
+import {
   useTemplateData,
   type Expression,
   type EnsembleWidget,
@@ -15,6 +20,7 @@ import {
   useMemo,
   useRef,
   useEffect,
+  ReactEventHandler,
 } from "react";
 import { get, isArray, isString } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
@@ -40,6 +46,7 @@ interface DataColumn {
     }[];
     onFilter: string;
   };
+  width?: number;
 }
 
 export interface DataGridStyles extends Partial<EnsembleWidgetStyles> {
@@ -70,6 +77,7 @@ export interface DataGridScrollable {
 
 export type GridProps = {
   allowSelection?: boolean;
+  allowColResizable?: boolean;
   onRowsSelected?: EnsembleAction;
   DataColumns: Expression<DataColumn[] | string[]>;
   "item-template": {
@@ -95,7 +103,35 @@ function djb2Hash(str: string): number {
   return hash >>> 0; // Ensure the result is an unsigned 32-bit integer
 }
 
+const ResizableTitle: React.FC<ResizableProps & ResizableState> = (props) => {
+  const { onResize, width, ...restProps } = props;
+
+  if (!width) {
+    return <th {...restProps} />;
+  }
+
+  return (
+    <Resizable
+      draggableOpts={{ enableUserSelectHack: false }}
+      handle={
+        <span
+          className="react-resizable-handle"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        />
+      }
+      height={0}
+      onResize={onResize}
+      width={width}
+    >
+      <th {...restProps} />
+    </Resizable>
+  );
+};
+
 export const DataGrid: React.FC<GridProps> = (props) => {
+  const [colWidth, setColWidth] = useState<Record<number, number>>({});
   const [rowsSelected, setRowsSelected] = useState<object[]>();
   const [allowSelection, setAllowSelection] = useState(
     props.allowSelection ?? false,
@@ -187,20 +223,35 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   // handle datagrid column list
   const dataColumns = useMemo(() => {
     if (values?.DataColumns && isArray(values.DataColumns)) {
-      return values.DataColumns.map((item): unknown => {
+      return values.DataColumns.map((item, index): unknown => {
         if (isString(item)) {
-          return { label: item };
+          return { label: item, width: colWidth[index] ?? 100 };
         }
-        return item;
+        return { ...item, width: colWidth[index] ?? item.width ?? 100 };
       }) as DataColumn[];
     }
 
     return [];
-  }, [values?.DataColumns]);
+  }, [values?.DataColumns, colWidth]);
+
+  const components = {
+    header: {
+      cell: ResizableTitle,
+    },
+  };
+
+  const handleResize =
+    (index: number) =>
+    (e: React.SyntheticEvent, { size }: { size: { width: number } }) => {
+      const prevColWidths = { ...colWidth };
+      prevColWidths[index] = size.width;
+      setColWidth(prevColWidths);
+    };
 
   return (
-    <div ref={containerRef}>
+    <div id={resolvedWidgetId} ref={containerRef}>
       <Table
+        components={components}
         dataSource={namedData}
         key={resolvedWidgetId}
         onRow={(record, recordIndex) => {
@@ -296,42 +347,76 @@ export const DataGrid: React.FC<GridProps> = (props) => {
                   : undefined
               }
               title={col.label}
+              width={col.width}
+              {...(values?.allowColResizable
+                ? {
+                    onHeaderCell: () => ({
+                      width: col.width,
+                      onResize: handleResize(
+                        colIndex,
+                      ) as ReactEventHandler<any>,
+                    }),
+                  }
+                : {})}
             />
           );
         })}
       </Table>
       <style>
         {`
-			.ant-table-thead > tr > th {
-				${
-          headerStyle?.backgroundColor
-            ? `background-color : ${headerStyle.backgroundColor} !important;`
-            : ""
-        }
-		${
-      headerStyle?.fontFamily
-        ? `font-family : ${headerStyle.fontFamily} !important;`
-        : ""
-    }
-		${
-      headerStyle?.fontSize
-        ? `font-size : ${headerStyle.fontSize} !important;`
-        : ""
-    }
-		${
-      headerStyle?.fontWeight
-        ? `font-weight : ${headerStyle.fontWeight} !important;`
-        : ""
-    }
-		${headerStyle?.textColor ? `color : ${headerStyle.textColor} !important;` : ""}
-			}
-			.ant-table-thead > tr > th::before{
-				${headerStyle?.hasDivider ? `position : unset !important;` : ""}
-			}
-			.ant-table-thead > tr > th {
-				${!headerStyle?.borderBottom ? "border-bottom: none !important" : ""}
-			}
-		`}
+          .react-resizable {
+            position: relative;
+            background-clip: padding-box;
+          }
+
+          .react-resizable-handle {
+            position: absolute;
+            right: -5px;
+            bottom: 0;
+            z-index: 1;
+            width: 10px;
+            height: 100%;
+            cursor: col-resize;
+          }
+
+          #${resolvedWidgetId} .ant-table-thead > tr > th {
+            ${
+              headerStyle?.backgroundColor
+                ? `background-color : ${headerStyle.backgroundColor} !important;`
+                : ""
+            }
+            ${
+              headerStyle?.fontFamily
+                ? `font-family : ${headerStyle.fontFamily} !important;`
+                : ""
+            }
+            ${
+              headerStyle?.fontSize
+                ? `font-size : ${headerStyle.fontSize} !important;`
+                : ""
+            }
+            ${
+              headerStyle?.fontWeight
+                ? `font-weight : ${headerStyle.fontWeight} !important;`
+                : ""
+            }
+            ${
+              headerStyle?.textColor
+                ? `color : ${headerStyle.textColor} !important;`
+                : ""
+            }
+			    }
+
+          #${resolvedWidgetId} .ant-table-thead > tr > th::before{
+            ${!headerStyle?.hasDivider ? `position : unset !important;` : ""}
+          }
+
+          #${resolvedWidgetId} .ant-table-thead > tr > th {
+            ${
+              !headerStyle?.borderBottom ? "border-bottom: none !important" : ""
+            }
+          }
+		    `}
       </style>
     </div>
   );
