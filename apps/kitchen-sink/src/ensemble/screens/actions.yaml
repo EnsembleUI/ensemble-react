@@ -137,16 +137,7 @@ View:
                       hideCloseIcon: false
                       hideFullScreenIcon: false
                       mask: false
-                      title:
-                        Column:
-                          children:
-                            - Text:
-                                text: Modal Screen title
-                            - Text:
-                                text: Modal Screen subtitle
-                                styles:
-                                  fontSize: ${typography.fontSize['14']}
-                                  fontWeight: ${typography.fontWeight.light}
+                      title: Modal Screen title (optional)
                       styles:
                         height: 400px
         - Card:

@@ -14,7 +14,7 @@ export const EnsembleFooter: React.FC<EnsembleFooterProps> = ({ footer }) => {
   return (
     <Column
       styles={{
-        position: "sticky",
+        position: "static",
         display: "flex",
         justifyContent: "center",
         width: footer.styles?.width || "100%",

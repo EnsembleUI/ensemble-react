@@ -13,7 +13,7 @@ import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
 import { CloseOutlined } from "@ant-design/icons";
 import { getComponentStyles } from "../shared/styles";
 import { useEvaluate } from "@ensembleui/react-framework";
-import { isEmpty, omit, pick } from "lodash-es";
+import { isEmpty, isString, omit, pick } from "lodash-es";
 
 interface ModalProps {
   title?: string | React.ReactNode;
@@ -71,7 +71,10 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
   const [newOptions, setNewOptions] = useState<Record<string, unknown>>({});
   const [isDialog, setIsDialog] = useState<boolean>(false);
   const [isDialogSet, setIsDialogSet] = useState<boolean>(false);
-  const evaluatedOptions = useEvaluate(newOptions, { context });
+  const evaluatedOptions = useEvaluate(newOptions, {
+    context,
+    refreshExpressions: true,
+  });
 
   useLayoutEffect(() => {
     if (modalState.length > 0 && !isFullScreen[isFullScreen.length - 1])
@@ -128,7 +131,9 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
 
     setContext(modalContext);
     setNewContent(content);
-    setNewOptions(options as Record<string, unknown>);
+    setNewOptions(
+      omit(options, ["onClose", !isString(options.title) ? "title" : ""]),
+    );
     setIsDialog(isADialog);
     setIsDialogSet(false);
   };
