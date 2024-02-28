@@ -1,4 +1,4 @@
-import { useRegisterBindings } from "@ensembleui/react-framework";
+import { Expression, useRegisterBindings } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import type {
   EnsembleWidgetProps,
@@ -6,31 +6,39 @@ import type {
   FlexboxStyles,
 } from "../shared/types";
 import { Column } from "./Column";
+import { useState } from "react";
+import { isArray } from "lodash-es";
 
 interface FittedColumnStyles extends FlexboxStyles {
-  childrenFits?: string[];
+  childrenFits?: Expression<string[]>;
 }
 
 export type FittedColumnProps = {
-  childrenFits?: string[];
+  childrenFits?: Expression<string[]>;
 } & FlexboxProps &
   EnsembleWidgetProps<FittedColumnStyles>;
 
 export const FittedColumn: React.FC<FittedColumnProps> = (props) => {
-  const { values } = useRegisterBindings({ ...props }, props.id);
+  const [childrenFits, setChildrenFits] = useState<
+    Expression<string[]> | undefined
+  >(props.childrenFits || props.styles?.childrenFits);
+
+  const { values } = useRegisterBindings({ childrenFits }, props.id, {
+    setChildrenFits,
+  });
+
   return (
     <Column
       {...props}
       styles={{
         display: "grid",
         gridAutoFlow: "row",
-        gridTemplateRows:
-          values?.childrenFits
-            ?.map((fit) => (fit === "auto" ? fit : `${fit}fr`))
-            ?.join(" ") ||
-          values?.styles?.childrenFits
-            ?.map((fit) => (fit === "auto" ? fit : `${fit}fr`))
-            ?.join(" "),
+        gridTemplateRows: isArray(values?.childrenFits)
+          ? values?.childrenFits
+              ?.map((fit) => (fit === "auto" ? fit : `${fit}fr`))
+              ?.join(" ")
+          : "auto",
+        ...props?.styles,
       }}
     />
   );

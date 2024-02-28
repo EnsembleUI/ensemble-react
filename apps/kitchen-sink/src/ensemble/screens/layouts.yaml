@@ -1,14 +1,20 @@
 View:
   onLoad:
-    invokeAPI:
-      name: getDummyProducts
-      inputs:
-        skip: 10
-      onResponse:
-        executeCode: |
-          const res = response.body.products;
-          ensemble.storage.set("skip", 10)
-          ensemble.storage.set("products", res)
+    executeCode:
+      body: |
+        ensemble.storage.set('childrenFits', [10, 1, 4]);
+        ensemble.storage.set('bgColor', '#f0f0f0');
+        console.log('onLoad')
+      onComplete:
+        invokeAPI:
+          name: getDummyProducts
+          inputs:
+            skip: 10
+          onResponse:
+            executeCode: |
+              const res = response.body.products;
+              ensemble.storage.set("skip", 10)
+              ensemble.storage.set("products", res);
   header:
     title:
       Header:
@@ -50,7 +56,13 @@ View:
             onTap:
               executeCode: |
                 console.log('FittedRow')
-            styles: { childrenFits: [10, 1, 4], crossAxis: center, padding: 12 }
+            styles:
+              {
+                childrenFits: "${ensemble.storage.get('childrenFits')}",
+                crossAxis: center,
+                padding: 12,
+                backgroundColor: "${ensemble.storage.get('bgColor')}",
+              }
             children:
               - Markdown:
                   text: |

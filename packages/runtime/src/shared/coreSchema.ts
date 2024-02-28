@@ -21,6 +21,8 @@ import type {
   TabBarProps,
   GridProps,
   TabBarItem,
+  FittedRowProps,
+  FittedColumnProps,
 } from "../widgets";
 import type { Menu, View } from "./screenSchema";
 import type { FlexboxProps, IconProps } from "./types";
@@ -208,8 +210,8 @@ export type Widget =
   // | { Calendar?: Calendar }
   // | { Countdown?: Countdown }
   | { ToggleButton?: ToggleButtonProps }
-  // | { FittedRow?: FittedRow }
-  // | { FittedColumn?: FittedColumn }
+  | { FittedRow?: ReplaceChildrenTemplate<FittedRowProps> }
+  | { FittedColumn?: ReplaceChildrenTemplate<FittedColumnProps> }
   // | { Map?: Map }
   | { Carousel?: ReplaceChildrenTemplate<CarouselProps> }
   // | { Conditional?: ConditionalProps };
