@@ -39,3 +39,7 @@ export const navigateUrl = (
 
   navigate(url, { state: urlInputs });
 };
+
+export const navigateBack = (navigate: NavigateFunction): void => {
+  navigate(-1);
+};

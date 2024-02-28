@@ -7,6 +7,7 @@ export interface EnsembleDocument {
   readonly id: string;
   readonly name: string;
   readonly content: string;
+  readonly path?: string;
   readonly isRoot?: boolean;
   readonly isDraft?: boolean;
   readonly category?: string;

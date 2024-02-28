@@ -1,20 +1,33 @@
 import type { Expression } from "./common";
 
+/**
+ * Execute a block of code
+ */
 export type ExecuteCodeAction =
   | string
   | {
+      /** The code to execute */
       body: string;
+      /** Execute another Action when the code body finishes executing */
       onComplete?: EnsembleAction;
     }
   | {
+      /** The script name to execute */
       scriptName: string;
+      /** Execute another Action when the code body finishes executing */
       onComplete?: EnsembleAction;
     };
 
 export interface InvokeAPIAction {
+  /** Enable binding to the API using this id. Binding to the API name is available globally, while binding to this id is useful in a local scope (e.g. access the API in a loop) */
+  id?: string;
+  /** Specify the API name to invoke */
   name: string;
-  inputs: Record<string, Expression<unknown>>;
+  /** Specify the key/value pairs to pass into the API */
+  inputs?: { [key: string]: Expression<unknown> };
+  /** execute an Action upon successful completion of the API */
   onResponse?: EnsembleAction;
+  /** execute an Action upon error */
   onError?: EnsembleAction;
 }
 
@@ -27,13 +40,15 @@ export interface NavigateModalScreenStyles {
 }
 
 interface NavigateScreenOptions {
+  /** Specify the screen name or the screen id to navigate to */
   name: string;
-  inputs: Record<string, unknown>;
+  /** Specify the key/value pairs to pass into the next Screen */
+  inputs: { [key: string]: unknown };
 }
 
 interface NavigateUrlOptions {
   url: string;
-  inputs: Record<string, unknown>;
+  inputs: { [key: string]: unknown };
 }
 
 export type NavigateModalScreenAction =
@@ -43,13 +58,15 @@ export type NavigateModalScreenAction =
       mask?: boolean;
       hideFullScreenIcon?: boolean;
       hideCloseIcon?: boolean;
-      title?: string | Record<string, unknown>;
+      title?: string | { [key: string]: unknown };
       styles?: NavigateModalScreenStyles;
     });
 
 export type NavigateScreenAction = string | NavigateScreenOptions;
 
 export type NavigateUrlAction = string | NavigateUrlOptions;
+
+export type NavigateBackAction = null;
 
 export interface ShowDialogOptions {
   mask?: boolean;
@@ -89,21 +106,41 @@ export interface UploadFilesAction {
   uploadApi: string;
   files: string;
   id?: string;
-  inputs?: Record<string, unknown>;
+  inputs?: { [key: string]: unknown };
   fieldName?: string;
   onComplete?: EnsembleAction;
   onError: EnsembleAction;
 }
 
-export interface EnsembleAction {
-  executeCode?: ExecuteCodeAction;
-  invokeApi?: InvokeAPIAction;
-  navigateScreen?: NavigateScreenAction;
-  navigateUrl?: NavigateUrlAction;
-  navigateModalScreen?: NavigateModalScreenAction;
-  showToast?: ShowToastAction;
-  closeAllDialogs?: null;
-  pickFiles?: PickFilesAction;
-  uploadFiles?: UploadFilesAction;
-  showDialog?: ShowDialogAction;
-}
+export type CloseAllDialogsAction = null;
+
+/* eslint-disable tsdoc/syntax */
+/**
+ * @uiType action
+ */
+/* eslint-enable tsdoc/syntax */
+export type EnsembleAction =
+  | {
+      executeCode?: ExecuteCodeAction;
+    }
+  | { invokeApi?: InvokeAPIAction }
+  | { invokeAPI?: InvokeAPIAction }
+  | { navigateBack?: NavigateBackAction }
+  | { navigateScreen?: NavigateScreenAction }
+  | { navigateModalScreen?: NavigateModalScreenAction }
+  // | { navigateExternalScreen?: NavigateModalScreenAction }
+  // | { navigateViewGroup?: NavigateViewGroup }
+  // | { showBottomModal?: ShowBottomModal }
+  // | { dismissBottomModal?: DismissBottomModal }
+  | { showDialog?: ShowDialogAction }
+  | { closeAllDialogs?: CloseAllDialogsAction }
+  | { showToast?: ShowToastAction }
+  // | { startTimer?: StartTimer }
+  // | { stopTimer?: StopTimer }
+  // | { callExternalMethod?: CallExternalMethod }
+  // | { callNativeMethod?: CallNativeMethod }
+  // | { getLocation?: GetLocation }
+  // | { openCamera?: OpenCamera }
+  | { uploadFiles?: UploadFilesAction }
+  | { pickFiles?: PickFilesAction }
+  | { navigateUrl?: NavigateUrlAction };

@@ -18,14 +18,14 @@ import { WidgetRegistry } from "../../registry";
 import type {
   EnsembleWidgetProps,
   EnsembleWidgetStyles,
-  HasBorder,
   HasItemTemplate,
 } from "../../shared/types";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import { EnsembleRuntime } from "../../runtime";
+import { getComponentStyles } from "../../shared/styles";
+import type { HasBorder } from "../../shared/hasSchema";
 import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
-import { getComponentStyles } from "../../shared/styles";
 
 export type DropdownStyles = {
   dropdownBackgroundColor?: string;
@@ -39,7 +39,7 @@ export type DropdownStyles = {
   EnsembleWidgetStyles;
 
 export interface SelectOption {
-  label: Expression<string> | Record<string, unknown>;
+  label: Expression<string> | { [key: string]: unknown };
   value: Expression<string | number>;
   type?: string;
   items?: SelectOption[];

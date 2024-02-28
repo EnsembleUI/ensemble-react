@@ -38,6 +38,7 @@ module.exports = {
   rules: {
     "prettier/prettier": "error",
     "import/no-default-export": "off",
+    "@typescript-eslint/consistent-indexed-object-style": [1, "index-signature"],
     "react/function-component-definition": [
       2,
       {

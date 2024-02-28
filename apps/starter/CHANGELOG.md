@@ -1,5 +1,28 @@
 # @ensembleui/react-starter
 
+## 0.3.19
+
+### Patch Changes
+
+- cc10f29: fix casing of 'invokeApi' to 'invokeAPI' and add invokeAPI in js
+- Updated dependencies [799597a]
+- Updated dependencies [1e0c49c]
+- Updated dependencies [8a960d6]
+- Updated dependencies [ced5d5e]
+- Updated dependencies [e15a61f]
+- Updated dependencies [cc10f29]
+- Updated dependencies [1794552]
+- Updated dependencies [1cc168b]
+  - @ensembleui/react-runtime@0.1.30
+  - @ensembleui/react-framework@0.1.21
+
+## 0.3.18
+
+### Patch Changes
+
+- Updated dependencies [32281dc]
+  - @ensembleui/react-runtime@0.1.29
+
 ## 0.3.17
 
 ### Patch Changes

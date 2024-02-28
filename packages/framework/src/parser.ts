@@ -58,7 +58,7 @@ export const EnsembleParser = {
       (widget) => widget.apis ?? [],
     );
 
-    const screens = app.screens.map(({ id, name, content: yaml }) => {
+    const screens = app.screens.map(({ id, name, content: yaml, ...rest }) => {
       const screen = parse(yaml) as EnsembleScreenYAML;
       const viewGroup = get(screen, "ViewGroup");
       if (viewGroup) {
@@ -69,6 +69,7 @@ export const EnsembleParser = {
       return {
         ...pageScreen,
         apis: concat(pageScreen.apis ?? [], widgetApis),
+        ...rest,
       };
     });
     if (isEmpty(screens)) {

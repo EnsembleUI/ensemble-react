@@ -25,6 +25,7 @@ import type {
   ShowDialogAction,
   NavigateScreenAction,
   CustomScope,
+  NavigateBackAction,
 } from "@ensembleui/react-framework";
 import {
   isEmpty,
@@ -39,10 +40,11 @@ import {
 } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { navigateApi, navigateUrl } from "../navigation";
+import { navigateApi, navigateBack, navigateUrl } from "../navigation";
 import { locationApi } from "../locationApi";
 import { ModalContext } from "../modal";
 import { EnsembleRuntime } from "../runtime";
+import { getShowDialogOptions, showDialog } from "../showDialog";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { useNavigateModalScreen } from "./useNavigateModal";
@@ -50,9 +52,7 @@ import { useNavigateScreen } from "./useNavigateScreen";
 import { useShowToast } from "./useShowToast";
 import { useCloseAllDialogs } from "./useCloseAllDialogs";
 import { useNavigateUrl } from "./useNavigateUrl";
-// FIXME: refactor
-// eslint-disable-next-line import/no-cycle
-import { getShowDialogOptions, showDialog } from "../showDialog";
+import { invokeAPI } from "../invokeApi";
 
 export type EnsembleActionHookResult =
   | {
@@ -107,8 +107,9 @@ export const useExecuteCode: EnsembleActionHook<
       )?.body;
     }
   }, [action, isCodeString, screen]);
-  const [user] = useEnsembleUser();
+  const user = useEnsembleUser();
   const appContext = useApplicationContext();
+  const screenData = useScreenData();
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,
   );
@@ -145,6 +146,18 @@ export const useExecuteCode: EnsembleActionHook<
                 showDialog: (dialogAction?: ShowDialogAction): void =>
                   showDialog({ action: dialogAction, openModal }),
                 closeAllDialogs: (): void => closeAllModals?.(),
+                invokeAPI: async (
+                  apiName: string,
+                  apiInputs?: Record<string, unknown>,
+                ) =>
+                  invokeAPI(
+                    screen,
+                    screenData,
+                    apiName,
+                    apiInputs,
+                    customScope,
+                  ),
+                navigateBack: (): void => navigateBack(navigate),
               },
             },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
@@ -179,7 +192,7 @@ export const useExecuteCode: EnsembleActionHook<
   return execute ? { callback: execute } : undefined;
 };
 
-export const useInvokeApi: EnsembleActionHook<InvokeAPIAction> = (action) => {
+export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const { apis, setData } = useScreenData();
   const [isComplete, setIsComplete] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>();
@@ -268,7 +281,7 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
   const callback = useCallback(
     (args: unknown) => {
       const modalOptions = getShowDialogOptions(
-        action?.options,
+        action.options,
         onDismissCallback,
       );
       const widgetBackgroundColor = get(
@@ -481,6 +494,16 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
   return { callback };
 };
 
+export const useNavigateBack: EnsembleActionHook<NavigateBackAction> = () => {
+  const navigate = useNavigate();
+
+  const callback = useCallback(() => {
+    navigateBack(navigate);
+  }, [navigateBack, navigate]);
+
+  return { callback };
+};
+
 /* eslint-disable react-hooks/rules-of-hooks */
 export const useEnsembleAction = (
   action?: EnsembleAction,
@@ -490,32 +513,41 @@ export const useEnsembleAction = (
   if (!action) {
     return;
   }
-  if (action.invokeApi) {
-    return useInvokeApi(action.invokeApi, options);
+  if ("invokeAPI" in action) {
+    return useInvokeAPI(action.invokeAPI, options);
   }
 
-  if (action.executeCode) {
+  // TODO: deprecated - remove usage of "invokeApi"
+  if ("invokeApi" in action) {
+    return useInvokeAPI(action.invokeApi, options);
+  }
+
+  if ("executeCode" in action) {
     return useExecuteCode(
       action.executeCode,
       options as UseExecuteCodeActionOptions,
     );
   }
-  if (action.navigateScreen) {
+  if ("navigateScreen" in action) {
     return useNavigateScreen(action.navigateScreen, options);
   }
 
-  if (action.navigateUrl) {
+  if ("navigateUrl" in action) {
     return useNavigateUrl(action.navigateUrl, options);
   }
 
-  if (action.navigateModalScreen) {
+  if ("navigateModalScreen" in action) {
     return useNavigateModalScreen(action.navigateModalScreen, options);
   }
 
-  if (action.showToast) {
+  if ("navigateBack" in action) {
+    return useNavigateBack(action.navigateBack);
+  }
+
+  if ("showToast" in action) {
     return useShowToast(action.showToast);
   }
-  if (action.showDialog) {
+  if ("showDialog" in action) {
     return useShowDialog(action.showDialog);
   }
 
@@ -523,10 +555,10 @@ export const useEnsembleAction = (
     return useCloseAllDialogs();
   }
 
-  if (action.pickFiles) {
+  if ("pickFiles" in action) {
     return usePickFiles(action.pickFiles);
   }
-  if (action.uploadFiles) {
+  if ("uploadFiles" in action) {
     return useUploadFiles(action.uploadFiles);
   }
 };

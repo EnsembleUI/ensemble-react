@@ -6,6 +6,7 @@
     "declaration": true,
     "declarationMap": true,
     "esModuleInterop": true,
+    "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "inlineSources": false,
     "isolatedModules": true,
@@ -15,7 +16,9 @@
     "preserveWatchOutput": true,
     "skipLibCheck": true,
     "strict": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "module": "ESNext",
+    "jsx": "react-jsx"
   },
   "exclude": ["node_modules"]
 }

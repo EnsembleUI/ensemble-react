@@ -12,12 +12,12 @@ import { DateFormatter } from "../date/dateFormatter";
 import {
   themeAtom,
   envAtom,
-  userAtom,
   defaultScreenContext,
   screenDataAtom,
   screenInputAtom,
   widgetFamilyAtom,
   screenGlobalScriptAtom,
+  userAtom,
 } from "../state";
 import { evaluate } from "./evaluate";
 import { createEvaluationContext } from "./context";

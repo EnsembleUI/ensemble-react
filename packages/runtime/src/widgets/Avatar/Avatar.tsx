@@ -57,8 +57,11 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
   };
 
   const handleMenuClick = (menuItem: AvatarMenu): void => {
-    menuItem.onTap?.executeCode && setCode(String(menuItem.onTap.executeCode));
-    menuItem.onTap?.navigateScreen &&
+    menuItem.onTap &&
+      "executeCode" in menuItem.onTap &&
+      setCode(String(menuItem.onTap.executeCode));
+    menuItem.onTap &&
+      "navigateScreen" in menuItem.onTap &&
       isString(menuItem.onTap.navigateScreen) &&
       setScreen(menuItem.onTap.navigateScreen);
     handleMenuClose();

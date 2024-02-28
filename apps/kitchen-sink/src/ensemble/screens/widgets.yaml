@@ -23,6 +23,72 @@ View:
       styles:
         names: page
       children:
+        - Icon:
+            name: ArrowBack
+            onTap:
+              navigateBack:
+        - Lottie:
+            id: MyLottie
+            source: https://lottie.host/3568da34-6083-42fc-a254-74d9c1e15b2f/wcVmO2igxm.json
+            # source: /images/lottie1.json
+            repeat: false
+            autoPlay: true
+            styles:
+              margin: 20px
+              height: 200px
+            onTap:
+              executeCode: |-
+                console.log("Tapped");
+            onForward:
+              executeCode: |-
+                console.log("Forwarded");
+            onReverse:
+              executeCode: |-
+                console.log("Reversed");
+            onPause:
+              executeCode: |-
+                console.log("Paused");
+            onComplete:
+              executeCode: |-
+                console.log("Completed");
+
+        - Row:
+            styles:
+              gap: 8
+            children:
+              - Button:
+                  styles:
+                    borderRadius: 20
+                  label: Forward
+                  onTap:
+                    executeCode: |-
+                      console.log("Forward");
+                      MyLottie.forward();
+              - Button:
+                  styles:
+                    borderRadius: 20
+                  label: Reverse
+                  onTap:
+                    executeCode: |-
+                      console.log("Reverse");
+                      MyLottie.reverse();
+              - Button:
+                  styles:
+                    borderRadius: 20
+                  label: Reset
+                  onTap:
+                    executeCode: |-
+                      console.log("Reset");
+                      MyLottie.reset();
+              - Button:
+                  styles:
+                    borderRadius: 20
+                  label: Stop
+                  onTap:
+                    executeCode: |-
+                      console.log("Stop");
+                      MyLottie.stop();
+
         - Column:
             item-template:
               data: ["foo", "bar"]
@@ -42,11 +108,18 @@ View:
                                 onTap:
                                   executeCode: |
                                     ${ensemble.storage.set('test', 'hello')}
+
+        - Text:
+            text: ${ensemble.user.email}
+
+        - SignInWithGoogle:
+            clientId: ${ensemble.env.googleOAuthId}
+
         - Button:
             label: click 3
             onTap:
               executeCode: |
-                ${ensemble.storage.set('test', 'hello')}
+                ensemble.user.set({email: 'uuu'})
         - Text:
             styles:
               names: heading-1
@@ -195,7 +268,7 @@ View:
                     scrollHeight: 200
                   onScrollEnd:
                     # here you can add your page update logic
-                    invokeApi:
+                    invokeAPI:
                       name: getDummyNumbers
                       onResponse:
                         executeCode: |
@@ -207,7 +280,7 @@ View:
                       DataRow:
                         children:
                           - Text:
-                              id: ${'x_'+dummyData}
+                              id: ${'x_'+index}
                               text: ${dummyData}
         - Card:
             styles:
@@ -555,6 +628,48 @@ View:
             styles:
               width: 300px
               justifySelf: end
+        - DateRange:
+            id: dateRange1
+            enabled: true
+            suffixIcon:
+              name: HomeOutlined
+            onChange:
+              executeCode:
+                body: |-
+                  console.log(dateRange1.value);
+        - Button:
+            label: Hello
+            onTap:
+              executeCode: |
+                onChangeDemoDate.setValue("02/12/2024")
+
+        - TabBar:
+            items:
+              - label: Home
+                widget:
+                  Text:
+                    text: Hello
+              - label: About
+                icon:
+                  name: HomeOutlined
+                widget:
+                  Text:
+                    text: Hello 222
+            tabStyles:
+              tabNavBackgroundColor: yellow
+              tabNavPadding: 10px 5px
+              tabBorderRadius: 10
+              tabBackgroundColor: orange
+              tabNavBottomBorderShow: false
+              tabNavBorderRadius: 10
+            styles:
+              activeTabBackgroundColor: red
+              activeTabColor: white
+              inkBarShow: false
+              tabContentHolderBackgroundColor: green
+              tabContentHolderBorderRadius: 10
+              tabContentHolderPadding: 10px 5px
+
         - DataGrid:
             DataColumns:
               - label: Number
@@ -592,7 +707,7 @@ View:
               - ToggleButton:
                   id: toggleButtonWidget
                   styles:
-                    margin: '12px 0px 10px 0px'
+                    margin: "12px 0px 10px 0px"
                     spacing: 0
                     runSpacing: 3
                     color: ${colors.gray['900']}
@@ -611,6 +726,40 @@ View:
                     executeCode:
                       body: |-
                         console.log('toggle button changed: ' + toggleButtonWidget.value);
+
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:
+              - Markdown:
+                  text: |
+                    ### Slider
+              - Slider:
+                  styles:
+                    maxWidth: unset
+                  dots: true
+                  min: 0
+                  max: 10
+                  value: 2
+                  divisions: 10
+
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+              gap: 10px
+            children:
+              - Markdown:
+                  text: |
+                    ### Switch
+              - Switch:
+                  enabled: true
+                  size: small
+                  value: true
+                  leadingText: Set to true and requred
+
+
 API:
   getDummyProducts:
     method: GET

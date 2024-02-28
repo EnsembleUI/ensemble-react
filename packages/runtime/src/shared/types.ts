@@ -4,6 +4,7 @@ import type {
   Expression,
   TemplateData,
 } from "@ensembleui/react-framework";
+import type { HasBorder } from "./hasSchema";
 
 export type EnsembleWidgetStyles = Omit<React.CSSProperties, "direction"> & {
   names?: Expression<string>;
@@ -15,7 +16,7 @@ export interface EnsembleWidgetProps<
 > {
   id?: string;
   styles?: T;
-  htmlAttributes?: Record<string, Expression<string>>;
+  htmlAttributes?: { [key: string]: Expression<string> };
   [key: string]: unknown;
 }
 
@@ -67,11 +68,3 @@ export type IconProps = {
   onTap?: EnsembleAction;
   onHover?: EnsembleAction;
 } & EnsembleWidgetProps;
-
-// composable types
-export interface HasBorder {
-  borderRadius?: number;
-  borderWidth?: number;
-  borderStyle?: string;
-  borderColor?: number | string;
-}

@@ -21,7 +21,7 @@ import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { EnsembleRuntime } from "../runtime";
 
 interface PopupMenuItem {
-  label: Expression<string> | Record<string, unknown>;
+  label: Expression<string> | { [key: string]: unknown };
   value: string;
 }
 
@@ -31,10 +31,10 @@ interface PopupMenuStyles {
   borderColor: string;
   borderWidth: string;
 }
-type PopupMenuProps = {
+export type PopupMenuProps = {
   [key: string]: unknown;
   items?: PopupMenuItem[];
-  widget?: Record<string, unknown>;
+  widget?: { [key: string]: unknown };
   onItemSelect?: EnsembleAction;
   showDivider?: boolean | Expression<string>;
 } & EnsembleWidgetProps<PopupMenuStyles> &
@@ -42,7 +42,7 @@ type PopupMenuProps = {
 
 export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
   const { "item-template": itemTemplate, ...rest } = props;
-  const { values } = useRegisterBindings({ ...rest }, props?.id);
+  const { values } = useRegisterBindings({ ...rest }, props.id);
   const action = useEnsembleAction(props.onItemSelect);
   const [widgetProps, setWidgetProps] = useState<EnsembleWidget>();
 
@@ -63,7 +63,7 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
                 ? item.label
                 : EnsembleRuntime.render([unwrapWidget(item.label)])}
             </Menu.Item>
-            {values?.items && values?.showDivider
+            {values.items && values.showDivider
               ? index < values.items.length - 1 && <Menu.Divider />
               : null}
           </React.Fragment>
@@ -109,7 +109,7 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
     }
     // clone value so we're not updating the yaml doc
     const widget = cloneDeep(values?.widget);
-    const actualWidget = unwrapWidget(widget as Record<string, unknown>);
+    const actualWidget = unwrapWidget(widget!);
     setWidgetProps(actualWidget);
     // Only run once
   }, []);
