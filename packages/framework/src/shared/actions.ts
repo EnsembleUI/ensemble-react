@@ -111,11 +111,9 @@ export interface UploadFilesAction {
 
 export type CloseAllDialogsAction = null;
 
-/* eslint-disable tsdoc/syntax */
 /**
  * @uiType action
  */
-/* eslint-enable tsdoc/syntax */
 export type EnsembleAction =
   | {
       executeCode?: ExecuteCodeAction;
