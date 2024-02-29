@@ -127,7 +127,6 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
           visible: false,
         },
       ]);
-      return;
     }
 
     setNewModal({
@@ -199,14 +198,11 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     `;
 
   const getFullScreenStyles = (index: number): string => `
-    .ensemble-modal-${index}, .ensemble-modal-${index} .ant-modal-content {
-      height: 100vh !important;
-      width: 100vw !important;
-      margin: 0 !important;
-      top: 0 !important;
-      left: 0 !important;
-      bottom: 0 !important;
-      right: 0 !important;
+    .ensemble-modal-${index} .ant-modal-content {
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      inset: 0;
     }
   `;
 
@@ -283,7 +279,6 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
         if (!modal.visible) {
           return null;
         }
-
         const { options } = modal;
         const modalContent = (
           <>
@@ -342,19 +337,25 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
                     options.verticalOffset < 0 ? "+" : "-"
                   } ${modalDimensions[index].height / 2}px)`,
                 }),
-                ...(getComponentStyles(
-                  "", // Empty prefix (all properties will be included)
-                  pick(options, [
-                    "height",
-                    "width",
-                    "position",
-                    "top",
-                    "left",
-                    "bottom",
-                    "right",
-                  ]) as React.CSSProperties,
-                  false,
-                ) as React.CSSProperties),
+                ...(isFullScreen[index]
+                  ? {
+                      height: "100vh",
+                      width: "100vw",
+                      margin: 0,
+                      inset: 0,
+                    }
+                  : (getComponentStyles(
+                      "",
+                      pick(options, [
+                        "height",
+                        "width",
+                        "top",
+                        "right",
+                        "bottom",
+                        "left",
+                      ]) as React.CSSProperties,
+                      false,
+                    ) as React.CSSProperties)),
               }}
               title={getTitleElement(modal.options, index)}
               width={modal.options.width || "auto"}

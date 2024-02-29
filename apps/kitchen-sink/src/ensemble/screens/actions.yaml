@@ -277,6 +277,8 @@ View:
                               label: Open Dialog with Template Value
                               onTap:
                                 showDialog:
+                                  options:
+                                    position: "top"
                                   widget:
                                     Button:
                                       label: ${"The value is:" + value + "! Click me"}
