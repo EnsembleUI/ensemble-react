@@ -381,6 +381,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
               style={{
                 ...(modal.options.position ? { position: "absolute" } : {}),
                 margin: (!isFullScreen[index] && modal.options.margin) || 0,
+                zIndex: 100000,
               }}
               title={getTitleElement(modal.options, index)}
               width={modal.options.width || "auto"}

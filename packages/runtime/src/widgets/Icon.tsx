@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import type { IconProps } from "../shared/types";
+import { omit } from "lodash-es";
 import { getColor, getIcon } from "../shared/styles";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
@@ -34,9 +35,9 @@ export const Icon: React.FC<IconProps> = ({
   if (!IconComponent) {
     return null;
   }
-  const handleMouseEnter = (event: React.MouseEvent<SVGSVGElement>): void => {
+  const handleMouseOver = (event: React.MouseEvent<SVGSVGElement>): void => {
     const { clientX, clientY } = event;
-    console.log("Mouse Enter");
+    console.log("mouse Enter");
     if (!isMouseOver) {
       setIsMouseOver(true);
       onMouseEnterAction?.callback({
@@ -46,7 +47,7 @@ export const Icon: React.FC<IconProps> = ({
   };
   const handleMouseLeave = (event: React.MouseEvent<SVGSVGElement>): void => {
     // Check if the mouse has left the Icon component
-    console.log("Mouse Left");
+    console.log("mouse Leave");
     onMouseLeaveAction?.callback();
     setIsMouseOver(false);
   };
@@ -54,7 +55,7 @@ export const Icon: React.FC<IconProps> = ({
     <IconComponent
       className={values?.styles?.names}
       onClick={(): unknown => onTapActionCallback?.callback()}
-      onMouseEnter={handleMouseEnter}
+      onMouseEnter={handleMouseOver}
       onMouseLeave={handleMouseLeave}
       sx={{
         ...values?.styles,

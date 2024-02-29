@@ -183,21 +183,22 @@ View:
                                 borderWidth: 1
                                 borderColor: black
                                 padding: 8
-                                zIndex: 1000000
                               onMouseEnter:
                                 showDialog:
                                   options:
-                                    mask: true
+                                    mask: false
                                     position: absolute
                                     top: ${location.y + 'px'}
-                                    left: ${(location.x + 100)+ 'px'}
+                                    left: ${(location.x + 10)+ 'px'}
                                     width: max-content
                                   widget:
                                     Column:
                                       children:
                                         - Text:
                                             text: ${location.y}
-                                    
+                              onMouseLeave:
+                                closeAllDialogs:
+
                           - PopupMenu:
                               showDivider: true
                               items:
@@ -765,6 +766,30 @@ View:
                   value: true
                   leadingText: Set to true and requred
 
+        - Card:
+            children:
+              - Icon:
+                  name: Add
+                  styles:
+                    borderRadius: 30
+                    borderWidth: 1
+                    borderColor: black
+                    padding: 8
+                  onMouseEnter:
+                    showDialog:
+                      options:
+                        mask: false
+                        position: absolute
+                        top: ${location.y + 'px'}
+                        left: ${(location.x + 100)+ 'px'}
+                        width: max-content
+                      widget:
+                        Column:
+                          children:
+                            - Text:
+                                text: ${location.y}
+                  onMouseLeave:
+                    closeAllDialogs:
 
 API:
   getDummyProducts:
