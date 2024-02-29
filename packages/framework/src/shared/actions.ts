@@ -51,6 +51,11 @@ interface NavigateUrlOptions {
   inputs: { [key: string]: unknown };
 }
 
+interface NavigateExternalScreenOptions {
+  url: string;
+  openNewTab?: boolean;
+}
+
 export type NavigateModalScreenAction =
   | string
   | (NavigateScreenOptions & {
@@ -66,6 +71,8 @@ export type NavigateScreenAction = string | NavigateScreenOptions;
 export type NavigateUrlAction = string | NavigateUrlOptions;
 
 export type NavigateBackAction = null;
+
+export type NavigateExternalScreen = string | NavigateExternalScreenOptions;
 
 export interface ShowDialogOptions {
   minWidth?: number;
@@ -125,7 +132,7 @@ export type EnsembleAction =
   | { navigateBack?: NavigateBackAction }
   | { navigateScreen?: NavigateScreenAction }
   | { navigateModalScreen?: NavigateModalScreenAction }
-  // | { navigateExternalScreen?: NavigateModalScreenAction }
+  | { navigateExternalScreen?: NavigateExternalScreen }
   // | { navigateViewGroup?: NavigateViewGroup }
   // | { showBottomModal?: ShowBottomModal }
   // | { dismissBottomModal?: DismissBottomModal }

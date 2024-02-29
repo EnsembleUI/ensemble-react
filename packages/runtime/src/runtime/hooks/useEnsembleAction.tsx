@@ -26,6 +26,7 @@ import type {
   NavigateScreenAction,
   CustomScope,
   NavigateBackAction,
+  NavigateExternalScreen,
 } from "@ensembleui/react-framework";
 import {
   isEmpty,
@@ -40,11 +41,17 @@ import {
 } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { navigateApi, navigateBack, navigateUrl } from "../navigation";
+import {
+  navigateApi,
+  navigateBack,
+  navigateUrl,
+  navigateExternalScreen,
+} from "../navigation";
 import { locationApi } from "../locationApi";
 import { ModalContext } from "../modal";
 import { EnsembleRuntime } from "../runtime";
 import { getShowDialogOptions, showDialog } from "../showDialog";
+import { invokeAPI } from "../invokeApi";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { useNavigateModalScreen } from "./useNavigateModal";
@@ -52,7 +59,7 @@ import { useNavigateScreen } from "./useNavigateScreen";
 import { useShowToast } from "./useShowToast";
 import { useCloseAllDialogs } from "./useCloseAllDialogs";
 import { useNavigateUrl } from "./useNavigateUrl";
-import { invokeAPI } from "../invokeApi";
+import { useNavigateExternalScreen } from "./useNavigteExternalScreen";
 
 export type EnsembleActionHookResult =
   | {
@@ -158,6 +165,8 @@ export const useExecuteCode: EnsembleActionHook<
                     customScope,
                   ),
                 navigateBack: (): void => navigateBack(navigate),
+                navigateExternalScreen: (url: NavigateExternalScreen) =>
+                  navigateExternalScreen(url),
               },
             },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
@@ -537,6 +546,10 @@ export const useEnsembleAction = (
 
   if ("navigateBack" in action) {
     return useNavigateBack(action.navigateBack);
+  }
+
+  if ("navigateExternalScreen" in action) {
+    return useNavigateExternalScreen(action.navigateExternalScreen);
   }
 
   if ("showToast" in action) {

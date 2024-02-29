@@ -279,6 +279,30 @@ View:
                   onTap:
                     navigateUrl: /widgets?name=hello
 
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: NavigateExternalUrl
+              - Button:
+                  label: navigateExternalUrl
+                  onTap:
+                    navigateExternalScreen:
+                      url: https://google.com
+                      openNewTab: false
+              - Button:
+                  label: navigateExternalUrl
+                  onTap:
+                    executeCode: |
+                      ensemble.navigateExternalScreen({
+                        url: 'https://google.com',
+                        openNewTab: true
+                      })
+
 API:
   getDummyProducts:
     method: GET
