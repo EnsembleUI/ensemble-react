@@ -46,6 +46,7 @@
     "jwt-decode": "^4.0.0",
     "lodash-es": "^4.17.21",
     "react-chartjs-2": "^5.2.0",
+    "react-easy-crop": "^5.0.5",
     "react-markdown": "^8.0.7",
     "react-resizable": "^3.0.5",
     "react-router-dom": "^6.16.0",
