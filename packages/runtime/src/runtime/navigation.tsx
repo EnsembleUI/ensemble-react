@@ -1,6 +1,7 @@
-import {
-  type ScreenContextDefinition,
-  type NavigateScreenAction,
+import type {
+  ScreenContextDefinition,
+  NavigateScreenAction,
+  NavigateExternalScreen,
 } from "@ensembleui/react-framework";
 import { cloneDeep, isObject, isString } from "lodash-es";
 import type { NavigateFunction } from "react-router-dom";
@@ -42,4 +43,24 @@ export const navigateUrl = (
 
 export const navigateBack = (navigate: NavigateFunction): void => {
   navigate(-1);
+};
+
+export const openExternalScreen = (action: NavigateExternalScreen): void => {
+  const hasOptions = !isString(action);
+  const screenUrl = hasOptions ? action.url : action;
+
+  if (!screenUrl) {
+    return;
+  }
+
+  window.open(
+    screenUrl,
+    !isString(action) && !action.openNewTab ? "_self" : "",
+  );
+};
+
+export const navigateExternalScreen = (
+  action: NavigateExternalScreen,
+): void => {
+  openExternalScreen(action);
 };
