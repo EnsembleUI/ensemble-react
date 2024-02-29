@@ -1,4 +1,4 @@
-import { Expression, useRegisterBindings } from "@ensembleui/react-framework";
+import { Expression, useEvaluate } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import type {
   EnsembleWidgetProps,
@@ -6,7 +6,6 @@ import type {
   FlexboxStyles,
 } from "../shared/types";
 import { Column } from "./Column";
-import { useState } from "react";
 import { isArray } from "lodash-es";
 
 interface FittedColumnStyles extends FlexboxStyles {
@@ -19,12 +18,8 @@ export type FittedColumnProps = {
   EnsembleWidgetProps<FittedColumnStyles>;
 
 export const FittedColumn: React.FC<FittedColumnProps> = (props) => {
-  const [childrenFits, setChildrenFits] = useState<
-    Expression<string[]> | undefined
-  >(props.childrenFits || props.styles?.childrenFits);
-
-  const { values } = useRegisterBindings({ childrenFits }, props.id, {
-    setChildrenFits,
+  const values = useEvaluate({
+    childrenFits: props.childrenFits || props.styles?.childrenFits,
   });
 
   return (
