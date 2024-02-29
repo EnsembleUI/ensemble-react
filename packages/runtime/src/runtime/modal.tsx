@@ -22,7 +22,7 @@ interface ModalProps {
   hideCloseIcon?: boolean;
   hideFullScreenIcon?: boolean;
   onClose?: () => void;
-  position?: "top" | "right" | "bottom" | "left";
+  position?: "top" | "right" | "bottom" | "left" | "center";
   height?: string;
   width?: string | number;
   margin?: string;
@@ -65,14 +65,15 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
   const [modalDimensions, setModalDimensions] = useState<ModalDimensions[]>([]);
   const [isFullScreen, setIsFullScreen] = useState<boolean[]>([]);
   const contentRef = useRef<HTMLDivElement | null>(null);
-  const titleRef = useRef<HTMLDivElement | null>(null);
-  const [context, setContext] = useState<unknown>();
-  const [newContent, setNewContent] = useState<React.ReactNode>();
-  const [newOptions, setNewOptions] = useState<Record<string, unknown>>({});
-  const [isDialog, setIsDialog] = useState<boolean>(false);
+  const [newModal, setNewModal] = useState<{
+    content: React.ReactNode;
+    options: Record<string, unknown>;
+    isDialog: boolean;
+    context?: Record<string, unknown>;
+  }>();
   const [isDialogSet, setIsDialogSet] = useState<boolean>(false);
-  const evaluatedOptions = useEvaluate(newOptions, {
-    context,
+  const evaluatedOptions = useEvaluate(newModal?.options, {
+    context: newModal?.context,
     refreshExpressions: true,
   });
 
@@ -94,12 +95,12 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
         ...oldModalState,
         {
           visible: true,
-          content: newContent,
+          content: newModal?.content,
           options: evaluatedOptions,
           key: oldModalState.length
             ? oldModalState[oldModalState.length - 1].key + 1
             : 0,
-          isDialog,
+          isDialog: Boolean(newModal?.isDialog),
         },
       ]);
       setModalDimensions((oldModalDimensions) => [
@@ -109,15 +110,15 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
       setIsFullScreen((oldIsFullScreen) => [...oldIsFullScreen, false]);
       setIsDialogSet(true);
     }
-  }, [evaluatedOptions, newContent, isDialogSet, newContent, isDialog]);
+  }, [evaluatedOptions, isDialogSet, newModal]);
 
   const openModal = (
     content: React.ReactNode,
     options: ModalProps,
-    isADialog = false,
+    isDialog = false,
     modalContext?: Record<string, unknown>,
   ): void => {
-    if (!isADialog && modalState.length > 0) {
+    if (!isDialog && modalState.length > 0) {
       // hide the last modal
       setModalState((oldModalState) => [
         ...oldModalState.slice(0, -1),
@@ -129,12 +130,15 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
       return;
     }
 
-    setContext(modalContext);
-    setNewContent(content);
-    setNewOptions(
-      omit(options, ["onClose", !isString(options.title) ? "title" : ""]),
-    );
-    setIsDialog(isADialog);
+    setNewModal({
+      content,
+      options: omit(options, [
+        "onClose",
+        !isString(options.title) ? "title" : "",
+      ]),
+      isDialog,
+      context: modalContext,
+    });
     setIsDialogSet(false);
   };
 
@@ -161,110 +165,31 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     }
   };
 
-  const getPositionSelector = (
-    modalWidth: number,
-    modalHeight: number,
-    isFullHeight = false,
-  ): Record<string, string> => {
-    return {
-      top: `
-        top: 0 !important;
-        left: calc(50% - ${modalWidth / 2}px) !important;
-      `,
-      right: `
-        right: 0 !important;
-        ${
-          isFullHeight
-            ? ""
-            : `top: calc(50% - ${modalHeight / 2}px) !important;`
-        }
-      `,
-      bottom: `
-        bottom: 0 !important;
-        right: calc(50% - ${modalWidth / 2}px) !important;
-      `,
-      left: `
-        left: 0 !important;
-        ${
-          isFullHeight
-            ? ""
-            : `top: calc(50% - ${modalHeight / 2}px) !important;`
-        }
-      `,
-      center: `
-        top: 50% !important;
-        left: 50% !important;
-        transform: translate(-50%, -50%) !important;
-      `,
-    };
-  };
-
-  const getPositionStyles = (options: ModalProps, index: number): string =>
-    `
-      .ensemble-modal-${index} {
-        ${
-          options.position
-            ? getPositionSelector(
-                modalDimensions[index].width,
-                modalDimensions[index].height,
-                options.height?.includes("100"),
-              )[options.position]
-            : ""
-        }
-        ${
-          options.horizontalOffset
-            ? `left: calc(${(options.horizontalOffset * 100) / 2}% + ${
-                modalDimensions[index].width / 2
-              }px) !important;`
-            : ""
-        }
-        ${
-          options.verticalOffset
-            ? `top: calc(${(options.verticalOffset * 100) / 2}% + ${
-                modalDimensions[index].height / 2
-              }px) !important;`
-            : ""
-        }
-      }
-    `;
-
   const getCustomStyles = (options: ModalProps, index: number): string =>
     `
       .ant-modal-root .ant-modal-centered .ant-modal {
         top: unset;
-        max-width: 100%;
       }
       .ensemble-modal-${index} {
-        height: 100%;
         max-height: 100vh;
         max-width: 100vw;
-        ${getComponentStyles(
-          "",
-          pick(options, [
-            "height",
-            "width",
-            "position",
-            "top",
-            "left",
-            "bottom",
-            "right",
-          ]) as React.CSSProperties,
-        )}
       }
       .ensemble-modal-${index} .ant-modal-content {
         display: flex;
         flex-direction: column;
-        ${getComponentStyles(
-          "",
-          omit(options, [
-            "width",
-            "position",
-            "top",
-            "left",
-            "bottom",
-            "right",
-          ]) as React.CSSProperties,
-        )}
+        ${
+          getComponentStyles(
+            "",
+            omit(options, [
+              "width",
+              "position",
+              "top",
+              "left",
+              "bottom",
+              "right",
+            ]) as React.CSSProperties,
+          ) as string
+        }
         ${options.showShadow === false ? "box-shadow: none !important;" : ""}
       }
       .ensemble-modal-${index} .ant-modal-body {
@@ -323,7 +248,6 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     options.hideFullScreenIcon === true &&
     options.hideCloseIcon === true ? null : (
       <div
-        ref={titleRef}
         style={{
           display: "flex",
           alignItems: "center",
@@ -360,27 +284,77 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
           return null;
         }
 
+        const { options } = modal;
         const modalContent = (
           <>
-            <style>{getCustomStyles(modal.options, index)}</style>
-            <style>
-              {isFullScreen[index]
-                ? getFullScreenStyles(index)
-                : getPositionStyles(modal.options, index)}
-            </style>
+            <style>{getCustomStyles(options, index)}</style>
+            {isFullScreen[index] && <style>{getFullScreenStyles(index)}</style>}
             <Modal
               centered={!isFullScreen[index]}
               className={`ensemble-modal-${index}`}
               closable={false}
               footer={null}
               key={modal.key}
-              mask={modal.options.mask}
-              maskClosable={modal.options.maskClosable}
+              mask={options.mask}
+              maskClosable={options.maskClosable}
               onCancel={(): void => closeModal(index)}
               open={modal.visible}
               style={{
-                ...(modal.options.position ? { position: "absolute" } : {}),
-                margin: (!isFullScreen[index] && modal.options.margin) || 0,
+                ...(options.position === "top" && {
+                  top: 0,
+                  left: `calc(50% - ${modalDimensions[index].width / 2}px)`,
+                }),
+                ...(options.position === "bottom" && {
+                  bottom: 0,
+                  left: `calc(50% - ${modalDimensions[index].width / 2}px)`,
+                }),
+                ...(options.position === "left" && {
+                  left: 0,
+                  top: `calc(50% - ${modalDimensions[index].height / 2}px)`,
+                }),
+                ...(options.position === "right" && {
+                  right: 0,
+                  top: `calc(50% - ${modalDimensions[index].height / 2}px)`,
+                }),
+                ...(options.position === "center" && {
+                  top: "50% !important",
+                  left: "50% !important",
+                  transform: "translate(-50%, -50%) !important",
+                }),
+                ...(options.position && {
+                  position: [
+                    "top",
+                    "right",
+                    "bottom",
+                    "left",
+                    "center",
+                  ].includes(options.position)
+                    ? "absolute"
+                    : (options.position as React.CSSProperties["position"]),
+                }),
+                ...(options.horizontalOffset && {
+                  left: `calc(${(options.horizontalOffset * 100) / 2}% ${
+                    options.horizontalOffset < 0 ? "+" : "-"
+                  } ${modalDimensions[index].width / 2}px)`,
+                }),
+                ...(options.verticalOffset && {
+                  top: `calc(${(options.verticalOffset * 100) / 2}% ${
+                    options.verticalOffset < 0 ? "+" : "-"
+                  } ${modalDimensions[index].height / 2}px)`,
+                }),
+                ...(getComponentStyles(
+                  "", // Empty prefix (all properties will be included)
+                  pick(options, [
+                    "height",
+                    "width",
+                    "position",
+                    "top",
+                    "left",
+                    "bottom",
+                    "right",
+                  ]) as React.CSSProperties,
+                  false,
+                ) as React.CSSProperties),
               }}
               title={getTitleElement(modal.options, index)}
               width={modal.options.width || "auto"}

@@ -1,6 +1,7 @@
 import * as Icons from "@mui/icons-material";
 import type { SvgIconComponent } from "@mui/icons-material";
 import { get } from "lodash-es";
+import React from "react";
 
 type Color = number | string;
 
@@ -104,12 +105,13 @@ export const getIcon = (name: string): SvgIconComponent | undefined => {
 export const getComponentStyles = (
   name: string,
   styles?: React.CSSProperties,
-  addImportant = true,
-): string => {
+  returnAsString = true,
+): string | React.CSSProperties => {
   const styleNames = Object.keys(styles || {}).filter((key) =>
     key.startsWith(name),
   );
   let result = "";
+  let res: React.CSSProperties = {};
 
   styleNames.forEach((property) => {
     const styleValue = get(styles, property) as string | undefined;
@@ -119,11 +121,10 @@ export const getComponentStyles = (
         // eslint-disable-next-line prefer-named-capture-group
         .replace(/([a-z])([A-Z])/g, "$1-$2")
         .toLowerCase(); // convert camelCase to kebab-case
-      result += `${cssProperty}: ${styleValue} ${
-        addImportant ? "!important" : ""
-      };`;
+      result += `${cssProperty}: ${styleValue};`;
+      res = { ...res, [cssProperty]: styleValue };
     }
   });
 
-  return result;
+  return returnAsString ? result : res;
 };

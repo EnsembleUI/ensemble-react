@@ -157,6 +157,9 @@ View:
                       title: Modal Screen title (optional)
                       styles:
                         height: 400px
+                        width: 604px
+                        right: 105px
+                        top: 304px
         - Card:
             styles:
               maxWidth: unset
@@ -225,6 +228,8 @@ View:
                         width: ${abcText.text}
                         height: 150px
                         backgroundColor: "#f1f1f1"
+                        right: 105px
+                        top: 304px
                       onDialogDismiss:
                         executeCode:
                           body: |
