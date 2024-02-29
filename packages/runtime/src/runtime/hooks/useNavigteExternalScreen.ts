@@ -15,7 +15,10 @@ export const useNavigateExternalScreen: EnsembleActionHook<
     }
 
     return () => {
-      window.open(screenUrl, !action?.openNewTab ? "_self" : "");
+      window.open(
+        screenUrl,
+        !isString(action) && !action?.openNewTab ? "_self" : "",
+      );
     };
   }, [screenUrl, action]);
 

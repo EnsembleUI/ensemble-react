@@ -55,5 +55,8 @@ export const navigateExternalScreen = (
     return;
   }
 
-  window.open(screenName, !action?.openNewTab ? "_self" : "");
+  window.open(
+    screenName,
+    !isString(action) && !action.openNewTab ? "_self" : "",
+  );
 };
