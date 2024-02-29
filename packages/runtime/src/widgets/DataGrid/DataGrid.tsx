@@ -77,7 +77,7 @@ export interface DataGridScrollable {
 
 export type GridProps = {
   allowSelection?: boolean;
-  allowColResizable?: boolean;
+  allowResizableColumns?: boolean;
   onRowsSelected?: EnsembleAction;
   DataColumns: Expression<DataColumn[] | string[]>;
   "item-template": {
@@ -132,7 +132,9 @@ const ResizableTitle: React.FC<ResizableProps & ResizableState> = (props) => {
 };
 
 export const DataGrid: React.FC<GridProps> = (props) => {
-  const [colWidth, setColWidth] = useState<Record<number, number>>({});
+  const [colWidth, setColWidth] = useState<{
+    [key: number]: number | undefined;
+  }>({});
   const [rowsSelected, setRowsSelected] = useState<object[]>();
   const [allowSelection, setAllowSelection] = useState(
     props.allowSelection ?? false,
@@ -226,14 +228,24 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     if (values?.DataColumns && isArray(values.DataColumns)) {
       return values.DataColumns.map((item, index): unknown => {
         if (isString(item)) {
-          return { label: item, width: colWidth[index] ?? 100 };
+          return {
+            label: item,
+            ...(values.allowResizableColumns
+              ? { width: colWidth[index] ?? 100 }
+              : {}),
+          };
         }
-        return { ...item, width: colWidth[index] ?? item.width ?? 100 };
+        return {
+          ...item,
+          ...(values.allowResizableColumns
+            ? { width: colWidth[index] ?? item.width ?? 100 }
+            : {}),
+        };
       }) as DataColumn[];
     }
 
     return [];
-  }, [values?.DataColumns, colWidth]);
+  }, [values?.DataColumns, values?.allowResizableColumns, colWidth]);
 
   const components = {
     header: {
@@ -325,6 +337,16 @@ export const DataGrid: React.FC<GridProps> = (props) => {
                       )
                   : undefined
               }
+              onHeaderCell={
+                values?.allowResizableColumns
+                  ? () => ({
+                      width: col.width,
+                      onResize: handleResize(
+                        colIndex,
+                      ) as ReactEventHandler<any>,
+                    })
+                  : undefined
+              }
               render={(_, record, rowIndex): ReactElement => {
                 return (
                   <DataCell
@@ -349,16 +371,6 @@ export const DataGrid: React.FC<GridProps> = (props) => {
               }
               title={col.label}
               width={col.width}
-              {...(values?.allowColResizable
-                ? {
-                    onHeaderCell: () => ({
-                      width: col.width,
-                      onResize: handleResize(
-                        colIndex,
-                      ) as ReactEventHandler<any>,
-                    }),
-                  }
-                : {})}
             />
           );
         })}
