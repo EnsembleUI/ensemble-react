@@ -5,14 +5,21 @@ import type { IconProps } from "../shared/types";
 import { getColor, getIcon } from "../shared/styles";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
-export const Icon: React.FC<IconProps> = ({ onTap, onHover, ...props }) => {
+export const Icon: React.FC<IconProps> = ({
+  onTap,
+  onMouseEnter,
+  onMouseLeave,
+  ...props
+}) => {
   const [color, setColor] = useState(props.color);
   const [name, setName] = useState(props.name);
   const [backgroundColor, setBackgroundColor] = useState(
     props.styles?.backgroundColor,
   );
+  const [isMouseOver, setIsMouseOver] = useState(false);
   const onTapActionCallback = useEnsembleAction(onTap);
-  const onHoverActionCallback = useEnsembleAction(onHover);
+  const onMouseEnterAction = useEnsembleAction(onMouseEnter);
+  const onMouseLeaveAction = useEnsembleAction(onMouseLeave);
 
   const { values } = useRegisterBindings(
     { ...props, color, name, backgroundColor },
@@ -27,11 +34,28 @@ export const Icon: React.FC<IconProps> = ({ onTap, onHover, ...props }) => {
   if (!IconComponent) {
     return null;
   }
+  const handleMouseEnter = (event: React.MouseEvent<SVGSVGElement>): void => {
+    const { clientX, clientY } = event;
+    console.log("Mouse Enter");
+    if (!isMouseOver) {
+      setIsMouseOver(true);
+      onMouseEnterAction?.callback({
+        location: { x: clientX, y: clientY },
+      });
+    }
+  };
+  const handleMouseLeave = (event: React.MouseEvent<SVGSVGElement>): void => {
+    // Check if the mouse has left the Icon component
+    console.log("Mouse Left");
+    onMouseLeaveAction?.callback();
+    setIsMouseOver(false);
+  };
   return (
     <IconComponent
       className={values?.styles?.names}
       onClick={(): unknown => onTapActionCallback?.callback()}
-      onMouseEnter={(): unknown => onHoverActionCallback?.callback()}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       sx={{
         ...values?.styles,
         color: values?.color && getColor(String(values.color)),

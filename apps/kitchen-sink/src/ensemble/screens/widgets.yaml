@@ -178,13 +178,19 @@ View:
                               text: ${dummyData.advocate}
                           - Icon:
                               name: Add
-                              onHover:
+                              styles:
+                                borderRadius: 30
+                                borderWidth: 1
+                                borderColor: black
+                                padding: 8
+                                zIndex: 1000000
+                              onMouseEnter:
                                 showDialog:
                                   options:
                                     mask: true
                                     position: absolute
-                                    top: ${location.y}
-                                    left: ${location.x}
+                                    top: ${location.y + 'px'}
+                                    left: ${(location.x + 100)+ 'px'}
                                     width: max-content
                                   widget:
                                     Column:
