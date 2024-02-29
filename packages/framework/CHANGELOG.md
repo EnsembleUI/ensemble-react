@@ -1,5 +1,13 @@
 # @ensembleui/react-framework
 
+## 0.1.21
+
+### Patch Changes
+
+- e15a61f: add navigateBack action
+- cc10f29: fix casing of 'invokeApi' to 'invokeAPI' and add invokeAPI in js
+- 1cc168b: added subscribe in useEnsembleUser
+
 ## 0.1.20
 
 ### Patch Changes

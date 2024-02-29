@@ -3,4 +3,4 @@
 "@ensembleui/react-runtime": patch
 ---
 
-add Lottie widget
+added image cropper widget

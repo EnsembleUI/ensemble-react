@@ -3,4 +3,4 @@
 "@ensembleui/react-runtime": patch
 ---
 
-added flex widget
+Added daterange picker widget

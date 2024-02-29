@@ -24,6 +24,7 @@ const config: Config = {
     // We can display this group different (e.g. card, ...)
     "groupDisplay",
   ],
+  jsDoc: "extended"
 
   // additionalProperties: true,
 
@@ -59,7 +60,7 @@ function postProcessing(schema: JSONSchema7) {
   schema = addDefaultSnippetsToCode(schema);
 
   schema = convertAnyOfToOneOf(schema, "Widget");
-  schema = convertAnyOfToOneOf(schema, "Action");
+  schema = convertAnyOfToOneOf(schema, "EnsembleAction");
 
   schema = convertToEnumWithDescription(schema, "ImageFit");
   schema = convertToEnumWithDescription(schema, "ShadowStyle");
@@ -182,7 +183,7 @@ function removeAdditionalPropertiesFalse(schema: JSONSchema7) {
   if (schema.$defs) {
     Object.keys(schema.$defs).forEach((key) => {
       // This is important. Widgets need to have additionalProperties: false
-      if (key !== "Widget" && key !== "Action") {
+      if (key !== "Widget" && key !== "EnsembleAction") {
         const val = schema.$defs?.[key];
         if (!isBoolean(val) && val) {
           removeAdditionalPropertiesFalse(val);

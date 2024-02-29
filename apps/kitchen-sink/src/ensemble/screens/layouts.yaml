@@ -226,7 +226,20 @@ View:
                           - Icon:
                               name: Search
                           - Text:
-                              text: ${"Hello" + flexChild}
+                              text: ${"Hello" + flexChild}        
+        - Card:
+            children:
+              - Markdown:
+                  text: |
+                    ## Spacer
+              - Column:
+                  children:
+                    - Button:
+                        label: Hello 1
+                    - Spacer:
+                    - Button:
+                        label: Hello 2
+              
 
   footer:
     children:
