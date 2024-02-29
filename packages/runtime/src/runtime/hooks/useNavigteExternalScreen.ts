@@ -11,7 +11,7 @@ export const useNavigateExternalScreen: EnsembleActionHook<
       return;
     }
 
-    openExternalScreen(action);
+    return () => openExternalScreen(action);
   }, [action]);
 
   return callback ? { callback } : undefined;
