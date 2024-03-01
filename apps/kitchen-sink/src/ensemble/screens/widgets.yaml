@@ -189,15 +189,13 @@ View:
                                     mask: false
                                     position: absolute
                                     top: ${location.y + 'px'}
-                                    left: ${(location.x + 100)+ 'px'}
+                                    left: ${(location.x + 20)+ 'px'}
                                     width: max-content
                                   widget:
                                     Column:
                                       children:
                                         - Text:
                                             text: ${location.y}
-                              onMouseLeave:
-                                closeAllDialogs:
                           - PopupMenu:
                               showDivider: true
                               items:
