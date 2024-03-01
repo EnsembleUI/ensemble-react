@@ -12,6 +12,7 @@ export type ButtonProps = {
   onTap?: EnsembleAction;
   submitForm?: boolean;
   startingIcon?: IconProps;
+  disabled?: boolean;
   endingIcon?: IconProps;
   styles?: {
     textColor: string;
@@ -36,6 +37,7 @@ export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
   const ButtonComponent = useMemo(() => {
     return (
       <AntButton
+        disabled={values?.disabled ?? false}
         htmlType="submit"
         onClick={onClickCallback}
         ref={rootRef}
