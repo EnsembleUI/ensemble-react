@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import type { IconProps } from "../shared/types";
-import { omit } from "lodash-es";
 import { getColor, getIcon } from "../shared/styles";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
@@ -44,7 +43,7 @@ export const Icon: React.FC<IconProps> = ({
       });
     }
   };
-  const handleMouseLeave = (event: React.MouseEvent<SVGSVGElement>): void => {
+  const handleMouseLeave = (): void => {
     // Check if the mouse has left the Icon component
     onMouseLeaveAction?.callback();
     setIsMouseOver(false);
