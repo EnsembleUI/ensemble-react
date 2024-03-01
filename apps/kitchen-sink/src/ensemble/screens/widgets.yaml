@@ -180,9 +180,18 @@ View:
                               name: Add
                               onHover:
                                 showDialog:
+                                  options:
+                                    mask: true
+                                    position: absolute
+                                    top: ${location.y}
+                                    left: ${location.x}
+                                    width: max-content
                                   widget:
-                                    Text:
-                                      text: "Added!"
+                                    Column:
+                                      children:
+                                        - Text:
+                                            text: ${location.y}
+                                    
                           - PopupMenu:
                               showDivider: true
                               items:

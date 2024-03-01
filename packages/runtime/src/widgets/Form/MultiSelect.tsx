@@ -166,7 +166,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     <>
       <style>{`
         .${id}_input .ant-select-selector {
-          ${getComponentStyles("multiSelect", values?.styles)}
+          ${getComponentStyles("multiSelect", values?.styles) as string}
         }
         .ant-select-item.ant-select-item-option.${id}_option[aria-selected="true"]
         {

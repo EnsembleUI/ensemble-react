@@ -10,16 +10,19 @@ export const useEvaluate = <T extends Record<string, unknown>>(
   options?: {
     context?: unknown;
     debugId?: string;
+    refreshExpressions?: boolean;
   },
 ): T => {
   const customScope = useCustomScope();
 
-  const expressions = useMemo(() => {
-    const expressionMap: string[][] = [];
-    findExpressions(values, [], expressionMap);
-    return expressionMap;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const expressions = useMemo(
+    () => {
+      const expressionMap: string[][] = [];
+      findExpressions(values, [], expressionMap);
+      return expressionMap;
+    },
+    options?.refreshExpressions ? [values] : [],
+  );
 
   const bindingsAtom = useMemo(() => {
     const bindingsEntries = compact(

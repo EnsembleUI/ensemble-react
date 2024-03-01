@@ -64,6 +64,7 @@ export const useNavigateModalScreen: EnsembleActionHook<
       maskClosable: true,
       hideCloseIcon: true,
       hideFullScreenIcon: true,
+      padding: "12px",
     };
     if (isObject(action)) {
       merge(modalOptions, action, { ...action.styles }, { title });
