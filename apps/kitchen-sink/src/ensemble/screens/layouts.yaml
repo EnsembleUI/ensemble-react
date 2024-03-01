@@ -1,14 +1,20 @@
 View:
   onLoad:
-    invokeAPI:
-      name: getDummyProducts
-      inputs:
-        skip: 10
-      onResponse:
-        executeCode: |
-          const res = response.body.products;
-          ensemble.storage.set("skip", 10)
-          ensemble.storage.set("products", res)
+    executeCode:
+      body: |
+        ensemble.storage.set('childrenFits', [10, 1, 4]);
+        ensemble.storage.set('bgColor', '#f0f0f0');
+        console.log('onLoad')
+      onComplete:
+        invokeAPI:
+          name: getDummyProducts
+          inputs:
+            skip: 10
+          onResponse:
+            executeCode: |
+              const res = response.body.products;
+              ensemble.storage.set("skip", 10)
+              ensemble.storage.set("products", res);
   header:
     title:
       Header:
@@ -24,6 +30,91 @@ View:
             text: Layouts
         - Markdown:
             text: This screen demonstrates a few patterns to get you started with Ensemble. Here, we fetch data from an API and use control expressions to display a loading state and a list of products. Try making a few changes and see how the screen automatically updates! For more information, see [help](/help).
+
+        - Text:
+            styles:
+              names: heading-3
+            text: Row
+        - Row:
+            styles: { gap: 10px, crossAxis: center, padding: 12 }
+            children:
+              - Markdown:
+                  text: |
+                    Row is a layout widget that arranges its children in a horizontal line. It is the most basic layout widget. You can use it to create a row of widgets.
+              - Column:
+                  children:
+                    - Text:
+                        text: O
+              - Button:
+                  label: Row
+
+        - Text:
+            styles:
+              names: heading-3
+            text: FittedRow
+        - FittedRow:
+            onTap:
+              executeCode: |
+                console.log('FittedRow')
+            styles:
+              {
+                childrenFits: "${ensemble.storage.get('childrenFits')}",
+                crossAxis: center,
+                padding: 12,
+                backgroundColor: "${ensemble.storage.get('bgColor')}",
+              }
+            children:
+              - Markdown:
+                  text: |
+                    Stretch to fit the parent (the parent is required to have a predetermined width), then distribute the horizontal spaces evenly among its children. You can override the space distribution via **childrenFits** attribute.
+              - Column:
+                  children:
+                    - Text:
+                        text: O
+              - Button:
+                  label: FittedRow
+
+        - Text:
+            styles:
+              names: heading-3
+            text: Column
+        - Column:
+            styles: { gap: 10px, crossAxis: center, padding: 12 }
+            children:
+              - Markdown:
+                  text: |
+                    Column is a layout widget that arranges its children in a vertical line. It is the most basic layout widget. You can use it to create a column of widgets.
+              - Column:
+                  children:
+                    - Text:
+                        text: O
+              - Button:
+                  label: Column
+
+        - Text:
+            styles:
+              names: heading-3
+            text: FittedColumn
+        - FittedColumn:
+            styles:
+              childrenFits: [3, 9, 1, 1, auto]
+              padding: 20
+              crossAxis: center
+            children:
+              - Markdown:
+                  text: |
+                    Fitted Column widget stretches to fit the parent (the parent is required to have a predetermined height), then distribute the vertical spaces evenly among its children. You can override the space distribution via **childrenFits** attribute.
+
+                    As in this example we can see. The first value corresponds to this text widget.
+              - Tag:
+                  label: 0
+              - Tag:
+                  label: 1
+              - Tag:
+                  label: 2
+              - Button:
+                  label: FittedColumn
+
         - Text:
             styles:
               names: heading-3
