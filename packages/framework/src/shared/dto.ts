@@ -18,7 +18,7 @@ export interface ApplicationDTO extends Omit<EnsembleDocument, "content"> {
   readonly screens: ScreenDTO[];
   readonly widgets: WidgetDTO[];
   readonly scripts: ScriptDTO[];
-  readonly theme?: ThemeDTO;
+  readonly theme?: ThemeDTO[];
   readonly config?: string;
 
   readonly description?: string;
@@ -34,6 +34,7 @@ export type WidgetDTO = EnsembleDocument;
 export type ScriptDTO = EnsembleDocument;
 export interface ThemeDTO {
   readonly id: string;
+  readonly name: string;
   readonly content: string;
 }
 

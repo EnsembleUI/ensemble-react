@@ -1,14 +1,20 @@
 import { Provider, useAtomValue } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
+
 import {
   appAtom,
   type ApplicationContextDefinition,
   defaultApplicationContext,
+  themesAtom,
+  screenAtom,
 } from "../state";
-import type { EnsembleAppModel } from "../shared/models";
+import type { EnsembleAppModel, EnsembleThemeModel } from "../shared/models";
+import { omap } from "yaml/dist/schema/yaml-1.1/omap";
+import { omit } from "lodash-es";
 
 interface ApplicationContextProps {
   app: EnsembleAppModel;
+  themes?: { [key: string]: EnsembleThemeModel };
 }
 
 type ApplicationContextProviderProps =
@@ -16,7 +22,7 @@ type ApplicationContextProviderProps =
 
 export const ApplicationContextProvider: React.FC<
   ApplicationContextProviderProps
-> = ({ app, children }) => {
+> = ({ app, themes, children }) => {
   return (
     <Provider key={app.id}>
       <HydrateAtoms
@@ -25,6 +31,7 @@ export const ApplicationContextProvider: React.FC<
           application: app,
           env: app.config?.environmentVariables ?? {},
         }}
+        themes={themes}
       >
         {children}
       </HydrateAtoms>
@@ -35,13 +42,29 @@ export const ApplicationContextProvider: React.FC<
 export const useApplicationContext =
   (): ApplicationContextDefinition | null => {
     const appContext = useAtomValue(appAtom);
+    const themes = useAtomValue(themesAtom);
+    const screen = useAtomValue(screenAtom);
+    console.log({ themes, screen });
     return appContext;
   };
 
 const HydrateAtoms: React.FC<
-  React.PropsWithChildren<{ appContext: ApplicationContextDefinition }>
-> = ({ appContext, children }) => {
+  React.PropsWithChildren<{
+    appContext: ApplicationContextDefinition;
+    themes?: Record<string, EnsembleThemeModel>;
+  }>
+> = ({ appContext, themes, children }) => {
   // initialising on state with prop on render here
-  useHydrateAtoms([[appAtom, appContext]]);
+  useHydrateAtoms([
+    [
+      appAtom,
+      {
+        ...appContext,
+        application: { ...omit(appContext.application, ["themes"]) },
+      },
+    ],
+  ]);
+  useHydrateAtoms([[themesAtom, themes || {}]]);
+
   return <>{children}</>;
 };

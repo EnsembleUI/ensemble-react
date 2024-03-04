@@ -3,6 +3,7 @@ import type {
   ApplicationDTO,
   EnsembleAppModel,
   ApplicationLoader,
+  EnsembleThemeModel,
 } from "@ensembleui/react-framework";
 import {
   ApplicationContextProvider,
@@ -37,7 +38,9 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
   loader,
   screenId,
 }) => {
-  const [app, setApp] = useState<EnsembleAppModel>();
+  const [app, setApp] = useState<
+    EnsembleAppModel & { themes?: Record<string, EnsembleThemeModel> }
+  >();
 
   useEffect(() => {
     if (app) {
@@ -55,6 +58,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
 
       setApp(parsedApp);
     };
+
     if (application) {
       parseApp(application);
       return;
@@ -109,7 +113,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
   }
 
   return (
-    <ApplicationContextProvider app={app}>
+    <ApplicationContextProvider app={app} themes={app.themes}>
       <ThemeProvider>
         <RouterProvider router={router} />
         <ToastContainer />

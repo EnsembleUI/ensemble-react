@@ -48,7 +48,9 @@ export interface EnsembleWidgetYAML {
 }
 
 export const EnsembleParser = {
-  parseApplication: (app: ApplicationDTO): EnsembleAppModel => {
+  parseApplication: (
+    app: ApplicationDTO,
+  ): EnsembleAppModel & { themes?: Record<string, EnsembleThemeModel> } => {
     const customWidgets = (app.widgets ?? []).map(({ name, content: yaml }) =>
       EnsembleParser.parseWidget(name, parse(yaml) as EnsembleWidgetYAML),
     );
@@ -90,7 +92,12 @@ export const EnsembleParser = {
       );
     }
 
-    const theme = unwrapTheme(app.theme?.content);
+    const themes = app.theme?.map((item) => {
+      return {
+        [item.name]: unwrapTheme(item.content),
+      };
+    });
+
     const scripts = app.scripts.map(({ name, content }) => ({
       name,
       body: content,
@@ -108,7 +115,7 @@ export const EnsembleParser = {
       screens: screens as EnsembleScreenModel[],
       customWidgets,
       home: menu ?? screens[0],
-      theme,
+      themes: themes ? Object.assign({}, ...themes) : undefined,
       scripts,
       config: ensembleConfigData,
     };

@@ -19,7 +19,8 @@ View:
             onTap:
               executeCode: |
                 // Calls a function defined in test.js
-                sayHello();
+                // sayHello();
+                ensemble.updateTheme('dark')
 
 Global:
   scriptName: test.js
