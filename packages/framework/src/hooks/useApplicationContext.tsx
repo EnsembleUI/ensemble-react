@@ -6,7 +6,6 @@ import {
   type ApplicationContextDefinition,
   defaultApplicationContext,
   themesAtom,
-  screenAtom,
 } from "../state";
 import type { EnsembleAppModel, EnsembleThemeModel } from "../shared/models";
 import { omit } from "lodash-es";
