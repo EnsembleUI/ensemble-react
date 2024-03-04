@@ -92,11 +92,13 @@ export const EnsembleParser = {
       );
     }
 
-    const themes = app.theme?.map((item) => {
-      return {
-        [item.name]: unwrapTheme(item.content),
-      };
-    });
+    const themes = isArray(app.theme)
+      ? app.theme.map((item) => {
+          return {
+            [item.name || item.id]: unwrapTheme(item.content),
+          };
+        })
+      : [unwrapTheme(app.theme?.content)];
 
     const scripts = app.scripts.map(({ name, content }) => ({
       name,
