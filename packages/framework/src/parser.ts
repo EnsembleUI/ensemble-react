@@ -117,7 +117,11 @@ export const EnsembleParser = {
       screens: screens as EnsembleScreenModel[],
       customWidgets,
       home: menu ?? screens[0],
-      themes: themes ? Object.assign({}, ...themes) : undefined,
+      themes: themes
+        ? (Object.assign({}, ...themes) as {
+            [key: string]: EnsembleThemeModel;
+          })
+        : undefined,
       scripts,
       config: ensembleConfigData,
     };
