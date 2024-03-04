@@ -15,8 +15,9 @@ export type ButtonProps = {
   disabled?: boolean;
   endingIcon?: IconProps;
   styles?: {
-    textColor: string;
-    gap: string | number;
+    /** @uiType color */
+    textColor?: string;
+    gap?: string | number;
   };
 } & EnsembleWidgetProps;
 

@@ -10,9 +10,11 @@ import type { BaseTextProps } from "../shared/types";
 export interface TextStyles {
   fontSize?: string | number;
   fontWeight?: string | number;
-  color: Expression<string>;
-  fontFamily: string;
-  backgroundColor: string;
+  /** @uiType color */
+  color?: Expression<string>;
+  fontFamily?: string;
+  /**  @uiType color */
+  backgroundColor?: string;
 }
 
 export type TextProps = {

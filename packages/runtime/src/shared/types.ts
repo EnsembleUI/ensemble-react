@@ -17,7 +17,6 @@ export interface EnsembleWidgetProps<
   id?: string;
   styles?: T;
   htmlAttributes?: { [key: string]: Expression<string> };
-  [key: string]: unknown;
 }
 
 export interface HasItemTemplate {
