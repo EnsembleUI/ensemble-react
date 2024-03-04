@@ -9,7 +9,6 @@ import {
   screenAtom,
 } from "../state";
 import type { EnsembleAppModel, EnsembleThemeModel } from "../shared/models";
-import { omap } from "yaml/dist/schema/yaml-1.1/omap";
 import { omit } from "lodash-es";
 
 interface ApplicationContextProps {
