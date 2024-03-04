@@ -71,7 +71,16 @@ const HydrateAtoms: React.FC<
   // initialising on state with prop on render here
   useHydrateAtoms([
     [appAtom, appContext],
-    [screenAtom, screenContext],
+    [
+      screenAtom,
+      {
+        ...screenContext,
+        app: {
+          ...screenContext.app,
+          theme: appContext?.application?.themes?.dark || {},
+        },
+      } as ScreenContextDefinition,
+    ],
   ]);
   return <>{children}</>;
 };

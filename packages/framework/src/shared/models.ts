@@ -22,7 +22,7 @@ export interface EnsembleScreenModel {
 
 export type EnsembleEntryPoint = EnsembleScreenModel | EnsembleMenuModel;
 
-export interface EnsembleAppModel {
+export type EnsembleAppModel = {
   id: string;
   menu?: EnsembleMenuModel;
   screens: EnsembleScreenModel[];
@@ -31,7 +31,7 @@ export interface EnsembleAppModel {
   theme?: EnsembleThemeModel;
   scripts: EnsembleScriptModel[];
   config?: EnsembleConfigYAML;
-}
+} & { themes?: Record<string, EnsembleThemeModel> };
 
 export interface EnsembleMenuModel {
   id?: string;
@@ -97,13 +97,13 @@ export interface CustomWidgetModel {
 export interface EnsembleThemeModel {
   Tokens?: {
     Colors?: {
-      primary?: string;
-    } & { [key: string]: string };
-    Spacing?: { [key: string]: string };
-    Animation?: { [key: string]: string };
+      primary?: unknown;
+    } & { [key: string]: unknown };
+    Spacing?: { [key: string]: unknown };
+    Animation?: { [key: string]: unknown };
     Typography?: {
-      fontFamily?: string;
-    } & { [key: string]: string };
+      fontFamily?: unknown;
+    } & { [key: string]: unknown };
   };
   Styles?: { [key: string]: CSSProperties };
 }

@@ -21,16 +21,25 @@ import FirstScript from "./ensemble/scripts/test.js?raw";
 import EnsembleConfig from "./ensemble/config.yaml";
 // Theme
 import ThemeYAML from "./ensemble/theme.yaml";
+import DarkThemeYAML from "./ensemble/dark.yaml";
 
 import "./App.css";
 
 const testApp: ApplicationDTO = {
   id: "test",
   name: "My App",
-  theme: {
-    id: "theme",
-    content: String(ThemeYAML),
-  },
+  theme: [
+    {
+      id: "theme",
+      name: "default",
+      content: String(ThemeYAML),
+    },
+    {
+      id: "darkTheme",
+      name: "dark",
+      content: String(DarkThemeYAML),
+    },
+  ],
   scripts: [
     {
       id: "test",
