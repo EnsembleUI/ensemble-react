@@ -41,9 +41,6 @@ export const ApplicationContextProvider: React.FC<
 export const useApplicationContext =
   (): ApplicationContextDefinition | null => {
     const appContext = useAtomValue(appAtom);
-    const themes = useAtomValue(themesAtom);
-    const screen = useAtomValue(screenAtom);
-    console.log({ themes, screen });
     return appContext;
   };
 
