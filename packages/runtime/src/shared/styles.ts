@@ -2,7 +2,7 @@ import * as Icons from "@mui/icons-material";
 import type { SvgIconComponent } from "@mui/icons-material";
 import { get } from "lodash-es";
 import React from "react";
-import {TextAlignment} from "./styleSchema";
+import { TextAlignment } from "./styleSchema";
 
 type Color = number | string;
 

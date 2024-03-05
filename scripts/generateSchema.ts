@@ -32,7 +32,7 @@ const config: Config = {
     // it in the latest JSON spec but not supported by Monaco
     "deprecated",
   ],
-  jsDoc: "extended"
+  jsDoc: "extended",
 
   // additionalProperties: true,
 
@@ -44,9 +44,9 @@ const config: Config = {
 const output_path = "apps/preview/public/schema/react/ensemble_schema.json";
 
 const schema = tsj.createGenerator(config).createSchema(config.type);
-const schemaString = JSON.stringify(postProcessing(schema), null, 2)
-  // hack because current generator chokes on generics when generating ref
-  // .replace(/%3C/g, "<").replace(/%3E/g, ">").replace(/%2C/g, ",").replace(/%7C/g, '|');
+const schemaString = JSON.stringify(postProcessing(schema), null, 2);
+// hack because current generator chokes on generics when generating ref
+// .replace(/%3C/g, "<").replace(/%3E/g, ">").replace(/%2C/g, ",").replace(/%7C/g, '|');
 fs.writeFile(output_path, schemaString, (err) => {
   if (err) throw err;
 });
@@ -157,10 +157,17 @@ function removeRequiredForAnyOf(schema: JSONSchema7, name: string) {
 
 // remove the presence of additionalProperties: false in each anyOf entry
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function removeAdditionalPropertiesFalseForOneOf(schema: JSONSchema7, name: string) {
+function removeAdditionalPropertiesFalseForOneOf(
+  schema: JSONSchema7,
+  name: string,
+) {
   if (schema.$defs && schema.$defs[name]) {
     const definition = schema.$defs[name];
-    if (!isBoolean(definition) && definition.oneOf && Array.isArray(definition.oneOf)) {
+    if (
+      !isBoolean(definition) &&
+      definition.oneOf &&
+      Array.isArray(definition.oneOf)
+    ) {
       definition.oneOf.forEach((item) => {
         if (!isBoolean(item) && item.additionalProperties === false) {
           delete item.additionalProperties;
@@ -177,7 +184,7 @@ function removeAdditionalPropertiesFalse(schema: JSONSchema7) {
   if (isBoolean(schema)) {
     return schema;
   }
-  
+
   if (schema.type === "object" && schema.additionalProperties === false) {
     delete schema.additionalProperties;
   }
@@ -204,11 +211,9 @@ function removeAdditionalPropertiesFalse(schema: JSONSchema7) {
     removeAdditionalPropertiesFalse(schema.items as JSONSchema7);
   }
   ["oneOf", "allOf", "anyOf"].forEach((key) => {
-    const value = get(schema, key)
+    const value = get(schema, key);
     if (value && Array.isArray(value)) {
-      value.forEach((subSchema) =>
-        removeAdditionalPropertiesFalse(subSchema),
-      );
+      value.forEach((subSchema) => removeAdditionalPropertiesFalse(subSchema));
     }
   });
 
@@ -219,13 +224,13 @@ function removeAdditionalPropertiesFalse(schema: JSONSchema7) {
 function addDefaultSnippetsToCode(schema: JSONSchema7) {
   const globalNode = schema?.properties?.["Global"];
   if (!isBoolean(globalNode) && globalNode) {
-    set(globalNode, "defaultSnippets",[
+    set(globalNode, "defaultSnippets", [
       {
         label: " ",
         // extra space at the end otherwise the last tab doesn't work
         body: "|-\n\t// Javascript code\n\t${0} ",
       },
-    ])
+    ]);
   }
   return schema;
 }
