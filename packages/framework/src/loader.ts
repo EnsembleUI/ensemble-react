@@ -40,17 +40,17 @@ const getArtifacts = async (
   for (const artifact of snapshot.docs) {
     const document = artifact.data();
     if (document.type === "screen") {
-      screens.push({ id: artifact.id, ...document } as ScreenDTO);
+      screens.push({ ...document, id: artifact.id } as ScreenDTO);
     } else if (document.type === "theme") {
-      theme = { id: artifact.id, ...document } as ThemeDTO;
+      theme = { ...document, id: artifact.id } as ThemeDTO;
     }
   }
   for (const artifact of internalArtifactsSnapshot.docs) {
     const artifactData = artifact.data();
     if (artifactData.type === "internal_widget") {
-      widgets.push({ id: artifact.id, ...artifactData } as WidgetDTO);
+      widgets.push({ ...artifactData, id: artifact.id } as WidgetDTO);
     } else if (artifactData.type === "internal_script") {
-      scripts.push({ id: artifact.id, ...artifactData } as ScriptDTO);
+      scripts.push({ ...artifactData, id: artifact.id } as ScriptDTO);
     }
   }
   return {
