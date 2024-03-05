@@ -5,6 +5,7 @@ import { cloneDeep } from "lodash-es";
 import type { EnsembleWidgetProps } from "../shared/types";
 import { EnsembleRuntime } from "../runtime";
 import { WidgetRegistry } from "../registry";
+import { Widget } from "../shared/coreSchema";
 
 export interface LoadingContainerProps extends EnsembleWidgetProps {
   isLoading: Expression<boolean>;
@@ -13,8 +14,8 @@ export interface LoadingContainerProps extends EnsembleWidgetProps {
   highlightColor?: Expression<string>;
   width?: Expression<number>;
   height?: Expression<number>;
-  widget: { [key: string]: unknown };
-  loadingWidget?: { [key: string]: unknown };
+  widget: Widget;
+  loadingWidget?: Widget;
 }
 
 export const LoadingContainer: React.FC<LoadingContainerProps> = (props) => {
