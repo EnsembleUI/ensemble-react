@@ -10,6 +10,7 @@ import {
 import type {
   ApplicationDTO,
   ScreenDTO,
+  ScriptDTO,
   ThemeDTO,
   WidgetDTO,
 } from "./shared/dto";
@@ -20,6 +21,7 @@ const getArtifacts = async (
   screens: ScreenDTO[];
   widgets: WidgetDTO[];
   theme?: ThemeDTO;
+  scripts: ScriptDTO[];
 }> => {
   const snapshot = await getDocs(
     query(collection(appRef, "artifacts"), where("isArchived", "!=", true)),
@@ -34,6 +36,7 @@ const getArtifacts = async (
   let theme;
   const screens = [];
   const widgets = [];
+  const scripts = [];
   for (const artifact of snapshot.docs) {
     const document = artifact.data();
     if (document.type === "screen") {
@@ -46,12 +49,15 @@ const getArtifacts = async (
     const artifactData = artifact.data();
     if (artifactData.type === "internal_widget") {
       widgets.push({ id: artifact.id, ...artifactData } as WidgetDTO);
+    } else if (artifactData.type === "internal_script") {
+      scripts.push({ id: artifact.id, ...artifactData } as ScriptDTO);
     }
   }
   return {
     screens,
     widgets,
     theme,
+    scripts,
   };
 };
 
@@ -70,13 +76,13 @@ export const getFirestoreApplicationLoader = (
       ...appDoc.data(),
     } as ApplicationDTO;
 
-    const { screens, widgets, theme } = await getArtifacts(appDocRef);
+    const { screens, widgets, theme, scripts } = await getArtifacts(appDocRef);
     return {
       ...app,
       screens,
       widgets,
       theme,
-      scripts: [],
+      scripts,
     };
   },
 });
