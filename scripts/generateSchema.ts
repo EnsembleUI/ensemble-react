@@ -23,6 +23,14 @@ const config: Config = {
     // by default a group has a header and collapsible body.
     // We can display this group different (e.g. card, ...)
     "groupDisplay",
+
+    // We use this to select the default value in the Property Panel (but not the Editor)
+    "defaultValue",
+
+    "icon",
+
+    // it in the latest JSON spec but not supported by Monaco
+    "deprecated",
   ],
   jsDoc: "extended"
 
@@ -65,6 +73,7 @@ function postProcessing(schema: JSONSchema7) {
   schema = convertToEnumWithDescription(schema, "ImageFit");
   schema = convertToEnumWithDescription(schema, "ShadowStyle");
   schema = convertToEnumWithDescription(schema, "MainAxisSize");
+  schema = convertToEnumWithDescription(schema, "TextAlignment");
 
   // schema = addAdditionalPropertiesFalseToWidget(schema);
 

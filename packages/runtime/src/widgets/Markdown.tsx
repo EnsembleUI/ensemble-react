@@ -27,7 +27,7 @@ export const Markdown: React.FC<MarkdownProps> = (props) => {
       className={values?.styles?.names}
       style={{
         ...values?.styles,
-        textAlign: getTextAlign(props.textAlign),
+        textAlign: getTextAlign(values?.styles?.textAlign),
         ...(values?.styles?.visible === false
           ? { display: "none" }
           : undefined),

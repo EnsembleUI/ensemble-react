@@ -29,7 +29,6 @@ export interface HasItemTemplate {
 
 export type BaseTextProps = {
   text?: Expression<string>;
-  textAlign?: string;
 } & EnsembleWidgetProps;
 
 export interface FlexboxStyles {

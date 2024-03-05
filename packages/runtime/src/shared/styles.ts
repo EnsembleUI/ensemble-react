@@ -2,6 +2,7 @@ import * as Icons from "@mui/icons-material";
 import type { SvgIconComponent } from "@mui/icons-material";
 import { get } from "lodash-es";
 import React from "react";
+import {TextAlignment} from "./styleSchema";
 
 type Color = number | string;
 
@@ -44,9 +45,7 @@ export const getColor = (color: number | string): string => {
 };
 
 /// same common properties as with Flutter
-export const getTextAlign = (
-  value: string | undefined,
-): "left" | "right" | "center" | "justify" | "end" | "start" => {
+export const getTextAlign = (value: string | undefined): TextAlignment => {
   switch (value) {
     case "left":
       return "left";
