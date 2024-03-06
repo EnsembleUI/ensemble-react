@@ -21,8 +21,9 @@ import type {
   TabBarProps,
   GridProps,
   TabBarItem,
-  FittedRowProps,
+  CardProps,
   FittedColumnProps,
+  FittedRowProps,
 } from "../widgets";
 import type { Menu, View } from "./screenSchema";
 import type { FlexboxProps, IconProps } from "./types";
@@ -191,6 +192,7 @@ export type Widget =
   | { Button?: ButtonProps }
   // | { IconButton?: IconButton }
   // | { Address?: Address }
+  | { Card?: ReplaceChildrenTemplate<CardProps> }
   | {
       Column?: ReplaceChildrenTemplate<FlexboxProps>;
     }
