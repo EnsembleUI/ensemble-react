@@ -27,10 +27,16 @@ const config: Config = {
     // We use this to select the default value in the Property Panel (but not the Editor)
     "defaultValue",
 
+    // for oneOf (with const/description), adding an icon to all entries will present the
+    // user with an Select field with icons laying out in a row (vs the regular Dropdown)
     "icon",
 
     // it in the latest JSON spec but not supported by Monaco
     "deprecated",
+
+    // we can move certain widgets to the tree as the child of the parent widget (vs staying in the Property Panel)
+    // specify a label here to enable it. The label will also be used as the text placeholder to set the widget.
+    "treeItemWidgetLabel",
   ],
   jsDoc: "extended",
 

@@ -14,6 +14,10 @@ export interface LoadingContainerProps extends EnsembleWidgetProps {
   highlightColor?: Expression<string>;
   width?: Expression<number>;
   height?: Expression<number>;
+  /**
+   * The widget to render as the content of this container.
+   * @treeItemWidgetLabel Set Content Widget
+   */
   widget: Widget;
   loadingWidget?: Widget;
 }
