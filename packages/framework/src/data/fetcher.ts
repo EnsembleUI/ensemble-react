@@ -43,6 +43,7 @@ export const DataFetcher = {
     context?: Record<string, unknown>,
   ): Promise<Response> => {
     const uri = new URL(api.uri);
+    debugger;
 
     const resolvedInputs = resolve(
       {
@@ -52,7 +53,6 @@ export const DataFetcher = {
       },
       context,
     );
-
     const axRes = await axios({
       url: resolvedInputs?.path,
       method: api.method,
@@ -91,7 +91,7 @@ const resolve = <T>(
 
   const screenContext = ensembleStore.get(screenAtom);
   const replace = (val: string): string =>
-    val.replace(/\$\{[^}]+\}/, (expression) => {
+    val.replace(/\$\{[^}]+\}/g, (expression) => {
       return evaluate(screenContext, expression, context);
     });
   const resolvedBody = visitAndReplaceExpressions(body, replace);
