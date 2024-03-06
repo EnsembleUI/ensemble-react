@@ -43,7 +43,6 @@ export const DataFetcher = {
     context?: Record<string, unknown>,
   ): Promise<Response> => {
     const uri = new URL(api.uri);
-    debugger;
 
     const resolvedInputs = resolve(
       {

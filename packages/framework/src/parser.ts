@@ -149,9 +149,8 @@ export const EnsembleParser = {
     let global: string | undefined;
 
     if (isString(scriptName)) {
-      global = app.scripts.find(
-        (script) => script.name === scriptName,
-      )?.content;
+      global = app.scripts.find((script) => script.name === scriptName)
+        ?.content;
     }
 
     if (isEmpty(global) && isString(globalBlock)) {
