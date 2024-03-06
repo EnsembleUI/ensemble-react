@@ -67,15 +67,18 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
   const contentRef = useRef<HTMLDivElement | null>(null);
   const [newModal, setNewModal] = useState<{
     content: React.ReactNode;
-    options: Record<string, unknown>;
+    options: ModalProps;
     isDialog: boolean;
     context?: Record<string, unknown>;
   }>();
   const [isDialogSet, setIsDialogSet] = useState<boolean>(false);
-  const evaluatedOptions = useEvaluate(newModal?.options, {
-    context: newModal?.context,
-    refreshExpressions: true,
-  });
+  const evaluatedOptions = useEvaluate(
+    newModal?.options as Record<string, unknown>,
+    {
+      context: newModal?.context,
+      refreshExpressions: true,
+    },
+  );
 
   useLayoutEffect(() => {
     if (modalState.length > 0 && !isFullScreen[isFullScreen.length - 1])
@@ -131,10 +134,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
 
     setNewModal({
       content,
-      options: omit(options, [
-        "onClose",
-        !isString(options.title) ? "title" : "",
-      ]),
+      options: omit(options, [!isString(options.title) ? "title" : ""]),
       isDialog,
       context: modalContext,
     });
