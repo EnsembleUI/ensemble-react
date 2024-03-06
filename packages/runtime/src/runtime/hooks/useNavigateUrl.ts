@@ -1,3 +1,4 @@
+import { evaluate } from "./../../../../framework/src/evaluate/evaluate";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -7,6 +8,7 @@ import {
   useCustomScope,
   useEnsembleStorage,
   useScreenContext,
+  isExpression,
 } from "@ensembleui/react-framework";
 import { cloneDeep, isString, set } from "lodash-es";
 import type { EnsembleActionHook } from "./useEnsembleAction";
@@ -42,7 +44,17 @@ export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
         set(inputs, path, result);
       });
     }
-
+    if (isString(screenUrl) && isExpression(screenUrl) && screenContext) {
+      const evaluatedScreenUrl: string = evaluate(screenContext, screenUrl, {
+        ensemble: {
+          storage,
+        },
+        ...customScope,
+      });
+      return () => {
+        navigate(evaluatedScreenUrl, { state: inputs });
+      };
+    }
     return () => {
       navigate(screenUrl, { state: inputs });
     };
