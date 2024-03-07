@@ -97,13 +97,13 @@ export interface CustomWidgetModel {
 export interface EnsembleThemeModel {
   Tokens?: {
     Colors?: {
-      primary?: unknown;
-    } & { [key: string]: unknown };
-    Spacing?: { [key: string]: unknown };
-    Animation?: { [key: string]: unknown };
+      primary?: string;
+    } & { [key: string]: string };
+    Spacing?: { [key: string]: string };
+    Animation?: { [key: string]: string };
     Typography?: {
-      fontFamily?: unknown;
-    } & { [key: string]: unknown };
+      fontFamily?: string;
+    } & { [key: string]: string };
   };
   Styles?: { [key: string]: CSSProperties };
 }
