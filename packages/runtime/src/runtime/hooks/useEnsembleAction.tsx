@@ -14,6 +14,7 @@ import {
   useEvaluate,
   useCustomScope,
   CustomScopeProvider,
+  useSetTheme,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -121,6 +122,7 @@ export const useExecuteCode: EnsembleActionHook<
     isCodeString ? undefined : action?.onComplete,
   );
   const theme = appContext?.application?.theme;
+  const { setTheme: updateTheme } = useSetTheme();
 
   const execute = useMemo(() => {
     if (!screen || !js) {
@@ -167,6 +169,7 @@ export const useExecuteCode: EnsembleActionHook<
                 navigateBack: (): void => navigateBack(navigate),
                 navigateExternalScreen: (url: NavigateExternalScreen) =>
                   navigateExternalScreen(url),
+                setTheme: (name: string): void => updateTheme(name),
               },
             },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),

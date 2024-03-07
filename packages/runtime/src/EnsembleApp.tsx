@@ -113,7 +113,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
   }
 
   return (
-    <ApplicationContextProvider app={app} themes={app.themes}>
+    <ApplicationContextProvider app={app}>
       <ThemeProvider>
         <RouterProvider router={router} />
         <ToastContainer />

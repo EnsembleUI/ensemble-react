@@ -75,7 +75,7 @@ export const getFirestoreApplicationLoader = (
       ...app,
       screens,
       widgets,
-      theme: theme ? [theme] : undefined,
+      theme,
       scripts: [],
     };
   },

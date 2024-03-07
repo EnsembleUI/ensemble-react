@@ -12,6 +12,7 @@ import {
   set,
   isString,
   concat,
+  clone,
 } from "lodash-es";
 import type {
   EnsembleScreenModel,
@@ -48,9 +49,7 @@ export interface EnsembleWidgetYAML {
 }
 
 export const EnsembleParser = {
-  parseApplication: (
-    app: ApplicationDTO,
-  ): EnsembleAppModel & { themes?: Record<string, EnsembleThemeModel> } => {
+  parseApplication: (app: ApplicationDTO): EnsembleAppModel => {
     const customWidgets = (app.widgets ?? []).map(({ name, content: yaml }) =>
       EnsembleParser.parseWidget(name, parse(yaml) as EnsembleWidgetYAML),
     );
@@ -92,13 +91,16 @@ export const EnsembleParser = {
       );
     }
 
-    const themes = isArray(app.theme)
-      ? app.theme.map((item) => {
-          return {
-            [item.name || item.id]: unwrapTheme(item.content),
-          };
-        })
-      : [unwrapTheme(app.theme?.content)];
+    const theme = unwrapTheme(app.theme?.content);
+    let themes: EnsembleThemeModel[] | undefined;
+
+    if (isArray(app.themes)) {
+      themes = app.themes.map((item) => {
+        return {
+          [item.name || item.id]: unwrapTheme(clone(item.content)),
+        };
+      });
+    }
 
     const scripts = app.scripts.map(({ name, content }) => ({
       name,
@@ -117,11 +119,12 @@ export const EnsembleParser = {
       screens: screens as EnsembleScreenModel[],
       customWidgets,
       home: menu ?? screens[0],
-      themes: themes
+      theme,
+      themes: isArray(themes)
         ? (Object.assign({}, ...themes) as {
             [key: string]: EnsembleThemeModel;
           })
-        : undefined,
+        : themes,
       scripts,
       config: ensembleConfigData,
     };
