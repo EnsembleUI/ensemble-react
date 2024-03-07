@@ -16,7 +16,6 @@ export const invokeAPI = async (
   if (!api) {
     return;
   }
-
   const evaluatedInputs = evaluate<Record<string, unknown>>(
     screen,
     JSON.stringify(apiInputs),
