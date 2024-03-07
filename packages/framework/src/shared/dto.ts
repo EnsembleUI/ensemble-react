@@ -18,7 +18,8 @@ export interface ApplicationDTO extends Omit<EnsembleDocument, "content"> {
   readonly screens: ScreenDTO[];
   readonly widgets: WidgetDTO[];
   readonly scripts: ScriptDTO[];
-  readonly theme?: ThemeDTO[] | ThemeDTO;
+  readonly theme?: ThemeDTO;
+  readonly themes?: ThemeDTO[];
   readonly config?: string;
 
   readonly description?: string;

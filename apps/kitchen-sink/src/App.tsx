@@ -28,7 +28,7 @@ import "./App.css";
 const testApp: ApplicationDTO = {
   id: "test",
   name: "My App",
-  theme: [
+  themes: [
     {
       id: "theme",
       name: "default",

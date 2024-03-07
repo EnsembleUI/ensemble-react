@@ -1,14 +1,13 @@
 import { Provider, useAtomValue } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
-
 import {
   appAtom,
   type ApplicationContextDefinition,
   defaultApplicationContext,
-  themesAtom,
+  currentThemeAtom,
 } from "../state";
 import type { EnsembleAppModel, EnsembleThemeModel } from "../shared/models";
-import { omit } from "lodash-es";
+import { merge } from "lodash-es";
 
 interface ApplicationContextProps {
   app: EnsembleAppModel;
@@ -20,7 +19,7 @@ type ApplicationContextProviderProps =
 
 export const ApplicationContextProvider: React.FC<
   ApplicationContextProviderProps
-> = ({ app, themes, children }) => {
+> = ({ app, children }) => {
   return (
     <Provider key={app.id}>
       <HydrateAtoms
@@ -29,7 +28,6 @@ export const ApplicationContextProvider: React.FC<
           application: app,
           env: app.config?.environmentVariables ?? {},
         }}
-        themes={themes}
       >
         {children}
       </HydrateAtoms>
@@ -46,20 +44,24 @@ export const useApplicationContext =
 const HydrateAtoms: React.FC<
   React.PropsWithChildren<{
     appContext: ApplicationContextDefinition;
-    themes?: Record<string, EnsembleThemeModel>;
   }>
-> = ({ appContext, themes, children }) => {
+> = ({ appContext, children }) => {
+  const activeTheme = useAtomValue(currentThemeAtom);
+
   // initialising on state with prop on render here
   useHydrateAtoms([
     [
       appAtom,
       {
         ...appContext,
-        application: { ...omit(appContext.application, ["themes"]) },
+        application: merge(appContext.application, {
+          theme: appContext.application?.themes
+            ? appContext.application.themes[activeTheme]
+            : undefined,
+        }),
       },
     ],
   ]);
-  useHydrateAtoms([[themesAtom, themes || {}]]);
 
   return <>{children}</>;
 };
