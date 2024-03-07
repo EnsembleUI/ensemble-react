@@ -20,8 +20,25 @@ View:
             onTap:
               executeCode: |
                 // Calls a function defined in test.js
-                // sayHello();
-                ensemble.setTheme('dark')
+                sayHello();
+
+        - Text:
+            styles:
+              names: heading-1
+            text: Change theme
+        - PopupMenu:
+            showDivider: true
+            items:
+              - label: Light
+                value: default
+              - label: Dark
+                value: dark
+            widget:
+              Icon:
+                name: Settings
+            onItemSelect:
+              executeCode: |
+                ensemble.setTheme(value)
 
 Global:
   scriptName: test.js
