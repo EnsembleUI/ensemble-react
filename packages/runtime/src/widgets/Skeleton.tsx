@@ -10,7 +10,7 @@ export interface SkeletonProps extends EnsembleWidgetProps {
 }
 
 export const Skeleton: React.FC<SkeletonProps> = (props) => {
-  const { values } = useRegisterBindings(props, props.id);
+  const { values } = useRegisterBindings({ ...props }, props.id);
 
   return (
     <MuiSkeleton

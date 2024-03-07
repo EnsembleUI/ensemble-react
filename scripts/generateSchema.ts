@@ -23,8 +23,22 @@ const config: Config = {
     // by default a group has a header and collapsible body.
     // We can display this group different (e.g. card, ...)
     "groupDisplay",
+
+    // We use this to select the default value in the Property Panel (but not the Editor)
+    "defaultValue",
+
+    // for oneOf (with const/description), adding an icon to all entries will present the
+    // user with an Select field with icons laying out in a row (vs the regular Dropdown)
+    "icon",
+
+    // it in the latest JSON spec but not supported by Monaco
+    "deprecated",
+
+    // we can move certain widgets to the tree as the child of the parent widget (vs staying in the Property Panel)
+    // specify a label here to enable it. The label will also be used as the text placeholder to set the widget.
+    "treeItemWidgetLabel",
   ],
-  jsDoc: "extended"
+  jsDoc: "extended",
 
   // additionalProperties: true,
 
@@ -36,9 +50,9 @@ const config: Config = {
 const output_path = "apps/preview/public/schema/react/ensemble_schema.json";
 
 const schema = tsj.createGenerator(config).createSchema(config.type);
-const schemaString = JSON.stringify(postProcessing(schema), null, 2)
-  // hack because current generator chokes on generics when generating ref
-  // .replace(/%3C/g, "<").replace(/%3E/g, ">").replace(/%2C/g, ",").replace(/%7C/g, '|');
+const schemaString = JSON.stringify(postProcessing(schema), null, 2);
+// hack because current generator chokes on generics when generating ref
+// .replace(/%3C/g, "<").replace(/%3E/g, ">").replace(/%2C/g, ",").replace(/%7C/g, '|');
 fs.writeFile(output_path, schemaString, (err) => {
   if (err) throw err;
 });
@@ -65,6 +79,7 @@ function postProcessing(schema: JSONSchema7) {
   schema = convertToEnumWithDescription(schema, "ImageFit");
   schema = convertToEnumWithDescription(schema, "ShadowStyle");
   schema = convertToEnumWithDescription(schema, "MainAxisSize");
+  schema = convertToEnumWithDescription(schema, "TextAlignment");
 
   // schema = addAdditionalPropertiesFalseToWidget(schema);
 
@@ -148,10 +163,17 @@ function removeRequiredForAnyOf(schema: JSONSchema7, name: string) {
 
 // remove the presence of additionalProperties: false in each anyOf entry
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function removeAdditionalPropertiesFalseForOneOf(schema: JSONSchema7, name: string) {
+function removeAdditionalPropertiesFalseForOneOf(
+  schema: JSONSchema7,
+  name: string,
+) {
   if (schema.$defs && schema.$defs[name]) {
     const definition = schema.$defs[name];
-    if (!isBoolean(definition) && definition.oneOf && Array.isArray(definition.oneOf)) {
+    if (
+      !isBoolean(definition) &&
+      definition.oneOf &&
+      Array.isArray(definition.oneOf)
+    ) {
       definition.oneOf.forEach((item) => {
         if (!isBoolean(item) && item.additionalProperties === false) {
           delete item.additionalProperties;
@@ -168,7 +190,7 @@ function removeAdditionalPropertiesFalse(schema: JSONSchema7) {
   if (isBoolean(schema)) {
     return schema;
   }
-  
+
   if (schema.type === "object" && schema.additionalProperties === false) {
     delete schema.additionalProperties;
   }
@@ -195,11 +217,9 @@ function removeAdditionalPropertiesFalse(schema: JSONSchema7) {
     removeAdditionalPropertiesFalse(schema.items as JSONSchema7);
   }
   ["oneOf", "allOf", "anyOf"].forEach((key) => {
-    const value = get(schema, key)
+    const value = get(schema, key);
     if (value && Array.isArray(value)) {
-      value.forEach((subSchema) =>
-        removeAdditionalPropertiesFalse(subSchema),
-      );
+      value.forEach((subSchema) => removeAdditionalPropertiesFalse(subSchema));
     }
   });
 
@@ -210,13 +230,13 @@ function removeAdditionalPropertiesFalse(schema: JSONSchema7) {
 function addDefaultSnippetsToCode(schema: JSONSchema7) {
   const globalNode = schema?.properties?.["Global"];
   if (!isBoolean(globalNode) && globalNode) {
-    set(globalNode, "defaultSnippets",[
+    set(globalNode, "defaultSnippets", [
       {
         label: " ",
         // extra space at the end otherwise the last tab doesn't work
         body: "|-\n\t// Javascript code\n\t${0} ",
       },
-    ])
+    ]);
   }
   return schema;
 }

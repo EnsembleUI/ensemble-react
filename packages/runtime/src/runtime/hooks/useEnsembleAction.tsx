@@ -284,11 +284,11 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
     ensembleAction.callback();
   }, [ensembleAction]);
 
-  if (!action?.widget)
+  if (!action?.widget && !action?.body)
     throw new Error("ShowDialog Action requires a widget to be specified");
   const widget = useMemo(
-    () => unwrapWidget(cloneDeep(action.widget)),
-    [action.widget],
+    () => unwrapWidget(cloneDeep(action?.widget || action?.body || {})),
+    [action?.widget, action?.body],
   );
   const callback = useCallback(
     (args: unknown) => {
@@ -316,6 +316,11 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
         </CustomScopeProvider>,
         modalOptions,
         true,
+        merge(
+          {},
+          customScope,
+          isObject(args) ? (args as CustomScope) : undefined,
+        ),
       );
     },
     [widget, onDismissCallback, action.options, openModal, customScope],

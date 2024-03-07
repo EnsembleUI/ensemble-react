@@ -11,25 +11,30 @@ import type {
 import { EnsembleRuntime } from "../runtime";
 
 interface CardStyles {
-  width: string;
-  height: string;
-  border: string;
-  borderRadius: string;
-  shadowColor: string;
-  shadowOffset: string;
-  shadowBlur: string;
-  shadowSpread: string;
-  padding: string;
-  maxWidth: string;
-  minWidth: string;
+  width?: string;
+  height?: string;
+  /** @uiType color */
+  backgroundColor?: string;
+  border?: string;
+  borderRadius?: string;
+  shadowColor?: string;
+  shadowOffset?: string;
+  shadowBlur?: string;
+  shadowSpread?: string;
+  padding?: string;
+  maxWidth?: string;
+  minWidth?: string;
   gap?: string;
 }
 
 export type CardProps = {
   children: EnsembleWidget[];
-} & EnsembleWidgetProps<CardStyles & EnsembleWidgetStyles>;
+} & EnsembleWidgetProps<
+  Omit<EnsembleWidgetStyles, keyof CardStyles> & CardStyles
+>;
 
 const defaultStyles: CardStyles = {
+  backgroundColor: "none",
   border: "1px solid lightgrey",
   width: "100%",
   height: "100%",
@@ -59,6 +64,7 @@ export const Card: React.FC<CardProps> = ({ children, styles }) => {
       style={{
         display: "flex",
         flexDirection: "column",
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         boxShadow: `${shadowOffset} ${shadowOffset} ${shadowBlur} ${shadowSpread} ${shadowColor}`,
         ...mergedStyles,
       }}
