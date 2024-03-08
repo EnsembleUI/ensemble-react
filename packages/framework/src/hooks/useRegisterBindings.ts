@@ -28,10 +28,18 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   );
 
   const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
-  const styleNames = get(values, ["styles", "names"]) as unknown;
-  const styleProperties = useStyleNames(
-    isString(styleNames) ? String(styleNames) : "",
-  );
+
+  const namedStyles = get(values, ["styles", "names"]) as unknown;
+  let classStyles = get(values, ["styles", "class"]) as unknown;
+  if (isString(classStyles) && classStyles.length > 0) {
+    classStyles = classStyles
+      .trim()
+      .split(" ")
+      .map((className) => `.${className}`)
+      .join(" ");
+  }
+  const styleNames = `${isString(namedStyles) ? namedStyles : ""} ${isString(classStyles) ? classStyles : ""}`;
+  const styleProperties = useStyleNames(styleNames);
 
   const styles = merge({}, styleProperties, values.styles);
   if (!isEmpty(styles)) {

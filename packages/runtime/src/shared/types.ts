@@ -6,8 +6,12 @@ import type {
 } from "@ensembleui/react-framework";
 import type { HasBorder } from "./hasSchema";
 
+/**
+ * @deprecated Use the `class` attribute for styling instead of `names`.
+ */
 export type EnsembleWidgetStyles = Omit<React.CSSProperties, "direction"> & {
   names?: Expression<string>;
+  class?: Expression<string>;
   visible?: boolean;
 };
 

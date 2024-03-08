@@ -50,6 +50,8 @@ Tokens:
       extraLight: 200
       thin: 100
 Styles:
+  .button-1:
+    backgroundColor: ${colors.primary['500']}
   page:
     padding: ${spacing.pagePadding}
   heading-1:
