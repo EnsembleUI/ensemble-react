@@ -100,9 +100,8 @@ export const Search: React.FC<SearchProps> = ({
     (search: string): void => {
       setSearchValue(search);
 
-      const matchingOptions = options.filter(
-        (item) =>
-          item.value?.toString()?.toLowerCase()?.includes(search.toLowerCase()),
+      const matchingOptions = options.filter((item) =>
+        item.value?.toString()?.toLowerCase()?.includes(search.toLowerCase()),
       );
       setFilteredOptions(matchingOptions);
     },

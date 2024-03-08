@@ -4,6 +4,10 @@
     {
       "tagName": "@uiType",
       "syntaxKind": "block"
+    },
+    {
+      "tagName": "@treeItemWidgetLabel",
+      "syntaxKind": "block"
     }
   ]
 }
