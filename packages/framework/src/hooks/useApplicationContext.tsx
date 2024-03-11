@@ -1,4 +1,4 @@
-import { Provider, useAtomValue } from "jotai";
+import { Provider, useAtom, useAtomValue } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 import {
   appAtom,
@@ -47,6 +47,7 @@ const HydrateAtoms: React.FC<
   }>
 > = ({ appContext, children }) => {
   const activeThemeName = useAtomValue(currentThemeAtom);
+  const [_, updateTheme] = useAtom(themeAtom);
   let activeTheme = undefined;
 
   if (appContext.application?.themes) {
@@ -58,10 +59,8 @@ const HydrateAtoms: React.FC<
   }
 
   // initialising on state with prop on render here
-  useHydrateAtoms([
-    [appAtom, appContext],
-    [themeAtom, activeTheme],
-  ]);
+  useHydrateAtoms([[appAtom, appContext]]);
+  updateTheme(activeTheme);
 
   return <>{children}</>;
 };

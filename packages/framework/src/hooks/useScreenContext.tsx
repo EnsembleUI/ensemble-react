@@ -4,10 +4,12 @@ import { clone, merge } from "lodash-es";
 import { useHydrateAtoms } from "jotai/utils";
 import {
   appAtom,
+  currentThemeAtom,
   defaultScreenContext,
   locationAtom,
   screenAtom,
   screenDataAtom,
+  themeAtom,
 } from "../state";
 import type {
   ApplicationContextDefinition,
@@ -68,11 +70,24 @@ const HydrateAtoms: React.FC<
     screenContext: ScreenContextDefinition;
   }>
 > = ({ appContext, screenContext, children }) => {
+  const activeThemeName = useAtomValue(currentThemeAtom);
+  const [_, updateTheme] = useAtom(themeAtom);
+  let activeTheme = undefined;
+
+  if (appContext.application?.themes) {
+    activeTheme = appContext.application?.themes
+      ? appContext.application.themes[activeThemeName]
+      : undefined;
+  } else {
+    activeTheme = appContext.application?.theme;
+  }
+
   // initialising on state with prop on render here
   useHydrateAtoms([
     [appAtom, appContext],
     [screenAtom, screenContext],
   ]);
+  updateTheme(activeTheme);
 
   return <>{children}</>;
 };
