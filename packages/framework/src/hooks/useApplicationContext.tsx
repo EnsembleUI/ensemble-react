@@ -5,9 +5,9 @@ import {
   type ApplicationContextDefinition,
   defaultApplicationContext,
   currentThemeAtom,
+  themeAtom,
 } from "../state";
 import type { EnsembleAppModel, EnsembleThemeModel } from "../shared/models";
-import { merge } from "lodash-es";
 
 interface ApplicationContextProps {
   app: EnsembleAppModel;
@@ -46,21 +46,21 @@ const HydrateAtoms: React.FC<
     appContext: ApplicationContextDefinition;
   }>
 > = ({ appContext, children }) => {
-  const activeTheme = useAtomValue(currentThemeAtom);
+  const activeThemeName = useAtomValue(currentThemeAtom);
+  let activeTheme = undefined;
+
+  if (appContext.application?.themes) {
+    activeTheme = appContext.application?.themes
+      ? appContext.application.themes[activeThemeName]
+      : undefined;
+  } else {
+    activeTheme = appContext.application?.theme;
+  }
 
   // initialising on state with prop on render here
   useHydrateAtoms([
-    [
-      appAtom,
-      {
-        ...appContext,
-        application: merge(appContext.application, {
-          theme: appContext.application?.themes
-            ? appContext.application.themes[activeTheme]
-            : undefined,
-        }),
-      },
-    ],
+    [appAtom, appContext],
+    [themeAtom, activeTheme],
   ]);
 
   return <>{children}</>;

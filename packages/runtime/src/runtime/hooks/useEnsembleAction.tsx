@@ -14,7 +14,7 @@ import {
   useEvaluate,
   useCustomScope,
   CustomScopeProvider,
-  useSetTheme,
+  useThemeContext,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -122,7 +122,7 @@ export const useExecuteCode: EnsembleActionHook<
     isCodeString ? undefined : action?.onComplete,
   );
   const theme = appContext?.application?.theme;
-  const { setTheme: updateTheme } = useSetTheme();
+  const { setTheme: updateTheme } = useThemeContext();
 
   const execute = useMemo(() => {
     if (!screen || !js) {

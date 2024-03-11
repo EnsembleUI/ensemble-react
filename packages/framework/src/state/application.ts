@@ -1,10 +1,9 @@
 import { useCallback } from "react";
-import { merge } from "lodash-es";
-import { atom, useAtom } from "jotai";
+import { clone } from "lodash-es";
+import { atom, useAtom, useAtomValue } from "jotai";
 import { focusAtom } from "jotai-optics";
-import type { EnsembleAppModel } from "../shared";
+import type { EnsembleAppModel, EnsembleThemeModel } from "../shared";
 import type { EnsembleUser } from "./user";
-import { screenAtom } from "./screen";
 
 export interface ApplicationContextDefinition {
   application: EnsembleAppModel | undefined;
@@ -40,39 +39,32 @@ export const currentThemeAtom = atom<string>("default");
 
 export const envAtom = focusAtom(appAtom, (optic) => optic.prop("env"));
 
-export const useSetTheme = (): {
+export const useThemeContext = (): {
+  theme: EnsembleThemeModel | undefined;
   themeName: string;
   setTheme: (name: string) => void;
 } => {
-  const [themeName, setThemeName] = useAtom(currentThemeAtom);
-  const [appContext, setApp] = useAtom(appAtom);
-  const [screenContext, setScreen] = useAtom(screenAtom);
+  const [theme, updateTheme] = useAtom(themeAtom);
+  const [themeName, updateThemeName] = useAtom(currentThemeAtom);
+  const appContext = useAtomValue(appAtom);
 
   const setTheme = useCallback(
     (name: string) => {
-      setThemeName(name);
-      const newTheme = appContext?.application?.themes
-        ? appContext.application.themes[name]
-        : undefined;
+      updateThemeName(name);
 
-      if (newTheme) {
-        setApp({
-          ...appContext,
-          application: merge(appContext.application, {
-            theme: newTheme,
-          }),
-        });
-
-        setScreen({
-          ...screenContext,
-          app: merge(screenContext.app, {
-            theme: newTheme,
-          }),
-        });
+      let newTheme = undefined;
+      if (appContext.application?.themes) {
+        newTheme = appContext?.application?.themes
+          ? appContext.application.themes[name]
+          : undefined;
+      } else {
+        newTheme = appContext.application?.theme;
       }
+
+      updateTheme(clone(newTheme));
     },
-    [setThemeName],
+    [updateTheme, updateThemeName],
   );
 
-  return { themeName, setTheme };
+  return { theme, themeName, setTheme };
 };
