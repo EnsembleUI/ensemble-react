@@ -1,4 +1,3 @@
-import { evaluate } from "./../../../../framework/src/evaluate/evaluate";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -11,6 +10,7 @@ import {
   useEvaluate,
 } from "@ensembleui/react-framework";
 import { cloneDeep, isString, set } from "lodash-es";
+import { evaluate } from "@ensembleui/react-framework/src/evaluate/evaluate";
 import type { EnsembleActionHook } from "./useEnsembleAction";
 
 export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
