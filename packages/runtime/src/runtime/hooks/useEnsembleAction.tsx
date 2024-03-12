@@ -14,7 +14,7 @@ import {
   useEvaluate,
   useCustomScope,
   CustomScopeProvider,
-  useThemeContext,
+  useCustomTheme,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -96,11 +96,20 @@ export const useExecuteCode: EnsembleActionHook<
   const location = useLocation();
   const customScope = useCustomScope();
   const { openModal, closeAllModals } = useContext(ModalContext) || {};
+  const themescope = useCustomTheme();
+  const user = useEnsembleUser();
+  const appContext = useApplicationContext();
+  const screenData = useScreenData();
+  const onCompleteAction = useEnsembleAction(
+    isCodeString ? undefined : action?.onComplete,
+  );
+  const theme = appContext?.application?.theme;
 
   const js = useMemo(() => {
     if (!action) {
       return;
     }
+
     if (isCodeString) {
       return action;
     }
@@ -115,14 +124,6 @@ export const useExecuteCode: EnsembleActionHook<
       )?.body;
     }
   }, [action, isCodeString, screen]);
-  const user = useEnsembleUser();
-  const appContext = useApplicationContext();
-  const screenData = useScreenData();
-  const onCompleteAction = useEnsembleAction(
-    isCodeString ? undefined : action?.onComplete,
-  );
-  const theme = appContext?.application?.theme;
-  const { setTheme: updateTheme } = useThemeContext();
 
   const execute = useMemo(() => {
     if (!screen || !js) {
@@ -143,6 +144,7 @@ export const useExecuteCode: EnsembleActionHook<
             {
               ...customWidgets,
               ensemble: {
+                ...themescope,
                 storage,
                 user,
                 formatter,
@@ -169,7 +171,6 @@ export const useExecuteCode: EnsembleActionHook<
                 navigateBack: (): void => navigateBack(navigate),
                 navigateExternalScreen: (url: NavigateExternalScreen) =>
                   navigateExternalScreen(url),
-                setTheme: (name: string): void => updateTheme(name),
               },
             },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
@@ -186,6 +187,7 @@ export const useExecuteCode: EnsembleActionHook<
       }
     };
   }, [
+    themescope,
     screen,
     js,
     storage,

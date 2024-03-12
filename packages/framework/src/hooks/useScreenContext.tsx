@@ -4,7 +4,6 @@ import { clone, merge } from "lodash-es";
 import { useHydrateAtoms } from "jotai/utils";
 import {
   appAtom,
-  currentThemeAtom,
   defaultScreenContext,
   locationAtom,
   screenAtom,
@@ -19,6 +18,7 @@ import type {
 import type { Response } from "../data";
 import type { EnsembleScreenModel } from "../shared/models";
 import { useApplicationContext } from "./useApplicationContext";
+import { useCustomTheme } from "./useThemeContext";
 
 interface ScreenContextProps {
   screen: EnsembleScreenModel;
@@ -70,24 +70,15 @@ const HydrateAtoms: React.FC<
     screenContext: ScreenContextDefinition;
   }>
 > = ({ appContext, screenContext, children }) => {
-  const activeThemeName = useAtomValue(currentThemeAtom);
+  const themeScope = useCustomTheme();
   const [_, updateTheme] = useAtom(themeAtom);
-  let activeTheme = undefined;
-
-  if (appContext.application?.themes) {
-    activeTheme = appContext.application?.themes
-      ? appContext.application.themes[activeThemeName]
-      : undefined;
-  } else {
-    activeTheme = appContext.application?.theme;
-  }
 
   // initialising on state with prop on render here
   useHydrateAtoms([
     [appAtom, appContext],
     [screenAtom, screenContext],
   ]);
-  updateTheme(activeTheme);
+  updateTheme(themeScope?.theme);
 
   return <>{children}</>;
 };
