@@ -1,5 +1,6 @@
 export * from "./shared";
 export * from "./loader";
+export * from "./serializer";
 export * from "./parser";
 export * from "./hooks";
 export * from "./data";

@@ -14,16 +14,18 @@ export type ShowDialogApiProps = {
 
 export const showDialog = (props?: ShowDialogApiProps): void => {
   const { action, openModal } = props ?? {};
-  if (!action || !openModal || !action?.widget) {
+  if (!action || !openModal || (!action?.widget && !action?.body)) {
     return;
   }
 
-  const widget = action?.widget?.name
-    ? (cloneDeep(action?.widget) as unknown as EnsembleWidget)
-    : unwrapWidget(cloneDeep(action?.widget));
+  const widget = action?.widget ?? action?.body;
+
+  const content = widget?.name
+    ? (cloneDeep(widget) as unknown as EnsembleWidget)
+    : unwrapWidget(cloneDeep(widget!));
 
   openModal?.(
-    EnsembleRuntime.render([widget]),
+    EnsembleRuntime.render([content]),
     getShowDialogOptions(action?.options),
     true,
     screen || undefined,

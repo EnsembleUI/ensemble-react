@@ -1,6 +1,8 @@
 import * as Icons from "@mui/icons-material";
 import type { SvgIconComponent } from "@mui/icons-material";
 import { get } from "lodash-es";
+import React from "react";
+import { TextAlignment } from "./styleSchema";
 
 type Color = number | string;
 
@@ -43,9 +45,7 @@ export const getColor = (color: number | string): string => {
 };
 
 /// same common properties as with Flutter
-export const getTextAlign = (
-  value: string | undefined,
-): "left" | "right" | "center" | "justify" | "end" | "start" => {
+export const getTextAlign = (value: string | undefined): TextAlignment => {
   switch (value) {
     case "left":
       return "left";
@@ -104,11 +104,13 @@ export const getIcon = (name: string): SvgIconComponent | undefined => {
 export const getComponentStyles = (
   name: string,
   styles?: React.CSSProperties,
-): string => {
+  returnAsString = true,
+): string | React.CSSProperties => {
   const styleNames = Object.keys(styles || {}).filter((key) =>
     key.startsWith(name),
   );
   let result = "";
+  let res: React.CSSProperties = {};
 
   styleNames.forEach((property) => {
     const styleValue = get(styles, property) as string | undefined;
@@ -118,9 +120,10 @@ export const getComponentStyles = (
         // eslint-disable-next-line prefer-named-capture-group
         .replace(/([a-z])([A-Z])/g, "$1-$2")
         .toLowerCase(); // convert camelCase to kebab-case
-      result += `${cssProperty}: ${styleValue} !important;`;
+      result += `${cssProperty}: ${styleValue};`;
+      res = { ...res, [cssProperty]: styleValue };
     }
   });
 
-  return result;
+  return returnAsString ? result : res;
 };

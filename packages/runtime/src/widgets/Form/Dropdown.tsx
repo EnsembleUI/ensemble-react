@@ -156,7 +156,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     <>
       <style>{`
         .${id}_input .ant-select-selector {
-          ${getComponentStyles("dropdown", values?.styles)}
+          ${getComponentStyles("dropdown", values?.styles) as string}
         }
         .ant-select-item.ant-select-item-option.${id}_option[aria-selected="true"] {
           ${

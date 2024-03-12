@@ -31,19 +31,19 @@ import { defaultScreenContext } from "./state";
 
 export interface EnsembleScreenYAML {
   View?: {
-    header?: Record<string, unknown>;
-    body: Record<string, unknown>;
-    footer?: Record<string, unknown>;
-    [k: string]: Record<string, unknown> | undefined;
+    header?: { [key: string]: unknown };
+    body: { [key: string]: unknown };
+    footer?: { [key: string]: unknown };
+    [k: string]: { [key: string]: unknown } | undefined;
   };
-  ViewGroup?: Record<string, unknown>;
+  ViewGroup?: { [key: string]: unknown };
 }
 
 export interface EnsembleWidgetYAML {
   Widget: {
     inputs?: string[];
     onLoad?: EnsembleAction;
-    body: Record<string, unknown>;
+    body: { [key: string]: unknown };
   };
 }
 
@@ -195,10 +195,10 @@ export const EnsembleParser = {
     }
 
     const headerDef = get(menu, [menuType, "header"]) as
-      | Record<string, unknown>
+      | { [key: string]: unknown }
       | undefined;
     const footerDef = get(menu, [menuType, "footer"]) as
-      | Record<string, unknown>
+      | { [key: string]: unknown }
       | undefined;
     return {
       id: get(menu, [menuType, "id"]) as string | undefined,
@@ -206,7 +206,7 @@ export const EnsembleParser = {
       items: get(menu, [menuType, "items"]) as [],
       header: headerDef ? unwrapWidget(headerDef) : undefined,
       footer: footerDef ? unwrapWidget(footerDef) : undefined,
-      styles: get(menu, [menuType, "styles"]) as Record<string, unknown>,
+      styles: get(menu, [menuType, "styles"]) as { [key: string]: unknown },
     };
   },
 };
@@ -233,7 +233,9 @@ const unwrapApiModels = (screen: unknown): EnsembleAPIModel[] => {
   return [];
 };
 
-export const unwrapWidget = (obj: Record<string, unknown>): EnsembleWidget => {
+export const unwrapWidget = (obj: {
+  [key: string]: unknown;
+}): EnsembleWidget => {
   const name = head(Object.keys(obj));
   if (!name) {
     throw Error("Invalid widget definition");
@@ -247,15 +249,17 @@ export const unwrapWidget = (obj: Record<string, unknown>): EnsembleWidget => {
     set(properties as object, "children", unwrappedChildren);
   }
   if (isObject(template)) {
-    const unwrappedTemplate = unwrapWidget(template as Record<string, unknown>);
+    const unwrappedTemplate = unwrapWidget(
+      template as { [key: string]: unknown },
+    );
     set(properties as object, ["item-template", "template"], unwrappedTemplate);
   }
   if (!isEmpty(items) && isArray(items)) {
     if (isObject(items[0]) && "widget" in items[0]) {
-      const valueItems = (items as Record<string, unknown>[]).map(
+      const valueItems = (items as { [key: string]: unknown }[]).map(
         ({ label, widget, icon }) => {
           const unwrappedWidget = unwrapWidget(
-            widget as Record<string, unknown>,
+            widget as { [key: string]: unknown },
           );
           return { label, icon, widget: unwrappedWidget };
         },
@@ -268,15 +272,15 @@ export const unwrapWidget = (obj: Record<string, unknown>): EnsembleWidget => {
 
   return {
     name,
-    properties: (properties ?? {}) as Record<string, unknown>,
+    properties: (properties ?? {}) as { [key: string]: unknown },
   };
 };
 
 export const unwrapHeader = (
-  header: Record<string, unknown> | undefined,
+  header: { [key: string]: unknown } | undefined,
 ): EnsembleHeaderModel | undefined => {
   const title = get(header, "title") as
-    | Record<string, unknown>
+    | { [key: string]: unknown }
     | string
     | undefined;
 
@@ -284,25 +288,25 @@ export const unwrapHeader = (
 
   return {
     title: typeof title === "string" ? title : unwrapWidget(title),
-    styles: get(header, "styles") as Record<string, unknown>,
+    styles: get(header, "styles") as { [key: string]: unknown },
   };
 };
 
 const unwrapFooter = (
-  footer: Record<string, unknown> | undefined,
+  footer: { [key: string]: unknown } | undefined,
 ): EnsembleFooterModel | undefined => {
   if (!footer) return;
 
   const children = get(footer, "children");
   if (isArray(children)) {
     const unwrappedChildren = map(children, (child) =>
-      unwrapWidget(child as Record<string, unknown>),
+      unwrapWidget(child as { [key: string]: unknown }),
     );
     set(footer as object, "children", unwrappedChildren);
 
     return {
       children: unwrappedChildren,
-      styles: get(footer, "styles") as Record<string, unknown>,
+      styles: get(footer, "styles") as { [key: string]: unknown },
     };
   }
 };

@@ -1,9 +1,10 @@
 import type { RefCallback } from "react";
 import { mapKeys, isObject } from "lodash-es";
 import { useCallback } from "react";
+import { error } from "../shared";
 
 export const useHtmlPassThrough = (
-  htmlAttributes?: Record<string, string>,
+  htmlAttributes?: { [key: string]: string },
   testId?: string,
 ): { rootRef: RefCallback<never> } => {
   const rootRef = useCallback(
@@ -15,12 +16,20 @@ export const useHtmlPassThrough = (
           );
 
           Object.keys(htmlAttributesObj).forEach((key: string) => {
-            (node as HTMLElement).setAttribute(key, htmlAttributesObj[key]);
+            try {
+              (node as HTMLElement).setAttribute(key, htmlAttributesObj[key]);
+            } catch (e) {
+              error(e);
+            }
           });
         }
 
         if (testId) {
-          (node as HTMLElement).setAttribute("data-testid", testId);
+          try {
+            (node as HTMLElement).setAttribute("data-testid", testId);
+          } catch (e) {
+            error(e);
+          }
         }
       }
     },

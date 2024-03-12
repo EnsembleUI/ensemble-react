@@ -17,7 +17,6 @@ export interface EnsembleWidgetProps<
   id?: string;
   styles?: T;
   htmlAttributes?: { [key: string]: Expression<string> };
-  [key: string]: unknown;
 }
 
 export interface HasItemTemplate {
@@ -30,7 +29,6 @@ export interface HasItemTemplate {
 
 export type BaseTextProps = {
   text?: Expression<string>;
-  textAlign?: string;
 } & EnsembleWidgetProps;
 
 export interface FlexboxStyles {
@@ -66,5 +64,6 @@ export type IconProps = {
     margin?: number | string;
   } & HasBorder;
   onTap?: EnsembleAction;
-  onHover?: EnsembleAction;
+  onMouseEnter?: EnsembleAction;
+  onMouseLeave?: EnsembleAction;
 } & EnsembleWidgetProps;

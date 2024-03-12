@@ -125,13 +125,41 @@ View:
               - Markdown:
                   text: "use `navigateModalScreen: screen_name` for navigate modal screen programmatically. click below button to check"
               - Button:
-                  label: navigateModalScreen
+                  label: navigateModalScreen 1
                   onTap:
                     navigateModalScreen:
                       name: Forms
                       hideCloseIcon: false
+                      hideFullScreenIcon: false
+                      title:
+                        Column:
+                          children:
+                            - Text:
+                                text: Modal Screen title
+                            - Text:
+                                text: Modal Screen subtitle
+                                styles:
+                                  fontSize: ${typography.fontSize['14']}
+                                  fontWeight: ${typography.fontWeight.light}
                       styles:
-                        height: 50%
+                        height: 100%
+                        width: 500px
+                        right: 100px
+                        backgroundColor: "#f0f0f0"
+              - Button:
+                  label: navigateModalScreen 2
+                  onTap:
+                    navigateModalScreen:
+                      name: Forms
+                      hideCloseIcon: false
+                      hideFullScreenIcon: false
+                      mask: false
+                      title: Modal Screen title (optional)
+                      styles:
+                        height: 400px
+                        width: 604px
+                        right: 105px
+                        top: 304px
         - Card:
             styles:
               maxWidth: unset
@@ -144,6 +172,11 @@ View:
                   text: Show Dialog
               - Markdown:
                   text: use `ensemble.showDialog` to show dialog programmatically. click below button to check.
+              - Text:
+                  id: showDialogWidth
+                  text: 400px
+                  styles:
+                    visible: false
               - Button:
                   label: Custom widget in dialog
                   onTap:
@@ -151,8 +184,9 @@ View:
                       ensemble.showDialog({
                         widget: StyledText,
                         options: {
-                          width: '400px',
+                          width: showDialogWidth.text,
                           height: '250px',
+                          position: 'right',
                         },
                       });
               - Button:
@@ -163,7 +197,8 @@ View:
                         widget: {StyledText: {inputs: {inputText: 'Hello World hiop'}}},
                         options: {
                           width: '300px',
-                          height: '200px',
+                          height: showDialogWidth.text,
+                          position: 'bottom',
                         },
                       });
               - Button:
@@ -171,27 +206,35 @@ View:
                   onTap:
                     executeCode: |-
                       ensemble.showDialog({
-                        widget: {Text: {text: 'Hello World'}},
+                        body: {Text: {text: 'Hello World'}},
                         options: {
                           backgroundColor: 'aqua',
+                          position: 'left',
                         },
                       });
               - Markdown:
                   text: use `showDialog` to show dialog. click below button to check.
+              - Text:
+                  text: 700px
+                  id: abcText
+                  styles:
+                    visible: false
               - Button:
                   label: Show dialog
                   onTap:
                     showDialog:
                       options:
-                        hideCloseIcon: false
-                        title: first modal
-                        width: 600px
-                        height: 450px
+                        mask: false
+                        width: ${abcText.text}
+                        height: 150px
+                        backgroundColor: "#f1f1f1"
+                        right: 105px
+                        top: 304px
                       onDialogDismiss:
                         executeCode:
                           body: |
                             console.log('Dialog 1 Dismissed');
-                      widget:
+                      body:
                         Button:
                           label: ${'Tap me to ' + showDialogText.text}
                           onTap:
@@ -208,7 +251,8 @@ View:
                                   onTap:
                                     showDialog:
                                       options:
-                                        horizontalOffset: -1
+                                        horizontalOffset: -0.8
+                                        height: 100%
                                       widget:
                                         Column:
                                           styles:
@@ -233,6 +277,8 @@ View:
                               label: Open Dialog with Template Value
                               onTap:
                                 showDialog:
+                                  options:
+                                    position: "top"
                                   widget:
                                     Button:
                                       label: ${"The value is:" + value + "! Click me"}
@@ -278,6 +324,30 @@ View:
                   label: Query params
                   onTap:
                     navigateUrl: /widgets?name=hello
+
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: NavigateExternalUrl
+              - Button:
+                  label: navigateExternalUrl
+                  onTap:
+                    navigateExternalScreen:
+                      url: https://google.com
+                      openNewTab: false
+              - Button:
+                  label: navigateExternalUrl
+                  onTap:
+                    executeCode: |
+                      ensemble.navigateExternalScreen({
+                        url: 'https://google.com',
+                        openNewTab: true
+                      })
 
 API:
   getDummyProducts:

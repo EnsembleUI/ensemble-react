@@ -51,10 +51,16 @@ interface NavigateUrlOptions {
   inputs: { [key: string]: unknown };
 }
 
+interface NavigateExternalScreenOptions {
+  url: string;
+  openNewTab?: boolean;
+}
+
 export type NavigateModalScreenAction =
   | string
   | (NavigateScreenOptions & {
       maskClosable?: boolean;
+      mask?: boolean;
       hideFullScreenIcon?: boolean;
       hideCloseIcon?: boolean;
       title?: string | { [key: string]: unknown };
@@ -67,7 +73,10 @@ export type NavigateUrlAction = string | NavigateUrlOptions;
 
 export type NavigateBackAction = null;
 
+export type NavigateExternalScreen = string | NavigateExternalScreenOptions;
+
 export interface ShowDialogOptions {
+  mask?: boolean;
   minWidth?: number;
   maxWidth?: number;
   minHeight?: number;
@@ -78,7 +87,8 @@ export interface ShowDialogOptions {
 }
 
 export interface ShowDialogAction {
-  widget: { [key: string]: unknown };
+  widget?: Record<string, unknown>;
+  body?: Record<string, unknown>;
   options?: ShowDialogOptions;
   onDialogDismiss?: EnsembleAction;
 }
@@ -111,11 +121,9 @@ export interface UploadFilesAction {
 
 export type CloseAllDialogsAction = null;
 
-/* eslint-disable tsdoc/syntax */
 /**
  * @uiType action
  */
-/* eslint-enable tsdoc/syntax */
 export type EnsembleAction =
   | {
       executeCode?: ExecuteCodeAction;
@@ -125,7 +133,7 @@ export type EnsembleAction =
   | { navigateBack?: NavigateBackAction }
   | { navigateScreen?: NavigateScreenAction }
   | { navigateModalScreen?: NavigateModalScreenAction }
-  // | { navigateExternalScreen?: NavigateModalScreenAction }
+  | { navigateExternalScreen?: NavigateExternalScreen }
   // | { navigateViewGroup?: NavigateViewGroup }
   // | { showBottomModal?: ShowBottomModal }
   // | { dismissBottomModal?: DismissBottomModal }

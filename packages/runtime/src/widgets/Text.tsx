@@ -6,13 +6,17 @@ import { useState } from "react";
 import { Typography } from "antd";
 import { WidgetRegistry } from "../registry";
 import type { BaseTextProps } from "../shared/types";
+import { TextAlignment } from "../shared/styleSchema";
 
 export interface TextStyles {
   fontSize?: string | number;
   fontWeight?: string | number;
-  color: Expression<string>;
-  fontFamily: string;
-  backgroundColor: string;
+  /** @uiType color */
+  color?: Expression<string>;
+  fontFamily?: string;
+  /**  @uiType color */
+  backgroundColor?: string;
+  textAlign?: TextAlignment;
 }
 
 export type TextProps = {

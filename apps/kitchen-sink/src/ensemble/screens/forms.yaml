@@ -105,6 +105,7 @@ View:
                     - Button:
                         submitForm: true
                         label: Submit
+                        disabled: true
               - Markdown:
                   id: result
                   text: Check here for the result!

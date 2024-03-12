@@ -115,14 +115,31 @@ export enum Alignment {
   bottomRight = "bottomRight",
 }
 
-export enum TextAlignment {
-  left = "left",
-  center = "center",
-  right = "right",
-  justify = "justify",
-  start = "start",
-  end = "end",
-}
+/**
+ * Specify the text alignment
+ * @uiType textAlignment
+ * @defaultValue start
+ */
+export type TextAlignment =
+  | TextAlignmentStart
+  | TextAlignmentCenter
+  | TextAlignmentEnd
+  | TextAlignmentJustify
+  | TextAlignmentLeft
+  | TextAlignmentRight;
+
+/** Align the text at the start (left for LTR languages, right for RTL languages) */
+type TextAlignmentStart = "start";
+/** Center-align the text */
+type TextAlignmentCenter = "center";
+/** Align the text at the end (right for LTR languages, left for RTL languages) */
+type TextAlignmentEnd = "end";
+/** Justify-align the text */
+type TextAlignmentJustify = "justify";
+/** Always left align the text regardless of languages */
+type TextAlignmentLeft = "left";
+/** Always right align the text regardless of languages */
+type TextAlignmentRight = "right";
 
 export enum FontWeight {
   light = "light",
