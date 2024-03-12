@@ -17,6 +17,7 @@ import {
   useTemplateData,
   unwrapWidget,
   useEvaluate,
+  isExpression,
 } from "@ensembleui/react-framework";
 import type { EnsembleWidget, Expression } from "@ensembleui/react-framework";
 import Alert from "@mui/material/Alert";
@@ -25,6 +26,7 @@ import { WidgetRegistry } from "../../registry";
 import { EnsembleRuntime } from "../../runtime";
 import type { StepTypeProps } from "./StepType";
 import { StepType } from "./StepType";
+import { isString } from "antd/es/button";
 
 export interface StepProps {
   stepLabel: string;
@@ -52,7 +54,17 @@ interface CustomConnectorProps {
 }
 
 const Stepper: React.FC<StepperProps> = (props) => {
-  const { activeStep, setActiveStep } = useEvaluatedSteps(props);
+  // Explicit update to evaluate activeStepIndex
+  const resVals = useEvaluate({
+    activeStepIndex: props.activeStepIndex,
+  });
+  const [activeStep, setActiveStep] = useState(props?.activeStepIndex);
+  useEffect(() => {
+    if (isString(activeStep) && isExpression(activeStep)) {
+      setActiveStep(resVals.activeStepIndex);
+    }
+  }, [resVals, activeStep]);
+
   const itemTemplate = props["item-template"];
   const { namedData } = useTemplateData({ ...itemTemplate });
   const stepsLength = namedData.length;
@@ -226,19 +238,4 @@ const unwrapContent = (
     };
   });
   return [...unwrappedChildren];
-};
-
-const useEvaluatedSteps = (
-  props: StepperProps,
-): { activeStep: number; setActiveStep: Dispatch<number> } => {
-  const resVals = useEvaluate({
-    activeStepIndex: props.activeStepIndex,
-  });
-  const [activeStep, setActiveStep] = useState(0);
-  useEffect(() => {
-    if (resVals.activeStepIndex) {
-      setActiveStep(resVals.activeStepIndex);
-    }
-  }, [resVals]);
-  return { activeStep, setActiveStep };
 };
