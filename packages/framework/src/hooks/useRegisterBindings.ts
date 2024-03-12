@@ -28,9 +28,13 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   );
 
   const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
-  const styleNames = get(values, ["styles", "names"]) as unknown;
+
+  const namedStyles = get(values, ["styles", "names"]) as unknown;
+  const classStyles = get(values, ["styles", "className"]) as unknown;
+
   const styleProperties = useStyleNames(
-    isString(styleNames) ? String(styleNames) : "",
+    isString(namedStyles) ? namedStyles : "",
+    isString(classStyles) ? classStyles : "",
   );
 
   const styles = merge({}, styleProperties, values.styles);

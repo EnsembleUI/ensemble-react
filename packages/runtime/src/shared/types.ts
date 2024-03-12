@@ -7,7 +7,11 @@ import type {
 import type { HasBorder } from "./hasSchema";
 
 export type EnsembleWidgetStyles = Omit<React.CSSProperties, "direction"> & {
+  /**
+   * @deprecated Use the `class` attribute for styling instead of `names`.
+   */
   names?: Expression<string>;
+  className?: Expression<string>;
   visible?: boolean;
 };
 
