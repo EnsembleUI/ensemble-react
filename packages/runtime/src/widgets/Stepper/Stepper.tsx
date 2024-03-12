@@ -1,4 +1,4 @@
-import React, { useState, useCallback, Dispatch, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import type { StepOwnProps } from "@mui/material";
 import {
   Stepper as MUIStepper,
@@ -16,17 +16,16 @@ import {
   useRegisterBindings,
   useTemplateData,
   unwrapWidget,
-  useEvaluate,
   isExpression,
 } from "@ensembleui/react-framework";
 import type { EnsembleWidget, Expression } from "@ensembleui/react-framework";
 import Alert from "@mui/material/Alert";
-import type { EnsembleWidgetProps, HasItemTemplate } from "../../shared/types";
-import { WidgetRegistry } from "../../registry";
-import { EnsembleRuntime } from "../../runtime";
-import type { StepTypeProps } from "./StepType";
-import { StepType } from "./StepType";
 import { isString } from "antd/es/button";
+import type { EnsembleWidgetProps, HasItemTemplate } from "../../shared/types";
+import { EnsembleRuntime } from "../../runtime";
+import { WidgetRegistry } from "../../registry";
+import { StepType } from "./StepType";
+import type { StepTypeProps } from "./StepType";
 
 export interface StepProps {
   stepLabel: string;
@@ -35,7 +34,7 @@ export interface StepProps {
 
 export type StepperProps = {
   steps: StepProps[];
-  activeStepIndex: number;
+  activeStepIndex?: number;
   styles: {
     inActiveConnectorColor?: Expression<string>;
     connectorColor?: Expression<string>;
@@ -54,28 +53,19 @@ interface CustomConnectorProps {
 }
 
 const Stepper: React.FC<StepperProps> = (props) => {
-  // Explicit update to evaluate activeStepIndex
-  const resVals = useEvaluate({
-    activeStepIndex: props.activeStepIndex,
-  });
   const [activeStep, setActiveStep] = useState(props?.activeStepIndex);
-  useEffect(() => {
-    if (isString(activeStep) && isExpression(activeStep)) {
-      setActiveStep(resVals.activeStepIndex);
-    }
-  }, [resVals, activeStep]);
 
   const itemTemplate = props["item-template"];
   const { namedData } = useTemplateData({ ...itemTemplate });
   const stepsLength = namedData.length;
   const stepTypes = itemTemplate?.template;
   const handleNext = useCallback(() => {
-    if (activeStep < namedData.length - 1) {
+    if (activeStep && activeStep < namedData.length - 1) {
       setActiveStep(activeStep + 1);
     }
   }, [activeStep, namedData.length]);
   const handleBack = useCallback(() => {
-    if (activeStep !== 0) {
+    if (activeStep && activeStep !== 0) {
       setActiveStep(activeStep - 1);
     }
   }, [activeStep]);
@@ -86,6 +76,11 @@ const Stepper: React.FC<StepperProps> = (props) => {
     handleNext,
     handleBack,
   });
+  useEffect(() => {
+    if (isString(activeStep) && isExpression(activeStep)) {
+      setActiveStep(values?.activeStepIndex);
+    }
+  }, [activeStep, values]);
   const steps = unwrapContent(props.steps);
   if (!stepTypes) {
     return (
@@ -103,7 +98,7 @@ const Stepper: React.FC<StepperProps> = (props) => {
   }
 
   const stepPercentage = 100 / stepsLength;
-  const activeStepPercentage = (activeStep + 1) * stepPercentage;
+  const activeStepPercentage = (activeStep ?? 0 + 1) * stepPercentage;
 
   return (
     <div ref={rootRef}>
