@@ -143,12 +143,12 @@ View:
                     executeCode: |
                       console.log("data", selectedRows, selectedRowKeys);
                   allowSelection: true
+                  allowResizableColumns: true
                   styles:
                     headerStyle:
                       backgroundColor: "white"
                       fontSize: "12px"
                       textColor: "#747184"
-                      hasDivider: true
                       borderBottom: false
                   DataColumns:
                     - label: PATIENT
