@@ -7,7 +7,7 @@ import type { EnsembleUser } from "./user";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
 
 export interface ApplicationContextDefinition {
-  application: EnsembleAppModel | undefined;
+  application: EnsembleAppModel | null;
   storage: unknown;
   secrets: unknown;
   env: Record<string, unknown>;
@@ -20,7 +20,7 @@ export interface ApplicationContextActions {
 }
 
 export const defaultApplicationContext = {
-  application: undefined,
+  application: null,
   storage: null,
   env: {},
   auth: null,

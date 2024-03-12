@@ -3,7 +3,6 @@ import type {
   ApplicationDTO,
   EnsembleAppModel,
   ApplicationLoader,
-  EnsembleThemeModel,
 } from "@ensembleui/react-framework";
 import {
   ApplicationContextProvider,
@@ -38,9 +37,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
   loader,
   screenId,
 }) => {
-  const [app, setApp] = useState<
-    EnsembleAppModel & { themes?: Record<string, EnsembleThemeModel> }
-  >();
+  const [app, setApp] = useState<EnsembleAppModel>();
 
   useEffect(() => {
     if (app) {

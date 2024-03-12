@@ -22,16 +22,17 @@ export interface EnsembleScreenModel {
 
 export type EnsembleEntryPoint = EnsembleScreenModel | EnsembleMenuModel;
 
-export type EnsembleAppModel = {
+export interface EnsembleAppModel {
   id: string;
   menu?: EnsembleMenuModel;
   screens: EnsembleScreenModel[];
   customWidgets: CustomWidgetModel[];
   home: EnsembleEntryPoint;
   theme?: EnsembleThemeModel;
+  themes?: Record<string, EnsembleThemeModel>;
   scripts: EnsembleScriptModel[];
   config?: EnsembleConfigYAML;
-} & { themes?: Record<string, EnsembleThemeModel> };
+}
 
 export interface EnsembleMenuModel {
   id?: string;

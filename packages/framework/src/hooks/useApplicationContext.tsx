@@ -7,11 +7,10 @@ import {
   currentThemeAtom,
   themeAtom,
 } from "../state";
-import type { EnsembleAppModel, EnsembleThemeModel } from "../shared/models";
+import type { EnsembleAppModel } from "../shared/models";
 
 interface ApplicationContextProps {
   app: EnsembleAppModel;
-  themes?: { [key: string]: EnsembleThemeModel };
 }
 
 type ApplicationContextProviderProps =

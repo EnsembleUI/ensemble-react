@@ -5,7 +5,7 @@ import { cloneDeep } from "lodash-es";
 import type { EnsembleWidgetProps } from "../shared/types";
 import { EnsembleRuntime } from "../runtime";
 import { WidgetRegistry } from "../registry";
-import type { Widget } from "../shared/coreSchema";
+import { Widget } from "../shared/coreSchema";
 
 export interface LoadingContainerProps extends EnsembleWidgetProps {
   isLoading: Expression<boolean>;
@@ -14,6 +14,10 @@ export interface LoadingContainerProps extends EnsembleWidgetProps {
   highlightColor?: Expression<string>;
   width?: Expression<number>;
   height?: Expression<number>;
+  /**
+   * The widget to render as the content of this container.
+   * @treeItemWidgetLabel Set Content Widget
+   */
   widget: Widget;
   loadingWidget?: Widget;
 }
