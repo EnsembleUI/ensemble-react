@@ -1,10 +1,10 @@
 import { useCallback } from "react";
 import { clone } from "lodash-es";
+import { atomWithStorage, createJSONStorage } from "jotai/utils";
 import { atom, useAtom, useAtomValue } from "jotai";
 import { focusAtom } from "jotai-optics";
 import type { EnsembleAppModel, EnsembleThemeModel } from "../shared";
 import type { EnsembleUser } from "./user";
-import { atomWithStorage, createJSONStorage } from "jotai/utils";
 
 export interface ApplicationContextDefinition {
   application: EnsembleAppModel | null;
@@ -35,9 +35,8 @@ export const appAtom = atom<ApplicationContextDefinition>(
 export const themeAtom = atom<EnsembleThemeModel | undefined>(undefined);
 
 const backingStorage = createJSONStorage<string>(() => sessionStorage);
-
-export const currentThemeAtom = atomWithStorage<string>(
-  "ensemble.currentTheme",
+export const selectedThemeNameAtom = atomWithStorage<string>(
+  "ensemble.selectedThemeName",
   "default",
   backingStorage,
 );
@@ -50,20 +49,16 @@ export const useThemeContext = (): {
   setTheme: (name: string) => void;
 } => {
   const [theme, updateTheme] = useAtom(themeAtom);
-  const [themeName, updateThemeName] = useAtom(currentThemeAtom);
+  const [themeName, updateThemeName] = useAtom(selectedThemeNameAtom);
   const appContext = useAtomValue(appAtom);
 
   const setTheme = useCallback(
     (name: string) => {
       updateThemeName(name);
 
-      let newTheme = undefined;
+      let newTheme = appContext.application?.theme;
       if (appContext.application?.themes) {
-        newTheme = appContext?.application?.themes
-          ? appContext.application.themes[name]
-          : undefined;
-      } else {
-        newTheme = appContext.application?.theme;
+        newTheme = appContext.application.themes[name];
       }
 
       updateTheme(clone(newTheme));

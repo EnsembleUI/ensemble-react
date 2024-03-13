@@ -92,13 +92,10 @@ export const EnsembleParser = {
     }
 
     const theme = unwrapTheme(app.theme?.content);
-    let themes: EnsembleThemeModel[] | undefined;
-
+    const themes: { [key: string]: EnsembleThemeModel | undefined } = {};
     if (isArray(app.themes)) {
-      themes = app.themes.map((item) => {
-        return {
-          [item.name || item.id]: unwrapTheme(clone(item.content)),
-        };
+      app.themes.forEach((item) => {
+        themes[item.name || item.id] = unwrapTheme(clone(item.content));
       });
     }
 
@@ -120,11 +117,7 @@ export const EnsembleParser = {
       customWidgets,
       home: menu ?? screens[0],
       theme,
-      themes: isArray(themes)
-        ? (Object.assign({}, ...themes) as {
-            [key: string]: EnsembleThemeModel;
-          })
-        : themes,
+      themes,
       scripts,
       config: ensembleConfigData,
     };

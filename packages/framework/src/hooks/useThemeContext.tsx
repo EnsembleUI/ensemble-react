@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from "react";
-import { EnsembleThemeModel } from "../shared";
+import { type EnsembleThemeModel } from "../shared";
 
 export type CustomTheme = Record<string, unknown> & {
   theme?: EnsembleThemeModel;
@@ -15,9 +15,8 @@ export const CustomThemeProvider: React.FC<CustomThemeProps> = ({
   children,
   value,
 }) => {
-  const parentTheme = useCustomTheme();
   return (
-    <CustomThemeContext.Provider value={{ ...parentTheme, ...value }}>
+    <CustomThemeContext.Provider value={{ ...value }}>
       {children}
     </CustomThemeContext.Provider>
   );

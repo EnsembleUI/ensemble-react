@@ -29,7 +29,7 @@ export interface EnsembleAppModel {
   customWidgets: CustomWidgetModel[];
   home: EnsembleEntryPoint;
   theme?: EnsembleThemeModel;
-  themes?: Record<string, EnsembleThemeModel>;
+  themes?: { [key: string]: EnsembleThemeModel | undefined };
   scripts: EnsembleScriptModel[];
   config?: EnsembleConfigYAML;
 }

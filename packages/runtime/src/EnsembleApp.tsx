@@ -11,9 +11,9 @@ import {
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { injectStyle } from "react-toastify/dist/inject-style";
-import { ThemeProvider } from "./ThemeProvider";
 import { EnsembleEntry } from "./runtime/entry";
 import { EnsembleScreen } from "./runtime/screen";
+import { EnsembleTheme } from "./runtime/theme";
 import { ErrorPage } from "./runtime/error";
 // Register built in widgets;
 import "./widgets";
@@ -111,10 +111,10 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
 
   return (
     <ApplicationContextProvider app={app}>
-      <ThemeProvider>
+      <EnsembleTheme>
         <RouterProvider router={router} />
         <ToastContainer />
-      </ThemeProvider>
+      </EnsembleTheme>
     </ApplicationContextProvider>
   );
 };

@@ -1,10 +1,10 @@
-import { Provider, useAtom, useAtomValue } from "jotai";
+import { Provider, useAtomValue } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 import {
   appAtom,
   type ApplicationContextDefinition,
   defaultApplicationContext,
-  currentThemeAtom,
+  selectedThemeNameAtom,
   themeAtom,
 } from "../state";
 import type { EnsembleAppModel } from "../shared/models";
@@ -45,21 +45,18 @@ const HydrateAtoms: React.FC<
     appContext: ApplicationContextDefinition;
   }>
 > = ({ appContext, children }) => {
-  const activeThemeName = useAtomValue(currentThemeAtom);
-  const [_, updateTheme] = useAtom(themeAtom);
-  let activeTheme = undefined;
+  const activeThemeName = useAtomValue(selectedThemeNameAtom);
 
+  let activeTheme = appContext.application?.theme;
   if (appContext.application?.themes) {
-    activeTheme = appContext.application?.themes
-      ? appContext.application.themes[activeThemeName]
-      : undefined;
-  } else {
-    activeTheme = appContext.application?.theme;
+    activeTheme = appContext.application.themes[activeThemeName];
   }
 
   // initialising on state with prop on render here
-  useHydrateAtoms([[appAtom, appContext]]);
-  updateTheme(activeTheme);
+  useHydrateAtoms([
+    [appAtom, appContext],
+    [themeAtom, activeTheme],
+  ]);
 
   return <>{children}</>;
 };
