@@ -18,7 +18,7 @@ import type {
 import type { Response } from "../data";
 import type { EnsembleScreenModel } from "../shared/models";
 import { useApplicationContext } from "./useApplicationContext";
-import { useCustomTheme } from "./useThemeContext";
+import { useTheme } from "./useThemeContext";
 
 interface ScreenContextProps {
   screen: EnsembleScreenModel;
@@ -70,7 +70,7 @@ const HydrateAtoms: React.FC<
     screenContext: ScreenContextDefinition;
   }>
 > = ({ appContext, screenContext, children }) => {
-  const themeScope = useCustomTheme();
+  const themeScope = useTheme();
   const [_, updateTheme] = useAtom(themeAtom);
 
   // initialising on state with prop on render here

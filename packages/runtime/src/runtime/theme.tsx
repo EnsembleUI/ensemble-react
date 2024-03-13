@@ -1,6 +1,6 @@
 import {
   CustomThemeProvider,
-  useThemeContext,
+  useThemeScope,
 } from "@ensembleui/react-framework";
 import { ConfigProvider } from "antd";
 import { type PropsWithChildren } from "react";
@@ -8,7 +8,7 @@ import { type PropsWithChildren } from "react";
 const DEFAULT_FONT_FAMILY = "sans-serif";
 
 export const EnsembleTheme: React.FC<PropsWithChildren> = ({ children }) => {
-  const themeScope = useThemeContext();
+  const themeScope = useThemeScope();
 
   if (!themeScope.theme) {
     return (
