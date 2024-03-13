@@ -80,7 +80,6 @@ const Stepper: React.FC<StepperProps> = (props) => {
       handleBack,
     },
   );
-  console.log("Stepper", values);
   useEffect(() => {
     if (
       isString(props?.activeStepIndex) &&
