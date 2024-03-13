@@ -53,34 +53,43 @@ interface CustomConnectorProps {
 }
 
 const Stepper: React.FC<StepperProps> = (props) => {
-  const [activeStep, setActiveStep] = useState(props?.activeStepIndex);
+  const [activeStep, setActiveStep] = useState(props.activeStepIndex ?? 0);
 
   const itemTemplate = props["item-template"];
   const { namedData } = useTemplateData({ ...itemTemplate });
   const stepsLength = namedData.length;
   const stepTypes = itemTemplate?.template;
   const handleNext = useCallback(() => {
-    if (activeStep && activeStep < namedData.length - 1) {
-      setActiveStep(activeStep + 1);
+    if (activeStep < namedData.length - 1) {
+      setActiveStep((prevStep) => prevStep + 1);
     }
   }, [activeStep, namedData.length]);
   const handleBack = useCallback(() => {
-    if (activeStep && activeStep !== 0) {
-      setActiveStep(activeStep - 1);
+    if (activeStep !== 0) {
+      setActiveStep((prevStep) => prevStep - 1);
     }
   }, [activeStep]);
   const handleStep = (step: number) => () => {
     setActiveStep(step);
   };
-  const { values, rootRef } = useRegisterBindings({ ...props }, props.id, {
-    handleNext,
-    handleBack,
-  });
+  const { values, rootRef } = useRegisterBindings(
+    { ...props, activeStep },
+    props.id,
+    {
+      handleNext,
+      handleBack,
+    },
+  );
+  console.log("Stepper", values);
   useEffect(() => {
-    if (isString(activeStep) && isExpression(activeStep)) {
+    if (
+      isString(props?.activeStepIndex) &&
+      isExpression(props?.activeStepIndex) &&
+      values?.activeStepIndex
+    ) {
       setActiveStep(values?.activeStepIndex);
     }
-  }, [activeStep, values]);
+  }, [props?.activeStepIndex, values?.activeStepIndex]);
   const steps = unwrapContent(props.steps);
   if (!stepTypes) {
     return (
@@ -98,7 +107,7 @@ const Stepper: React.FC<StepperProps> = (props) => {
   }
 
   const stepPercentage = 100 / stepsLength;
-  const activeStepPercentage = (activeStep ?? 0 + 1) * stepPercentage;
+  const activeStepPercentage = (activeStep + 1) * stepPercentage;
 
   return (
     <div ref={rootRef}>

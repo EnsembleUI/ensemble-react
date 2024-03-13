@@ -3,7 +3,7 @@ View:
     executeCode:
       body: |-
         ensemble.storage.set('dataColumn', [{key1: "value", key2: 2}, {key1: "foo", key2: 3}])
-        ensemble.storage.set('activeIndex',1);
+        ensemble.storage.set('activeIndex',3);
       onComplete:
         invokeApi:
           name: getDummyNumbers
