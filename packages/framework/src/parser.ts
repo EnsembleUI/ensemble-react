@@ -34,6 +34,7 @@ export interface EnsembleScreenYAML {
     header?: { [key: string]: unknown };
     body: { [key: string]: unknown };
     footer?: { [key: string]: unknown };
+    style?: { [key: string]: unknown };
     [k: string]: { [key: string]: unknown } | undefined;
   };
   ViewGroup?: { [key: string]: unknown };
@@ -167,6 +168,7 @@ export const EnsembleParser = {
       footer: unwrapFooter(footer),
       body: viewWidget,
       apis,
+      styles: get(view, "styles"),
     };
   },
 

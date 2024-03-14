@@ -12,9 +12,10 @@ interface EnsembleBodyProps {
   header?: EnsembleHeaderModel;
   footer?: EnsembleFooterModel;
   isModal?: boolean;
+  styles?: { [key: string]: unknown };
 }
 
-export const EnsembleBody: React.FC<EnsembleBodyProps> = ({ body }) => {
+export const EnsembleBody: React.FC<EnsembleBodyProps> = ({ body, styles }) => {
   const BodyFn = WidgetRegistry.find(body.name);
   if (!(BodyFn instanceof Function))
     throw new Error(`Unknown widget: ${body.name}`);
@@ -24,6 +25,7 @@ export const EnsembleBody: React.FC<EnsembleBodyProps> = ({ body }) => {
     styles: {
       flex: 1,
       overflow: "auto",
+      ...styles,
     },
   };
 
