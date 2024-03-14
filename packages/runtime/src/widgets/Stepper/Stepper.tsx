@@ -11,7 +11,7 @@ import type { StepIconProps } from "@mui/material/StepIcon";
 import StepConnector, {
   stepConnectorClasses,
 } from "@mui/material/StepConnector";
-import { map, cloneDeep, isString } from "lodash-es";
+import { map, cloneDeep, isNumber } from "lodash-es";
 import {
   useRegisterBindings,
   useTemplateData,
@@ -28,7 +28,7 @@ import type { StepTypeProps } from "./StepType";
 
 export interface StepProps {
   stepLabel: string;
-  contentWidget: Record<string, unknown>;
+  contentWidget: { [key: string]: unknown };
 }
 
 export type StepperProps = {
@@ -52,7 +52,7 @@ interface CustomConnectorProps {
 }
 
 const Stepper: React.FC<StepperProps> = (props) => {
-  const [activeStep, setActiveStep] = useState(props.activeStepIndex ?? 0);
+  const [activeStep, setActiveStep] = useState(0);
 
   const itemTemplate = props["item-template"];
   const { namedData } = useTemplateData({ ...itemTemplate });
@@ -81,14 +81,12 @@ const Stepper: React.FC<StepperProps> = (props) => {
   );
   useEffect(() => {
     if (
-      isString(props?.activeStepIndex) &&
-      isExpression(props?.activeStepIndex) &&
-      values?.activeStepIndex
+      isExpression(props.activeStepIndex) &&
+      isNumber(values?.activeStepIndex)
     ) {
-      setActiveStep(values?.activeStepIndex);
+      setActiveStep(values?.activeStepIndex ?? 0);
     }
-  }, [props?.activeStepIndex, values?.activeStepIndex]);
-  console.log("Stepper", values);
+  }, [props.activeStepIndex, values?.activeStepIndex]);
   const steps = unwrapContent(props.steps);
   if (!stepTypes) {
     return (
