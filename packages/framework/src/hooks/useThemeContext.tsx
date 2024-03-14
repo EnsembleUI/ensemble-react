@@ -1,6 +1,6 @@
 import { useAtom, useAtomValue } from "jotai";
 import { clone, isEmpty } from "lodash-es";
-import { createContext, useCallback, useContext } from "react";
+import { createContext, useCallback } from "react";
 import { type EnsembleThemeModel } from "../shared";
 import { appAtom, selectedThemeNameAtom, themeAtom } from "../state";
 
@@ -35,8 +35,4 @@ export const useThemeScope = (): {
   );
 
   return { theme, themeName, setTheme };
-};
-
-export const useTheme = (): CustomTheme => {
-  return useContext(CustomThemeContext);
 };

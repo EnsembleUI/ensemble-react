@@ -1,5 +1,5 @@
 import { Provider, useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useCallback } from "react";
+import { useCallback, useContext } from "react";
 import { clone, merge } from "lodash-es";
 import { useHydrateAtoms } from "jotai/utils";
 import {
@@ -18,7 +18,7 @@ import type {
 import type { Response } from "../data";
 import type { EnsembleScreenModel } from "../shared/models";
 import { useApplicationContext } from "./useApplicationContext";
-import { useTheme } from "./useThemeContext";
+import { CustomThemeContext } from "./useThemeContext";
 
 interface ScreenContextProps {
   screen: EnsembleScreenModel;
@@ -70,7 +70,7 @@ const HydrateAtoms: React.FC<
     screenContext: ScreenContextDefinition;
   }>
 > = ({ appContext, screenContext, children }) => {
-  const themeScope = useTheme();
+  const themeScope = useContext(CustomThemeContext);
 
   // initialising on state with prop on render here
   useHydrateAtoms([

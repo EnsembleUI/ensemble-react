@@ -14,7 +14,7 @@ import {
   useEvaluate,
   useCustomScope,
   CustomScopeProvider,
-  useTheme,
+  CustomThemeContext,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -96,7 +96,7 @@ export const useExecuteCode: EnsembleActionHook<
   const location = useLocation();
   const customScope = useCustomScope();
   const { openModal, closeAllModals } = useContext(ModalContext) || {};
-  const themescope = useTheme();
+  const themescope = useContext(CustomThemeContext);
   const user = useEnsembleUser();
   const appContext = useApplicationContext();
   const screenData = useScreenData();
