@@ -1,25 +1,22 @@
-import {
-  CustomThemeProvider,
-  useThemeScope,
-} from "@ensembleui/react-framework";
+import { CustomThemeContext, useThemeScope } from "@ensembleui/react-framework";
 import { ConfigProvider } from "antd";
 import { type PropsWithChildren } from "react";
 
 const DEFAULT_FONT_FAMILY = "sans-serif";
 
-export const EnsembleTheme: React.FC<PropsWithChildren> = ({ children }) => {
+export const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const themeScope = useThemeScope();
 
   if (!themeScope.theme) {
     return (
-      <CustomThemeProvider value={themeScope}>
+      <CustomThemeContext.Provider value={themeScope}>
         <ConfigProvider>{children}</ConfigProvider>
-      </CustomThemeProvider>
+      </CustomThemeContext.Provider>
     );
   }
 
   return (
-    <CustomThemeProvider value={themeScope}>
+    <CustomThemeContext.Provider value={themeScope}>
       <ConfigProvider
         theme={{
           token: {
@@ -31,6 +28,6 @@ export const EnsembleTheme: React.FC<PropsWithChildren> = ({ children }) => {
       >
         {children}
       </ConfigProvider>
-    </CustomThemeProvider>
+    </CustomThemeContext.Provider>
   );
 };

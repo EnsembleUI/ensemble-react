@@ -1,7 +1,5 @@
-import { useCallback } from "react";
-import { clone } from "lodash-es";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
-import { atom, useAtom, useAtomValue } from "jotai";
+import { atom } from "jotai";
 import { focusAtom } from "jotai-optics";
 import type { EnsembleAppModel, EnsembleThemeModel } from "../shared";
 import type { EnsembleUser } from "./user";

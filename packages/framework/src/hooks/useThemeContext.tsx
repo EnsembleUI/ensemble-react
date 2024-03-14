@@ -1,6 +1,6 @@
 import { useAtom, useAtomValue } from "jotai";
 import { clone } from "lodash-es";
-import React, { createContext, useCallback, useContext } from "react";
+import { createContext, useCallback, useContext } from "react";
 import { type EnsembleThemeModel } from "../shared";
 import { appAtom, selectedThemeNameAtom, themeAtom } from "../state";
 
@@ -10,20 +10,6 @@ export type CustomTheme = { [key: string]: unknown } & {
   setTheme?: (name: string) => void;
 };
 export const CustomThemeContext = createContext<CustomTheme>({});
-
-type CustomThemeProps = {
-  value?: CustomTheme;
-} & React.PropsWithChildren<CustomTheme>;
-export const CustomThemeProvider: React.FC<CustomThemeProps> = ({
-  children,
-  value,
-}) => {
-  return (
-    <CustomThemeContext.Provider value={{ ...value }}>
-      {children}
-    </CustomThemeContext.Provider>
-  );
-};
 
 export const useThemeScope = (): {
   theme: EnsembleThemeModel | undefined;
