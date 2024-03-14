@@ -39,7 +39,7 @@ export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
     }
 
     return () => {
-      navigate(evaluatedRes.url, { state: evaluatedRes.inputs });
+      navigate(String(evaluatedRes.url), { state: evaluatedRes.inputs });
     };
   }, [evaluatedRes.inputs, evaluatedRes.url, navigate]);
 
