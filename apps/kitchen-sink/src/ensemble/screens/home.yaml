@@ -3,6 +3,9 @@ View:
     title:
       Header:
 
+  styles:
+    backgroundColor: ${colors.primary['200']}
+
   body:
     Column:
       styles:
