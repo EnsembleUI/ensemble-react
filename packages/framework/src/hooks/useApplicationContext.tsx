@@ -8,6 +8,7 @@ import {
   themeAtom,
 } from "../state";
 import type { EnsembleAppModel } from "../shared/models";
+import { isEmpty } from "lodash-es";
 
 interface ApplicationContextProps {
   app: EnsembleAppModel;
@@ -48,8 +49,8 @@ const HydrateAtoms: React.FC<
   const activeThemeName = useAtomValue(selectedThemeNameAtom);
 
   let activeTheme = appContext.application?.theme;
-  if (appContext.application?.themes) {
-    activeTheme = appContext.application.themes[activeThemeName];
+  if (!isEmpty(appContext.application?.themes)) {
+    activeTheme = appContext.application?.themes[activeThemeName];
   }
 
   // initialising on state with prop on render here
