@@ -35,6 +35,7 @@ export interface EnsembleScreenYAML {
     header?: { [key: string]: unknown };
     body: { [key: string]: unknown };
     footer?: { [key: string]: unknown };
+    styles?: { [key: string]: unknown };
     [k: string]: { [key: string]: unknown } | undefined;
   };
   ViewGroup?: { [key: string]: unknown };
@@ -158,8 +159,10 @@ export const EnsembleParser = {
     let global: string | undefined;
 
     if (isString(scriptName)) {
-      global = app.scripts.find((script) => script.name === scriptName)
-        ?.content;
+      const globalContent = app.scripts.find(
+        (script) => script.name === scriptName,
+      );
+      global = globalContent?.content;
     }
 
     if (isEmpty(global) && isString(globalBlock)) {
@@ -175,6 +178,7 @@ export const EnsembleParser = {
       footer: unwrapFooter(footer),
       body: viewWidget,
       apis,
+      styles: get(view, "styles"),
     };
   },
 

@@ -3,6 +3,9 @@ View:
     title:
       Header:
 
+  styles:
+    backgroundColor: ${colors.primary['200']}
+
   body:
     Column:
       styles:
@@ -16,6 +19,8 @@ View:
         - Markdown:
             text: This application is built with Ensemble and serves as a guide for how to implement common UI patterns with Ensemble React.
         - Button:
+            styles:
+              className: button-1
             label: Say Hello!
             onTap:
               executeCode: |
