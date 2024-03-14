@@ -11,7 +11,7 @@ import type { StepIconProps } from "@mui/material/StepIcon";
 import StepConnector, {
   stepConnectorClasses,
 } from "@mui/material/StepConnector";
-import { map, cloneDeep } from "lodash-es";
+import { map, cloneDeep, isString } from "lodash-es";
 import {
   useRegisterBindings,
   useTemplateData,
@@ -20,7 +20,6 @@ import {
 } from "@ensembleui/react-framework";
 import type { EnsembleWidget, Expression } from "@ensembleui/react-framework";
 import Alert from "@mui/material/Alert";
-import { isString } from "antd/es/button";
 import type { EnsembleWidgetProps, HasItemTemplate } from "../../shared/types";
 import { EnsembleRuntime } from "../../runtime";
 import { WidgetRegistry } from "../../registry";
@@ -89,6 +88,7 @@ const Stepper: React.FC<StepperProps> = (props) => {
       setActiveStep(values?.activeStepIndex);
     }
   }, [props?.activeStepIndex, values?.activeStepIndex]);
+  console.log("Stepper", values);
   const steps = unwrapContent(props.steps);
   if (!stepTypes) {
     return (
