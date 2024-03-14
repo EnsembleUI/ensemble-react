@@ -19,10 +19,6 @@ import ThemeYAML from "./theme.yaml";
 export const starterApp: ApplicationDTO = {
   id: "myStarterApp",
   name: "My App",
-  theme: {
-    id: "theme",
-    content: String(ThemeYAML),
-  },
   config: ConfigYAML,
   scripts: [
     {

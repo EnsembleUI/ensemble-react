@@ -53,7 +53,7 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({
         />
         <div
           style={{
-            flexGrow: 1,
+            flex: 1,
             height: "100vh",
             display: "flex",
             flexDirection: "column",

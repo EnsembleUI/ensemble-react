@@ -4,7 +4,7 @@ ViewGroup:
       width: 240px
       iconWidth: 20px
       iconHeight: 20px
-      backgroundColor: '#f7fbfa'
+      backgroundColor: "#f7fbfa"
       labelColor: "#171B2A"
       selectedColor: "#171B2A"
       labelFontSize: 1
@@ -14,6 +14,7 @@ ViewGroup:
     header:
       Image:
         height: 50px
+        width: 100%
         source: https://docs.ensembleui.com/images/logo.svg
     items:
       - label: Home
@@ -24,5 +25,10 @@ ViewGroup:
         icon: HelpOutlineOutlined
         page: help
     footer:
-      Text:
-        text: Give us feedback
+      Row:
+        styles:
+          padding: 10px
+          justifyContent: center
+        children:
+          - Text:
+              text: Give us feedback

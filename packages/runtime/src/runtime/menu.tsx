@@ -170,24 +170,10 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
                     : (values?.styles?.labelColor as string) ?? "grey",
                 display: "flex",
                 justifyContent: "center",
-                borderRadius: 0,
                 alignItems: "center",
-                fontSize:
-                  selectedItem === item.label
-                    ? `${
-                        parseInt(
-                          `${
-                            props.styles?.labelFontSize
-                              ? props.styles.labelFontSize
-                              : 1
-                          }` || "1",
-                        ) + 0.2
-                      }rem`
-                    : `${
-                        props.styles?.labelFontSize
-                          ? props.styles.labelFontSize
-                          : 1
-                      }rem`,
+                fontSize: `${
+                  props.styles?.labelFontSize ? props.styles.labelFontSize : 1
+                }rem`,
                 ...(selectedItem === item.label
                   ? props.styles?.onSelectStyles ?? {}
                   : {}),
