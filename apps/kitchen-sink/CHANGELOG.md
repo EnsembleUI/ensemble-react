@@ -1,5 +1,23 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.23
+
+### Patch Changes
+
+- 3edecd3: support for activeStepIndex as expression
+- 4720898: added column resizable feature
+- 4caacc7: Support expressions in navigateUrl
+- 765acec: Added support for styles in view
+- e0b96f5: adopted the dot notation CSS class-based styling while introducing the className attribute to the styles. also, deprecated the names attribute os styles.
+- Updated dependencies [3edecd3]
+- Updated dependencies [4720898]
+- Updated dependencies [4caacc7]
+- Updated dependencies [765acec]
+- Updated dependencies [e0b96f5]
+- Updated dependencies [e36b8a0]
+  - @ensembleui/react-runtime@0.1.32
+  - @ensembleui/react-framework@0.1.23
+
 ## 0.0.22
 
 ### Patch Changes
