@@ -1,5 +1,14 @@
 # @ensembleui/react-runtime
 
+## 0.1.33
+
+### Patch Changes
+
+- f44932f: Added support for multiple theme support
+- 6b4b2e8: added support to return the API response in ensemble.invokeAPI
+- Updated dependencies [f44932f]
+  - @ensembleui/react-framework@0.1.24
+
 ## 0.1.32
 
 ### Patch Changes

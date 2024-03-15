@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.24
+
+### Patch Changes
+
+- f44932f: Added support for multiple theme support
+
 ## 0.1.23
 
 ### Patch Changes
