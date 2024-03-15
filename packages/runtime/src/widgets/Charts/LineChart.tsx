@@ -1,6 +1,7 @@
 import { Line } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
 import { useState } from "react";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { get } from "lodash-es";
 import { type ChartDataSets, type ChartProps } from "..";
@@ -53,6 +54,7 @@ export const LineChart: React.FC<ChartProps> = (props) => {
         datasets: config?.data?.datasets as ChartDataSets[],
       }}
       options={getMergedOptions(options, values?.title, config?.options)}
+      plugins={[ChartDataLabels]}
       style={{
         ...(get(props, "styles") as object),
       }}
