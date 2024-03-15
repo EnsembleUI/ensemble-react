@@ -1,5 +1,16 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.24
+
+### Patch Changes
+
+- f44932f: Added support for multiple theme support
+- 6b4b2e8: added support to return the API response in ensemble.invokeAPI
+- Updated dependencies [f44932f]
+- Updated dependencies [6b4b2e8]
+  - @ensembleui/react-framework@0.1.24
+  - @ensembleui/react-runtime@0.1.33
+
 ## 0.0.23
 
 ### Patch Changes
