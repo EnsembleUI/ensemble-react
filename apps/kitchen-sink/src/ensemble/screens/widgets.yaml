@@ -3,6 +3,7 @@ View:
     executeCode:
       body: |-
         ensemble.storage.set('dataColumn', [{key1: "value", key2: 2}, {key1: "foo", key2: 3}])
+        ensemble.storage.set('activeIndex',3);
       onComplete:
         invokeApi:
           name: getDummyNumbers
@@ -804,7 +805,67 @@ View:
                   styles:
                     maxWidth: 500px
                   source: https://img.huffingtonpost.com/asset/5ab4d4ac2000007d06eb2c56.jpeg?cache=sih0jwle4e&ops=1910_1000
-
+        - Card:
+            styles:
+              width: unset
+              maxWidth: unset
+            children:
+              - Stepper:
+                  id: workflowStepper
+                  activeStepIndex: ${ensemble.storage.get('activeIndex')}
+                  styles:
+                    connectorColor: black
+                    connectorHeight: 4
+                    backgroundColor: green
+                    padding: 20
+                    borderRadius: 10
+                  steps:
+                    - stepLabel: Review Match
+                      contentWidget:
+                        Text:
+                          text: Step 0
+                    - stepLabel: Review
+                      contentWidget:
+                        Text:
+                          text: Step 1
+                    - stepLabel: SubmitDocs
+                      contentWidget:
+                        Text:
+                          text: Step 2
+                    - stepLabel: Track
+                      contentWidget:
+                        Text:
+                          text: Step 3
+                    - stepLabel: Enroll
+                      contentWidget:
+                        Text:
+                          text: Step 4
+                  item-template:
+                    data:
+                      - name: Review Match
+                        iconName: Balance
+                      - name: Obtain Consent
+                        iconName: VerifiedUserOutlined
+                      - name: Submit Docs
+                        iconName: Check
+                      - name: Track
+                        iconName: FingerprintOutlined
+                      - name: Enroll
+                        iconName: ThumbUpAltOutlined
+                    name: step
+                    template:
+                      Icon:
+                        name: Search
+              - Button:
+                  label: Next
+                  onTap:
+                    executeCode:  |
+                      workflowStepper.handleNext();
+              - Button:
+                  label: Prev
+                  onTap:
+                    executeCode:  |
+                      workflowStepper.handleBack();
 API:
   getDummyProducts:
     method: GET

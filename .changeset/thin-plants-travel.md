@@ -1,6 +1,7 @@
 ---
+"@ensembleui/react-framework": patch
 "@ensembleui/react-kitchen-sink": patch
 "@ensembleui/react-runtime": patch
 ---
 
-added column resizable feature
+Added support for multiple theme support

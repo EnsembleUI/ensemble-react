@@ -9,3 +9,4 @@ export * from "./useEvaluate";
 export * from "./useStyleNames";
 export * from "./useHtmlPassThrough";
 export * from "./useEnsembleUser";
+export * from "./useThemeContext";

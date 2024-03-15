@@ -18,6 +18,7 @@ export interface EnsembleScreenModel {
   footer?: EnsembleFooterModel;
   apis?: EnsembleAPIModel[];
   global?: string;
+  styles?: { [key: string]: unknown };
 }
 
 export type EnsembleEntryPoint = EnsembleScreenModel | EnsembleMenuModel;
@@ -29,6 +30,7 @@ export interface EnsembleAppModel {
   customWidgets: CustomWidgetModel[];
   home: EnsembleEntryPoint;
   theme?: EnsembleThemeModel;
+  themes?: { [key: string]: EnsembleThemeModel | undefined };
   scripts: EnsembleScriptModel[];
   config?: EnsembleConfigYAML;
 }

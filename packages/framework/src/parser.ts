@@ -12,6 +12,7 @@ import {
   set,
   isString,
   concat,
+  clone,
 } from "lodash-es";
 import type {
   EnsembleScreenModel,
@@ -34,6 +35,7 @@ export interface EnsembleScreenYAML {
     header?: { [key: string]: unknown };
     body: { [key: string]: unknown };
     footer?: { [key: string]: unknown };
+    styles?: { [key: string]: unknown };
     [k: string]: { [key: string]: unknown } | undefined;
   };
   ViewGroup?: { [key: string]: unknown };
@@ -91,6 +93,13 @@ export const EnsembleParser = {
     }
 
     const theme = unwrapTheme(app.theme?.content);
+    const themes: { [key: string]: EnsembleThemeModel | undefined } = {};
+    if (isArray(app.themes)) {
+      app.themes.forEach((item) => {
+        themes[item.name || item.id] = unwrapTheme(clone(item.content));
+      });
+    }
+
     const scripts = app.scripts.map(({ name, content }) => ({
       name,
       body: content,
@@ -109,6 +118,7 @@ export const EnsembleParser = {
       customWidgets,
       home: menu ?? screens[0],
       theme,
+      themes,
       scripts,
       config: ensembleConfigData,
     };
@@ -149,9 +159,10 @@ export const EnsembleParser = {
     let global: string | undefined;
 
     if (isString(scriptName)) {
-      global = app.scripts.find(
+      const globalContent = app.scripts.find(
         (script) => script.name === scriptName,
-      )?.content;
+      );
+      global = globalContent?.content;
     }
 
     if (isEmpty(global) && isString(globalBlock)) {
@@ -167,6 +178,7 @@ export const EnsembleParser = {
       footer: unwrapFooter(footer),
       body: viewWidget,
       apis,
+      styles: get(view, "styles"),
     };
   },
 

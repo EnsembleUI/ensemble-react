@@ -42,7 +42,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
       <ModalWrapper>
         <OnLoadAction action={screen.onLoad} context={{ ...mergedInputs }}>
           <EnsembleHeader header={screen.header} />
-          <EnsembleBody body={screen.body} />
+          <EnsembleBody body={screen.body} styles={screen.styles} />
         </OnLoadAction>
         <EnsembleFooter footer={screen.footer} />
       </ModalWrapper>

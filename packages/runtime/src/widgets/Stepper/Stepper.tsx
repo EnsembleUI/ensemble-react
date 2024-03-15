@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import type { StepOwnProps } from "@mui/material";
 import {
   Stepper as MUIStepper,
@@ -11,23 +11,24 @@ import type { StepIconProps } from "@mui/material/StepIcon";
 import StepConnector, {
   stepConnectorClasses,
 } from "@mui/material/StepConnector";
-import { map, cloneDeep } from "lodash-es";
+import { map, cloneDeep, isNumber } from "lodash-es";
 import {
   useRegisterBindings,
   useTemplateData,
   unwrapWidget,
+  isExpression,
 } from "@ensembleui/react-framework";
 import type { EnsembleWidget, Expression } from "@ensembleui/react-framework";
 import Alert from "@mui/material/Alert";
 import type { EnsembleWidgetProps, HasItemTemplate } from "../../shared/types";
-import { WidgetRegistry } from "../../registry";
 import { EnsembleRuntime } from "../../runtime";
-import type { StepTypeProps } from "./StepType";
+import { WidgetRegistry } from "../../registry";
 import { StepType } from "./StepType";
+import type { StepTypeProps } from "./StepType";
 
 export interface StepProps {
   stepLabel: string;
-  contentWidget: Record<string, unknown>;
+  contentWidget: { [key: string]: unknown };
 }
 
 export type StepperProps = {
@@ -51,20 +52,20 @@ interface CustomConnectorProps {
 }
 
 const Stepper: React.FC<StepperProps> = (props) => {
-  const [activeStep, setActiveStep] = useState(props.activeStepIndex ?? 0);
+  const [activeStep, setActiveStep] = useState(0);
+
   const itemTemplate = props["item-template"];
   const { namedData } = useTemplateData({ ...itemTemplate });
   const stepsLength = namedData.length;
   const stepTypes = itemTemplate?.template;
   const handleNext = useCallback(() => {
     if (activeStep < namedData.length - 1) {
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      setActiveStep((prevStep) => prevStep + 1);
     }
   }, [activeStep, namedData.length]);
-
   const handleBack = useCallback(() => {
     if (activeStep !== 0) {
-      setActiveStep((prevActiveStep) => prevActiveStep - 1);
+      setActiveStep((prevStep) => prevStep - 1);
     }
   }, [activeStep]);
   const handleStep = (step: number) => () => {
@@ -78,8 +79,15 @@ const Stepper: React.FC<StepperProps> = (props) => {
       handleBack,
     },
   );
+  useEffect(() => {
+    if (
+      isExpression(props.activeStepIndex) &&
+      isNumber(values?.activeStepIndex)
+    ) {
+      setActiveStep(values?.activeStepIndex ?? 0);
+    }
+  }, [props.activeStepIndex, values?.activeStepIndex]);
   const steps = unwrapContent(props.steps);
-
   if (!stepTypes) {
     return (
       <Alert
@@ -102,7 +110,7 @@ const Stepper: React.FC<StepperProps> = (props) => {
     <div ref={rootRef}>
       <div style={{ position: "relative" }}>
         <MUIStepper
-          activeStep={values?.activeStep}
+          activeStep={activeStep}
           alternativeLabel
           connector={
             <CustomConnector
@@ -133,7 +141,7 @@ const Stepper: React.FC<StepperProps> = (props) => {
                       stepTypes,
                       ...(iconProps as StepIconProps),
                       data,
-                      index: values?.activeStep ?? 0,
+                      index: values?.activeStepIndex ?? 0,
                       stepsLength,
                       name: itemTemplate.name,
                     };
@@ -162,7 +170,7 @@ const Stepper: React.FC<StepperProps> = (props) => {
       <div>
         {steps.map((step, index) => (
           <div key={step.stepLabel}>
-            {index === values?.activeStep && (
+            {index === activeStep && (
               <>{EnsembleRuntime.render([step.contentWidget])}</>
             )}
           </div>
