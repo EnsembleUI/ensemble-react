@@ -156,14 +156,16 @@ export const useExecuteCode: EnsembleActionHook<
                 invokeAPI: async (
                   apiName: string,
                   apiInputs?: Record<string, unknown>,
-                ) =>
-                  invokeAPI(
+                ) => {
+                  const apiRes = await invokeAPI(
                     screen,
                     screenData,
                     apiName,
                     apiInputs,
                     customScope,
-                  ),
+                  );
+                  return apiRes;
+                },
                 navigateBack: (): void => navigateBack(navigate),
                 navigateExternalScreen: (url: NavigateExternalScreen) =>
                   navigateExternalScreen(url),
