@@ -8,6 +8,7 @@ View:
       ensemble.invokeAPI('getDummyProducts');
       ensemble.storage.set('dummyId', '1');
       ensemble.invokeAPI('getDummyProduct', {id: ensemble.storage.get('dummyId')});
+      ensemble.storage.set('value',1);
   body:
     Column:
       styles:
@@ -324,6 +325,11 @@ View:
                   label: Query params
                   onTap:
                     navigateUrl: /widgets?name=hello
+              - Button:
+                  label: Dynamic Query
+                  onTap:  
+                    navigateUrl:
+                      url: ${"/widgets" + ensemble.storage.get('value')}
 
         - Card:
             styles:
