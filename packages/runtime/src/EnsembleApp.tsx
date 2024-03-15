@@ -55,6 +55,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
 
       setApp(parsedApp);
     };
+
     if (application) {
       parseApp(application);
       return;

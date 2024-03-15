@@ -1,26 +1,33 @@
-import type { PropsWithChildren } from "react";
+import { CustomThemeContext, useThemeScope } from "@ensembleui/react-framework";
 import { ConfigProvider } from "antd";
-import { useApplicationContext } from "@ensembleui/react-framework";
+import { type PropsWithChildren } from "react";
 
 const DEFAULT_FONT_FAMILY = "sans-serif";
 
 export const ThemeProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const context = useApplicationContext();
-  const theme = context?.application?.theme;
-  if (!theme) {
-    return <ConfigProvider>{children}</ConfigProvider>;
+  const themeScope = useThemeScope();
+
+  if (!themeScope.theme) {
+    return (
+      <CustomThemeContext.Provider value={themeScope}>
+        <ConfigProvider>{children}</ConfigProvider>
+      </CustomThemeContext.Provider>
+    );
   }
 
   return (
-    <ConfigProvider
-      theme={{
-        token: {
-          fontFamily:
-            theme.Tokens?.Typography?.fontFamily ?? DEFAULT_FONT_FAMILY,
-        },
-      }}
-    >
-      {children}
-    </ConfigProvider>
+    <CustomThemeContext.Provider value={themeScope}>
+      <ConfigProvider
+        theme={{
+          token: {
+            fontFamily:
+              themeScope.theme.Tokens?.Typography?.fontFamily ??
+              DEFAULT_FONT_FAMILY,
+          },
+        }}
+      >
+        {children}
+      </ConfigProvider>
+    </CustomThemeContext.Provider>
   );
 };

@@ -1,7 +1,7 @@
+import { atomWithStorage, createJSONStorage } from "jotai/utils";
 import { atom } from "jotai";
-import { selectAtom } from "jotai/utils";
 import { focusAtom } from "jotai-optics";
-import type { EnsembleAppModel } from "../shared";
+import type { EnsembleAppModel, EnsembleThemeModel } from "../shared";
 import type { EnsembleUser } from "./user";
 
 export interface ApplicationContextDefinition {
@@ -30,8 +30,13 @@ export const appAtom = atom<ApplicationContextDefinition>(
   defaultApplicationContext,
 );
 
-export const themeAtom = selectAtom(appAtom, (appContext) => {
-  return appContext.application?.theme;
-});
+export const themeAtom = atom<EnsembleThemeModel | undefined>(undefined);
+
+const backingStorage = createJSONStorage<string>(() => sessionStorage);
+export const selectedThemeNameAtom = atomWithStorage<string>(
+  "ensemble.selectedThemeName",
+  "default",
+  backingStorage,
+);
 
 export const envAtom = focusAtom(appAtom, (optic) => optic.prop("env"));

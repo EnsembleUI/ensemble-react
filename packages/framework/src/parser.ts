@@ -12,6 +12,7 @@ import {
   set,
   isString,
   concat,
+  clone,
 } from "lodash-es";
 import type {
   EnsembleScreenModel,
@@ -92,6 +93,13 @@ export const EnsembleParser = {
     }
 
     const theme = unwrapTheme(app.theme?.content);
+    const themes: { [key: string]: EnsembleThemeModel | undefined } = {};
+    if (isArray(app.themes)) {
+      app.themes.forEach((item) => {
+        themes[item.name || item.id] = unwrapTheme(clone(item.content));
+      });
+    }
+
     const scripts = app.scripts.map(({ name, content }) => ({
       name,
       body: content,
@@ -110,6 +118,7 @@ export const EnsembleParser = {
       customWidgets,
       home: menu ?? screens[0],
       theme,
+      themes,
       scripts,
       config: ensembleConfigData,
     };
