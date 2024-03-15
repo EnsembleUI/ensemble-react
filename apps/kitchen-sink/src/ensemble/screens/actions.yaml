@@ -90,7 +90,7 @@ View:
                           age: 30,
                         };
                         ensemble.navigateScreen({
-                          name: 'home', 
+                          name: 'home',
                           inputs: payload
                         });
         - Card:
@@ -354,6 +354,22 @@ View:
                         url: 'https://google.com',
                         openNewTab: true
                       })
+              - Card:
+                  styles:
+                    maxWidth: unset
+                    width: unset
+                  children:
+                    - Text:
+                        styles:
+                          names: heading-3
+                        text: Trigger API using ensemble.invokeApi
+                    - Button:
+                        label: Trigger API
+                        onTap:
+                          executeCode: |
+                            ensemble.invokeAPI('getDummyProducts').then((res) => {
+                              console.log(res)
+                            })
 
 API:
   getDummyProducts:

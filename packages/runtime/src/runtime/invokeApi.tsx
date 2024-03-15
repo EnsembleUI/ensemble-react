@@ -23,4 +23,6 @@ export const invokeAPI = async (
   );
   const res = await DataFetcher.fetch(api, evaluatedInputs);
   screenData.setData(api.name, res);
+
+  return res;
 };
