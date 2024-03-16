@@ -183,20 +183,24 @@ export const useExecuteCode: EnsembleActionHook<
             args,
           ) as { [key: string]: unknown },
         );
-        onCompleteAction?.callback();
+        onCompleteAction?.callback({
+          ...(args as { [key: string]: unknown }),
+          result: retVal,
+        });
         return retVal;
       } catch (e) {
         logError(e);
       }
     };
   }, [
-    themescope,
     screen,
     js,
+    appContext?.application?.customWidgets,
+    appContext?.env,
+    themescope,
     storage,
     user,
     formatter,
-    appContext?.env,
     location,
     theme?.Tokens,
     theme?.Styles,
@@ -204,6 +208,9 @@ export const useExecuteCode: EnsembleActionHook<
     options?.context,
     onCompleteAction,
     navigate,
+    openModal,
+    closeAllModals,
+    screenData,
   ]);
 
   return execute ? { callback: execute } : undefined;
@@ -213,7 +220,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const { apis, setData } = useScreenData();
   const [isComplete, setIsComplete] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>();
-  const [context, setContext] = useState<unknown>();
+  const [context, setContext] = useState<{ [key: string]: unknown }>();
   const evaluatedInputs = useEvaluate(action?.inputs, { context });
 
   const api = useMemo(
@@ -240,7 +247,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
         isError: false,
       });
       setIsComplete(false);
-      setContext(args);
+      setContext(args as { [key: string]: unknown });
     };
     return { callback };
   }, [api, setData]);
@@ -255,12 +262,12 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
       try {
         const res = await DataFetcher.fetch(api, evaluatedInputs);
         setData(api.name, res);
-        onAPIResponseAction?.callback({ response: res });
-        onInvokeAPIResponseAction?.callback({ response: res });
+        onAPIResponseAction?.callback({ ...context, response: res });
+        onInvokeAPIResponseAction?.callback({ ...context, response: res });
       } catch (e) {
         logError(e);
-        onAPIErrorAction?.callback({ error: e });
-        onInvokeAPIErrorAction?.callback({ error: e });
+        onAPIErrorAction?.callback({ ...context, error: e });
+        onInvokeAPIErrorAction?.callback({ ...context, error: e });
       } finally {
         setIsLoading(false);
         setIsComplete(true);
@@ -278,6 +285,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     onAPIErrorAction,
     onAPIResponseAction,
     setData,
+    context,
   ]);
 
   return invokeApi;
@@ -448,48 +456,52 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
 
   const evaluatedInputs = useEvaluate(action?.inputs);
 
-  const callback = useCallback(async (): Promise<void> => {
-    if (!apiModel || !action) return;
+  const callback = useCallback(
+    async (args: unknown): Promise<void> => {
+      if (!apiModel || !action) return;
 
-    const files = evaluate<FileList>(
-      screenContext as ScreenContextDefinition,
-      action.files,
-    );
-    if (isEmpty(files)) throw Error("Files not found");
-
-    try {
-      setStatus("running");
-      const response = await DataFetcher.uploadFiles(
-        apiModel,
-        action,
-        files,
-        progressCallback,
-        evaluatedInputs,
+      const files = evaluate<FileList>(
+        screenContext as ScreenContextDefinition,
+        action.files,
+        args as { [key: string]: unknown },
       );
+      if (isEmpty(files)) throw Error("Files not found");
 
-      setBody(response.body as { [key: string]: unknown });
-      setHeaders(response.headers as { [key: string]: unknown });
-      if (response.isSuccess) {
-        setStatus("completed");
-        onCompleteAction?.callback({ response });
-      } else {
+      try {
+        setStatus("running");
+        const response = await DataFetcher.uploadFiles(
+          apiModel,
+          action,
+          files,
+          progressCallback,
+          evaluatedInputs,
+        );
+
+        setBody(response.body as { [key: string]: unknown });
+        setHeaders(response.headers as { [key: string]: unknown });
+        if (response.isSuccess) {
+          setStatus("completed");
+          onCompleteAction?.callback({ response });
+        } else {
+          setStatus("failed");
+          onErrorAction?.callback({ response });
+        }
+      } catch (error: unknown) {
+        setBody(error as { [key: string]: unknown });
         setStatus("failed");
-        onErrorAction?.callback({ response });
+        onErrorAction?.callback({ error });
       }
-    } catch (error: unknown) {
-      setBody(error as { [key: string]: unknown });
-      setStatus("failed");
-      onErrorAction?.callback({ error });
-    }
-  }, [
-    apiModel,
-    action,
-    screenContext,
-    progressCallback,
-    evaluatedInputs,
-    onCompleteAction,
-    onErrorAction,
-  ]);
+    },
+    [
+      apiModel,
+      action,
+      screenContext,
+      progressCallback,
+      evaluatedInputs,
+      onCompleteAction,
+      onErrorAction,
+    ],
+  );
 
   return { callback };
 };
