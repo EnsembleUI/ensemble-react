@@ -2,7 +2,6 @@ import {
   DataFetcher,
   useScreenContext,
   evaluate,
-  isExpression,
   useRegisterBindings,
   error as logError,
   useScreenData,
@@ -81,7 +80,7 @@ type UploadStatus =
   | "failed";
 
 export interface UseExecuteCodeActionOptions {
-  context?: Record<string, unknown>;
+  context?: { [key: string]: unknown };
 }
 
 export const useExecuteCode: EnsembleActionHook<
@@ -152,14 +151,16 @@ export const useExecuteCode: EnsembleActionHook<
                 navigateScreen: (targetScreen: NavigateScreenAction): void =>
                   navigateApi(targetScreen, screen, navigate),
                 location: locationApi(location),
-                navigateUrl: (url: string, inputs?: Record<string, unknown>) =>
-                  navigateUrl(url, navigate, inputs),
+                navigateUrl: (
+                  url: string,
+                  inputs?: { [key: string]: unknown },
+                ) => navigateUrl(url, navigate, inputs),
                 showDialog: (dialogAction?: ShowDialogAction): void =>
                   showDialog({ action: dialogAction, openModal }),
                 closeAllDialogs: (): void => closeAllModals?.(),
                 invokeAPI: async (
                   apiName: string,
-                  apiInputs?: Record<string, unknown>,
+                  apiInputs?: { [key: string]: unknown },
                 ) => {
                   const apiRes = await invokeAPI(
                     screen,
@@ -180,7 +181,7 @@ export const useExecuteCode: EnsembleActionHook<
             customScope,
             options?.context,
             args,
-          ) as Record<string, unknown>,
+          ) as { [key: string]: unknown },
         );
         onCompleteAction?.callback();
         return retVal;
@@ -299,8 +300,8 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
   if (!action?.widget && !action?.body)
     throw new Error("ShowDialog Action requires a widget to be specified");
   const widget = useMemo(
-    () => unwrapWidget(cloneDeep(action?.widget || action?.body || {})),
-    [action?.widget, action?.body],
+    () => unwrapWidget(cloneDeep(action.widget || action.body || {})),
+    [action.widget, action.body],
   );
   const callback = useCallback(
     (args: unknown) => {
@@ -406,8 +407,8 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
 export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
   action?: UploadFilesAction,
 ) => {
-  const [body, setBody] = useState<Record<string, unknown>>();
-  const [headers, setHeaders] = useState<Record<string, unknown>>();
+  const [body, setBody] = useState<{ [key: string]: unknown }>();
+  const [headers, setHeaders] = useState<{ [key: string]: unknown }>();
   const [status, setStatus] = useState<UploadStatus>("pending");
   const [progress, setProgress] = useState<number>(0.0);
 
@@ -431,68 +432,43 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
     },
   );
 
+  const apiModel = useMemo(
+    () =>
+      screenContext?.model?.apis?.find(
+        (model) => model.name === action?.uploadApi,
+      ),
+    [action?.uploadApi, screenContext?.model?.apis],
+  );
+
+  const progressCallback = useCallback((progressEvent: ProgressEvent): void => {
+    const percentCompleted = (progressEvent.loaded * 100) / progressEvent.total;
+
+    setProgress(percentCompleted);
+  }, []);
+
+  const evaluatedInputs = useEvaluate(action?.inputs);
+
   const callback = useCallback(async (): Promise<void> => {
-    const apiModel = screenContext?.model?.apis?.find(
-      (model) => model.name === action?.uploadApi,
-    );
-    if (!apiModel) return;
-
-    const progressCallback = (progressEvent: ProgressEvent): void => {
-      const percentCompleted =
-        (progressEvent.loaded * 100) / progressEvent.total;
-
-      setProgress(percentCompleted);
-    };
+    if (!apiModel || !action) return;
 
     const files = evaluate<FileList>(
       screenContext as ScreenContextDefinition,
-      action?.files,
+      action.files,
     );
     if (isEmpty(files)) throw Error("Files not found");
-
-    const formData = new FormData();
-    if (files.length === 1)
-      formData.append(action?.fieldName ?? "files", files[0]);
-    else
-      for (let i = 0; i < files.length; i++) {
-        formData.append(action?.fieldName ?? `file${i}`, files[i]);
-      }
-
-    if (isObject(apiModel.body)) {
-      const apiModelBody = apiModel.body as Record<string, unknown>;
-      for (const key in apiModelBody) {
-        const evaluatedValue = isExpression(apiModelBody[key])
-          ? evaluate(
-              screenContext as ScreenContextDefinition,
-              apiModelBody[key] as string,
-              action?.inputs,
-            )
-          : apiModelBody[key];
-        formData.append(key, evaluatedValue as string);
-      }
-    }
-
-    const apiUrl = evaluate<string>(
-      screenContext as ScreenContextDefinition,
-      `\`${apiModel.uri}\``,
-      action?.inputs,
-    );
 
     try {
       setStatus("running");
       const response = await DataFetcher.uploadFiles(
-        apiUrl,
-        apiModel.method,
-        {
-          "Content-Type": "multipart/form-data",
-          ...apiModel.headers,
-        },
-        formData,
+        apiModel,
+        action,
+        files,
         progressCallback,
+        evaluatedInputs,
       );
 
-      setBody(response.body as Record<string, unknown>);
-      setHeaders(response.headers as Record<string, unknown>);
+      setBody(response.body as { [key: string]: unknown });
+      setHeaders(response.headers as { [key: string]: unknown });
       if (response.isSuccess) {
         setStatus("completed");
         onCompleteAction?.callback({ response });
@@ -501,16 +477,16 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
         onErrorAction?.callback({ response });
       }
     } catch (error: unknown) {
-      setBody(error as Record<string, unknown>);
+      setBody(error as { [key: string]: unknown });
       setStatus("failed");
       onErrorAction?.callback({ error });
     }
   }, [
+    apiModel,
+    action,
     screenContext,
-    action?.files,
-    action?.fieldName,
-    action?.inputs,
-    action?.uploadApi,
+    progressCallback,
+    evaluatedInputs,
     onCompleteAction,
     onErrorAction,
   ]);

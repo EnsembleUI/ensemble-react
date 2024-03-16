@@ -1,8 +1,8 @@
 import type { AxiosResponse, AxiosResponseHeaders } from "axios";
 import axios from "axios";
-import { cloneDeep, get, isObject, isString, set } from "lodash-es";
+import { cloneDeep, get, head, isObject, isString, set } from "lodash-es";
 import type { EnsembleAPIModel } from "../shared/models";
-import { type Expression } from "../shared";
+import { type UploadFilesAction } from "../shared";
 import { evaluate } from "../evaluate/evaluate";
 import { ensembleStore, screenAtom } from "../state";
 import type { Response } from "./index";
@@ -40,7 +40,7 @@ class EnsembleResponse implements Response {
 export const DataFetcher = {
   fetch: async (
     api: EnsembleAPIModel,
-    context?: Record<string, unknown>,
+    context?: { [key: string]: unknown },
   ): Promise<Response> => {
     const uri = new URL(api.uri);
 
@@ -48,6 +48,7 @@ export const DataFetcher = {
       {
         path: api.uri.replace(uri.search, ""),
         body: api.body,
+        headers: api.headers,
         params: Object.fromEntries(uri.searchParams),
       },
       context,
@@ -62,16 +63,51 @@ export const DataFetcher = {
     return EnsembleResponse.fromAxiosResponse(axRes);
   },
   uploadFiles: async (
-    url: string,
-    method: string,
-    headers: Headers,
-    body?: Record<string, Expression<unknown>> | FormData,
+    api: EnsembleAPIModel,
+    action: UploadFilesAction,
+    files: FileList,
     progressCallback?: (progressEvent: ProgressEvent) => void,
+    context?: { [key: string]: unknown },
   ): Promise<Response> => {
+    const resolvedInputs = resolve(
+      {
+        url: api.uri,
+        headers: api.headers,
+      },
+      context,
+    );
+
+    const contentType = get(resolvedInputs?.headers, "Content-Type");
+    let body;
+    if (contentType === "application/octet-stream") {
+      // We only upload one file if binary
+      const file = head(files);
+      body = await file?.arrayBuffer();
+    } else {
+      const formData = new FormData();
+      const fieldName = action.fieldName ?? "files";
+      if (files.length === 1) {
+        formData.append(fieldName, files[0]);
+      } else {
+        for (let i = 0; i < files.length; i++) {
+          formData.append(`${fieldName}${i}`, files[i]);
+        }
+      }
+
+      if (isObject(api.body)) {
+        const apiModelBody = api.body as { [key: string]: unknown };
+        for (const key in apiModelBody) {
+          const evaluatedValue = resolve(apiModelBody[key], context);
+          formData.append(key, evaluatedValue as string);
+        }
+      }
+      body = formData;
+    }
+
     const axRes = await axios({
-      url,
-      method,
-      headers,
+      url: resolvedInputs?.url,
+      method: api.method,
+      headers: resolvedInputs?.headers,
       data: body,
 
       onUploadProgress: progressCallback,
@@ -82,7 +118,7 @@ export const DataFetcher = {
 
 const resolve = <T>(
   body?: T,
-  context?: Record<string, unknown>,
+  context?: { [key: string]: unknown },
 ): T | undefined => {
   if (!body) {
     return;
