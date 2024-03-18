@@ -56,7 +56,7 @@ export const DataFetcher = {
     const axRes = await axios({
       url: resolvedInputs?.path,
       method: api.method,
-      headers: api.headers,
+      headers: resolvedInputs?.headers,
       params: resolvedInputs?.params,
       data: resolvedInputs?.body,
     });
