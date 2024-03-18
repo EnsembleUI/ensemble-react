@@ -8,6 +8,7 @@ View:
       ensemble.invokeAPI('getDummyProducts');
       ensemble.storage.set('dummyId', '1');
       ensemble.invokeAPI('getDummyProduct', {id: ensemble.storage.get('dummyId')});
+      ensemble.storage.set('value',1);
   body:
     Column:
       styles:
@@ -89,7 +90,7 @@ View:
                           age: 30,
                         };
                         ensemble.navigateScreen({
-                          name: 'home', 
+                          name: 'home',
                           inputs: payload
                         });
         - Card:
@@ -324,6 +325,11 @@ View:
                   label: Query params
                   onTap:
                     navigateUrl: /widgets?name=hello
+              - Button:
+                  label: Dynamic Query
+                  onTap:  
+                    navigateUrl:
+                      url: ${"/widgets" + ensemble.storage.get('value')}
 
         - Card:
             styles:
@@ -348,6 +354,22 @@ View:
                         url: 'https://google.com',
                         openNewTab: true
                       })
+              - Card:
+                  styles:
+                    maxWidth: unset
+                    width: unset
+                  children:
+                    - Text:
+                        styles:
+                          names: heading-3
+                        text: Trigger API using ensemble.invokeApi
+                    - Button:
+                        label: Trigger API
+                        onTap:
+                          executeCode: |
+                            ensemble.invokeAPI('getDummyProducts').then((res) => {
+                              console.log(res)
+                            })
 
 API:
   getDummyProducts:

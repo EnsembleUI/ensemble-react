@@ -22,7 +22,8 @@ export const showDialog = (props?: ShowDialogApiProps): void => {
 
   const content = widget?.name
     ? (cloneDeep(widget) as unknown as EnsembleWidget)
-    : unwrapWidget(cloneDeep(widget!));
+    : // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+      unwrapWidget(cloneDeep(widget!));
 
   openModal?.(
     EnsembleRuntime.render([content]),

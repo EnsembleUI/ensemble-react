@@ -1,6 +1,6 @@
-import type {
-  EnsembleEntryPoint,
-  EnsembleScreenModel,
+import {
+  type EnsembleEntryPoint,
+  type EnsembleScreenModel,
 } from "@ensembleui/react-framework";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";

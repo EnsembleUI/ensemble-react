@@ -1,5 +1,18 @@
 # @ensembleui/react-framework
 
+## 0.1.24
+
+### Patch Changes
+
+- f44932f: Added support for multiple theme support
+
+## 0.1.23
+
+### Patch Changes
+
+- 765acec: Added support for styles in view
+- e0b96f5: adopted the dot notation CSS class-based styling while introducing the className attribute to the styles. also, deprecated the names attribute os styles.
+
 ## 0.1.22
 
 ### Patch Changes

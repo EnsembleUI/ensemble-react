@@ -14,6 +14,7 @@ import {
   useEvaluate,
   useCustomScope,
   CustomScopeProvider,
+  CustomThemeContext,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -95,11 +96,20 @@ export const useExecuteCode: EnsembleActionHook<
   const location = useLocation();
   const customScope = useCustomScope();
   const { openModal, closeAllModals } = useContext(ModalContext) || {};
+  const themescope = useContext(CustomThemeContext);
+  const user = useEnsembleUser();
+  const appContext = useApplicationContext();
+  const screenData = useScreenData();
+  const onCompleteAction = useEnsembleAction(
+    isCodeString ? undefined : action?.onComplete,
+  );
+  const theme = appContext?.application?.theme;
 
   const js = useMemo(() => {
     if (!action) {
       return;
     }
+
     if (isCodeString) {
       return action;
     }
@@ -114,13 +124,6 @@ export const useExecuteCode: EnsembleActionHook<
       )?.body;
     }
   }, [action, isCodeString, screen]);
-  const user = useEnsembleUser();
-  const appContext = useApplicationContext();
-  const screenData = useScreenData();
-  const onCompleteAction = useEnsembleAction(
-    isCodeString ? undefined : action?.onComplete,
-  );
-  const theme = appContext?.application?.theme;
 
   const execute = useMemo(() => {
     if (!screen || !js) {
@@ -141,6 +144,7 @@ export const useExecuteCode: EnsembleActionHook<
             {
               ...customWidgets,
               ensemble: {
+                ...themescope,
                 storage,
                 user,
                 formatter,
@@ -156,14 +160,16 @@ export const useExecuteCode: EnsembleActionHook<
                 invokeAPI: async (
                   apiName: string,
                   apiInputs?: Record<string, unknown>,
-                ) =>
-                  invokeAPI(
+                ) => {
+                  const apiRes = await invokeAPI(
                     screen,
                     screenData,
                     apiName,
                     apiInputs,
                     customScope,
-                  ),
+                  );
+                  return apiRes;
+                },
                 navigateBack: (): void => navigateBack(navigate),
                 navigateExternalScreen: (url: NavigateExternalScreen) =>
                   navigateExternalScreen(url),
@@ -183,6 +189,7 @@ export const useExecuteCode: EnsembleActionHook<
       }
     };
   }, [
+    themescope,
     screen,
     js,
     storage,
@@ -205,17 +212,19 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const { apis, setData } = useScreenData();
   const [isComplete, setIsComplete] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>();
-
   const [context, setContext] = useState<unknown>();
-
   const evaluatedInputs = useEvaluate(action?.inputs, { context });
-  const onResponseAction = useEnsembleAction(action?.onResponse);
-  const onErrorAction = useEnsembleAction(action?.onError);
 
   const api = useMemo(
     () => apis?.find((model) => model.name === action?.name),
     [action?.name, apis],
   );
+
+  const onInvokeAPIResponseAction = useEnsembleAction(action?.onResponse);
+  const onInvokeAPIErrorAction = useEnsembleAction(action?.onError);
+
+  const onAPIResponseAction = useEnsembleAction(api?.onResponse);
+  const onAPIErrorAction = useEnsembleAction(api?.onError);
 
   const invokeApi = useMemo(() => {
     if (!api) {
@@ -239,28 +248,34 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     if (!api || isComplete !== false || isLoading) {
       return;
     }
+
     const fireRequest = async (): Promise<void> => {
       setIsLoading(true);
       try {
         const res = await DataFetcher.fetch(api, evaluatedInputs);
         setData(api.name, res);
-        onResponseAction?.callback({ response: res });
+        onAPIResponseAction?.callback({ response: res });
+        onInvokeAPIResponseAction?.callback({ response: res });
       } catch (e) {
         logError(e);
-        onErrorAction?.callback({ error: e });
+        onAPIErrorAction?.callback({ error: e });
+        onInvokeAPIErrorAction?.callback({ error: e });
       } finally {
         setIsLoading(false);
         setIsComplete(true);
       }
     };
+
     void fireRequest();
   }, [
     api,
     evaluatedInputs,
     isComplete,
     isLoading,
-    onErrorAction,
-    onResponseAction,
+    onInvokeAPIErrorAction,
+    onInvokeAPIResponseAction,
+    onAPIErrorAction,
+    onAPIResponseAction,
     setData,
   ]);
 

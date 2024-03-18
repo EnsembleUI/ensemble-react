@@ -1,7 +1,7 @@
 Tokens:
   Colors:
     primary:
-      "900": "#1B4239"
+      "900": "#ff0"
       "800": "#1F5348"
       "700": "#226A5B"
       "600": "#24806D"
@@ -50,8 +50,6 @@ Tokens:
       extraLight: 200
       thin: 100
 Styles:
-  .button-1:
-    backgroundColor: ${colors.primary['500']}
   page:
     padding: ${spacing.pagePadding}
   heading-1:

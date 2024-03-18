@@ -3,6 +3,9 @@ View:
     title:
       Header:
 
+  styles:
+    backgroundColor: ${colors.primary['200']}
+
   body:
     Column:
       styles:
@@ -11,6 +14,7 @@ View:
         - Text:
             styles:
               names: heading-1
+              color: ${colors.primary['900']}
             text: The Kitchen Sink
         - Markdown:
             text: This application is built with Ensemble and serves as a guide for how to implement common UI patterns with Ensemble React.
@@ -22,6 +26,24 @@ View:
               executeCode: |
                 // Calls a function defined in test.js
                 sayHello();
+
+        - Text:
+            styles:
+              names: heading-1
+            text: Change theme
+        - PopupMenu:
+            showDivider: true
+            items:
+              - label: Light
+                value: default
+              - label: Dark
+                value: dark
+            widget:
+              Icon:
+                name: Settings
+            onItemSelect:
+              executeCode: |
+                ensemble.setTheme(value)
 
 Global:
   scriptName: test.js
