@@ -30,7 +30,7 @@ export const DoughnutChart: React.FC<ChartProps> = (props) => {
         datasets: config?.data?.datasets as ChartDataSets[],
       }}
       options={getMergedOptions(options, values?.title, config?.options)}
-      plugins={[ChartDataLabels] as any}
+      plugins={[ChartDataLabels]}
       style={{
         ...(get(props, "styles") as object),
       }}
