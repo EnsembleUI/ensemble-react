@@ -152,6 +152,10 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
 
   const { backgroundColor: _, ...formItemStyles } = values?.styles ?? {};
 
+  if (isEmpty(options)) {
+    return null;
+  }
+
   return (
     <>
       <style>{`
