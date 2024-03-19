@@ -1,5 +1,13 @@
 # @ensembleui/react-runtime
 
+## 0.1.34
+
+### Patch Changes
+
+- de7d06b: Fix various issues with action hooks
+- Updated dependencies [de7d06b]
+  - @ensembleui/react-framework@0.1.25
+
 ## 0.1.33
 
 ### Patch Changes
