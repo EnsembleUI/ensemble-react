@@ -1,5 +1,5 @@
 import { Checkbox } from "antd";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   EnsembleAction,
   unwrapWidget,
@@ -16,7 +16,7 @@ import { useEnsembleAction } from "../../runtime/hooks";
 export type CheckBoxProps = {
   trailingText?: string | { [key: string]: unknown };
   leadingText?: string;
-  onCheck?: EnsembleAction;
+  onChange?: EnsembleAction;
 } & EnsembleWidgetProps &
   FormInputProps<boolean>;
 
@@ -29,7 +29,7 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
       setValue: setChecked,
     },
   );
-  const action = useEnsembleAction(props.onCheck);
+  const action = useEnsembleAction(props.onChange);
 
   const trailingContent = useMemo(() => {
     if (values?.trailingText) {
@@ -41,14 +41,14 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
     }
   }, [values?.trailingText]);
 
-  const onCheckCallback = useMemo(
-    () => (newValue: boolean) => action?.callback({ value: newValue }),
+  const onChangeCallback = useCallback(
+    (newValue: boolean) => action?.callback({ value: newValue }),
     [action],
   );
 
   const handleChange = (newValue: boolean): void => {
     setChecked(newValue);
-    onCheckCallback(newValue);
+    onChangeCallback(newValue);
   };
 
   return (

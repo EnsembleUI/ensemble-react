@@ -4,4 +4,4 @@
 "@ensembleui/react-runtime": patch
 ---
 
-add onCheck action in Checkbox widget
+add onChange action in Checkbox widget

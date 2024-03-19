@@ -39,10 +39,14 @@ View:
                     gap: 8px
                     labelPosition: top
                   onSubmit:
-                    executeCode: |
-                      const formattedVals = JSON.stringify(vals, null, 2)
-                      console.log(formattedVals)
-                      result.setText(formattedVals)
+                    executeCode:
+                      body: |
+                        const formattedVals = JSON.stringify(vals, null, 2)
+                        console.log(formattedVals)
+                        result.setText(formattedVals)
+                      onComplete:
+                        showToast:
+                          message: Form submitted!
                   children:
                     - Radio:
                         id: radio
@@ -63,7 +67,7 @@ View:
                           - Checkbox:
                               id: checkbox
                               trailingText: Check me
-                              onCheck:
+                              onChange:
                                 executeCode: |-
                                   console.log('isChecked', value);
                           - Checkbox:
@@ -108,7 +112,6 @@ View:
                     - Button:
                         submitForm: true
                         label: Submit
-                        disabled: true
               - Markdown:
                   id: result
                   text: Check here for the result!
