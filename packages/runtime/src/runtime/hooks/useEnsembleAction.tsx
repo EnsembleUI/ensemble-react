@@ -460,10 +460,11 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
     async (args: unknown): Promise<void> => {
       if (!apiModel || !action) return;
 
+      const argContext = args as { [key: string]: unknown };
       const files = evaluate<FileList>(
         screenContext as ScreenContextDefinition,
         action.files,
-        args as { [key: string]: unknown },
+        argContext,
       );
       if (isEmpty(files)) throw Error("Files not found");
 
@@ -474,7 +475,7 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
           action,
           files,
           progressCallback,
-          evaluatedInputs,
+          { ...evaluatedInputs, ...argContext },
         );
 
         setBody(response.body as { [key: string]: unknown });
