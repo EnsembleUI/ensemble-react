@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.25
+
+### Patch Changes
+
+- de7d06b: Fix various issues with action hooks
+
 ## 0.1.24
 
 ### Patch Changes
