@@ -63,6 +63,9 @@ View:
                           - Checkbox:
                               id: checkbox
                               trailingText: Check me
+                              onCheck:
+                                executeCode: |-
+                                  console.log('isChecked', value);
                           - Checkbox:
                               id: checkbox2
                               trailingText: Check me 2
