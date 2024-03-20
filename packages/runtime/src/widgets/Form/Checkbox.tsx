@@ -1,16 +1,22 @@
 import { Checkbox } from "antd";
-import { useMemo, useState } from "react";
-import { unwrapWidget, useRegisterBindings } from "@ensembleui/react-framework";
+import { useCallback, useMemo, useState } from "react";
+import {
+  EnsembleAction,
+  unwrapWidget,
+  useRegisterBindings,
+} from "@ensembleui/react-framework";
 import { isString } from "lodash-es";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { EnsembleRuntime } from "../../runtime";
 import { WidgetRegistry } from "../../registry";
 import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
+import { useEnsembleAction } from "../../runtime/hooks";
 
 export type CheckBoxProps = {
   trailingText?: string | { [key: string]: unknown };
   leadingText?: string;
+  onChange?: EnsembleAction;
 } & EnsembleWidgetProps &
   FormInputProps<boolean>;
 
@@ -23,6 +29,7 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
       setValue: setChecked,
     },
   );
+  const action = useEnsembleAction(props.onChange);
 
   const trailingContent = useMemo(() => {
     if (values?.trailingText) {
@@ -34,6 +41,16 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
     }
   }, [values?.trailingText]);
 
+  const onChangeCallback = useCallback(
+    (newValue: boolean) => action?.callback({ value: newValue }),
+    [action],
+  );
+
+  const handleChange = (newValue: boolean): void => {
+    setChecked(newValue);
+    onChangeCallback(newValue);
+  };
+
   return (
     <EnsembleFormItem valuePropName="checked" values={values}>
       <Checkbox
@@ -41,7 +58,7 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
         disabled={
           values?.enabled === undefined ? false : Boolean(values.enabled)
         }
-        onChange={(event): void => setChecked(event.target.checked)}
+        onChange={(event): void => handleChange(event.target.checked)}
         style={{
           marginLeft: `${props.leadingText ? "4px" : "0px"}`,
           ...values?.styles,

@@ -1,6 +1,6 @@
 {
   "name": "@ensembleui/react-runtime",
-  "version": "0.1.32",
+  "version": "0.1.35",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": ["./dist/**"],

@@ -878,3 +878,6 @@ API:
   getDummyNumbers:
     method: GET
     uri: https://mocki.io/v1/c1f19d68-e6c8-4ae3-848d-d99e588cf224
+    onResponse:
+      executeCode: |
+        console.log('dummy number fetched')

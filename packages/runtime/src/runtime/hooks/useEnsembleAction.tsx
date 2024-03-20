@@ -2,7 +2,6 @@ import {
   DataFetcher,
   useScreenContext,
   evaluate,
-  isExpression,
   useRegisterBindings,
   error as logError,
   useScreenData,
@@ -81,7 +80,7 @@ type UploadStatus =
   | "failed";
 
 export interface UseExecuteCodeActionOptions {
-  context?: Record<string, unknown>;
+  context?: { [key: string]: unknown };
 }
 
 export const useExecuteCode: EnsembleActionHook<
@@ -152,22 +151,26 @@ export const useExecuteCode: EnsembleActionHook<
                 navigateScreen: (targetScreen: NavigateScreenAction): void =>
                   navigateApi(targetScreen, screen, navigate),
                 location: locationApi(location),
-                navigateUrl: (url: string, inputs?: Record<string, unknown>) =>
-                  navigateUrl(url, navigate, inputs),
+                navigateUrl: (
+                  url: string,
+                  inputs?: { [key: string]: unknown },
+                ) => navigateUrl(url, navigate, inputs),
                 showDialog: (dialogAction?: ShowDialogAction): void =>
                   showDialog({ action: dialogAction, openModal }),
                 closeAllDialogs: (): void => closeAllModals?.(),
                 invokeAPI: async (
                   apiName: string,
-                  apiInputs?: Record<string, unknown>,
-                ) =>
-                  invokeAPI(
+                  apiInputs?: { [key: string]: unknown },
+                ) => {
+                  const apiRes = await invokeAPI(
                     screen,
                     screenData,
                     apiName,
                     apiInputs,
                     customScope,
-                  ),
+                  );
+                  return apiRes;
+                },
                 navigateBack: (): void => navigateBack(navigate),
                 navigateExternalScreen: (url: NavigateExternalScreen) =>
                   navigateExternalScreen(url),
@@ -178,22 +181,26 @@ export const useExecuteCode: EnsembleActionHook<
             customScope,
             options?.context,
             args,
-          ) as Record<string, unknown>,
+          ) as { [key: string]: unknown },
         );
-        onCompleteAction?.callback();
+        onCompleteAction?.callback({
+          ...(args as { [key: string]: unknown }),
+          result: retVal,
+        });
         return retVal;
       } catch (e) {
         logError(e);
       }
     };
   }, [
-    themescope,
     screen,
     js,
+    appContext?.application?.customWidgets,
+    appContext?.env,
+    themescope,
     storage,
     user,
     formatter,
-    appContext?.env,
     location,
     theme?.Tokens,
     theme?.Styles,
@@ -201,6 +208,9 @@ export const useExecuteCode: EnsembleActionHook<
     options?.context,
     onCompleteAction,
     navigate,
+    openModal,
+    closeAllModals,
+    screenData,
   ]);
 
   return execute ? { callback: execute } : undefined;
@@ -210,17 +220,19 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const { apis, setData } = useScreenData();
   const [isComplete, setIsComplete] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>();
-
-  const [context, setContext] = useState<unknown>();
-
+  const [context, setContext] = useState<{ [key: string]: unknown }>();
   const evaluatedInputs = useEvaluate(action?.inputs, { context });
-  const onResponseAction = useEnsembleAction(action?.onResponse);
-  const onErrorAction = useEnsembleAction(action?.onError);
 
   const api = useMemo(
     () => apis?.find((model) => model.name === action?.name),
     [action?.name, apis],
   );
+
+  const onInvokeAPIResponseAction = useEnsembleAction(action?.onResponse);
+  const onInvokeAPIErrorAction = useEnsembleAction(action?.onError);
+
+  const onAPIResponseAction = useEnsembleAction(api?.onResponse);
+  const onAPIErrorAction = useEnsembleAction(api?.onError);
 
   const invokeApi = useMemo(() => {
     if (!api) {
@@ -235,7 +247,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
         isError: false,
       });
       setIsComplete(false);
-      setContext(args);
+      setContext(args as { [key: string]: unknown });
     };
     return { callback };
   }, [api, setData]);
@@ -244,29 +256,36 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     if (!api || isComplete !== false || isLoading) {
       return;
     }
+
     const fireRequest = async (): Promise<void> => {
       setIsLoading(true);
       try {
         const res = await DataFetcher.fetch(api, evaluatedInputs);
         setData(api.name, res);
-        onResponseAction?.callback({ response: res });
+        onAPIResponseAction?.callback({ ...context, response: res });
+        onInvokeAPIResponseAction?.callback({ ...context, response: res });
       } catch (e) {
         logError(e);
-        onErrorAction?.callback({ error: e });
+        onAPIErrorAction?.callback({ ...context, error: e });
+        onInvokeAPIErrorAction?.callback({ ...context, error: e });
       } finally {
         setIsLoading(false);
         setIsComplete(true);
       }
     };
+
     void fireRequest();
   }, [
     api,
     evaluatedInputs,
     isComplete,
     isLoading,
-    onErrorAction,
-    onResponseAction,
+    onInvokeAPIErrorAction,
+    onInvokeAPIResponseAction,
+    onAPIErrorAction,
+    onAPIResponseAction,
     setData,
+    context,
   ]);
 
   return invokeApi;
@@ -289,8 +308,8 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
   if (!action?.widget && !action?.body)
     throw new Error("ShowDialog Action requires a widget to be specified");
   const widget = useMemo(
-    () => unwrapWidget(cloneDeep(action?.widget || action?.body || {})),
-    [action?.widget, action?.body],
+    () => unwrapWidget(cloneDeep(action.widget || action.body || {})),
+    [action.widget, action.body],
   );
   const callback = useCallback(
     (args: unknown) => {
@@ -396,8 +415,8 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
 export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
   action?: UploadFilesAction,
 ) => {
-  const [body, setBody] = useState<Record<string, unknown>>();
-  const [headers, setHeaders] = useState<Record<string, unknown>>();
+  const [body, setBody] = useState<{ [key: string]: unknown }>();
+  const [headers, setHeaders] = useState<{ [key: string]: unknown }>();
   const [status, setStatus] = useState<UploadStatus>("pending");
   const [progress, setProgress] = useState<number>(0.0);
 
@@ -421,89 +440,69 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
     },
   );
 
-  const callback = useCallback(async (): Promise<void> => {
-    const apiModel = screenContext?.model?.apis?.find(
-      (model) => model.name === action?.uploadApi,
-    );
-    if (!apiModel) return;
+  const apiModel = useMemo(
+    () =>
+      screenContext?.model?.apis?.find(
+        (model) => model.name === action?.uploadApi,
+      ),
+    [action?.uploadApi, screenContext?.model?.apis],
+  );
 
-    const progressCallback = (progressEvent: ProgressEvent): void => {
-      const percentCompleted =
-        (progressEvent.loaded * 100) / progressEvent.total;
+  const progressCallback = useCallback((progressEvent: ProgressEvent): void => {
+    const percentCompleted = (progressEvent.loaded * 100) / progressEvent.total;
 
-      setProgress(percentCompleted);
-    };
+    setProgress(percentCompleted);
+  }, []);
 
-    const files = evaluate<FileList>(
-      screenContext as ScreenContextDefinition,
-      action?.files,
-    );
-    if (isEmpty(files)) throw Error("Files not found");
+  const evaluatedInputs = useEvaluate(action?.inputs);
 
-    const formData = new FormData();
-    if (files.length === 1)
-      formData.append(action?.fieldName ?? "files", files[0]);
-    else
-      for (let i = 0; i < files.length; i++) {
-        formData.append(action?.fieldName ?? `file${i}`, files[i]);
-      }
+  const callback = useCallback(
+    async (args: unknown): Promise<void> => {
+      if (!apiModel || !action) return;
 
-    if (isObject(apiModel.body)) {
-      const apiModelBody = apiModel.body as Record<string, unknown>;
-      for (const key in apiModelBody) {
-        const evaluatedValue = isExpression(apiModelBody[key])
-          ? evaluate(
-              screenContext as ScreenContextDefinition,
-              apiModelBody[key] as string,
-              action?.inputs,
-            )
-          : apiModelBody[key];
-        formData.append(key, evaluatedValue as string);
-      }
-    }
-
-    const apiUrl = evaluate<string>(
-      screenContext as ScreenContextDefinition,
-      `\`${apiModel.uri}\``,
-      action?.inputs,
-    );
-
-    try {
-      setStatus("running");
-      const response = await DataFetcher.uploadFiles(
-        apiUrl,
-        apiModel.method,
-        {
-          "Content-Type": "multipart/form-data",
-          ...apiModel.headers,
-        },
-        formData,
-        progressCallback,
+      const argContext = args as { [key: string]: unknown };
+      const files = evaluate<FileList>(
+        screenContext as ScreenContextDefinition,
+        action.files,
+        argContext,
       );
+      if (isEmpty(files)) throw Error("Files not found");
 
-      setBody(response.body as Record<string, unknown>);
-      setHeaders(response.headers as Record<string, unknown>);
-      if (response.isSuccess) {
-        setStatus("completed");
-        onCompleteAction?.callback({ response });
-      } else {
+      try {
+        setStatus("running");
+        const response = await DataFetcher.uploadFiles(
+          apiModel,
+          action,
+          files,
+          progressCallback,
+          { ...evaluatedInputs, ...argContext },
+        );
+
+        setBody(response.body as { [key: string]: unknown });
+        setHeaders(response.headers as { [key: string]: unknown });
+        if (response.isSuccess) {
+          setStatus("completed");
+          onCompleteAction?.callback({ response });
+        } else {
+          setStatus("failed");
+          onErrorAction?.callback({ response });
+        }
+      } catch (error: unknown) {
+        setBody(error as { [key: string]: unknown });
         setStatus("failed");
-        onErrorAction?.callback({ response });
+        onErrorAction?.callback({ error });
       }
-    } catch (error: unknown) {
-      setBody(error as Record<string, unknown>);
-      setStatus("failed");
-      onErrorAction?.callback({ error });
-    }
-  }, [
-    screenContext,
-    action?.files,
-    action?.fieldName,
-    action?.inputs,
-    action?.uploadApi,
-    onCompleteAction,
-    onErrorAction,
-  ]);
+    },
+    [
+      apiModel,
+      action,
+      screenContext,
+      progressCallback,
+      evaluatedInputs,
+      onCompleteAction,
+      onErrorAction,
+    ],
+  );
 
   return { callback };
 };

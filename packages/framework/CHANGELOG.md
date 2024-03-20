@@ -1,5 +1,24 @@
 # @ensembleui/react-framework
 
+## 0.1.26
+
+### Patch Changes
+
+- 0e65e56: add onChange action in Checkbox widget
+- 392d9d1: Update acorn ECMAScript version to 2020 for optional chaining and nullish coalescing
+
+## 0.1.25
+
+### Patch Changes
+
+- de7d06b: Fix various issues with action hooks
+
+## 0.1.24
+
+### Patch Changes
+
+- f44932f: Added support for multiple theme support
+
 ## 0.1.23
 
 ### Patch Changes
