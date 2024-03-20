@@ -1,5 +1,15 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.26
+
+### Patch Changes
+
+- 0e65e56: add onChange action in Checkbox widget
+- Updated dependencies [0e65e56]
+- Updated dependencies [392d9d1]
+  - @ensembleui/react-framework@0.1.26
+  - @ensembleui/react-runtime@0.1.35
+
 ## 0.0.25
 
 ### Patch Changes
