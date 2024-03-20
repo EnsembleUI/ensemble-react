@@ -1,6 +1,6 @@
 import type { RefCallback } from "react";
 import { useEffect } from "react";
-import { get, isEmpty, isString, merge } from "lodash-es";
+import { get, isEmpty, isString, keys, merge } from "lodash-es";
 import isEqual from "react-fast-compare";
 import type { InvokableMethods } from "../state";
 import { useWidgetId } from "./useWidgetId";
@@ -15,7 +15,7 @@ export interface RegisterBindingsResult<T> {
   rootRef: RefCallback<never>;
 }
 
-export const useRegisterBindings = <T extends Record<string, unknown>>(
+export const useRegisterBindings = <T extends { [key: string]: unknown }>(
   values: T,
   id?: string,
   methods?: InvokableMethods,
@@ -52,7 +52,7 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
 
     if (
       isEqual(newValues, widgetState?.values) &&
-      isEqual(methods, widgetState?.invokable.methods)
+      isEqual(keys(methods), keys(widgetState?.invokable.methods))
     ) {
       return;
     }
@@ -72,10 +72,9 @@ export const useRegisterBindings = <T extends Record<string, unknown>>(
   ]);
 
   const updatedValues = widgetState?.values ?? newValues;
-  const htmlAttributes = get(updatedValues, "htmlAttributes") as Record<
-    string,
-    string
-  >;
+  const htmlAttributes = get(updatedValues, "htmlAttributes") as {
+    [key: string]: string;
+  };
 
   const { rootRef } = useHtmlPassThrough(
     htmlAttributes,
