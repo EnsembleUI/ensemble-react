@@ -67,7 +67,7 @@ export const StackBarChart: React.FC<ChartProps> = (props) => {
         datasets: config?.data?.datasets as ChartDataSets[],
       }}
       options={getMergedOptions(options, values?.title, config?.options)}
-      plugins={[ChartDataLabels]}
+      plugins={[ChartDataLabels, ...(config?.plugins || [])]}
       style={{
         ...(get(props, "styles") as object),
       }}

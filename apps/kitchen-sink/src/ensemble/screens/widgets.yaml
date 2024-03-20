@@ -399,7 +399,12 @@ View:
                                   },
                                 },
                                 cutout: '50%'
-                              }
+                              },
+                              plugins: [{
+                              beforeInit: function(chart, options) {
+                                      console.log('yolo');
+                                  }
+                              }]
                           }
                     - Chart:
                         id: myLineChart
@@ -859,12 +864,12 @@ View:
               - Button:
                   label: Next
                   onTap:
-                    executeCode:  |
+                    executeCode: |
                       workflowStepper.handleNext();
               - Button:
                   label: Prev
                   onTap:
-                    executeCode:  |
+                    executeCode: |
                       workflowStepper.handleBack();
 API:
   getDummyProducts:
