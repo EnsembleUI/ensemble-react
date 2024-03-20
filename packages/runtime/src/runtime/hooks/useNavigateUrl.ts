@@ -2,8 +2,6 @@ import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   type NavigateUrlAction,
-  useCustomScope,
-  useEnsembleStorage,
   useEvaluate,
 } from "@ensembleui/react-framework";
 import { cloneDeep, isString } from "lodash-es";
@@ -15,23 +13,16 @@ export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
   const navigate = useNavigate();
   const hasOptions = !isString(action);
   const screenUrl = hasOptions ? action?.url : action;
-  const inputs = useMemo(
-    () => (!isString(action) && action?.inputs ? cloneDeep(action.inputs) : {}),
-    [action],
-  );
-  const customScope = useCustomScope();
-  const storage = useEnsembleStorage();
-  const evaluatedRes = useEvaluate(
-    { url: screenUrl, inputs },
-    {
-      context: {
-        ensemble: {
-          storage,
-        },
-        ...customScope,
-      },
-    },
-  );
+  const evaluationInput = useMemo(() => {
+    if (!isString(action)) {
+      return {
+        url: screenUrl,
+        inputs: cloneDeep(action?.inputs),
+      };
+    }
+    return { url: screenUrl };
+  }, [action, screenUrl]);
+  const evaluatedRes = useEvaluate(evaluationInput);
 
   const callback = useMemo(() => {
     if (!evaluatedRes.url) {
