@@ -18,7 +18,9 @@ export const useStyleNames = (
       .map((className) => `.${className}`)
       .join(" ");
   }
-  const styleNames = `${isString(namedStyles) ? namedStyles : ""} ${dotClassStyles}`;
+  const styleNames = `${
+    isString(namedStyles) ? namedStyles : ""
+  } ${dotClassStyles}`;
 
   if (styleNames && themeContext) {
     return resolveStyleNames(styleNames, themeContext);
