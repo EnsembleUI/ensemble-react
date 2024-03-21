@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.27
+
+### Patch Changes
+
+- 136d130: Add click callback to Button
+
 ## 0.1.26
 
 ### Patch Changes

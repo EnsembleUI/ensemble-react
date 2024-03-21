@@ -1,5 +1,14 @@
 # @ensembleui/react-runtime
 
+## 0.1.36
+
+### Patch Changes
+
+- 136d130: Add click callback to Button
+- 17efe4f: added plugins support in doughnutchart and linechart
+- Updated dependencies [136d130]
+  - @ensembleui/react-framework@0.1.27
+
 ## 0.1.35
 
 ### Patch Changes
