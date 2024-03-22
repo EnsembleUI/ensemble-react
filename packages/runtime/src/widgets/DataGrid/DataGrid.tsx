@@ -12,6 +12,7 @@ import {
   defaultScreenContext,
   useRegisterBindings,
   type EnsembleAction,
+  unwrapWidget,
 } from "@ensembleui/react-framework";
 import {
   useCallback,
@@ -31,9 +32,10 @@ import type {
 } from "../../shared/types";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import { DataCell } from "./DataCell";
+import { EnsembleRuntime } from "../../runtime";
 
 interface DataColumn {
-  label: string;
+  label: Expression<{ [key: string]: unknown }>;
   type: string;
   tooltip?: string;
   sort?: {
@@ -237,6 +239,9 @@ export const DataGrid: React.FC<GridProps> = (props) => {
         }
         return {
           ...item,
+          label: isString(item.label)
+            ? item.label
+            : EnsembleRuntime.render([unwrapWidget(item.label)]),
           ...(values.allowResizableColumns
             ? { width: colWidth[index] ?? item.width ?? 100 }
             : {}),
@@ -321,7 +326,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
                 text: label,
                 value,
               }))}
-              key={col.label}
+              key={colIndex}
               onFilter={
                 col.filter?.onFilter
                   ? (value, record): boolean =>
@@ -369,7 +374,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
                       )
                   : undefined
               }
-              title={col.label}
+              title={col.label as string | React.ReactNode}
               width={col.width}
             />
           );
