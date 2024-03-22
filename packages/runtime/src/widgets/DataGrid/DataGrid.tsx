@@ -14,16 +14,9 @@ import {
   type EnsembleAction,
   unwrapWidget,
 } from "@ensembleui/react-framework";
-import {
-  useCallback,
-  type ReactElement,
-  useState,
-  useMemo,
-  useRef,
-  useEffect,
-  ReactEventHandler,
-} from "react";
-import { get, isArray, isString } from "lodash-es";
+import { useCallback, useState, useMemo, useRef, useEffect } from "react";
+import type { ReactEventHandler, ReactElement } from "react";
+import { get, isArray, isString, isObject } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type {
   EnsembleWidgetProps,
@@ -31,11 +24,11 @@ import type {
   HasItemTemplate,
 } from "../../shared/types";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
-import { DataCell } from "./DataCell";
 import { EnsembleRuntime } from "../../runtime";
+import { DataCell } from "./DataCell";
 
 interface DataColumn {
-  label: Expression<{ [key: string]: unknown }>;
+  label?: Expression<{ [key: string]: unknown }>;
   type: string;
   tooltip?: string;
   sort?: {
@@ -237,11 +230,15 @@ export const DataGrid: React.FC<GridProps> = (props) => {
               : {}),
           };
         }
+        let label = null;
+        if (isString(item.label)) {
+          label = item.label;
+        } else if (isObject(item.label)) {
+          EnsembleRuntime.render([unwrapWidget({ ...item.label })]);
+        }
         return {
           ...item,
-          label: isString(item.label)
-            ? item.label
-            : EnsembleRuntime.render([unwrapWidget(item.label)]),
+          label,
           ...(values.allowResizableColumns
             ? { width: colWidth[index] ?? item.width ?? 100 }
             : {}),
