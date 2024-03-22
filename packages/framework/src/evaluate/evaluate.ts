@@ -75,7 +75,7 @@ const addGlobalBlock = (js: string, globalBlock?: string): string =>
  * @param context- any additional context needed for the script
  * @returns the result of the evaluated expression/script
  */
-export const evaluate = <T = unknown,>(
+export const evaluate = <T = unknown>(
   screen: Partial<ScreenContextDefinition>,
   js?: string,
   context?: Record<string, unknown>,
