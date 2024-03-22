@@ -1,9 +1,9 @@
 import type { FormItemProps } from "antd";
 import { Form as AntForm } from "antd";
-import type { FormInputProps } from "./types";
 import { isString } from "lodash-es";
-import { EnsembleRuntime } from "../../runtime";
 import { unwrapWidget } from "@ensembleui/react-framework";
+import { EnsembleRuntime } from "../../runtime";
+import type { FormInputProps } from "./types";
 
 export type EnsembleFormItemProps<T> = FormItemProps & {
   values?: FormInputProps<T>;
@@ -17,9 +17,11 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
 ) => {
   const { values, ...rest } = props;
   const { backgroundColor: _, ...formItemStyles } = values?.styles ?? {};
+
   return (
     <AntForm.Item
       className={values?.styles?.names}
+      id={values?.id ?? values?.label}
       initialValue={values?.value}
       label={
         values?.label ? (
@@ -36,7 +38,6 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
           </label>
         ) : null
       }
-      name={values?.id ?? values?.label}
       rules={[{ required: Boolean(values?.required) }]}
       style={{
         margin: "0px",
