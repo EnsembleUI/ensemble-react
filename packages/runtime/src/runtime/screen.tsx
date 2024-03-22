@@ -16,7 +16,7 @@ import { ModalWrapper } from "./modal";
 
 export interface EnsembleScreenProps {
   screen: EnsembleScreenModel;
-  inputs?: Record<string, unknown>;
+  inputs?: { [key: string]: unknown };
   isModal?: boolean;
 }
 
@@ -25,20 +25,24 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
   inputs,
 }) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const { state, search } = useLocation();
+  const { state, search, pathname } = useLocation();
   const routeParams = useParams(); // route params
   const params = new URLSearchParams(search); // query params
-  const queryParams: Record<string, unknown> = Object.fromEntries(params);
+  const queryParams: { [key: string]: unknown } = Object.fromEntries(params);
 
   const mergedInputs = merge(
     {},
-    state as Record<string, unknown>,
+    state as { [key: string]: unknown },
     routeParams,
     queryParams,
     inputs,
   );
   return (
-    <ScreenContextProvider context={{ inputs: mergedInputs }} screen={screen}>
+    <ScreenContextProvider
+      context={{ inputs: mergedInputs }}
+      key={pathname}
+      screen={screen}
+    >
       <ModalWrapper>
         <OnLoadAction action={screen.onLoad} context={{ ...mergedInputs }}>
           <EnsembleHeader header={screen.header} />
@@ -53,7 +57,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
 const OnLoadAction: React.FC<
   React.PropsWithChildren<{
     action?: EnsembleAction;
-    context: Record<string, unknown>;
+    context: { [key: string]: unknown };
   }>
 > = ({ action, children, context }) => {
   const onLoadAction = useEnsembleAction(action);
