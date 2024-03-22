@@ -1,5 +1,12 @@
 # @ensembleui/react-runtime
 
+## 0.1.37
+
+### Patch Changes
+
+- 35901fe: add ability to pass DataColumn's label as a widget too
+- bb779a7: Re-render screen when path changes
+
 ## 0.1.36
 
 ### Patch Changes
