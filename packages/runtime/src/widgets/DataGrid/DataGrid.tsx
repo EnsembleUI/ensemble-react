@@ -16,7 +16,7 @@ import {
 } from "@ensembleui/react-framework";
 import { useCallback, useState, useMemo, useRef, useEffect } from "react";
 import type { ReactEventHandler, ReactElement } from "react";
-import { get, isArray, isString, isObject } from "lodash-es";
+import { get, isArray, isString, isObject, cloneDeep } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type {
   EnsembleWidgetProps,
@@ -234,7 +234,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
         if (isString(item.label)) {
           label = item.label;
         } else if (isObject(item.label)) {
-          EnsembleRuntime.render([unwrapWidget({ ...item.label })]);
+          label = EnsembleRuntime.render([unwrapWidget(cloneDeep(item.label))]);
         }
         return {
           ...item,
