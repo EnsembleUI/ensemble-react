@@ -125,10 +125,15 @@ const resolve = <T>(
   }
 
   const screenContext = ensembleStore.get(screenAtom);
-  const replace = (val: string): string =>
-    val.replace(/\$\{[^}]+\}/g, (expression) => {
+  const replace = (val: string): unknown => {
+    const matches = val.match(/\$\{[^}]+\}/g);
+    if (matches?.length === 1 && matches[0] === val) {
+      return evaluate(screenContext, val, context);
+    }
+    return val.replace(/\$\{[^}]+\}/g, (expression) => {
       return evaluate(screenContext, expression, context);
     });
+  };
   const resolvedBody = visitAndReplaceExpressions(body, replace);
   return resolvedBody as T;
 };

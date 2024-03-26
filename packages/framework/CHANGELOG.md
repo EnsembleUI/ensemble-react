@@ -1,5 +1,12 @@
 # @ensembleui/react-framework
 
+## 0.1.28
+
+### Patch Changes
+
+- 19d2369: Fix forced string coercion when fetching data
+- 57b6697: Fix stale data in ensemble.invokeAPI
+
 ## 0.1.27
 
 ### Patch Changes

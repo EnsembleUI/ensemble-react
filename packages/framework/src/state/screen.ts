@@ -2,6 +2,7 @@ import { atom, useAtom, useAtomValue } from "jotai";
 import { focusAtom } from "jotai-optics";
 import { clone } from "lodash-es";
 import { useCallback } from "react";
+import isEqual from "react-fast-compare";
 import type { Response } from "../data";
 import type {
   EnsembleAPIModel,
@@ -13,9 +14,9 @@ import type { WidgetState } from "./widget";
 export interface ScreenContextDefinition {
   app?: EnsembleAppModel;
   model?: EnsembleScreenModel;
-  data: Record<string, Response | undefined>;
-  widgets: Record<string, WidgetState | undefined>;
-  inputs?: Record<string, unknown>;
+  data: { [key: string]: Response | undefined };
+  widgets: { [key: string]: WidgetState | undefined };
+  inputs?: { [key: string]: unknown };
   [key: string]: unknown;
 }
 
@@ -59,10 +60,13 @@ export const useScreenData = (): { apis?: EnsembleAPIModel[] } & Pick<
 
   const setData = useCallback(
     (name: string, response: Response) => {
+      if (isEqual(data[name], response)) {
+        return;
+      }
       data[name] = response;
       setDataAtom(clone(data));
     },
-    [setDataAtom],
+    [data, setDataAtom],
   );
   return {
     apis,
