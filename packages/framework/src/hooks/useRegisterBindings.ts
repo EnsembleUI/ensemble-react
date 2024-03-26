@@ -20,7 +20,7 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
   id?: string,
   methods?: InvokableMethods,
   options?: {
-    forceRerender?: boolean;
+    forceState?: boolean;
   },
 ): RegisterBindingsResult<T> => {
   const testId = get(values, ["testId"]);
@@ -75,13 +75,13 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
   ]);
 
   useEffect(() => {
-    if (options?.forceRerender) {
+    if (options?.forceState === true) {
       setWidgetState({
         values: newValues,
         invokable: { id: resolvedWidgetId, methods },
       });
     }
-  }, [options?.forceRerender]);
+  }, [options?.forceState]);
 
   const updatedValues = widgetState?.values ?? newValues;
   const htmlAttributes = get(updatedValues, "htmlAttributes") as {
