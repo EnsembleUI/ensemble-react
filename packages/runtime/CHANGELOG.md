@@ -1,5 +1,15 @@
 # @ensembleui/react-runtime
 
+## 0.1.38
+
+### Patch Changes
+
+- c55632d: Handle nullish label in DataColumn
+- 57b6697: Fix stale data in ensemble.invokeAPI
+- Updated dependencies [19d2369]
+- Updated dependencies [57b6697]
+  - @ensembleui/react-framework@0.1.28
+
 ## 0.1.37
 
 ### Patch Changes
