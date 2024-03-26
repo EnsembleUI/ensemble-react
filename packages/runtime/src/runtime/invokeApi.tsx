@@ -9,14 +9,14 @@ export const invokeAPI = async (
   screen: ScreenContextDefinition,
   screenData: ReturnType<typeof useScreenData>,
   apiName: string,
-  apiInputs?: Record<string, unknown>,
-  context?: Record<string, unknown>,
+  apiInputs?: { [key: string]: unknown },
+  context?: { [key: string]: unknown },
 ) => {
   const api = screenData.apis?.find((model) => model.name === apiName);
   if (!api) {
     return;
   }
-  const evaluatedInputs = evaluate<Record<string, unknown>>(
+  const evaluatedInputs = evaluate<{ [key: string]: unknown }>(
     screen,
     JSON.stringify(apiInputs),
     context,
