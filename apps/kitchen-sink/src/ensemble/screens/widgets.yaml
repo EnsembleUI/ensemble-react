@@ -882,6 +882,36 @@ View:
                   onTap:
                     executeCode: |
                       workflowStepper.handleBack();
+
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+              gap: 10px
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: Dynamic options Dropdown
+              - Button:
+                  label: load options
+                  onTap:
+                    invokeApi:
+                      name: "getDummyProducts"
+                      onResponse:
+                        executeCode: |
+                          ensemble.storage.set('dynamicDropdownOptions', response.body.products)
+              - Dropdown:
+                  label: With the label widget
+                  hintText: Hint Text
+                  value: 15
+                  item-template:
+                    data: ${ensemble.storage.get('dynamicDropdownOptions')}
+                    name: product
+                    value: ${product.id}
+                    template:
+                      Text:
+                        text: ${product.title}
 API:
   getDummyProducts:
     method: GET
