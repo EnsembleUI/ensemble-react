@@ -1,6 +1,6 @@
 {
   "name": "@ensembleui/react-runtime",
-  "version": "0.1.33",
+  "version": "0.1.38",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
@@ -38,7 +38,7 @@
     "@types/react-dom": "^18.2.0",
     "@types/react-resizable": "3.0.7",
     "antd": "^5.9.0",
-    "chart.js": "^4.4.0",
+    "chart.js": "^4.4.2",
     "chartjs-plugin-datalabels": "^2.2.0",
     "dayjs": "^1.11.10",
     "eslint-config-custom": "workspace:*",

@@ -1,5 +1,51 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.29
+
+### Patch Changes
+
+- Updated dependencies [19d2369]
+- Updated dependencies [c55632d]
+- Updated dependencies [57b6697]
+  - @ensembleui/react-framework@0.1.28
+  - @ensembleui/react-runtime@0.1.38
+
+## 0.0.28
+
+### Patch Changes
+
+- 35901fe: add ability to pass DataColumn's label as a widget too
+- Updated dependencies [35901fe]
+- Updated dependencies [bb779a7]
+  - @ensembleui/react-runtime@0.1.37
+
+## 0.0.27
+
+### Patch Changes
+
+- Updated dependencies [136d130]
+- Updated dependencies [17efe4f]
+  - @ensembleui/react-framework@0.1.27
+  - @ensembleui/react-runtime@0.1.36
+
+## 0.0.26
+
+### Patch Changes
+
+- 0e65e56: add onChange action in Checkbox widget
+- Updated dependencies [0e65e56]
+- Updated dependencies [392d9d1]
+  - @ensembleui/react-framework@0.1.26
+  - @ensembleui/react-runtime@0.1.35
+
+## 0.0.25
+
+### Patch Changes
+
+- Updated dependencies [de7d06b]
+  - @ensembleui/react-framework@0.1.25
+  - @ensembleui/react-runtime@0.1.34
+
 ## 0.0.24
 
 ### Patch Changes

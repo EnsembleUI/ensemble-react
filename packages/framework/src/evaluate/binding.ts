@@ -24,7 +24,7 @@ import { createEvaluationContext } from "./context";
 
 export const createBindingAtom = <T = unknown>(
   expression?: Expression<unknown>,
-  context?: Record<string, unknown>,
+  context?: { [key: string]: unknown },
   widgetId?: string,
 ): Atom<T | undefined | null> => {
   if (!isExpression(expression)) {
@@ -36,7 +36,7 @@ export const createBindingAtom = <T = unknown>(
 
   try {
     parseExpressionAt(rawJsExpression, 0, {
-      ecmaVersion: 6,
+      ecmaVersion: 2020,
       onToken: (token) => {
         if (token.type !== tokTypes.name) {
           return;

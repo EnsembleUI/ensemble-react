@@ -22,11 +22,10 @@ export type ButtonProps = {
 } & EnsembleWidgetProps;
 
 export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
-  const { values, rootRef } = useRegisterBindings(rest, id);
   const action = useEnsembleAction(onTap);
   const onClickCallback = useCallback(
-    (e: MouseEvent) => {
-      e.stopPropagation();
+    (e?: MouseEvent) => {
+      e?.stopPropagation();
       if (!action) {
         return;
       }
@@ -34,6 +33,10 @@ export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
     },
     [action],
   );
+
+  const { values, rootRef } = useRegisterBindings(rest, id, {
+    click: onClickCallback,
+  });
 
   const ButtonComponent = useMemo(() => {
     return (

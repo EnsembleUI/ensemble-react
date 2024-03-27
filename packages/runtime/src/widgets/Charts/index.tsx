@@ -10,6 +10,7 @@ import {
   PointElement,
   LineElement,
   type ChartOptions,
+  type Plugin,
 } from "chart.js";
 import React, { cloneElement, useEffect, useMemo, useState } from "react";
 import {
@@ -64,6 +65,7 @@ export interface ChartConfigs {
   };
   title?: Expression<string>;
   options?: ChartOptions;
+  plugins?: Plugin[];
 }
 
 export type ChartProps = {

@@ -1,5 +1,31 @@
 # @ensembleui/react-framework
 
+## 0.1.28
+
+### Patch Changes
+
+- 19d2369: Fix forced string coercion when fetching data
+- 57b6697: Fix stale data in ensemble.invokeAPI
+
+## 0.1.27
+
+### Patch Changes
+
+- 136d130: Add click callback to Button
+
+## 0.1.26
+
+### Patch Changes
+
+- 0e65e56: add onChange action in Checkbox widget
+- 392d9d1: Update acorn ECMAScript version to 2020 for optional chaining and nullish coalescing
+
+## 0.1.25
+
+### Patch Changes
+
+- de7d06b: Fix various issues with action hooks
+
 ## 0.1.24
 
 ### Patch Changes

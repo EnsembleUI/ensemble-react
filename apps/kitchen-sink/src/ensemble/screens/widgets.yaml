@@ -399,7 +399,12 @@ View:
                                   },
                                 },
                                 cutout: '50%'
-                              }
+                              },
+                              plugins: [{
+                              beforeInit: function(chart, options) {
+                                      console.log('yolo');
+                                  }
+                              }]
                           }
                     - Chart:
                         id: myLineChart
@@ -677,7 +682,18 @@ View:
 
         - DataGrid:
             DataColumns:
-              - label: Number
+              - label:
+                  Row:
+                    crossAxis: center
+                    children:
+                      - Text:
+                          text: Disclaimer
+                      - Icon:
+                          name: ErrorOutline
+                          color: red
+                          onMouseEnter:
+                            executeCode: |-
+                              console.log('hovered')
               - label: Name
             item-template:
               data: [1, 2]
