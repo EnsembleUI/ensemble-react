@@ -84,6 +84,7 @@ View:
                             value: option2
                     # If you omit id, the form value key will be the label
                     - TextInput:
+                        id: formTextInput
                         label:
                           Text:
                             text: Text input
@@ -116,6 +117,13 @@ View:
                   id: result
                   text: Check here for the result!
 
+        - Button:
+            label: set text input value
+            styles:
+              margin: 5px
+            onTap:
+              executeCode: |
+                formTextInput.setValue('hello')
   footer:
     children:
       - Text:
