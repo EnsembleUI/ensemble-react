@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.29
+
+### Patch Changes
+
+- 28a734a: add force option in useRegisterBindings hook
+
 ## 0.1.28
 
 ### Patch Changes
