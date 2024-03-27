@@ -38,6 +38,7 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
           </label>
         ) : null
       }
+      name={values?.id ?? values?.label}
       rules={[{ required: Boolean(values?.required) }]}
       style={{
         margin: "0px",

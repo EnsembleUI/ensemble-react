@@ -1,7 +1,7 @@
-import { Input } from "antd";
+import { Input, Form } from "antd";
 import type { Expression } from "@ensembleui/react-framework";
 import { useRegisterBindings } from "@ensembleui/react-framework";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { WidgetRegistry } from "../../registry";
 import type { TextStyles } from "../Text";
@@ -21,6 +21,11 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
   const { values } = useRegisterBindings({ ...props, value }, props.id, {
     setValue,
   });
+  const form = Form.useFormInstance();
+
+  useEffect(() => {
+    form.setFieldsValue({ [values?.id ?? values?.label ?? ""]: value });
+  }, [value]);
 
   return (
     <EnsembleFormItem valuePropName="value" values={values}>
