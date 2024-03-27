@@ -22,7 +22,7 @@ import {
 import { evaluate } from "./evaluate";
 import { createEvaluationContext } from "./context";
 
-export const createBindingAtom = <T = unknown>(
+export const createBindingAtom = <T = unknown,>(
   expression?: Expression<unknown>,
   context?: { [key: string]: unknown },
   widgetId?: string,
