@@ -55,6 +55,7 @@ export const Icon: React.FC<IconProps> = ({
       onMouseEnter={handleMouseOver}
       onMouseLeave={handleMouseLeave}
       sx={{
+        cursor: onTap ? "pointer" : "auto",
         ...values?.styles,
         color: values?.color && getColor(String(values.color)),
         fontSize: props.size,
@@ -81,7 +82,6 @@ export const Icon: React.FC<IconProps> = ({
           ? getColor(String(values.styles.borderColor))
           : undefined,
         borderStyle: values?.styles?.borderWidth ? "solid" : undefined,
-        cursor: onTap ? "pointer" : "auto",
         ...(values?.styles?.visible === false
           ? { display: "none" }
           : undefined),
