@@ -1,10 +1,9 @@
 import { Doughnut } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
-import ChartDataLabels from "chartjs-plugin-datalabels";
 import { get } from "lodash-es";
 import { useState } from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
-import { type ChartDataSets, type ChartProps } from "..";
+import { type ChartProps } from "..";
 import { getMergedOptions } from "./utils/getMergedOptions";
 
 const options: ChartOptions<"doughnut"> = {
@@ -27,10 +26,9 @@ export const DoughnutChart: React.FC<ChartProps> = (props) => {
     <Doughnut
       data={{
         labels: values?.labels,
-        datasets: config?.data.datasets as ChartDataSets[],
+        datasets: config?.data.datasets ?? [],
       }}
       options={getMergedOptions(options, values?.title, config?.options)}
-      plugins={[ChartDataLabels as any, ...(config?.plugins || [])]}
       style={{
         ...(get(props, "styles") as object),
       }}

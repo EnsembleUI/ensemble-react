@@ -1,6 +1,5 @@
 import { Bar } from "react-chartjs-2";
 import type { ChartOptions } from "chart.js";
-import ChartDataLabels from "chartjs-plugin-datalabels";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useState } from "react";
 import { type ChartProps } from "..";
@@ -54,7 +53,6 @@ export const BarChart: React.FC<ChartProps> = (props) => {
           datasets: config?.data.datasets ?? [],
         }}
         options={getMergedOptions(options, values?.title, config?.options)}
-        plugins={[ChartDataLabels, ...(config?.plugins || [])]}
       />
     </div>
   );
