@@ -9,8 +9,8 @@ import {
   ArcElement,
   PointElement,
   LineElement,
-  type ChartOptions,
 } from "chart.js";
+import type { Plugin, ChartOptions } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import React, { cloneElement, useEffect, useMemo, useState } from "react";
 import {
@@ -66,6 +66,7 @@ export interface ChartConfigs {
   };
   title?: Expression<string>;
   options?: ChartOptions;
+  plugins?: Plugin[];
 }
 
 export type ChartProps = {
