@@ -1,5 +1,14 @@
 # @ensembleui/react-runtime
 
+## 0.1.39
+
+### Patch Changes
+
+- 1bab3df: fix: dropdown render after options loaded
+- 5fe6778: Fix ChartDataLabels plugin handling
+- Updated dependencies [28a734a]
+  - @ensembleui/react-framework@0.1.29
+
 ## 0.1.38
 
 ### Patch Changes
