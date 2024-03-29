@@ -348,9 +348,15 @@ const unwrapTheme = (theme?: string): EnsembleThemeModel | undefined => {
     },
   );
 
-  resolvedProps.forEach(([path, value]) =>
-    set(workingTheme.Styles!, path, value),
-  );
+  resolvedProps.forEach(([path, value]) => {
+    const stylePaths = path.split(".");
+    if (path.startsWith(".")) {
+      stylePaths.shift();
+      stylePaths[0] = `.${stylePaths[0]}`;
+    }
+
+    set(workingTheme.Styles!, [...stylePaths], value);
+  });
 
   return workingTheme;
 };

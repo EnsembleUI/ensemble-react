@@ -1,12 +1,16 @@
 import { get, intersection, isEmpty, isString, keys, merge } from "lodash-es";
 import type { CSSProperties } from "react";
-import { useEvaluate } from "../hooks";
+import { evaluate } from "../evaluate";
+import type { CustomScope, EnsembleStorage } from "../hooks";
+import { defaultScreenContext } from "../state";
 import { isExpression } from "./common";
 import type { EnsembleThemeModel } from "./models";
 
 export const resolveStyleNames = (
   styleNames: string[] | string,
   theme: EnsembleThemeModel,
+  storage: EnsembleStorage,
+  customScope?: CustomScope,
 ): CSSProperties => {
   let names: string[] = isString(styleNames)
     ? styleNames.split(" ")
@@ -16,7 +20,10 @@ export const resolveStyleNames = (
     const isClass = styleName.startsWith(".");
     const styleKey = isClass ? styleName.substring(1) : styleName;
     const styleVal = isExpression(styleKey)
-      ? useEvaluate({ styleKey }).styleKey
+      ? evaluate<string>(defaultScreenContext, styleKey, {
+          ensemble: { storage },
+          ...customScope,
+        })
       : styleKey;
 
     return isClass ? `.${styleVal}` : styleVal;

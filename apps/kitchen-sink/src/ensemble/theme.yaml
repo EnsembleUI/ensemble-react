@@ -49,6 +49,7 @@ Tokens:
       light: 300
       extraLight: 200
       thin: 100
+
 Styles:
   .button-1:
     backgroundColor: ${colors.primary['500']}
