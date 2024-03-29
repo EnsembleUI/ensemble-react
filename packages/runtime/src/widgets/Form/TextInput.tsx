@@ -24,6 +24,10 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
   const formInstance = Form.useFormInstance();
 
   useEffect(() => {
+    setValue(values?.value);
+  }, [values]);
+
+  useEffect(() => {
     if (formInstance) {
       formInstance.setFieldsValue({
         [values?.id ?? values?.label ?? ""]: value,
@@ -58,7 +62,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
               ? { display: "none" }
               : undefined),
           }}
-          value={values?.value}
+          value={value}
         />
       )}
     </EnsembleFormItem>
