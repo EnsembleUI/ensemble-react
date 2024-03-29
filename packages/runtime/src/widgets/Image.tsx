@@ -16,26 +16,26 @@ export type ImageProps = {
   width?: number | string;
   height?: number | string;
   fit?: "contain" | "cover" | "fill" | "none" | "scale-down";
-  onDrag?: EnsembleAction;
+  onDragStart?: EnsembleAction;
 } & HasBorder &
   EnsembleWidgetProps;
 
-export const Image: React.FC<ImageProps> = ({ onDrag, ...props }) => {
+export const Image: React.FC<ImageProps> = ({ onDragStart, ...props }) => {
   const [source, setSource] = useState(props.source);
   const [imageBackgroundColor, setImageBackgroundColor] = useState(
     props.backgroundColor,
   );
-  const onDragAction = useEnsembleAction(onDrag);
+  const onDragStartAction = useEnsembleAction(onDragStart);
 
-  const onDragCallback = useCallback(
+  const onDragStartCallback = useCallback(
     (...args: unknown[]) => {
-      if (!onDragAction?.callback) {
+      if (!onDragStartAction?.callback) {
         return;
       }
 
-      return onDragAction.callback(...args);
+      return onDragStartAction.callback(...args);
     },
-    [onDragAction],
+    [onDragStartAction],
   );
 
   const { values } = useRegisterBindings(
@@ -50,7 +50,7 @@ export const Image: React.FC<ImageProps> = ({ onDrag, ...props }) => {
     <img
       alt=""
       className={values?.styles?.names}
-      onDrag={onDragCallback}
+      onDragStart={onDragStartCallback}
       src={values?.source}
       style={{
         ...values?.styles,
