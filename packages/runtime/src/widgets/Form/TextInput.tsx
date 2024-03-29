@@ -21,11 +21,15 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
   const { values } = useRegisterBindings({ ...props, value }, props.id, {
     setValue,
   });
-  const form = Form.useFormInstance();
+  const formInstance = Form.useFormInstance();
 
   useEffect(() => {
-    form.setFieldsValue({ [values?.id ?? values?.label ?? ""]: value });
-  }, [value]);
+    if (formInstance) {
+      formInstance.setFieldsValue({
+        [values?.id ?? values?.label ?? ""]: value,
+      });
+    }
+  }, [value, formInstance]);
 
   return (
     <EnsembleFormItem valuePropName="value" values={values}>

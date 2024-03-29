@@ -17,6 +17,7 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
 ) => {
   const { values, ...rest } = props;
   const { backgroundColor: _, ...formItemStyles } = values?.styles ?? {};
+  const formInstance = AntForm.useFormInstance();
 
   return (
     <AntForm.Item
@@ -38,7 +39,7 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
           </label>
         ) : null
       }
-      name={values?.id ?? values?.label}
+      name={formInstance ? values?.id ?? values?.label : undefined}
       rules={[{ required: Boolean(values?.required) }]}
       style={{
         margin: "0px",

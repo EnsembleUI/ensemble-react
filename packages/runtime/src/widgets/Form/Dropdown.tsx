@@ -1,5 +1,5 @@
-import { Select } from "antd";
-import { useCallback, useMemo, useState } from "react";
+import { Select, Form } from "antd";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   CustomScopeProvider,
   evaluate,
@@ -151,6 +151,16 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   }, [values?.items, namedData, itemTemplate]);
 
   const { backgroundColor: _, ...formItemStyles } = values?.styles ?? {};
+
+  const formInstance = Form.useFormInstance();
+
+  useEffect(() => {
+    if (formInstance) {
+      formInstance.setFieldsValue({
+        [values?.id ?? values?.label ?? ""]: selectedValue,
+      });
+    }
+  }, [selectedValue, formInstance]);
 
   return (
     <>

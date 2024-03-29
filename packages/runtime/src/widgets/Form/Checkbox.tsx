@@ -1,7 +1,7 @@
-import { Checkbox } from "antd";
-import { useCallback, useMemo, useState } from "react";
+import { Checkbox, Form } from "antd";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  EnsembleAction,
+  type EnsembleAction,
   unwrapWidget,
   useRegisterBindings,
 } from "@ensembleui/react-framework";
@@ -9,9 +9,9 @@ import { isString } from "lodash-es";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { EnsembleRuntime } from "../../runtime";
 import { WidgetRegistry } from "../../registry";
+import { useEnsembleAction } from "../../runtime/hooks";
 import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
-import { useEnsembleAction } from "../../runtime/hooks";
 
 export type CheckBoxProps = {
   trailingText?: string | { [key: string]: unknown };
@@ -50,6 +50,16 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
     setChecked(newValue);
     onChangeCallback(newValue);
   };
+
+  const formInstance = Form.useFormInstance();
+
+  useEffect(() => {
+    if (formInstance) {
+      formInstance.setFieldsValue({
+        [values?.id ?? values?.label ?? ""]: checked,
+      });
+    }
+  }, [checked, formInstance]);
 
   return (
     <EnsembleFormItem valuePropName="checked" values={values}>
