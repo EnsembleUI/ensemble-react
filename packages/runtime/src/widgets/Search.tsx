@@ -13,7 +13,7 @@ import type {
 } from "@ensembleui/react-framework";
 import { AutoComplete, Input } from "antd";
 import { SearchOutlined } from "@mui/icons-material";
-import { get, isArray, isNumber, isObject } from "lodash-es";
+import { get, isArray, isEmpty, isNumber, isObject } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type {
   EnsembleWidgetProps,
@@ -110,7 +110,7 @@ export const Search: React.FC<SearchProps> = ({
 
   useDebounce(
     () => {
-      if (onSearchAction?.callback) {
+      if (onSearchAction?.callback && !isEmpty(searchValue)) {
         onSearchAction.callback({ search: searchValue });
       }
     },

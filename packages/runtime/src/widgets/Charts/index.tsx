@@ -9,9 +9,9 @@ import {
   ArcElement,
   PointElement,
   LineElement,
-  type ChartOptions,
-  type Plugin,
 } from "chart.js";
+import type { Plugin, ChartOptions } from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import React, { cloneElement, useEffect, useMemo, useState } from "react";
 import {
   evaluate,
@@ -44,6 +44,7 @@ ChartJS.register(
   ArcElement,
   PointElement,
   LineElement,
+  ChartDataLabels,
 );
 
 export interface ChartDataSets {

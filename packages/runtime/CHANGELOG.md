@@ -1,5 +1,31 @@
 # @ensembleui/react-runtime
 
+## 0.1.39
+
+### Patch Changes
+
+- 1bab3df: fix: dropdown render after options loaded
+- 5fe6778: Fix ChartDataLabels plugin handling
+- Updated dependencies [28a734a]
+  - @ensembleui/react-framework@0.1.29
+
+## 0.1.38
+
+### Patch Changes
+
+- c55632d: Handle nullish label in DataColumn
+- 57b6697: Fix stale data in ensemble.invokeAPI
+- Updated dependencies [19d2369]
+- Updated dependencies [57b6697]
+  - @ensembleui/react-framework@0.1.28
+
+## 0.1.37
+
+### Patch Changes
+
+- 35901fe: add ability to pass DataColumn's label as a widget too
+- bb779a7: Re-render screen when path changes
+
 ## 0.1.36
 
 ### Patch Changes

@@ -12,17 +12,11 @@ import {
   defaultScreenContext,
   useRegisterBindings,
   type EnsembleAction,
+  unwrapWidget,
 } from "@ensembleui/react-framework";
-import {
-  useCallback,
-  type ReactElement,
-  useState,
-  useMemo,
-  useRef,
-  useEffect,
-  ReactEventHandler,
-} from "react";
-import { get, isArray, isString } from "lodash-es";
+import { useCallback, useState, useMemo, useRef, useEffect } from "react";
+import type { ReactEventHandler, ReactElement } from "react";
+import { get, isArray, isString, isObject, cloneDeep } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type {
   EnsembleWidgetProps,
@@ -30,10 +24,11 @@ import type {
   HasItemTemplate,
 } from "../../shared/types";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
+import { EnsembleRuntime } from "../../runtime";
 import { DataCell } from "./DataCell";
 
 interface DataColumn {
-  label: string;
+  label?: Expression<{ [key: string]: unknown }>;
   type: string;
   tooltip?: string;
   sort?: {
@@ -235,8 +230,15 @@ export const DataGrid: React.FC<GridProps> = (props) => {
               : {}),
           };
         }
+        let label = null;
+        if (isString(item.label)) {
+          label = item.label;
+        } else if (isObject(item.label)) {
+          label = EnsembleRuntime.render([unwrapWidget(cloneDeep(item.label))]);
+        }
         return {
           ...item,
+          label,
           ...(values.allowResizableColumns
             ? { width: colWidth[index] ?? item.width ?? 100 }
             : {}),
@@ -321,7 +323,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
                 text: label,
                 value,
               }))}
-              key={col.label}
+              key={colIndex}
               onFilter={
                 col.filter?.onFilter
                   ? (value, record): boolean =>
@@ -369,7 +371,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
                       )
                   : undefined
               }
-              title={col.label}
+              title={col.label as string | React.ReactNode}
               width={col.width}
             />
           );
