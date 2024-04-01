@@ -152,7 +152,6 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
 
   const { backgroundColor: _, ...formItemStyles } = values?.styles ?? {};
 
-
   const formInstance = Form.useFormInstance();
 
   useEffect(() => {
@@ -166,7 +165,6 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   if (isNull(options)) {
     return null;
   }
-
 
   return (
     <>
