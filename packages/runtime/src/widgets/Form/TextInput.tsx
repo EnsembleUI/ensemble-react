@@ -32,12 +32,12 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
   }, [values?.initialValue]);
 
   useEffect(() => {
-    if (formInstance) {
+    if (formInstance && (values?.id || values?.label)) {
       formInstance.setFieldsValue({
-        [values?.id ?? values?.label ?? ""]: value,
+        [values.id ?? values.label]: value,
       });
     }
-  }, [value, formInstance]);
+  }, [value, formInstance, values?.id, values?.label]);
 
   return (
     <EnsembleFormItem valuePropName="value" values={values}>
@@ -49,7 +49,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
           rows={values.maxLines ? Number(values.maxLines) : 4} // Adjust the number of rows as needed
           style={{
             ...(values.styles ?? values.hintStyle),
-            ...(values?.styles?.visible === false
+            ...(values.styles?.visible === false
               ? { display: "none" }
               : undefined),
           }}

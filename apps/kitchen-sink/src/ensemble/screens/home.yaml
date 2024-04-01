@@ -60,7 +60,7 @@ View:
             label: set value
             onTap:
               executeCode: |
-                console.log(formTextInput2.value)
+                formTextInput2.setValue('')
 
 Global:
   scriptName: test.js
