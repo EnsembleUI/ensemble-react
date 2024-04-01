@@ -2,6 +2,7 @@ View:
   onLoad:
     executeCode:
       body: |
+        ensemble.storage.set('inputVal', 'sagar')
         ensemble.storage.set('dummyData', [
           { value: "val 1", label: "lab 1" },
           { value: "val 2", label: "lab 2" },
@@ -85,6 +86,7 @@ View:
                     # If you omit id, the form value key will be the label
                     - TextInput:
                         id: formTextInput
+                        value: ${ensemble.storage.get('inputVal')}
                         label:
                           Text:
                             text: Text input

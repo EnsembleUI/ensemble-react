@@ -17,15 +17,19 @@ export type TextInputProps = {
   FormInputProps<string>;
 
 export const TextInput: React.FC<TextInputProps> = (props) => {
-  const [value, setValue] = useState(props.value);
-  const { values } = useRegisterBindings({ ...props, value }, props.id, {
-    setValue,
-  });
+  const [value, setValue] = useState<string>();
+  const { values } = useRegisterBindings(
+    { ...props, initialValue: props.value, value },
+    props.id,
+    {
+      setValue,
+    },
+  );
   const formInstance = Form.useFormInstance();
 
   useEffect(() => {
-    setValue(values?.value);
-  }, [values]);
+    setValue(values?.initialValue);
+  }, [values?.initialValue]);
 
   useEffect(() => {
     if (formInstance) {
