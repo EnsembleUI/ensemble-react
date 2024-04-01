@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import type { Expression } from "@ensembleui/react-framework";
+import React, { useCallback, useState } from "react";
+import type { EnsembleAction, Expression } from "@ensembleui/react-framework";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import { getColor } from "../shared/styles";
 import type { EnsembleWidgetProps } from "../shared/types";
 import type { HasBorder } from "../shared/hasSchema";
+import { useEnsembleAction } from "../runtime/hooks";
 
 export type ImageProps = {
   source: Expression<string>;
@@ -15,14 +16,28 @@ export type ImageProps = {
   width?: number | string;
   height?: number | string;
   fit?: "contain" | "cover" | "fill" | "none" | "scale-down";
+  onDragStart?: EnsembleAction;
 } & HasBorder &
   EnsembleWidgetProps;
 
-export const Image: React.FC<ImageProps> = (props) => {
+export const Image: React.FC<ImageProps> = ({ onDragStart, ...props }) => {
   const [source, setSource] = useState(props.source);
   const [imageBackgroundColor, setImageBackgroundColor] = useState(
     props.backgroundColor,
   );
+  const onDragStartAction = useEnsembleAction(onDragStart);
+
+  const onDragStartCallback = useCallback(
+    (...args: unknown[]) => {
+      if (!onDragStartAction?.callback) {
+        return;
+      }
+
+      return onDragStartAction.callback(...args);
+    },
+    [onDragStartAction],
+  );
+
   const { values } = useRegisterBindings(
     { ...props, source, imageBackgroundColor },
     props.id,
@@ -35,6 +50,7 @@ export const Image: React.FC<ImageProps> = (props) => {
     <img
       alt=""
       className={values?.styles?.names}
+      onDragStart={onDragStartCallback}
       src={values?.source}
       style={{
         ...values?.styles,
