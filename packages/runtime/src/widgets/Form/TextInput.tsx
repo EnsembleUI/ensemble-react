@@ -1,7 +1,9 @@
 import { Input, Form } from "antd";
 import type { Expression } from "@ensembleui/react-framework";
 import { useRegisterBindings } from "@ensembleui/react-framework";
-import { useEffect, useState } from "react";
+import type { ChangeEvent } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { debounce } from "lodash-es";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { WidgetRegistry } from "../../registry";
 import type { TextStyles } from "../Text";
@@ -39,12 +41,22 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     }
   }, [value, formInstance, values?.id, values?.label]);
 
+  const changeHandler = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ): void => setValue(event.target.value);
+
+  // We need to debounce the change handler otherwise state updates will create too many re-renders
+  const debouncedChangeHandler = useMemo(
+    () => debounce(changeHandler, 300),
+    [],
+  );
+
   return (
     <EnsembleFormItem valuePropName="value" values={values}>
       {values?.multiLine ? (
         <Input.TextArea
           defaultValue={values.value}
-          onChange={(event): void => setValue(event.target.value)}
+          onChange={debouncedChangeHandler}
           placeholder={values.hintText ?? ""}
           rows={values.maxLines ? Number(values.maxLines) : 4} // Adjust the number of rows as needed
           style={{
@@ -58,7 +70,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
       ) : (
         <Input
           defaultValue={values?.value}
-          onChange={(event): void => setValue(event.target.value)}
+          onChange={debouncedChangeHandler}
           placeholder={values?.hintText ?? ""}
           style={{
             ...(values?.styles ?? values?.hintStyle),
