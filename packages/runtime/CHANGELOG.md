@@ -1,5 +1,14 @@
 # @ensembleui/react-runtime
 
+## 0.1.40
+
+### Patch Changes
+
+- 19b5491: Add onDrag handler for Image
+- 6fb1095: added id attribute in form item to update form element value through setValue
+- Updated dependencies [6fb1095]
+  - @ensembleui/react-framework@0.1.30
+
 ## 0.1.39
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.30
+
+### Patch Changes
+
+- 6fb1095: added id attribute in form item to update form element value through setValue
+
 ## 0.1.29
 
 ### Patch Changes
