@@ -1,7 +1,7 @@
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import type { Expression, EnsembleAction } from "@ensembleui/react-framework";
-import { DatePicker } from "antd";
-import { useState, useCallback } from "react";
+import { DatePicker, Form } from "antd";
+import { useState, useCallback, useEffect } from "react";
 import dayjs from "dayjs";
 import { WidgetRegistry } from "../../../registry";
 import type {
@@ -59,6 +59,16 @@ export const Date: React.FC<DateProps> = (props) => {
       onChangeCallback(formattedDate);
     }
   };
+
+  const formInstance = Form.useFormInstance();
+
+  useEffect(() => {
+    if (formInstance) {
+      formInstance.setFieldsValue({
+        [values?.id ?? values?.label ?? ""]: dayjs(value),
+      });
+    }
+  }, [value, formInstance]);
 
   return (
     <EnsembleFormItem initialValue={undefined} values={values}>

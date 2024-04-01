@@ -29,6 +29,7 @@ export const buildEvaluateFn = (
     ...Object.keys(invokableObj),
     addGlobalBlock(formatJs(js), globalBlock),
   );
+
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return () => jsFunc(...Object.values(invokableObj));
 };

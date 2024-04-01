@@ -42,7 +42,7 @@ export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
     return (
       <AntButton
         disabled={values?.disabled ?? false}
-        htmlType="submit"
+        htmlType={values?.submitForm === true ? "submit" : "button"}
         onClick={onClickCallback}
         ref={rootRef}
         style={{

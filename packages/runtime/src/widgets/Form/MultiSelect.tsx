@@ -7,7 +7,7 @@ import {
   useTemplateData,
 } from "@ensembleui/react-framework";
 import { PlusCircleOutlined } from "@ant-design/icons";
-import { Select as SelectComponent, Space } from "antd";
+import { Select as SelectComponent, Space, Form } from "antd";
 import { get, isArray, isString } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
@@ -96,6 +96,16 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
 
     setOptions(tempOptions);
   }, [rawData, values?.labelKey, values?.valueKey]);
+
+  const formInstance = Form.useFormInstance();
+
+  useEffect(() => {
+    if (formInstance) {
+      formInstance.setFieldsValue({
+        [values?.id ?? values?.label ?? ""]: selectedValues,
+      });
+    }
+  }, [selectedValues, formInstance]);
 
   const handleChange = (value: string[]): void => {
     setSelectedValues(value);
