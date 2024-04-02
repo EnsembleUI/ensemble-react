@@ -1,41 +1,16 @@
 import { useAtomValue } from "jotai";
 import type { CSSProperties } from "react";
 import { get, intersection, isEmpty, isString, keys, merge } from "lodash-es";
-import {
-  type EnsembleThemeModel,
-  isExpression,
-  type Expression,
-} from "../shared";
-import { themeAtom, defaultScreenContext } from "../state";
-import { evaluate } from "../evaluate";
-import { type EnsembleStorage, useEnsembleStorage } from "./useEnsembleStorage";
-import { type CustomScope, useCustomScope } from "./useCustomScope";
+import { type EnsembleThemeModel, type Expression } from "../shared";
+import { themeAtom } from "../state";
+import { useEvaluate } from "./useEvaluate";
 
 const resolveStyleNames = (
-  styleNames: string[] | string,
+  styleNames: string[],
   theme: EnsembleThemeModel,
-  storage: EnsembleStorage,
-  customScope?: CustomScope,
 ): CSSProperties => {
-  let names: string[] = isString(styleNames)
-    ? styleNames.split(" ")
-    : styleNames;
-
-  names = names.map((styleName) => {
-    const isClass = styleName.startsWith(".");
-    const styleKey = isClass ? styleName.substring(1) : styleName;
-    const styleVal = isExpression(styleKey)
-      ? evaluate<string>(defaultScreenContext, styleKey, {
-          ensemble: { storage },
-          ...customScope,
-        })
-      : styleKey;
-
-    return isClass ? `.${styleVal}` : styleVal;
-  });
-
   const appStyleNames = keys(theme.Styles);
-  const overlappingNames = intersection(names, appStyleNames);
+  const overlappingNames = intersection(styleNames, appStyleNames);
   if (isEmpty(overlappingNames)) {
     return {};
   }
@@ -53,22 +28,29 @@ export const useStyleNames = (
   classStyles?: Expression<string | string[]>,
 ): CSSProperties | undefined => {
   const themeContext = useAtomValue(themeAtom);
-  const storage = useEnsembleStorage();
-  const customScope = useCustomScope();
 
-  let dotClassStyles = "";
-  if (isString(classStyles) && classStyles.length > 0) {
-    dotClassStyles = classStyles
-      .trim()
-      .split(" ")
-      .map((className) => `.${className}`)
-      .join(" ");
-  }
-  const styleNames = `${
-    isString(namedStyles) ? namedStyles : ""
-  } ${dotClassStyles}`.trim();
+  // evaluate styles
+  const nameStylesArray: string[] | undefined = isString(namedStyles)
+    ? namedStyles.split(" ")
+    : namedStyles;
+  const nameStyles = useEvaluate({ nameStylesArray });
 
-  if (styleNames && themeContext) {
-    return resolveStyleNames(styleNames, themeContext, storage, customScope);
+  // evaluate classnames
+  const classStylesArray: string[] | undefined = isString(classStyles)
+    ? classStyles.split(" ")
+    : classStyles;
+  const styleClasses = useEvaluate({ classStylesArray });
+
+  const styleNames = [
+    ...(nameStyles.nameStylesArray
+      ? nameStyles.nameStylesArray.map((nameStyle) => `${nameStyle}`)
+      : []),
+    ...(styleClasses.classStylesArray
+      ? styleClasses.classStylesArray.map((className) => `.${className}`)
+      : []),
+  ];
+
+  if (styleNames.length && themeContext) {
+    return resolveStyleNames(styleNames, themeContext);
   }
 };
