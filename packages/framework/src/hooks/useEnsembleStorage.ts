@@ -21,16 +21,10 @@ export const screenStorageAtom = atomWithStorage<Record<string, unknown>>(
 
 export const useEnsembleStorage = (): EnsembleStorage => {
   const [storage, setStorage] = useAtom(screenStorageAtom);
-  // Use a buffer so we can perform imperative changes without forcing re-render
-  const storageBuffer = useMemo<Record<string, unknown>>(() => ({}), []);
-
-  useMemo(() => {
-    merge(storageBuffer, storage);
-  }, [storageBuffer, storage]);
 
   const storageApi = useMemo(
-    () => createStorageApi(storageBuffer, setStorage),
-    [setStorage, storageBuffer],
+    () => createStorageApi(storage, setStorage),
+    [setStorage, storage],
   );
 
   return storageApi;

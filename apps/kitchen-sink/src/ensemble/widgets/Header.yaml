@@ -3,7 +3,8 @@ Widget:
     - message
   onLoad:
     executeCode: |
-      console.log("hello from header", message);
+      ensemble.storage.set('animal', 'movie')
+      console.log("hello from header");
   body:
     Row:
       backgroundColor: white
