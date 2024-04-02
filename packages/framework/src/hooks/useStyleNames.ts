@@ -42,12 +42,9 @@ export const useStyleNames = (
   const styleClasses = useEvaluate({ classStylesArray });
 
   const styleNames = [
-    ...(nameStyles.nameStylesArray
-      ? nameStyles.nameStylesArray.map((nameStyle) => `${nameStyle}`)
-      : []),
-    ...(styleClasses.classStylesArray
-      ? styleClasses.classStylesArray.map((className) => `.${className}`)
-      : []),
+    ...(nameStyles.nameStylesArray?.map((nameStyle) => `${nameStyle}`) || []),
+    ...(styleClasses.classStylesArray?.map((className) => `.${className}`) ||
+      []),
   ];
 
   if (styleNames.length && themeContext) {
