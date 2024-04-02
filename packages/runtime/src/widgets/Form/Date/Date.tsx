@@ -97,7 +97,7 @@ export const Date: React.FC<DateProps> = (props) => {
         onChange={onDateChange}
         placeholder={values?.hintText}
         style={{ width: "100%", ...values?.styles }}
-        value={dayjs(values?.value)}
+        value={dayjs(values?.value) as unknown as string}
         {...(values?.showCalendarIcon === false
           ? { suffixIcon: false }
           : undefined)}
