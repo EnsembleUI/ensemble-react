@@ -27,12 +27,16 @@ export type DateProps = {
   EnsembleWidgetProps<DateStyles>;
 
 export const Date: React.FC<DateProps> = (props) => {
-  const [value, setValue] = useState(props.value);
+  const [value, setValue] = useState<string>();
   const action = useEnsembleAction(props.onChange);
 
-  const { id, values } = useRegisterBindings({ ...props, value }, props.id, {
-    setValue,
-  });
+  const { id, values } = useRegisterBindings(
+    { ...props, initialValue: props.value, value },
+    props.id,
+    {
+      setValue,
+    },
+  );
 
   const onChangeCallback = useCallback(
     (date?: string) => {
@@ -51,14 +55,22 @@ export const Date: React.FC<DateProps> = (props) => {
   );
 
   const onDateChange = (date: unknown): void => {
+    setValue(date as string);
     const formattedDate = dayjs(date as string).format(DateDisplayFormat);
-
     if (formattedDate === "Invalid Date") {
       onChangeCallback("");
     } else {
       onChangeCallback(formattedDate);
     }
   };
+
+  useEffect(() => {
+    if (!value) {
+      setValue(
+        values?.initialValue || (dayjs(values?.value) as unknown as string),
+      );
+    }
+  }, [values]);
 
   const formInstance = Form.useFormInstance();
 

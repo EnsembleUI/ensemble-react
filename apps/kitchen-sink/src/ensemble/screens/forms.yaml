@@ -128,7 +128,7 @@ View:
               margin: 5px
             onTap:
               executeCode: |
-                date.setValue('2021-01-20')
+                console.log('>>>>', radio)
   footer:
     children:
       - Text:
