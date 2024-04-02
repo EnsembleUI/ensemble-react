@@ -54,7 +54,7 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
   const formInstance = Form.useFormInstance();
 
   useEffect(() => {
-    setChecked(values?.initialValue as boolean);
+    setChecked(Boolean(values?.initialValue));
   }, [values?.initialValue]);
 
   useEffect(() => {

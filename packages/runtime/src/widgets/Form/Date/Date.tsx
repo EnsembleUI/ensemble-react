@@ -54,9 +54,9 @@ export const Date: React.FC<DateProps> = (props) => {
     [action, id, props],
   );
 
-  const onDateChange = (date: unknown): void => {
-    setValue(date as string);
-    const formattedDate = dayjs(date as string).format(DateDisplayFormat);
+  const onDateChange = (date: string): void => {
+    setValue(date);
+    const formattedDate = dayjs(date).format(DateDisplayFormat);
     if (formattedDate === "Invalid Date") {
       onChangeCallback("");
     } else {
@@ -67,7 +67,8 @@ export const Date: React.FC<DateProps> = (props) => {
   useEffect(() => {
     if (!value) {
       setValue(
-        values?.initialValue || (dayjs(values?.value) as unknown as string),
+        values?.initialValue ||
+          (dayjs(values?.initialValue) as unknown as string),
       );
     }
   }, [values]);
