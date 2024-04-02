@@ -28,6 +28,7 @@ export interface EnsembleAppProps {
   path?: string;
   loader?: ApplicationLoader;
   screenId?: string;
+  environmentOverrides?: { [key: string]: unknown };
 }
 
 export const EnsembleApp: React.FC<EnsembleAppProps> = ({
@@ -36,6 +37,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
   path,
   loader,
   screenId,
+  environmentOverrides,
 }) => {
   const [app, setApp] = useState<EnsembleAppModel>();
 
@@ -110,7 +112,10 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
   }
 
   return (
-    <ApplicationContextProvider app={app}>
+    <ApplicationContextProvider
+      app={app}
+      environmentOverrides={environmentOverrides}
+    >
       <ThemeProvider>
         <RouterProvider router={router} />
         <ToastContainer />
