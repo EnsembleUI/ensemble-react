@@ -1,5 +1,12 @@
 # @ensembleui/react-framework
 
+## 0.1.31
+
+### Patch Changes
+
+- f566152: Optionally debounce state updates for rapid state changes
+- f566152: Support env variables in API uris
+
 ## 0.1.30
 
 ### Patch Changes
