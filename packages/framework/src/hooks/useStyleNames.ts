@@ -33,18 +33,23 @@ export const useStyleNames = (
   const nameStylesArray: string[] | undefined = isString(namedStyles)
     ? namedStyles.split(" ")
     : namedStyles;
-  const nameStyles = useEvaluate({ nameStylesArray });
 
   // evaluate classnames
   const classStylesArray: string[] | undefined = isString(classStyles)
     ? classStyles.split(" ")
     : classStyles;
-  const styleClasses = useEvaluate({ classStylesArray });
+
+  const {
+    classStylesArray: classStylesArrayEval,
+    nameStylesArray: namedStylesArrayEval,
+  } = useEvaluate({
+    classStylesArray,
+    nameStylesArray,
+  });
 
   const styleNames = [
-    ...(nameStyles.nameStylesArray?.map((nameStyle) => `${nameStyle}`) || []),
-    ...(styleClasses.classStylesArray?.map((className) => `.${className}`) ||
-      []),
+    ...(namedStylesArrayEval?.map((nameStyle) => `${nameStyle}`) || []),
+    ...(classStylesArrayEval?.map((className) => `.${className}`) || []),
   ];
 
   if (styleNames.length && themeContext) {
