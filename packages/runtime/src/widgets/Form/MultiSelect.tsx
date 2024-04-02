@@ -115,7 +115,6 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   }, [selectedValues, formInstance]);
 
   const handleChange = (value: string[]): void => {
-    console.log({ value });
     setSelectedValues(value);
     onItemSelectCallback(value);
     if (newOption) {
