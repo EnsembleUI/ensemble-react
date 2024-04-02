@@ -218,6 +218,7 @@ export const useExecuteCode: EnsembleActionHook<
 
 export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const { apis, setData } = useScreenData();
+  const appContext = useApplicationContext();
   const [isComplete, setIsComplete] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>();
   const [context, setContext] = useState<{ [key: string]: unknown }>();
@@ -260,7 +261,13 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     const fireRequest = async (): Promise<void> => {
       setIsLoading(true);
       try {
-        const res = await DataFetcher.fetch(api, evaluatedInputs);
+        const res = await DataFetcher.fetch(api, {
+          ...evaluatedInputs,
+          ...context,
+          ensemble: {
+            env: appContext?.env,
+          },
+        });
         setData(api.name, res);
         onAPIResponseAction?.callback({ ...context, response: res });
         onInvokeAPIResponseAction?.callback({ ...context, response: res });

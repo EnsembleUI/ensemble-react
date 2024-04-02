@@ -24,6 +24,9 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     {
       setValue,
     },
+    {
+      debounceMs: 300,
+    },
   );
   const formInstance = Form.useFormInstance();
 
