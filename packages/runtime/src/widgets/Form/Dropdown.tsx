@@ -1,5 +1,5 @@
-import { Select } from "antd";
-import { useCallback, useMemo, useState } from "react";
+import { Select, Form } from "antd";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   CustomScopeProvider,
   evaluate,
@@ -13,7 +13,7 @@ import type {
   EnsembleAction,
   Expression,
 } from "@ensembleui/react-framework";
-import { get, isEmpty, isObject, isString } from "lodash-es";
+import { get, isEmpty, isNull, isObject, isString } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type {
   EnsembleWidgetProps,
@@ -83,7 +83,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   });
 
   const options = useMemo(() => {
-    const dropdownOptions = [];
+    let dropdownOptions = null;
     if (values?.items) {
       const tempOptions = values.items.map((item) => {
         if (item.type === "group") {
@@ -119,7 +119,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
         );
       });
 
-      dropdownOptions.push(...tempOptions);
+      dropdownOptions = tempOptions;
     }
 
     if (isObject(itemTemplate) && !isEmpty(namedData)) {
@@ -144,13 +144,27 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
         );
       });
 
-      dropdownOptions.push(...tempOptions);
+      dropdownOptions = [...(dropdownOptions || []), ...tempOptions];
     }
 
     return dropdownOptions;
   }, [values?.items, namedData, itemTemplate]);
 
   const { backgroundColor: _, ...formItemStyles } = values?.styles ?? {};
+
+  const formInstance = Form.useFormInstance();
+
+  useEffect(() => {
+    if (formInstance) {
+      formInstance.setFieldsValue({
+        [values?.id ?? values?.label ?? ""]: selectedValue,
+      });
+    }
+  }, [selectedValue, formInstance]);
+
+  if (isNull(options)) {
+    return null;
+  }
 
   return (
     <>

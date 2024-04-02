@@ -49,5 +49,18 @@ View:
               executeCode: |
                 ensemble.setTheme(value)
 
+        - TextInput:
+            id: formTextInput2
+            value: ${ensemble.storage.get('inputVal')}
+            label:
+              Text:
+                text: Text input
+
+        - Button:
+            label: set value
+            onTap:
+              executeCode: |
+                formTextInput2.setValue('')
+
 Global:
   scriptName: test.js

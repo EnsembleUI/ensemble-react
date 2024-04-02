@@ -2,6 +2,7 @@ View:
   onLoad:
     executeCode:
       body: |
+        ensemble.storage.set('inputVal', 'sagar')
         ensemble.storage.set('dummyData', [
           { value: "val 1", label: "lab 1" },
           { value: "val 2", label: "lab 2" },
@@ -84,10 +85,13 @@ View:
                             value: option2
                     # If you omit id, the form value key will be the label
                     - TextInput:
+                        id: formTextInput
+                        value: ${ensemble.storage.get('inputVal')}
                         label:
                           Text:
                             text: Text input
                     - MultiSelect:
+                        id: multiselectoptions1
                         label: Choose multiple from API or storage
                         placeholder: "Select From Groups"
                         value: ["hbingley1@plala.or.jp", "val 2"]
@@ -100,6 +104,7 @@ View:
                             console.log('selected');
                             console.log(selectedValues)
                     - MultiSelect:
+                        id: multiselectoptions2
                         label: Choose multiple
                         data:
                           - label: Option 1
@@ -107,6 +112,7 @@ View:
                           - label: Option 2
                             value: option2
                     - Date:
+                        id: date
                         label: Date
                         hintText: Choose date
                     - Button:
@@ -116,6 +122,13 @@ View:
                   id: result
                   text: Check here for the result!
 
+        - Button:
+            label: set text input value
+            styles:
+              margin: 5px
+            onTap:
+              executeCode: |
+                date.setValue('2021-01-20')
   footer:
     children:
       - Text:

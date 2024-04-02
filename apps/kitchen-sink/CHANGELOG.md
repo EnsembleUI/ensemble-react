@@ -1,5 +1,43 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.31
+
+### Patch Changes
+
+- Updated dependencies [19b5491]
+- Updated dependencies [6fb1095]
+  - @ensembleui/react-runtime@0.1.40
+  - @ensembleui/react-framework@0.1.30
+
+## 0.0.30
+
+### Patch Changes
+
+- Updated dependencies [1bab3df]
+- Updated dependencies [5fe6778]
+- Updated dependencies [28a734a]
+  - @ensembleui/react-runtime@0.1.39
+  - @ensembleui/react-framework@0.1.29
+
+## 0.0.29
+
+### Patch Changes
+
+- Updated dependencies [19d2369]
+- Updated dependencies [c55632d]
+- Updated dependencies [57b6697]
+  - @ensembleui/react-framework@0.1.28
+  - @ensembleui/react-runtime@0.1.38
+
+## 0.0.28
+
+### Patch Changes
+
+- 35901fe: add ability to pass DataColumn's label as a widget too
+- Updated dependencies [35901fe]
+- Updated dependencies [bb779a7]
+  - @ensembleui/react-runtime@0.1.37
+
 ## 0.0.27
 
 ### Patch Changes

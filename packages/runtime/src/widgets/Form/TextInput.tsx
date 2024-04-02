@@ -1,7 +1,7 @@
-import { Input } from "antd";
+import { Input, Form } from "antd";
 import type { Expression } from "@ensembleui/react-framework";
 import { useRegisterBindings } from "@ensembleui/react-framework";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { WidgetRegistry } from "../../registry";
 import type { TextStyles } from "../Text";
@@ -17,10 +17,27 @@ export type TextInputProps = {
   FormInputProps<string>;
 
 export const TextInput: React.FC<TextInputProps> = (props) => {
-  const [value, setValue] = useState(props.value);
-  const { values } = useRegisterBindings({ ...props, value }, props.id, {
-    setValue,
-  });
+  const [value, setValue] = useState<string>();
+  const { values } = useRegisterBindings(
+    { ...props, initialValue: props.value, value },
+    props.id,
+    {
+      setValue,
+    },
+  );
+  const formInstance = Form.useFormInstance();
+
+  useEffect(() => {
+    setValue(values?.initialValue);
+  }, [values?.initialValue]);
+
+  useEffect(() => {
+    if (formInstance && (values?.id || values?.label)) {
+      formInstance.setFieldsValue({
+        [values.id ?? values.label]: value,
+      });
+    }
+  }, [value, formInstance, values?.id, values?.label]);
 
   return (
     <EnsembleFormItem valuePropName="value" values={values}>
@@ -32,7 +49,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
           rows={values.maxLines ? Number(values.maxLines) : 4} // Adjust the number of rows as needed
           style={{
             ...(values.styles ?? values.hintStyle),
-            ...(values?.styles?.visible === false
+            ...(values.styles?.visible === false
               ? { display: "none" }
               : undefined),
           }}
@@ -49,7 +66,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
               ? { display: "none" }
               : undefined),
           }}
-          value={values?.value}
+          value={value}
         />
       )}
     </EnsembleFormItem>

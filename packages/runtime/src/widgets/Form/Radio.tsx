@@ -1,7 +1,7 @@
 import type { EnsembleAction, Expression } from "@ensembleui/react-framework";
 import { useRegisterBindings } from "@ensembleui/react-framework";
-import { Radio } from "antd";
-import { useCallback, useState } from "react";
+import { Radio, Form } from "antd";
+import { useCallback, useEffect, useState } from "react";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetStyles, HasItemTemplate } from "../../shared/types";
 import type { FormInputProps } from "./types";
@@ -40,6 +40,16 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
     setValue(newValue);
     onChangeCallback(newValue);
   };
+
+  const formInstance = Form.useFormInstance();
+
+  useEffect(() => {
+    if (formInstance) {
+      formInstance.setFieldsValue({
+        [values?.id ?? values?.label ?? ""]: value,
+      });
+    }
+  }, [value, formInstance]);
 
   return (
     <EnsembleFormItem values={values}>
