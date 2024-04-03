@@ -31,12 +31,14 @@ export const useStyleNames = (
 
   // evaluate styles
   const nameStylesArray: string[] | undefined = isString(namedStyles)
-    ? namedStyles.split(/([a-zA-Z0-9_-]+)\s+(\${.+?})\s+(\w+)/).filter((x) => x)
+    ? // eslint-disable-next-line prefer-named-capture-group
+      namedStyles.split(/([a-zA-Z0-9_-]+)\s+(\${.+?})\s+(\w+)/).filter((x) => x)
     : namedStyles;
 
   // evaluate classnames
   const classStylesArray: string[] | undefined = isString(classStyles)
-    ? classStyles.split(/([a-zA-Z0-9_-]+)\s+(\${.+?})\s+(\w+)/)
+    ? // eslint-disable-next-line prefer-named-capture-group
+      classStyles.split(/([a-zA-Z0-9_-]+)\s+(\${.+?})\s+(\w+)/)
     : classStyles;
 
   const {
