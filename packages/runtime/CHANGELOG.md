@@ -1,5 +1,13 @@
 # @ensembleui/react-runtime
 
+## 0.1.42
+
+### Patch Changes
+
+- 357d754: Fix context passing on imperative invoke API
+- Updated dependencies [357d754]
+  - @ensembleui/react-framework@0.1.32
+
 ## 0.1.41
 
 ### Patch Changes
