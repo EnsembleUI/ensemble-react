@@ -122,13 +122,107 @@ View:
                   id: result
                   text: Check here for the result!
 
-        - Button:
-            label: set text input value
+        - Text:
             styles:
-              margin: 5px
-            onTap:
-              executeCode: |
-                console.log('>>>>', radio)
+              names: heading-3
+            text: Forms with initial values
+        - Markdown:
+            text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:
+              - Form:
+                  id: myForm2
+                  styles:
+                    gap: 8px
+                    labelPosition: top
+                  onSubmit:
+                    executeCode:
+                      body: |
+                        const formattedVals = JSON.stringify(vals, null, 2)
+                        console.log(formattedVals)
+                        result.setText(formattedVals)
+                      onComplete:
+                        showToast:
+                          message: Form submitted!
+                  children:
+                    - Radio:
+                        id: initial_radio
+                        label: Radio Group
+                        value: 2
+                        items:
+                          - label: Option 1
+                            value: 1
+                          - label: Option 2
+                            value: 2
+                          - label: Option 3
+                            value: 3
+                        onChange:
+                          executeCode: |
+                            console.log('radio changed', value)
+                    # Build your own checkbox group
+                    - Row:
+                        children:
+                          - Checkbox:
+                              id: initial_checkbox
+                              value: true
+                              trailingText: Check me
+                              onChange:
+                                executeCode: |-
+                                  console.log('isChecked', value);
+                          - Checkbox:
+                              id: initial_checkbox2
+                              trailingText: Check me 2
+                    - Dropdown:
+                        id: initail_dropdown
+                        label: Dropdown
+                        value: option2
+                        hintText: Choose One
+                        items:
+                          - label: Option 1
+                            value: option1
+                          - label: Option 2
+                            value: option2
+                    # If you omit id, the form value key will be the label
+                    - TextInput:
+                        id: initial_formTextInput
+                        value: ${ensemble.storage.get('inputVal')}
+                        label:
+                          Text:
+                            text: Text input
+                    - MultiSelect:
+                        id: initial_multiselectoptions1
+                        label: Choose multiple from API or storage
+                        placeholder: "Select From Groups"
+                        value: ["hbingley1@plala.or.jp", "val 2"]
+                        data: getData.body.users
+                        labelKey: firstName
+                        valueKey: email
+                        items: ${ensemble.storage.get('dummyData')}
+                        onItemSelect:
+                          executeCode: |
+                            console.log('selected');
+                            console.log(selectedValues)
+                    - MultiSelect:
+                        id: initial_multiselectoptions2
+                        label: Choose multiple
+                        value: option2
+                        data:
+                          - label: Option 1
+                            value: option1
+                          - label: Option 2
+                            value: option2
+                    - Date:
+                        id: initail_date
+                        label: Date
+                        value: "2024/04/04"
+                        hintText: Choose date
+                    - Button:
+                        submitForm: true
+                        label: Submit
+
   footer:
     children:
       - Text:

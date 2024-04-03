@@ -45,7 +45,7 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
   const formInstance = Form.useFormInstance();
 
   useEffect(() => {
-    setValue(values?.initialValue);
+    setValue(String(values?.initialValue));
   }, [values?.initialValue]);
 
   useEffect(() => {
