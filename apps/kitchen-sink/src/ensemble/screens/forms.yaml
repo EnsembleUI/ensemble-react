@@ -143,7 +143,7 @@ View:
                       body: |
                         const formattedVals = JSON.stringify(vals, null, 2)
                         console.log(formattedVals)
-                        result.setText(formattedVals)
+                        result2.setText(formattedVals)
                       onComplete:
                         showToast:
                           message: Form submitted!
@@ -222,6 +222,10 @@ View:
                     - Button:
                         submitForm: true
                         label: Submit
+
+              - Markdown:
+                  id: result2
+                  text: Check here for the result!
 
   footer:
     children:
