@@ -31,12 +31,12 @@ export const useStyleNames = (
 
   // evaluate styles
   const nameStylesArray: string[] | undefined = isString(namedStyles)
-    ? namedStyles.split(" ")
+    ? namedStyles.split(/([a-zA-Z0-9_-]+)\s+(\${.+?})\s+(\w+)/).filter((x) => x)
     : namedStyles;
 
   // evaluate classnames
   const classStylesArray: string[] | undefined = isString(classStyles)
-    ? classStyles.split(" ")
+    ? classStyles.split(/([a-zA-Z0-9_-]+)\s+(\${.+?})\s+(\w+)/)
     : classStyles;
 
   const {
