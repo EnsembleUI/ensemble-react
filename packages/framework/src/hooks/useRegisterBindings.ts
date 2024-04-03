@@ -49,7 +49,7 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
   const newValues = useEvaluate(values, { debugId: resolvedWidgetId });
 
   const debounceSetState = useMemo(
-    () => debounce(setWidgetState, options?.debounceMs ?? 0),
+    () => debounce(setWidgetState, options?.debounceMs ?? 0, { leading: true }),
     [options?.debounceMs, setWidgetState],
   );
 
