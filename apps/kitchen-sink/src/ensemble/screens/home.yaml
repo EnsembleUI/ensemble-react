@@ -1,8 +1,4 @@
 View:
-  onLoad:
-    executeCode: |
-      ensemble.storage.set('inputVal', 'sagar')
-
   header:
     title:
       Header:
@@ -49,18 +45,15 @@ View:
               executeCode: |
                 ensemble.setTheme(value)
 
-        - TextInput:
-            id: formTextInput2
-            value: ${ensemble.storage.get('inputVal')}
-            label:
-              Text:
-                text: Text input
-
         - Button:
-            label: set value
+            label: Action group
             onTap:
-              executeCode: |
-                formTextInput2.setValue('')
+              executeActionGroup:
+                actions:
+                  - executeCode: |
+                      console.log('hello')
+                  - executeCode: |
+                      console.log('buyy')
 
 Global:
   scriptName: test.js

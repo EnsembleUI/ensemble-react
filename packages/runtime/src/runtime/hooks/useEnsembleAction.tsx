@@ -38,6 +38,7 @@ import {
   mapKeys,
   cloneDeep,
   isEqual,
+  isArray,
 } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -538,6 +539,7 @@ export const useEnsembleAction = (
   if (!action) {
     return;
   }
+
   if ("invokeAPI" in action) {
     return useInvokeAPI(action.invokeAPI, options);
   }
@@ -553,6 +555,7 @@ export const useEnsembleAction = (
       options as UseExecuteCodeActionOptions,
     );
   }
+
   if ("navigateScreen" in action) {
     return useNavigateScreen(action.navigateScreen, options);
   }
@@ -576,6 +579,7 @@ export const useEnsembleAction = (
   if ("showToast" in action) {
     return useShowToast(action.showToast);
   }
+
   if ("showDialog" in action) {
     return useShowDialog(action.showDialog);
   }
@@ -587,8 +591,27 @@ export const useEnsembleAction = (
   if ("pickFiles" in action) {
     return usePickFiles(action.pickFiles);
   }
+
   if ("uploadFiles" in action) {
     return useUploadFiles(action.uploadFiles);
+  }
+
+  if ("executeActionGroup" in action) {
+    if (action.executeActionGroup) {
+      const { actions } = action.executeActionGroup;
+
+      if (isArray(actions) && actions.length) {
+        const execActs = actions.map((act: EnsembleAction) => {
+          return useEnsembleAction(act);
+        });
+
+        const callback = useCallback((): void => {
+          execActs.forEach((act) => act?.callback());
+        }, [execActs]);
+
+        return { callback };
+      }
+    }
   }
 };
 /* eslint-enable react-hooks/rules-of-hooks */

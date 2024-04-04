@@ -148,4 +148,5 @@ export type EnsembleAction =
   // | { openCamera?: OpenCamera }
   | { uploadFiles?: UploadFilesAction }
   | { pickFiles?: PickFilesAction }
-  | { navigateUrl?: NavigateUrlAction };
+  | { navigateUrl?: NavigateUrlAction }
+  | { executeActionGroup?: { actions: EnsembleAction[] } };
