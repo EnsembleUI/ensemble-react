@@ -597,20 +597,18 @@ export const useEnsembleAction = (
   }
 
   if ("executeActionGroup" in action) {
-    if (action.executeActionGroup) {
-      const { actions } = action.executeActionGroup;
+    const actions = action.executeActionGroup?.actions as EnsembleAction[];
 
-      if (isArray(actions) && actions.length) {
-        const execActs = actions.map((act: EnsembleAction) => {
-          return useEnsembleAction(act);
-        });
+    if (isArray(actions) && actions.length) {
+      const execActs = actions.map((act: EnsembleAction) => {
+        return useEnsembleAction(act);
+      });
 
-        const callback = useCallback((): void => {
-          execActs.forEach((act) => act?.callback());
-        }, [execActs]);
+      const callback = useCallback((): void => {
+        execActs.forEach((act) => act?.callback());
+      }, [execActs]);
 
-        return { callback };
-      }
+      return { callback };
     }
   }
 };
