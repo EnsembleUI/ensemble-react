@@ -47,20 +47,24 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   const { data, ...rest } = props;
   const [options, setOptions] = useState<SelectOption[]>([]);
   const [newOption, setNewOption] = useState("");
-  const [selectedValues, setSelectedValues] = useState<string[] | undefined>(
-    isString(props.value) ? [props.value] : props.value,
-  );
+  const [selectedValues, setSelectedValues] = useState<string[]>();
 
   const action = useEnsembleAction(props.onItemSelect);
   const { rawData } = useTemplateData({ data });
   const { id, rootRef, values } = useRegisterBindings(
-    { ...rest, selectedValues, options },
+    { ...rest, initialValue: props.value, selectedValues, options },
     props.id,
     {
       setSelectedValues,
       setOptions,
     },
   );
+
+  useEffect(() => {
+    if (!selectedValues && isArray(values?.initialValue)) {
+      setSelectedValues(values?.initialValue);
+    }
+  }, [values?.initialValue]);
 
   useEffect(() => {
     if (

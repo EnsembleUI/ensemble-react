@@ -56,10 +56,12 @@ export type DropdownProps = {
   } & FormInputProps<string | number>;
 
 const Dropdown: React.FC<DropdownProps> = (props) => {
-  const [selectedValue, setSelectedValue] = useState(props.value);
+  const [selectedValue, setSelectedValue] = useState<
+    string | number | undefined
+  >();
   const { "item-template": itemTemplate, ...rest } = props;
   const { id, rootRef, values } = useRegisterBindings(
-    { ...rest, selectedValue },
+    { ...rest, initialValue: props.value, selectedValue },
     props.id,
     {
       setSelectedValue,
@@ -153,6 +155,10 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   const { backgroundColor: _, ...formItemStyles } = values?.styles ?? {};
 
   const formInstance = Form.useFormInstance();
+
+  useEffect(() => {
+    setSelectedValue(values?.initialValue);
+  }, [values?.initialValue]);
 
   useEffect(() => {
     if (formInstance) {
