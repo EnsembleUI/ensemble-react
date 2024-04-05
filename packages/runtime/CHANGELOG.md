@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.1.43
+
+### Patch Changes
+
+- 3b61b34: receive updated values from all form elements
+
 ## 0.1.42
 
 ### Patch Changes
