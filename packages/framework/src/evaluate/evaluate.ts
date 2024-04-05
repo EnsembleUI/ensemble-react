@@ -6,7 +6,7 @@ import { sanitizeJs, debug } from "../shared";
 export const buildEvaluateFn = (
   screen: Partial<ScreenContextDefinition>,
   js?: string,
-  context?: Record<string, unknown>,
+  context?: { [key: string]: unknown },
 ): (() => unknown) => {
   const widgets: [string, InvokableMethods | undefined][] = Object.entries(
     screen.widgets ?? {},
@@ -20,6 +20,7 @@ export const buildEvaluateFn = (
     ...widgets,
     ...Object.entries(screen.inputs ?? {}),
     ...Object.entries(screen.data ?? {}),
+    ...Object.entries(screen),
     ...Object.entries(context ?? {}),
   ]);
   const globalBlock = screen.model?.global;
@@ -78,7 +79,7 @@ const addGlobalBlock = (js: string, globalBlock?: string): string =>
 export const evaluate = <T = unknown>(
   screen: Partial<ScreenContextDefinition>,
   js?: string,
-  context?: Record<string, unknown>,
+  context?: { [key: string]: unknown },
 ): T => {
   try {
     return buildEvaluateFn(screen, js, context)() as T;

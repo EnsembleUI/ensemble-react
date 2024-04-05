@@ -1,6 +1,6 @@
 import type { RefCallback } from "react";
-import { useEffect } from "react";
-import { get, isEmpty, isString, keys, merge } from "lodash-es";
+import { useEffect, useMemo } from "react";
+import { debounce, get, isEmpty, isString, keys, merge } from "lodash-es";
 import isEqual from "react-fast-compare";
 import type { InvokableMethods } from "../state";
 import { useWidgetId } from "./useWidgetId";
@@ -21,6 +21,7 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
   methods?: InvokableMethods,
   options?: {
     forceState?: boolean;
+    debounceMs?: number;
   },
 ): RegisterBindingsResult<T> => {
   const testId = get(values, ["testId"]);
@@ -47,6 +48,11 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
 
   const newValues = useEvaluate(values, { debugId: resolvedWidgetId });
 
+  const debounceSetState = useMemo(
+    () => debounce(setWidgetState, options?.debounceMs ?? 0, { leading: true }),
+    [options?.debounceMs, setWidgetState],
+  );
+
   useEffect(() => {
     // Improves performance greatly: o need to store state in global if there's no explicit ID to reference it with
     if (isEmpty(id)) {
@@ -60,7 +66,7 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
       return;
     }
 
-    setWidgetState({
+    debounceSetState({
       values: newValues,
       invokable: { id: resolvedWidgetId, methods },
     });
@@ -72,6 +78,7 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
     widgetState?.values,
     widgetState?.invokable.methods,
     id,
+    debounceSetState,
   ]);
 
   useEffect(() => {

@@ -8,7 +8,7 @@ export interface ApplicationContextDefinition {
   application: EnsembleAppModel | null;
   storage: unknown;
   secrets: unknown;
-  env: Record<string, unknown>;
+  env: { [key: string]: unknown };
   auth: unknown;
   user: EnsembleUser | null;
 }
