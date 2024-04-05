@@ -84,6 +84,7 @@ export type GridProps = {
   hidePagination?: boolean;
   scroll?: DataGridScrollable;
   onScrollEnd?: EnsembleAction;
+  onPageChange?: EnsembleAction;
 } & EnsembleWidgetProps<DataGridStyles>;
 
 function djb2Hash(str: string): number {
@@ -134,7 +135,12 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   const [allowSelection, setAllowSelection] = useState(
     props.allowSelection ?? false,
   );
-  const { "item-template": itemTemplate, onScrollEnd, ...rest } = props;
+  const {
+    "item-template": itemTemplate,
+    onScrollEnd,
+    onPageChange,
+    ...rest
+  } = props;
   const [selectionType, setSelectionType] = useState<"checkbox" | "radio">(
     "checkbox",
   );
@@ -263,6 +269,22 @@ export const DataGrid: React.FC<GridProps> = (props) => {
       setColWidth(prevColWidths);
     };
 
+  const onPageChangeAction = useEnsembleAction(onPageChange);
+  // page change action
+  const onPageChangeActionCallback = useCallback(
+    (page: number) => {
+      if (onPageChangeAction) {
+        onPageChangeAction.callback({ page });
+      }
+    },
+    [onPageChangeAction],
+  );
+
+  // handle page change
+  const handlePageChange = (page: number): void => {
+    onPageChangeActionCallback(page);
+  };
+
   return (
     <div id={resolvedWidgetId} ref={containerRef}>
       <Table
@@ -272,7 +294,9 @@ export const DataGrid: React.FC<GridProps> = (props) => {
         onRow={(record, recordIndex) => {
           return { onClick: () => onTapActionCallback(record, recordIndex) };
         }}
-        pagination={values?.hidePagination ? false : undefined}
+        pagination={
+          values?.hidePagination ? false : { onChange: handlePageChange }
+        }
         ref={rootRef}
         rowKey={(data: unknown) => {
           const identifier: string = evaluate(
