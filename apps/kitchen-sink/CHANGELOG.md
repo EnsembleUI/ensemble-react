@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.34
+
+### Patch Changes
+
+- 3b61b34: receive updated values from all form elements
+- Updated dependencies [3b61b34]
+  - @ensembleui/react-runtime@0.1.43
+
 ## 0.0.33
 
 ### Patch Changes
