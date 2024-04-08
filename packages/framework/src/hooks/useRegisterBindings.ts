@@ -41,11 +41,12 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
   );
 
   const styles = merge({}, styleProperties, values.styles);
-  if (!isEmpty(styles)) {
-    merge(values, { styles });
-  }
-
-  const newValues = useEvaluate(values, { debugId: resolvedWidgetId });
+  const newValues = useEvaluate(
+    { ...values, styles },
+    {
+      debugId: resolvedWidgetId,
+    },
+  );
 
   useEffect(() => {
     // Improves performance greatly: o need to store state in global if there's no explicit ID to reference it with

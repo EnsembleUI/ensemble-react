@@ -1,16 +1,16 @@
 import { useAtomValue } from "jotai";
-import type { CSSProperties } from "react";
+import { CSSProperties, useMemo } from "react";
 import { get, intersection, isEmpty, isString, keys, merge } from "lodash-es";
 import { type EnsembleThemeModel, type Expression } from "../shared";
 import { themeAtom } from "../state";
 import { useEvaluate } from "./useEvaluate";
 
 const resolveStyleNames = (
-  styleNames: string[],
+  styleNames: string,
   theme: EnsembleThemeModel,
 ): CSSProperties => {
   const appStyleNames = keys(theme.Styles);
-  const overlappingNames = intersection(styleNames, appStyleNames);
+  const overlappingNames = intersection(styleNames.split(" "), appStyleNames);
   if (isEmpty(overlappingNames)) {
     return {};
   }
@@ -50,11 +50,17 @@ export const useStyleNames = (
   });
 
   const styleNames = [
-    ...(namedStylesArrayEval?.map((nameStyle) => `${nameStyle}`) || []),
-    ...(classStylesArrayEval?.map((className) => `.${className}`) || []),
-  ];
+    ...(namedStylesArrayEval
+      ?.filter((className) => className)
+      .map((nameStyle) => `${nameStyle}`) || []),
+    ...(classStylesArrayEval
+      ?.filter((className) => className)
+      .map((className) => `.${className}`) || []),
+  ].join(" ");
 
-  if (styleNames.length && themeContext) {
-    return resolveStyleNames(styleNames, themeContext);
-  }
+  return useMemo(() => {
+    if (styleNames.length && themeContext) {
+      return resolveStyleNames(styleNames, themeContext);
+    }
+  }, [styleNames, themeContext]);
 };

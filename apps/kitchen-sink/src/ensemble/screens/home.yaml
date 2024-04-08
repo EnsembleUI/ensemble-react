@@ -2,66 +2,23 @@ View:
   onLoad:
     executeCode: |
       ensemble.storage.set('yyy' , 'page')
-      ensemble.storage.set('zzz' , 'button')
+      ensemble.storage.set('zzz' , 'button-1')
       ensemble.storage.set('aaa', '-1')
-  header:
-    title:
-      Header:
 
   styles:
     backgroundColor: ${colors.primary['200']}
 
   body:
     Column:
-      styles:
-        names: ${ensemble.storage.get('yyy')}
       children:
-        - Text:
-            styles:
-              names: heading-1
-              color: ${colors.primary['900']}
-            text: The Kitchen Sink
-        - Markdown:
-            text: This application is built with Ensemble and serves as a guide for how to implement common UI patterns with Ensemble React.
         - Button:
             styles:
-              className: ${ensemble.storage.get('zzz') + ensemble.storage.get('aaa')}
+              className: ${ensemble.storage.get('zzz')}
             label: Say Hello!
             onTap:
               executeCode: |
                 // Calls a function defined in test.js
                 sayHello();
-
-        - Text:
-            styles:
-              names: heading-1
-            text: Change theme
-        - PopupMenu:
-            showDivider: true
-            items:
-              - label: Light
-                value: default
-              - label: Dark
-                value: dark
-            widget:
-              Icon:
-                name: Settings
-            onItemSelect:
-              executeCode: |
-                ensemble.setTheme(value)
-
-        - TextInput:
-            id: formTextInput2
-            value: ${ensemble.storage.get('inputVal')}
-            label:
-              Text:
-                text: Text input
-
-        - Button:
-            label: set value
-            onTap:
-              executeCode: |
-                formTextInput2.setValue('')
 
 Global:
   scriptName: test.js

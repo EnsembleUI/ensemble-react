@@ -21,7 +21,7 @@ export const useEvaluate = <T extends Record<string, unknown>>(
       findExpressions(values, [], expressionMap);
       return expressionMap;
     },
-    options?.refreshExpressions ? [values] : [],
+    options?.refreshExpressions ? [values] : [values?.styles],
   );
 
   const bindingsAtom = useMemo(() => {
