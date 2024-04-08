@@ -1,6 +1,6 @@
 import type { RefCallback } from "react";
-import { useEffect } from "react";
-import { get, isEmpty, isString, keys, merge } from "lodash-es";
+import { useEffect, useMemo } from "react";
+import { get, isEmpty, isString, keys, merge, omit } from "lodash-es";
 import isEqual from "react-fast-compare";
 import type { InvokableMethods } from "../state";
 import { useWidgetId } from "./useWidgetId";
@@ -40,7 +40,14 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
     isString(classStyles) ? classStyles : "",
   );
 
-  const styles = merge({}, styleProperties, values.styles);
+  const styles = useMemo(() => {
+    return merge(
+      {},
+      styleProperties,
+      omit(values.styles ?? {}, ["className", "names"]),
+    );
+  }, [styleProperties, values.styles]);
+
   const newValues = useEvaluate(
     { ...values, styles },
     {
