@@ -1,6 +1,6 @@
 import type { RefCallback } from "react";
-import { useEffect } from "react";
-import { get, isEmpty, isString, keys } from "lodash-es";
+import { useEffect, useMemo } from "react";
+import { get, isEmpty, isString, keys, debounce } from "lodash-es";
 import isEqual from "react-fast-compare";
 import type { InvokableMethods } from "../state";
 import { useWidgetId } from "./useWidgetId";
@@ -40,6 +40,11 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
     {
       debugId: resolvedWidgetId,
     },
+  );
+
+  const debounceSetState = useMemo(
+    () => debounce(setWidgetState, options?.debounceMs ?? 0, { leading: true }),
+    [options?.debounceMs, setWidgetState],
   );
 
   useEffect(() => {
