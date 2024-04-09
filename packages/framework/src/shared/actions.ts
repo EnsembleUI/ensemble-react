@@ -87,8 +87,8 @@ export interface ShowDialogOptions {
 }
 
 export interface ShowDialogAction {
-  widget?: Record<string, unknown>;
-  body?: Record<string, unknown>;
+  widget?: { [key: string]: unknown };
+  body?: { [key: string]: unknown };
   options?: ShowDialogOptions;
   onDialogDismiss?: EnsembleAction;
 }
@@ -121,6 +121,10 @@ export interface UploadFilesAction {
 
 export type CloseAllDialogsAction = null;
 
+export interface ExecuteActionGroupAction {
+  actions: EnsembleAction[];
+}
+
 /**
  * @uiType action
  */
@@ -148,4 +152,5 @@ export type EnsembleAction =
   // | { openCamera?: OpenCamera }
   | { uploadFiles?: UploadFilesAction }
   | { pickFiles?: PickFilesAction }
-  | { navigateUrl?: NavigateUrlAction };
+  | { navigateUrl?: NavigateUrlAction }
+  | { executeActionGroup?: ExecuteActionGroupAction };

@@ -327,7 +327,7 @@ View:
                     navigateUrl: /widgets?name=hello
               - Button:
                   label: Dynamic Query
-                  onTap:  
+                  onTap:
                     navigateUrl:
                       url: ${"/widgets" + ensemble.storage.get('value')}
 
@@ -354,22 +354,46 @@ View:
                         url: 'https://google.com',
                         openNewTab: true
                       })
-              - Card:
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:
+              - Text:
                   styles:
-                    maxWidth: unset
-                    width: unset
-                  children:
-                    - Text:
-                        styles:
-                          names: heading-3
-                        text: Trigger API using ensemble.invokeApi
-                    - Button:
-                        label: Trigger API
-                        onTap:
-                          executeCode: |
-                            ensemble.invokeAPI('getDummyProducts').then((res) => {
-                              console.log(res)
-                            })
+                    names: heading-3
+                  text: Trigger API using ensemble.invokeApi
+              - Button:
+                  label: Trigger API
+                  onTap:
+                    executeCode: |
+                      ensemble.invokeAPI('getDummyProducts').then((res) => {
+                        console.log(res)
+                      })
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: Concurrent actions with action group
+              - Button:
+                  label: Action group
+                  onTap:
+                    executeActionGroup:
+                      actions:
+                        - invokeAPI:
+                            name: getDummyProducts
+                            onResponse:
+                              executeCode: |
+                                console.log('done first!')
+                        - invokeAPI:
+                            name: getDummyProducts
+                            onResponse:
+                              executeCode: |
+                                console.log('done second!')
 
 API:
   getDummyProducts:

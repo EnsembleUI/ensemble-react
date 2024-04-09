@@ -27,6 +27,7 @@ import type {
   CustomScope,
   NavigateBackAction,
   NavigateExternalScreen,
+  ExecuteActionGroupAction,
 } from "@ensembleui/react-framework";
 import {
   isEmpty,
@@ -529,6 +530,24 @@ export const useNavigateBack: EnsembleActionHook<NavigateBackAction> = () => {
   return { callback };
 };
 
+export const useActionGroup: EnsembleActionHook<ExecuteActionGroupAction> = (
+  action,
+) => {
+  // This ensures hooks are fired in consistent order
+  const actions = useMemo(() => action?.actions ?? [], [action]);
+
+  const execActs = actions.map((act: EnsembleAction) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useEnsembleAction(act);
+  });
+
+  const callback = (): void => {
+    execActs.forEach((act) => act?.callback());
+  };
+
+  return { callback };
+};
+
 /* eslint-disable react-hooks/rules-of-hooks */
 export const useEnsembleAction = (
   action?: EnsembleAction,
@@ -538,6 +557,7 @@ export const useEnsembleAction = (
   if (!action) {
     return;
   }
+
   if ("invokeAPI" in action) {
     return useInvokeAPI(action.invokeAPI, options);
   }
@@ -553,6 +573,7 @@ export const useEnsembleAction = (
       options as UseExecuteCodeActionOptions,
     );
   }
+
   if ("navigateScreen" in action) {
     return useNavigateScreen(action.navigateScreen, options);
   }
@@ -576,6 +597,7 @@ export const useEnsembleAction = (
   if ("showToast" in action) {
     return useShowToast(action.showToast);
   }
+
   if ("showDialog" in action) {
     return useShowDialog(action.showDialog);
   }
@@ -587,8 +609,13 @@ export const useEnsembleAction = (
   if ("pickFiles" in action) {
     return usePickFiles(action.pickFiles);
   }
+
   if ("uploadFiles" in action) {
     return useUploadFiles(action.uploadFiles);
+  }
+
+  if ("executeActionGroup" in action) {
+    return useActionGroup(action.executeActionGroup);
   }
 };
 /* eslint-enable react-hooks/rules-of-hooks */
