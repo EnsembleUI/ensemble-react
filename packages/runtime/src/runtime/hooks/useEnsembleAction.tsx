@@ -27,6 +27,7 @@ import type {
   CustomScope,
   NavigateBackAction,
   NavigateExternalScreen,
+  ExecuteActionGroupAction,
 } from "@ensembleui/react-framework";
 import {
   isEmpty,
@@ -38,7 +39,6 @@ import {
   mapKeys,
   cloneDeep,
   isEqual,
-  isArray,
 } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -530,6 +530,24 @@ export const useNavigateBack: EnsembleActionHook<NavigateBackAction> = () => {
   return { callback };
 };
 
+export const useActionGroup: EnsembleActionHook<ExecuteActionGroupAction> = (
+  action,
+) => {
+  // This ensures hooks are fired in consistent order
+  const actions = useMemo(() => action?.actions ?? [], [action]);
+
+  const execActs = actions.map((act: EnsembleAction) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useEnsembleAction(act);
+  });
+
+  const callback = (): void => {
+    execActs.forEach((act) => act?.callback());
+  };
+
+  return { callback };
+};
+
 /* eslint-disable react-hooks/rules-of-hooks */
 export const useEnsembleAction = (
   action?: EnsembleAction,
@@ -597,19 +615,7 @@ export const useEnsembleAction = (
   }
 
   if ("executeActionGroup" in action) {
-    const actions = action.executeActionGroup?.actions as EnsembleAction[];
-
-    if (isArray(actions) && actions.length) {
-      const execActs = actions.map((act: EnsembleAction) => {
-        return useEnsembleAction(act);
-      });
-
-      const callback = useCallback((): void => {
-        execActs.forEach((act) => act?.callback());
-      }, [execActs]);
-
-      return { callback };
-    }
+    return useActionGroup(action.executeActionGroup);
   }
 };
 /* eslint-enable react-hooks/rules-of-hooks */

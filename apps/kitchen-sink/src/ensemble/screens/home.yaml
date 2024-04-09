@@ -45,15 +45,5 @@ View:
               executeCode: |
                 ensemble.setTheme(value)
 
-        - Button:
-            label: Action group
-            onTap:
-              executeActionGroup:
-                actions:
-                  - executeCode: |
-                      console.log('hello')
-                  - executeCode: |
-                      console.log('buyy')
-
 Global:
   scriptName: test.js
