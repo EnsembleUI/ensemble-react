@@ -19,7 +19,7 @@ export type RadioWidgetProps = FormInputProps<string> &
   };
 
 export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
-  const [value, setValue] = useState<string | number>();
+  const [value, setValue] = useState<string | number | undefined>(undefined);
   const { values, rootRef } = useRegisterBindings(
     { ...props, initialValue: props.value, value },
     props.id,
@@ -45,7 +45,7 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
   const formInstance = Form.useFormInstance();
 
   useEffect(() => {
-    setValue(String(values?.initialValue));
+    setValue(values?.initialValue);
   }, [values?.initialValue]);
 
   useEffect(() => {
