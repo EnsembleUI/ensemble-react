@@ -4,9 +4,9 @@ import { Radio, Form } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetStyles, HasItemTemplate } from "../../shared/types";
+import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
-import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 
 export type RadioWidgetProps = FormInputProps<string> &
   HasItemTemplate & {
@@ -17,10 +17,11 @@ export type RadioWidgetProps = FormInputProps<string> &
     }[];
     onChange?: EnsembleAction;
   };
+
 export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
-  const [value, setValue] = useState(props.value);
+  const [value, setValue] = useState<string | number>();
   const { values, rootRef } = useRegisterBindings(
-    { ...props, value },
+    { ...props, initialValue: props.value, value },
     props.id,
     { setValue },
   );
@@ -44,6 +45,10 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
   const formInstance = Form.useFormInstance();
 
   useEffect(() => {
+    setValue(String(values?.initialValue));
+  }, [values?.initialValue]);
+
+  useEffect(() => {
     if (formInstance) {
       formInstance.setFieldsValue({
         [values?.id ?? values?.label ?? ""]: value,
@@ -60,18 +65,18 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
         onChange={(event): void => handleChange(String(event.target.value))}
         ref={rootRef}
         style={values?.styles}
-        value={values?.value}
+        value={String(values?.value)}
       >
         {values?.items.map((item) => (
           <Radio
             key={item.value}
-            value={item.value}
             style={{
-              ...item?.styles,
-              ...(item?.styles?.visible === false
+              ...item.styles,
+              ...(item.styles?.visible === false
                 ? { display: "none" }
                 : undefined),
             }}
+            value={String(item.value)}
           >
             {item.label}
           </Radio>

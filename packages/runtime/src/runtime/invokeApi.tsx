@@ -26,7 +26,7 @@ export const invokeAPI = async (
     isError: false,
     isSuccess: false,
   });
-  const res = await DataFetcher.fetch(api, evaluatedInputs);
+  const res = await DataFetcher.fetch(api, { ...evaluatedInputs, ...context });
   screenData.setData(api.name, res);
 
   return res;

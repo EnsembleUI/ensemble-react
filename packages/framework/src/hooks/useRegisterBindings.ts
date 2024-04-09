@@ -21,6 +21,7 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
   methods?: InvokableMethods,
   options?: {
     forceState?: boolean;
+    debounceMs?: number;
   },
 ): RegisterBindingsResult<T> => {
   const testId = get(values, ["testId"]);
@@ -54,7 +55,7 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
       return;
     }
 
-    setWidgetState({
+    debounceSetState({
       values: newValues,
       invokable: { id: resolvedWidgetId, methods },
     });
@@ -66,6 +67,7 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
     widgetState?.values,
     widgetState?.invokable.methods,
     id,
+    debounceSetState,
   ]);
 
   useEffect(() => {
