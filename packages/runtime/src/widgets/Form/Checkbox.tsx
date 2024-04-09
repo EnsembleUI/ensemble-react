@@ -21,9 +21,9 @@ export type CheckBoxProps = {
   FormInputProps<boolean>;
 
 export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
-  const [checked, setChecked] = useState(props.value || false);
+  const [checked, setChecked] = useState<boolean>();
   const { values } = useRegisterBindings(
-    { ...props, value: checked },
+    { ...props, initialValue: props.value, value: checked },
     props.id,
     {
       setValue: setChecked,
@@ -52,6 +52,10 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
   };
 
   const formInstance = Form.useFormInstance();
+
+  useEffect(() => {
+    setChecked(Boolean(values?.initialValue));
+  }, [values?.initialValue]);
 
   useEffect(() => {
     if (formInstance) {

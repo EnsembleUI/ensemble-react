@@ -27,12 +27,16 @@ export type DateProps = {
   EnsembleWidgetProps<DateStyles>;
 
 export const Date: React.FC<DateProps> = (props) => {
-  const [value, setValue] = useState(props.value);
+  const [value, setValue] = useState<string>();
   const action = useEnsembleAction(props.onChange);
 
-  const { id, values } = useRegisterBindings({ ...props, value }, props.id, {
-    setValue,
-  });
+  const { id, values } = useRegisterBindings(
+    { ...props, initialValue: props.value, value },
+    props.id,
+    {
+      setValue,
+    },
+  );
 
   const onChangeCallback = useCallback(
     (date?: string) => {
@@ -50,15 +54,21 @@ export const Date: React.FC<DateProps> = (props) => {
     [action, id, props],
   );
 
-  const onDateChange = (date: unknown): void => {
-    const formattedDate = dayjs(date as string).format(DateDisplayFormat);
-
+  const onDateChange = (date: string): void => {
+    setValue(date);
+    const formattedDate = dayjs(date).format(DateDisplayFormat);
     if (formattedDate === "Invalid Date") {
       onChangeCallback("");
     } else {
       onChangeCallback(formattedDate);
     }
   };
+
+  useEffect(() => {
+    if (!value) {
+      setValue(String(dayjs(values?.initialValue)));
+    }
+  }, [values]);
 
   const formInstance = Form.useFormInstance();
 
@@ -84,7 +94,7 @@ export const Date: React.FC<DateProps> = (props) => {
         onChange={onDateChange}
         placeholder={values?.hintText}
         style={{ width: "100%", ...values?.styles }}
-        value={dayjs(values?.value)}
+        value={String(dayjs(values?.value))}
         {...(values?.showCalendarIcon === false
           ? { suffixIcon: false }
           : undefined)}
