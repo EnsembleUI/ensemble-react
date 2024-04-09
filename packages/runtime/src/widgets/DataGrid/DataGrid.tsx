@@ -85,6 +85,7 @@ export type GridProps = {
   scroll?: DataGridScrollable;
   onScrollEnd?: EnsembleAction;
   onPageChange?: EnsembleAction;
+  pageSize?: number;
 } & EnsembleWidgetProps<DataGridStyles>;
 
 function djb2Hash(str: string): number {
@@ -274,7 +275,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   const onPageChangeActionCallback = useCallback(
     (page: number) => {
       if (onPageChangeAction) {
-        onPageChangeAction.callback({ page });
+        onPageChangeAction.callback({ page, pageSize: values?.pageSize });
       }
     },
     [onPageChangeAction],
@@ -285,6 +286,16 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     onPageChangeActionCallback(page);
   };
 
+  const paginationObject = useMemo(() => {
+    const { hidePagination, pageSize } = values ?? {};
+
+    if (hidePagination || pageSize === undefined || pageSize < 1) {
+      return false;
+    }
+
+    return { onChange: handlePageChange, pageSize: values?.pageSize };
+  }, [values?.hidePagination, values?.pageSize]);
+
   return (
     <div id={resolvedWidgetId} ref={containerRef}>
       <Table
@@ -294,9 +305,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
         onRow={(record, recordIndex) => {
           return { onClick: () => onTapActionCallback(record, recordIndex) };
         }}
-        pagination={
-          values?.hidePagination ? false : { onChange: handlePageChange }
-        }
+        pagination={paginationObject}
         ref={rootRef}
         rowKey={(data: unknown) => {
           const identifier: string = evaluate(
