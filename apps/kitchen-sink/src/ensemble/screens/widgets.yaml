@@ -2,14 +2,17 @@ View:
   onLoad:
     executeCode:
       body: |-
-        ensemble.storage.set('dataColumn', Array(15).fill().map((x,i) => ({key1: 'value', key2: i})))
         ensemble.storage.set('activeIndex',3);
       onComplete:
         invokeApi:
-          name: getDummyNumbers
+          name: getDummyProductsByPaginate
+          inputs:
+            skip: 0
           onResponse:
             executeCode: |
-              ensemble.storage.set('dummyNumbers', response.body)
+              const res = response.body.products;
+              ensemble.storage.set("skip", 10)
+              ensemble.storage.set("dummyProducts", res);
 
   header:
     title:
@@ -233,13 +236,21 @@ View:
                       textColor: "#747184"
                       hasDivider: true
                       borderBottom: false
-                  DataColumns: ${Object.keys(ensemble.storage.get('dataColumn')[0])}
+                  DataColumns: ["id", "title", "description"]
                   pageSize: 3
                   onPageChange:
-                    executeCode: |
-                      console.log('Page changed to ', page, pageSize)
+                    invokeAPI:
+                      name: getDummyProductsByPaginate
+                      inputs:
+                        skip: ${ensemble.storage.get('skip') + page}
+                      onResponse:
+                        executeCode: |
+                          const prevItem = ensemble.storage.get("dummyProducts")
+                          const res = response.body.products;
+                          ensemble.storage.set("skip", ensemble.storage.get('skip') + page)
+                          ensemble.storage.set("dummyProducts", [...prevItem, ...res])
                   item-template:
-                    data: ${ensemble.storage.get('dataColumn')}
+                    data: ${ensemble.storage.get('dummyProducts')}
                     name: dummyData
                     key: ${dummyData.key}
                     template:
@@ -256,6 +267,14 @@ View:
               width: unset
               gap: 10px
             children:
+              - Button:
+                  label: Load numbers data
+                  onTap:
+                    invokeAPI:
+                      name: getDummyNumbers
+                      onResponse:
+                        executeCode: |
+                          ensemble.storage.set('dummyNumbers', response.body)
               - Text:
                   styles:
                     names: heading-3
@@ -918,6 +937,11 @@ API:
   getDummyProducts:
     method: GET
     uri: https://dummyjson.com/products
+  getDummyProductsByPaginate:
+    method: GET
+    uri: https://dummyjson.com/products?skip=${skip}&limit=10
+    inputs:
+      - skip
   getDummyNumbers:
     method: GET
     uri: https://mocki.io/v1/c1f19d68-e6c8-4ae3-848d-d99e588cf224
