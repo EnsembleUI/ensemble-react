@@ -36,7 +36,7 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
   const styles = useStyles(values);
 
   const newValues = useEvaluate(
-    { ...values, styles },
+    { ...values, ...(isEmpty(styles) ? {} : { styles }) },
     {
       debugId: resolvedWidgetId,
     },
