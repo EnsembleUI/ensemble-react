@@ -319,10 +319,6 @@ export const DataGrid: React.FC<GridProps> = (props) => {
       case "sort":
         onSortActionCallback(sorter);
         break;
-
-      default:
-        console.log("data grid changes");
-        break;
     }
   };
 
