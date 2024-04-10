@@ -5,6 +5,8 @@ import {
 } from "./utils/getPrettyDuration";
 import { getPrettyTime } from "./utils/getPrettyTime";
 import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
+import relativeTime from "dayjs/plugin/relativeTime";
 
 export interface EnsembleDateTime {
   getDate: () => string;
@@ -23,6 +25,7 @@ export interface EnsembleDateTime {
   getDaysDifference: (input: string) => number;
   getMonthsDifference: (input: string) => number;
   getYearsDifference: (input: string) => number;
+  humanize: (input: string) => string;
 }
 
 export interface EnsembleFormatter {
@@ -37,6 +40,9 @@ export interface EnsembleFormatter {
 }
 
 export const DateFormatter = (): EnsembleFormatter => {
+  dayjs.extend(duration);
+  dayjs.extend(relativeTime);
+
   const now = (): EnsembleDateTime => {
     const date = new Date();
     const currentDate = dayjs();
@@ -60,6 +66,8 @@ export const DateFormatter = (): EnsembleFormatter => {
         dayjs(input).diff(currentDate, "month"),
       getYearsDifference: (input: string): number =>
         dayjs(input).diff(currentDate, "year"),
+      humanize: (input: string): string =>
+        dayjs.duration(dayjs(input).diff(currentDate)).humanize(true),
     };
   };
 

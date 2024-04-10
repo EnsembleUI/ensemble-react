@@ -3,6 +3,11 @@ View:
     title:
       Header:
 
+  onLoad:
+    executeCode: |
+      const date = '2024-04-08T18:54:09.063Z'; // change date to see different results
+      console.log(ensemble.formatter.now().humanize(date));
+
   body:
     Column:
       styles:

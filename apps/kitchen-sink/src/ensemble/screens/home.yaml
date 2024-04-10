@@ -4,7 +4,6 @@ View:
       ensemble.storage.set('yyy' , 'page')
       ensemble.storage.set('zzz' , 'button')
       ensemble.storage.set('aaa' , '1')
-
   header:
     title:
       Header:
