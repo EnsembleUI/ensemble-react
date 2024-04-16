@@ -25,7 +25,7 @@ View:
             text: This application is built with Ensemble and serves as a guide for how to implement common UI patterns with Ensemble React.
         - Button:
             styles:
-              className: ${ensemble.storage.get('zzz') + '-' + ensemble.storage.get('aaa')}
+              className: page-1 ${ensemble.storage.get('zzz') + '-' + ensemble.storage.get('aaa')}
             label: Say Hello!
             onTap:
               executeCode: |
