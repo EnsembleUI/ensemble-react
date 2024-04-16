@@ -43,7 +43,7 @@ export const useStyles = <T extends { [key: string]: unknown }>(
   const { classStylesArray, nameStylesArray } = useMemo(() => {
     const stringSplitter = (styles: string): string[] =>
       // eslint-disable-next-line prefer-named-capture-group
-      styles.split(/([a-zA-Z0-9_-]+)\s+(\${.+?})\s+(\w+)/).filter(Boolean);
+      styles.split(/(\s+)*(\${.+?})(\s+)*/g).filter(Boolean);
     return {
       classStylesArray: isString(classStyles)
         ? stringSplitter(classStyles)
@@ -61,7 +61,7 @@ export const useStyles = <T extends { [key: string]: unknown }>(
   });
 
   const styleNames = compact([
-    ...namedStylesArrayEval.map((nameStyle) => `${nameStyle}`),
+    ...namedStylesArrayEval,
     ...classStylesArrayEval.map((className) => `.${className}`),
   ]).join(" ");
 
