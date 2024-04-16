@@ -261,6 +261,55 @@ View:
                           template:
                             Text:
                               text: ${value}
+
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+              gap: 10px
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: DataGrid with sort example
+              - DataGrid:
+                  id: "myDataGridExample3"
+                  styles:
+                    headerStyle:
+                      backgroundColor: "white"
+                      fontSize: "12px"
+                      textColor: "#747184"
+                      hasDivider: true
+                      borderBottom: false
+                  DataColumns:
+                    - label: id
+                      sort:
+                        compareFn: |
+                          a.dummyData.id - b.dummyData.id
+                    - label: title
+                    - label: description
+                  hidePagination: true
+                  onSort:
+                    executeCode: |
+                      // TODO: here this condition is required because sort return undefined when sort on any perticular column has been removed.
+                      if (column_title && sort_order) {
+                        ensemble.invokeAPI('getMockProducts', {'sortBy': column_title, 'sortOrder': sort_order === 'descend' ? 'desc' : 'asc'}).then((res) => {
+                          console.log(res)
+                        })
+                      }
+
+                  item-template:
+                    data: ${ensemble.storage.get('dummyProducts')}
+                    name: dummyData
+                    key: ${dummyData.key}
+                    template:
+                      DataRow:
+                        item-template:
+                          data: ${Object.values(dummyData)}
+                          name: value
+                          template:
+                            Text:
+                              text: ${value}
         - Card:
             styles:
               maxWidth: unset
@@ -942,6 +991,12 @@ API:
     uri: https://dummyjson.com/products?skip=${skip}&limit=10
     inputs:
       - skip
+  getMockProducts:
+    method: GET
+    uri: https://661e111b98427bbbef034208.mockapi.io/products?sortBy=${sortBy}&order=${sortOrder}&limit=10
+    inputs:
+      - sortBy
+      - sortOrder
   getDummyNumbers:
     method: GET
     uri: https://mocki.io/v1/c1f19d68-e6c8-4ae3-848d-d99e588cf224

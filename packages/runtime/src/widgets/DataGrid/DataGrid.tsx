@@ -1,4 +1,5 @@
 import { Table, type TableProps } from "antd";
+import type { SorterResult } from "antd/es/table/interface";
 import {
   Resizable,
   type ResizableProps,
@@ -301,9 +302,12 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   const onSortAction = useEnsembleAction(onSort);
   // page change action
   const onSortActionCallback = useCallback(
-    (sorter: Partial<TableProps["onChange"]>) => {
+    (sorter: SorterResult<unknown>) => {
       if (onSortAction) {
-        onSortAction.callback({ sorter });
+        onSortAction.callback({
+          sort_order: sorter.order,
+          column_title: sorter.column?.title,
+        });
       }
     },
     [onSortAction],
@@ -317,7 +321,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   ) => {
     switch (extra.action) {
       case "sort":
-        onSortActionCallback(sorter);
+        onSortActionCallback(sorter as SorterResult<unknown>);
         break;
 
       default:
