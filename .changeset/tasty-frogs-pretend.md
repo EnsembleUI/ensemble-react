@@ -1,6 +1,7 @@
 ---
+"@ensembleui/react-framework": patch
 "@ensembleui/react-kitchen-sink": patch
 "@ensembleui/react-runtime": patch
 ---
 
-receive updated values from all form elements
+Add initial support for executeActionGroup
