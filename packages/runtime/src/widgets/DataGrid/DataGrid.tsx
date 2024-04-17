@@ -304,13 +304,20 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   const onSortActionCallback = useCallback(
     (sorter: SorterResult<unknown>) => {
       if (onSortAction) {
+        const namedDataObject = namedData?.[0] as { [key: string]: unknown };
+        const dataObject = namedDataObject[sorter.field as string] as {
+          [key: string]: unknown;
+        };
+        const dataObjectKeys = Object.keys(dataObject);
+
         onSortAction.callback({
           sortOrder: sorter.order,
           columnTitle: sorter.column?.title,
+          dataKey: dataObjectKeys[sorter.columnKey as number],
         });
       }
     },
-    [onSortAction],
+    [onSortAction, namedData],
   );
 
   const onChange: TableProps["onChange"] = (
