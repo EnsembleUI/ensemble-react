@@ -292,8 +292,8 @@ View:
                   onSort:
                     executeCode: |
                       // TODO: here this condition is required because sort return undefined when sort on any perticular column has been removed.
-                      if (column_title && sort_order) {
-                        ensemble.invokeAPI('getMockProducts', {'sortBy': column_title, 'sortOrder': sort_order === 'descend' ? 'desc' : 'asc'}).then((res) => {
+                      if (columnTitle && sortOrder) {
+                        ensemble.invokeAPI('getMockProducts', {'sortBy': columnTitle, 'sortOrder': sortOrder === 'descend' ? 'desc' : 'asc'}).then((res) => {
                           console.log(res)
                         })
                       }
