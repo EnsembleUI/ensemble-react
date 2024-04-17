@@ -45,20 +45,16 @@ export type ToggleButtonProps = {
 } & EnsembleWidgetProps<ToggleButtonPropsStyles & EnsembleWidgetStyles>;
 
 export const ToggleButton: React.FC<ToggleButtonProps> = ({
-  id: propId,
+  id,
   value: givenValue,
   items,
   onChange,
   styles,
 }) => {
   const [value, setValue] = useState(givenValue);
-  const { values, rootRef, id } = useRegisterBindings(
-    { value, styles },
-    propId,
-    {
-      setValue,
-    },
-  );
+  const { values, rootRef } = useRegisterBindings({ value, styles }, id, {
+    setValue,
+  });
 
   // onchange action handler
   const action = useEnsembleAction(onChange);
@@ -69,13 +65,10 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
       }
 
       action.callback({
-        [id]: {
-          value: newValue,
-          setValue,
-        },
+        value: newValue,
       });
     },
-    [action, id],
+    [action],
   );
 
   // handle toggle button value change
