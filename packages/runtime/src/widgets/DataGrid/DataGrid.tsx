@@ -304,7 +304,6 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   const onSortActionCallback = useCallback(
     (sorter: SorterResult<unknown>) => {
       if (onSortAction) {
-        console.log({ sorter });
         onSortAction.callback({
           sortOrder: sorter.order,
           columnTitle: sorter.column?.title,
