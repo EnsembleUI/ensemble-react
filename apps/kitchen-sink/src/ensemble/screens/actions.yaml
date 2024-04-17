@@ -395,6 +395,26 @@ View:
                               executeCode: |
                                 console.log('done second!')
 
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: Invoke API response pass to NavigateExternalScreen
+              - Button:
+                  label: Call Action
+                  onTap:
+                    invokeAPI:
+                      name: getDummyProduct
+                      inputs:
+                        id: 1
+                      onResponse:
+                        navigateExternalScreen:
+                          url: ${'http://localhost:4000/actions/'+response.body.price}
+
 API:
   getDummyProducts:
     method: GET
