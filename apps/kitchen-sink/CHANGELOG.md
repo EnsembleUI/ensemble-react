@@ -1,5 +1,28 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.35
+
+### Patch Changes
+
+- f1cf9b0: added support of expression in style and class names
+- 593537d: Added support for onPageChange action handler
+- 8072925: Add functionality to disable create new options in multiselect
+- 12eada9: add humanize method to ensemble formatter
+- 8b6a691: Add initial support for executeActionGroup
+- 3cdf0db: fix navigateExternalScreen API to accept the args from the other actions
+- 887f10a: set value of Radio as undefined instead of "undefined"
+- Updated dependencies [f1cf9b0]
+- Updated dependencies [593537d]
+- Updated dependencies [8072925]
+- Updated dependencies [12eada9]
+- Updated dependencies [8b6a691]
+- Updated dependencies [4c5cba2]
+- Updated dependencies [3cdf0db]
+- Updated dependencies [887f10a]
+- Updated dependencies [87876d7]
+  - @ensembleui/react-framework@0.1.33
+  - @ensembleui/react-runtime@0.1.44
+
 ## 0.0.34
 
 ### Patch Changes
