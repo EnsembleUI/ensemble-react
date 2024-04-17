@@ -1,5 +1,21 @@
 # @ensembleui/react-runtime
 
+## 0.1.44
+
+### Patch Changes
+
+- 593537d: Added support for onPageChange action handler
+- 8072925: Add functionality to disable create new options in multiselect
+- 8b6a691: Add initial support for executeActionGroup
+- 4c5cba2: Added support for onSort action handler in datagrid
+- 3cdf0db: fix navigateExternalScreen API to accept the args from the other actions
+- 887f10a: set value of Radio as undefined instead of "undefined"
+- 87876d7: fix toggle button bindings
+- Updated dependencies [f1cf9b0]
+- Updated dependencies [12eada9]
+- Updated dependencies [8b6a691]
+  - @ensembleui/react-framework@0.1.33
+
 ## 0.1.43
 
 ### Patch Changes

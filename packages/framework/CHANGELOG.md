@@ -1,5 +1,13 @@
 # @ensembleui/react-framework
 
+## 0.1.33
+
+### Patch Changes
+
+- f1cf9b0: added support of expression in style and class names
+- 12eada9: add humanize method to ensemble formatter
+- 8b6a691: Add initial support for executeActionGroup
+
 ## 0.1.32
 
 ### Patch Changes
