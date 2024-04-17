@@ -1,4 +1,5 @@
-import { Table } from "antd";
+import { Table, type TableProps } from "antd";
+import type { SorterResult } from "antd/es/table/interface";
 import {
   Resizable,
   type ResizableProps,
@@ -85,6 +86,7 @@ export type GridProps = {
   scroll?: DataGridScrollable;
   onScrollEnd?: EnsembleAction;
   onPageChange?: EnsembleAction;
+  onSort?: EnsembleAction;
   pageSize?: number;
 } & EnsembleWidgetProps<DataGridStyles>;
 
@@ -140,6 +142,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     "item-template": itemTemplate,
     onScrollEnd,
     onPageChange,
+    onSort,
     ...rest
   } = props;
   const [selectionType, setSelectionType] = useState<"checkbox" | "radio">(
@@ -296,12 +299,50 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     return { onChange: handlePageChange, pageSize: values?.pageSize };
   }, [values?.hidePagination, values?.pageSize]);
 
+  const onSortAction = useEnsembleAction(onSort);
+  // page change action
+  const onSortActionCallback = useCallback(
+    (sorter: SorterResult<unknown>) => {
+      if (onSortAction) {
+        const namedDataObject = namedData?.[0] as { [key: string]: unknown };
+        const dataObject = namedDataObject[sorter.field as string] as {
+          [key: string]: unknown;
+        };
+        const dataObjectKeys = Object.keys(dataObject);
+
+        onSortAction.callback({
+          sortOrder: sorter.order,
+          columnTitle: sorter.column?.title,
+          dataKey: dataObjectKeys[sorter.columnKey as number],
+        });
+      }
+    },
+    [onSortAction, namedData],
+  );
+
+  const onChange: TableProps["onChange"] = (
+    pagination,
+    filters,
+    sorter,
+    extra,
+  ) => {
+    switch (extra.action) {
+      case "sort":
+        onSortActionCallback(sorter as SorterResult<unknown>);
+        break;
+
+      default:
+        break;
+    }
+  };
+
   return (
     <div id={resolvedWidgetId} ref={containerRef}>
       <Table
         components={components}
         dataSource={namedData}
         key={resolvedWidgetId}
+        onChange={onChange}
         onRow={(record, recordIndex) => {
           return { onClick: () => onTapActionCallback(record, recordIndex) };
         }}
