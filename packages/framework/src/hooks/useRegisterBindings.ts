@@ -1,12 +1,12 @@
 import type { RefCallback } from "react";
 import { useEffect, useMemo } from "react";
-import { debounce, get, isEmpty, isString, keys, merge } from "lodash-es";
+import { get, isEmpty, isString, keys, debounce } from "lodash-es";
 import isEqual from "react-fast-compare";
 import type { InvokableMethods } from "../state";
 import { useWidgetId } from "./useWidgetId";
 import { useHtmlPassThrough } from "./useHtmlPassThrough";
 import { useWidgetState } from "./useWidgetState";
-import { useStyleNames } from "./useStyleNames";
+import { useStyles } from "./useStyles";
 import { useEvaluate } from "./useEvaluate";
 
 export interface RegisterBindingsResult<T> {
@@ -33,20 +33,14 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
 
   const [widgetState, setWidgetState] = useWidgetState<T>(resolvedWidgetId);
 
-  const namedStyles = get(values, ["styles", "names"]) as unknown;
-  const classStyles = get(values, ["styles", "className"]) as unknown;
+  const styles = useStyles(values);
 
-  const styleProperties = useStyleNames(
-    isString(namedStyles) ? namedStyles : "",
-    isString(classStyles) ? classStyles : "",
+  const newValues = useEvaluate(
+    { ...values, ...(isEmpty(styles) ? {} : { styles }) },
+    {
+      debugId: resolvedWidgetId,
+    },
   );
-
-  const styles = merge({}, styleProperties, values.styles);
-  if (!isEmpty(styles)) {
-    merge(values, { styles });
-  }
-
-  const newValues = useEvaluate(values, { debugId: resolvedWidgetId });
 
   const debounceSetState = useMemo(
     () => debounce(setWidgetState, options?.debounceMs ?? 0, { leading: true }),
