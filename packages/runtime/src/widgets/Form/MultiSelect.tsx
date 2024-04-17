@@ -40,6 +40,7 @@ export type MultiSelectProps = {
   items?: Expression<SelectOption[]>;
   onItemSelect?: EnsembleAction;
   hintStyle?: EnsembleWidgetStyles;
+  allowCreateOptions?: boolean;
 } & EnsembleWidgetProps<MultiSelectStyles> &
   FormInputProps<string[]>;
 
@@ -127,12 +128,11 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   };
 
   const handleSearch = (value: string): void => {
-    if (
-      values?.options.some((option) =>
-        option.label.toString().toLowerCase().startsWith(value.toLowerCase()),
-      )
-    )
-      setNewOption("");
+    const isOptionExist = values?.options.some((option) =>
+      option.label.toString().toLowerCase().startsWith(value.toLowerCase()),
+    );
+
+    if (isOptionExist || !values?.allowCreateOptions) setNewOption("");
     else {
       setNewOption(value);
     }
@@ -260,7 +260,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
                 ?.startsWith(input.toLowerCase()) || false
             }
             id={values?.id}
-            mode="tags"
+            mode={values?.allowCreateOptions ? "tags" : "multiple"}
             notFoundContent="No Results"
             onChange={handleChange}
             onSearch={handleSearch}
