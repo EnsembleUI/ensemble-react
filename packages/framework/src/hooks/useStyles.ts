@@ -5,7 +5,6 @@ import {
   get,
   intersection,
   isEmpty,
-  isString,
   keys,
   merge,
   omit,
@@ -35,40 +34,28 @@ const resolveStyleNames = (
 export const useStyles = <T extends { [key: string]: unknown }>(
   values: T,
 ): CSSProperties | undefined => {
-  const namedStyles = get(values, ["styles", "names"]) as unknown;
-  const classStyles = get(values, ["styles", "className"]) as unknown;
+  const namedStyles = get(values, ["styles", "names"]) as string;
+  const classStyles = get(values, ["styles", "className"]) as string;
 
   const themeContext = useAtomValue(themeAtom);
 
-  const { classStylesArray, nameStylesArray } = useMemo(() => {
-    const stringSplitter = (styles: string): string[] =>
-      // eslint-disable-next-line prefer-named-capture-group
-      styles.split(/(\s+)*(\${.+?})(\s+)*/g).filter(Boolean);
-    return {
-      classStylesArray: isString(classStyles)
-        ? stringSplitter(classStyles)
-        : [],
-      nameStylesArray: isString(namedStyles) ? stringSplitter(namedStyles) : [],
-    };
-  }, [classStyles, namedStyles]);
-
-  const {
-    classStylesArray: classStylesArrayEval,
-    nameStylesArray: namedStylesArrayEval,
-  } = useEvaluate({
-    classStylesArray,
-    nameStylesArray,
-  });
+  const { classStyles: classStylesEval, namedStyles: namedStylesEval } =
+    useEvaluate({
+      classStyles: `\${\`${classStyles || ""}\`}`,
+      namedStyles: `\${\`${namedStyles || ""}\`}`,
+    });
 
   const styleNames = compact([
-    ...namedStylesArrayEval,
-    ...classStylesArrayEval.map((className) => `.${className}`),
+    ...(classStylesEval.trim()
+      ? classStylesEval.split(" ").map((className) => `.${className}`)
+      : []),
+    ...[namedStylesEval.trim()],
   ]).join(" ");
 
   const styleProperties = useMemo(() => {
-    if (styleNames.length && themeContext) {
-      return resolveStyleNames(styleNames.split(" "), themeContext);
-    }
+    return styleNames && themeContext
+      ? resolveStyleNames(styleNames.split(" "), themeContext)
+      : undefined;
   }, [styleNames, themeContext]);
 
   return useMemo(() => {
