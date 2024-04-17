@@ -45,12 +45,14 @@ export const useStyles = <T extends { [key: string]: unknown }>(
       namedStyles: `\${\`${namedStyles || ""}\`}`,
     });
 
-  const styleNames = compact([
-    ...(classStylesEval.trim()
-      ? classStylesEval.split(" ").map((className) => `.${className}`)
-      : []),
-    ...[namedStylesEval.trim()],
-  ]).join(" ");
+  const styleNames = compact(
+    classStylesEval
+      .trim()
+      .split(" ")
+      .map((className) => `.${className}`),
+  )
+    .join(" ")
+    .concat(` ${namedStylesEval.trim()}`);
 
   const styleProperties = useMemo(() => {
     return styleNames && themeContext
