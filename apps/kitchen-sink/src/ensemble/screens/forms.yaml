@@ -42,6 +42,7 @@ View:
                   onSubmit:
                     executeCode:
                       body: |
+                        console.log(vals)
                         const formattedVals = JSON.stringify(vals, null, 2)
                         console.log(formattedVals)
                         result.setText(formattedVals)
