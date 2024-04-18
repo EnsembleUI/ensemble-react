@@ -146,6 +146,7 @@ View:
                     executeCode: |
                       console.log("data", selectedRows, selectedRowKeys);
                   allowSelection: true
+                  selectionType: radio
                   allowResizableColumns: true
                   styles:
                     headerStyle:
