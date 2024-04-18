@@ -465,14 +465,13 @@ View:
                     backgroundColor: lime
               - Progress:
                   display: linear
-                  filledPercentage: 75
                   styles:
                     color: ${colors.primary['600']}
                     thickness: 4
                     backgroundColor: ${colors.light['300']}
               - Progress:
                   display: linear
-                  filledPercentage: 33
+                  filledPercentage: 0
                   styles:
                     color: ${colors.primary['600']}
                     thickness: 4
