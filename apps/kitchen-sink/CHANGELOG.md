@@ -1,5 +1,15 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.36
+
+### Patch Changes
+
+- df66279: support for radio type in DataGrid
+- f801ba7: show empty progress bar when filledPercentage is 0
+- Updated dependencies [df66279]
+- Updated dependencies [f801ba7]
+  - @ensembleui/react-runtime@0.1.45
+
 ## 0.0.35
 
 ### Patch Changes

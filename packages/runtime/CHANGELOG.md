@@ -1,5 +1,12 @@
 # @ensembleui/react-runtime
 
+## 0.1.45
+
+### Patch Changes
+
+- df66279: support for radio type in DataGrid
+- f801ba7: show empty progress bar when filledPercentage is 0
+
 ## 0.1.44
 
 ### Patch Changes
