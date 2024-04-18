@@ -50,6 +50,16 @@ const config: Config = {
 const output_path = "apps/preview/public/schema/react/ensemble_schema.json";
 
 const schema = tsj.createGenerator(config).createSchema(config.type);
+// create separate schema for CustomWidgetUsage since it is not used by the main schema
+const customWidgetUsageSchema = tsj
+  .createGenerator(config)
+  .createSchema("CustomWidgetUsage");
+
+// merge the two schemas. Note the use of definitions instead of $defs (we convert to $defs later)
+schema.definitions!["CustomWidgetUsage"] = {
+  type: "object",
+  properties: customWidgetUsageSchema.properties,
+};
 const schemaString = JSON.stringify(postProcessing(schema), null, 2);
 // hack because current generator chokes on generics when generating ref
 // .replace(/%3C/g, "<").replace(/%3E/g, ">").replace(/%2C/g, ",").replace(/%7C/g, '|');
