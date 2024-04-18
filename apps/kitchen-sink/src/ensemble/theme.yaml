@@ -49,9 +49,12 @@ Tokens:
       light: 300
       extraLight: 200
       thin: 100
+
 Styles:
   .button-1:
     backgroundColor: ${colors.primary['500']}
+  .page-1:
+    color: ${colors.primary['300']}
   page:
     padding: ${spacing.pagePadding}
   heading-1:
