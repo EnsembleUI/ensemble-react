@@ -89,6 +89,7 @@ export type GridProps = {
   onPageChange?: EnsembleAction;
   onSort?: EnsembleAction;
   pageSize?: number;
+  totalRows?: number;
 } & EnsembleWidgetProps<DataGridStyles>;
 
 function djb2Hash(str: string): number {
@@ -279,7 +280,11 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   const onPageChangeActionCallback = useCallback(
     (page: number) => {
       if (onPageChangeAction) {
-        onPageChangeAction.callback({ page, pageSize: values?.pageSize });
+        onPageChangeAction.callback({
+          page,
+          pageSize: values?.pageSize,
+          totalRows: values?.totalRows,
+        });
       }
     },
     [onPageChangeAction],
@@ -291,14 +296,18 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   };
 
   const paginationObject = useMemo(() => {
-    const { hidePagination, pageSize } = values ?? {};
+    const { hidePagination, pageSize, totalRows } = values ?? {};
 
     if (hidePagination || pageSize === undefined || pageSize < 1) {
       return false;
     }
 
-    return { onChange: handlePageChange, pageSize: values?.pageSize };
-  }, [values?.hidePagination, values?.pageSize]);
+    return {
+      onChange: handlePageChange,
+      pageSize,
+      total: totalRows,
+    };
+  }, [values]);
 
   const onSortAction = useEnsembleAction(onSort);
   // page change action
