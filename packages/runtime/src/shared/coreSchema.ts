@@ -48,27 +48,31 @@ export interface Event {
 /**
  * used by the custom widgets to dispatch events that then are handled by the outside
  */
-export interface CustomEvent {
-  [key: string]: {
-    /** The event payload to dispatch */
-    data?: { [key: string]: unknown };
-  };
-}
-// definition for a Custom Widget
 export interface CustomWidget {
   /** Execute an Action when the widget renders. This will happen after the widget's content has been initially rendered, so you may reference the widget's contents by their IDs. */
   onLoad?: EnsembleAction;
-  /** Define the list of input names that this widget accepts */
+  /** Define the input names that this widget expects. */
   inputs?: string[];
-  /** Define events that this custom widget may dispatch along with their optional data */
-  events?: { [key: string]: unknown };
+  /** Define events that this widget may dispatch along with their optional data */
+  events?: { [key: string]: CustomWidgetEvent };
   /** Define the widget to render as the body */
   body?: Widget;
 }
 
-// usage of a Custom Widget as a Widget
-export interface CustomWidgetReference {
+/** @groupDisplay flatten */
+export interface CustomWidgetEvent {
+  /** Define the list of named data that this Event will dispatch. Each item can be accessed on the caller with 'event.data.<name>' */
+  data?: { [key: string]: null };
+}
+
+// definition for using a Custom Widget
+// Note that this is not linked to any definition (see Widget for why),
+// so we generate it separately and inject it into the schema $defs.
+// Be careful when changing this name as we look for it in the code.
+export interface CustomWidgetUsage {
+  /** Set the keys and values that the widget expects as inputs */
   inputs?: { [key: string]: unknown };
+  /** Handle events that may be dispatched by the widget */
   events?: { [key: string]: EnsembleAction };
 }
 
