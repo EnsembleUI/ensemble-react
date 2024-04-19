@@ -26,7 +26,7 @@ View:
         - Button:
             styles:
               className: page-1 ${ensemble.storage.get('zzz') + '-' + ensemble.storage.get('aaa')}
-            label: Say Hello!
+            label: ${productTitleName}
             onTap:
               executeCode: |
                 // Calls a function defined in test.js
@@ -52,3 +52,6 @@ View:
 
 Global:
   scriptName: test.js
+
+Import:
+  - common

@@ -50,6 +50,10 @@ export const screenGlobalScriptAtom = focusAtom(screenAtom, (optic) =>
   optic.prop("model").optional().prop("global"),
 );
 
+export const screenImportScriptAtom = focusAtom(screenAtom, (optic) =>
+  optic.prop("model").optional().prop("importedScripts"),
+);
+
 export const useScreenData = (): { apis?: EnsembleAPIModel[] } & Pick<
   ScreenContextDefinition,
   "data"
