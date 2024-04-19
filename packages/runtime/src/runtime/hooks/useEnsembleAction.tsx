@@ -168,12 +168,6 @@ export const useExecuteCode: EnsembleActionHook<
                     screenData,
                     apiName,
                     apiInputs,
-                    {
-                      ...customScope,
-                      ensemble: {
-                        env: appContext?.env,
-                      },
-                    },
                   );
                   return apiRes;
                 },
