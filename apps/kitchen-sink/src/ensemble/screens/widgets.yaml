@@ -238,7 +238,8 @@ View:
                       hasDivider: true
                       borderBottom: false
                   DataColumns: ["id", "title", "description"]
-                  pageSize: 3
+                  pageSize: 10
+                  totalRows: 100
                   onPageChange:
                     invokeAPI:
                       name: getDummyProductsByPaginate
