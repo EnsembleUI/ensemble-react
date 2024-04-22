@@ -1,5 +1,18 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.37
+
+### Patch Changes
+
+- 8a0b3a1: added defaultSelected Row in datagrid
+- 0730867: Added support for import scripts
+- c923f2a: fix search input infinite render issue
+- Updated dependencies [8a0b3a1]
+- Updated dependencies [0730867]
+- Updated dependencies [c923f2a]
+  - @ensembleui/react-runtime@0.1.46
+  - @ensembleui/react-framework@0.1.34
+
 ## 0.0.36
 
 ### Patch Changes
