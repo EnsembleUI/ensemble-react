@@ -1,5 +1,10 @@
-import type { ReactElement } from "react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useMemo,
+  type ReactElement,
+} from "react";
 import { useDebounce } from "react-use";
 import {
   useTemplateData,
@@ -13,7 +18,7 @@ import type {
 } from "@ensembleui/react-framework";
 import { AutoComplete, Input } from "antd";
 import { SearchOutlined } from "@mui/icons-material";
-import { get, isArray, isEmpty, isNumber, isObject } from "lodash-es";
+import { get, isEmpty, isNull, isNumber, isObject } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type {
   EnsembleWidgetProps,
@@ -48,16 +53,14 @@ export const Search: React.FC<SearchProps> = ({
   const [options, setOptions] = useState<{ label: string; value: unknown }[]>(
     [],
   );
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState<string | null>(null);
   const [value, setValue] = useState("");
-  const [filteredOptions, setFilteredOptions] = useState<
-    { label: string; value: unknown }[]
-  >([]);
 
   const { namedData } = useTemplateData({
     data: itemTemplate?.data,
     name: itemTemplate?.name,
   });
+
   const { rootRef, values } = useRegisterBindings(
     { styles, value, options, ...rest },
     id,
@@ -66,18 +69,24 @@ export const Search: React.FC<SearchProps> = ({
       setOptions,
     },
   );
+
   const onSearchAction = useEnsembleAction(onSearch);
   const onChangeAction = useEnsembleAction(onChange);
   const onSelectAction = useEnsembleAction(onSelect);
 
   useEffect(() => {
-    if (!isArray(namedData)) {
+    if (isEmpty(namedData)) {
       return;
     }
+
     const newOptions = namedData.map((item) => {
+      const itemData = itemTemplate?.name
+        ? (get(item, itemTemplate.name) as unknown)
+        : item;
+
       const option = {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        value: isObject(item) ? get(item, searchKey ?? "") : item,
+        value: isObject(itemData) ? get(itemData, searchKey ?? "") : itemData,
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         label: itemTemplate?.template ? (
@@ -86,36 +95,35 @@ export const Search: React.FC<SearchProps> = ({
             template={itemTemplate.template}
           />
         ) : (
-          get(item, searchKey ?? "")
+          get(itemData, searchKey ?? "")
         ),
       };
       return option;
     });
     setOptions(newOptions);
-    setFilteredOptions(newOptions);
-  }, [itemTemplate?.template, namedData, searchKey, setOptions, value]);
+  }, [itemTemplate, namedData, searchKey, setOptions, value]);
 
-  // TODO: Pass in search predicate function via props or filter via API
-  const handleSearch = useCallback(
-    (search: string): void => {
-      setSearchValue(search);
+  const filteredOptions = useMemo(() => {
+    const x = searchValue?.trim().length
+      ? options.filter((item) =>
+          item.value
+            ?.toString()
+            ?.toLowerCase()
+            ?.includes(searchValue.trim().toLowerCase()),
+        )
+      : options;
 
-      const matchingOptions = options.filter((item) =>
-        item.value?.toString()?.toLowerCase()?.includes(search.toLowerCase()),
-      );
-      setFilteredOptions(matchingOptions);
-    },
-    [options],
-  );
+    return x;
+  }, [options, searchValue]);
 
   useDebounce(
     () => {
-      if (onSearchAction?.callback && !isEmpty(searchValue)) {
+      if (onSearchAction?.callback && !isNull(searchValue)) {
         onSearchAction.callback({ search: searchValue });
       }
     },
     onSearch?.debounceMs,
-    [onSearchAction, searchValue],
+    [searchValue],
   );
 
   const handleChange = useCallback(
@@ -139,7 +147,7 @@ export const Search: React.FC<SearchProps> = ({
         allowClear
         id={id}
         onChange={handleChange}
-        onSearch={handleSearch}
+        onSearch={(search): void => setSearchValue(search)}
         onSelect={handleSelect}
         options={filteredOptions}
         popupMatchSelectWidth={

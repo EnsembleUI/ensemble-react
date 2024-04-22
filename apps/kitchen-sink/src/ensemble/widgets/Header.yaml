@@ -26,12 +26,12 @@ Widget:
               borderColor: "#B8BED6"
             placeholder: Search
             item-template:
-              data: searchUsers.body.users
+              data: ${findUsers.body.users}
               name: user
               template:
                 Text:
                   text: ${user.firstName}
-            searchKey: email
+            searchKey: firstName
             onSearch:
               invokeAPI:
                 name: findUsers
