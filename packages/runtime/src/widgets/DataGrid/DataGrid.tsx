@@ -76,6 +76,7 @@ export type GridProps = {
   selectionType?: "checkbox" | "radio";
   allowResizableColumns?: boolean;
   onRowsSelected?: EnsembleAction;
+  defaultSelectedRowKeys?: string[];
   DataColumns: Expression<DataColumn[] | string[]>;
   "item-template": {
     data: Expression<object>;
@@ -371,6 +372,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
                   setRowsSelected(selectedRows);
                   return onRowsSelectedCallback(selectedRowKeys, selectedRows);
                 },
+                defaultSelectedRowKeys: values?.defaultSelectedRowKeys,
               }
             : undefined
         }

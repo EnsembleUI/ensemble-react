@@ -148,6 +148,7 @@ View:
                   allowSelection: true
                   selectionType: radio
                   allowResizableColumns: true
+                  defaultSelectedRowKeys: ["2"]
                   styles:
                     headerStyle:
                       backgroundColor: "white"
@@ -162,15 +163,15 @@ View:
                   item-template:
                     data:
                       [
-                        { key: "1", patient: "John", advocate: "Mike Ross" },
+                        { id: "1", patient: "John", advocate: "Mike Ross" },
                         {
-                          key: "2",
+                          id: "2",
                           patient: "Reuben",
                           advocate: "Harvey Dent",
                         },
                       ]
                     name: dummyData
-                    key: ${dummyData.key}
+                    key: ${dummyData.id}
                     template:
                       DataRow:
                         children:
