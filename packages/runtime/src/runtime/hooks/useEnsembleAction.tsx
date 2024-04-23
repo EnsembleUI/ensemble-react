@@ -541,8 +541,8 @@ export const useActionGroup: EnsembleActionHook<ExecuteActionGroupAction> = (
     return useEnsembleAction(act);
   });
 
-  const callback = (): void => {
-    execActs.forEach((act) => act?.callback());
+  const callback = (args: unknown): void => {
+    execActs.forEach((act) => act?.callback(args));
   };
 
   return { callback };
