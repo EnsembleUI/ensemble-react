@@ -164,11 +164,7 @@ View:
                     data:
                       [
                         { id: "1", patient: "John", advocate: "Mike Ross" },
-                        {
-                          id: "2",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
+                        { id: "2", patient: "Reuben", advocate: "Harvey Dent" },
                       ]
                     name: dummyData
                     key: ${dummyData.id}
@@ -719,6 +715,7 @@ View:
                 body: |-
                   console.log(dateRange1.value);
         - Button:
+            id: helloText
             label: Hello
             onTap:
               executeCode: |
@@ -796,6 +793,11 @@ View:
               - Markdown:
                   text: |
                     ### Toggle Button
+              - Text:
+                  id: toggleButtonText
+                  text: button 1
+                  styles:
+                    visible: false
               - ToggleButton:
                   id: toggleButtonWidget
                   styles:
@@ -808,16 +810,15 @@ View:
                     selectedColor: ${colors.gray['900']}
                     selectedBackgroundColor: ${colors.gray['100']}
                     selectedBorderColor: ${colors.gray['200']}
-                  value: button 1
+                  value: ${toggleButtonText.text}
                   items:
                     - label: Button 1
                       value: button 1
                     - label: Button 2
                       value: button 2
                   onChange:
-                    executeCode:
-                      body: |-
-                        console.log('toggle button changed: ' + toggleButtonWidget.value);
+                    executeCode: |-
+                      console.log('toggle button changed: ' + value);
 
         - Card:
             styles:
