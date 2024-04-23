@@ -18,7 +18,7 @@ import type {
 } from "@ensembleui/react-framework";
 import { AutoComplete, Input } from "antd";
 import { SearchOutlined } from "@mui/icons-material";
-import { get, isEmpty, isNull, isNumber, isObject } from "lodash-es";
+import { get, isEmpty, isNull, isNumber } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type {
   EnsembleWidgetProps,
@@ -50,11 +50,11 @@ export const Search: React.FC<SearchProps> = ({
   onSelect,
   ...rest
 }) => {
-  const [options, setOptions] = useState<{ label: string; value: unknown }[]>(
-    [],
-  );
+  const [options, setOptions] = useState<
+    { label: string | ReactElement; value: unknown; data: unknown }[]
+  >([]);
   const [searchValue, setSearchValue] = useState<string | null>(null);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState<unknown>();
 
   const { namedData } = useTemplateData({
     data: itemTemplate?.data,
@@ -84,18 +84,17 @@ export const Search: React.FC<SearchProps> = ({
         ? (get(item, itemTemplate.name) as unknown)
         : item;
 
+      const optionValue = get(itemData, searchKey ?? "") as unknown;
       const option = {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        value: isObject(itemData) ? get(itemData, searchKey ?? "") : itemData,
-
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        data: itemData,
+        value: optionValue,
         label: itemTemplate?.template ? (
           <SearchOption
             context={item as CustomScope}
             template={itemTemplate.template}
           />
         ) : (
-          get(itemData, searchKey ?? "")
+          JSON.stringify(optionValue)
         ),
       };
       return option;
@@ -104,17 +103,17 @@ export const Search: React.FC<SearchProps> = ({
   }, [itemTemplate, namedData, searchKey, setOptions, value]);
 
   const filteredOptions = useMemo(() => {
-    const x = searchValue?.trim().length
-      ? options.filter((item) =>
-          item.value
-            ?.toString()
-            ?.toLowerCase()
-            ?.includes(searchValue.trim().toLowerCase()),
-        )
-      : options;
-
-    return x;
-  }, [options, searchValue]);
+    // We assume the search callback does the result filtering
+    if (onSearchAction?.callback) {
+      return options;
+    }
+    if (!searchValue?.trim().length) {
+      return options;
+    }
+    return options.filter(({ value: optionValue }) =>
+      JSON.stringify(optionValue).includes(searchValue.trim()),
+    );
+  }, [onSearchAction?.callback, options, searchValue]);
 
   useDebounce(
     () => {
@@ -134,11 +133,14 @@ export const Search: React.FC<SearchProps> = ({
   );
 
   const handleSelect = useCallback(
-    (selectedValue: string): void => {
-      setValue(selectedValue);
-      onSelectAction?.callback({ value: selectedValue });
+    (selectedValue: unknown): void => {
+      const selectedData = options.find(
+        ({ value: optionValue }) => optionValue === selectedValue,
+      )?.data;
+      setValue(selectedData);
+      onSelectAction?.callback({ value: selectedData });
     },
-    [onSelectAction],
+    [onSelectAction, options],
   );
 
   return (
