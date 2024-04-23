@@ -37,6 +37,9 @@ Widget:
                 name: findUsers
                 inputs:
                   search: ${search}
+            onSelect:
+              executeCode: |
+                console.log(value)
         - Row:
             styles:
               gap: 10
