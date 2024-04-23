@@ -167,6 +167,11 @@ export const DataGrid: React.FC<GridProps> = (props) => {
       setPageSize,
     },
   );
+
+  useEffect(() => {
+    setPageSize(values?.pageSize);
+  }, [values?.pageSize]);
+
   const { namedData } = useTemplateData({ ...itemTemplate });
   const headerStyle = values?.styles?.headerStyle;
   const onTapAction = useEnsembleAction(itemTemplate.template.properties.onTap);
