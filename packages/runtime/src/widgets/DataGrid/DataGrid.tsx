@@ -6,6 +6,7 @@ import {
   type ResizableState,
 } from "react-resizable";
 import {
+  useEnsembleStorage,
   useTemplateData,
   type Expression,
   type EnsembleWidget,
@@ -290,12 +291,16 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     [onPageChangeAction],
   );
 
+  const storage = useEnsembleStorage();
+
   // handle page change
   const handlePageChange = (page: number): void => {
+    storage.set(resolvedWidgetId, { page });
     onPageChangeActionCallback(page);
   };
 
   const paginationObject = useMemo(() => {
+    const currentDataGrid = storage.get(resolvedWidgetId);
     const { hidePagination, pageSize, totalRows } = values ?? {};
 
     if (hidePagination || pageSize === undefined || pageSize < 1) {
@@ -306,8 +311,9 @@ export const DataGrid: React.FC<GridProps> = (props) => {
       onChange: handlePageChange,
       pageSize,
       total: totalRows,
+      defaultCurrent: get(currentDataGrid, "page"),
     };
-  }, [values]);
+  }, [values, resolvedWidgetId, storage]);
 
   const onSortAction = useEnsembleAction(onSort);
   // page change action
