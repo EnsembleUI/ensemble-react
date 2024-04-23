@@ -3,6 +3,8 @@ View:
     executeCode:
       body: |-
         ensemble.storage.set('activeIndex',3);
+        ensemble.storage.set('loaderStat', false);
+
       onComplete:
         invokeApi:
           name: getDummyProductsByPaginate
@@ -228,41 +230,50 @@ View:
                   styles:
                     names: heading-3
                   text: DataGrid with item-template inside dataRow
-              - DataGrid:
-                  id: "myDataGridExample2"
-                  styles:
-                    headerStyle:
-                      backgroundColor: "white"
-                      fontSize: "12px"
-                      textColor: "#747184"
-                      hasDivider: true
-                      borderBottom: false
-                  DataColumns: ["id", "title", "description"]
-                  pageSize: 10
-                  totalRows: 100
-                  onPageChange:
-                    invokeAPI:
-                      name: getDummyProductsByPaginate
-                      inputs:
-                        skip: ${ensemble.storage.get('skip') + page}
-                      onResponse:
-                        executeCode: |
-                          const prevItem = ensemble.storage.get("dummyProducts")
-                          const res = response.body.products;
-                          ensemble.storage.set("skip", ensemble.storage.get('skip') + page)
-                          ensemble.storage.set("dummyProducts", [...prevItem, ...res])
-                  item-template:
-                    data: ${ensemble.storage.get('dummyProducts')}
-                    name: dummyData
-                    key: ${dummyData.key}
-                    template:
-                      DataRow:
-                        item-template:
-                          data: ${Object.values(dummyData)}
-                          name: value
-                          template:
-                            Text:
-                              text: ${value}
+              - Button:
+                  label: toggle
+                  onTap:
+                    executeCode: |
+                      ensemble.storage.set('loaderStat', !ensemble.storage.get('loaderStat'))
+
+              - LoadingContainer:
+                  isLoading: ${ensemble.storage.get('loaderStat')}
+                  widget:
+                    DataGrid:
+                      id: "myDataGridExample2"
+                      styles:
+                        headerStyle:
+                          backgroundColor: "white"
+                          fontSize: "12px"
+                          textColor: "#747184"
+                          hasDivider: true
+                          borderBottom: false
+                      DataColumns: ["id", "title", "description"]
+                      pageSize: 10
+                      totalRows: 100
+                      onPageChange:
+                        invokeAPI:
+                          name: getDummyProductsByPaginate
+                          inputs:
+                            skip: ${ensemble.storage.get('skip') * (page - 1)}
+                          onResponse:
+                            executeCode: |
+                              console.log(pageSize)
+                              const prevItem = ensemble.storage.get("dummyProducts")
+                              const res = response.body.products;
+                              ensemble.storage.set("dummyProducts", [...res])
+                      item-template:
+                        data: ${ensemble.storage.get('dummyProducts')}
+                        name: dummyData
+                        key: ${dummyData.key}
+                        template:
+                          DataRow:
+                            item-template:
+                              data: ${Object.values(dummyData)}
+                              name: value
+                              template:
+                                Text:
+                                  text: ${value}
 
         - Card:
             styles:

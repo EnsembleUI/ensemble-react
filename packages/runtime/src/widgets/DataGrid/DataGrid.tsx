@@ -137,6 +137,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   const [colWidth, setColWidth] = useState<{
     [key: number]: number | undefined;
   }>({});
+
   const [rowsSelected, setRowsSelected] = useState<object[]>();
   const [allowSelection, setAllowSelection] = useState(
     props.allowSelection ?? false,
@@ -148,6 +149,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     onSort,
     ...rest
   } = props;
+  const [pageSize, setPageSize] = useState<number | undefined>(props?.pageSize);
   const [selectionType, setSelectionType] = useState<"checkbox" | "radio">(
     props?.selectionType ? props.selectionType : "checkbox",
   );
@@ -156,12 +158,13 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     id: resolvedWidgetId,
     values,
   } = useRegisterBindings(
-    { ...rest, rowsSelected, selectionType, allowSelection },
+    { ...rest, rowsSelected, selectionType, allowSelection, pageSize },
     props.id,
     {
       setRowsSelected,
       setSelectionType,
       setAllowSelection,
+      setPageSize,
     },
   );
   const { namedData } = useTemplateData({ ...itemTemplate });
@@ -279,11 +282,11 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   const onPageChangeAction = useEnsembleAction(onPageChange);
   // page change action
   const onPageChangeActionCallback = useCallback(
-    (page: number) => {
+    (page: number, newPageSize: number) => {
       if (onPageChangeAction) {
         onPageChangeAction.callback({
           page,
-          pageSize: values?.pageSize,
+          pageSize: newPageSize,
           totalRows: values?.totalRows,
         });
       }
@@ -294,14 +297,15 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   const storage = useEnsembleStorage();
 
   // handle page change
-  const handlePageChange = (page: number): void => {
-    storage.set(resolvedWidgetId, { page });
-    onPageChangeActionCallback(page);
+  const handlePageChange = (page: number, newPageSize: number): void => {
+    storage.set(resolvedWidgetId, { page, pageSize: newPageSize });
+    setPageSize(newPageSize);
+    onPageChangeActionCallback(page, newPageSize);
   };
 
   const paginationObject = useMemo(() => {
     const currentDataGrid = storage.get(resolvedWidgetId);
-    const { hidePagination, pageSize, totalRows } = values ?? {};
+    const { hidePagination, totalRows } = values ?? {};
 
     if (hidePagination || pageSize === undefined || pageSize < 1) {
       return false;
@@ -313,7 +317,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
       total: totalRows,
       defaultCurrent: get(currentDataGrid, "page"),
     };
-  }, [values, resolvedWidgetId, storage]);
+  }, [values, pageSize, resolvedWidgetId, storage]);
 
   const onSortAction = useEnsembleAction(onSort);
   // page change action
