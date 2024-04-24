@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import { createJSONStorage, atomWithStorage } from "jotai/utils";
-import { clone, merge } from "lodash-es";
+import { clone, cloneDeep } from "lodash-es";
 import { useMemo } from "react";
 
 export interface EnsembleStorage {
@@ -37,7 +37,7 @@ export const createStorageApi = (
   return {
     set: (key: string, value: unknown): void => {
       if (storage) {
-        storage[key] = value;
+        storage[key] = cloneDeep(value);
         setStorage?.(clone(storage));
       }
     },
