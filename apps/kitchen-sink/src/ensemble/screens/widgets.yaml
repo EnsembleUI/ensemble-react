@@ -4,16 +4,17 @@ View:
       body: |-
         ensemble.storage.set('activeIndex',3);
         ensemble.storage.set('loaderStat', false);
+        ensemble.storage.set("skip", 10)
 
       onComplete:
         invokeApi:
           name: getDummyProductsByPaginate
           inputs:
             skip: 0
+            limit: 10
           onResponse:
             executeCode: |
               const res = response.body.products;
-              ensemble.storage.set("skip", 10)
               ensemble.storage.set("dummyProducts", res);
 
   header:
@@ -256,9 +257,9 @@ View:
                           name: getDummyProductsByPaginate
                           inputs:
                             skip: ${ensemble.storage.get('skip') * (page - 1)}
+                            limit: ${pageSize}
                           onResponse:
                             executeCode: |
-                              console.log(pageSize)
                               const prevItem = ensemble.storage.get("dummyProducts")
                               const res = response.body.products;
                               ensemble.storage.set("dummyProducts", [...res])
@@ -1000,9 +1001,10 @@ API:
     uri: https://dummyjson.com/products
   getDummyProductsByPaginate:
     method: GET
-    uri: https://dummyjson.com/products?skip=${skip}&limit=10
+    uri: https://dummyjson.com/products?skip=${skip}&limit=${limit}
     inputs:
       - skip
+      - limit
   getMockProducts:
     method: GET
     uri: https://661e111b98427bbbef034208.mockapi.io/products?sortBy=${sortBy}&order=${sortOrder}&limit=10
