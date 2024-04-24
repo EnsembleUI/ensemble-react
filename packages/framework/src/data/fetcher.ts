@@ -42,14 +42,11 @@ export const DataFetcher = {
     api: EnsembleAPIModel,
     context?: { [key: string]: unknown },
   ): Promise<Response> => {
-    const uri = new URL(api.uri);
-
     const resolvedInputs = resolve(
       {
-        path: api.uri.replace(uri.search, ""),
+        path: api.uri,
         body: api.body,
         headers: api.headers,
-        params: Object.fromEntries(uri.searchParams),
       },
       context,
     );
@@ -57,7 +54,6 @@ export const DataFetcher = {
       url: resolvedInputs?.path,
       method: api.method,
       headers: resolvedInputs?.headers,
-      params: resolvedInputs?.params,
       data: resolvedInputs?.body,
     });
     return EnsembleResponse.fromAxiosResponse(axRes);

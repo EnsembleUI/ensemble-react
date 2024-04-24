@@ -1,7 +1,7 @@
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import type { Expression, EnsembleAction } from "@ensembleui/react-framework";
-import { useCallback, useState } from "react";
-import { isEqual, isNil, isString } from "lodash-es";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { isString, isEmpty } from "lodash-es";
 import MUIToggleButton from "@mui/material/ToggleButton";
 import MUIToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { Alert } from "antd";
@@ -51,41 +51,67 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
   onChange,
   styles,
 }) => {
-  const [value, setValue] = useState(givenValue);
-  const { values, rootRef } = useRegisterBindings({ value, styles }, id, {
-    setValue,
-  });
+  const [value, setValue] = useState<string>();
+  const { values, rootRef } = useRegisterBindings(
+    { value, initialValue: givenValue, styles },
+    id,
+    {
+      setValue,
+    },
+  );
+
+  useEffect(() => {
+    setValue(values?.initialValue);
+  }, [values?.initialValue]);
+
+  // onchange action handler
   const action = useEnsembleAction(onChange);
   const onChangeCallback = useCallback(
-    (_event: React.MouseEvent<HTMLElement>, newValue: string) => {
+    (newValue: string) => {
       if (!action) {
         return;
       }
 
-      if (!isNil(newValue) && !isEqual(value, newValue)) {
-        setValue(newValue);
-
-        action.callback({
-          [id!]: {
-            value: newValue,
-            setValue,
-          },
-        });
-      }
+      action.callback({
+        value: newValue,
+      });
     },
-    [action, id],
+    [action],
   );
 
-  if (isNil(items))
-    return <Alert message="ToggleButton: items is required" type="error" />;
+  // handle toggle button value change
+  const handleChange = (
+    _event: React.MouseEvent<HTMLElement>,
+    newValue: string,
+  ): void => {
+    if (!newValue) {
+      return;
+    }
 
-  const structuredItems = structureItems(items);
+    setValue(newValue);
+    onChangeCallback(newValue);
+  };
+
+  const structuredItems = useMemo(() => {
+    if (isEmpty(items)) {
+      return [];
+    }
+
+    return items.map((item) => {
+      return isString(item)
+        ? { label: item, value: item }
+        : { label: item.label, value: item.value, icon: item.icon };
+    });
+  }, [items]);
+
+  if (isEmpty(structuredItems))
+    return <Alert message="ToggleButton: items is required" type="error" />;
 
   return (
     <MUIToggleButtonGroup
       className={values?.styles?.names}
       exclusive
-      onChange={onChangeCallback}
+      onChange={handleChange}
       ref={rootRef}
       sx={{
         display: "grid",
@@ -151,12 +177,3 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
 };
 
 WidgetRegistry.register("ToggleButton", ToggleButton);
-
-const structureItems = (
-  items: ToggleButtonProps["items"],
-): Exclude<ToggleButtonProps["items"], string[]> =>
-  items.map((item) => {
-    return isString(item)
-      ? { label: item, value: item }
-      : { label: item.label, value: item.value, icon: item.icon };
-  });

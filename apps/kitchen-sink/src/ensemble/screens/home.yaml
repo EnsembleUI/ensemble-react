@@ -1,8 +1,9 @@
 View:
   onLoad:
     executeCode: |
-      ensemble.storage.set('inputVal', 'sagar')
-
+      ensemble.storage.set('yyy' , 'page')
+      ensemble.storage.set('zzz' , 'button')
+      ensemble.storage.set('aaa' , '1')
   header:
     title:
       Header:
@@ -13,7 +14,7 @@ View:
   body:
     Column:
       styles:
-        names: page
+        names: ${ensemble.storage.get('yyy')}
       children:
         - Text:
             styles:
@@ -24,8 +25,8 @@ View:
             text: This application is built with Ensemble and serves as a guide for how to implement common UI patterns with Ensemble React.
         - Button:
             styles:
-              className: button-1
-            label: Say Hello!
+              className: page-1 ${ensemble.storage.get('zzz') + '-' + ensemble.storage.get('aaa')}
+            label: ${productTitleName}
             onTap:
               executeCode: |
                 // Calls a function defined in test.js
@@ -49,18 +50,8 @@ View:
               executeCode: |
                 ensemble.setTheme(value)
 
-        - TextInput:
-            id: formTextInput2
-            value: ${ensemble.storage.get('inputVal')}
-            label:
-              Text:
-                text: Text input
-
-        - Button:
-            label: set value
-            onTap:
-              executeCode: |
-                formTextInput2.setValue('')
-
 Global:
   scriptName: test.js
+
+Import:
+  - common

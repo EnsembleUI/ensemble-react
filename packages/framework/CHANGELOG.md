@@ -1,5 +1,32 @@
 # @ensembleui/react-framework
 
+## 0.1.34
+
+### Patch Changes
+
+- 0730867: Added support for import scripts
+
+## 0.1.33
+
+### Patch Changes
+
+- f1cf9b0: added support of expression in style and class names
+- 12eada9: add humanize method to ensemble formatter
+- 8b6a691: Add initial support for executeActionGroup
+
+## 0.1.32
+
+### Patch Changes
+
+- 357d754: Fix context passing on imperative invoke API
+
+## 0.1.31
+
+### Patch Changes
+
+- f566152: Optionally debounce state updates for rapid state changes
+- f566152: Support env variables in API uris
+
 ## 0.1.30
 
 ### Patch Changes

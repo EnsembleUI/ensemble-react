@@ -40,6 +40,7 @@ export type MultiSelectProps = {
   items?: Expression<SelectOption[]>;
   onItemSelect?: EnsembleAction;
   hintStyle?: EnsembleWidgetStyles;
+  allowCreateOptions?: boolean;
 } & EnsembleWidgetProps<MultiSelectStyles> &
   FormInputProps<string[]>;
 
@@ -47,20 +48,24 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   const { data, ...rest } = props;
   const [options, setOptions] = useState<SelectOption[]>([]);
   const [newOption, setNewOption] = useState("");
-  const [selectedValues, setSelectedValues] = useState<string[] | undefined>(
-    isString(props.value) ? [props.value] : props.value,
-  );
+  const [selectedValues, setSelectedValues] = useState<string[]>();
 
   const action = useEnsembleAction(props.onItemSelect);
   const { rawData } = useTemplateData({ data });
   const { id, rootRef, values } = useRegisterBindings(
-    { ...rest, selectedValues, options },
+    { ...rest, initialValue: props.value, selectedValues, options },
     props.id,
     {
       setSelectedValues,
       setOptions,
     },
   );
+
+  useEffect(() => {
+    if (!selectedValues && isArray(values?.initialValue)) {
+      setSelectedValues(values?.initialValue);
+    }
+  }, [values?.initialValue]);
 
   useEffect(() => {
     if (
@@ -123,12 +128,11 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   };
 
   const handleSearch = (value: string): void => {
-    if (
-      values?.options.some((option) =>
-        option.label.toString().toLowerCase().startsWith(value.toLowerCase()),
-      )
-    )
-      setNewOption("");
+    const isOptionExist = values?.options.some((option) =>
+      option.label.toString().toLowerCase().startsWith(value.toLowerCase()),
+    );
+
+    if (isOptionExist || !values?.allowCreateOptions) setNewOption("");
     else {
       setNewOption(value);
     }
@@ -256,7 +260,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
                 ?.startsWith(input.toLowerCase()) || false
             }
             id={values?.id}
-            mode="tags"
+            mode={values?.allowCreateOptions ? "tags" : "multiple"}
             notFoundContent="No Results"
             onChange={handleChange}
             onSearch={handleSearch}

@@ -1,5 +1,10 @@
-import type { ReactElement } from "react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useMemo,
+  type ReactElement,
+} from "react";
 import { useDebounce } from "react-use";
 import {
   useTemplateData,
@@ -13,7 +18,7 @@ import type {
 } from "@ensembleui/react-framework";
 import { AutoComplete, Input } from "antd";
 import { SearchOutlined } from "@mui/icons-material";
-import { get, isArray, isEmpty, isNumber, isObject } from "lodash-es";
+import { get, isEmpty, isNull, isNumber } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type {
   EnsembleWidgetProps,
@@ -45,19 +50,17 @@ export const Search: React.FC<SearchProps> = ({
   onSelect,
   ...rest
 }) => {
-  const [options, setOptions] = useState<{ label: string; value: unknown }[]>(
-    [],
-  );
-  const [searchValue, setSearchValue] = useState("");
-  const [value, setValue] = useState("");
-  const [filteredOptions, setFilteredOptions] = useState<
-    { label: string; value: unknown }[]
+  const [options, setOptions] = useState<
+    { label: string | ReactElement; value: unknown; data: unknown }[]
   >([]);
+  const [searchValue, setSearchValue] = useState<string | null>(null);
+  const [value, setValue] = useState<unknown>();
 
   const { namedData } = useTemplateData({
     data: itemTemplate?.data,
     name: itemTemplate?.name,
   });
+
   const { rootRef, values } = useRegisterBindings(
     { styles, value, options, ...rest },
     id,
@@ -66,56 +69,60 @@ export const Search: React.FC<SearchProps> = ({
       setOptions,
     },
   );
+
   const onSearchAction = useEnsembleAction(onSearch);
   const onChangeAction = useEnsembleAction(onChange);
   const onSelectAction = useEnsembleAction(onSelect);
 
   useEffect(() => {
-    if (!isArray(namedData)) {
+    if (isEmpty(namedData)) {
       return;
     }
-    const newOptions = namedData.map((item) => {
-      const option = {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        value: isObject(item) ? get(item, searchKey ?? "") : item,
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const newOptions = namedData.map((item) => {
+      const itemData = itemTemplate?.name
+        ? (get(item, itemTemplate.name) as unknown)
+        : item;
+
+      const optionValue = get(itemData, searchKey ?? "") as unknown;
+      const option = {
+        data: itemData,
+        value: optionValue,
         label: itemTemplate?.template ? (
           <SearchOption
             context={item as CustomScope}
             template={itemTemplate.template}
           />
         ) : (
-          get(item, searchKey ?? "")
+          JSON.stringify(optionValue)
         ),
       };
       return option;
     });
     setOptions(newOptions);
-    setFilteredOptions(newOptions);
-  }, [itemTemplate?.template, namedData, searchKey, setOptions, value]);
+  }, [itemTemplate, namedData, searchKey, setOptions, value]);
 
-  // TODO: Pass in search predicate function via props or filter via API
-  const handleSearch = useCallback(
-    (search: string): void => {
-      setSearchValue(search);
-
-      const matchingOptions = options.filter((item) =>
-        item.value?.toString()?.toLowerCase()?.includes(search.toLowerCase()),
-      );
-      setFilteredOptions(matchingOptions);
-    },
-    [options],
-  );
+  const filteredOptions = useMemo(() => {
+    // We assume the search callback does the result filtering
+    if (onSearchAction?.callback) {
+      return options;
+    }
+    if (!searchValue?.trim().length) {
+      return options;
+    }
+    return options.filter(({ value: optionValue }) =>
+      JSON.stringify(optionValue).includes(searchValue.trim()),
+    );
+  }, [onSearchAction?.callback, options, searchValue]);
 
   useDebounce(
     () => {
-      if (onSearchAction?.callback && !isEmpty(searchValue)) {
+      if (onSearchAction?.callback && !isNull(searchValue)) {
         onSearchAction.callback({ search: searchValue });
       }
     },
     onSearch?.debounceMs,
-    [onSearchAction, searchValue],
+    [searchValue],
   );
 
   const handleChange = useCallback(
@@ -126,11 +133,14 @@ export const Search: React.FC<SearchProps> = ({
   );
 
   const handleSelect = useCallback(
-    (selectedValue: string): void => {
-      setValue(selectedValue);
-      onSelectAction?.callback({ value: selectedValue });
+    (selectedValue: unknown): void => {
+      const selectedData = options.find(
+        ({ value: optionValue }) => optionValue === selectedValue,
+      )?.data;
+      setValue(selectedData);
+      onSelectAction?.callback({ value: selectedData });
     },
-    [onSelectAction],
+    [onSelectAction, options],
   );
 
   return (
@@ -139,7 +149,7 @@ export const Search: React.FC<SearchProps> = ({
         allowClear
         id={id}
         onChange={handleChange}
-        onSearch={handleSearch}
+        onSearch={(search): void => setSearchValue(search)}
         onSelect={handleSelect}
         options={filteredOptions}
         popupMatchSelectWidth={

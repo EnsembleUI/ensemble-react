@@ -19,6 +19,7 @@ export interface EnsembleScreenModel {
   apis?: EnsembleAPIModel[];
   global?: string;
   styles?: { [key: string]: unknown };
+  importedScripts?: string;
 }
 
 export type EnsembleEntryPoint = EnsembleScreenModel | EnsembleMenuModel;

@@ -1,3 +1,3 @@
 const sayHello = () => {
-  window.alert("hello world!")
-}
+  window.alert("hello world!");
+};

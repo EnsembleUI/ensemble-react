@@ -1,25 +1,43 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { isString } from "lodash-es";
 import {
   useEvaluate,
   type NavigateExternalScreen,
 } from "@ensembleui/react-framework";
-import { isString } from "lodash-es";
 import { openExternalScreen } from "../navigation";
 import { type EnsembleActionHook } from "./useEnsembleAction";
 
 export const useNavigateExternalScreen: EnsembleActionHook<
   NavigateExternalScreen
 > = (action) => {
-  const evaluatedAction = useEvaluate(
+  const [screenNavigated, setScreenNavigated] = useState<boolean>();
+  const [context, setContext] = useState<{ [key: string]: unknown }>();
+  const evaluatedInputs = useEvaluate(
     isString(action) ? { url: action } : { ...action },
+    { context },
   );
-  const callback = useMemo(() => {
-    if (!evaluatedAction || !evaluatedAction.url) {
+
+  const navigateScreen = useMemo(() => {
+    if (!action) {
       return;
     }
 
-    return () => openExternalScreen(evaluatedAction as NavigateExternalScreen);
-  }, [evaluatedAction]);
+    const callback = (args: unknown): void => {
+      setScreenNavigated(false);
+      setContext(args as { [key: string]: unknown });
+    };
 
-  return callback ? { callback } : undefined;
+    return { callback };
+  }, [action]);
+
+  useEffect(() => {
+    if (!evaluatedInputs.url || screenNavigated !== false) {
+      return;
+    }
+
+    setScreenNavigated(true);
+    return openExternalScreen(evaluatedInputs as NavigateExternalScreen);
+  }, [evaluatedInputs, screenNavigated]);
+
+  return navigateScreen;
 };

@@ -35,7 +35,6 @@ const Progress: React.FC<ProgressProps> = (props) => {
   // Calculate the percentage based on the countdown value
   const [percent, setPercent] = useState(countdown ? 0 : -1);
   const { id, values } = useRegisterBindings({ ...props }, props.id);
-  const filledPercentage = values?.filledPercentage || 40;
 
   useEffect(() => {
     // If countdown is present and greater than 0, calculate the target percent for animation
@@ -155,7 +154,7 @@ const Progress: React.FC<ProgressProps> = (props) => {
       </div>
     );
   }
-  if (isLinear && filledPercentage) {
+  if (isLinear && values?.filledPercentage !== undefined) {
     return (
       <div style={{ margin: values?.styles?.margin }}>
         <div className={`${id} loader-static`} />
@@ -177,7 +176,7 @@ const Progress: React.FC<ProgressProps> = (props) => {
 			}
 			.${id}.loader-static::after {
 			  content: '';
-			  width: ${filledPercentage}%;
+			  width: ${values?.filledPercentage}%;
 			  height: 100%;
 			  background: ${values?.styles?.color ? values?.styles.color : "#1890ff"};
 			  position: absolute;

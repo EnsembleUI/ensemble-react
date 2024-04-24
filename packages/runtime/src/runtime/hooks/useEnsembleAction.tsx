@@ -27,6 +27,7 @@ import type {
   CustomScope,
   NavigateBackAction,
   NavigateExternalScreen,
+  ExecuteActionGroupAction,
 } from "@ensembleui/react-framework";
 import {
   isEmpty,
@@ -167,7 +168,12 @@ export const useExecuteCode: EnsembleActionHook<
                     screenData,
                     apiName,
                     apiInputs,
-                    customScope,
+                    {
+                      ...customScope,
+                      ensemble: {
+                        env: appContext?.env,
+                      },
+                    },
                   );
                   return apiRes;
                 },
@@ -218,6 +224,7 @@ export const useExecuteCode: EnsembleActionHook<
 
 export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const { apis, setData } = useScreenData();
+  const appContext = useApplicationContext();
   const [isComplete, setIsComplete] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>();
   const [context, setContext] = useState<{ [key: string]: unknown }>();
@@ -260,7 +267,13 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     const fireRequest = async (): Promise<void> => {
       setIsLoading(true);
       try {
-        const res = await DataFetcher.fetch(api, evaluatedInputs);
+        const res = await DataFetcher.fetch(api, {
+          ...evaluatedInputs,
+          ...context,
+          ensemble: {
+            env: appContext?.env,
+          },
+        });
         setData(api.name, res);
         onAPIResponseAction?.callback({ ...context, response: res });
         onInvokeAPIResponseAction?.callback({ ...context, response: res });
@@ -517,6 +530,24 @@ export const useNavigateBack: EnsembleActionHook<NavigateBackAction> = () => {
   return { callback };
 };
 
+export const useActionGroup: EnsembleActionHook<ExecuteActionGroupAction> = (
+  action,
+) => {
+  // This ensures hooks are fired in consistent order
+  const actions = useMemo(() => action?.actions ?? [], [action]);
+
+  const execActs = actions.map((act: EnsembleAction) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useEnsembleAction(act);
+  });
+
+  const callback = (args: unknown): void => {
+    execActs.forEach((act) => act?.callback(args));
+  };
+
+  return { callback };
+};
+
 /* eslint-disable react-hooks/rules-of-hooks */
 export const useEnsembleAction = (
   action?: EnsembleAction,
@@ -526,6 +557,7 @@ export const useEnsembleAction = (
   if (!action) {
     return;
   }
+
   if ("invokeAPI" in action) {
     return useInvokeAPI(action.invokeAPI, options);
   }
@@ -541,6 +573,7 @@ export const useEnsembleAction = (
       options as UseExecuteCodeActionOptions,
     );
   }
+
   if ("navigateScreen" in action) {
     return useNavigateScreen(action.navigateScreen, options);
   }
@@ -564,6 +597,7 @@ export const useEnsembleAction = (
   if ("showToast" in action) {
     return useShowToast(action.showToast);
   }
+
   if ("showDialog" in action) {
     return useShowDialog(action.showDialog);
   }
@@ -575,8 +609,13 @@ export const useEnsembleAction = (
   if ("pickFiles" in action) {
     return usePickFiles(action.pickFiles);
   }
+
   if ("uploadFiles" in action) {
     return useUploadFiles(action.uploadFiles);
+  }
+
+  if ("executeActionGroup" in action) {
+    return useActionGroup(action.executeActionGroup);
   }
 };
 /* eslint-enable react-hooks/rules-of-hooks */

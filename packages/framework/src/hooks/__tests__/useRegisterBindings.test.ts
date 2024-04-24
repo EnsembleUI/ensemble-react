@@ -54,16 +54,15 @@ test("evaluates nested bindings", () => {
     },
     data: {},
   });
+
+  const mockData = {
+    ...mockValues,
+    // eslint-disable-next-line no-template-curly-in-string
+    styles: { padding: "${ensemble.storage.get('paddingValue')}" },
+  };
+
   const { result } = renderHook(() =>
-    useRegisterBindings(
-      {
-        ...mockValues,
-        // eslint-disable-next-line no-template-curly-in-string
-        styles: { padding: "${ensemble.storage.get('paddingValue')}" },
-      },
-      mockInvokable.id,
-      mockInvokable.methods,
-    ),
+    useRegisterBindings(mockData, mockInvokable.id, mockInvokable.methods),
   );
 
   expect(result.current).toMatchObject({

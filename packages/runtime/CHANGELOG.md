@@ -1,5 +1,70 @@
 # @ensembleui/react-runtime
 
+## 0.1.47
+
+### Patch Changes
+
+- 02dca79: fix initial value of ToggleButton
+- 3c5c191: Make Search widget event symmetrical with data binding
+- 38d10e1: expose context in executeActionGroup
+
+## 0.1.46
+
+### Patch Changes
+
+- 8a0b3a1: added defaultSelected Row in datagrid
+- c923f2a: fix search input infinite render issue
+- Updated dependencies [0730867]
+  - @ensembleui/react-framework@0.1.34
+
+## 0.1.45
+
+### Patch Changes
+
+- df66279: support for radio type in DataGrid
+- f801ba7: show empty progress bar when filledPercentage is 0
+
+## 0.1.44
+
+### Patch Changes
+
+- 593537d: Added support for onPageChange action handler
+- 8072925: Add functionality to disable create new options in multiselect
+- 8b6a691: Add initial support for executeActionGroup
+- 4c5cba2: Added support for onSort action handler in datagrid
+- 3cdf0db: fix navigateExternalScreen API to accept the args from the other actions
+- 887f10a: set value of Radio as undefined instead of "undefined"
+- 87876d7: fix toggle button bindings
+- Updated dependencies [f1cf9b0]
+- Updated dependencies [12eada9]
+- Updated dependencies [8b6a691]
+  - @ensembleui/react-framework@0.1.33
+
+## 0.1.43
+
+### Patch Changes
+
+- 3b61b34: receive updated values from all form elements
+
+## 0.1.42
+
+### Patch Changes
+
+- 357d754: Fix context passing on imperative invoke API
+- Updated dependencies [357d754]
+  - @ensembleui/react-framework@0.1.32
+
+## 0.1.41
+
+### Patch Changes
+
+- 3da9f12: Add ensemble env to imperative invokeAPI
+- f566152: Optionally debounce state updates for rapid state changes
+- f566152: Support env variables in API uris
+- Updated dependencies [f566152]
+- Updated dependencies [f566152]
+  - @ensembleui/react-framework@0.1.31
+
 ## 0.1.40
 
 ### Patch Changes

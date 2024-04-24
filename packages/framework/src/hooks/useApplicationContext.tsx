@@ -1,5 +1,6 @@
 import { Provider, useAtomValue } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
+import { isEmpty, merge } from "lodash-es";
 import {
   appAtom,
   type ApplicationContextDefinition,
@@ -8,10 +9,10 @@ import {
   themeAtom,
 } from "../state";
 import type { EnsembleAppModel } from "../shared/models";
-import { isEmpty } from "lodash-es";
 
 interface ApplicationContextProps {
   app: EnsembleAppModel;
+  environmentOverrides?: { [key: string]: unknown };
 }
 
 type ApplicationContextProviderProps =
@@ -19,14 +20,18 @@ type ApplicationContextProviderProps =
 
 export const ApplicationContextProvider: React.FC<
   ApplicationContextProviderProps
-> = ({ app, children }) => {
+> = ({ app, environmentOverrides, children }) => {
   return (
     <Provider key={app.id}>
       <HydrateAtoms
         appContext={{
           ...defaultApplicationContext,
           application: app,
-          env: app.config?.environmentVariables ?? {},
+          env: merge(
+            {},
+            app.config?.environmentVariables,
+            environmentOverrides,
+          ),
         }}
       >
         {children}

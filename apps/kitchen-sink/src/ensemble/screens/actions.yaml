@@ -327,7 +327,7 @@ View:
                     navigateUrl: /widgets?name=hello
               - Button:
                   label: Dynamic Query
-                  onTap:  
+                  onTap:
                     navigateUrl:
                       url: ${"/widgets" + ensemble.storage.get('value')}
 
@@ -354,22 +354,74 @@ View:
                         url: 'https://google.com',
                         openNewTab: true
                       })
-              - Card:
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:
+              - Text:
                   styles:
-                    maxWidth: unset
-                    width: unset
-                  children:
-                    - Text:
-                        styles:
-                          names: heading-3
-                        text: Trigger API using ensemble.invokeApi
-                    - Button:
-                        label: Trigger API
-                        onTap:
-                          executeCode: |
-                            ensemble.invokeAPI('getDummyProducts').then((res) => {
-                              console.log(res)
-                            })
+                    names: heading-3
+                  text: Trigger API using ensemble.invokeApi
+              - Button:
+                  label: Trigger API
+                  onTap:
+                    executeCode: |
+                      ensemble.invokeAPI('getDummyProducts').then((res) => {
+                        console.log(res)
+                      })
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:
+              - Text:
+                  id: text01
+                  styles:
+                    names: heading-3
+                  text: Concurrent actions with action group
+              - ToggleButton:
+                  id: actionGroupToggler
+                  value: "Action group"
+                  items:
+                    - "Action group"
+                    - "Action group 2"
+                  onChange:
+                    executeActionGroup:
+                      actions:
+                        - executeCode: |
+                            console.log("actionGroupToggler");
+                            console.log(value);
+                        - invokeAPI:
+                            name: getDummyProducts
+                            onResponse:
+                              executeCode: |
+                                console.log('done first!')
+                        - invokeAPI:
+                            name: getDummyProducts
+                            onResponse:
+                              executeCode: |
+                                console.log('done second!')
+
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: Invoke API response pass to NavigateExternalScreen
+              - Button:
+                  label: Call Action
+                  onTap:
+                    invokeAPI:
+                      name: getDummyProduct
+                      inputs:
+                        id: 1
+                      onResponse:
+                        navigateExternalScreen:
+                          url: ${'http://localhost:4000/actions/'+response.body.price}
 
 API:
   getDummyProducts:

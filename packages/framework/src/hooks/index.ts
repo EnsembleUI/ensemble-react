@@ -6,7 +6,7 @@ export * from "./useTemplateData";
 export * from "./useWidgetId";
 export * from "./useEnsembleStorage";
 export * from "./useEvaluate";
-export * from "./useStyleNames";
+export * from "./useStyles";
 export * from "./useHtmlPassThrough";
 export * from "./useEnsembleUser";
 export * from "./useThemeContext";

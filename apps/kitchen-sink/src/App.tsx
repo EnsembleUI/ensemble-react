@@ -17,6 +17,9 @@ import StyledTextWidgetYAML from "./ensemble/widgets/StyledText.yaml";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import FirstScript from "./ensemble/scripts/test.js?raw";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+import CommonScript from "./ensemble/scripts/common.js?raw";
 // ensemble-config
 import EnsembleConfig from "./ensemble/config.yaml";
 // Theme
@@ -45,6 +48,11 @@ const testApp: ApplicationDTO = {
       id: "test",
       name: "test.js",
       content: String(FirstScript),
+    },
+    {
+      id: "common",
+      name: "common",
+      content: String(CommonScript),
     },
   ],
   widgets: [

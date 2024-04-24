@@ -73,13 +73,16 @@ const HydrateAtoms: React.FC<
   const themeScope = useContext(CustomThemeContext);
 
   // initialising on state with prop on render here
-  useHydrateAtoms([
-    [appAtom, appContext],
-    [screenAtom, screenContext],
-  ]);
-  useHydrateAtoms([[themeAtom, themeScope.theme]], {
-    dangerouslyForceHydrate: true,
-  });
+  useHydrateAtoms([[screenAtom, screenContext]]);
+  useHydrateAtoms(
+    [
+      [appAtom, appContext],
+      [themeAtom, themeScope.theme],
+    ],
+    {
+      dangerouslyForceHydrate: true,
+    },
+  );
 
   return <>{children}</>;
 };
