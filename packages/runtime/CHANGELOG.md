@@ -1,5 +1,13 @@
 # @ensembleui/react-runtime
 
+## 0.1.47
+
+### Patch Changes
+
+- 02dca79: fix initial value of ToggleButton
+- 3c5c191: Make Search widget event symmetrical with data binding
+- 38d10e1: expose context in executeActionGroup
+
 ## 0.1.46
 
 ### Patch Changes
