@@ -173,6 +173,9 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
         max-height: 100vh;
         max-width: 100vw;
       }
+      .ensemble-modal-${index} > div {
+        height: ${options.height || "auto"};
+      }
       .ensemble-modal-${index} .ant-modal-content {
         display: flex;
         flex-direction: column;
