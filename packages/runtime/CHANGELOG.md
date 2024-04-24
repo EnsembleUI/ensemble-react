@@ -1,5 +1,14 @@
 # @ensembleui/react-runtime
 
+## 0.1.46
+
+### Patch Changes
+
+- 8a0b3a1: added defaultSelected Row in datagrid
+- c923f2a: fix search input infinite render issue
+- Updated dependencies [0730867]
+  - @ensembleui/react-framework@0.1.34
+
 ## 0.1.45
 
 ### Patch Changes

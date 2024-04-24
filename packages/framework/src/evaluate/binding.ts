@@ -17,6 +17,7 @@ import {
   screenInputAtom,
   widgetFamilyAtom,
   screenGlobalScriptAtom,
+  screenImportScriptAtom,
   userAtom,
 } from "../state";
 import { evaluate } from "./evaluate";
@@ -106,7 +107,10 @@ export const createBindingAtom = <T = unknown>(
     try {
       const result = evaluate<T>(
         merge({}, defaultScreenContext, {
-          model: { global: get(screenGlobalScriptAtom) },
+          model: {
+            global: get(screenGlobalScriptAtom),
+            importedScripts: get(screenImportScriptAtom),
+          },
         }),
         rawJsExpression,
         evaluationContext,

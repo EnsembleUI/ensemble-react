@@ -13,6 +13,8 @@ import {
   isString,
   concat,
   clone,
+  filter,
+  includes,
 } from "lodash-es";
 import type {
   EnsembleScreenModel,
@@ -169,6 +171,19 @@ export const EnsembleParser = {
       global = globalBlock;
     }
 
+    const importBlock = get(screen, "Import");
+    let importedScripts: string | undefined;
+    if (isArray(importBlock)) {
+      const matchingScripts = filter(app.scripts, (script) =>
+        includes(importBlock, script.name),
+      );
+
+      importedScripts = matchingScripts.reduce(
+        (acc, script) => acc.concat(script.content, "\n\n"),
+        "",
+      );
+    }
+
     return {
       ...(view ?? {}),
       id,
@@ -179,6 +194,7 @@ export const EnsembleParser = {
       body: viewWidget,
       apis,
       styles: get(view, "styles"),
+      importedScripts,
     };
   },
 

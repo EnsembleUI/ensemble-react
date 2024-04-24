@@ -24,11 +24,12 @@ export const buildEvaluateFn = (
     ...Object.entries(context ?? {}),
   ]);
   const globalBlock = screen.model?.global;
+  const importedScriptBlock = screen.model?.importedScripts;
 
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
   const jsFunc = new Function(
     ...Object.keys(invokableObj),
-    addGlobalBlock(formatJs(js), globalBlock),
+    addScriptBlock(formatJs(js), globalBlock, importedScriptBlock),
   );
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -64,8 +65,23 @@ const formatJs = (js?: string): string => {
   return `return ${sanitizedJs}`;
 };
 
-const addGlobalBlock = (js: string, globalBlock?: string): string =>
-  globalBlock ? `${globalBlock}\n\n${js}` : js;
+const addScriptBlock = (
+  js: string,
+  globalBlock?: string,
+  importedScriptBlock?: string,
+): string => {
+  let jsString = ``;
+
+  if (importedScriptBlock) {
+    jsString += `${importedScriptBlock}\n\n`;
+  }
+
+  if (globalBlock) {
+    jsString += `${globalBlock}\n\n`;
+  }
+
+  return (jsString += `${js}`);
+};
 
 /**
  * @deprecated Consider using useEvaluate or createBinding which will

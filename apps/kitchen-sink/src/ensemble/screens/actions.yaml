@@ -376,14 +376,22 @@ View:
               width: unset
             children:
               - Text:
+                  id: text01
                   styles:
                     names: heading-3
                   text: Concurrent actions with action group
-              - Button:
-                  label: Action group
-                  onTap:
+              - ToggleButton:
+                  id: actionGroupToggler
+                  value: "Action group"
+                  items:
+                    - "Action group"
+                    - "Action group 2"
+                  onChange:
                     executeActionGroup:
                       actions:
+                        - executeCode: |
+                            console.log("actionGroupToggler");
+                            console.log(value);
                         - invokeAPI:
                             name: getDummyProducts
                             onResponse:
