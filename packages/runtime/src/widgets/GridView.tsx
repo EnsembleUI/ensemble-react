@@ -122,7 +122,7 @@ export const GridView: React.FC<GridViewProps> = ({
       const { scrollTop, scrollHeight, clientHeight } = container;
 
       // Check if the user has scrolled to the bottom
-      if (scrollTop + clientHeight === scrollHeight) {
+      if (Math.round(scrollTop + clientHeight) === Math.round(scrollHeight)) {
         onScrollEndActionCallback();
       }
     },

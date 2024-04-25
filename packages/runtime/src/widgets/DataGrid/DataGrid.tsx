@@ -277,7 +277,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
       const { scrollTop, scrollHeight, clientHeight } = container;
 
       // Check if the user has scrolled to the bottom
-      if (scrollTop + clientHeight === scrollHeight) {
+      if (Math.round(scrollTop + clientHeight) === Math.round(scrollHeight)) {
         onScrollEndActionCallback();
       }
     },
