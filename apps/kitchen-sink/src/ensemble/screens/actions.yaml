@@ -422,6 +422,16 @@ View:
                       onResponse:
                         navigateExternalScreen:
                           url: ${'http://localhost:4000/actions/'+response.body.price}
+              - Button:
+                  label: Call Navigate URL with args
+                  onTap:
+                    invokeAPI:
+                      name: getDummyProduct
+                      inputs:
+                        id: 1
+                      onResponse:
+                        navigateUrl:
+                          url: ${'/widgets/'+response.body.price}
 
 API:
   getDummyProducts:

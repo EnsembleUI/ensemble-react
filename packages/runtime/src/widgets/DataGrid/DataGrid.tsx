@@ -277,7 +277,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
       const { scrollTop, scrollHeight, clientHeight } = container;
 
       // Check if the user has scrolled to the bottom
-      if (scrollTop + clientHeight === scrollHeight) {
+      if (Math.ceil(scrollTop + clientHeight) >= scrollHeight) {
         onScrollEndActionCallback();
       }
     },
@@ -378,122 +378,125 @@ export const DataGrid: React.FC<GridProps> = (props) => {
 
   return (
     <div id={resolvedWidgetId} ref={containerRef}>
-      <Table
-        components={components}
-        dataSource={namedData}
-        key={resolvedWidgetId}
-        onChange={onChange}
-        onRow={(record, recordIndex) => {
-          return { onClick: () => onTapActionCallback(record, recordIndex) };
-        }}
-        pagination={paginationObject}
-        ref={rootRef}
-        rowKey={(data: unknown) => {
-          const identifier: string = evaluate(
-            defaultScreenContext,
-            itemTemplate.key,
-            {
-              [itemTemplate.name]: get(data, itemTemplate.name) as unknown,
-            },
-          );
-          if (identifier) {
-            return identifier;
+      <div ref={rootRef}>
+        <Table
+          components={components}
+          dataSource={namedData}
+          key={resolvedWidgetId}
+          onChange={onChange}
+          onRow={(record, recordIndex) => {
+            return { onClick: () => onTapActionCallback(record, recordIndex) };
+          }}
+          pagination={paginationObject}
+          rowKey={(data: unknown) => {
+            const identifier: string = evaluate(
+              defaultScreenContext,
+              itemTemplate.key,
+              {
+                [itemTemplate.name]: get(data, itemTemplate.name) as unknown,
+              },
+            );
+            if (identifier) {
+              return identifier;
+            }
+            const res = djb2Hash(JSON.stringify(data));
+            return String(res);
+          }}
+          rowSelection={
+            allowSelection
+              ? {
+                  type: selectionType,
+                  onChange: (selectedRowKeys, selectedRows) => {
+                    setRowsSelected(selectedRows);
+                    return onRowsSelectedCallback(
+                      selectedRowKeys,
+                      selectedRows,
+                    );
+                  },
+                  defaultSelectedRowKeys: values?.defaultSelectedRowKeys,
+                }
+              : undefined
           }
-          const res = djb2Hash(JSON.stringify(data));
-          return String(res);
-        }}
-        rowSelection={
-          allowSelection
-            ? {
-                type: selectionType,
-                onChange: (selectedRowKeys, selectedRows) => {
-                  setRowsSelected(selectedRows);
-                  return onRowsSelectedCallback(selectedRowKeys, selectedRows);
-                },
-                defaultSelectedRowKeys: values?.defaultSelectedRowKeys,
-              }
-            : undefined
-        }
-        scroll={
-          values?.scroll
-            ? {
-                y: values.scroll.scrollHeight || 150,
-                x: values.scroll.scrollWidth || "max-content",
-              }
-            : undefined
-        }
-        style={{
-          width: "100%",
-          ...values?.styles,
-          ...(values?.styles?.visible === false
-            ? { display: "none" }
-            : undefined),
-        }}
-      >
-        {dataColumns.map((col, colIndex) => {
-          return (
-            <Table.Column
-              dataIndex={itemTemplate.name}
-              filters={col.filter?.values.map(({ label, value }) => ({
-                text: label,
-                value,
-              }))}
-              key={colIndex}
-              onFilter={
-                col.filter?.onFilter
-                  ? (value, record): boolean =>
-                      Boolean(
-                        evaluate(defaultScreenContext, col.filter?.onFilter, {
-                          value,
-                          record,
-                          [itemTemplate.name]: get(
+          scroll={
+            values?.scroll
+              ? {
+                  y: values.scroll.scrollHeight || 150,
+                  x: values.scroll.scrollWidth || "max-content",
+                }
+              : undefined
+          }
+          style={{
+            width: "100%",
+            ...values?.styles,
+            ...(values?.styles?.visible === false
+              ? { display: "none" }
+              : undefined),
+          }}
+        >
+          {dataColumns.map((col, colIndex) => {
+            return (
+              <Table.Column
+                dataIndex={itemTemplate.name}
+                filters={col.filter?.values.map(({ label, value }) => ({
+                  text: label,
+                  value,
+                }))}
+                key={colIndex}
+                onFilter={
+                  col.filter?.onFilter
+                    ? (value, record): boolean =>
+                        Boolean(
+                          evaluate(defaultScreenContext, col.filter?.onFilter, {
+                            value,
                             record,
-                            itemTemplate.name,
-                          ) as unknown,
-                        }),
-                      )
-                  : undefined
-              }
-              onHeaderCell={
-                values?.allowResizableColumns
-                  ? () => ({
-                      width: col.width,
-                      onResize: handleResize(
-                        colIndex,
-                      ) as ReactEventHandler<any>,
-                    })
-                  : undefined
-              }
-              render={(_, record, rowIndex): ReactElement => {
-                return (
-                  <DataCell
-                    columnIndex={colIndex}
-                    data={record}
-                    rowIndex={rowIndex}
-                    scopeName={itemTemplate.name}
-                    template={itemTemplate.template}
-                  />
-                );
-              }}
-              sorter={
-                col.sort?.compareFn
-                  ? (a, b): number =>
-                      Number(
-                        evaluate(defaultScreenContext, col.sort?.compareFn, {
-                          a,
-                          b,
-                        }),
-                      )
-                  : undefined
-              }
-              title={col.label as string | React.ReactNode}
-              width={col.width}
-            />
-          );
-        })}
-      </Table>
-      <style>
-        {`
+                            [itemTemplate.name]: get(
+                              record,
+                              itemTemplate.name,
+                            ) as unknown,
+                          }),
+                        )
+                    : undefined
+                }
+                onHeaderCell={
+                  values?.allowResizableColumns
+                    ? () => ({
+                        width: col.width,
+                        onResize: handleResize(
+                          colIndex,
+                        ) as ReactEventHandler<any>,
+                      })
+                    : undefined
+                }
+                render={(_, record, rowIndex): ReactElement => {
+                  return (
+                    <DataCell
+                      columnIndex={colIndex}
+                      data={record}
+                      rowIndex={rowIndex}
+                      scopeName={itemTemplate.name}
+                      template={itemTemplate.template}
+                    />
+                  );
+                }}
+                sorter={
+                  col.sort?.compareFn
+                    ? (a, b): number =>
+                        Number(
+                          evaluate(defaultScreenContext, col.sort?.compareFn, {
+                            a,
+                            b,
+                          }),
+                        )
+                    : undefined
+                }
+                title={col.label as string | React.ReactNode}
+                width={col.width}
+              />
+            );
+          })}
+        </Table>
+        <style>
+          {`
           .react-resizable {
             position: relative;
             background-clip: padding-box;
@@ -547,7 +550,8 @@ export const DataGrid: React.FC<GridProps> = (props) => {
             }
           }
 		    `}
-      </style>
+        </style>
+      </div>
     </div>
   );
 };
