@@ -1,6 +1,6 @@
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import type { Expression, EnsembleAction } from "@ensembleui/react-framework";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { isString, isEmpty } from "lodash-es";
 import MUIToggleButton from "@mui/material/ToggleButton";
 import MUIToggleButtonGroup from "@mui/material/ToggleButtonGroup";
@@ -51,10 +51,18 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
   onChange,
   styles,
 }) => {
-  const [value, setValue] = useState(givenValue);
-  const { values, rootRef } = useRegisterBindings({ value, styles }, id, {
-    setValue,
-  });
+  const [value, setValue] = useState<string>();
+  const { values, rootRef } = useRegisterBindings(
+    { value, initialValue: givenValue, styles },
+    id,
+    {
+      setValue,
+    },
+  );
+
+  useEffect(() => {
+    setValue(values?.initialValue);
+  }, [values?.initialValue]);
 
   // onchange action handler
   const action = useEnsembleAction(onChange);

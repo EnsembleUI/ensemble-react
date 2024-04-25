@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.34
+
+### Patch Changes
+
+- 0730867: Added support for import scripts
+
 ## 0.1.33
 
 ### Patch Changes

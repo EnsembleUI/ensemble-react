@@ -57,8 +57,12 @@ export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
             : undefined),
         }}
       >
-        {values?.startingIcon ? <Icon {...values.startingIcon} /> : null}
-        &nbsp;
+        {values?.startingIcon ? (
+          <>
+            <Icon {...values.startingIcon} />
+            &nbsp;
+          </>
+        ) : null}
         {values?.label}
         {values?.endingIcon ? <Icon {...values.endingIcon} /> : null}
       </AntButton>
