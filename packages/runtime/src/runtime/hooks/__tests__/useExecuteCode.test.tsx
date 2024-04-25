@@ -26,6 +26,14 @@ const wrapper: React.FC<React.PropsWithChildren> = ({ children }) => (
       id: "test",
       name: "test",
       body: { name: "Widget", properties: {} },
+      apis: [
+        {
+          name: "getDummyProductsByPaginate",
+          method: "GET",
+          uri: "https://dummyjson.com/products?skip=${skip}&limit=${limit}",
+          inputs: ["skip", "limit"],
+        },
+      ],
     }}
   >
     {children}
@@ -75,6 +83,31 @@ test("can be invoked multiple times", () => {
     execResult2 = result.current?.callback();
   });
   expect(execResult2).toBe(2);
+});
+
+test("call ensemble.invokeAPI", async () => {
+  const apiConfig = {
+    limit: 15,
+    skip: 10,
+  };
+
+  const { result } = renderHook(
+    () =>
+      useExecuteCode(
+        "ensemble.invokeAPI('getDummyProductsByPaginate', apiConfig).then((res) => res.body.products.length)",
+        { context: { apiConfig } },
+      ),
+    {
+      wrapper,
+    },
+  );
+
+  let execResult;
+  await act(async () => {
+    execResult = await result.current?.callback();
+  });
+
+  expect(execResult).toBe(apiConfig.limit);
 });
 
 test.todo("populates application invokables");

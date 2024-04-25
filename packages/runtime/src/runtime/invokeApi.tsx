@@ -1,12 +1,7 @@
 import { DataFetcher } from "@ensembleui/react-framework";
-import type {
-  Response,
-  ScreenContextDefinition,
-  useScreenData,
-} from "@ensembleui/react-framework";
+import type { Response, useScreenData } from "@ensembleui/react-framework";
 
 export const invokeAPI = async (
-  screen: ScreenContextDefinition,
   screenData: ReturnType<typeof useScreenData>,
   apiName: string,
   apiInputs?: { [key: string]: unknown },
