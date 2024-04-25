@@ -164,16 +164,9 @@ export const useExecuteCode: EnsembleActionHook<
                   apiInputs?: { [key: string]: unknown },
                 ) => {
                   const apiRes = await invokeAPI(
-                    screen,
                     screenData,
                     apiName,
                     apiInputs,
-                    {
-                      ...customScope,
-                      ensemble: {
-                        env: appContext?.env,
-                      },
-                    },
                   );
                   return apiRes;
                 },
