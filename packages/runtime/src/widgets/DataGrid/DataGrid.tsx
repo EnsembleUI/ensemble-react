@@ -90,6 +90,7 @@ export type GridProps = {
   onPageChange?: EnsembleAction;
   onSort?: EnsembleAction;
   pageSize?: number;
+  totalRows?: number;
 } & EnsembleWidgetProps<DataGridStyles>;
 
 function djb2Hash(str: string): number {
@@ -133,13 +134,6 @@ const ResizableTitle: React.FC<ResizableProps & ResizableState> = (props) => {
 };
 
 export const DataGrid: React.FC<GridProps> = (props) => {
-  const [colWidth, setColWidth] = useState<{
-    [key: number]: number | undefined;
-  }>({});
-  const [rowsSelected, setRowsSelected] = useState<object[]>();
-  const [allowSelection, setAllowSelection] = useState(
-    props.allowSelection ?? false,
-  );
   const {
     "item-template": itemTemplate,
     onScrollEnd,
@@ -147,35 +141,68 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     onSort,
     ...rest
   } = props;
+
+  const [skipFirstRender, setSkipFirstRender] = useState<boolean>(false);
+  const [colWidth, setColWidth] = useState<{
+    [key: number]: number | undefined;
+  }>({});
+  const [curPage, setCurPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(props.pageSize || 10);
+  const [rowsSelected, setRowsSelected] = useState<object[]>();
+  const [allowSelection, setAllowSelection] = useState(
+    props.allowSelection ?? false,
+  );
   const [selectionType, setSelectionType] = useState<"checkbox" | "radio">(
     props?.selectionType ? props.selectionType : "checkbox",
   );
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { namedData } = useTemplateData({ ...itemTemplate });
+  const components = {
+    header: {
+      cell: ResizableTitle,
+    },
+  };
+
   const {
     rootRef,
     id: resolvedWidgetId,
     values,
   } = useRegisterBindings(
-    { ...rest, rowsSelected, selectionType, allowSelection },
+    { ...rest, rowsSelected, selectionType, allowSelection, pageSize, curPage },
     props.id,
     {
       setRowsSelected,
       setSelectionType,
       setAllowSelection,
+      setPageSize,
+      setCurPage,
     },
   );
-  const { namedData } = useTemplateData({ ...itemTemplate });
   const headerStyle = values?.styles?.headerStyle;
+
+  useEffect(() => {
+    setPageSize(values?.pageSize || 10);
+  }, [values?.pageSize]);
+
+  useEffect(() => {
+    if (!skipFirstRender) {
+      return;
+    }
+
+    onPageChangeActionCallback(curPage || 1, pageSize || 10);
+  }, [skipFirstRender, curPage, pageSize]);
+
+  // handle column resize
+  const handleResize =
+    (index: number) =>
+    (e: React.SyntheticEvent, { size }: { size: { width: number } }) => {
+      const prevColWidths = { ...colWidth };
+      prevColWidths[index] = size.width;
+      setColWidth(prevColWidths);
+    };
+
+  // on row tap action
   const onTapAction = useEnsembleAction(itemTemplate.template.properties.onTap);
-  const onRowsSelected = useEnsembleAction(props.onRowsSelected);
-  const onRowsSelectedCallback = useCallback(
-    (selectedRowKeys: React.Key[], selectedRows: object[]) => {
-      if (!onRowsSelected) {
-        return;
-      }
-      return onRowsSelected.callback({ selectedRows, selectedRowKeys });
-    },
-    [onRowsSelected],
-  );
   const onTapActionCallback = useCallback(
     (data: unknown, index?: number) => {
       if (!onTapAction) {
@@ -187,14 +214,61 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     [onTapAction],
   );
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const onScrollEndAction = useEnsembleAction(onScrollEnd);
+  // on row selected action
+  const onRowsSelected = useEnsembleAction(props.onRowsSelected);
+  const onRowsSelectedCallback = useCallback(
+    (selectedRowKeys: React.Key[], selectedRows: object[]) => {
+      if (!onRowsSelected) {
+        return;
+      }
+      return onRowsSelected.callback({ selectedRows, selectedRowKeys });
+    },
+    [onRowsSelected],
+  );
+
   // scroll end action
+  const onScrollEndAction = useEnsembleAction(onScrollEnd);
   const onScrollEndActionCallback = useCallback(() => {
     if (onScrollEndAction) {
       onScrollEndAction.callback();
     }
   }, [onScrollEndAction]);
+
+  // page change action
+  const onPageChangeAction = useEnsembleAction(onPageChange);
+  const onPageChangeActionCallback = useCallback(
+    (page: number, newPageSize: number) => {
+      if (onPageChangeAction) {
+        onPageChangeAction.callback({
+          page,
+          pageSize: newPageSize,
+          totalRows: values?.totalRows,
+        });
+      }
+    },
+    [onPageChangeAction],
+  );
+
+  // column sort action
+  const onSortAction = useEnsembleAction(onSort);
+  const onSortActionCallback = useCallback(
+    (sorter: SorterResult<unknown>) => {
+      if (onSortAction) {
+        const namedDataObject = namedData?.[0] as { [key: string]: unknown };
+        const dataObject = namedDataObject[sorter.field as string] as {
+          [key: string]: unknown;
+        };
+        const dataObjectKeys = Object.keys(dataObject);
+
+        onSortAction.callback({
+          sortOrder: sorter.order,
+          columnTitle: sorter.column?.title,
+          dataKey: dataObjectKeys[sorter.columnKey as number],
+        });
+      }
+    },
+    [onSortAction, namedData],
+  );
 
   // handle scroll event
   const handleScrollEvent = useCallback(
@@ -209,6 +283,47 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     },
     [onScrollEndActionCallback],
   );
+
+  // handle page change
+  const handlePageChange = (page: number, newPageSize: number): void => {
+    const nextPage = newPageSize !== pageSize ? 1 : page;
+    setSkipFirstRender(true);
+    setCurPage(nextPage);
+    setPageSize(newPageSize);
+  };
+
+  // handle onChange event on table
+  const onChange: TableProps["onChange"] = (
+    pagination,
+    filters,
+    sorter,
+    extra,
+  ) => {
+    switch (extra.action) {
+      case "sort":
+        onSortActionCallback(sorter as SorterResult<unknown>);
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  // pagination object
+  const paginationObject = useMemo(() => {
+    const { hidePagination, totalRows } = values ?? {};
+
+    if (hidePagination || !pageSize) {
+      return false;
+    }
+
+    return {
+      onChange: handlePageChange,
+      pageSize,
+      total: totalRows,
+      current: curPage,
+    };
+  }, [values, pageSize, curPage, resolvedWidgetId]);
 
   useEffect(() => {
     const containerElement = containerRef.current;
@@ -260,83 +375,6 @@ export const DataGrid: React.FC<GridProps> = (props) => {
 
     return [];
   }, [values?.DataColumns, values?.allowResizableColumns, colWidth]);
-
-  const components = {
-    header: {
-      cell: ResizableTitle,
-    },
-  };
-
-  const handleResize =
-    (index: number) =>
-    (e: React.SyntheticEvent, { size }: { size: { width: number } }) => {
-      const prevColWidths = { ...colWidth };
-      prevColWidths[index] = size.width;
-      setColWidth(prevColWidths);
-    };
-
-  const onPageChangeAction = useEnsembleAction(onPageChange);
-  // page change action
-  const onPageChangeActionCallback = useCallback(
-    (page: number) => {
-      if (onPageChangeAction) {
-        onPageChangeAction.callback({ page, pageSize: values?.pageSize });
-      }
-    },
-    [onPageChangeAction],
-  );
-
-  // handle page change
-  const handlePageChange = (page: number): void => {
-    onPageChangeActionCallback(page);
-  };
-
-  const paginationObject = useMemo(() => {
-    const { hidePagination, pageSize } = values ?? {};
-
-    if (hidePagination || pageSize === undefined || pageSize < 1) {
-      return false;
-    }
-
-    return { onChange: handlePageChange, pageSize: values?.pageSize };
-  }, [values?.hidePagination, values?.pageSize]);
-
-  const onSortAction = useEnsembleAction(onSort);
-  // page change action
-  const onSortActionCallback = useCallback(
-    (sorter: SorterResult<unknown>) => {
-      if (onSortAction) {
-        const namedDataObject = namedData?.[0] as { [key: string]: unknown };
-        const dataObject = namedDataObject[sorter.field as string] as {
-          [key: string]: unknown;
-        };
-        const dataObjectKeys = Object.keys(dataObject);
-
-        onSortAction.callback({
-          sortOrder: sorter.order,
-          columnTitle: sorter.column?.title,
-          dataKey: dataObjectKeys[sorter.columnKey as number],
-        });
-      }
-    },
-    [onSortAction, namedData],
-  );
-
-  const onChange: TableProps["onChange"] = (
-    pagination,
-    filters,
-    sorter,
-    extra,
-  ) => {
-    switch (extra.action) {
-      case "sort":
-        onSortActionCallback(sorter as SorterResult<unknown>);
-        break;
-
-      default:
-        break;
-    }
-  };
 
   return (
     <div id={resolvedWidgetId} ref={containerRef}>

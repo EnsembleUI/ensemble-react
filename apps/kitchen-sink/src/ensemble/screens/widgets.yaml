@@ -3,15 +3,18 @@ View:
     executeCode:
       body: |-
         ensemble.storage.set('activeIndex',3);
+        ensemble.storage.set('loaderStat', false);
+        ensemble.storage.set("skip", 10)
+
       onComplete:
         invokeApi:
           name: getDummyProductsByPaginate
           inputs:
             skip: 0
+            limit: 10
           onResponse:
             executeCode: |
               const res = response.body.products;
-              ensemble.storage.set("skip", 10)
               ensemble.storage.set("dummyProducts", res);
 
   header:
@@ -164,11 +167,7 @@ View:
                     data:
                       [
                         { id: "1", patient: "John", advocate: "Mike Ross" },
-                        {
-                          id: "2",
-                          patient: "Reuben",
-                          advocate: "Harvey Dent",
-                        },
+                        { id: "2", patient: "Reuben", advocate: "Harvey Dent" },
                       ]
                     name: dummyData
                     key: ${dummyData.id}
@@ -229,40 +228,50 @@ View:
                   styles:
                     names: heading-3
                   text: DataGrid with item-template inside dataRow
-              - DataGrid:
-                  id: "myDataGridExample2"
-                  styles:
-                    headerStyle:
-                      backgroundColor: "white"
-                      fontSize: "12px"
-                      textColor: "#747184"
-                      hasDivider: true
-                      borderBottom: false
-                  DataColumns: ["id", "title", "description"]
-                  pageSize: 3
-                  onPageChange:
-                    invokeAPI:
-                      name: getDummyProductsByPaginate
-                      inputs:
-                        skip: ${ensemble.storage.get('skip') + page}
-                      onResponse:
-                        executeCode: |
-                          const prevItem = ensemble.storage.get("dummyProducts")
-                          const res = response.body.products;
-                          ensemble.storage.set("skip", ensemble.storage.get('skip') + page)
-                          ensemble.storage.set("dummyProducts", [...prevItem, ...res])
-                  item-template:
-                    data: ${ensemble.storage.get('dummyProducts')}
-                    name: dummyData
-                    key: ${dummyData.key}
-                    template:
-                      DataRow:
-                        item-template:
-                          data: ${Object.values(dummyData)}
-                          name: value
-                          template:
-                            Text:
-                              text: ${value}
+              - Button:
+                  label: toggle
+                  onTap:
+                    executeCode: |
+                      ensemble.storage.set('loaderStat', !ensemble.storage.get('loaderStat'))
+
+              - LoadingContainer:
+                  isLoading: ${ensemble.storage.get('loaderStat')}
+                  widget:
+                    DataGrid:
+                      id: "myDataGridExample2"
+                      styles:
+                        headerStyle:
+                          backgroundColor: "white"
+                          fontSize: "12px"
+                          textColor: "#747184"
+                          hasDivider: true
+                          borderBottom: false
+                      DataColumns: ["id", "title", "description"]
+                      pageSize: 10
+                      totalRows: 100
+                      onPageChange:
+                        invokeAPI:
+                          name: getDummyProductsByPaginate
+                          inputs:
+                            skip: ${ensemble.storage.get('skip') * (page - 1)}
+                            limit: ${pageSize}
+                          onResponse:
+                            executeCode: |
+                              const prevItem = ensemble.storage.get("dummyProducts")
+                              const res = response.body.products;
+                              ensemble.storage.set("dummyProducts", [...res])
+                      item-template:
+                        data: ${ensemble.storage.get('dummyProducts')}
+                        name: dummyData
+                        key: ${dummyData.key}
+                        template:
+                          DataRow:
+                            item-template:
+                              data: ${Object.values(dummyData)}
+                              name: value
+                              template:
+                                Text:
+                                  text: ${value}
 
         - Card:
             styles:
@@ -718,6 +727,7 @@ View:
                 body: |-
                   console.log(dateRange1.value);
         - Button:
+            id: helloText
             label: Hello
             onTap:
               executeCode: |
@@ -795,6 +805,11 @@ View:
               - Markdown:
                   text: |
                     ### Toggle Button
+              - Text:
+                  id: toggleButtonText
+                  text: button 1
+                  styles:
+                    visible: false
               - ToggleButton:
                   id: toggleButtonWidget
                   styles:
@@ -807,16 +822,15 @@ View:
                     selectedColor: ${colors.gray['900']}
                     selectedBackgroundColor: ${colors.gray['100']}
                     selectedBorderColor: ${colors.gray['200']}
-                  value: button 1
+                  value: ${toggleButtonText.text}
                   items:
                     - label: Button 1
                       value: button 1
                     - label: Button 2
                       value: button 2
                   onChange:
-                    executeCode:
-                      body: |-
-                        console.log('toggle button changed: ' + toggleButtonWidget.value);
+                    executeCode: |-
+                      console.log('toggle button changed: ' + value);
 
         - Card:
             styles:
@@ -988,9 +1002,10 @@ API:
     uri: https://dummyjson.com/products
   getDummyProductsByPaginate:
     method: GET
-    uri: https://dummyjson.com/products?skip=${skip}&limit=10
+    uri: https://dummyjson.com/products?skip=${skip}&limit=${limit}
     inputs:
       - skip
+      - limit
   getMockProducts:
     method: GET
     uri: https://661e111b98427bbbef034208.mockapi.io/products?sortBy=${sortBy}&order=${sortOrder}&limit=10
