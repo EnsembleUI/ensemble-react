@@ -30,6 +30,7 @@ const wrapper: React.FC<React.PropsWithChildren> = ({ children }) => (
         {
           name: "getDummyProductsByPaginate",
           method: "GET",
+          // eslint-disable-next-line no-template-curly-in-string
           uri: "https://dummyjson.com/products?skip=${skip}&limit=${limit}",
           inputs: ["skip", "limit"],
         },
