@@ -1,38 +1,45 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   type NavigateUrlAction,
   useEvaluate,
 } from "@ensembleui/react-framework";
-import { cloneDeep, isString } from "lodash-es";
+import { isString } from "lodash-es";
 import type { EnsembleActionHook } from "./useEnsembleAction";
 
 export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
   action,
 ) => {
   const navigate = useNavigate();
-  const hasOptions = !isString(action);
-  const screenUrl = hasOptions ? action?.url : action;
-  const evaluationInput = useMemo(() => {
-    if (!isString(action)) {
-      return {
-        url: screenUrl,
-        inputs: cloneDeep(action?.inputs),
-      };
-    }
-    return { url: screenUrl };
-  }, [action, screenUrl]);
-  const evaluatedRes = useEvaluate(evaluationInput);
+  const [urlNavigated, setUrlNavigated] = useState<boolean>();
+  const [context, setContext] = useState<{ [key: string]: unknown }>();
 
-  const callback = useMemo(() => {
-    if (!evaluatedRes.url) {
+  const evaluatedInputs = useEvaluate(
+    isString(action) ? { url: action } : { ...action },
+    { context },
+  );
+
+  const navigateUrl = useMemo(() => {
+    if (!action) {
       return;
     }
 
-    return () => {
-      navigate(String(evaluatedRes.url), { state: evaluatedRes.inputs });
+    const callback = (args: unknown): void => {
+      setUrlNavigated(false);
+      setContext(args as { [key: string]: unknown });
     };
-  }, [evaluatedRes.inputs, evaluatedRes.url, navigate]);
 
-  return callback ? { callback } : undefined;
+    return { callback };
+  }, [action]);
+
+  useEffect(() => {
+    if (!evaluatedInputs.url || urlNavigated !== false) {
+      return;
+    }
+
+    setUrlNavigated(true);
+    return navigate(evaluatedInputs.url, { state: evaluatedInputs.inputs });
+  }, [urlNavigated, evaluatedInputs]);
+
+  return navigateUrl;
 };
