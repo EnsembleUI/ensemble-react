@@ -996,6 +996,18 @@ View:
                     template:
                       Text:
                         text: ${product.title}
+
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+              gap: 10px
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: Custom widget in screen
+              - PersonProfile:
 API:
   getDummyProducts:
     method: GET
@@ -1018,3 +1030,10 @@ API:
     onResponse:
       executeCode: |
         console.log('dummy number fetched')
+
+PersonProfile:
+  inputs:
+    - image
+  body:
+    Text:
+      text: Hello

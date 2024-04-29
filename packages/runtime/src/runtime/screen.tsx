@@ -5,7 +5,8 @@ import type {
 import { ScreenContextProvider, error } from "@ensembleui/react-framework";
 import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
-import { merge } from "lodash-es";
+import { isEmpty, merge } from "lodash-es";
+import { WidgetRegistry } from "../registry";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { useEnsembleAction } from "./hooks/useEnsembleAction";
@@ -13,6 +14,7 @@ import { EnsembleHeader } from "./header";
 import { EnsembleFooter } from "./footer";
 import { EnsembleBody } from "./body";
 import { ModalWrapper } from "./modal";
+import { createCustomWidget } from "./customWidget";
 
 export interface EnsembleScreenProps {
   screen: EnsembleScreenModel;
@@ -26,6 +28,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
 }) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { state, search, pathname } = useLocation();
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const routeParams = useParams(); // route params
   const params = new URLSearchParams(search); // query params
   const queryParams: { [key: string]: unknown } = Object.fromEntries(params);
@@ -37,6 +40,28 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
     queryParams,
     inputs,
   );
+
+  useEffect(() => {
+    if (!screen.customWidgets || isEmpty(screen.customWidgets)) {
+      setIsLoaded(true);
+      return;
+    }
+
+    // load screen custom widgets
+    screen.customWidgets.forEach((customWidget) => {
+      WidgetRegistry.register(
+        customWidget.name,
+        createCustomWidget(customWidget),
+      );
+    });
+
+    setIsLoaded(true);
+  }, [screen.customWidgets]);
+
+  if (!isLoaded) {
+    return;
+  }
+
   return (
     <ScreenContextProvider
       context={{ inputs: mergedInputs }}

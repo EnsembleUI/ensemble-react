@@ -15,6 +15,8 @@ import {
   clone,
   filter,
   includes,
+  omit,
+  keys,
 } from "lodash-es";
 import type {
   EnsembleScreenModel,
@@ -153,9 +155,11 @@ export const EnsembleParser = {
         throw new Error("Invalid screen: missing view widget");
       }
     }
+
     const viewWidget = unwrapWidget(viewNode);
     const apis = unwrapApiModels(screen);
 
+    // handle global block
     const globalBlock = get(screen, "Global");
     const scriptName = get(globalBlock, "scriptName");
     let global: string | undefined;
@@ -171,6 +175,7 @@ export const EnsembleParser = {
       global = globalBlock;
     }
 
+    // handle import block
     const importBlock = get(screen, "Import");
     let importedScripts: string | undefined;
     if (isArray(importBlock)) {
@@ -184,6 +189,13 @@ export const EnsembleParser = {
       );
     }
 
+    const widgets = omit(screen, ["View", "Global", "API", "Import"]);
+    const customWidgets = keys(widgets).map((widgetName) =>
+      EnsembleParser.parseWidget(widgetName, {
+        Widget: get(widgets, widgetName) as { [key: string]: unknown },
+      } as EnsembleWidgetYAML),
+    );
+
     return {
       ...(view ?? {}),
       id,
@@ -195,6 +207,7 @@ export const EnsembleParser = {
       apis,
       styles: get(view, "styles"),
       importedScripts,
+      customWidgets,
     };
   },
 
