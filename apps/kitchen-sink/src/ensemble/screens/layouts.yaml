@@ -158,7 +158,7 @@ View:
             children:
               - Markdown:
                   text: |
-                    ## Flow 
+                    ## Flow
 
                     It shows with direction **horizontal** and **vertical**
               - Flow:
@@ -206,7 +206,7 @@ View:
             children:
               - Markdown:
                   text: |
-                    ## Flex 
+                    ## Flex
 
                     It shows with direction **horizontal** and **vertical**
               - Flex:
@@ -226,7 +226,7 @@ View:
                           - Icon:
                               name: Search
                           - Text:
-                              text: ${"Hello" + flexChild}        
+                              text: ${"Hello" + flexChild}
         - Card:
             children:
               - Markdown:
@@ -239,7 +239,28 @@ View:
                     - Spacer:
                     - Button:
                         label: Hello 2
-              
+
+        - Card:
+            styles:
+              marginTop: 10
+            children:
+              - Markdown:
+                  text: |
+                    ## Stack
+              - Stack:
+                  styles:
+                    alignChildren: centerRight
+                  children:
+                    - Row:
+                        styles:
+                          { backgroundColor: grey, height: 200, padding: 20 }
+                        children:
+                          - Text:
+                              text: |
+                                I am the first child
+                                I render at the bottom of the stack
+                    - Button:
+                        label: Button stacked on top
 
   footer:
     children:
