@@ -59,7 +59,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
   }, [screen.customWidgets]);
 
   if (!isLoaded) {
-    return;
+    return null;
   }
 
   return (
