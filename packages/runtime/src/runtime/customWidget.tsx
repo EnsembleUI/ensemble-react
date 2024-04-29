@@ -9,6 +9,8 @@ import type {
 } from "@ensembleui/react-framework";
 import React, { useEffect, useState } from "react";
 import { EnsembleRuntime } from "./runtime";
+// FIXME: refactor
+// eslint-disable-next-line import/no-cycle
 import { useEnsembleAction } from "./hooks/useEnsembleAction";
 
 export interface CustomWidgetProps {
