@@ -138,6 +138,7 @@ export type EnsembleAction =
   | { navigateScreen?: NavigateScreenAction }
   | { navigateModalScreen?: NavigateModalScreenAction }
   | { navigateExternalScreen?: NavigateExternalScreen }
+  | { openUrl?: NavigateExternalScreen }
   // | { navigateViewGroup?: NavigateViewGroup }
   // | { showBottomModal?: ShowBottomModal }
   // | { dismissBottomModal?: DismissBottomModal }
