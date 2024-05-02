@@ -138,7 +138,7 @@ export type EnsembleAction =
   | { navigateScreen?: NavigateScreenAction }
   | { navigateModalScreen?: NavigateModalScreenAction }
   | { navigateExternalScreen?: NavigateExternalScreen }
-  | { openUrl?: NavigateExternalScreen }
+  | { openUrl?: NavigateExternalScreen } // this is needed for support the flutter compatibility
   // | { navigateViewGroup?: NavigateViewGroup }
   // | { showBottomModal?: ShowBottomModal }
   // | { dismissBottomModal?: DismissBottomModal }
