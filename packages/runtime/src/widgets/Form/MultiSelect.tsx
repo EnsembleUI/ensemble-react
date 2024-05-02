@@ -116,7 +116,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
         option.label.toString().toLowerCase().search(value.toLowerCase()) > -1,
     );
 
-    if (!isOptionExist) {
+    if (!isOptionExist && values?.allowCreateOptions) {
       setNewOption(value);
     } else {
       setNewOption("");
@@ -267,7 +267,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
             mode={values?.allowCreateOptions ? "tags" : "multiple"}
             notFoundContent="No Results"
             onChange={handleChange}
-            onSearch={handleSearch}
+            onSearch={handleSearch} // required for display new custom option with Dropdown element
             optionFilterProp="children"
             placeholder={
               values?.hintText ? (
