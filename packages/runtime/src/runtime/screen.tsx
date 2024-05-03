@@ -48,7 +48,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
     }
 
     // load screen custom widgets
-    screen.customWidgets.forEach((customWidget) => {
+    screen.customWidgets?.forEach((customWidget) => {
       WidgetRegistry.register(
         customWidget.name,
         createCustomWidget(customWidget),
@@ -59,7 +59,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
 
     return () => {
       // unMount screen custom widgets
-      screen.customWidgets.forEach((customWidget) => {
+      screen.customWidgets?.forEach((customWidget) => {
         WidgetRegistry.unMount(customWidget.name);
       });
     };
