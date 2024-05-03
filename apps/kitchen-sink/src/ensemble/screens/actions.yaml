@@ -5,10 +5,11 @@ View:
 
   onLoad:
     executeCode: |
-      ensemble.invokeAPI('getDummyProducts');
+      ensemble.invokeAPI("${1==1?'getDummyProducts':'noApi'}");
       ensemble.storage.set('dummyId', '1');
       ensemble.invokeAPI('getDummyProduct', {id: ensemble.storage.get('dummyId')});
       ensemble.storage.set('value',1);
+
   body:
     Column:
       styles:
@@ -20,7 +21,7 @@ View:
               names: heading-1
             text: Actions
         - Markdown:
-            text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).
+            text: ${ensemble.storage.get('dummyId') + ' More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/)'}
         - Card:
             styles:
               maxWidth: unset
@@ -38,7 +39,7 @@ View:
                   label: Get Data With Inputs
                   onTap:
                     invokeAPI:
-                      name: getDummyProduct
+                      name: ${1==1?'getDummyProduct':'noApi'}
                       inputs:
                         id: ${getDataInputValue.value}
                       onResponse:

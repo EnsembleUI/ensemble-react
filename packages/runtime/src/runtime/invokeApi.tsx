@@ -1,12 +1,26 @@
-import { DataFetcher } from "@ensembleui/react-framework";
-import type { Response, useScreenData } from "@ensembleui/react-framework";
+import {
+  DataFetcher,
+  evaluate,
+  isExpression,
+} from "@ensembleui/react-framework";
+import type {
+  Response,
+  ScreenContextDefinition,
+  useScreenData,
+} from "@ensembleui/react-framework";
 
 export const invokeAPI = async (
+  screen: ScreenContextDefinition,
   screenData: ReturnType<typeof useScreenData>,
   apiName: string,
   apiInputs?: { [key: string]: unknown },
+  context?: { [key: string]: unknown },
 ): Promise<Response | undefined> => {
-  const api = screenData.apis?.find((model) => model.name === apiName);
+  const evaluatedName = isExpression(apiName)
+    ? evaluate<string>(screen, apiName, context)
+    : apiName;
+
+  const api = screenData.apis?.find((model) => model.name === evaluatedName);
   if (!api) {
     return;
   }
