@@ -95,7 +95,7 @@ const calculateStackAlignment = (id: string, alignment: string): string => {
 
     case "bottomRight":
       alignmentStyles = `
-        botton: 0;
+        bottom: 0;
         right: 0;
       `;
       break;
@@ -119,7 +119,11 @@ export const Stack: React.FC<StackProps> = (props) => {
 
   return (
     <>
-      <div id={id} ref={rootRef} style={{ position: "relative" }}>
+      <div
+        id={id}
+        ref={rootRef}
+        style={{ position: "relative", margin: "auto" }}
+      >
         {renderedChildren}
       </div>
       <style>
