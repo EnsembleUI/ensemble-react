@@ -56,6 +56,13 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
     });
 
     setIsLoaded(true);
+
+    return () => {
+      // unMount screen custom widgets
+      screen.customWidgets.forEach((customWidget) => {
+        WidgetRegistry.unMount(customWidget.name);
+      });
+    };
   }, [screen.customWidgets]);
 
   if (!isLoaded) {
