@@ -307,17 +307,25 @@ View:
                     names: heading-3
                   text: Upload files
               - Button:
+                  label: upload images
+                  onTap:
+                    pickFiles:
+                      id: fileUploader1
+                      allowMultiple: "${1==10 ? false : true}"
+                      allowedExtensions: '${1==10 ? ["pdf", "docx"] : ["jpg", "png"]}'
+                      onComplete:
+                        executeCode: |
+                          console.log(fileUploader1, "hello", files);
+              - Button:
                   label: upload
                   onTap:
                     pickFiles:
-                      id: fileUploader
-                      allowMultiple: true
-                      allowedExtensions:
-                        - pdf
-                        - docx
+                      id: fileUploader2
+                      allowMultiple: "${1==1 ? true : false}"
+                      allowedExtensions: '${1==1 ? ["pdf", "docx"] : ["jpg", "png"]}'
                       onComplete:
                         executeCode: |
-                          console.log(fileUploader, "hello", files);
+                          console.log(fileUploader2, "hello", files);
 
         - Card:
             styles:
