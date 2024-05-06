@@ -162,7 +162,7 @@ export const useExecuteCode: EnsembleActionHook<
                 invokeAPI: async (
                   apiName: string,
                   apiInputs?: { [key: string]: unknown },
-                ) => await invokeAPI(screenData, apiName, apiInputs),
+                ) => invokeAPI(screenData, apiName, apiInputs),
                 navigateBack: (): void => navigateBack(navigate),
                 navigateExternalScreen: (url: NavigateExternalScreen) =>
                   navigateExternalScreen(url),
