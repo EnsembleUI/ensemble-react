@@ -23,7 +23,7 @@ export const WidgetRegistry = {
     }
     return Widget;
   },
-  unMount: (name: string): void => {
+  unregister: (name: string): void => {
     if (name in backupRegistry) {
       mainRegistry[name] = backupRegistry[name];
       delete backupRegistry[name];
