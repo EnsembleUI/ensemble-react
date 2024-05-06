@@ -368,6 +368,7 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
   const { values } = useRegisterBindings(
     {
       files,
+      ...action,
     },
     action?.id,
     {
@@ -378,13 +379,13 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
   const inputEl = useMemo(() => {
     const input = document.createElement("input");
     input.type = "file";
-    input.multiple = action?.allowMultiple || false;
+    input.multiple = values?.allowMultiple || false;
     input.accept =
-      action?.allowedExtensions?.map((ext) => ".".concat(ext))?.toString() ||
+      values?.allowedExtensions?.map((ext) => ".".concat(ext))?.toString() ||
       "*/*";
 
     return input;
-  }, [action?.allowMultiple, action?.allowedExtensions]);
+  }, [values?.allowMultiple, values?.allowedExtensions]);
 
   useEffect(() => {
     inputEl.onchange = (event: Event): void => {
