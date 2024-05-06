@@ -91,6 +91,7 @@ export type GridProps = {
   onSort?: EnsembleAction;
   pageSize?: number;
   totalRows?: number;
+  curPage?: number;
 } & EnsembleWidgetProps<DataGridStyles>;
 
 function djb2Hash(str: string): number {
@@ -142,11 +143,11 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     ...rest
   } = props;
 
-  const [skipFirstRender, setSkipFirstRender] = useState<boolean>(false);
   const [colWidth, setColWidth] = useState<{
     [key: number]: number | undefined;
   }>({});
-  const [curPage, setCurPage] = useState<number>(1);
+  const [skipFirstRender, setSkipFirstRender] = useState<boolean>(true);
+  const [curPage, setCurPage] = useState<number>(props.curPage || 1);
   const [pageSize, setPageSize] = useState<number>(props.pageSize || 10);
   const [rowsSelected, setRowsSelected] = useState<object[]>();
   const [allowSelection, setAllowSelection] = useState(
@@ -182,15 +183,16 @@ export const DataGrid: React.FC<GridProps> = (props) => {
 
   useEffect(() => {
     setPageSize(values?.pageSize || 10);
-  }, [values?.pageSize]);
+    setCurPage(values?.curPage || 1);
+  }, [values?.pageSize, values?.curPage]);
 
   useEffect(() => {
-    if (!skipFirstRender) {
+    if (skipFirstRender) {
+      setSkipFirstRender(false);
       return;
     }
-
     onPageChangeActionCallback(curPage || 1, pageSize || 10);
-  }, [skipFirstRender, curPage, pageSize]);
+  }, [curPage, pageSize]);
 
   // handle column resize
   const handleResize =
@@ -287,7 +289,6 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   // handle page change
   const handlePageChange = (page: number, newPageSize: number): void => {
     const nextPage = newPageSize !== pageSize ? 1 : page;
-    setSkipFirstRender(true);
     setCurPage(nextPage);
     setPageSize(newPageSize);
   };
