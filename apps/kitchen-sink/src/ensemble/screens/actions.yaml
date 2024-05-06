@@ -123,6 +123,16 @@ View:
               - Text:
                   styles:
                     names: heading-3
+                  text: openUrl
+              - Markdown:
+                  text: "use `openUrl: url` for open external link programatically. click below button to check"
+              - Button:
+                  label: open url
+                  onTap:
+                    openUrl: https://google.com/
+              - Text:
+                  styles:
+                    names: heading-3
                   text: navigateModalScreen
               - Markdown:
                   text: "use `navigateModalScreen: screen_name` for navigate modal screen programmatically. click below button to check"

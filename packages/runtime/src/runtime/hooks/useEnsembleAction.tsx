@@ -173,6 +173,8 @@ export const useExecuteCode: EnsembleActionHook<
                 navigateBack: (): void => navigateBack(navigate),
                 navigateExternalScreen: (url: NavigateExternalScreen) =>
                   navigateExternalScreen(url),
+                openUrl: (url: NavigateExternalScreen) =>
+                  navigateExternalScreen(url),
               },
             },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
@@ -586,6 +588,10 @@ export const useEnsembleAction = (
 
   if ("navigateExternalScreen" in action) {
     return useNavigateExternalScreen(action.navigateExternalScreen);
+  }
+
+  if ("openUrl" in action) {
+    return useNavigateExternalScreen(action.openUrl);
   }
 
   if ("showToast" in action) {
