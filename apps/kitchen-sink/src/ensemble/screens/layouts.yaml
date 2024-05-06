@@ -273,6 +273,32 @@ View:
                   styles:
                     alignChildren: bottomRight
                   children:
+                    - Image:
+                        source: https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8dXNlciUyMHByb2ZpbGV8ZW58MHx8MHx8&w=1000&q=80
+                        width: 200
+                        height: 200
+                        fit: cover
+                        borderRadius: 200
+                    - Icon:
+                        name: ArrowBack
+                        size: 32
+                        color: white
+                        styles:
+                          backgroundColor: blue
+                          padding: 16
+                          borderRadius: 48
+
+        - Card:
+            styles:
+              marginTop: 10
+            children:
+              - Markdown:
+                  text: |
+                    ## Stack 3
+              - Stack:
+                  styles:
+                    alignChildren: topRight
+                  children:
                     - Icon:
                         name: ArrowBack
                         size: 32

@@ -34,68 +34,64 @@ const calculateStackAlignment = (id: string, alignment: string): string => {
   switch (alignment) {
     case "topLeft":
       alignmentStyles = `
-        top: 0;
-        left: 0;
+        align-items: start;
+        justify-items: left;
       `;
       break;
 
     case "topCenter":
       alignmentStyles = `
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
+        align-items: start;
+        justify-items: center;
       `;
       break;
 
     case "topRight":
       alignmentStyles = `
-        top: 0;
-        right: 0;
+        align-items: start;
+        justify-items: right;
       `;
       break;
 
     case "centerLeft":
       alignmentStyles = `
-        top: 50%;
-        left: 0;
-        transform: translateY(-50%);
+        align-items: center;
+        justify-items: left;
       `;
       break;
 
     case "center":
       alignmentStyles = `
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+        align-items: center;
+        justify-items: center;
       `;
       break;
 
     case "centerRight":
       alignmentStyles = `
-        top: 50%;
-        right: 0;
-        transform: translateY(-50%);
+        align-items: center;
+        justify-items: right;
       `;
       break;
 
     case "bottomLeft":
       alignmentStyles = `
-        bottom: 0;
-        left: 0;
+        align-items: end;
+        justify-items: left;
       `;
       break;
 
     case "bottomCenter":
       alignmentStyles = `
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
+        align-items: end;
+        justify-items: center;
       `;
       break;
 
     case "bottomRight":
       alignmentStyles = `
-        grid-area: 3 / 3 / 4 / 4;
+        align-items: end;
+        justify-items: right;
       `;
       break;
 
@@ -104,7 +100,7 @@ const calculateStackAlignment = (id: string, alignment: string): string => {
       break;
   }
 
-  return `#${id} > * {${alignmentStyles}}`;
+  return `#${id} {${alignmentStyles}} #${id} > * {grid-area: 1 / 1 / 3 / 3;}`;
 };
 
 export const Stack: React.FC<StackProps> = (props) => {
@@ -118,11 +114,7 @@ export const Stack: React.FC<StackProps> = (props) => {
 
   return (
     <>
-      <div
-        id={id}
-        ref={rootRef}
-        style={{ position: "relative", margin: "auto", display: "grid" }}
-      >
+      <div id={id} ref={rootRef} style={{ margin: "auto", display: "grid" }}>
         {renderedChildren}
       </div>
       <style>
