@@ -162,7 +162,13 @@ export const useExecuteCode: EnsembleActionHook<
                 invokeAPI: async (
                   apiName: string,
                   apiInputs?: { [key: string]: unknown },
-                ) => invokeAPI(screenData, apiName, apiInputs),
+                ) =>
+                  invokeAPI(screenData, apiName, apiInputs, {
+                    ...customScope,
+                    ensemble: {
+                      env: appContext?.env,
+                    },
+                  }),
                 navigateBack: (): void => navigateBack(navigate),
                 navigateExternalScreen: (url: NavigateExternalScreen) =>
                   navigateExternalScreen(url),
@@ -220,8 +226,8 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const evaluatedName = useEvaluate({ name: action?.name }, { context });
 
   const api = useMemo(
-    () => apis?.find((model) => model.name === evaluatedName?.name),
-    [evaluatedName?.name, apis],
+    () => apis?.find((model) => model.name === evaluatedName.name),
+    [evaluatedName.name, apis],
   );
 
   const onInvokeAPIResponseAction = useEnsembleAction(action?.onResponse);
