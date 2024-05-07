@@ -6,7 +6,7 @@ import {
   useRegisterBindings,
   type EnsembleWidget,
 } from "@ensembleui/react-framework";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { getColor } from "../shared/styles";
 import { EnsembleRuntime } from "./runtime";
 
@@ -35,10 +35,12 @@ interface MenuItem {
   icon?: string;
   iconLibrary?: "default" | "fontAwesome";
   label: string;
+  url: string;
   page: string;
   selected?: boolean;
   divider?: boolean;
   hasNotifications?: boolean;
+  openNewTab?: boolean;
 }
 
 interface MenuBaseProps {
@@ -91,7 +93,6 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
   const { values } = useRegisterBindings({ ...props, isCollapsed }, id, {
     setCollapsed,
   });
-  const navigate = useNavigate();
   const location = useLocation();
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
@@ -114,11 +115,6 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
       setSelectedItem(locationMatch.label);
     }
   }, [location.pathname, props.items]);
-
-  const handleClick = (page: string, label: string): void => {
-    setSelectedItem(label);
-    navigate(`/${page.toLowerCase()}`);
-  };
 
   return (
     <Col
@@ -162,7 +158,11 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
                 props.styles?.iconHeight,
               )}
               key={item.page}
-              onClick={() => handleClick(item.page, item.label)}
+              onClick={(): void => {
+                if (!item.openNewTab) {
+                  setSelectedItem(item.label);
+                }
+              }}
               style={{
                 color:
                   selectedItem === item.label
@@ -193,7 +193,10 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
                   : {}),
               }}
             >
-              <span>
+              <Link
+                target={item.openNewTab ? "_blank" : "_self"}
+                to={item.url ? item.url : `/${item.page}`}
+              >
                 {!isCollapsed && item.label}
                 {item.hasNotifications ? (
                   <div
@@ -207,7 +210,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
                     }}
                   />
                 ) : null}
-              </span>
+              </Link>
             </AntMenu.Item>
             {item.divider ? (
               <Col
