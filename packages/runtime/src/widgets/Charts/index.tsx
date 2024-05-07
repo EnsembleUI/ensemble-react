@@ -162,6 +162,7 @@ export const Chart: React.FC<ChartProps> = (props) => {
       style={{
         height: props.styles?.height ?? "100%",
         width: props.styles?.width ?? "100%",
+        aspectRatio: 2,
         ...(props.styles?.visible === false ? { display: "none" } : undefined),
       }}
     >

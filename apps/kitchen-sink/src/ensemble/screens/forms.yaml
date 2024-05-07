@@ -100,7 +100,7 @@ View:
                         labelKey: firstName
                         valueKey: email
                         items: ${ensemble.storage.get('dummyData')}
-                        allowCreateOptions: false
+                        allowCreateOptions: true
                         onItemSelect:
                           executeCode: |
                             console.log('selected');

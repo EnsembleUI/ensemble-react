@@ -5,10 +5,11 @@ View:
 
   onLoad:
     executeCode: |
-      ensemble.invokeAPI('getDummyProducts');
+      ensemble.invokeAPI("${1==1?'getDummyProducts':'noApi'}");
       ensemble.storage.set('dummyId', '1');
       ensemble.invokeAPI('getDummyProduct', {id: ensemble.storage.get('dummyId')});
       ensemble.storage.set('value',1);
+
   body:
     Column:
       styles:
@@ -20,7 +21,7 @@ View:
               names: heading-1
             text: Actions
         - Markdown:
-            text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).
+            text: ${ensemble.storage.get('dummyId') + ' More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/)'}
         - Card:
             styles:
               maxWidth: unset
@@ -38,7 +39,7 @@ View:
                   label: Get Data With Inputs
                   onTap:
                     invokeAPI:
-                      name: getDummyProduct
+                      name: ${1==1?'getDummyProduct':'noApi'}
                       inputs:
                         id: ${getDataInputValue.value}
                       onResponse:
@@ -119,6 +120,16 @@ View:
                   label: navigate url
                   onTap:
                     navigateUrl: /widgets
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: openUrl
+              - Markdown:
+                  text: "use `openUrl: url` for open external link programatically. click below button to check"
+              - Button:
+                  label: open url
+                  onTap:
+                    openUrl: https://google.com/
               - Text:
                   styles:
                     names: heading-3
@@ -296,17 +307,25 @@ View:
                     names: heading-3
                   text: Upload files
               - Button:
+                  label: upload images
+                  onTap:
+                    pickFiles:
+                      id: fileUploader1
+                      allowMultiple: "${1==10 ? false : true}"
+                      allowedExtensions: '${1==10 ? ["pdf", "docx"] : ["jpg", "png"]}'
+                      onComplete:
+                        executeCode: |
+                          console.log(fileUploader1, "hello", files);
+              - Button:
                   label: upload
                   onTap:
                     pickFiles:
-                      id: fileUploader
-                      allowMultiple: true
-                      allowedExtensions:
-                        - pdf
-                        - docx
+                      id: fileUploader2
+                      allowMultiple: "${1==1 ? true : false}"
+                      allowedExtensions: '${1==1 ? ["pdf", "docx"] : ["jpg", "png"]}'
                       onComplete:
                         executeCode: |
-                          console.log(fileUploader, "hello", files);
+                          console.log(fileUploader2, "hello", files);
 
         - Card:
             styles:
