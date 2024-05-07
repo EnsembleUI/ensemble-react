@@ -146,7 +146,6 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   const [colWidth, setColWidth] = useState<{
     [key: number]: number | undefined;
   }>({});
-  const [skipFirstRender, setSkipFirstRender] = useState<boolean>(true);
   const [curPage, setCurPage] = useState<number>(props.curPage || 1);
   const [pageSize, setPageSize] = useState<number>(props.pageSize || 10);
   const [rowsSelected, setRowsSelected] = useState<object[]>();
@@ -164,6 +163,11 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     },
   };
 
+  const setPage = (page: number) => {
+    setCurPage(page);
+    onPageChangeActionCallback(page, pageSize || 10);
+  };
+
   const {
     rootRef,
     id: resolvedWidgetId,
@@ -176,7 +180,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
       setSelectionType,
       setAllowSelection,
       setPageSize,
-      setCurPage,
+      setPage,
     },
   );
   const headerStyle = values?.styles?.headerStyle;
@@ -185,14 +189,6 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     setPageSize(values?.pageSize || 10);
     setCurPage(values?.curPage || 1);
   }, [values?.pageSize, values?.curPage]);
-
-  useEffect(() => {
-    if (skipFirstRender) {
-      setSkipFirstRender(false);
-      return;
-    }
-    onPageChangeActionCallback(curPage || 1, pageSize || 10);
-  }, [curPage, pageSize]);
 
   // handle column resize
   const handleResize =
