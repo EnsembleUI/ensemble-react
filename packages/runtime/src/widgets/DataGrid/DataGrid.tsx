@@ -163,42 +163,6 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     },
   };
 
-  const setPage = (page: number) => {
-    setCurPage(page);
-    onPageChangeActionCallback(page, pageSize || 10);
-  };
-
-  const {
-    rootRef,
-    id: resolvedWidgetId,
-    values,
-  } = useRegisterBindings(
-    { ...rest, rowsSelected, selectionType, allowSelection, pageSize, curPage },
-    props.id,
-    {
-      setRowsSelected,
-      setSelectionType,
-      setAllowSelection,
-      setPageSize,
-      setPage,
-    },
-  );
-  const headerStyle = values?.styles?.headerStyle;
-
-  useEffect(() => {
-    setPageSize(values?.pageSize || 10);
-    setCurPage(values?.curPage || 1);
-  }, [values?.pageSize, values?.curPage]);
-
-  // handle column resize
-  const handleResize =
-    (index: number) =>
-    (e: React.SyntheticEvent, { size }: { size: { width: number } }) => {
-      const prevColWidths = { ...colWidth };
-      prevColWidths[index] = size.width;
-      setColWidth(prevColWidths);
-    };
-
   // on row tap action
   const onTapAction = useEnsembleAction(itemTemplate.template.properties.onTap);
   const onTapActionCallback = useCallback(
@@ -281,6 +245,55 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     },
     [onScrollEndActionCallback],
   );
+
+  // update page number callback
+  const updatePageNumber = useCallback(
+    (n: number) => {
+      setCurPage(n);
+      onPageChangeActionCallback(n, pageSize || 10);
+    },
+    [pageSize, onPageChangeActionCallback],
+  );
+
+  // update pageSize callback
+  const updatePageSize = useCallback(
+    (n: number) => {
+      setPageSize(n);
+      onPageChangeActionCallback(curPage, n || 10);
+    },
+    [curPage, onPageChangeActionCallback],
+  );
+
+  const {
+    rootRef,
+    id: resolvedWidgetId,
+    values,
+  } = useRegisterBindings(
+    { ...rest, rowsSelected, selectionType, allowSelection, pageSize, curPage },
+    props.id,
+    {
+      setRowsSelected,
+      setSelectionType,
+      setAllowSelection,
+      setPageSize: updatePageSize,
+      setCurPage: updatePageNumber,
+    },
+  );
+  const headerStyle = values?.styles?.headerStyle;
+
+  useEffect(() => {
+    setPageSize(values?.pageSize || 10);
+    setCurPage(values?.curPage || 1);
+  }, [values?.pageSize, values?.curPage]);
+
+  // handle column resize
+  const handleResize =
+    (index: number) =>
+    (e: React.SyntheticEvent, { size }: { size: { width: number } }) => {
+      const prevColWidths = { ...colWidth };
+      prevColWidths[index] = size.width;
+      setColWidth(prevColWidths);
+    };
 
   // handle page change
   const handlePageChange = (page: number, newPageSize: number): void => {
