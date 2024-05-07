@@ -1,5 +1,28 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.39
+
+### Patch Changes
+
+- f1b1940: bind pickFiles attributes
+- 6c1004e: Add stack widget
+- 205415c: fix search in multiselect
+- 2770ed9: added support of arguments in navigateUrl
+- 5c00a86: added openUrl action for flutter compatibility
+- 8b092af: bind invokeAPI name
+- Updated dependencies [f1b1940]
+- Updated dependencies [6c1004e]
+- Updated dependencies [397781a]
+- Updated dependencies [205415c]
+- Updated dependencies [2770ed9]
+- Updated dependencies [5c00a86]
+- Updated dependencies [b08c208]
+- Updated dependencies [3cce71f]
+- Updated dependencies [23cf277]
+- Updated dependencies [8b092af]
+  - @ensembleui/react-runtime@0.1.48
+  - @ensembleui/react-framework@0.1.35
+
 ## 0.0.38
 
 ### Patch Changes

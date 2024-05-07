@@ -1,5 +1,12 @@
 # @ensembleui/react-framework
 
+## 0.1.35
+
+### Patch Changes
+
+- 5c00a86: added openUrl action for flutter compatibility
+- 3cce71f: handle nullish values in useStyles
+
 ## 0.1.34
 
 ### Patch Changes
