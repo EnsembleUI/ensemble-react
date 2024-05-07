@@ -35,8 +35,8 @@ interface MenuItem {
   icon?: string;
   iconLibrary?: "default" | "fontAwesome";
   label: string;
-  url: string;
-  page: string;
+  url?: string;
+  page?: string;
   selected?: boolean;
   divider?: boolean;
   hasNotifications?: boolean;
@@ -109,7 +109,8 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
 
   useEffect(() => {
     const locationMatch = props.items.find(
-      (item) => `/${item.page.toLowerCase()}` === location.pathname,
+      (item) =>
+        item.page && `/${item.page.toLowerCase()}` === location.pathname,
     );
     if (locationMatch) {
       setSelectedItem(locationMatch.label);
@@ -195,7 +196,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
             >
               <Link
                 target={item.openNewTab ? "_blank" : "_self"}
-                to={item.url ? item.url : `/${item.page}`}
+                to={item.page ? `/${item.page}` : String(item.url)}
               >
                 {!isCollapsed && item.label}
                 {item.hasNotifications ? (
