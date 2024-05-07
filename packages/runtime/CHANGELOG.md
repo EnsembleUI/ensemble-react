@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.1.49
+
+### Patch Changes
+
+- 1ed18c1: Hotfix - restore ensemble context in useInvokeAPI
+
 ## 0.1.48
 
 ### Patch Changes
