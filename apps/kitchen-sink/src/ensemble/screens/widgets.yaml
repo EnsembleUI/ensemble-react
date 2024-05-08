@@ -1018,11 +1018,15 @@ View:
                             iconButton1.setLoading(!iconButton1.loading)
                             iconButton2.setLoading(!iconButton2.loading)
                     - Button:
+                        styles:
+                          width: 50px
                         id: iconButton1
                         label: Hello
                         endingIcon:
                           name: ArrowBack
                     - Button:
+                        styles:
+                          minWidth: 50px
                         id: iconButton2
                         label: Hello
                         startingIcon:
