@@ -91,6 +91,7 @@ export type GridProps = {
   onSort?: EnsembleAction;
   pageSize?: number;
   totalRows?: number;
+  curPage?: number;
 } & EnsembleWidgetProps<DataGridStyles>;
 
 function djb2Hash(str: string): number {
@@ -142,11 +143,10 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     ...rest
   } = props;
 
-  const [skipFirstRender, setSkipFirstRender] = useState<boolean>(false);
   const [colWidth, setColWidth] = useState<{
     [key: number]: number | undefined;
   }>({});
-  const [curPage, setCurPage] = useState<number>(1);
+  const [curPage, setCurPage] = useState<number>(props.curPage || 1);
   const [pageSize, setPageSize] = useState<number>(props.pageSize || 10);
   const [rowsSelected, setRowsSelected] = useState<object[]>();
   const [allowSelection, setAllowSelection] = useState(
@@ -162,44 +162,6 @@ export const DataGrid: React.FC<GridProps> = (props) => {
       cell: ResizableTitle,
     },
   };
-
-  const {
-    rootRef,
-    id: resolvedWidgetId,
-    values,
-  } = useRegisterBindings(
-    { ...rest, rowsSelected, selectionType, allowSelection, pageSize, curPage },
-    props.id,
-    {
-      setRowsSelected,
-      setSelectionType,
-      setAllowSelection,
-      setPageSize,
-      setCurPage,
-    },
-  );
-  const headerStyle = values?.styles?.headerStyle;
-
-  useEffect(() => {
-    setPageSize(values?.pageSize || 10);
-  }, [values?.pageSize]);
-
-  useEffect(() => {
-    if (!skipFirstRender) {
-      return;
-    }
-
-    onPageChangeActionCallback(curPage || 1, pageSize || 10);
-  }, [skipFirstRender, curPage, pageSize]);
-
-  // handle column resize
-  const handleResize =
-    (index: number) =>
-    (e: React.SyntheticEvent, { size }: { size: { width: number } }) => {
-      const prevColWidths = { ...colWidth };
-      prevColWidths[index] = size.width;
-      setColWidth(prevColWidths);
-    };
 
   // on row tap action
   const onTapAction = useEnsembleAction(itemTemplate.template.properties.onTap);
@@ -284,12 +246,61 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     [onScrollEndActionCallback],
   );
 
+  // update page number callback
+  const updatePageNumber = useCallback(
+    (newPage: number) => {
+      setCurPage(newPage);
+      onPageChangeActionCallback(newPage, pageSize || 10);
+    },
+    [pageSize, onPageChangeActionCallback],
+  );
+
+  // update pageSize callback
+  const updatePageSize = useCallback(
+    (newPageSize: number) => {
+      setPageSize(newPageSize);
+      onPageChangeActionCallback(curPage, newPageSize || 10);
+    },
+    [curPage, onPageChangeActionCallback],
+  );
+
+  const {
+    rootRef,
+    id: resolvedWidgetId,
+    values,
+  } = useRegisterBindings(
+    { ...rest, rowsSelected, selectionType, allowSelection, pageSize, curPage },
+    props.id,
+    {
+      setRowsSelected,
+      setSelectionType,
+      setAllowSelection,
+      setPageSize: updatePageSize,
+      setCurPage: updatePageNumber,
+    },
+  );
+  const headerStyle = values?.styles?.headerStyle;
+
+  useEffect(() => {
+    setPageSize(values?.pageSize || 10);
+    setCurPage(values?.curPage || 1);
+  }, [values?.pageSize, values?.curPage]);
+
+  // handle column resize
+  const handleResize =
+    (index: number) =>
+    (e: React.SyntheticEvent, { size }: { size: { width: number } }) => {
+      const prevColWidths = { ...colWidth };
+      prevColWidths[index] = size.width;
+      setColWidth(prevColWidths);
+    };
+
   // handle page change
   const handlePageChange = (page: number, newPageSize: number): void => {
     const nextPage = newPageSize !== pageSize ? 1 : page;
-    setSkipFirstRender(true);
     setCurPage(nextPage);
     setPageSize(newPageSize);
+    onPageChangeActionCallback(nextPage, newPageSize || 10);
   };
 
   // handle onChange event on table
