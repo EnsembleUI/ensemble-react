@@ -69,9 +69,7 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
     <EnsembleFormItem valuePropName="checked" values={values}>
       <Checkbox
         checked={Boolean(values?.value)}
-        disabled={
-          values?.enabled === undefined ? false : Boolean(values.enabled)
-        }
+        disabled={values?.enabled === false}
         onChange={(event): void => handleChange(event.target.checked)}
         style={{
           marginLeft: `${props.leadingText ? "4px" : "0px"}`,

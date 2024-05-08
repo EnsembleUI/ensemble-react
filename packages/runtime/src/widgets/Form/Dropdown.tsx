@@ -242,9 +242,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
           <Select
             className={`${values?.styles?.names || ""} ${id}_input`}
             defaultValue={values?.value}
-            disabled={
-              values?.enabled === undefined ? false : Boolean(values.enabled)
-            }
+            disabled={values?.enabled === false}
             dropdownStyle={values?.styles}
             id={values?.id}
             onSelect={onItemSelectCallback}
