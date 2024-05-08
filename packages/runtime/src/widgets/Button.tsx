@@ -1,7 +1,13 @@
 import type { EnsembleAction, Expression } from "@ensembleui/react-framework";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { Button as AntButton, Form as AntForm } from "antd";
-import { type MouseEvent, useCallback, useMemo } from "react";
+import {
+  type MouseEvent,
+  useCallback,
+  useMemo,
+  useState,
+  useEffect,
+} from "react";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps, IconProps } from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
@@ -19,9 +25,11 @@ export type ButtonProps = {
     textColor?: string;
     gap?: string | number;
   };
+  loading?: boolean;
 } & EnsembleWidgetProps;
 
 export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
+  const [loading, setLoading] = useState<boolean>(rest.loading || false);
   const action = useEnsembleAction(onTap);
   const onClickCallback = useCallback(
     (e?: MouseEvent) => {
@@ -34,15 +42,23 @@ export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
     [action],
   );
 
-  const { values, rootRef } = useRegisterBindings(rest, id, {
+  const { values, rootRef } = useRegisterBindings({ ...rest, loading }, id, {
     click: onClickCallback,
+    setLoading,
   });
+
+  useEffect(() => {
+    if (values?.loading !== undefined) {
+      setLoading(values.loading);
+    }
+  }, [values?.loading]);
 
   const ButtonComponent = useMemo(() => {
     return (
       <AntButton
         disabled={values?.disabled ?? false}
         htmlType={values?.submitForm === true ? "submit" : "button"}
+        loading={loading}
         onClick={onClickCallback}
         ref={rootRef}
         style={{
@@ -57,17 +73,21 @@ export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
             : undefined),
         }}
       >
-        {values?.startingIcon ? (
+        {!loading && (
           <>
-            <Icon {...values.startingIcon} />
-            &nbsp;
+            {values?.startingIcon ? (
+              <>
+                <Icon {...values.startingIcon} />
+                &nbsp;
+              </>
+            ) : null}
+            {values?.label}
+            {values?.endingIcon ? <Icon {...values.endingIcon} /> : null}
           </>
-        ) : null}
-        {values?.label}
-        {values?.endingIcon ? <Icon {...values.endingIcon} /> : null}
+        )}
       </AntButton>
     );
-  }, [onClickCallback, rootRef, values]);
+  }, [onClickCallback, rootRef, values, loading]);
 
   if (values?.submitForm) {
     return (
