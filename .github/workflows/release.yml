@@ -27,7 +27,18 @@ jobs:
 
       - name: Install Dependencies
         run: pnpm install
-
+      - name: Generate Schema
+        run: pnpm run schema:generate
+      - name: Build Preview Dev
+        run: pnpm run build
+        working-directory: ./apps/preview
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_ENSEMBLE_WEB_STUDIO }}"
+          channelId: live
+          projectId: ensemble-web-studio
+          entryPoint: ./apps/preview
       - name: Create Release Pull Request
         uses: changesets/action@v1
         with:

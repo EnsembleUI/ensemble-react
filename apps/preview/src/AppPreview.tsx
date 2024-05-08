@@ -1,6 +1,7 @@
 import type {
   ApplicationDTO,
   ApplicationLoader,
+  EnsembleDocument,
 } from "@ensembleui/react-framework";
 import { getFirestoreApplicationLoader } from "@ensembleui/react-framework";
 import { EnsembleApp } from "@ensembleui/react-runtime";
@@ -10,6 +11,48 @@ import type { Firestore } from "firebase/firestore/lite";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useParams, useSearchParams } from "react-router-dom";
 
+const customWidgetPreviewScaffold = `
+View:
+  body:
+    Column:
+      children:
+        - @@WIDGET@@
+`;
+
+const customWidgetScreenTemplate = {
+  id: "preview",
+  name: "home",
+  content: customWidgetPreviewScaffold,
+};
+
+const customPreviewWidgetApp: ApplicationDTO = {
+  screens: [customWidgetScreenTemplate],
+  widgets: [],
+  scripts: [],
+  id: "customWidgetPreview",
+  name: "customWidgetPreview",
+};
+
+const createCustomWidgetPreviewApp = (
+  app: ApplicationDTO,
+  customWidget: EnsembleDocument,
+): ApplicationDTO => {
+  const screen = {
+    ...customWidgetScreenTemplate,
+    content: customWidgetScreenTemplate.content.replace(
+      "@@WIDGET@@",
+      `${customWidget.name}:`,
+    ),
+  };
+  const customApp: ApplicationDTO = {
+    ...customPreviewWidgetApp,
+    theme: app.theme,
+    screens: [screen],
+    widgets: [customWidget],
+  };
+  return customApp;
+};
+
 export const AppPreview: React.FC<{ db: Firestore }> = ({ db }) => {
   const { previewId } = useParams();
   const { pathname } = useLocation();
@@ -17,7 +60,8 @@ export const AppPreview: React.FC<{ db: Firestore }> = ({ db }) => {
   const [refreshCount, setRefreshCount] = useState<number>(0);
   const [bypassCache, setBypassCache] = useState<boolean>(true);
 
-  const screenId = searchParams.get("screenId");
+  const artifactId =
+    searchParams.get("artifactId") ?? searchParams.get("screenId");
   const loader = useMemo(() => {
     const firestoreLoader = getFirestoreApplicationLoader(db);
     const loaderWithCache: ApplicationLoader = {
@@ -28,6 +72,12 @@ export const AppPreview: React.FC<{ db: Firestore }> = ({ db }) => {
             `ensemble-react.preview.${appId}`,
             JSON.stringify(app),
           );
+          const matchingWidget = app.widgets.find(
+            (widget) => widget.id === artifactId,
+          );
+          if (matchingWidget) {
+            return createCustomWidgetPreviewApp(app, matchingWidget);
+          }
           return app;
         }
 
@@ -38,14 +88,21 @@ export const AppPreview: React.FC<{ db: Firestore }> = ({ db }) => {
           throw Error(`${appId} does not exist in cache!`);
         }
         const hydratedApp = JSON.parse(serializedApp) as ApplicationDTO;
-        if (screenId) {
-          const cachedScreen = localStorage.getItem(`flutter.${screenId}`);
-          if (cachedScreen) {
-            const matchingScreen = hydratedApp.screens.find(
-              (screen) => screen.id === screenId,
-            );
+        const matchingWidget = hydratedApp.widgets.find(
+          (widget) => widget.id === artifactId,
+        );
+        const matchingScreen = hydratedApp.screens.find(
+          (screen) => screen.id === artifactId,
+        );
+        if (artifactId) {
+          const cachedArtifact = localStorage.getItem(`flutter.${artifactId}`);
+          if (cachedArtifact) {
+            if (matchingWidget) {
+              set(matchingWidget, "content", JSON.parse(cachedArtifact));
+              return createCustomWidgetPreviewApp(hydratedApp, matchingWidget);
+            }
             if (matchingScreen) {
-              set(matchingScreen, "content", JSON.parse(cachedScreen));
+              set(matchingScreen, "content", JSON.parse(cachedArtifact));
             }
           }
         }
@@ -53,7 +110,7 @@ export const AppPreview: React.FC<{ db: Firestore }> = ({ db }) => {
       },
     };
     return loaderWithCache;
-  }, [bypassCache, db, screenId]);
+  }, [bypassCache, db, artifactId]);
 
   const handleMessage = useCallback(
     (e: MessageEvent) => {
@@ -102,7 +159,7 @@ export const AppPreview: React.FC<{ db: Firestore }> = ({ db }) => {
       key={refreshCount}
       loader={loader}
       path={pathname}
-      screenId={screenId ?? undefined}
+      screenId={artifactId ?? undefined}
     />
   );
 };
