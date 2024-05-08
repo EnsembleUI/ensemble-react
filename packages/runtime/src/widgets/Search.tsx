@@ -117,7 +117,7 @@ export const Search: React.FC<SearchProps> = ({
         onSearchAction.callback({ search: searchValue });
       }
     },
-    onSearch?.debounceMs || 500,
+    onSearch?.debounceMs || 0,
     [searchValue],
   );
 
