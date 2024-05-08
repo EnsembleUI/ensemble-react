@@ -18,7 +18,7 @@ import type {
 } from "@ensembleui/react-framework";
 import { AutoComplete, Input } from "antd";
 import { SearchOutlined } from "@mui/icons-material";
-import { get, isEmpty, isNull, isNumber } from "lodash-es";
+import { get, isNull, isNumber } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type {
   EnsembleWidgetProps,
@@ -75,10 +75,6 @@ export const Search: React.FC<SearchProps> = ({
   const onSelectAction = useEnsembleAction(onSelect);
 
   useEffect(() => {
-    if (isEmpty(namedData)) {
-      return;
-    }
-
     const newOptions = namedData.map((item) => {
       const itemData = itemTemplate?.name
         ? (get(item, itemTemplate.name) as unknown)
@@ -121,7 +117,7 @@ export const Search: React.FC<SearchProps> = ({
         onSearchAction.callback({ search: searchValue });
       }
     },
-    onSearch?.debounceMs,
+    onSearch?.debounceMs || 500,
     [searchValue],
   );
 
