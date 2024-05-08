@@ -996,6 +996,37 @@ View:
                     template:
                       Text:
                         text: ${product.title}
+
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+              gap: 10px
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: Button with icons and loading
+              - Row:
+                  styles:
+                    gap: 4
+                  children:
+                    - Button:
+                        label: Toggle loaders
+                        onTap:
+                          executeCode: |
+                            iconButton1.setLoading(!iconButton1.loading)
+                            iconButton2.setLoading(!iconButton2.loading)
+                    - Button:
+                        id: iconButton1
+                        label: Hello
+                        endingIcon:
+                          name: ArrowBack
+                    - Button:
+                        id: iconButton2
+                        label: Hello
+                        startingIcon:
+                          name: ArrowBack
 API:
   getDummyProducts:
     method: GET
