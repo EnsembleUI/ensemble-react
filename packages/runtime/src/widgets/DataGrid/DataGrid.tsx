@@ -300,6 +300,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     const nextPage = newPageSize !== pageSize ? 1 : page;
     setCurPage(nextPage);
     setPageSize(newPageSize);
+    onPageChangeActionCallback(nextPage, newPageSize || 10);
   };
 
   // handle onChange event on table
