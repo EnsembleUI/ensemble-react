@@ -15,7 +15,7 @@
     "ensemble-web-studio": {
       "hosting": {
         "react-preview": [
-          "react-preview"
+          "ensemble-react-preview"
         ]
       }
     }
