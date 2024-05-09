@@ -23,6 +23,7 @@ View:
       styles:
         names: page
       children:
+        - Icon:
         - Text:
             styles:
               names: heading-3
@@ -246,3 +247,8 @@ API:
   getData:
     method: GET
     uri: https://dummyjson.com/users
+
+Icon:
+  body:
+    Text:
+      text: Hello123
