@@ -252,9 +252,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
             allowClear
             className={`${values?.styles?.names || ""} ${id}_input`}
             defaultValue={defaultValue}
-            disabled={
-              values?.enabled === undefined ? false : Boolean(values.enabled)
-            }
+            disabled={values?.enabled === false}
             dropdownRender={newOptionRender}
             dropdownStyle={values?.styles}
             filterOption={(input, option): boolean =>

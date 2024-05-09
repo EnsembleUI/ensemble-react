@@ -47,6 +47,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
       {values?.multiLine ? (
         <Input.TextArea
           defaultValue={values.value}
+          disabled={values?.enabled === false}
           onChange={(event): void => setValue(event.target.value)}
           placeholder={values.hintText ?? ""}
           rows={values.maxLines ? Number(values.maxLines) : 4} // Adjust the number of rows as needed
@@ -61,6 +62,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
       ) : (
         <Input
           defaultValue={values?.value}
+          disabled={values?.enabled === false}
           onChange={(event): void => setValue(event.target.value)}
           placeholder={values?.hintText ?? ""}
           style={{

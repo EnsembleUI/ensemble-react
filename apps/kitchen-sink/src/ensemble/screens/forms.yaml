@@ -57,6 +57,7 @@ View:
                         items:
                           - label: Option 1
                             value: 1
+                            enabled: false
                           - label: Option 2
                             value: 2
                           - label: Option 3
@@ -70,12 +71,17 @@ View:
                           - Checkbox:
                               id: checkbox
                               trailingText: Check me
+                              enabled: false
                               onChange:
                                 executeCode: |-
                                   console.log('isChecked', value);
                           - Checkbox:
                               id: checkbox2
                               trailingText: Check me 2
+                          - Checkbox:
+                              id: checkbox3
+                              trailingText: Check me 3
+                              enabled: true
                     - Dropdown:
                         id: dropdown
                         label: Dropdown

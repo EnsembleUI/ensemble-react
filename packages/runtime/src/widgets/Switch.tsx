@@ -104,9 +104,7 @@ export const SwitchWidget: React.FC<SwitchProps> = (props) => {
       {leadingContent}
       <Switch
         checked={values?.value as boolean}
-        disabled={
-          values?.enabled === undefined ? false : Boolean(!values.enabled)
-        }
+        disabled={values?.enabled === false}
         loading={values?.loading}
         onChange={handleChange}
         size={values?.size}
