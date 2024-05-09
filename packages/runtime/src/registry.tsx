@@ -4,32 +4,21 @@ import type { ReactElement } from "react";
 type WidgetComponent<T> = React.FC<T>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mainRegistry: Record<string, WidgetComponent<any> | undefined> = {};
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const backupRegistry: Record<string, WidgetComponent<any> | undefined> = {};
+export const registry: { [key: string]: WidgetComponent<any> | undefined } = {};
 
 export const WidgetRegistry = {
   register: <T,>(name: string, component: WidgetComponent<T>): void => {
-    if (name in mainRegistry) {
-      backupRegistry[name] = mainRegistry[name];
-    }
-
-    mainRegistry[name] = component;
+    registry[name] = component;
   },
   find: (name: string): WidgetComponent<any> | ReactElement => {
-    const Widget = mainRegistry[name];
+    const Widget = registry[name];
     if (!Widget) {
       return <UnknownWidget missingName={name} />;
     }
     return Widget;
   },
   unregister: (name: string): void => {
-    if (name in backupRegistry) {
-      mainRegistry[name] = backupRegistry[name];
-      delete backupRegistry[name];
-    } else {
-      delete mainRegistry[name];
-    }
+    delete registry[name];
   },
 };
 

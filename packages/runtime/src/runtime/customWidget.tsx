@@ -14,16 +14,17 @@ import { EnsembleRuntime } from "./runtime";
 import { useEnsembleAction } from "./hooks/useEnsembleAction";
 
 export interface CustomWidgetProps {
-  inputs: Record<string, unknown>;
+  inputs: { [key: string]: unknown };
 }
 
 export const createCustomWidget = (
   widget: CustomWidgetModel,
 ): React.FC<CustomWidgetProps> => {
   const CustomWidget: React.FC<CustomWidgetProps> = ({ inputs }) => {
-    const { values } = useRegisterBindings<Record<string, unknown>>({
+    const { values } = useRegisterBindings<{ [key: string]: unknown }>({
       ...inputs,
     });
+
     return (
       <CustomScopeProvider value={values ?? inputs}>
         <OnLoadAction action={widget?.onLoad} context={values ?? inputs}>
@@ -38,7 +39,7 @@ export const createCustomWidget = (
 const OnLoadAction: React.FC<
   React.PropsWithChildren<{
     action?: EnsembleAction;
-    context: Record<string, unknown>;
+    context: { [key: string]: unknown };
   }>
 > = ({ action, children, context }) => {
   const onLoadAction = useEnsembleAction(action);

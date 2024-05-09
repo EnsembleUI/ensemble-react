@@ -1007,7 +1007,7 @@ View:
                   styles:
                     names: heading-3
                   text: Custom widget in screen
-              - PersonProfile:
+              - Button:
 API:
   getDummyProducts:
     method: GET
@@ -1031,7 +1031,7 @@ API:
       executeCode: |
         console.log('dummy number fetched')
 
-PersonProfile:
+Button:
   inputs:
     - image
   body:
