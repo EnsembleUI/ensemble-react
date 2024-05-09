@@ -3,10 +3,10 @@ import type {
   EnsembleScreenModel,
 } from "@ensembleui/react-framework";
 import { ScreenContextProvider, error } from "@ensembleui/react-framework";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { isEmpty, merge } from "lodash-es";
-import { registry, WidgetRegistry } from "../registry";
+import { type WidgetComponent, findWidget, WidgetRegistry } from "../registry";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { useEnsembleAction } from "./hooks/useEnsembleAction";
@@ -28,7 +28,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
 }) => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { state, search, pathname } = useLocation();
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const routeParams = useParams(); // route params
   const params = new URLSearchParams(search); // query params
   const queryParams: { [key: string]: unknown } = Object.fromEntries(params);
@@ -43,29 +43,35 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
 
   useEffect(() => {
     if (!screen.customWidgets || isEmpty(screen.customWidgets)) {
-      setIsLoaded(true);
+      setIsInitialized(true);
       return;
     }
 
     // initial widget values store
-    const initialWidgetValues = {};
+    const initialWidgetValues: {
+      [key: string]: WidgetComponent<any>;
+    } = {};
 
     // load screen custom widgets
     screen.customWidgets?.forEach((customWidget) => {
-      initialWidgetValues[customWidget.name] = registry[customWidget.name];
+      const originalImplementation = findWidget(customWidget.name);
+      if (originalImplementation) {
+        initialWidgetValues[customWidget.name] = originalImplementation;
+      }
+
       WidgetRegistry.register(
         customWidget.name,
         createCustomWidget(customWidget),
       );
     });
 
-    setIsLoaded(true);
+    setIsInitialized(true);
 
     return () => {
       // unMount screen custom widgets
       screen.customWidgets?.forEach((customWidget) => {
         WidgetRegistry.unregister(customWidget.name);
-        if (initialWidgetValues.hasOwnProperty(customWidget.name)) {
+        if (customWidget.name in initialWidgetValues) {
           WidgetRegistry.register(
             customWidget.name,
             initialWidgetValues[customWidget.name],
@@ -75,7 +81,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
     };
   }, [screen.customWidgets]);
 
-  if (!isLoaded) {
+  if (!isInitialized) {
     return null;
   }
 

@@ -1,10 +1,10 @@
 import { Alert } from "antd";
 import type { ReactElement } from "react";
 
-type WidgetComponent<T> = React.FC<T>;
+export type WidgetComponent<T> = React.FC<T>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const registry: { [key: string]: WidgetComponent<any> | undefined } = {};
+const registry: { [key: string]: WidgetComponent<any> | undefined } = {};
 
 export const WidgetRegistry = {
   register: <T,>(name: string, component: WidgetComponent<T>): void => {
@@ -20,6 +20,10 @@ export const WidgetRegistry = {
   unregister: (name: string): void => {
     delete registry[name];
   },
+};
+
+export const findWidget = (name: string): WidgetComponent<any> | undefined => {
+  return registry[name];
 };
 
 const UnknownWidget: React.FC<{ missingName: string }> = ({ missingName }) => {
