@@ -39,9 +39,13 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(Boolean(menuAnchorEl));
   const [name, setName] = useState(props.name);
-  const { values } = useRegisterBindings({ ...props, name }, props.id, {
-    setName,
-  });
+  const { values, rootRef } = useRegisterBindings(
+    { ...props, name },
+    props.id,
+    {
+      setName,
+    },
+  );
   // FIXME: action callbacks should take params so they can be callable per element
   const executeCode = useExecuteCode(code, { context: values });
   const navigate = useNavigateScreen(screen);
@@ -75,7 +79,7 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
   }, [screen, navigate]);
 
   return (
-    <div>
+    <div ref={rootRef}>
       <MuiAvatar
         alt={props.alt}
         onClick={handleMenuOpen}
@@ -110,8 +114,11 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
           onClose={handleMenuClose}
           open={isMenuOpen}
         >
-          {props.menu.map((menuItem, index) => (
-            <MenuItem key={index} onClick={() => handleMenuClick(menuItem)}>
+          {props.menu.map((menuItem) => (
+            <MenuItem
+              key={menuItem.label}
+              onClick={(): void => handleMenuClick(menuItem)}
+            >
               {menuItem.icon ? (
                 <ListItemIcon>
                   <Icon
