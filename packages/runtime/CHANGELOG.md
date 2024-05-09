@@ -1,5 +1,28 @@
 # @ensembleui/react-runtime
 
+## 0.1.49
+
+### Patch Changes
+
+- 1ed18c1: Hotfix - restore ensemble context in useInvokeAPI
+
+## 0.1.48
+
+### Patch Changes
+
+- f1b1940: bind pickFiles attributes
+- 6c1004e: Add stack widget
+- 397781a: added aspectRation in charts for responsiveness
+- 205415c: fix search in multiselect
+- 2770ed9: added support of arguments in navigateUrl
+- 5c00a86: added openUrl action for flutter compatibility
+- b08c208: fix showDialog's height to whatever user has given
+- 23cf277: Support external links in sidebar menu items
+- 8b092af: bind invokeAPI name
+- Updated dependencies [5c00a86]
+- Updated dependencies [3cce71f]
+  - @ensembleui/react-framework@0.1.35
+
 ## 0.1.47
 
 ### Patch Changes

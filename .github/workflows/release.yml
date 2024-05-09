@@ -12,22 +12,30 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
-
+      - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2.0.1
         with:
           version: 6.32.2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+          run_install: true
+      - uses: actions/setup-node@v3
         with:
-          node-version: 18
-          cache: pnpm
-
-      - name: Install Dependencies
-        run: pnpm install
-
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+      # TODO only do this when changesets are empty
+      - name: Build Packages
+        run: pnpm run build --filter=./packages
+      - name: Generate Schema
+        run: pnpm run schema:generate
+      - name: Build Preview Dev
+        run: pnpm run build
+        working-directory: ./apps/preview
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_ENSEMBLE_WEB_STUDIO }}"
+          channelId: live
+          projectId: ensemble-web-studio
+          entryPoint: ./apps/preview
       - name: Create Release Pull Request
         uses: changesets/action@v1
         with:

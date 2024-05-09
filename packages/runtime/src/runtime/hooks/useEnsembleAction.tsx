@@ -162,16 +162,17 @@ export const useExecuteCode: EnsembleActionHook<
                 invokeAPI: async (
                   apiName: string,
                   apiInputs?: { [key: string]: unknown },
-                ) => {
-                  const apiRes = await invokeAPI(
-                    screenData,
-                    apiName,
-                    apiInputs,
-                  );
-                  return apiRes;
-                },
+                ) =>
+                  invokeAPI(screenData, apiName, apiInputs, {
+                    ...customScope,
+                    ensemble: {
+                      env: appContext?.env,
+                    },
+                  }),
                 navigateBack: (): void => navigateBack(navigate),
                 navigateExternalScreen: (url: NavigateExternalScreen) =>
+                  navigateExternalScreen(url),
+                openUrl: (url: NavigateExternalScreen) =>
                   navigateExternalScreen(url),
               },
             },
@@ -222,10 +223,11 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const [isLoading, setIsLoading] = useState<boolean>();
   const [context, setContext] = useState<{ [key: string]: unknown }>();
   const evaluatedInputs = useEvaluate(action?.inputs, { context });
+  const evaluatedName = useEvaluate({ name: action?.name }, { context });
 
   const api = useMemo(
-    () => apis?.find((model) => model.name === action?.name),
-    [action?.name, apis],
+    () => apis?.find((model) => model.name === evaluatedName.name),
+    [evaluatedName.name, apis],
   );
 
   const onInvokeAPIResponseAction = useEnsembleAction(action?.onResponse);
@@ -366,6 +368,7 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
   const { values } = useRegisterBindings(
     {
       files,
+      ...action,
     },
     action?.id,
     {
@@ -376,13 +379,13 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
   const inputEl = useMemo(() => {
     const input = document.createElement("input");
     input.type = "file";
-    input.multiple = action?.allowMultiple || false;
+    input.multiple = values?.allowMultiple || false;
     input.accept =
-      action?.allowedExtensions?.map((ext) => ".".concat(ext))?.toString() ||
+      values?.allowedExtensions?.map((ext) => ".".concat(ext))?.toString() ||
       "*/*";
 
     return input;
-  }, [action?.allowMultiple, action?.allowedExtensions]);
+  }, [values?.allowMultiple, values?.allowedExtensions]);
 
   useEffect(() => {
     inputEl.onchange = (event: Event): void => {
@@ -585,6 +588,10 @@ export const useEnsembleAction = (
 
   if ("navigateExternalScreen" in action) {
     return useNavigateExternalScreen(action.navigateExternalScreen);
+  }
+
+  if ("openUrl" in action) {
+    return useNavigateExternalScreen(action.openUrl);
   }
 
   if ("showToast" in action) {

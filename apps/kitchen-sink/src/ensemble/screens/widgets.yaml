@@ -1008,6 +1008,7 @@ View:
                     names: heading-3
                   text: Custom widget in screen
               - Button:
+
 API:
   getDummyProducts:
     method: GET
