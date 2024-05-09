@@ -17,13 +17,12 @@ export const WidgetRegistry = {
     }
     return Widget;
   },
+  findOrNull: (name: string): WidgetComponent<any> | null => {
+    return registry[name] || null;
+  },
   unregister: (name: string): void => {
     delete registry[name];
   },
-};
-
-export const findWidget = (name: string): WidgetComponent<any> | undefined => {
-  return registry[name];
 };
 
 const UnknownWidget: React.FC<{ missingName: string }> = ({ missingName }) => {

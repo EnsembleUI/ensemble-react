@@ -6,7 +6,7 @@ import { ScreenContextProvider, error } from "@ensembleui/react-framework";
 import React, { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { isEmpty, merge } from "lodash-es";
-import { type WidgetComponent, findWidget, WidgetRegistry } from "../registry";
+import { type WidgetComponent, WidgetRegistry } from "../registry";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { useEnsembleAction } from "./hooks/useEnsembleAction";
@@ -54,7 +54,9 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
 
     // load screen custom widgets
     screen.customWidgets?.forEach((customWidget) => {
-      const originalImplementation = findWidget(customWidget.name);
+      const originalImplementation = WidgetRegistry.findOrNull(
+        customWidget.name,
+      );
       if (originalImplementation) {
         initialWidgetValues[customWidget.name] = originalImplementation;
       }
