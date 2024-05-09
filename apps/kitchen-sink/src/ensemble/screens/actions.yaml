@@ -136,6 +136,7 @@ View:
                   text: navigateModalScreen
               - Markdown:
                   text: "use `navigateModalScreen: screen_name` for navigate modal screen programmatically. click below button to check"
+              - Icon:
               - Button:
                   label: navigateModalScreen 1
                   onTap:
@@ -464,3 +465,8 @@ API:
     onResponse:
       executeCode: |
         console.log(response.body);
+
+Icon:
+  body:
+    Text:
+      text: Hello123456

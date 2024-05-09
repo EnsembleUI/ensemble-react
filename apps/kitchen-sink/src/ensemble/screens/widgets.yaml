@@ -1006,31 +1006,9 @@ View:
               - Text:
                   styles:
                     names: heading-3
-                  text: Button with icons and loading
-              - Row:
-                  styles:
-                    gap: 4
-                  children:
-                    - Button:
-                        label: Toggle loaders
-                        onTap:
-                          executeCode: |
-                            iconButton1.setLoading(!iconButton1.loading)
-                            iconButton2.setLoading(!iconButton2.loading)
-                    - Button:
-                        styles:
-                          width: 50px
-                        id: iconButton1
-                        label: Hello
-                        endingIcon:
-                          name: ArrowBack
-                    - Button:
-                        styles:
-                          minWidth: 50px
-                        id: iconButton2
-                        label: Hello
-                        startingIcon:
-                          name: ArrowBack
+                  text: Custom widget in screen
+              - Button:
+
 API:
   getDummyProducts:
     method: GET
@@ -1053,3 +1031,10 @@ API:
     onResponse:
       executeCode: |
         console.log('dummy number fetched')
+
+Button:
+  inputs:
+    - image
+  body:
+    Text:
+      text: Hello
