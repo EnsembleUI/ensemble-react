@@ -66,5 +66,5 @@ Styles:
   Button:
     backgroundColor: red
   Text:
-    backgroundColor: yellow
-    color: red
+    backgroundColor: ${colors.primary['600']}
+    color: ${colors.primary['400']}
