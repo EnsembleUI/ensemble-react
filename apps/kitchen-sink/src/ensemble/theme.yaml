@@ -63,3 +63,8 @@ Styles:
   heading-3:
     fontSize: ${typography.fontSize['24']}
     fontWeight: ${typography.fontWeight.bold}
+  Button:
+    backgroundColor: red
+  Text:
+    backgroundColor: yellow
+    color: red

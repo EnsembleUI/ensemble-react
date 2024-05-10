@@ -36,6 +36,7 @@ export const useStyles = <T extends { [key: string]: unknown }>(
 ): CSSProperties | undefined => {
   const namedStyles = get(values, ["styles", "names"]) as string;
   const classStyles = get(values, ["styles", "className"]) as string;
+  const widgetName = get(values, ["widgetName"]) as string;
 
   const themeContext = useAtomValue(themeAtom);
 
@@ -49,6 +50,7 @@ export const useStyles = <T extends { [key: string]: unknown }>(
     classStylesEval
       ?.trim()
       .split(" ")
+      .filter((x) => x)
       .map((className) => `.${className}`),
   )
     .join(" ")
@@ -56,9 +58,12 @@ export const useStyles = <T extends { [key: string]: unknown }>(
 
   const styleProperties = useMemo(() => {
     return styleNames && themeContext
-      ? resolveStyleNames(styleNames.split(" "), themeContext)
+      ? resolveStyleNames(
+          [...styleNames.split(" "), widgetName || ""].filter((x) => x.trim()),
+          themeContext,
+        )
       : undefined;
-  }, [styleNames, themeContext]);
+  }, [widgetName, styleNames, themeContext]);
 
   return useMemo(() => {
     return merge(

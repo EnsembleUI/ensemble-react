@@ -6,7 +6,9 @@ import { useState } from "react";
 import { Typography } from "antd";
 import { WidgetRegistry } from "../registry";
 import type { BaseTextProps } from "../shared/types";
-import { TextAlignment } from "../shared/styleSchema";
+import type { TextAlignment } from "../shared/styleSchema";
+
+const widgetName = "Text";
 
 export interface TextStyles {
   fontSize?: string | number;
@@ -25,13 +27,11 @@ export type TextProps = {
 
 export const Text: React.FC<TextProps> = (props) => {
   const [text, setText] = useState(props.text);
-  const [color, setColor] = useState(props.styles?.color);
   const { values, rootRef } = useRegisterBindings(
-    { ...props, text, color },
+    { ...props, text, widgetName },
     props.id,
     {
       setText,
-      setColor,
     },
   );
 
@@ -51,4 +51,4 @@ export const Text: React.FC<TextProps> = (props) => {
   );
 };
 
-WidgetRegistry.register("Text", Text);
+WidgetRegistry.register(widgetName, Text);
