@@ -28,6 +28,8 @@ import type {
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { EnsembleRuntime } from "../runtime";
 
+const widgetName = "Search";
+
 export type SearchProps = {
   placeholder?: string;
   searchKey?: string;
@@ -62,7 +64,7 @@ export const Search: React.FC<SearchProps> = ({
   });
 
   const { rootRef, values } = useRegisterBindings(
-    { styles, value, options, ...rest },
+    { styles, value, options, ...rest, widgetName },
     id,
     {
       setValue,
@@ -201,4 +203,4 @@ const SearchOption = ({
   );
 };
 
-WidgetRegistry.register("Search", Search);
+WidgetRegistry.register(widgetName, Search);

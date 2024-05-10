@@ -13,6 +13,8 @@ import type { FormInputProps } from "../types";
 import { EnsembleFormItem } from "../FormItem";
 import { DateDisplayFormat } from "./utils/DateConstants";
 
+const widgetName = "Date";
+
 type DateStyles = {
   visible?: boolean;
 } & EnsembleWidgetStyles;
@@ -31,7 +33,7 @@ export const Date: React.FC<DateProps> = (props) => {
   const action = useEnsembleAction(props.onChange);
 
   const { id, values } = useRegisterBindings(
-    { ...props, initialValue: props.value, value },
+    { ...props, initialValue: props.value, value, widgetName },
     props.id,
     {
       setValue,
@@ -103,4 +105,4 @@ export const Date: React.FC<DateProps> = (props) => {
   );
 };
 
-WidgetRegistry.register("Date", Date);
+WidgetRegistry.register(widgetName, Date);

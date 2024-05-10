@@ -6,6 +6,8 @@ import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import type { EnsembleWidgetProps } from "../shared/types";
 
+const widgetName = "Conditional";
+
 export type ConditionalElement = Record<
   Capitalize<string>,
   Record<string, unknown>
@@ -33,7 +35,7 @@ export const Conditional: React.FC<ConditionalProps> = ({
   );
 
   const { values } = useRegisterBindings(
-    { conditions: conditionStatements, ...props },
+    { conditions: conditionStatements, ...props, widgetName },
     props.id,
   );
 
@@ -67,7 +69,7 @@ export const Conditional: React.FC<ConditionalProps> = ({
   return <>{EnsembleRuntime.render([widget])}</>;
 };
 
-WidgetRegistry.register("Conditional", Conditional);
+WidgetRegistry.register(widgetName, Conditional);
 
 export const hasProperStructure = (
   conditions: ConditionalElement[],

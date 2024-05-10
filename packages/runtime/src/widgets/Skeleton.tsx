@@ -4,13 +4,15 @@ import { Skeleton as MuiSkeleton } from "@mui/material";
 import type { EnsembleWidgetProps } from "../shared/types";
 import { WidgetRegistry } from "../registry";
 
+const widgetName = "Skeleton";
+
 export interface SkeletonProps extends EnsembleWidgetProps {
   useShimmer?: Expression<boolean>;
   variant?: "circular" | "rectangular" | "rounded" | "text";
 }
 
 export const Skeleton: React.FC<SkeletonProps> = (props) => {
-  const { values } = useRegisterBindings({ ...props }, props.id);
+  const { values } = useRegisterBindings({ ...props, widgetName }, props.id);
 
   return (
     <MuiSkeleton
@@ -23,4 +25,4 @@ export const Skeleton: React.FC<SkeletonProps> = (props) => {
   );
 };
 
-WidgetRegistry.register("Skeleton", Skeleton);
+WidgetRegistry.register(widgetName, Skeleton);

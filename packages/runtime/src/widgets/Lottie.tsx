@@ -1,13 +1,15 @@
 import React, { useCallback, useRef, useState } from "react";
 import { Player, type PlayerEvent } from "@lottiefiles/react-lottie-player";
-import { WidgetRegistry } from "../registry";
-import { EnsembleWidgetProps } from "../shared/types";
 import {
-  EnsembleAction,
+  type EnsembleAction,
   useRegisterBindings,
 } from "@ensembleui/react-framework";
+import { WidgetRegistry } from "../registry";
+import { type EnsembleWidgetProps } from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks";
 import { getComponentStyles } from "../shared/styles";
+
+const widgetName = "Lottie";
 
 export type LottieProps = {
   source: string;
@@ -72,6 +74,7 @@ export const Lottie: React.FC<LottieProps> = (props) => {
     {
       ...props,
       source,
+      widgetName,
     },
     props.id,
     {
@@ -118,4 +121,4 @@ export const Lottie: React.FC<LottieProps> = (props) => {
   );
 };
 
-WidgetRegistry.register("Lottie", Lottie);
+WidgetRegistry.register(widgetName, Lottie);

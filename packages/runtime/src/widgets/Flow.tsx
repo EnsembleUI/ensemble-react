@@ -1,12 +1,14 @@
+import { useMemo } from "react";
+import { indexOf, keys, omit } from "lodash-es";
 import {
   useRegisterBindings,
-  EnsembleWidget,
-  Expression,
-  TemplateData,
+  type EnsembleWidget,
+  type Expression,
+  type TemplateData,
   useTemplateData,
   CustomScopeProvider,
   useCustomScope,
-  CustomScope,
+  type CustomScope,
 } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import type {
@@ -14,8 +16,8 @@ import type {
   EnsembleWidgetStyles,
 } from "../shared/types";
 import { EnsembleRuntime } from "../runtime";
-import { indexOf, keys, omit } from "lodash-es";
-import { useMemo } from "react";
+
+const widgetName = "Flow";
 
 export interface FlexStyles extends EnsembleWidgetStyles {
   direction?: "horizontal" | "vertical" | undefined;
@@ -44,7 +46,10 @@ export const Flow: React.FC<FlowProps> = (props) => {
   const renderedChildren = useMemo(() => {
     return children ? EnsembleRuntime.render(children) : null;
   }, [children]);
-  const { values, rootRef } = useRegisterBindings({ ...rest }, props.id);
+  const { values, rootRef } = useRegisterBindings(
+    { ...rest, widgetName },
+    props.id,
+  );
   return (
     <div
       className={values?.styles?.names}
@@ -85,4 +90,4 @@ export const Flow: React.FC<FlowProps> = (props) => {
   );
 };
 
-WidgetRegistry.register("Flow", Flow);
+WidgetRegistry.register(widgetName, Flow);

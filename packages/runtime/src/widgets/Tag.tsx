@@ -1,3 +1,4 @@
+import { merge } from "lodash-es";
 import type { Expression } from "@ensembleui/react-framework";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useState } from "react";
@@ -9,7 +10,8 @@ import type {
   IconProps,
 } from "../shared/types";
 import { Icon } from "./Icon";
-import { merge } from "lodash-es";
+
+const widgetName = "Tag";
 
 export interface TagStyles extends EnsembleWidgetStyles {
   backgroundColor?: Expression<string>;
@@ -40,7 +42,7 @@ export const Tag: React.FC<TagProps> = (props) => {
   );
   const [textColor, setTextColor] = useState(props.styles?.textColor);
   const { values, rootRef } = useRegisterBindings(
-    { ...props, label, backgroundColor, textColor },
+    { ...props, label, backgroundColor, textColor, widgetName },
     props.id,
     {
       setLabel,
@@ -110,4 +112,4 @@ export const Tag: React.FC<TagProps> = (props) => {
   );
 };
 
-WidgetRegistry.register("Tag", Tag);
+WidgetRegistry.register(widgetName, Tag);

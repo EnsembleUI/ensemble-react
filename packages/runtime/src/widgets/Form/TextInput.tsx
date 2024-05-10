@@ -8,6 +8,8 @@ import type { TextStyles } from "../Text";
 import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
 
+const widgetName = "TextInput";
+
 export type TextInputProps = {
   hintStyle?: TextStyles;
   labelStyle?: TextStyles;
@@ -19,7 +21,7 @@ export type TextInputProps = {
 export const TextInput: React.FC<TextInputProps> = (props) => {
   const [value, setValue] = useState<string>();
   const { values } = useRegisterBindings(
-    { ...props, initialValue: props.value, value },
+    { ...props, initialValue: props.value, value, widgetName },
     props.id,
     {
       setValue,
@@ -78,4 +80,4 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
   );
 };
 
-WidgetRegistry.register("TextInput", TextInput);
+WidgetRegistry.register(widgetName, TextInput);

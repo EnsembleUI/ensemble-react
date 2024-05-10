@@ -1,4 +1,5 @@
-import { Expression, useEvaluate } from "@ensembleui/react-framework";
+import { type Expression, useEvaluate } from "@ensembleui/react-framework";
+import { isArray } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type {
   EnsembleWidgetProps,
@@ -6,7 +7,6 @@ import type {
   FlexboxStyles,
 } from "../shared/types";
 import { Column } from "./Column";
-import { isArray } from "lodash-es";
 
 interface FittedColumnStyles extends FlexboxStyles {
   childrenFits?: Expression<string[]>;

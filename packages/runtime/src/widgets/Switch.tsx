@@ -16,6 +16,8 @@ import { EnsembleRuntime } from "../runtime";
 import type { FormInputProps } from "./Form/types";
 import { EnsembleFormItem } from "./Form/FormItem";
 
+const widgetName = "Switch";
+
 export interface SwitchStyles extends EnsembleWidgetStyles {
   activeColor?: string;
   activeThumbColor?: string;
@@ -34,9 +36,13 @@ export type SwitchProps = {
 
 export const SwitchWidget: React.FC<SwitchProps> = (props) => {
   const [value, setValue] = useState(props.value);
-  const { values } = useRegisterBindings({ ...props, value }, props.id, {
-    setValue,
-  });
+  const { values } = useRegisterBindings(
+    { ...props, value, widgetName },
+    props.id,
+    {
+      setValue,
+    },
+  );
   const onChangeAction = useEnsembleAction(props.onChange);
 
   const onChangeActionCallback = useCallback(
@@ -114,4 +120,4 @@ export const SwitchWidget: React.FC<SwitchProps> = (props) => {
   );
 };
 
-WidgetRegistry.register("Switch", SwitchWidget);
+WidgetRegistry.register(widgetName, SwitchWidget);
