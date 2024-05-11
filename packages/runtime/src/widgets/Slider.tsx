@@ -83,9 +83,7 @@ const SliderWidget: React.FC<SliderProps> = (props) => {
       <EnsembleFormItem values={values}>
         <Slider
           defaultValue={values?.initialValue}
-          disabled={
-            values?.enabled === undefined ? false : Boolean(!values.enabled)
-          }
+          disabled={values?.enabled === false}
           dots={values?.dots}
           max={values?.max}
           min={values?.min}

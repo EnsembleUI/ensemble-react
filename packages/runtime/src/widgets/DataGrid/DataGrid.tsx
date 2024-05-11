@@ -91,6 +91,7 @@ export type GridProps = {
   onSort?: EnsembleAction;
   pageSize?: number;
   totalRows?: number;
+  curPage?: number;
 } & EnsembleWidgetProps<DataGridStyles>;
 
 function djb2Hash(str: string): number {
@@ -142,11 +143,10 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     ...rest
   } = props;
 
-  const [skipFirstRender, setSkipFirstRender] = useState<boolean>(false);
   const [colWidth, setColWidth] = useState<{
     [key: number]: number | undefined;
   }>({});
-  const [curPage, setCurPage] = useState<number>(1);
+  const [curPage, setCurPage] = useState<number>(props.curPage || 1);
   const [pageSize, setPageSize] = useState<number>(props.pageSize || 10);
   const [rowsSelected, setRowsSelected] = useState<object[]>();
   const [allowSelection, setAllowSelection] = useState(
@@ -162,44 +162,6 @@ export const DataGrid: React.FC<GridProps> = (props) => {
       cell: ResizableTitle,
     },
   };
-
-  const {
-    rootRef,
-    id: resolvedWidgetId,
-    values,
-  } = useRegisterBindings(
-    { ...rest, rowsSelected, selectionType, allowSelection, pageSize, curPage },
-    props.id,
-    {
-      setRowsSelected,
-      setSelectionType,
-      setAllowSelection,
-      setPageSize,
-      setCurPage,
-    },
-  );
-  const headerStyle = values?.styles?.headerStyle;
-
-  useEffect(() => {
-    setPageSize(values?.pageSize || 10);
-  }, [values?.pageSize]);
-
-  useEffect(() => {
-    if (!skipFirstRender) {
-      return;
-    }
-
-    onPageChangeActionCallback(curPage || 1, pageSize || 10);
-  }, [skipFirstRender, curPage, pageSize]);
-
-  // handle column resize
-  const handleResize =
-    (index: number) =>
-    (e: React.SyntheticEvent, { size }: { size: { width: number } }) => {
-      const prevColWidths = { ...colWidth };
-      prevColWidths[index] = size.width;
-      setColWidth(prevColWidths);
-    };
 
   // on row tap action
   const onTapAction = useEnsembleAction(itemTemplate.template.properties.onTap);
@@ -277,19 +239,68 @@ export const DataGrid: React.FC<GridProps> = (props) => {
       const { scrollTop, scrollHeight, clientHeight } = container;
 
       // Check if the user has scrolled to the bottom
-      if (scrollTop + clientHeight === scrollHeight) {
+      if (Math.ceil(scrollTop + clientHeight) >= scrollHeight) {
         onScrollEndActionCallback();
       }
     },
     [onScrollEndActionCallback],
   );
 
+  // update page number callback
+  const updatePageNumber = useCallback(
+    (newPage: number) => {
+      setCurPage(newPage);
+      onPageChangeActionCallback(newPage, pageSize || 10);
+    },
+    [pageSize, onPageChangeActionCallback],
+  );
+
+  // update pageSize callback
+  const updatePageSize = useCallback(
+    (newPageSize: number) => {
+      setPageSize(newPageSize);
+      onPageChangeActionCallback(curPage, newPageSize || 10);
+    },
+    [curPage, onPageChangeActionCallback],
+  );
+
+  const {
+    rootRef,
+    id: resolvedWidgetId,
+    values,
+  } = useRegisterBindings(
+    { ...rest, rowsSelected, selectionType, allowSelection, pageSize, curPage },
+    props.id,
+    {
+      setRowsSelected,
+      setSelectionType,
+      setAllowSelection,
+      setPageSize: updatePageSize,
+      setCurPage: updatePageNumber,
+    },
+  );
+  const headerStyle = values?.styles?.headerStyle;
+
+  useEffect(() => {
+    setPageSize(values?.pageSize || 10);
+    setCurPage(values?.curPage || 1);
+  }, [values?.pageSize, values?.curPage]);
+
+  // handle column resize
+  const handleResize =
+    (index: number) =>
+    (e: React.SyntheticEvent, { size }: { size: { width: number } }) => {
+      const prevColWidths = { ...colWidth };
+      prevColWidths[index] = size.width;
+      setColWidth(prevColWidths);
+    };
+
   // handle page change
   const handlePageChange = (page: number, newPageSize: number): void => {
     const nextPage = newPageSize !== pageSize ? 1 : page;
-    setSkipFirstRender(true);
     setCurPage(nextPage);
     setPageSize(newPageSize);
+    onPageChangeActionCallback(nextPage, newPageSize || 10);
   };
 
   // handle onChange event on table
@@ -378,122 +389,125 @@ export const DataGrid: React.FC<GridProps> = (props) => {
 
   return (
     <div id={resolvedWidgetId} ref={containerRef}>
-      <Table
-        components={components}
-        dataSource={namedData}
-        key={resolvedWidgetId}
-        onChange={onChange}
-        onRow={(record, recordIndex) => {
-          return { onClick: () => onTapActionCallback(record, recordIndex) };
-        }}
-        pagination={paginationObject}
-        ref={rootRef}
-        rowKey={(data: unknown) => {
-          const identifier: string = evaluate(
-            defaultScreenContext,
-            itemTemplate.key,
-            {
-              [itemTemplate.name]: get(data, itemTemplate.name) as unknown,
-            },
-          );
-          if (identifier) {
-            return identifier;
+      <div ref={rootRef}>
+        <Table
+          components={components}
+          dataSource={namedData}
+          key={resolvedWidgetId}
+          onChange={onChange}
+          onRow={(record, recordIndex) => {
+            return { onClick: () => onTapActionCallback(record, recordIndex) };
+          }}
+          pagination={paginationObject}
+          rowKey={(data: unknown) => {
+            const identifier: string = evaluate(
+              defaultScreenContext,
+              itemTemplate.key,
+              {
+                [itemTemplate.name]: get(data, itemTemplate.name) as unknown,
+              },
+            );
+            if (identifier) {
+              return identifier;
+            }
+            const res = djb2Hash(JSON.stringify(data));
+            return String(res);
+          }}
+          rowSelection={
+            allowSelection
+              ? {
+                  type: selectionType,
+                  onChange: (selectedRowKeys, selectedRows) => {
+                    setRowsSelected(selectedRows);
+                    return onRowsSelectedCallback(
+                      selectedRowKeys,
+                      selectedRows,
+                    );
+                  },
+                  defaultSelectedRowKeys: values?.defaultSelectedRowKeys,
+                }
+              : undefined
           }
-          const res = djb2Hash(JSON.stringify(data));
-          return String(res);
-        }}
-        rowSelection={
-          allowSelection
-            ? {
-                type: selectionType,
-                onChange: (selectedRowKeys, selectedRows) => {
-                  setRowsSelected(selectedRows);
-                  return onRowsSelectedCallback(selectedRowKeys, selectedRows);
-                },
-                defaultSelectedRowKeys: values?.defaultSelectedRowKeys,
-              }
-            : undefined
-        }
-        scroll={
-          values?.scroll
-            ? {
-                y: values.scroll.scrollHeight || 150,
-                x: values.scroll.scrollWidth || "max-content",
-              }
-            : undefined
-        }
-        style={{
-          width: "100%",
-          ...values?.styles,
-          ...(values?.styles?.visible === false
-            ? { display: "none" }
-            : undefined),
-        }}
-      >
-        {dataColumns.map((col, colIndex) => {
-          return (
-            <Table.Column
-              dataIndex={itemTemplate.name}
-              filters={col.filter?.values.map(({ label, value }) => ({
-                text: label,
-                value,
-              }))}
-              key={colIndex}
-              onFilter={
-                col.filter?.onFilter
-                  ? (value, record): boolean =>
-                      Boolean(
-                        evaluate(defaultScreenContext, col.filter?.onFilter, {
-                          value,
-                          record,
-                          [itemTemplate.name]: get(
+          scroll={
+            values?.scroll
+              ? {
+                  y: values.scroll.scrollHeight || 150,
+                  x: values.scroll.scrollWidth || "max-content",
+                }
+              : undefined
+          }
+          style={{
+            width: "100%",
+            ...values?.styles,
+            ...(values?.styles?.visible === false
+              ? { display: "none" }
+              : undefined),
+          }}
+        >
+          {dataColumns.map((col, colIndex) => {
+            return (
+              <Table.Column
+                dataIndex={itemTemplate.name}
+                filters={col.filter?.values.map(({ label, value }) => ({
+                  text: label,
+                  value,
+                }))}
+                key={colIndex}
+                onFilter={
+                  col.filter?.onFilter
+                    ? (value, record): boolean =>
+                        Boolean(
+                          evaluate(defaultScreenContext, col.filter?.onFilter, {
+                            value,
                             record,
-                            itemTemplate.name,
-                          ) as unknown,
-                        }),
-                      )
-                  : undefined
-              }
-              onHeaderCell={
-                values?.allowResizableColumns
-                  ? () => ({
-                      width: col.width,
-                      onResize: handleResize(
-                        colIndex,
-                      ) as ReactEventHandler<any>,
-                    })
-                  : undefined
-              }
-              render={(_, record, rowIndex): ReactElement => {
-                return (
-                  <DataCell
-                    columnIndex={colIndex}
-                    data={record}
-                    rowIndex={rowIndex}
-                    scopeName={itemTemplate.name}
-                    template={itemTemplate.template}
-                  />
-                );
-              }}
-              sorter={
-                col.sort?.compareFn
-                  ? (a, b): number =>
-                      Number(
-                        evaluate(defaultScreenContext, col.sort?.compareFn, {
-                          a,
-                          b,
-                        }),
-                      )
-                  : undefined
-              }
-              title={col.label as string | React.ReactNode}
-              width={col.width}
-            />
-          );
-        })}
-      </Table>
-      <style>
-        {`
+                            [itemTemplate.name]: get(
+                              record,
+                              itemTemplate.name,
+                            ) as unknown,
+                          }),
+                        )
+                    : undefined
+                }
+                onHeaderCell={
+                  values?.allowResizableColumns
+                    ? () => ({
+                        width: col.width,
+                        onResize: handleResize(
+                          colIndex,
+                        ) as ReactEventHandler<any>,
+                      })
+                    : undefined
+                }
+                render={(_, record, rowIndex): ReactElement => {
+                  return (
+                    <DataCell
+                      columnIndex={colIndex}
+                      data={record}
+                      rowIndex={rowIndex}
+                      scopeName={itemTemplate.name}
+                      template={itemTemplate.template}
+                    />
+                  );
+                }}
+                sorter={
+                  col.sort?.compareFn
+                    ? (a, b): number =>
+                        Number(
+                          evaluate(defaultScreenContext, col.sort?.compareFn, {
+                            a,
+                            b,
+                          }),
+                        )
+                    : undefined
+                }
+                title={col.label as string | React.ReactNode}
+                width={col.width}
+              />
+            );
+          })}
+        </Table>
+        <style>
+          {`
           .react-resizable {
             position: relative;
             background-clip: padding-box;
@@ -547,7 +561,8 @@ export const DataGrid: React.FC<GridProps> = (props) => {
             }
           }
 		    `}
-      </style>
+        </style>
+      </div>
     </div>
   );
 };

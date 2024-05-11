@@ -61,35 +61,17 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     },
   );
 
+  // load initial values
   useEffect(() => {
     if (!selectedValues && isArray(values?.initialValue)) {
       setSelectedValues(values?.initialValue);
     }
   }, [values?.initialValue]);
 
-  useEffect(() => {
-    if (
-      values?.items &&
-      isArray(values.items) &&
-      values.items.every(
-        (item) =>
-          !values.options.some(
-            (option) => option.value === item.value.toString(),
-          ),
-      )
-    ) {
-      setOptions([
-        ...values.options,
-        ...values.items.map((item) => ({
-          label: item.label,
-          value: item.value,
-        })),
-      ]);
-    }
-  }, [values?.items]);
-
+  // load data and items
   useEffect(() => {
     const tempOptions: SelectOption[] = [];
+
     if (isArray(rawData)) {
       tempOptions.push(
         ...rawData.map((item) => ({
@@ -99,11 +81,27 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
       );
     }
 
+    if (
+      values?.items &&
+      isArray(values.items) &&
+      values.items.every(
+        (item) =>
+          !tempOptions.find((option) => option.value === item.value.toString()),
+      )
+    ) {
+      tempOptions.push(
+        ...values.items.map((item) => ({
+          label: item.label,
+          value: item.value,
+        })),
+      );
+    }
+
     setOptions(tempOptions);
-  }, [rawData, values?.labelKey, values?.valueKey]);
+  }, [rawData, values?.labelKey, values?.valueKey, values?.items]);
 
+  // handle form instance
   const formInstance = Form.useFormInstance();
-
   useEffect(() => {
     if (formInstance) {
       formInstance.setFieldsValue({
@@ -112,6 +110,20 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     }
   }, [selectedValues, formInstance]);
 
+  const handleSearch = (value: string): void => {
+    const isOptionExist = options.find(
+      (option) =>
+        option.label.toString().toLowerCase().search(value.toLowerCase()) > -1,
+    );
+
+    if (!isOptionExist && values?.allowCreateOptions) {
+      setNewOption(value);
+    } else {
+      setNewOption("");
+    }
+  };
+
+  // handle option change
   const handleChange = (value: string[]): void => {
     setSelectedValues(value);
     onItemSelectCallback(value);
@@ -127,17 +139,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     }
   };
 
-  const handleSearch = (value: string): void => {
-    const isOptionExist = values?.options.some((option) =>
-      option.label.toString().toLowerCase().startsWith(value.toLowerCase()),
-    );
-
-    if (isOptionExist || !values?.allowCreateOptions) setNewOption("");
-    else {
-      setNewOption(value);
-    }
-  };
-
+  // on item select callback
   const onItemSelectCallback = useCallback(
     (value?: string[]) => {
       if (action) {
@@ -147,6 +149,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     [action],
   );
 
+  // default value
   const defaultValue = useMemo(() => {
     if (isArray(values?.value)) {
       return values?.value;
@@ -156,6 +159,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     }
   }, [values?.value]);
 
+  // rendered options
   const renderOptions = useMemo(
     () =>
       options.map((option) => (
@@ -248,13 +252,11 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
             allowClear
             className={`${values?.styles?.names || ""} ${id}_input`}
             defaultValue={defaultValue}
-            disabled={
-              values?.enabled === undefined ? false : Boolean(values.enabled)
-            }
+            disabled={values?.enabled === false}
             dropdownRender={newOptionRender}
             dropdownStyle={values?.styles}
             filterOption={(input, option): boolean =>
-              option?.label
+              option?.children
                 ?.toString()
                 ?.toLowerCase()
                 ?.startsWith(input.toLowerCase()) || false
@@ -263,7 +265,8 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
             mode={values?.allowCreateOptions ? "tags" : "multiple"}
             notFoundContent="No Results"
             onChange={handleChange}
-            onSearch={handleSearch}
+            onSearch={handleSearch} // required for display new custom option with Dropdown element
+            optionFilterProp="children"
             placeholder={
               values?.hintText ? (
                 <span style={{ ...values.hintStyle }}>{values.hintText}</span>
@@ -285,6 +288,7 @@ interface DropdownProps {
   menu: ReactElement;
   newOption: string;
 }
+
 const Dropdown: React.FC<DropdownProps> = ({ menu, newOption }) => {
   return (
     <>

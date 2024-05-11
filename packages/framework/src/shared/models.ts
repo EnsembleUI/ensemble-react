@@ -20,6 +20,7 @@ export interface EnsembleScreenModel {
   global?: string;
   styles?: { [key: string]: unknown };
   importedScripts?: string;
+  customWidgets?: CustomWidgetModel[];
 }
 
 export type EnsembleEntryPoint = EnsembleScreenModel | EnsembleMenuModel;

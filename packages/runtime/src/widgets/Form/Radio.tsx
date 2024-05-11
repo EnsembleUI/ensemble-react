@@ -14,6 +14,7 @@ export type RadioWidgetProps = FormInputProps<string> &
       label: Expression<string>;
       value: Expression<string | number>;
       styles?: EnsembleWidgetStyles;
+      enabled?: Expression<boolean>;
     }[];
     onChange?: EnsembleAction;
   };
@@ -59,9 +60,6 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
   return (
     <EnsembleFormItem values={values}>
       <Radio.Group
-        disabled={
-          values?.enabled === undefined ? false : Boolean(values.enabled)
-        }
         onChange={(event): void => handleChange(String(event.target.value))}
         ref={rootRef}
         style={values?.styles}
@@ -69,6 +67,7 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
       >
         {values?.items.map((item) => (
           <Radio
+            disabled={values?.enabled === false || item.enabled === false}
             key={item.value}
             style={{
               ...item.styles,

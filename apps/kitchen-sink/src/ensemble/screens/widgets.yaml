@@ -353,7 +353,6 @@ View:
                   scroll:
                     scrollHeight: 200
                   onScrollEnd:
-                    # here you can add your page update logic
                     invokeAPI:
                       name: getDummyNumbers
                       onResponse:
@@ -367,7 +366,7 @@ View:
                         children:
                           - Text:
                               id: ${'x_'+index}
-                              text: ${dummyData}
+                              text: ${dummyData.number}
         - Card:
             styles:
               maxWidth: unset
@@ -997,6 +996,19 @@ View:
                     template:
                       Text:
                         text: ${product.title}
+
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+              gap: 10px
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: Custom widget in screen
+              - Button:
+
 API:
   getDummyProducts:
     method: GET
@@ -1015,7 +1027,14 @@ API:
       - sortOrder
   getDummyNumbers:
     method: GET
-    uri: https://mocki.io/v1/c1f19d68-e6c8-4ae3-848d-d99e588cf224
+    uri: https://661e111b98427bbbef034208.mockapi.io/number?limit=10
     onResponse:
       executeCode: |
         console.log('dummy number fetched')
+
+Button:
+  inputs:
+    - image
+  body:
+    Text:
+      text: Hello
