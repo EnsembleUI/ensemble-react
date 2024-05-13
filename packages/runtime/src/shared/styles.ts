@@ -104,13 +104,21 @@ export const getIcon = (name: string): SvgIconComponent | undefined => {
 export const getComponentStyles = (
   name: string,
   styles?: React.CSSProperties,
-  returnAsString = true,
+  options: {
+    importantStyles?:
+      | keyof React.CSSProperties
+      | Array<keyof React.CSSProperties>;
+    returnAsString?: boolean;
+  } = {
+    importantStyles: [],
+    returnAsString: true,
+  },
 ): string | React.CSSProperties => {
   const styleNames = Object.keys(styles || {}).filter((key) =>
     key.startsWith(name),
   );
-  let result = "";
-  let res: React.CSSProperties = {};
+  let stringResult = "";
+  let result: React.CSSProperties = {};
 
   styleNames.forEach((property) => {
     const styleValue = get(styles, property) as string | undefined;
@@ -120,10 +128,18 @@ export const getComponentStyles = (
         // eslint-disable-next-line prefer-named-capture-group
         .replace(/([a-z])([A-Z])/g, "$1-$2")
         .toLowerCase(); // convert camelCase to kebab-case
-      result += `${cssProperty}: ${styleValue};`;
-      res = { ...res, [cssProperty]: styleValue };
+
+      stringResult += `${cssProperty}: ${styleValue}${
+        options?.importantStyles?.includes(
+          property as keyof React.CSSProperties,
+        )
+          ? " !important"
+          : ""
+      };`;
+
+      result = { ...result, [cssProperty]: styleValue };
     }
   });
 
-  return returnAsString ? result : res;
+  return options?.returnAsString === false ? result : stringResult;
 };

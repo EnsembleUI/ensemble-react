@@ -357,7 +357,9 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
                         "bottom",
                         "left",
                       ]) as React.CSSProperties,
-                      false,
+                      {
+                        returnAsString: false,
+                      },
                     ) as React.CSSProperties)),
               }}
               title={getTitleElement(modal.options, index)}

@@ -98,7 +98,7 @@ export const Lottie: React.FC<LottieProps> = (props) => {
                         .toLowerCase()};`
                     : ""
                 }
-                ${getComponentStyles("", values?.styles) as string}
+                ${getComponentStyles("", values?.styles, { importantStyles: ["width", "height", "transform"] }) as string}
             }
         `}
       </style>
