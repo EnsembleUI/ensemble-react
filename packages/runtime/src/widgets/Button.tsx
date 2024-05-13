@@ -73,18 +73,16 @@ export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
             : undefined),
         }}
       >
-        {!loading && (
-          <>
-            {values?.startingIcon ? (
-              <>
-                <Icon {...values.startingIcon} />
-                &nbsp;
-              </>
-            ) : null}
-            {values?.label}
-            {values?.endingIcon ? <Icon {...values.endingIcon} /> : null}
-          </>
-        )}
+        {!loading && values?.startingIcon ? (
+          <Icon {...values.startingIcon} />
+        ) : null}
+        {!loading && values?.startingIcon ? <>&nbsp;</> : null}
+
+        {!loading && <>{values?.label}</>}
+
+        {!loading && values?.endingIcon ? (
+          <Icon {...values.endingIcon} />
+        ) : null}
       </AntButton>
     );
   }, [onClickCallback, rootRef, values, loading]);
