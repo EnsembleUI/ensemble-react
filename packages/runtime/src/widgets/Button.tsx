@@ -74,7 +74,13 @@ export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
         }}
       >
         {!loading && (
-          <>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
             {values?.startingIcon ? (
               <>
                 <Icon {...values.startingIcon} />
@@ -83,7 +89,7 @@ export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
             ) : null}
             {values?.label}
             {values?.endingIcon ? <Icon {...values.endingIcon} /> : null}
-          </>
+          </div>
         )}
       </AntButton>
     );
