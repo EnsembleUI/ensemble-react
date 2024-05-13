@@ -1,5 +1,21 @@
 # @ensembleui/react-runtime
 
+## 0.1.50
+
+### Patch Changes
+
+- a09ba40: fix enabled property of form items
+- 2b07531: Added support to define custom widget in screen
+- 10e1c8c: reset options when there are no options on search query
+- 6afd361: Retrofit avatar widget with rootRef
+- 99ea07c: added loading attribute in button widget
+- 7bf1c51: added curPage in dataGrid
+- 5d1abc2: Fix button icons alignment
+  Override default styles of Lottie when given from yaml
+- Updated dependencies [7780b49]
+- Updated dependencies [2b07531]
+  - @ensembleui/react-framework@0.1.36
+
 ## 0.1.49
 
 ### Patch Changes
