@@ -1,5 +1,5 @@
 import type { RefCallback } from "react";
-import { mapKeys, isObject, merge } from "lodash-es";
+import { mapKeys, isObject } from "lodash-es";
 import { useCallback } from "react";
 import { error } from "../shared";
 
@@ -11,10 +11,6 @@ export const useHtmlPassThrough = (
     (node: never) => {
       if (node && "setAttribute" in node) {
         if (isObject(htmlAttributes)) {
-          if (testId) {
-            merge(htmlAttributes, { "data-testid": testId });
-          }
-
           const htmlAttributesObj = mapKeys(htmlAttributes, (_, key) =>
             key.toLowerCase(),
           );
@@ -26,6 +22,13 @@ export const useHtmlPassThrough = (
               error(e);
             }
           });
+        }
+        if (testId) {
+          try {
+            (node as HTMLElement).setAttribute("data-testid", testId);
+          } catch (e) {
+            error(e);
+          }
         }
       }
     },

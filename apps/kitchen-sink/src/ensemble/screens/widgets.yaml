@@ -42,6 +42,9 @@ View:
             styles:
               margin: 20px
               height: 200px
+              backgroundColor: "#f0f0f0"
+              width: 200px
+              transform: rotate(1deg)
             onTap:
               executeCode: |-
                 console.log("Tapped");
@@ -66,6 +69,8 @@ View:
                   styles:
                     borderRadius: 20
                   label: Forward
+                  startingIcon:
+                    name: PlayArrow
                   onTap:
                     executeCode: |-
                       console.log("Forward");
@@ -90,6 +95,8 @@ View:
                   styles:
                     borderRadius: 20
                   label: Stop
+                  endingIcon:
+                    name: Stop
                   onTap:
                     executeCode: |-
                       console.log("Stop");

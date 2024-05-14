@@ -1,5 +1,12 @@
 # @ensembleui/react-framework
 
+## 0.1.36
+
+### Patch Changes
+
+- 7780b49: Fix testid regression
+- 2b07531: Added support to define custom widget in screen
+
 ## 0.1.35
 
 ### Patch Changes

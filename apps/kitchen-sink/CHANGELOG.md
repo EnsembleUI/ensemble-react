@@ -1,5 +1,24 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.41
+
+### Patch Changes
+
+- a09ba40: fix enabled property of form items
+- 2b07531: Added support to define custom widget in screen
+- 5d1abc2: Fix button icons alignment
+  Override default styles of Lottie when given from yaml
+- Updated dependencies [7780b49]
+- Updated dependencies [a09ba40]
+- Updated dependencies [2b07531]
+- Updated dependencies [10e1c8c]
+- Updated dependencies [6afd361]
+- Updated dependencies [99ea07c]
+- Updated dependencies [7bf1c51]
+- Updated dependencies [5d1abc2]
+  - @ensembleui/react-framework@0.1.36
+  - @ensembleui/react-runtime@0.1.50
+
 ## 0.0.40
 
 ### Patch Changes
