@@ -1031,10 +1031,3 @@ API:
     onResponse:
       executeCode: |
         console.log('dummy number fetched')
-
-Button:
-  inputs:
-    - image
-  body:
-    Text:
-      text: Hello
