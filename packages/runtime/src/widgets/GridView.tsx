@@ -18,8 +18,6 @@ import type {
 } from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
-const widgetName = "GridView";
-
 export interface GridViewStyles extends EnsembleWidgetStyles {
   horizontalTileCount?: number;
   horizontalGap?: number;
@@ -43,7 +41,6 @@ export const GridView: React.FC<GridViewProps> = ({
   const defaultColumnCount = 4;
   const { values } = useRegisterBindings({
     ...rest,
-    widgetName,
   });
   const { namedData } = useTemplateData({ data, name });
   const onScrollEndAction = useEnsembleAction(onScrollEnd);
@@ -166,4 +163,4 @@ export const GridView: React.FC<GridViewProps> = ({
   );
 };
 
-WidgetRegistry.register(widgetName, GridView);
+WidgetRegistry.register("GridView", GridView);

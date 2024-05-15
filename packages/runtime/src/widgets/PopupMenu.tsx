@@ -20,8 +20,6 @@ import { WidgetRegistry } from "../registry";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { EnsembleRuntime } from "../runtime";
 
-const widgetName = "PopupMenu";
-
 interface PopupMenuItem {
   label: Expression<string> | { [key: string]: unknown };
   value: string;
@@ -44,7 +42,7 @@ export type PopupMenuProps = {
 
 export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
   const { "item-template": itemTemplate, ...rest } = props;
-  const { values } = useRegisterBindings({ ...rest, widgetName }, props.id);
+  const { values } = useRegisterBindings({ ...rest }, props.id);
   const action = useEnsembleAction(props.onItemSelect);
   const [widgetProps, setWidgetProps] = useState<EnsembleWidget>();
 
@@ -126,4 +124,4 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
   );
 };
 
-WidgetRegistry.register(widgetName, PopupMenu);
+WidgetRegistry.register("PopupMenu", PopupMenu);

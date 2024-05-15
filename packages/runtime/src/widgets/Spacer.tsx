@@ -1,8 +1,6 @@
+import { EnsembleWidgetProps } from "../shared/types";
 import { useRegisterBindings } from "@ensembleui/react-framework";
-import { type EnsembleWidgetProps } from "../shared/types";
 import { WidgetRegistry } from "../registry";
-
-const widgetName = "Spacer";
 
 export type SpacerProps = {
   styles: {
@@ -11,7 +9,7 @@ export type SpacerProps = {
 } & EnsembleWidgetProps;
 
 export const Spacer: React.FC<SpacerProps> = (props) => {
-  const { values } = useRegisterBindings({ ...props, widgetName }, props.id);
+  const { values } = useRegisterBindings({ ...props }, props.id);
   return (
     <div
       style={{
@@ -22,4 +20,4 @@ export const Spacer: React.FC<SpacerProps> = (props) => {
   );
 };
 
-WidgetRegistry.register(widgetName, Spacer);
+WidgetRegistry.register("Spacer", Spacer);

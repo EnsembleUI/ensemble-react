@@ -5,8 +5,6 @@ import type { IconProps } from "../shared/types";
 import { getColor, getIcon } from "../shared/styles";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
-const widgetName = "Icon";
-
 export const Icon: React.FC<IconProps> = ({
   onTap,
   onMouseEnter,
@@ -24,7 +22,7 @@ export const Icon: React.FC<IconProps> = ({
   const onMouseLeaveAction = useEnsembleAction(onMouseLeave);
 
   const { values } = useRegisterBindings(
-    { ...props, color, name, backgroundColor, widgetName },
+    { ...props, color, name, backgroundColor },
     props.id,
     {
       setColor,
@@ -92,4 +90,4 @@ export const Icon: React.FC<IconProps> = ({
   );
 };
 
-WidgetRegistry.register(widgetName, Icon);
+WidgetRegistry.register("Icon", Icon);

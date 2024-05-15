@@ -26,8 +26,6 @@ import { WidgetRegistry } from "../../registry";
 import { StepType } from "./StepType";
 import type { StepTypeProps } from "./StepType";
 
-const widgetName = "Stepper";
-
 export interface StepProps {
   stepLabel: string;
   contentWidget: { [key: string]: unknown };
@@ -74,7 +72,7 @@ const Stepper: React.FC<StepperProps> = (props) => {
     setActiveStep(step);
   };
   const { values, rootRef } = useRegisterBindings(
-    { ...props, activeStep, widgetName },
+    { ...props, activeStep },
     props.id,
     {
       handleNext,
@@ -182,7 +180,7 @@ const Stepper: React.FC<StepperProps> = (props) => {
   );
 };
 
-WidgetRegistry.register(widgetName, Stepper);
+WidgetRegistry.register("Stepper", Stepper);
 
 const CustomConnector = styled(StepConnector)(
   (props: CustomConnectorProps) => ({

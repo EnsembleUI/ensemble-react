@@ -6,8 +6,6 @@ import { WidgetRegistry } from "../registry";
 import type { BaseTextProps } from "../shared/types";
 import { getTextAlign } from "../shared/styles";
 
-const widgetName = "Markdown";
-
 export type MarkdownProps = {
   // to be added more
 } & BaseTextProps;
@@ -21,13 +19,9 @@ const components = {
 
 export const Markdown: React.FC<MarkdownProps> = (props) => {
   const [text, setText] = useState(props.text);
-  const { values } = useRegisterBindings(
-    { ...props, text, widgetName },
-    props.id,
-    {
-      setText,
-    },
-  );
+  const { values } = useRegisterBindings({ ...props, text }, props.id, {
+    setText,
+  });
   return (
     <div
       className={values?.styles?.names}
@@ -46,4 +40,4 @@ export const Markdown: React.FC<MarkdownProps> = (props) => {
   );
 };
 
-WidgetRegistry.register(widgetName, Markdown);
+WidgetRegistry.register("Markdown", Markdown);

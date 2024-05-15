@@ -12,7 +12,6 @@ import { EnsembleRuntime } from "../runtime";
 import { WidgetRegistry } from "../registry";
 import { Icon } from "./Icon";
 
-const widgetName = "TabBar";
 const { TabPane } = Tabs;
 
 export interface TabBarItem {
@@ -63,7 +62,7 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
       icon,
     })),
   };
-  const { values } = useRegisterBindings({ ...bindings, widgetName }, props.id);
+  const { values } = useRegisterBindings({ ...bindings }, props.id);
   const tabs = zip(values?.items ?? [], props.items);
   const renderLabel = (label: string, icon?: IconProps): ReactElement => {
     return (
@@ -188,4 +187,4 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
   );
 };
 
-WidgetRegistry.register(widgetName, TabBar);
+WidgetRegistry.register("TabBar", TabBar);

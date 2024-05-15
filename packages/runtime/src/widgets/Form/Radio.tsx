@@ -8,8 +8,6 @@ import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
 
-const widgetName = "Radio";
-
 export type RadioWidgetProps = FormInputProps<string> &
   HasItemTemplate & {
     items: {
@@ -24,7 +22,7 @@ export type RadioWidgetProps = FormInputProps<string> &
 export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
   const [value, setValue] = useState<string | number | undefined>(undefined);
   const { values, rootRef } = useRegisterBindings(
-    { ...props, initialValue: props.value, value, widgetName },
+    { ...props, initialValue: props.value, value },
     props.id,
     { setValue },
   );
@@ -87,4 +85,4 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
   );
 };
 
-WidgetRegistry.register(widgetName, RadioWidget);
+WidgetRegistry.register("Radio", RadioWidget);

@@ -10,8 +10,6 @@ import type {
 } from "../shared/types";
 import { EnsembleRuntime } from "../runtime";
 
-const widgetName = "Card";
-
 interface CardStyles {
   width?: string;
   height?: string;
@@ -51,7 +49,7 @@ const defaultStyles: CardStyles = {
 };
 
 export const Card: React.FC<CardProps> = ({ children, styles }) => {
-  const { values } = useRegisterBindings({ styles, widgetName });
+  const { values } = useRegisterBindings({ styles });
 
   const renderedChildren = useMemo(() => {
     return EnsembleRuntime.render(children);
@@ -76,4 +74,4 @@ export const Card: React.FC<CardProps> = ({ children, styles }) => {
   );
 };
 
-WidgetRegistry.register(widgetName, Card);
+WidgetRegistry.register("Card", Card);

@@ -15,8 +15,6 @@ import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { Text } from "./Text";
 import { Icon } from "./Icon";
 
-const widgetName = "ToggleButton";
-
 interface ToggleButtonPropsStyles {
   margin?: string;
   padding?: number;
@@ -55,7 +53,7 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
 }) => {
   const [value, setValue] = useState<string>();
   const { values, rootRef } = useRegisterBindings(
-    { value, initialValue: givenValue, styles, widgetName },
+    { value, initialValue: givenValue, styles },
     id,
     {
       setValue,
@@ -178,4 +176,4 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
   );
 };
 
-WidgetRegistry.register(widgetName, ToggleButton);
+WidgetRegistry.register("ToggleButton", ToggleButton);

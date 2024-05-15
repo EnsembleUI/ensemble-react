@@ -1,17 +1,12 @@
 import React, { useCallback, useState } from "react";
-import Cropper, { type Area } from "react-easy-crop";
+import Cropper, { Area } from "react-easy-crop";
 import {
   type EnsembleAction,
   useRegisterBindings,
 } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
-import type {
-  EnsembleWidgetProps,
-  EnsembleWidgetStyles,
-} from "../shared/types";
+import { EnsembleWidgetProps, EnsembleWidgetStyles } from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks";
-
-const widgetName = "ImageCropper";
 
 type ImageCropperStyle = {
   shape?: "rect" | "round";
@@ -150,15 +145,11 @@ export const ImageCropper: React.FC<ImageCropperProps> = (props) => {
     onCroppedActionCallback(croppedImage);
   };
 
-  const { values, id } = useRegisterBindings(
-    { ...rest, rotate, widgetName },
-    props.id,
-    {
-      setRotate,
-      getCroppedImg,
-      crop,
-    },
-  );
+  const { values, id } = useRegisterBindings({ ...rest, rotate }, props.id, {
+    setRotate,
+    getCroppedImg,
+    crop,
+  });
 
   if (!values?.source) {
     return null;
@@ -179,7 +170,7 @@ export const ImageCropper: React.FC<ImageCropperProps> = (props) => {
         background-color: ${
           values.styles?.backgroundColor || "unset"
         } !important;
-
+        
       }
 
       #${id} .reactEasyCrop_CropAreaRound {
@@ -216,4 +207,4 @@ export const ImageCropper: React.FC<ImageCropperProps> = (props) => {
   );
 };
 
-WidgetRegistry.register(widgetName, ImageCropper);
+WidgetRegistry.register("ImageCropper", ImageCropper);

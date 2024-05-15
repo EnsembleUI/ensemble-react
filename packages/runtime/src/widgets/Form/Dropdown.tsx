@@ -27,8 +27,6 @@ import type { HasBorder } from "../../shared/hasSchema";
 import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
 
-const widgetName = "Dropdown";
-
 export type DropdownStyles = {
   dropdownBackgroundColor?: string;
   dropdownBorderRadius?: number;
@@ -63,7 +61,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   >();
   const { "item-template": itemTemplate, ...rest } = props;
   const { id, rootRef, values } = useRegisterBindings(
-    { ...rest, initialValue: props.value, selectedValue, widgetName },
+    { ...rest, initialValue: props.value, selectedValue },
     props.id,
     {
       setSelectedValue,
@@ -266,4 +264,4 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   );
 };
 
-WidgetRegistry.register(widgetName, Dropdown);
+WidgetRegistry.register("Dropdown", Dropdown);

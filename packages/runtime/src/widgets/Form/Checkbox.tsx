@@ -13,8 +13,6 @@ import { useEnsembleAction } from "../../runtime/hooks";
 import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
 
-const widgetName = "Checkbox";
-
 export type CheckBoxProps = {
   trailingText?: string | { [key: string]: unknown };
   leadingText?: string;
@@ -25,7 +23,7 @@ export type CheckBoxProps = {
 export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
   const [checked, setChecked] = useState<boolean>();
   const { values } = useRegisterBindings(
-    { ...props, initialValue: props.value, value: checked, widgetName },
+    { ...props, initialValue: props.value, value: checked },
     props.id,
     {
       setValue: setChecked,
@@ -84,4 +82,4 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
   );
 };
 
-WidgetRegistry.register(widgetName, CheckboxWidget);
+WidgetRegistry.register("Checkbox", CheckboxWidget);

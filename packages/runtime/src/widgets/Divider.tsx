@@ -8,8 +8,6 @@ import type {
   EnsembleWidgetStyles,
 } from "../shared/types";
 
-const widgetName = "Divider";
-
 export interface DividerStyles extends EnsembleWidgetStyles {
   direction?: "horizontal" | "vertical";
   thickness?: number;
@@ -22,7 +20,7 @@ export interface DividerStyles extends EnsembleWidgetStyles {
 export type DividerProps = EnsembleWidgetProps<DividerStyles>;
 
 export const DividerWidget: React.FC<DividerProps> = (props) => {
-  const { values } = useRegisterBindings({ ...props, widgetName }, props.id);
+  const { values } = useRegisterBindings({ ...props }, props.id);
   const { direction, ...restStyles } = values?.styles || {};
 
   let width;
@@ -59,4 +57,4 @@ export const DividerWidget: React.FC<DividerProps> = (props) => {
   );
 };
 
-WidgetRegistry.register(widgetName, DividerWidget);
+WidgetRegistry.register("Divider", DividerWidget);

@@ -15,17 +15,12 @@ import { getColor, getCrossAxis, getMainAxis } from "../shared/styles";
 // eslint-disable-next-line import/no-cycle
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
-const widgetName = "Column";
-
 export const Column: React.FC<FlexboxProps> = (props) => {
   const { "item-template": itemTemplate, children, onTap, ...rest } = props;
   const childrenFirst =
     indexOf(keys(props), "children") < indexOf(keys(props), "item-template");
 
-  const { values, rootRef } = useRegisterBindings(
-    { ...rest, widgetName },
-    props.id,
-  );
+  const { values, rootRef } = useRegisterBindings({ ...rest }, props.id);
   const { namedData } = useTemplateData({
     data: itemTemplate?.data,
     name: itemTemplate?.name,
@@ -100,4 +95,4 @@ export const Column: React.FC<FlexboxProps> = (props) => {
   );
 };
 
-WidgetRegistry.register(widgetName, Column);
+WidgetRegistry.register("Column", Column);

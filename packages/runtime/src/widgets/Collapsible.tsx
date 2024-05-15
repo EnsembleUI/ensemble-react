@@ -22,8 +22,6 @@ import { EnsembleRuntime } from "../runtime";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { Icon } from "./Icon";
 
-const widgetName = "Collapsible";
-
 interface CollapsibleItem {
   key: Expression<string>;
   label: Expression<string> | Record<string, unknown>;
@@ -56,13 +54,9 @@ export type CollapsibleProps = {
 export const Collapsible: React.FC<CollapsibleProps> = (props) => {
   const { "item-template": itemTemplate, ...rest } = props;
   const [activeValue, setActiveValue] = useState<string[]>(props.value);
-  const { values } = useRegisterBindings(
-    { ...rest, activeValue, widgetName },
-    props.id,
-    {
-      setActiveValue,
-    },
-  );
+  const { values } = useRegisterBindings({ ...rest, activeValue }, props.id, {
+    setActiveValue,
+  });
   const onCollapseAction = useEnsembleAction(props.onCollapse);
   const { namedData } = useTemplateData({
     data: itemTemplate?.data,
@@ -209,4 +203,4 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
   );
 };
 
-WidgetRegistry.register(widgetName, Collapsible);
+WidgetRegistry.register("Collapsible", Collapsible);

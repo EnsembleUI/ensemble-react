@@ -13,8 +13,6 @@ import type { EnsembleWidgetProps, IconProps } from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { Icon } from "./Icon";
 
-const widgetName = "Button";
-
 export type ButtonProps = {
   label: Expression<string>;
   onTap?: EnsembleAction;
@@ -44,14 +42,10 @@ export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
     [action],
   );
 
-  const { values, rootRef } = useRegisterBindings(
-    { ...rest, loading, widgetName },
-    id,
-    {
-      click: onClickCallback,
-      setLoading,
-    },
-  );
+  const { values, rootRef } = useRegisterBindings({ ...rest, loading }, id, {
+    click: onClickCallback,
+    setLoading,
+  });
 
   useEffect(() => {
     if (values?.loading !== undefined) {
@@ -107,4 +101,4 @@ export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
   return ButtonComponent;
 };
 
-WidgetRegistry.register(widgetName, Button);
+WidgetRegistry.register("Button", Button);
