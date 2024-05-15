@@ -1,5 +1,6 @@
 import {
   CustomScopeProvider,
+  useRegisterBindings,
   useTemplateData,
 } from "@ensembleui/react-framework";
 import type {
@@ -12,6 +13,8 @@ import { useEffect, useRef, useState } from "react";
 import type { EnsembleWidgetProps } from "../shared/types";
 import { EnsembleRuntime } from "../runtime";
 import { WidgetRegistry } from "../registry";
+
+const widgetName = "Carousel";
 
 export interface CarouselWidgetStyles {
   layout?: "auto" | "single" | "multiple";
@@ -52,6 +55,9 @@ export const Carousel: React.FC<CarouselProps> = (props) => {
   const [containerWidth, setContainerWidth] = useState<number | undefined>(
     undefined,
   );
+
+  const { values } = useRegisterBindings({ ...props, widgetName });
+
   //   const renderedChildren = useMemo(() => {
   //     return EnsembleRuntime.render(props.children);
   //   }, [props.children]);
@@ -64,29 +70,29 @@ export const Carousel: React.FC<CarouselProps> = (props) => {
     }
   }, []);
   let itemWidthStyle = "";
-  if (containerWidth && props.styles?.multipleItemWidthRatio !== undefined) {
-    const ratio = props.styles.multipleItemWidthRatio;
+  if (containerWidth && values?.styles?.multipleItemWidthRatio !== undefined) {
+    const ratio = values.styles.multipleItemWidthRatio;
     const itemWidth = containerWidth * ratio;
     itemWidthStyle = `width: ${itemWidth}px !important;`;
   }
 
   return (
-    <div ref={containerRef} style={{ height: props.styles?.height }}>
+    <div ref={containerRef} style={{ height: values?.styles?.height }}>
       <AntCarousel
-        autoplay={props.styles?.autoplay ? props.styles.autoplay : false}
+        autoplay={values?.styles?.autoplay ? values.styles.autoplay : false}
         autoplaySpeed={
-          props.styles?.autoplayInterval
-            ? parseInt(`${props.styles.autoplayInterval}`) * 1000
+          values?.styles?.autoplayInterval
+            ? parseInt(`${values.styles.autoplayInterval}`) * 1000
             : 4000
         }
         dotPosition={
-          props.styles?.indicatorPosition
-            ? props.styles.indicatorPosition
+          values?.styles?.indicatorPosition
+            ? values.styles.indicatorPosition
             : "bottom"
         }
         draggable
         infinite={false}
-        slidesToShow={props.styles?.layout ? 2 : 1}
+        slidesToShow={values?.styles?.layout ? 2 : 1}
       >
         {namedData.map((n, index) => (
           <CustomScopeProvider key={index} value={n as CustomScope}>
@@ -98,26 +104,26 @@ export const Carousel: React.FC<CarouselProps> = (props) => {
       <style>
         {`
 			  .ant-carousel .slick-slide {
-				  ${props.styles?.gap ? `margin-right : ${props.styles.gap}px` : ""} 
+				  ${values?.styles?.gap ? `margin-right : ${values.styles.gap}px` : ""}
 				}
-				
+
 				.ant-carousel .slick-slide:last-child {
-				  margin-right: 0; 
+				  margin-right: 0;
 				}
 			  .ant-carousel .slick-slide {
 				  ${itemWidthStyle}
 			  }
-			  .ant-carousel .slick-dots li button 
+			  .ant-carousel .slick-dots li button
 			  {
 			  opacity: 0.5;
-			
+
 		}
 			  }
 			  .ant-carousel .slick-dots li:first-child button {
-				  margin-left: 0; 
+				  margin-left: 0;
 				}
 				.ant-carousel .slick-dots li:last-child button {
-				  margin-right: 0; 
+				  margin-right: 0;
 				}
 		  .ant-carousel .slick-dots li.slick-active button{
 				  opacity: 1;
@@ -137,4 +143,4 @@ export const Carousel: React.FC<CarouselProps> = (props) => {
   );
 };
 
-WidgetRegistry.register("Carousel", Carousel);
+WidgetRegistry.register(widgetName, Carousel);

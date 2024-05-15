@@ -11,8 +11,10 @@ import { EnsembleFormItem } from "../FormItem";
 import { type FormInputProps } from "../types";
 import type { IconProps, EnsembleWidgetProps } from "../../../shared/types";
 import { useEnsembleAction } from "../../../runtime/hooks/useEnsembleAction";
-import { DateDisplayFormat } from "./utils/DateConstants";
 import { Icon } from "../../Icon";
+import { DateDisplayFormat } from "./utils/DateConstants";
+
+const widgetName = "DateRange";
 
 interface ShowTimeProps {
   hideDisabledOptions: boolean;
@@ -34,7 +36,7 @@ export const DateRange: React.FC<DateRangeProps> = (props) => {
   const [fromValue, setFromValue] = useState(props.fromDate);
   const [toValue, setToValue] = useState(props.toDate);
   const { id, values } = useRegisterBindings(
-    { ...props, fromValue, toValue },
+    { ...props, fromValue, toValue, widgetName },
     props.id,
     {
       setFromValue,
@@ -102,4 +104,4 @@ export const DateRange: React.FC<DateRangeProps> = (props) => {
   );
 };
 
-WidgetRegistry.register("DateRange", DateRange);
+WidgetRegistry.register(widgetName, DateRange);

@@ -16,6 +16,8 @@ import { useExecuteCode } from "../../runtime/hooks/useEnsembleAction";
 import { stringToColor } from "./utils/stringToColors";
 import { generateInitials } from "./utils/generateInitials";
 
+const widgetName = "Avatar";
+
 export interface AvatarMenu {
   label: string;
   icon?: IconProps;
@@ -40,7 +42,7 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(Boolean(menuAnchorEl));
   const [name, setName] = useState(props.name);
   const { values, rootRef } = useRegisterBindings(
-    { ...props, name },
+    { ...props, name, widgetName },
     props.id,
     {
       setName,
@@ -137,4 +139,4 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
   );
 };
 
-WidgetRegistry.register("Avatar", Avatar);
+WidgetRegistry.register(widgetName, Avatar);

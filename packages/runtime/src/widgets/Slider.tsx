@@ -10,6 +10,8 @@ import { type EnsembleWidgetProps } from "../shared/types";
 import type { FormInputProps } from "./Form/types";
 import { EnsembleFormItem } from "./Form/FormItem";
 
+const widgetName = "Slider";
+
 interface SliderStyles {
   maxWidth: string;
 }
@@ -29,9 +31,13 @@ export type SliderProps = {
 
 const SliderWidget: React.FC<SliderProps> = (props) => {
   const [value, setValue] = useState(props.value);
-  const { values } = useRegisterBindings({ ...props, value }, props.id, {
-    setValue,
-  });
+  const { values } = useRegisterBindings(
+    { ...props, value, widgetName },
+    props.id,
+    {
+      setValue,
+    },
+  );
   const onChangeAction = useEnsembleAction(props.onChange);
   const onCompleteAction = useEnsembleAction(props.onComplete);
 
@@ -99,4 +105,4 @@ const SliderWidget: React.FC<SliderProps> = (props) => {
   );
 };
 
-WidgetRegistry.register("Slider", SliderWidget);
+WidgetRegistry.register(widgetName, SliderWidget);
