@@ -14,6 +14,9 @@ import {
   useCustomScope,
   CustomScopeProvider,
   CustomThemeContext,
+  ConnectSocketAction,
+  DisconnectSocketAction,
+  SendSocketMessageAction,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -61,6 +64,11 @@ import { useShowToast } from "./useShowToast";
 import { useCloseAllDialogs } from "./useCloseAllDialogs";
 import { useNavigateUrl } from "./useNavigateUrl";
 import { useNavigateExternalScreen } from "./useNavigteExternalScreen";
+import {
+  handleConnectSocket,
+  handleMessageSocket,
+  handleDisconnectSocket,
+} from "../websocket";
 
 export type EnsembleActionHookResult =
   | {
@@ -174,6 +182,14 @@ export const useExecuteCode: EnsembleActionHook<
                   navigateExternalScreen(url),
                 openUrl: (url: NavigateExternalScreen) =>
                   navigateExternalScreen(url),
+                connectSocket: (name: string) =>
+                  handleConnectSocket(screenData, name),
+                messageSocket: (
+                  name: string,
+                  message: { [key: string]: unknown },
+                ) => handleMessageSocket(screenData, name, message),
+                disconnectSocket: (name: string) =>
+                  handleDisconnectSocket(screenData, name),
               },
             },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
@@ -297,6 +313,184 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   ]);
 
   return invokeApi;
+};
+
+export const useConnectSocket: EnsembleActionHook<ConnectSocketAction> = (
+  action,
+) => {
+  const { sockets, setData } = useScreenData();
+  const [isComplete, setIsComplete] = useState<boolean>();
+  const [isLoading, setIsLoading] = useState<boolean>();
+
+  const socket = useMemo(
+    () => sockets?.find((model) => model.name === action?.name),
+    [action, sockets],
+  );
+
+  const onSocketConnectAction = useEnsembleAction(socket?.onSuccess);
+  const onMessageReceiveAction = useEnsembleAction(socket?.onReceive);
+  const onSocketDisconnectAction = useEnsembleAction(socket?.onDisconnect);
+
+  const connectSocket = useMemo(() => {
+    if (!socket) {
+      return;
+    }
+
+    const callback = (): void => {
+      setIsComplete(false);
+    };
+    return { callback };
+  }, [socket, setData]);
+
+  useEffect(() => {
+    if (!socket || isComplete !== false || isLoading) {
+      return;
+    }
+
+    const fireRequest = (): void => {
+      setIsLoading(true);
+      try {
+        const ws = new WebSocket(socket.uri);
+
+        ws.onopen = (): void => {
+          onSocketConnectAction?.callback();
+        };
+
+        ws.onmessage = (e: MessageEvent): void => {
+          onMessageReceiveAction?.callback({ data: e.data as unknown });
+        };
+
+        ws.onclose = (): void => {
+          onSocketDisconnectAction?.callback();
+        };
+
+        setData(socket.name, ws);
+      } catch (e) {
+        logError(e);
+      } finally {
+        setIsLoading(false);
+        setIsComplete(true);
+      }
+    };
+
+    fireRequest();
+  }, [
+    socket,
+    isComplete,
+    isLoading,
+    onSocketConnectAction,
+    onMessageReceiveAction,
+    onSocketDisconnectAction,
+  ]);
+
+  return connectSocket;
+};
+
+export const useMessageSocket: EnsembleActionHook<SendSocketMessageAction> = (
+  action,
+) => {
+  const { sockets, data } = useScreenData();
+  const [isComplete, setIsComplete] = useState<boolean>();
+  const [isLoading, setIsLoading] = useState<boolean>();
+  const [context, setContext] = useState<{ [key: string]: unknown }>();
+  const evaluatedInputs = useEvaluate(action?.message, { context });
+
+  const socket = useMemo(
+    () => sockets?.find((model) => model.name === action?.name),
+    [action, sockets],
+  );
+
+  const sendSocketMessage = useMemo(() => {
+    if (!socket) {
+      return;
+    }
+
+    const callback = (args: unknown): void => {
+      setIsComplete(false);
+      setContext(args as { [key: string]: unknown });
+    };
+    return { callback };
+  }, [socket]);
+
+  useEffect(() => {
+    if (!socket || isComplete !== false || isLoading) {
+      return;
+    }
+
+    const fireRequest = (): void => {
+      setIsLoading(true);
+      try {
+        const socketInstance = data[socket.name] as WebSocket;
+        if (socketInstance) {
+          socketInstance.send(JSON.stringify(evaluatedInputs));
+        }
+      } catch (e) {
+        logError(e);
+      } finally {
+        setIsLoading(false);
+        setIsComplete(true);
+      }
+    };
+
+    fireRequest();
+  }, [socket, data, evaluatedInputs, isComplete, isLoading]);
+
+  return sendSocketMessage;
+};
+
+export const useDisconnectSocket: EnsembleActionHook<DisconnectSocketAction> = (
+  action,
+) => {
+  const { sockets, data, setData } = useScreenData();
+  const [isComplete, setIsComplete] = useState<boolean>();
+  const [isLoading, setIsLoading] = useState<boolean>();
+
+  const socket = useMemo(
+    () => sockets?.find((model) => model.name === action?.name),
+    [action, sockets],
+  );
+
+  const disconnectSocket = useMemo(() => {
+    if (!socket) {
+      return;
+    }
+
+    const callback = (): void => {
+      setIsComplete(false);
+    };
+    return { callback };
+  }, [socket]);
+
+  useEffect(() => {
+    if (!socket || isComplete !== false || isLoading) {
+      return;
+    }
+
+    const fireRequest = (): void => {
+      setIsLoading(true);
+      try {
+        const socketInstance = data[socket.name] as WebSocket;
+        if (socketInstance) {
+          socketInstance.close();
+        }
+
+        setData(socket.name, {
+          isLoading: false,
+          isSuccess: false,
+          isError: false,
+        });
+      } catch (e) {
+        logError(e);
+      } finally {
+        setIsLoading(false);
+        setIsComplete(true);
+      }
+    };
+
+    fireRequest();
+  }, [socket, data, setData, isComplete, isLoading]);
+
+  return disconnectSocket;
 };
 
 export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
@@ -616,6 +810,18 @@ export const useEnsembleAction = (
 
   if ("executeActionGroup" in action) {
     return useActionGroup(action.executeActionGroup);
+  }
+
+  if ("connectSocket" in action) {
+    return useConnectSocket(action.connectSocket);
+  }
+
+  if ("messageSocket" in action) {
+    return useMessageSocket(action.messageSocket);
+  }
+
+  if ("disconnectSocket" in action) {
+    return useDisconnectSocket(action.disconnectSocket);
   }
 };
 /* eslint-enable react-hooks/rules-of-hooks */

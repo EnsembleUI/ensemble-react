@@ -29,8 +29,17 @@ View:
             label: ${productTitleName}
             onTap:
               executeCode: |
-                // Calls a function defined in test.js
-                sayHello();
+                ensemble.connectSocket('echo')
+        - Button:
+            label: Send SMS
+            onTap:
+              executeCode: |
+                ensemble.messageSocket('echo', {msg: 'helllo'})
+        - Button:
+            label: Close socket
+            onTap:
+              executeCode: |
+                ensemble.disconnectSocket('echo')
 
         - Text:
             styles:
@@ -55,3 +64,19 @@ Global:
 
 Import:
   - common
+
+Socket:
+  echo:
+    uri: wss://echo.websocket.org/
+
+    onSuccess:
+      executeCode: |
+        console.log('=== socket connected')
+
+    onReceive:
+      executeCode: |
+        console.log('=== message received')
+
+    onDisconnect:
+      executeCode: |
+        console.log('=== socket disconnected')

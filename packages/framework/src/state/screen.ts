@@ -8,13 +8,14 @@ import type {
   EnsembleAPIModel,
   EnsembleAppModel,
   EnsembleScreenModel,
+  EnsembleSocketModel,
 } from "../shared";
 import type { WidgetState } from "./widget";
 
 export interface ScreenContextDefinition {
   app?: EnsembleAppModel;
   model?: EnsembleScreenModel;
-  data: { [key: string]: Response | undefined };
+  data: { [key: string]: Response | WebSocket | undefined };
   widgets: { [key: string]: WidgetState | undefined };
   inputs?: { [key: string]: unknown };
   [key: string]: unknown;
@@ -22,7 +23,7 @@ export interface ScreenContextDefinition {
 
 export interface ScreenContextActions {
   setWidget: (id: string, state: WidgetState) => void;
-  setData: (name: string, response: Response) => void;
+  setData: (name: string, response: Response | WebSocket) => void;
   setCustom: (id: string, data: unknown) => void;
 }
 
@@ -42,6 +43,10 @@ export const screenApiAtom = focusAtom(screenAtom, (optic) => {
   return optic.prop("model").optional().prop("apis");
 });
 
+export const screenSocketAtom = focusAtom(screenAtom, (optic) => {
+  return optic.prop("model").optional().prop("sockets");
+});
+
 export const screenInputAtom = focusAtom(screenAtom, (optic) =>
   optic.prop("inputs"),
 );
@@ -54,16 +59,16 @@ export const screenImportScriptAtom = focusAtom(screenAtom, (optic) =>
   optic.prop("model").optional().prop("importedScripts"),
 );
 
-export const useScreenData = (): { apis?: EnsembleAPIModel[] } & Pick<
-  ScreenContextDefinition,
-  "data"
-> &
+export const useScreenData = (): { apis?: EnsembleAPIModel[] } & {
+  sockets?: EnsembleSocketModel[];
+} & Pick<ScreenContextDefinition, "data"> &
   Pick<ScreenContextActions, "setData"> => {
   const apis = useAtomValue(screenApiAtom);
+  const sockets = useAtomValue(screenSocketAtom);
   const [data, setDataAtom] = useAtom(screenDataAtom);
 
   const setData = useCallback(
-    (name: string, response: Response) => {
+    (name: string, response: Response | WebSocket) => {
       if (isEqual(data[name], response)) {
         return;
       }
@@ -72,8 +77,10 @@ export const useScreenData = (): { apis?: EnsembleAPIModel[] } & Pick<
     },
     [data, setDataAtom],
   );
+
   return {
     apis,
+    sockets,
     data,
     setData,
   };
