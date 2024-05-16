@@ -29,17 +29,7 @@ View:
             label: ${productTitleName}
             onTap:
               executeCode: |
-                ensemble.connectSocket('echo')
-        - Button:
-            label: Send SMS
-            onTap:
-              executeCode: |
-                ensemble.messageSocket('echo', {msg: 'helllo'})
-        - Button:
-            label: Close socket
-            onTap:
-              executeCode: |
-                ensemble.disconnectSocket('echo')
+                sayHello();
 
         - Text:
             styles:
@@ -59,6 +49,72 @@ View:
               executeCode: |
                 ensemble.setTheme(value)
 
+        - Divider:
+
+        - Text:
+            styles:
+              names: heading-1
+            text: Socket Example
+
+        - Row:
+            styles:
+              gap: 8
+              margin: 10px 0px
+            children:
+              - Button:
+                  styles:
+                    borderRadius: 20
+                  label: Connect Socket
+                  onTap:
+                    connectSocket:
+                      name: echo
+              - Button:
+                  styles:
+                    borderRadius: 20
+                  label: Disconnect Socket
+                  onTap:
+                    disconnectSocket:
+                      name: echo
+
+        - Row:
+            styles:
+              gap: 8
+              margin: 10px 0px
+            children:
+              - Text:
+                  fontWeight: 900
+                  text: "Socket Status :"
+
+              - Text:
+                  id: socketStatus
+
+        - Row:
+            styles:
+              gap: 8
+            children:
+              - TextInput:
+                  id: socketMessageBox
+                  hintText: Type message here
+
+              - Button:
+                  label: Send Message
+                  onTap:
+                    messageSocket:
+                      name: echo
+                      message:
+                        msg: ${socketMessageBox.value}
+
+        - Text:
+            styles:
+              fontWeight: 900
+              margin: 10px 0px
+            text: Message from socket
+
+        - Text:
+            styles:
+              margin: 10px 0px
+            id: socketReceivedMessage
+
 Global:
   scriptName: test.js
 
@@ -71,12 +127,12 @@ Socket:
 
     onSuccess:
       executeCode: |
-        console.log('=== socket connected')
+        socketStatus.setText('Connected')
 
     onReceive:
       executeCode: |
-        console.log('=== message received')
+        socketReceivedMessage.setText(data)
 
     onDisconnect:
       executeCode: |
-        console.log('=== socket disconnected')
+        socketStatus.setText('Disconnected')
