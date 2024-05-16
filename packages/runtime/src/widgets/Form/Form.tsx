@@ -25,8 +25,9 @@ export type FormProps = {
 } & EnsembleWidgetProps;
 export const Form: React.FC<FormProps> = (props) => {
   const { children, ...rest } = props;
-  const { values } = useRegisterBindings({ ...rest });
+  const [form] = AntForm.useForm();
 
+  const getValues = form.getFieldsValue;
   const action = useEnsembleAction(props.onSubmit);
   const onFinishCallback = useCallback(
     (vals: unknown) => {
@@ -39,8 +40,11 @@ export const Form: React.FC<FormProps> = (props) => {
     [action],
   );
 
+  const { values } = useRegisterBindings({ ...rest }, rest.id, { getValues });
+
   return (
     <AntForm
+      form={form}
       colon={false}
       layout={getLayout(values?.styles?.labelPosition)}
       onFinish={onFinishCallback}
