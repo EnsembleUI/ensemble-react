@@ -14,6 +14,8 @@ import type {
   EnsembleWidgetStyles,
 } from "../../shared/types";
 
+const widgetName = "Form";
+
 export type FormProps = {
   children: EnsembleWidget[];
   enabled: boolean;
@@ -25,9 +27,10 @@ export type FormProps = {
 } & EnsembleWidgetProps;
 export const Form: React.FC<FormProps> = (props) => {
   const { children, ...rest } = props;
+  
   const [form] = AntForm.useForm();
-
   const getValues = form.getFieldsValue;
+  
   const action = useEnsembleAction(props.onSubmit);
   const onFinishCallback = useCallback(
     (vals: unknown) => {
@@ -72,4 +75,4 @@ const getLayout = (labelPosition?: string): FormLayout => {
   }
 };
 
-WidgetRegistry.register("Form", Form);
+WidgetRegistry.register(widgetName, Form);

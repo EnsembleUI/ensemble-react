@@ -23,6 +23,7 @@ export const createCustomWidget = (
   const CustomWidget: React.FC<CustomWidgetProps> = ({ inputs }) => {
     const { values } = useRegisterBindings<{ [key: string]: unknown }>({
       ...inputs,
+      widgetName: widget.name,
     });
 
     return (
