@@ -296,6 +296,16 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     setCurPage(values?.curPage || 1);
   }, [values?.pageSize, values?.curPage]);
 
+  // initialize bindings
+  useEffect(() => {
+    if (values?.allowSelection !== undefined) {
+      setAllowSelection(values.allowSelection);
+    }
+    if (values?.selectionType !== undefined) {
+      setSelectionType(values.selectionType);
+    }
+  }, [values?.allowSelection, values?.selectionType]);
+
   // handle column resize
   const handleResize =
     (index: number) =>
