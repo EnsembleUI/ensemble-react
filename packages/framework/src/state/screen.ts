@@ -1,8 +1,7 @@
 import { atom, useAtom, useAtomValue } from "jotai";
 import { focusAtom } from "jotai-optics";
-import { clone } from "lodash-es";
+import { clone, isEqual } from "lodash-es";
 import { useCallback } from "react";
-import isEqual from "react-fast-compare";
 import type { Response } from "../data";
 import type {
   EnsembleAPIModel,

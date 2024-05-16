@@ -280,6 +280,15 @@ const unwrapApiModels = (screen: unknown): EnsembleAPIModel[] => {
 
 const unwrapSocketModels = (screen: unknown): EnsembleSocketModel[] => {
   const socketNode = get(screen, "Socket");
+  if (isArray(socketNode)) {
+    return map<object, EnsembleSocketModel>(socketNode, (value) => {
+      const name = head(Object.keys(value));
+      return {
+        name,
+        ...value,
+      } as EnsembleSocketModel;
+    });
+  }
 
   if (isObject(socketNode)) {
     return map(Object.entries<object>(socketNode), ([name, value]) => {

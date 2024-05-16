@@ -29,6 +29,7 @@ View:
             label: ${productTitleName}
             onTap:
               executeCode: |
+                // Calls a function defined in test.js
                 sayHello();
 
         - Text:
@@ -81,6 +82,36 @@ View:
               gap: 8
               margin: 10px 0px
             children:
+              - Button:
+                  styles:
+                    borderRadius: 20
+                  label: Connect Socket JS
+                  onTap:
+                    executeCode:
+                      body: |
+                        ensemble.connectSocket('echo')
+                      onComplete:
+                        executeCode: |
+                          socketStatus.setText('Connected')
+                          echo.onmessage = (e) => {
+                            socketReceivedMessage.setText(e.data)
+                          };
+                          echo.onclose = (e) => {
+                            socketStatus.setText('Disconnected')
+                          };
+              - Button:
+                  styles:
+                    borderRadius: 20
+                  label: Disconnect Socket JS
+                  onTap:
+                    executeCode: |
+                      ensemble.disconnectSocket('echo')
+
+        - Row:
+            styles:
+              gap: 8
+              margin: 10px 0px
+            children:
               - Text:
                   fontWeight: 900
                   text: "Socket Status :"
@@ -103,6 +134,13 @@ View:
                       name: echo
                       message:
                         msg: ${socketMessageBox.value}
+                        x: ${ensemble.storage.get('yyy')}
+
+              - Button:
+                  label: Send Message JS
+                  onTap:
+                    executeCode: |
+                      ensemble.messageSocket('echo', {msg: socketMessageBox.value, x: ensemble.storage.get('yyy')})
 
         - Text:
             styles:

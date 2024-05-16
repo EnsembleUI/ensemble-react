@@ -2,9 +2,9 @@ import { type useScreenData } from "@ensembleui/react-framework";
 
 export const handleConnectSocket = (
   screenData: ReturnType<typeof useScreenData>,
-  name: string,
+  socketName: string,
 ): WebSocket | undefined => {
-  const socket = screenData.sockets?.find((model) => model.name === name);
+  const socket = screenData.sockets?.find((model) => model.name === socketName);
   if (!socket) {
     return;
   }
@@ -17,10 +17,10 @@ export const handleConnectSocket = (
 
 export const handleMessageSocket = (
   screenData: ReturnType<typeof useScreenData>,
-  name: string,
+  socketName: string,
   message?: { [key: string]: unknown },
-) => {
-  const socket = screenData.sockets?.find((model) => model.name === name);
+): void => {
+  const socket = screenData.sockets?.find((model) => model.name === socketName);
   if (!socket) {
     return;
   }
@@ -33,9 +33,9 @@ export const handleMessageSocket = (
 
 export const handleDisconnectSocket = (
   screenData: ReturnType<typeof useScreenData>,
-  name: string,
+  socketName: string,
 ): void => {
-  const socket = screenData.sockets?.find((model) => model.name === name);
+  const socket = screenData.sockets?.find((model) => model.name === socketName);
   if (!socket) {
     return;
   }
@@ -44,12 +44,4 @@ export const handleDisconnectSocket = (
   if (socketInstance) {
     socketInstance.close();
   }
-
-  screenData.setData(socket.name, {
-    isLoading: false,
-    isSuccess: false,
-    isError: false,
-  });
-
-  return;
 };

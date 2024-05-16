@@ -14,9 +14,6 @@ import {
   useCustomScope,
   CustomScopeProvider,
   CustomThemeContext,
-  ConnectSocketAction,
-  DisconnectSocketAction,
-  SendSocketMessageAction,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -31,6 +28,9 @@ import type {
   NavigateBackAction,
   NavigateExternalScreen,
   ExecuteActionGroupAction,
+  ConnectSocketAction,
+  DisconnectSocketAction,
+  SendSocketMessageAction,
 } from "@ensembleui/react-framework";
 import {
   isEmpty,
@@ -56,6 +56,11 @@ import { ModalContext } from "../modal";
 import { EnsembleRuntime } from "../runtime";
 import { getShowDialogOptions, showDialog } from "../showDialog";
 import { invokeAPI } from "../invokeApi";
+import {
+  handleConnectSocket,
+  handleMessageSocket,
+  handleDisconnectSocket,
+} from "../websocket";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { useNavigateModalScreen } from "./useNavigateModal";
@@ -64,11 +69,6 @@ import { useShowToast } from "./useShowToast";
 import { useCloseAllDialogs } from "./useCloseAllDialogs";
 import { useNavigateUrl } from "./useNavigateUrl";
 import { useNavigateExternalScreen } from "./useNavigteExternalScreen";
-import {
-  handleConnectSocket,
-  handleMessageSocket,
-  handleDisconnectSocket,
-} from "../websocket";
 
 export type EnsembleActionHookResult =
   | {
@@ -340,7 +340,7 @@ export const useConnectSocket: EnsembleActionHook<ConnectSocketAction> = (
       setIsComplete(false);
     };
     return { callback };
-  }, [socket, setData]);
+  }, [socket]);
 
   useEffect(() => {
     if (!socket || isComplete !== false || isLoading) {
@@ -378,6 +378,7 @@ export const useConnectSocket: EnsembleActionHook<ConnectSocketAction> = (
     socket,
     isComplete,
     isLoading,
+    setData,
     onSocketConnectAction,
     onMessageReceiveAction,
     onSocketDisconnectAction,
@@ -473,12 +474,6 @@ export const useDisconnectSocket: EnsembleActionHook<DisconnectSocketAction> = (
         if (socketInstance) {
           socketInstance.close();
         }
-
-        setData(socket.name, {
-          isLoading: false,
-          isSuccess: false,
-          isError: false,
-        });
       } catch (e) {
         logError(e);
       } finally {
