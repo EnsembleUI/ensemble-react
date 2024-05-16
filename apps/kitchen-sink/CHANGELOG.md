@@ -1,5 +1,18 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.42
+
+### Patch Changes
+
+- 41bbdd8: fix: added support of widgets styles in themes
+- 693be2c: bind form id and expose getValues method
+- 9c720b8: fix allowSelection and selectionType binding of Datagrid
+- Updated dependencies [41bbdd8]
+- Updated dependencies [693be2c]
+- Updated dependencies [9c720b8]
+  - @ensembleui/react-framework@0.1.37
+  - @ensembleui/react-runtime@0.1.51
+
 ## 0.0.41
 
 ### Patch Changes

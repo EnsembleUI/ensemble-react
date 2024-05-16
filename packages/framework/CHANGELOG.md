@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.37
+
+### Patch Changes
+
+- 41bbdd8: fix: added support of widgets styles in themes
+
 ## 0.1.36
 
 ### Patch Changes
