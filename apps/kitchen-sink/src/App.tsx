@@ -10,6 +10,7 @@ import FormsYAML from "./ensemble/screens/forms.yaml";
 import CustomWidgetsYAML from "./ensemble/screens/customWidgets.yaml";
 import HelpYAML from "./ensemble/screens/help.yaml";
 import ProductYAML from "./ensemble/screens/product.yaml";
+import TestYAML from "./ensemble/screens/test.yaml";
 // Widgets
 import HeaderWidgetYAML from "./ensemble/widgets/Header.yaml";
 import StyledTextWidgetYAML from "./ensemble/widgets/StyledText.yaml";
@@ -20,6 +21,12 @@ import FirstScript from "./ensemble/scripts/test.js?raw";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import CommonScript from "./ensemble/scripts/common.js?raw";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+import AIChatMessageScript from "./ensemble/scripts/aiChatMessage.js?raw";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+import SetAdvocateScript from "./ensemble/scripts/setAdvocates.js?raw";
 // ensemble-config
 import EnsembleConfig from "./ensemble/config.yaml";
 // Theme
@@ -53,6 +60,16 @@ const testApp: ApplicationDTO = {
       id: "common",
       name: "common",
       content: String(CommonScript),
+    },
+    {
+      id: "aiChatMessage",
+      name: "aiChatMessage.js",
+      content: String(AIChatMessageScript),
+    },
+    {
+      id: "setAdvocate",
+      name: "setAdvocate.js",
+      content: String(SetAdvocateScript),
     },
   ],
   widgets: [
@@ -118,6 +135,11 @@ const testApp: ApplicationDTO = {
       name: "Product",
       path: "/product/:product_name",
       content: String(ProductYAML),
+    },
+    {
+      id: "test",
+      name: "Test",
+      content: String(TestYAML),
     },
   ],
   config: EnsembleConfig,

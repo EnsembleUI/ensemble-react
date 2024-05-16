@@ -44,13 +44,16 @@ ViewGroup:
         page: actions
       - label: Forms
         icon: CodeOutlined
-        page: forms        
+        page: forms
       - label: Custom Widgets
         icon: ExtensionOutlined
         page: custom widgets
       - label: Help
         icon: HelpOutlineOutlined
         page: help
+      - label: Test
+        icon: HelpOutlineOutlined
+        page: test
     footer:
       Row:
         styles:

@@ -1,9 +1,38 @@
 View:
   onLoad:
-    executeCode: |
-      ensemble.storage.set('yyy' , 'page')
-      ensemble.storage.set('zzz' , 'button')
-      ensemble.storage.set('aaa' , '1')
+    executeCode:
+      body: |
+        ensemble.storage.set('yyy' , 'page')
+        ensemble.storage.set('zzz' , 'button')
+        ensemble.storage.set('aaa' , '1')
+      onComplete:
+        executeActionGroup:
+          actions:
+            - executeCode: |
+                ensemble.storage.set('managerIsLoading', true);
+            - executeCode:
+                scriptName: aiChatMessage.js
+            - executeCode:
+                scriptName: setAdvocate.js
+            - invokeAPI:
+                name: getDummyProducts
+                onResponse:
+                  executeActionGroup:
+                    actions:
+                      - invokeAPI:
+                          name: getMockProducts
+                          inputs:
+                            sortBy: id
+                            sortOrder: desc
+                          onResponse:
+                            executeCode: |
+                              const tasks = response.body.map(({id})=> id)
+                              ensemble.storage.set('managerTasks', tasks)
+                              ensemble.storage.set('cursors', Array(response.body.length).fill())
+                              ensemble.storage.set('managerIsLoading', false);
+                      - invokeAPI:
+                          name: getDummyNumbers
+
   header:
     title:
       Header:
@@ -55,3 +84,22 @@ Global:
 
 Import:
   - common
+
+API:
+  getDummyProducts:
+    method: GET
+    uri: https://dummyjson.com/products
+
+  getMockProducts:
+    method: GET
+    uri: https://661e111b98427bbbef034208.mockapi.io/products?sortBy=${sortBy}&order=${sortOrder}&limit=10
+    inputs:
+      - sortBy
+      - sortOrder
+
+  getDummyNumbers:
+    method: GET
+    uri: https://661e111b98427bbbef034208.mockapi.io/number?limit=10
+    onResponse:
+      executeCode: |
+        console.log('dummy number fetched')
