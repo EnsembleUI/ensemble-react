@@ -155,8 +155,8 @@ View:
                   onRowsSelected:
                     executeCode: |
                       console.log("data", selectedRows, selectedRowKeys);
-                  allowSelection: true
-                  selectionType: radio
+                  allowSelection: ${1===1}
+                  selectionType: '${1===10 ? "checkbox" : "radio"}'
                   allowResizableColumns: true
                   defaultSelectedRowKeys: ["2"]
                   styles:
