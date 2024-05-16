@@ -67,21 +67,16 @@ View:
                             console.log('radio changed', value)
                     # Build your own checkbox group
                     - Row:
-                        children:
-                          - Checkbox:
-                              id: checkbox
-                              trailingText: Check me
-                              enabled: false
+                        item-template:
+                          data: [0, 1, 2]
+                          name: cd
+                          template:
+                            Checkbox:
+                              id: ${'cb' + cd}
+                              trailingText: ${'Check me' + cd}
                               onChange:
                                 executeCode: |-
                                   console.log('isChecked', value);
-                          - Checkbox:
-                              id: checkbox2
-                              trailingText: Check me 2
-                          - Checkbox:
-                              id: checkbox3
-                              trailingText: Check me 3
-                              enabled: true
                     - Dropdown:
                         id: dropdown
                         label: Dropdown
@@ -110,8 +105,9 @@ View:
                         allowCreateOptions: true
                         onItemSelect:
                           executeCode: |
-                            console.log('selected');
-                            console.log(selectedValues)
+                            console.log('selected', multiselectoptions1);
+                            console.log(1,selectedValues)
+                            console.log(1,multiselectoptions1.selectedValues)
                     - MultiSelect:
                         id: multiselectoptions2
                         label: Choose multiple
@@ -130,6 +126,10 @@ View:
               - Markdown:
                   id: result
                   text: Check here for the result!
+              - Button:
+                  label: get form by id
+                  onTap:
+                    executeCode: console.log(myForm.getValues())
 
         - Text:
             styles:
