@@ -6,7 +6,8 @@ on:
   pull_request:
     types: [opened, synchronize]
     paths-ignore:
-      - "**.md"
+      - .changeset/**.md
+      - "**/CHANGELOG.md"
       - "**/package.json"
 
 jobs:
