@@ -1,9 +1,11 @@
 {
   "name": "@ensembleui/react-runtime",
-  "version": "0.1.50",
+  "version": "0.1.51",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["./dist/**"],
+  "files": [
+    "./dist/**"
+  ],
   "repository": "https://github.com/EnsembleUI/ensemble-react",
   "scripts": {
     "dev": "tsup src/index.tsx --format cjs --watch --dts --external react",
