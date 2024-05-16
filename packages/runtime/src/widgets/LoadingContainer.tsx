@@ -5,7 +5,9 @@ import { cloneDeep } from "lodash-es";
 import type { EnsembleWidgetProps } from "../shared/types";
 import { EnsembleRuntime } from "../runtime";
 import { WidgetRegistry } from "../registry";
-import { Widget } from "../shared/coreSchema";
+import { type Widget } from "../shared/coreSchema";
+
+const widgetName = "LoadingContainer";
 
 export interface LoadingContainerProps extends EnsembleWidgetProps {
   isLoading: Expression<boolean>;
@@ -28,7 +30,7 @@ export const LoadingContainer: React.FC<LoadingContainerProps> = (props) => {
   const unwrappedLoadingWidget = loadingWidget
     ? unwrapWidget(cloneDeep(loadingWidget))
     : undefined;
-  const { values } = useRegisterBindings(rest, props.id);
+  const { values } = useRegisterBindings({ ...rest, widgetName }, props.id);
 
   if (values?.isLoading) {
     if (unwrappedLoadingWidget) {
@@ -48,4 +50,4 @@ export const LoadingContainer: React.FC<LoadingContainerProps> = (props) => {
   return <>{EnsembleRuntime.render([unwrappedWidget])}</>;
 };
 
-WidgetRegistry.register("LoadingContainer", LoadingContainer);
+WidgetRegistry.register(widgetName, LoadingContainer);

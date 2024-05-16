@@ -28,6 +28,8 @@ import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import { EnsembleRuntime } from "../../runtime";
 import { DataCell } from "./DataCell";
 
+const widgetName = "DataGrid";
+
 interface DataColumn {
   label?: Expression<{ [key: string]: unknown }>;
   type: string;
@@ -269,7 +271,15 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     id: resolvedWidgetId,
     values,
   } = useRegisterBindings(
-    { ...rest, rowsSelected, selectionType, allowSelection, pageSize, curPage },
+    {
+      ...rest,
+      rowsSelected,
+      selectionType,
+      allowSelection,
+      pageSize,
+      curPage,
+      widgetName,
+    },
     props.id,
     {
       setRowsSelected,
@@ -577,4 +587,4 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   );
 };
 
-WidgetRegistry.register("DataGrid", DataGrid);
+WidgetRegistry.register(widgetName, DataGrid);
