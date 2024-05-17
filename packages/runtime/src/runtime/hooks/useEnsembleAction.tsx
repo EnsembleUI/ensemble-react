@@ -386,48 +386,28 @@ export const useConnectSocket: EnsembleActionHook<ConnectSocketAction> = (
 export const useMessageSocket: EnsembleActionHook<SendSocketMessageAction> = (
   action,
 ) => {
-  const { sockets, data } = useScreenData();
+  const screenData = useScreenData();
   const [isComplete, setIsComplete] = useState<boolean>();
   const [context, setContext] = useState<{ [key: string]: unknown }>();
   const evaluatedInputs = useEvaluate(action?.message, { context });
 
-  const socket = useMemo(
-    () => sockets?.find((model) => model.name === action?.name),
-    [action, sockets],
-  );
-
   const sendSocketMessage = useMemo(() => {
-    if (!socket) {
-      return;
-    }
-
     const callback = (args: unknown): void => {
       setIsComplete(false);
       setContext(args as { [key: string]: unknown });
     };
     return { callback };
-  }, [socket]);
+  }, []);
 
   useEffect(() => {
-    if (!socket || isComplete !== false) {
+    if (!action || isComplete !== false) {
       return;
     }
 
-    const fireRequest = (): void => {
-      try {
-        const socketInstance = data[socket.name] as WebSocket;
-        if (socketInstance) {
-          socketInstance.send(JSON.stringify(evaluatedInputs));
-        }
-      } catch (e) {
-        logError(e);
-      } finally {
-        setIsComplete(true);
-      }
-    };
-
-    fireRequest();
-  }, [socket, data, evaluatedInputs, isComplete]);
+    // send socket message
+    handleMessageSocket(screenData, action.name, evaluatedInputs);
+    setIsComplete(true);
+  }, [screenData, action, evaluatedInputs, isComplete]);
 
   return sendSocketMessage;
 };
@@ -435,45 +415,24 @@ export const useMessageSocket: EnsembleActionHook<SendSocketMessageAction> = (
 export const useDisconnectSocket: EnsembleActionHook<DisconnectSocketAction> = (
   action,
 ) => {
-  const { sockets, data, setData } = useScreenData();
+  const screenData = useScreenData();
   const [isComplete, setIsComplete] = useState<boolean>();
 
-  const socket = useMemo(
-    () => sockets?.find((model) => model.name === action?.name),
-    [action, sockets],
-  );
-
   const disconnectSocket = useMemo(() => {
-    if (!socket) {
-      return;
-    }
-
     const callback = (): void => {
       setIsComplete(false);
     };
     return { callback };
-  }, [socket]);
+  }, []);
 
   useEffect(() => {
-    if (!socket || isComplete !== false) {
+    if (!action || isComplete !== false) {
       return;
     }
 
-    const fireRequest = (): void => {
-      try {
-        const socketInstance = data[socket.name] as WebSocket;
-        if (socketInstance) {
-          socketInstance.close();
-        }
-      } catch (e) {
-        logError(e);
-      } finally {
-        setIsComplete(true);
-      }
-    };
-
-    fireRequest();
-  }, [socket, data, setData, isComplete]);
+    handleDisconnectSocket(screenData, action.name);
+    setIsComplete(true);
+  }, [screenData, action, isComplete]);
 
   return disconnectSocket;
 };
