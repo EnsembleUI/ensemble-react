@@ -319,8 +319,7 @@ export const useConnectSocket: EnsembleActionHook<ConnectSocketAction> = (
   action,
 ) => {
   const { sockets, setData } = useScreenData();
-  const [isComplete, setIsComplete] = useState<boolean>();
-  const [isLoading, setIsLoading] = useState<boolean>();
+  const [isOpen, setIsOpen] = useState<boolean>();
 
   const socket = useMemo(
     () => sockets?.find((model) => model.name === action?.name),
@@ -337,18 +336,17 @@ export const useConnectSocket: EnsembleActionHook<ConnectSocketAction> = (
     }
 
     const callback = (): void => {
-      setIsComplete(false);
+      setIsOpen(false);
     };
     return { callback };
   }, [socket]);
 
   useEffect(() => {
-    if (!socket || isComplete !== false || isLoading) {
+    if (!socket || isOpen !== false) {
       return;
     }
 
     const fireRequest = (): void => {
-      setIsLoading(true);
       try {
         const ws = new WebSocket(socket.uri);
 
@@ -368,16 +366,14 @@ export const useConnectSocket: EnsembleActionHook<ConnectSocketAction> = (
       } catch (e) {
         logError(e);
       } finally {
-        setIsLoading(false);
-        setIsComplete(true);
+        setIsOpen(true);
       }
     };
 
     fireRequest();
   }, [
     socket,
-    isComplete,
-    isLoading,
+    isOpen,
     setData,
     onSocketConnectAction,
     onMessageReceiveAction,
@@ -392,7 +388,6 @@ export const useMessageSocket: EnsembleActionHook<SendSocketMessageAction> = (
 ) => {
   const { sockets, data } = useScreenData();
   const [isComplete, setIsComplete] = useState<boolean>();
-  const [isLoading, setIsLoading] = useState<boolean>();
   const [context, setContext] = useState<{ [key: string]: unknown }>();
   const evaluatedInputs = useEvaluate(action?.message, { context });
 
@@ -414,12 +409,11 @@ export const useMessageSocket: EnsembleActionHook<SendSocketMessageAction> = (
   }, [socket]);
 
   useEffect(() => {
-    if (!socket || isComplete !== false || isLoading) {
+    if (!socket || isComplete !== false) {
       return;
     }
 
     const fireRequest = (): void => {
-      setIsLoading(true);
       try {
         const socketInstance = data[socket.name] as WebSocket;
         if (socketInstance) {
@@ -428,13 +422,12 @@ export const useMessageSocket: EnsembleActionHook<SendSocketMessageAction> = (
       } catch (e) {
         logError(e);
       } finally {
-        setIsLoading(false);
         setIsComplete(true);
       }
     };
 
     fireRequest();
-  }, [socket, data, evaluatedInputs, isComplete, isLoading]);
+  }, [socket, data, evaluatedInputs, isComplete]);
 
   return sendSocketMessage;
 };
@@ -444,7 +437,6 @@ export const useDisconnectSocket: EnsembleActionHook<DisconnectSocketAction> = (
 ) => {
   const { sockets, data, setData } = useScreenData();
   const [isComplete, setIsComplete] = useState<boolean>();
-  const [isLoading, setIsLoading] = useState<boolean>();
 
   const socket = useMemo(
     () => sockets?.find((model) => model.name === action?.name),
@@ -463,12 +455,11 @@ export const useDisconnectSocket: EnsembleActionHook<DisconnectSocketAction> = (
   }, [socket]);
 
   useEffect(() => {
-    if (!socket || isComplete !== false || isLoading) {
+    if (!socket || isComplete !== false) {
       return;
     }
 
     const fireRequest = (): void => {
-      setIsLoading(true);
       try {
         const socketInstance = data[socket.name] as WebSocket;
         if (socketInstance) {
@@ -477,13 +468,12 @@ export const useDisconnectSocket: EnsembleActionHook<DisconnectSocketAction> = (
       } catch (e) {
         logError(e);
       } finally {
-        setIsLoading(false);
         setIsComplete(true);
       }
     };
 
     fireRequest();
-  }, [socket, data, setData, isComplete, isLoading]);
+  }, [socket, data, setData, isComplete]);
 
   return disconnectSocket;
 };
