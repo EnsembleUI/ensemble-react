@@ -1,8 +1,9 @@
 import { atom, useAtom, useAtomValue } from "jotai";
 import { focusAtom } from "jotai-optics";
-import { clone, isEqual } from "lodash-es";
+import { clone } from "lodash-es";
 import { useCallback } from "react";
-import type { Response } from "../data";
+import isEqual from "react-fast-compare";
+import type { Response, WebSocketConnection } from "../data";
 import type {
   EnsembleAPIModel,
   EnsembleAppModel,
@@ -14,15 +15,15 @@ import type { WidgetState } from "./widget";
 export interface ScreenContextDefinition {
   app?: EnsembleAppModel;
   model?: EnsembleScreenModel;
-  data: { [key: string]: Response | WebSocket | undefined };
-  widgets: { [key: string]: WidgetState | undefined };
+  data: { [key: string]: Response | WebSocketConnection };
+  widgets: { [key: string]: WidgetState };
   inputs?: { [key: string]: unknown };
   [key: string]: unknown;
 }
 
 export interface ScreenContextActions {
   setWidget: (id: string, state: WidgetState) => void;
-  setData: (name: string, response: Response | WebSocket) => void;
+  setData: (name: string, response: Response | WebSocketConnection) => void;
   setCustom: (id: string, data: unknown) => void;
 }
 
@@ -67,7 +68,7 @@ export const useScreenData = (): { apis?: EnsembleAPIModel[] } & {
   const [data, setDataAtom] = useAtom(screenDataAtom);
 
   const setData = useCallback(
-    (name: string, response: Response | WebSocket) => {
+    (name: string, response: Response | WebSocketConnection) => {
       if (isEqual(data[name], response)) {
         return;
       }

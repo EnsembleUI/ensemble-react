@@ -15,7 +15,7 @@ import type {
   ScreenContextActions,
   ScreenContextDefinition,
 } from "../state";
-import type { Response } from "../data";
+import type { Response, WebSocketConnection } from "../data";
 import type { EnsembleScreenModel } from "../shared/models";
 import { useApplicationContext } from "./useApplicationContext";
 import { CustomThemeContext } from "./useThemeContext";
@@ -103,7 +103,7 @@ export const useScreenContext = ():
   const screenContext = useAtomValue(screenAtom);
   const setDataAtom = useSetAtom(screenDataAtom);
   const setData = useCallback(
-    (name: string, response: Response | WebSocket) => {
+    (name: string, response: Response | WebSocketConnection) => {
       const data = screenContext.data;
       data[name] = response;
       setDataAtom(clone(data));

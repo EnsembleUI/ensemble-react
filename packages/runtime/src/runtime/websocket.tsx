@@ -1,18 +1,38 @@
-import { type useScreenData } from "@ensembleui/react-framework";
+import {
+  type useScreenData,
+  type WebSocketConnection,
+  type EnsembleActionHookResult,
+} from "@ensembleui/react-framework";
 
 export const handleConnectSocket = (
   screenData: ReturnType<typeof useScreenData>,
   socketName: string,
-): WebSocket | undefined => {
+  onOpen?: EnsembleActionHookResult,
+  onMessage?: EnsembleActionHookResult,
+  onClose?: EnsembleActionHookResult,
+): WebSocketConnection | undefined => {
   const socket = screenData.sockets?.find((model) => model.name === socketName);
   if (!socket) {
     return;
   }
 
   const ws = new WebSocket(socket.uri);
-  screenData.setData(socket.name, ws);
 
-  return ws;
+  ws.onopen = (): void => {
+    onOpen ? onOpen?.callback() : {};
+  };
+
+  ws.onmessage = (e: MessageEvent): void => {
+    onMessage ? onMessage?.callback({ data: e.data as unknown }) : {};
+  };
+
+  ws.onclose = (): void => {
+    onClose ? onClose?.callback() : {};
+  };
+
+  screenData.setData(socket.name, { socket: ws, isConnected: true });
+
+  return { socket: ws, isConnected: true };
 };
 
 export const handleMessageSocket = (
@@ -25,9 +45,9 @@ export const handleMessageSocket = (
     return;
   }
 
-  const socketInstance = screenData.data[socket.name] as WebSocket;
-  if (socketInstance) {
-    socketInstance.send(JSON.stringify(message));
+  const socketInstance = screenData.data[socket.name] as WebSocketConnection;
+  if (socketInstance.isConnected) {
+    socketInstance.socket?.send(JSON.stringify(message));
   }
 };
 
@@ -40,8 +60,9 @@ export const handleDisconnectSocket = (
     return;
   }
 
-  const socketInstance = screenData.data[socket.name] as WebSocket;
-  if (socketInstance) {
-    socketInstance.close();
+  const socketInstance = screenData.data[socket.name] as WebSocketConnection;
+  if (socketInstance.isConnected) {
+    socketInstance.socket?.close();
+    screenData.setData(socket.name, { isConnected: false });
   }
 };

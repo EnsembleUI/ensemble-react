@@ -31,6 +31,7 @@ import type {
   ConnectSocketAction,
   DisconnectSocketAction,
   SendSocketMessageAction,
+  EnsembleActionHookResult,
 } from "@ensembleui/react-framework";
 import {
   isEmpty,
@@ -70,11 +71,6 @@ import { useCloseAllDialogs } from "./useCloseAllDialogs";
 import { useNavigateUrl } from "./useNavigateUrl";
 import { useNavigateExternalScreen } from "./useNavigteExternalScreen";
 
-export type EnsembleActionHookResult =
-  | {
-      callback: (...args: unknown[]) => unknown;
-    }
-  | undefined;
 export type EnsembleActionHook<
   T = unknown,
   Q = unknown,
@@ -318,12 +314,12 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
 export const useConnectSocket: EnsembleActionHook<ConnectSocketAction> = (
   action,
 ) => {
-  const { sockets, setData } = useScreenData();
+  const screenData = useScreenData();
   const [isOpen, setIsOpen] = useState<boolean>();
 
   const socket = useMemo(
-    () => sockets?.find((model) => model.name === action?.name),
-    [action, sockets],
+    () => screenData.sockets?.find((model) => model.name === action?.name),
+    [action, screenData],
   );
 
   const onSocketConnectAction = useEnsembleAction(socket?.onSuccess);
@@ -346,35 +342,18 @@ export const useConnectSocket: EnsembleActionHook<ConnectSocketAction> = (
       return;
     }
 
-    const fireRequest = (): void => {
-      try {
-        const ws = new WebSocket(socket.uri);
-
-        ws.onopen = (): void => {
-          onSocketConnectAction?.callback();
-        };
-
-        ws.onmessage = (e: MessageEvent): void => {
-          onMessageReceiveAction?.callback({ data: e.data as unknown });
-        };
-
-        ws.onclose = (): void => {
-          onSocketDisconnectAction?.callback();
-        };
-
-        setData(socket.name, ws);
-      } catch (e) {
-        logError(e);
-      } finally {
-        setIsOpen(true);
-      }
-    };
-
-    fireRequest();
+    handleConnectSocket(
+      screenData,
+      socket.name,
+      onSocketConnectAction,
+      onMessageReceiveAction,
+      onSocketDisconnectAction,
+    );
+    setIsOpen(true);
   }, [
     socket,
     isOpen,
-    setData,
+    screenData,
     onSocketConnectAction,
     onMessageReceiveAction,
     onSocketDisconnectAction,

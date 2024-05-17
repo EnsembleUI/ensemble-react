@@ -138,6 +138,12 @@ export interface ExecuteActionGroupAction {
   actions: EnsembleAction[];
 }
 
+export type EnsembleActionHookResult =
+  | {
+      callback: (...args: unknown[]) => unknown;
+    }
+  | undefined;
+
 /**
  * @uiType action
  */
