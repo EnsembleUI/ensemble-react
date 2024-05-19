@@ -55,7 +55,6 @@ export const Image: React.FC<ImageProps> = ({ onDragStart, ...props }) => {
       onDragStart={onDragStartCallback}
       src={values?.source}
       style={{
-        ...values?.styles,
         width: props.width,
         height: props.height,
         objectFit: props.fit,
@@ -70,6 +69,7 @@ export const Image: React.FC<ImageProps> = ({ onDragStart, ...props }) => {
         ...(values?.styles?.visible === false
           ? { display: "none" }
           : undefined),
+        ...values?.styles,
       }}
     />
   );
