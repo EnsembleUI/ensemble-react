@@ -315,7 +315,6 @@ export const useConnectSocket: EnsembleActionHook<ConnectSocketAction> = (
   action,
 ) => {
   const screenData = useScreenData();
-  const [isOpen, setIsOpen] = useState<boolean>();
 
   const socket = useMemo(
     () => screenData.sockets?.find((model) => model.name === action?.name),
@@ -332,28 +331,18 @@ export const useConnectSocket: EnsembleActionHook<ConnectSocketAction> = (
     }
 
     const callback = (): void => {
-      setIsOpen(false);
+      handleConnectSocket(
+        screenData,
+        socket.name,
+        onSocketConnectAction,
+        onMessageReceiveAction,
+        onSocketDisconnectAction,
+      );
     };
     return { callback };
-  }, [socket]);
-
-  useEffect(() => {
-    if (!socket || isOpen !== false) {
-      return;
-    }
-
-    handleConnectSocket(
-      screenData,
-      socket.name,
-      onSocketConnectAction,
-      onMessageReceiveAction,
-      onSocketDisconnectAction,
-    );
-    setIsOpen(true);
   }, [
-    socket,
-    isOpen,
     screenData,
+    socket,
     onSocketConnectAction,
     onMessageReceiveAction,
     onSocketDisconnectAction,
@@ -395,23 +384,15 @@ export const useDisconnectSocket: EnsembleActionHook<DisconnectSocketAction> = (
   action,
 ) => {
   const screenData = useScreenData();
-  const [isComplete, setIsComplete] = useState<boolean>();
 
   const disconnectSocket = useMemo(() => {
     const callback = (): void => {
-      setIsComplete(false);
+      if (action?.name) {
+        handleDisconnectSocket(screenData, action.name);
+      }
     };
     return { callback };
-  }, []);
-
-  useEffect(() => {
-    if (!action || isComplete !== false) {
-      return;
-    }
-
-    handleDisconnectSocket(screenData, action.name);
-    setIsComplete(true);
-  }, [screenData, action, isComplete]);
+  }, [screenData, action]);
 
   return disconnectSocket;
 };

@@ -16,19 +16,29 @@ export const handleConnectSocket = (
     return;
   }
 
+  // check the socket is already connected
+  const prevSocketConnection = screenData.data[
+    socket.name
+  ] as WebSocketConnection;
+
+  if (prevSocketConnection && prevSocketConnection.isConnected) {
+    return prevSocketConnection;
+  }
+
   const ws = new WebSocket(socket.uri);
 
-  ws.onopen = (): void => {
-    onOpen ? onOpen?.callback() : {};
-  };
+  if (onOpen?.callback) {
+    ws.onopen = () => onOpen?.callback();
+  }
 
-  ws.onmessage = (e: MessageEvent): void => {
-    onMessage ? onMessage?.callback({ data: e.data as unknown }) : {};
-  };
+  if (onMessage?.callback) {
+    ws.onmessage = (e: MessageEvent) =>
+      onMessage?.callback({ data: e.data as unknown });
+  }
 
-  ws.onclose = (): void => {
-    onClose ? onClose?.callback() : {};
-  };
+  if (onClose?.callback) {
+    ws.onclose = () => onClose?.callback();
+  }
 
   screenData.setData(socket.name, { socket: ws, isConnected: true });
 
