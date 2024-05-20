@@ -38,6 +38,9 @@ View:
             text: Change theme
         - PopupMenu:
             showDivider: true
+            styles:
+              width: 100px
+              backgroundColor: ${colors.primary['500']}
             items:
               - label: Light
                 value: default

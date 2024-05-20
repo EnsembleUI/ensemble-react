@@ -15,7 +15,11 @@ import type {
   EnsembleWidget,
   Expression,
 } from "@ensembleui/react-framework";
-import type { EnsembleWidgetProps, HasItemTemplate } from "../shared/types";
+import type {
+  EnsembleWidgetProps,
+  EnsembleWidgetStyles,
+  HasItemTemplate,
+} from "../shared/types";
 import { WidgetRegistry } from "../registry";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { EnsembleRuntime } from "../runtime";
@@ -39,7 +43,7 @@ export type PopupMenuProps = {
   widget?: { [key: string]: unknown };
   onItemSelect?: EnsembleAction;
   showDivider?: boolean | Expression<string>;
-} & EnsembleWidgetProps<PopupMenuStyles> &
+} & EnsembleWidgetProps<PopupMenuStyles & EnsembleWidgetStyles> &
   HasItemTemplate & { "item-template"?: { value: Expression<string> } };
 
 export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
@@ -102,7 +106,11 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
       popupItems.push(...tempItems);
     }
 
-    return <Menu>{popupItems}</Menu>;
+    return (
+      <Menu className={values?.styles?.names} style={{ ...values?.styles }}>
+        {popupItems}
+      </Menu>
+    );
   }, [values?.items, action, namedData, itemTemplate]);
 
   useEffect((): void => {
