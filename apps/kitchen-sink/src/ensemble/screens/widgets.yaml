@@ -759,6 +759,7 @@ View:
               tabBackgroundColor: orange
               tabNavBottomBorderShow: false
               tabNavBorderRadius: 10
+              tabNavStretch: true
             styles:
               activeTabBackgroundColor: red
               activeTabColor: white
@@ -766,6 +767,7 @@ View:
               tabContentHolderBackgroundColor: green
               tabContentHolderBorderRadius: 10
               tabContentHolderPadding: 10px 5px
+              tabPosition: "top"
 
         - DataGrid:
             DataColumns:
