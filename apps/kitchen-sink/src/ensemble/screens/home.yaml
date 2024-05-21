@@ -32,6 +32,20 @@ View:
                 // Calls a function defined in test.js
                 sayHello();
 
+        - Button:
+            label: show error
+            onTap:
+              invokeAPI:
+                name: ERROR500
+                onError:
+                  showToast:
+                    message: ${error.response.data.description}
+                    options:
+                      type: error
+                      position: topRight
+                onResponse:
+                  executeCode: console.log('onresponse', response)
+
         - Text:
             styles:
               names: heading-1
@@ -58,3 +72,8 @@ Global:
 
 Import:
   - common
+
+API:
+  ERROR500:
+    method: GET
+    uri: https://httpstat.us/500

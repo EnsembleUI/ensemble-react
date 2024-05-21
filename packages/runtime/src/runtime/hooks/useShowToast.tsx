@@ -1,36 +1,61 @@
-import {
-  evaluate,
-  useScreenContext,
-  type ShowToastAction,
-  isExpression,
-} from "@ensembleui/react-framework";
-import type { Id } from "react-toastify";
+import { type ShowToastAction, useEvaluate } from "@ensembleui/react-framework";
+import type { Id, ToastPosition } from "react-toastify";
 import { toast } from "react-toastify";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { EnsembleActionHook } from "./useEnsembleAction";
+
+const positionMapping: { [key: string]: ToastPosition } = {
+  top: "top-center",
+  topLeft: "top-left",
+  topRight: "top-right",
+  center: "bottom-center",
+  centerLeft: "bottom-left",
+  centerRight: "bottom-right",
+  bottom: "bottom-center",
+  bottomLeft: "bottom-left",
+  bottomRight: "bottom-right",
+};
 
 export const useShowToast: EnsembleActionHook<ShowToastAction> = (action) => {
   const ref = useRef<Id | null>(null);
-  const screen = useScreenContext();
+  const [isMessageShowed, setIsMessageShowed] = useState<boolean>();
+  const [context, setContext] = useState<{ [key: string]: unknown }>();
+  const evaluatedInputs = useEvaluate(
+    { ...action },
+    {
+      context,
+    },
+  );
+
   const showToast = useMemo(() => {
     if (!action?.message) {
       return;
     }
 
     return {
-      callback: (): void => {
-        let message = action.message;
-        if (isExpression(action.message) && screen) {
-          message = String(evaluate(screen, action.message));
-        }
-        if (!ref.current || !toast.isActive(ref.current)) {
-          ref.current = toast.success(message, {
-            position: "bottom-right",
-            toastId: message,
-          });
-        }
+      callback: (args: unknown): void => {
+        setIsMessageShowed(false);
+        setContext(args as { [key: string]: unknown });
       },
     };
-  }, [action?.message, screen]);
+  }, [action?.message, setContext, setIsMessageShowed]);
+
+  useEffect(() => {
+    if (!evaluatedInputs.message || isMessageShowed !== false) {
+      return;
+    }
+
+    if (!ref.current || !toast.isActive(ref.current)) {
+      ref.current = toast.success(evaluatedInputs.message, {
+        position:
+          positionMapping[evaluatedInputs.options?.position || "bottomRight"],
+        type: evaluatedInputs.options?.type,
+        toastId: evaluatedInputs.message,
+      });
+    }
+
+    setIsMessageShowed(true);
+  }, [evaluatedInputs, isMessageShowed, setIsMessageShowed]);
+
   return showToast;
 };
