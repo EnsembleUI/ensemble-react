@@ -67,13 +67,134 @@ View:
               executeCode: |
                 ensemble.setTheme(value)
 
+        - Divider:
+
+        - Text:
+            styles:
+              names: heading-1
+            text: Socket Example
+
+        - Row:
+            styles:
+              gap: 8
+              margin: 10px 0px
+            children:
+              - Button:
+                  styles:
+                    borderRadius: 20
+                  label: Connect Socket
+                  onTap:
+                    connectSocket:
+                      name: echo
+              - Button:
+                  styles:
+                    borderRadius: 20
+                  label: Disconnect Socket
+                  onTap:
+                    disconnectSocket:
+                      name: echo
+
+        - Row:
+            styles:
+              gap: 8
+              margin: 10px 0px
+            children:
+              - Button:
+                  styles:
+                    borderRadius: 20
+                  label: Connect Socket JS
+                  onTap:
+                    executeCode:
+                      body: |
+                        ensemble.connectSocket('echo')
+                      onComplete:
+                        executeCode: |
+                          socketStatus.setText('Connected')
+                          echo.onmessage = (e) => {
+                            socketReceivedMessage.setText(e.data)
+                          };
+                          echo.onclose = (e) => {
+                            socketStatus.setText('Disconnected')
+                          };
+              - Button:
+                  styles:
+                    borderRadius: 20
+                  label: Disconnect Socket JS
+                  onTap:
+                    executeCode: |
+                      ensemble.disconnectSocket('echo')
+
+        - Row:
+            styles:
+              gap: 8
+              margin: 10px 0px
+            children:
+              - Text:
+                  fontWeight: 900
+                  text: "Socket Status :"
+
+              - Text:
+                  id: socketStatus
+
+        - Row:
+            styles:
+              gap: 8
+            children:
+              - TextInput:
+                  id: socketMessageBox
+                  hintText: Type message here
+
+              - Button:
+                  label: Send Message
+                  onTap:
+                    messageSocket:
+                      name: echo
+                      message:
+                        msg: ${socketMessageBox.value}
+                        x: ${ensemble.storage.get('yyy')}
+
+              - Button:
+                  label: Send Message JS
+                  onTap:
+                    executeCode: |
+                      ensemble.messageSocket('echo', {msg: socketMessageBox.value, x: ensemble.storage.get('yyy')})
+
+        - Text:
+            styles:
+              fontWeight: 900
+              margin: 10px 0px
+            text: Message from socket
+
+        - Text:
+            styles:
+              margin: 10px 0px
+            id: socketReceivedMessage
+
 Global:
   scriptName: test.js
 
 Import:
   - common
 
+
+Socket:
+  echo:
+    uri: wss://echo.websocket.org/
+
+    onSuccess:
+      executeCode: |
+        socketStatus.setText('Connected')
+
+    onReceive:
+      executeCode: |
+        socketReceivedMessage.setText(data)
+
+    onDisconnect:
+      executeCode: |
+        socketStatus.setText('Disconnected')
+
 API:
   ERROR500:
     method: GET
     uri: https://httpstat.us/500
+

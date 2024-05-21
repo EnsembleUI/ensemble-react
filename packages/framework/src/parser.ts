@@ -28,6 +28,7 @@ import type {
   EnsembleFooterModel,
   CustomWidgetModel,
   EnsembleThemeModel,
+  EnsembleSocketModel,
 } from "./shared/models";
 import type { ApplicationDTO, EnsembleConfigYAML } from "./shared/dto";
 import { findExpressions, type EnsembleAction } from "./shared";
@@ -158,6 +159,7 @@ export const EnsembleParser = {
 
     const viewWidget = unwrapWidget(viewNode);
     const apis = unwrapApiModels(screen);
+    const sockets = unwrapSocketModels(screen);
 
     // handle global block
     const globalBlock = get(screen, "Global");
@@ -189,7 +191,7 @@ export const EnsembleParser = {
       );
     }
 
-    const widgets = omit(screen, ["View", "Global", "API", "Import"]);
+    const widgets = omit(screen, ["View", "Global", "API", "Import", "Socket"]);
     const customWidgets = keys(widgets).map((widgetName) =>
       EnsembleParser.parseWidget(widgetName, {
         Widget: get(widgets, widgetName) as { [key: string]: unknown },
@@ -208,6 +210,7 @@ export const EnsembleParser = {
       styles: get(view, "styles"),
       importedScripts,
       customWidgets,
+      sockets,
     };
   },
 
@@ -272,6 +275,30 @@ const unwrapApiModels = (screen: unknown): EnsembleAPIModel[] => {
       } as EnsembleAPIModel;
     });
   }
+  return [];
+};
+
+const unwrapSocketModels = (screen: unknown): EnsembleSocketModel[] => {
+  const socketNode = get(screen, "Socket");
+  if (isArray(socketNode)) {
+    return map<object, EnsembleSocketModel>(socketNode, (value) => {
+      const name = head(Object.keys(value));
+      return {
+        name,
+        ...value,
+      } as EnsembleSocketModel;
+    });
+  }
+
+  if (isObject(socketNode)) {
+    return map(Object.entries<object>(socketNode), ([name, value]) => {
+      return {
+        name,
+        ...value,
+      } as EnsembleSocketModel;
+    });
+  }
+
   return [];
 };
 

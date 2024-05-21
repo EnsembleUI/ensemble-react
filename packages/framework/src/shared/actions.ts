@@ -31,6 +31,19 @@ export interface InvokeAPIAction {
   onError?: EnsembleAction;
 }
 
+export interface ConnectSocketAction {
+  name: string;
+}
+
+export interface SendSocketMessageAction {
+  name: string;
+  message: { [key: string]: unknown };
+}
+
+export interface DisconnectSocketAction {
+  name: string;
+}
+
 export interface NavigateModalScreenStyles {
   position?: "top" | "right" | "bottom" | "left";
   height?: string;
@@ -135,6 +148,12 @@ export interface ExecuteActionGroupAction {
   actions: EnsembleAction[];
 }
 
+export type EnsembleActionHookResult =
+  | {
+      callback: (...args: unknown[]) => unknown;
+    }
+  | undefined;
+
 /**
  * @uiType action
  */
@@ -164,4 +183,7 @@ export type EnsembleAction =
   | { uploadFiles?: UploadFilesAction }
   | { pickFiles?: PickFilesAction }
   | { navigateUrl?: NavigateUrlAction }
-  | { executeActionGroup?: ExecuteActionGroupAction };
+  | { executeActionGroup?: ExecuteActionGroupAction }
+  | { connectSocket?: ConnectSocketAction }
+  | { messageSocket?: SendSocketMessageAction }
+  | { disconnectSocket?: DisconnectSocketAction };
