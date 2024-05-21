@@ -129,7 +129,8 @@ View:
               - Button:
                   label: open url
                   onTap:
-                    openUrl: https://google.com/
+                    openUrl:
+                      url: https://x.com/
               - Text:
                   styles:
                     names: heading-3

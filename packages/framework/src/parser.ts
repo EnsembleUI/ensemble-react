@@ -386,6 +386,10 @@ const unwrapTheme = (theme?: string): EnsembleThemeModel | undefined => {
   }
 
   const workingTheme = parse(theme) as EnsembleThemeModel;
+  if (!workingTheme) {
+    return;
+  }
+
   if (!workingTheme.Styles) {
     return workingTheme;
   }
