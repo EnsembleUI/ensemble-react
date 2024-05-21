@@ -1,5 +1,21 @@
 # @ensembleui/react-runtime
 
+## 0.1.52
+
+### Patch Changes
+
+- 6006664: Added websocket support
+- dca04a3: fix: added external params to match flutter schema
+- cba60d8: Added support of height width in styles object in Image widget
+- 641b066: Added support of args passing and options support in showToast action
+- d1cbdc3: add styles in popupmenu widget
+- d8d0e87: added support for tabBar.selectedIndex
+- Updated dependencies [6006664]
+- Updated dependencies [dca04a3]
+- Updated dependencies [641b066]
+- Updated dependencies [651fcc9]
+  - @ensembleui/react-framework@0.1.38
+
 ## 0.1.51
 
 ### Patch Changes
