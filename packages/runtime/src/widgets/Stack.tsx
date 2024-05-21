@@ -10,6 +10,8 @@ import type {
   EnsembleWidgetStyles,
 } from "../shared/types";
 
+const widgetName = "Stack";
+
 interface StackStyles extends EnsembleWidgetStyles {
   alignChildren:
     | "topLeft"
@@ -105,7 +107,10 @@ const calculateStackAlignment = (id: string, alignment: string): string => {
 
 export const Stack: React.FC<StackProps> = (props) => {
   const { children, ...rest } = props;
-  const { values, rootRef, id } = useRegisterBindings({ ...rest }, props.id);
+  const { values, rootRef, id } = useRegisterBindings(
+    { ...rest, widgetName },
+    props.id,
+  );
 
   // render childrens
   const renderedChildren = useMemo(() => {
@@ -124,4 +129,4 @@ export const Stack: React.FC<StackProps> = (props) => {
   );
 };
 
-WidgetRegistry.register("Stack", Stack);
+WidgetRegistry.register(widgetName, Stack);

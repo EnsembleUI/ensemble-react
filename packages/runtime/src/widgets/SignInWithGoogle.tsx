@@ -11,6 +11,8 @@ import { Alert } from "antd";
 import { WidgetRegistry } from "../registry";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
+const widgetName = "SignInWithGoogle";
+
 export interface SignInWithGoogleProps {
   clientId: string;
   type?: "standard" | "icon";
@@ -24,9 +26,13 @@ export interface SignInWithGoogleProps {
 
 export const SignInWithGoogle: React.FC<SignInWithGoogleProps> = (props) => {
   const [clientId, setClientId] = useState(props.clientId);
-  const { values } = useRegisterBindings({ ...props, clientId }, undefined, {
-    setClientId,
-  });
+  const { values } = useRegisterBindings(
+    { ...props, clientId, widgetName },
+    undefined,
+    {
+      setClientId,
+    },
+  );
   const user = useEnsembleUser();
   const onSignInAction = useEnsembleAction(props.onSignedIn);
   const onErrorAction = useEnsembleAction(props.onError);
@@ -93,4 +99,4 @@ export const SignInWithGoogle: React.FC<SignInWithGoogleProps> = (props) => {
   return SignInWithGoogleComponent;
 };
 
-WidgetRegistry.register("SignInWithGoogle", SignInWithGoogle);
+WidgetRegistry.register(widgetName, SignInWithGoogle);

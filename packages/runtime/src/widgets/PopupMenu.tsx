@@ -15,10 +15,16 @@ import type {
   EnsembleWidget,
   Expression,
 } from "@ensembleui/react-framework";
-import type { EnsembleWidgetProps, HasItemTemplate } from "../shared/types";
+import type {
+  EnsembleWidgetProps,
+  EnsembleWidgetStyles,
+  HasItemTemplate,
+} from "../shared/types";
 import { WidgetRegistry } from "../registry";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { EnsembleRuntime } from "../runtime";
+
+const widgetName = "PopupMenu";
 
 interface PopupMenuItem {
   label: Expression<string> | { [key: string]: unknown };
@@ -37,12 +43,12 @@ export type PopupMenuProps = {
   widget?: { [key: string]: unknown };
   onItemSelect?: EnsembleAction;
   showDivider?: boolean | Expression<string>;
-} & EnsembleWidgetProps<PopupMenuStyles> &
+} & EnsembleWidgetProps<PopupMenuStyles & EnsembleWidgetStyles> &
   HasItemTemplate & { "item-template"?: { value: Expression<string> } };
 
 export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
   const { "item-template": itemTemplate, ...rest } = props;
-  const { values } = useRegisterBindings({ ...rest }, props.id);
+  const { values } = useRegisterBindings({ ...rest, widgetName }, props.id);
   const action = useEnsembleAction(props.onItemSelect);
   const [widgetProps, setWidgetProps] = useState<EnsembleWidget>();
 
@@ -100,7 +106,11 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
       popupItems.push(...tempItems);
     }
 
-    return <Menu>{popupItems}</Menu>;
+    return (
+      <Menu className={values?.styles?.names} style={{ ...values?.styles }}>
+        {popupItems}
+      </Menu>
+    );
   }, [values?.items, action, namedData, itemTemplate]);
 
   useEffect((): void => {
@@ -124,4 +134,4 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
   );
 };
 
-WidgetRegistry.register("PopupMenu", PopupMenu);
+WidgetRegistry.register(widgetName, PopupMenu);

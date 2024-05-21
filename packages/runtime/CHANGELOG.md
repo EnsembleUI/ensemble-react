@@ -1,5 +1,15 @@
 # @ensembleui/react-runtime
 
+## 0.1.51
+
+### Patch Changes
+
+- 41bbdd8: fix: added support of widgets styles in themes
+- 693be2c: bind form id and expose getValues method
+- 9c720b8: fix allowSelection and selectionType binding of Datagrid
+- Updated dependencies [41bbdd8]
+  - @ensembleui/react-framework@0.1.37
+
 ## 0.1.50
 
 ### Patch Changes

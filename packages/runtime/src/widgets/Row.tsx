@@ -14,12 +14,17 @@ import { getColor, getCrossAxis, getMainAxis } from "../shared/styles";
 import type { FlexboxProps } from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
+const widgetName = "Row";
+
 export const Row: React.FC<FlexboxProps> = (props) => {
   const { "item-template": itemTemplate, children, onTap, ...rest } = props;
   const childrenFirst =
     indexOf(keys(props), "children") < indexOf(keys(props), "item-template");
 
-  const { values, rootRef } = useRegisterBindings({ ...rest }, props.id);
+  const { values, rootRef } = useRegisterBindings(
+    { ...rest, widgetName },
+    props.id,
+  );
   const { namedData } = useTemplateData({
     data: itemTemplate?.data,
     name: itemTemplate?.name,
@@ -96,4 +101,4 @@ export const Row: React.FC<FlexboxProps> = (props) => {
   );
 };
 
-WidgetRegistry.register("Row", Row);
+WidgetRegistry.register(widgetName, Row);

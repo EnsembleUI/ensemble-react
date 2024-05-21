@@ -22,6 +22,8 @@ import type { SelectOption } from "./Dropdown";
 import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
 
+const widgetName = "MultiSelect";
+
 export type MultiSelectStyles = {
   multiSelectBackgroundColor?: string;
   multiSelectBorderRadius?: number;
@@ -53,7 +55,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   const action = useEnsembleAction(props.onItemSelect);
   const { rawData } = useTemplateData({ data });
   const { id, rootRef, values } = useRegisterBindings(
-    { ...rest, initialValue: props.value, selectedValues, options },
+    { ...rest, initialValue: props.value, selectedValues, options, widgetName },
     props.id,
     {
       setSelectedValues,
@@ -315,4 +317,4 @@ const Dropdown: React.FC<DropdownProps> = ({ menu, newOption }) => {
   );
 };
 
-WidgetRegistry.register("MultiSelect", MultiSelect);
+WidgetRegistry.register(widgetName, MultiSelect);

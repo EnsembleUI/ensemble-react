@@ -110,6 +110,16 @@ export interface ShowToastAction {
   message: string;
   options: {
     type: "success" | "warning" | "info" | "error";
+    position:
+      | "top"
+      | "topLeft"
+      | "topRight"
+      | "center"
+      | "centerLeft"
+      | "centerRight"
+      | "bottom"
+      | "bottomLeft"
+      | "bottomRight";
   };
   dismissable?: boolean;
   duration?: number;

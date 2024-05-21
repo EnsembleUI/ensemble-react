@@ -7,6 +7,8 @@ import type { EnsembleWidgetProps } from "../shared/types";
 import type { HasBorder } from "../shared/hasSchema";
 import { useEnsembleAction } from "../runtime/hooks";
 
+const widgetName = "Image";
+
 export type ImageProps = {
   source: Expression<string>;
 
@@ -39,7 +41,7 @@ export const Image: React.FC<ImageProps> = ({ onDragStart, ...props }) => {
   );
 
   const { values } = useRegisterBindings(
-    { ...props, source, imageBackgroundColor },
+    { ...props, source, imageBackgroundColor, widgetName },
     props.id,
     {
       setImageBackgroundColor,
@@ -53,7 +55,6 @@ export const Image: React.FC<ImageProps> = ({ onDragStart, ...props }) => {
       onDragStart={onDragStartCallback}
       src={values?.source}
       style={{
-        ...values?.styles,
         width: props.width,
         height: props.height,
         objectFit: props.fit,
@@ -68,9 +69,10 @@ export const Image: React.FC<ImageProps> = ({ onDragStart, ...props }) => {
         ...(values?.styles?.visible === false
           ? { display: "none" }
           : undefined),
+        ...values?.styles,
       }}
     />
   );
 };
 
-WidgetRegistry.register("Image", Image);
+WidgetRegistry.register(widgetName, Image);

@@ -7,6 +7,8 @@ import {
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from "../shared/types";
 
+const widgetName = "Progress";
+
 export interface ProgressStyle {
   size?: number;
   thickness?: number;
@@ -34,7 +36,10 @@ const Progress: React.FC<ProgressProps> = (props) => {
   const thickness = styles?.thickness ? styles.thickness : DEFAULT_STROKE_WIDTH;
   // Calculate the percentage based on the countdown value
   const [percent, setPercent] = useState(countdown ? 0 : -1);
-  const { id, values } = useRegisterBindings({ ...props }, props.id);
+  const { id, values } = useRegisterBindings(
+    { ...props, widgetName },
+    props.id,
+  );
 
   useEffect(() => {
     // If countdown is present and greater than 0, calculate the target percent for animation
@@ -219,7 +224,7 @@ const Progress: React.FC<ProgressProps> = (props) => {
 			  box-sizing: border-box;
 			  animation: animloader 1.5s linear infinite;
 			}
-			
+
 			@keyframes animloader {
 			  0% {
 				left: 0;
@@ -236,4 +241,4 @@ const Progress: React.FC<ProgressProps> = (props) => {
   );
 };
 
-WidgetRegistry.register("Progress", Progress);
+WidgetRegistry.register(widgetName, Progress);
