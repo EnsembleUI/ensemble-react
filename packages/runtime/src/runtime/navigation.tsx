@@ -55,7 +55,7 @@ export const openExternalScreen = (action: NavigateExternalScreen): void => {
 
   window.open(
     screenUrl,
-    !isString(action) && !action.openNewTab ? "_self" : "",
+    !isString(action) && !(action.external || action.openNewTab) ? "_self" : "",
   );
 };
 

@@ -67,6 +67,7 @@ interface NavigateUrlOptions {
 interface NavigateExternalScreenOptions {
   url: string;
   openNewTab?: boolean;
+  external?: boolean;
 }
 
 export type NavigateModalScreenAction =
