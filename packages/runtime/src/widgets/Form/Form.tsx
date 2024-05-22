@@ -43,7 +43,15 @@ export const Form: React.FC<FormProps> = (props) => {
     [action],
   );
 
-  const { values } = useRegisterBindings({ ...rest }, rest.id, { getValues });
+  // reset form
+  const handleResetForm = useCallback(() => {
+    form.resetFields();
+  }, [form]);
+
+  const { values } = useRegisterBindings({ ...rest }, rest.id, {
+    getValues,
+    resetForm: handleResetForm,
+  });
 
   return (
     <AntForm

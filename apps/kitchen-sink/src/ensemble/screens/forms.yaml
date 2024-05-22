@@ -123,6 +123,11 @@ View:
                     - Button:
                         submitForm: true
                         label: Submit
+                    - Button:
+                        label: Reset
+                        onTap:
+                          executeCode: |
+                            myForm.resetForm()
               - Markdown:
                   id: result
                   text: Check here for the result!
