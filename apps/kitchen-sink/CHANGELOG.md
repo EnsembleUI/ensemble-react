@@ -1,5 +1,22 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.44
+
+### Patch Changes
+
+- 7fdafa2: show just the hintText in case of empty value of Date widget
+- a50e638: replace api.uri with api.url
+- 3cb71b7: Fix toggle button color bindings
+- 1f67aee: fix: tabBar stretch option
+- a28a301: Improve validation on pickFiles action
+- Updated dependencies [7fdafa2]
+- Updated dependencies [a50e638]
+- Updated dependencies [3cb71b7]
+- Updated dependencies [1f67aee]
+- Updated dependencies [a28a301]
+  - @ensembleui/react-runtime@0.1.53
+  - @ensembleui/react-framework@0.1.39
+
 ## 0.0.43
 
 ### Patch Changes
