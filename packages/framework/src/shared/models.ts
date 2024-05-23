@@ -56,7 +56,8 @@ export interface EnsembleMenuModel {
 export interface EnsembleAPIModel {
   name: string;
   inputs?: string[];
-  uri: string;
+  uri?: string;
+  url?: string;
   method: "GET" | "POST" | "PUT" | "PATCH";
   headers?: { [key: string]: string | number | boolean };
   body?: string | object;
