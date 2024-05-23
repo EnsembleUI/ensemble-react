@@ -130,7 +130,9 @@ export interface PickFilesAction {
   id: string;
   allowMultiple?: boolean;
   allowedExtensions?: string[];
+  allowMaxFileSizeBytes?: number;
   onComplete?: EnsembleAction;
+  onError?: EnsembleAction;
 }
 
 export interface UploadFilesAction {
