@@ -461,10 +461,10 @@ View:
 API:
   getDummyProducts:
     method: GET
-    uri: https://dummyjson.com/products
+    url: https://dummyjson.com/products
   getDummyProduct:
     method: GET
-    uri: https://dummyjson.com/products/${id}
+    url: https://dummyjson.com/products/${id}
     inputs:
       - id
     onResponse:
