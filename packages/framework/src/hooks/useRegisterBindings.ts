@@ -22,6 +22,7 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
   options?: {
     forceState?: boolean;
     debounceMs?: number;
+    comparator?: (next: T, prev?: T) => boolean;
   },
 ): RegisterBindingsResult<T> => {
   const testId = get(values, ["testId"]);
@@ -54,7 +55,9 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
     }
 
     if (
-      isEqual(newValues, widgetState?.values) &&
+      (options?.comparator
+        ? options.comparator(newValues, widgetState?.values)
+        : isEqual(newValues, widgetState?.values)) &&
       isEqual(keys(methods), keys(widgetState?.invokable.methods))
     ) {
       return;
@@ -73,6 +76,7 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
     widgetState?.invokable.methods,
     id,
     debounceSetState,
+    options,
   ]);
 
   useEffect(() => {
