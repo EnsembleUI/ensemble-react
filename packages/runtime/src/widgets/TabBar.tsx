@@ -1,4 +1,4 @@
-import React, { type ReactElement } from "react";
+import React, { useEffect, useState, type ReactElement } from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import type { Expression, EnsembleWidget } from "@ensembleui/react-framework";
 import { Tabs, ConfigProvider } from "antd";
@@ -56,6 +56,7 @@ export interface TabBarProps extends EnsembleWidgetProps<TabBarStyles> {
 }
 
 export const TabBar: React.FC<TabBarProps> = (props) => {
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const bindings = {
     ...props,
     items: props.items.map(({ label, icon }) => ({
@@ -63,8 +64,23 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
       icon,
     })),
   };
-  const { values } = useRegisterBindings({ ...bindings, widgetName }, props.id);
+
+  const { values } = useRegisterBindings(
+    { ...bindings, widgetName, selectedIndex },
+    props.id,
+    {
+      setSelectedIndex,
+    },
+  );
+
+  useEffect(() => {
+    if (values?.selectedIndex) {
+      setSelectedIndex(values.selectedIndex);
+    }
+  }, [values?.selectedIndex]);
+
   const tabs = zip(values?.items ?? [], props.items);
+
   const renderLabel = (label: string, icon?: IconProps): ReactElement => {
     return (
       <div
@@ -163,11 +179,16 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
     }
   `;
 
-  const setDefaultSelectedTab = () => {
-    if (props.selectedIndex && props.selectedIndex <= props.items.length) {
-      return props.items[props.selectedIndex].label;
+  const getActiveKey = (): string => {
+    if (selectedIndex && selectedIndex <= props.items.length) {
+      return props.items[selectedIndex].label;
     }
     return props.items[0].label;
+  };
+
+  const handleSelectedTabChange = (key: string): void => {
+    const tabIndex = props.items.findIndex((tab) => tab.label === key);
+    setSelectedIndex(tabIndex);
   };
 
   return (
@@ -176,16 +197,17 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
         components: {
           Tabs: {
             inkBarColor: "transparent",
-            itemColor: props.styles?.inactiveTabColor ?? "grey",
-            itemSelectedColor: props.styles?.activeTabColor ?? "black",
-            titleFontSize: props.styles?.tabFontSize ?? 16,
+            itemColor: values?.styles?.inactiveTabColor ?? "grey",
+            itemSelectedColor: values?.styles?.activeTabColor ?? "black",
+            titleFontSize: values?.styles?.tabFontSize ?? 16,
           },
         },
       }}
     >
       <style>{customStyles}</style>
       <Tabs
-        defaultActiveKey={setDefaultSelectedTab()}
+        activeKey={getActiveKey()}
+        onChange={handleSelectedTabChange}
         style={{ ...values?.styles }}
       >
         {tabs.map(([tabItem, widget]) => (

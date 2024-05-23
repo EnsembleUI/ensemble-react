@@ -1,5 +1,14 @@
 # @ensembleui/react-framework
 
+## 0.1.38
+
+### Patch Changes
+
+- 6006664: Added websocket support
+- dca04a3: fix: added external params to match flutter schema
+- 641b066: Added support of args passing and options support in showToast action
+- 651fcc9: fix: handle empty theme file
+
 ## 0.1.37
 
 ### Patch Changes

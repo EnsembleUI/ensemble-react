@@ -28,6 +28,10 @@ import type {
   NavigateBackAction,
   NavigateExternalScreen,
   ExecuteActionGroupAction,
+  ConnectSocketAction,
+  DisconnectSocketAction,
+  SendSocketMessageAction,
+  EnsembleActionHookResult,
 } from "@ensembleui/react-framework";
 import {
   isEmpty,
@@ -53,6 +57,11 @@ import { ModalContext } from "../modal";
 import { EnsembleRuntime } from "../runtime";
 import { getShowDialogOptions, showDialog } from "../showDialog";
 import { invokeAPI } from "../invokeApi";
+import {
+  handleConnectSocket,
+  handleMessageSocket,
+  handleDisconnectSocket,
+} from "../websocket";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { useNavigateModalScreen } from "./useNavigateModal";
@@ -62,11 +71,6 @@ import { useCloseAllDialogs } from "./useCloseAllDialogs";
 import { useNavigateUrl } from "./useNavigateUrl";
 import { useNavigateExternalScreen } from "./useNavigteExternalScreen";
 
-export type EnsembleActionHookResult =
-  | {
-      callback: (...args: unknown[]) => unknown;
-    }
-  | undefined;
 export type EnsembleActionHook<
   T = unknown,
   Q = unknown,
@@ -174,6 +178,14 @@ export const useExecuteCode: EnsembleActionHook<
                   navigateExternalScreen(url),
                 openUrl: (url: NavigateExternalScreen) =>
                   navigateExternalScreen(url),
+                connectSocket: (name: string) =>
+                  handleConnectSocket(screenData, name),
+                messageSocket: (
+                  name: string,
+                  message: { [key: string]: unknown },
+                ) => handleMessageSocket(screenData, name, message),
+                disconnectSocket: (name: string) =>
+                  handleDisconnectSocket(screenData, name),
               },
             },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
@@ -299,6 +311,92 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   return invokeApi;
 };
 
+export const useConnectSocket: EnsembleActionHook<ConnectSocketAction> = (
+  action,
+) => {
+  const screenData = useScreenData();
+
+  const socket = useMemo(
+    () => screenData.sockets?.find((model) => model.name === action?.name),
+    [action, screenData],
+  );
+
+  const onSocketConnectAction = useEnsembleAction(socket?.onSuccess);
+  const onMessageReceiveAction = useEnsembleAction(socket?.onReceive);
+  const onSocketDisconnectAction = useEnsembleAction(socket?.onDisconnect);
+
+  const connectSocket = useMemo(() => {
+    if (!socket) {
+      return;
+    }
+
+    const callback = (): void => {
+      handleConnectSocket(
+        screenData,
+        socket.name,
+        onSocketConnectAction,
+        onMessageReceiveAction,
+        onSocketDisconnectAction,
+      );
+    };
+    return { callback };
+  }, [
+    screenData,
+    socket,
+    onSocketConnectAction,
+    onMessageReceiveAction,
+    onSocketDisconnectAction,
+  ]);
+
+  return connectSocket;
+};
+
+export const useMessageSocket: EnsembleActionHook<SendSocketMessageAction> = (
+  action,
+) => {
+  const screenData = useScreenData();
+  const [isComplete, setIsComplete] = useState<boolean>();
+  const [context, setContext] = useState<{ [key: string]: unknown }>();
+  const evaluatedInputs = useEvaluate(action?.message, { context });
+
+  const sendSocketMessage = useMemo(() => {
+    const callback = (args: unknown): void => {
+      setIsComplete(false);
+      setContext(args as { [key: string]: unknown });
+    };
+    return { callback };
+  }, []);
+
+  useEffect(() => {
+    if (!action || isComplete !== false) {
+      return;
+    }
+
+    // send socket message
+    handleMessageSocket(screenData, action.name, evaluatedInputs);
+    setIsComplete(true);
+  }, [screenData, action, evaluatedInputs, isComplete]);
+
+  return sendSocketMessage;
+};
+
+export const useDisconnectSocket: EnsembleActionHook<DisconnectSocketAction> = (
+  action,
+) => {
+  const screenData = useScreenData();
+
+  const disconnectSocket = useMemo(() => {
+    const callback = (): void => {
+      if (action?.name) {
+        handleDisconnectSocket(screenData, action.name);
+      }
+    };
+    return { callback };
+  }, [screenData, action]);
+
+  return disconnectSocket;
+};
+
 export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
   action?: ShowDialogAction,
 ) => {
@@ -361,9 +459,10 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
 export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
   action?: PickFilesAction,
 ) => {
-  const [files, setFiles] = useState<FileList>();
+  const [files, setFiles] = useState<File[]>();
   const [isComplete, setIsComplete] = useState<boolean>();
   const onCompleteAction = useEnsembleAction(action?.onComplete);
+  const onErrorAction = useEnsembleAction(action?.onError);
 
   const { values } = useRegisterBindings(
     {
@@ -373,6 +472,10 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
     action?.id,
     {
       setFiles,
+    },
+    {
+      // need to override default comparator with isEqual for File object
+      comparator: isEqual,
     },
   );
 
@@ -392,9 +495,9 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
       const selectedFiles =
         (event.target as HTMLInputElement).files || undefined;
 
-      if (!isEqual(selectedFiles, files)) {
+      if (selectedFiles && !isEqual(selectedFiles, files)) {
         setIsComplete(false);
-        setFiles(selectedFiles);
+        setFiles(Array.from(selectedFiles));
       }
     };
     return () => {
@@ -403,11 +506,38 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
   }, [inputEl, files]);
 
   useEffect(() => {
-    if (!isEmpty(values?.files) && isComplete === false) {
-      onCompleteAction?.callback({ files: values?.files });
-      setIsComplete(true);
+    // Ensure widget state is up to date with component state
+    if (isEmpty(values?.files) || !isEqual(values?.files, files)) {
+      return;
     }
-  }, [values?.files, onCompleteAction, isComplete]);
+
+    if (isComplete === false) {
+      setIsComplete(true);
+      if (
+        !isEmpty(values?.allowedExtensions) &&
+        !values?.files?.every((file) =>
+          values.allowedExtensions?.some((ext) => file.name.endsWith(ext)),
+        )
+      ) {
+        onErrorAction?.callback({
+          files: values?.files,
+          error: "EXTENSION_NOT_ALLOWED",
+        });
+      } else if (
+        Boolean(values?.allowMaxFileSizeBytes) &&
+        !values?.files?.every((file) => {
+          return file.size < values.allowMaxFileSizeBytes!;
+        })
+      ) {
+        onErrorAction?.callback({
+          files: values?.files,
+          error: "MAX_FILE_SIZE_EXCEEDED",
+        });
+      } else {
+        onCompleteAction?.callback({ files: values?.files });
+      }
+    }
+  }, [onCompleteAction, isComplete, files, values, onErrorAction]);
 
   const callback = useCallback((): void => {
     try {
@@ -616,6 +746,18 @@ export const useEnsembleAction = (
 
   if ("executeActionGroup" in action) {
     return useActionGroup(action.executeActionGroup);
+  }
+
+  if ("connectSocket" in action) {
+    return useConnectSocket(action.connectSocket);
+  }
+
+  if ("messageSocket" in action) {
+    return useMessageSocket(action.messageSocket);
+  }
+
+  if ("disconnectSocket" in action) {
+    return useDisconnectSocket(action.disconnectSocket);
   }
 };
 /* eslint-enable react-hooks/rules-of-hooks */

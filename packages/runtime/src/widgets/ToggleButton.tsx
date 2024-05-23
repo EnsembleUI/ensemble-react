@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { isString, isEmpty } from "lodash-es";
 import MUIToggleButton from "@mui/material/ToggleButton";
 import MUIToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import { Alert } from "antd";
+import { Alert, Typography } from "antd";
 import type {
   EnsembleWidgetProps,
   EnsembleWidgetStyles,
@@ -12,7 +12,6 @@ import type {
 } from "../shared/types";
 import { WidgetRegistry } from "../registry";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
-import { Text } from "./Text";
 import { Icon } from "./Icon";
 
 const widgetName = "ToggleButton";
@@ -132,7 +131,6 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
           key={item.value}
           sx={{
             padding: values?.styles?.padding,
-            color: values?.styles?.color,
             backgroundColor: values?.styles?.backgroundColor,
             marginRight:
               index !== items.length - 1 ? `${styles?.spacing ?? 0}px` : 0,
@@ -156,9 +154,6 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
               boxShadow: `1px 2px 5px 1px ${
                 styles?.shadowColor ?? "transparent"
               }`,
-              "& .ant-typography": {
-                color: values?.styles?.selectedColor,
-              },
             },
             "&.Mui-selected:hover": {
               backgroundColor: values?.styles?.selectedBackgroundColor,
@@ -168,10 +163,21 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
           value={item.value}
         >
           {item.icon && isString(item.icon.name) ? (
-            <Icon {...item.icon} />
+            <>
+              <Icon {...item.icon} />
+              &nbsp;
+            </>
           ) : null}
-          &nbsp;
-          <Text text={item.label} />
+          <Typography.Text
+            style={{
+              color:
+                item.value === values?.value
+                  ? values.styles?.selectedColor
+                  : values?.styles?.color,
+            }}
+          >
+            {item.label}
+          </Typography.Text>
         </MUIToggleButton>
       ))}
     </MUIToggleButtonGroup>

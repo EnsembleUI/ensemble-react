@@ -11,3 +11,8 @@ export interface Response {
   isSuccess: boolean;
   isError: boolean;
 }
+
+export interface WebSocketConnection {
+  socket?: WebSocket;
+  isConnected: boolean;
+}

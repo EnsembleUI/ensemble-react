@@ -824,12 +824,12 @@ View:
                     margin: "12px 0px 10px 0px"
                     spacing: 0
                     runSpacing: 3
-                    color: ${colors.gray['900']}
+                    color: blue
                     borderColor: ${colors.gray['200']}
-                    backgroundColor: white
-                    selectedColor: ${colors.gray['900']}
-                    selectedBackgroundColor: ${colors.gray['100']}
-                    selectedBorderColor: ${colors.gray['200']}
+                    backgroundColor: "aqua"
+                    selectedColor: red
+                    selectedBackgroundColor: green
+                    selectedBorderColor: yellow
                   value: ${toggleButtonText.text}
                   items:
                     - label: Button 1

@@ -31,6 +31,19 @@ export interface InvokeAPIAction {
   onError?: EnsembleAction;
 }
 
+export interface ConnectSocketAction {
+  name: string;
+}
+
+export interface SendSocketMessageAction {
+  name: string;
+  message: { [key: string]: unknown };
+}
+
+export interface DisconnectSocketAction {
+  name: string;
+}
+
 export interface NavigateModalScreenStyles {
   position?: "top" | "right" | "bottom" | "left";
   height?: string;
@@ -54,6 +67,7 @@ interface NavigateUrlOptions {
 interface NavigateExternalScreenOptions {
   url: string;
   openNewTab?: boolean;
+  external?: boolean;
 }
 
 export type NavigateModalScreenAction =
@@ -97,6 +111,16 @@ export interface ShowToastAction {
   message: string;
   options: {
     type: "success" | "warning" | "info" | "error";
+    position:
+      | "top"
+      | "topLeft"
+      | "topRight"
+      | "center"
+      | "centerLeft"
+      | "centerRight"
+      | "bottom"
+      | "bottomLeft"
+      | "bottomRight";
   };
   dismissable?: boolean;
   duration?: number;
@@ -106,7 +130,9 @@ export interface PickFilesAction {
   id: string;
   allowMultiple?: boolean;
   allowedExtensions?: string[];
+  allowMaxFileSizeBytes?: number;
   onComplete?: EnsembleAction;
+  onError?: EnsembleAction;
 }
 
 export interface UploadFilesAction {
@@ -124,6 +150,12 @@ export type CloseAllDialogsAction = null;
 export interface ExecuteActionGroupAction {
   actions: EnsembleAction[];
 }
+
+export type EnsembleActionHookResult =
+  | {
+      callback: (...args: unknown[]) => unknown;
+    }
+  | undefined;
 
 /**
  * @uiType action
@@ -154,4 +186,7 @@ export type EnsembleAction =
   | { uploadFiles?: UploadFilesAction }
   | { pickFiles?: PickFilesAction }
   | { navigateUrl?: NavigateUrlAction }
-  | { executeActionGroup?: ExecuteActionGroupAction };
+  | { executeActionGroup?: ExecuteActionGroupAction }
+  | { connectSocket?: ConnectSocketAction }
+  | { messageSocket?: SendSocketMessageAction }
+  | { disconnectSocket?: DisconnectSocketAction };

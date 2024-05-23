@@ -1,9 +1,7 @@
 import { useContext } from "react";
+import { type EnsembleActionHookResult } from "@ensembleui/react-framework";
 import { ModalContext } from "../modal";
-import type {
-  EnsembleActionHook,
-  EnsembleActionHookResult,
-} from "./useEnsembleAction";
+import type { EnsembleActionHook } from "./useEnsembleAction";
 
 export const useCloseAllDialogs: EnsembleActionHook<
   EnsembleActionHookResult
