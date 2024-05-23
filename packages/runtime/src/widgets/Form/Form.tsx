@@ -48,9 +48,18 @@ export const Form: React.FC<FormProps> = (props) => {
     form.resetFields();
   }, [form]);
 
+  // clear form
+  const handleClearForm = useCallback(() => {
+    const fields = form.getFieldsValue() as { [key: string]: unknown };
+    Object.keys(fields).forEach((field) => {
+      form.setFieldValue(field, null);
+    });
+  }, [form]);
+
   const { values } = useRegisterBindings({ ...rest }, rest.id, {
     getValues,
-    resetForm: handleResetForm,
+    reset: handleResetForm,
+    clear: handleClearForm,
   });
 
   return (

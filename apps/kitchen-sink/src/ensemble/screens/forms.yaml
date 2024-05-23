@@ -127,7 +127,12 @@ View:
                         label: Reset
                         onTap:
                           executeCode: |
-                            myForm.resetForm()
+                            myForm.reset()
+                    - Button:
+                        label: Clear
+                        onTap:
+                          executeCode: |
+                            myForm.clear()
               - Markdown:
                   id: result
                   text: Check here for the result!
