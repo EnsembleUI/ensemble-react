@@ -766,6 +766,7 @@ View:
               tabContentHolderBackgroundColor: green
               tabContentHolderBorderRadius: 10
               tabContentHolderPadding: 10px 5px
+              tabPosition: "stretch"
 
         - DataGrid:
             DataColumns:

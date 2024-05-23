@@ -128,6 +128,10 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
       };
     }
 
+    .ant-tabs-nav-list {
+      width: 100%
+    }
+
     .ant-tabs > .ant-tabs-nav {
       background-color: ${props.tabStyles?.tabNavBackgroundColor || "none"};
       border-radius: ${props.tabStyles?.tabNavBorderRadius || 0}px !important;
@@ -144,6 +148,15 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
       background: ${props.styles?.tabBackgroundColor || "inherit"} !important;
       color: ${props.tabStyles?.tabColor || "inherit"} !important;
     }
+
+    ${
+      values?.styles?.tabPosition === "stretch"
+        ? `.ant-tabs-nav-list .ant-tabs-tab:nth-last-child(2) {
+      flex: 1
+    }`
+        : ""
+    }
+
 
     .ant-tabs .ant-tabs-tab+.ant-tabs-tab {
       margin-left: 10px !important;
