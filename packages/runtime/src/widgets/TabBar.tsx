@@ -3,7 +3,6 @@ import { useRegisterBindings } from "@ensembleui/react-framework";
 import type { Expression, EnsembleWidget } from "@ensembleui/react-framework";
 import { Tabs, ConfigProvider } from "antd";
 import { zip } from "lodash-es";
-import { TabsPosition } from "antd/es/tabs";
 import type {
   EnsembleWidgetProps,
   EnsembleWidgetStyles,
@@ -29,13 +28,12 @@ export interface TabStyles {
   tabNavBorderRadius: string;
   tabNavBottomBorderShow: boolean;
   tabColor: string;
-  tabNavStretch: boolean;
 }
 
 export interface TabBarStyles extends EnsembleWidgetStyles {
   inkBarShow: boolean;
   activeTabBackgroundColor: string;
-  tabPosition: TabsPosition;
+  tabPosition: "start" | "stretch";
   tabPadding: string;
   tabFontSize: number;
   tabFontWeight: string;
@@ -114,11 +112,14 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
       };
     }
 
+    .ant-tabs-nav-list {
+      width: 100%
+    }
+
     .ant-tabs > .ant-tabs-nav {
       background-color: ${props.tabStyles?.tabNavBackgroundColor || "none"};
       border-radius: ${props.tabStyles?.tabNavBorderRadius || 0}px !important;
       padding: ${props.tabStyles?.tabNavPadding || "inherit"};
-      max-width: ${!props.tabStyles?.tabNavStretch ? "fit-content" : "unset"}
     }
 
     .ant-tabs {
@@ -131,6 +132,15 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
       background: ${props.styles?.tabBackgroundColor || "inherit"} !important;
       color: ${props.tabStyles?.tabColor || "inherit"} !important;
     }
+
+    ${
+      values?.styles?.tabPosition === "stretch"
+        ? `.ant-tabs-nav-list .ant-tabs-tab:nth-last-child(2) {
+      flex: 1
+    }`
+        : ""
+    }
+
 
     .ant-tabs .ant-tabs-tab+.ant-tabs-tab {
       margin-left: 10px !important;
@@ -177,7 +187,6 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
       <Tabs
         defaultActiveKey={setDefaultSelectedTab()}
         style={{ ...values?.styles }}
-        tabPosition={values?.styles?.tabPosition}
       >
         {tabs.map(([tabItem, widget]) => (
           <TabPane
