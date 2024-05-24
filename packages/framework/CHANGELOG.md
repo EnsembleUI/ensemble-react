@@ -1,5 +1,12 @@
 # @ensembleui/react-framework
 
+## 0.1.39
+
+### Patch Changes
+
+- a50e638: replace api.uri with api.url
+- a28a301: Improve validation on pickFiles action
+
 ## 0.1.38
 
 ### Patch Changes
