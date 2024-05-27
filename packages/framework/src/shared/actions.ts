@@ -151,6 +151,24 @@ export interface ExecuteActionGroupAction {
   actions: EnsembleAction[];
 }
 
+export interface ExecuteConditionalActionAction {
+  conditions: (
+    | {
+        action: EnsembleAction;
+        if: Expression<boolean>;
+        elseif?: never;
+        else?: never;
+      }
+    | {
+        action: EnsembleAction;
+        elseif: Expression<boolean>;
+        if?: never;
+        else?: never;
+      }
+    | { action: EnsembleAction; else: null; if?: never; elseif?: never }
+  )[];
+}
+
 export type EnsembleActionHookResult =
   | {
       callback: (...args: unknown[]) => unknown;
@@ -187,6 +205,7 @@ export type EnsembleAction =
   | { pickFiles?: PickFilesAction }
   | { navigateUrl?: NavigateUrlAction }
   | { executeActionGroup?: ExecuteActionGroupAction }
+  | { executeConditionalAction?: ExecuteConditionalActionAction }
   | { connectSocket?: ConnectSocketAction }
   | { messageSocket?: SendSocketMessageAction }
   | { disconnectSocket?: DisconnectSocketAction };
