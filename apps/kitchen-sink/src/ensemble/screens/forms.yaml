@@ -81,6 +81,7 @@ View:
                         id: dropdown
                         label: Dropdown
                         hintText: Choose One
+                        value: option2
                         items:
                           - label: Option 1
                             value: option1
