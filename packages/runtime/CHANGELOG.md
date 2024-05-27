@@ -1,5 +1,17 @@
 # @ensembleui/react-runtime
 
+## 0.1.53
+
+### Patch Changes
+
+- 7fdafa2: show just the hintText in case of empty value of Date widget
+- 3cb71b7: Fix toggle button color bindings
+- 1f67aee: fix: tabBar stretch option
+- a28a301: Improve validation on pickFiles action
+- Updated dependencies [a50e638]
+- Updated dependencies [a28a301]
+  - @ensembleui/react-framework@0.1.39
+
 ## 0.1.52
 
 ### Patch Changes
