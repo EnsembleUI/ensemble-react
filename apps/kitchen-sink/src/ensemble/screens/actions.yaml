@@ -313,11 +313,15 @@ View:
                   onTap:
                     pickFiles:
                       id: fileUploader1
-                      allowMultiple: "${1==10 ? false : true}"
-                      allowedExtensions: '${1==10 ? ["pdf", "docx"] : ["jpg", "png"]}'
+                      allowMultiple: true
+                      allowedExtensions: ["jpg", "png"]
+                      allowMaxFileSizeBytes: 200000
                       onComplete:
                         executeCode: |
                           console.log(fileUploader1, "hello", files);
+                      onError:
+                        executeCode: |
+                          console.log(error, files)
               - Button:
                   label: upload
                   onTap:
@@ -457,10 +461,10 @@ View:
 API:
   getDummyProducts:
     method: GET
-    uri: https://dummyjson.com/products
+    url: https://dummyjson.com/products
   getDummyProduct:
     method: GET
-    uri: https://dummyjson.com/products/${id}
+    url: https://dummyjson.com/products/${id}
     inputs:
       - id
     onResponse:

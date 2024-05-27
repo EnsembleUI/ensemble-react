@@ -44,7 +44,7 @@ export const DataFetcher = {
   ): Promise<Response> => {
     const resolvedInputs = resolve(
       {
-        path: api.uri,
+        path: api.url || api.uri,
         body: api.body,
         headers: api.headers,
       },
@@ -67,7 +67,7 @@ export const DataFetcher = {
   ): Promise<Response> => {
     const resolvedInputs = resolve(
       {
-        url: api.uri,
+        url: api.url || api.uri,
         headers: api.headers,
       },
       context,

@@ -118,9 +118,19 @@ View:
                           - label: Option 2
                             value: option2
                     - Date:
-                        id: date
-                        label: Date
-                        hintText: Choose date
+                        id: date0
+                        label: Date 0
+                        hintText: Choose date 0
+                    - Date:
+                        id: date1
+                        label: Date 1
+                        value: ""
+                        hintText: Choose date 1
+                    - Date:
+                        id: date2
+                        label: Date 2
+                        value: "2024/04/04"
+                        hintText: Choose date 2
                     - Button:
                         submitForm: true
                         label: Submit
@@ -234,11 +244,11 @@ View:
                             value: option1
                           - label: Option 2
                             value: option2
-                    - Date:
-                        id: initail_date
-                        label: Date
-                        value: "2024/04/04"
-                        hintText: Choose date
+                    # - Date:
+                    #     id: initail_date
+                    #     label: Date
+                    #     value: "2024/04/04"
+                    #     hintText: Choose date
                     - Button:
                         submitForm: true
                         label: Submit

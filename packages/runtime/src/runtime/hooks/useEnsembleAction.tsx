@@ -459,9 +459,10 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
 export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
   action?: PickFilesAction,
 ) => {
-  const [files, setFiles] = useState<FileList>();
+  const [files, setFiles] = useState<File[]>();
   const [isComplete, setIsComplete] = useState<boolean>();
   const onCompleteAction = useEnsembleAction(action?.onComplete);
+  const onErrorAction = useEnsembleAction(action?.onError);
 
   const { values } = useRegisterBindings(
     {
@@ -471,6 +472,10 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
     action?.id,
     {
       setFiles,
+    },
+    {
+      // need to override default comparator with isEqual for File object
+      comparator: isEqual,
     },
   );
 
@@ -490,9 +495,9 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
       const selectedFiles =
         (event.target as HTMLInputElement).files || undefined;
 
-      if (!isEqual(selectedFiles, files)) {
+      if (selectedFiles && !isEqual(selectedFiles, files)) {
         setIsComplete(false);
-        setFiles(selectedFiles);
+        setFiles(Array.from(selectedFiles));
       }
     };
     return () => {
@@ -501,11 +506,38 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
   }, [inputEl, files]);
 
   useEffect(() => {
-    if (!isEmpty(values?.files) && isComplete === false) {
-      onCompleteAction?.callback({ files: values?.files });
-      setIsComplete(true);
+    // Ensure widget state is up to date with component state
+    if (isEmpty(values?.files) || !isEqual(values?.files, files)) {
+      return;
     }
-  }, [values?.files, onCompleteAction, isComplete]);
+
+    if (isComplete === false) {
+      setIsComplete(true);
+      if (
+        !isEmpty(values?.allowedExtensions) &&
+        !values?.files?.every((file) =>
+          values.allowedExtensions?.some((ext) => file.name.endsWith(ext)),
+        )
+      ) {
+        onErrorAction?.callback({
+          files: values?.files,
+          error: "EXTENSION_NOT_ALLOWED",
+        });
+      } else if (
+        Boolean(values?.allowMaxFileSizeBytes) &&
+        !values?.files?.every((file) => {
+          return file.size < values.allowMaxFileSizeBytes!;
+        })
+      ) {
+        onErrorAction?.callback({
+          files: values?.files,
+          error: "MAX_FILE_SIZE_EXCEEDED",
+        });
+      } else {
+        onCompleteAction?.callback({ files: values?.files });
+      }
+    }
+  }, [onCompleteAction, isComplete, files, values, onErrorAction]);
 
   const callback = useCallback((): void => {
     try {

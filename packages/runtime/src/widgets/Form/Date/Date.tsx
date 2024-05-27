@@ -69,7 +69,7 @@ export const Date: React.FC<DateProps> = (props) => {
   useEffect(() => {
     if (!value) {
       setValue(
-        values?.initialValue ? String(dayjs(values?.initialValue)) : undefined,
+        values?.initialValue ? String(dayjs(values.initialValue)) : undefined,
       );
     }
   }, [values]);
@@ -79,7 +79,7 @@ export const Date: React.FC<DateProps> = (props) => {
   useEffect(() => {
     if (formInstance) {
       formInstance.setFieldsValue({
-        [values?.id ?? values?.label ?? ""]: dayjs(value),
+        [values?.id ?? values?.label ?? ""]: value ? dayjs(value) : undefined,
       });
     }
   }, [value, formInstance]);
