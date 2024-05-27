@@ -47,6 +47,7 @@ const modifyJs = (
   }
 
   // check if the code is assigning a value to a property
+  // eslint-disable-next-line prefer-named-capture-group
   const assignmentRegex = /(\w+)\.(\w+)\s*=\s*(.*)$/gm; // matches widgetId.setter = value
   let modifiedCode = js;
 
