@@ -65,12 +65,12 @@ import {
   handleMessageSocket,
   handleDisconnectSocket,
 } from "../websocket";
-// FIXME: refactor
-
 import {
   extractCondition,
   hasProperStructure,
 } from "../../widgets/Conditional";
+// FIXME: refactor
+// eslint-disable-next-line import/no-cycle
 import { useNavigateModalScreen } from "./useNavigateModal";
 import { useNavigateScreen } from "./useNavigateScreen";
 import { useShowToast } from "./useShowToast";
