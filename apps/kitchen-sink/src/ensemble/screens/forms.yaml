@@ -25,11 +25,18 @@ View:
       children:
         - Icon:
         - Text:
+            id: formHeading
             styles:
               names: heading-3
             text: Forms
         - Markdown:
             text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).
+        - Button:
+            label: set me
+            onTap:
+              executeCode: |
+                formHeading.text = 'i am set'
+                iconText.text = 'i am set too'
         - Card:
             styles:
               maxWidth: unset
@@ -144,7 +151,7 @@ View:
         - Text:
             styles:
               names: heading-3
-            text: Forms with initial values
+            text: ${formHeading.text + ' with initial values'}
         - Markdown:
             text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).
         - Card:
@@ -261,4 +268,5 @@ API:
 Icon:
   body:
     Text:
+      id: iconText
       text: Hello123
