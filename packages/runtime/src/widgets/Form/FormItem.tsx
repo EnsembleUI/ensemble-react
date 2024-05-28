@@ -39,7 +39,10 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
         ) : null
       }
       name={formInstance ? values?.id ?? values?.label : undefined}
-      rules={[{ required: Boolean(values?.required) }]}
+      rules={rest.rules?.concat({ required: Boolean(values?.required) })}
+      validateTrigger={
+        values?.validateOnUserInteraction === true ? "onChange" : "onSubmit"
+      }
       style={{
         margin: "0px",
         ...(values?.styles?.visible === false

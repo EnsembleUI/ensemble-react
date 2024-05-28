@@ -4,3 +4,4 @@
 ---
 
 support inputType, validator and mask on TextInput widget
+support validateOnUserInteraction on form items
