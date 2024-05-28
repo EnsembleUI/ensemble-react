@@ -32,6 +32,7 @@ import type {
   DisconnectSocketAction,
   SendSocketMessageAction,
   EnsembleActionHookResult,
+  ExecuteConditionalActionAction,
 } from "@ensembleui/react-framework";
 import {
   isEmpty,
@@ -43,6 +44,8 @@ import {
   mapKeys,
   cloneDeep,
   isEqual,
+  last,
+  toNumber,
 } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -62,6 +65,10 @@ import {
   handleMessageSocket,
   handleDisconnectSocket,
 } from "../websocket";
+import {
+  extractCondition,
+  hasProperStructure,
+} from "../../widgets/Conditional";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { useNavigateModalScreen } from "./useNavigateModal";
@@ -674,6 +681,81 @@ export const useActionGroup: EnsembleActionHook<ExecuteActionGroupAction> = (
   return { callback };
 };
 
+export const useConditionalAction: EnsembleActionHook<
+  ExecuteConditionalActionAction
+> = (action) => {
+  if (!action?.conditions) {
+    throw new Error("No conditions provided for executeConditionalAction");
+  }
+
+  const [isValid, errorMessage] = hasProperStructure(action.conditions);
+  if (!isValid) {
+    throw Error(errorMessage);
+  }
+
+  const conditionStatements = action.conditions.map(extractCondition);
+  const execActs = action.conditions.map((condition) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useEnsembleAction(condition.action);
+  });
+  const [isComplete, setIsComplete] = useState<boolean>();
+  const [context, setContext] = useState<unknown>();
+  const [trueActionIndex, setTrueActionIndex] = useState<number>();
+  const evaluatedStatements = useEvaluate(
+    conditionStatements as unknown as { [key: string]: unknown },
+    {
+      context,
+    },
+  );
+
+  useEffect(() => {
+    if (trueActionIndex === undefined) {
+      return;
+    }
+
+    execActs[trueActionIndex]?.callback(context);
+    setTrueActionIndex(undefined);
+  }, [context, execActs, trueActionIndex]);
+
+  useEffect(() => {
+    if (!action || isComplete !== false) {
+      return;
+    }
+
+    const index = Object.keys(evaluatedStatements).find(
+      (key) => evaluatedStatements[key] === true,
+    );
+
+    let trueIndex: number | undefined;
+    if (index !== undefined) {
+      trueIndex = toNumber(index);
+    }
+
+    if (trueIndex === undefined || trueIndex < 0) {
+      // check if last condition is 'else'
+      const lastCondition = last(action.conditions);
+      if (lastCondition && "else" in lastCondition) {
+        trueIndex = action.conditions.length - 1;
+      }
+      // if no condition is true, return
+      else {
+        setIsComplete(true);
+        return;
+      }
+    }
+
+    setTrueActionIndex(trueIndex);
+    setIsComplete(true);
+  }, [action, evaluatedStatements, isComplete, context]);
+
+  const callback = (args: unknown): void => {
+    setContext(args);
+    setIsComplete(false);
+  };
+
+  return { callback };
+};
+
 /* eslint-disable react-hooks/rules-of-hooks */
 export const useEnsembleAction = (
   action?: EnsembleAction,
@@ -758,6 +840,10 @@ export const useEnsembleAction = (
 
   if ("disconnectSocket" in action) {
     return useDisconnectSocket(action.disconnectSocket);
+  }
+
+  if ("executeConditionalAction" in action) {
+    return useConditionalAction(action.executeConditionalAction);
   }
 };
 /* eslint-enable react-hooks/rules-of-hooks */
