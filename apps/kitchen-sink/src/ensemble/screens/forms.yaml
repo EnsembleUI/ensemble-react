@@ -90,9 +90,24 @@ View:
                     - TextInput:
                         id: formTextInput
                         value: ${ensemble.storage.get('inputVal')}
+                        hintText: (123) 456-7890
+                        mask: "(###) ###-####"
+                        inputType: phone
                         label:
                           Text:
                             text: Text input
+                    - TextInput:
+                        id: minMaxTextInput
+                        validator:
+                          minLength: 4
+                          maxLength: 10
+                        label: Text input with min and max length
+                    - TextInput:
+                        id: regexTextInput
+                        validator:
+                          regex: "[0-5]"
+                          regexError: "Only numbers 0 to 5 are allowed"
+                        label: Text input with regex
                     - MultiSelect:
                         id: multiselectoptions1
                         label: Choose multiple from API or storage

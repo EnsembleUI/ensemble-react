@@ -11,4 +11,5 @@ export type FormInputProps<T> = EnsembleWidgetProps & {
   required?: Expression<boolean>;
   enabled?: Expression<boolean>;
   labelStyle?: EnsembleWidgetStyles;
+  validateOnUserInteraction?: Expression<boolean>;
 };
