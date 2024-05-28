@@ -30,6 +30,41 @@ View:
               - Text:
                   styles:
                     names: heading-3
+                  text: Execute Conditional Action
+              - Button:
+                  label: Tap to pick an image
+                  onTap:
+                    pickFiles:
+                      allowedExtensions: ["jpg", "png", "pdf", "docs"]
+                      onComplete:
+                        executeConditionalAction:
+                          conditions:
+                            - if: ${!verifyFileExtension(files[0].name)}
+                              action:
+                                showDialog:
+                                  body:
+                                    Text:
+                                      text: Invalid file type. Please upload a JPG or PNG file.
+                            - elseif: ${verifyFileExtension(files[0].name)}
+                              action:
+                                showDialog:
+                                  body:
+                                    Text:
+                                      text: File uploaded successfully.
+                            - else:
+                              action:
+                                showDialog:
+                                  body:
+                                    Text:
+                                      text: Something went wrong. Please try again.
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
                   text: Invoke API
               - TextInput:
                   id: getDataInputValue
@@ -475,3 +510,9 @@ Icon:
   body:
     Text:
       text: Hello123456
+
+Global: |
+  function verifyFileExtension(fileName) {
+    const listOfPossibleExtensions = ['.png', '.jpg', '.jpeg'];
+    return !!listOfPossibleExtensions.find((ext) => fileName.endsWith(ext));
+  }
