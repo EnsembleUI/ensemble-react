@@ -15,7 +15,7 @@ export type EnsembleFormItemProps<T> = FormItemProps & {
 export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
   props,
 ) => {
-  const { values, ...rest } = props;
+  const { values, rules, ...rest } = props;
   const { backgroundColor: _, ...formItemStyles } = values?.styles ?? {};
   const formInstance = AntForm.useFormInstance();
 
@@ -39,7 +39,7 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
         ) : null
       }
       name={formInstance ? values?.id ?? values?.label : undefined}
-      rules={rest.rules?.concat({ required: Boolean(values?.required) })}
+      rules={rules?.concat([{ required: Boolean(values?.required) }])}
       validateTrigger={
         values?.validateOnUserInteraction === true ? "onChange" : "onSubmit"
       }
