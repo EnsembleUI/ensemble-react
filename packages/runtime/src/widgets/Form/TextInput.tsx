@@ -140,7 +140,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     if (values?.mask && patternValue) {
       rulesArray.push({
         pattern: new RegExp(patternValue),
-        message: `The field does not match the mask ${values.mask}`,
+        message: `The value must be of the format ${values.mask}`,
       });
     }
 
