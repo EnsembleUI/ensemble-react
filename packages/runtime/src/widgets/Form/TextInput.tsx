@@ -8,6 +8,7 @@ import type { TextStyles } from "../Text";
 import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
 import { Rule } from "antd/es/form";
+import { forEach } from "lodash-es";
 
 const widgetName = "TextInput";
 
@@ -93,7 +94,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     ];
 
     let pattern = "^(?:";
-    for (const char of values.mask) {
+    forEach(values.mask, (char) => {
       switch (char) {
         case "#":
           pattern += "[0-9]"; // Match any digit
@@ -109,7 +110,8 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
           }
           break;
       }
-    }
+    });
+
     return pattern + ")$";
   }, [values?.mask]);
 
