@@ -70,13 +70,13 @@ const Stepper: React.FC<StepperProps> = (props) => {
 
   const handleNext = useCallback(() => {
     if (activeStep !== undefined && activeStep < namedData.length - 1) {
-      setActiveStep(activeStep === undefined ? undefined : activeStep + 1);
+      setActiveStep(activeStep + 1);
     }
   }, [activeStep, namedData.length]);
 
   const handleBack = useCallback(() => {
     if (activeStep) {
-      setActiveStep(activeStep === undefined ? undefined : activeStep - 1);
+      setActiveStep(activeStep - 1);
     }
   }, [activeStep]);
 
@@ -111,6 +111,10 @@ const Stepper: React.FC<StepperProps> = (props) => {
     [action],
   );
 
+  if (activeStep === undefined) {
+    return null;
+  }
+
   if (!stepTypes) {
     return (
       <Alert
@@ -127,13 +131,7 @@ const Stepper: React.FC<StepperProps> = (props) => {
   }
 
   const stepPercentage = 100 / stepsLength;
-  const activeStepPercentage = activeStep
-    ? (activeStep + 1) * stepPercentage
-    : 0;
-
-  if (activeStep === undefined) {
-    return null;
-  }
+  const activeStepPercentage = (activeStep + 1) * stepPercentage;
 
   return (
     <div ref={rootRef}>
