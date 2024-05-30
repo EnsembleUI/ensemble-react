@@ -14,7 +14,7 @@ View:
   body:
     Column:
       styles:
-        names: ${ensemble.storage.get('yyy')}
+        names: ${ensemble.storage.yyy}
       children:
         - Text:
             styles:
@@ -25,7 +25,7 @@ View:
             text: This application is built with Ensemble and serves as a guide for how to implement common UI patterns with Ensemble React.
         - Button:
             styles:
-              className: page-1 ${ensemble.storage.get('zzz') + '-' + ensemble.storage.get('aaa')}
+              className: page-1 ${ensemble.storage.zzz + '-' + ensemble.storage.aaa}
             label: ${productTitleName}
             onTap:
               executeCode: |
@@ -151,13 +151,13 @@ View:
                       name: echo
                       message:
                         msg: ${socketMessageBox.value}
-                        x: ${ensemble.storage.get('yyy')}
+                        x: ${ensemble.storage.yyy}
 
               - Button:
                   label: Send Message JS
                   onTap:
                     executeCode: |
-                      ensemble.messageSocket('echo', {msg: socketMessageBox.value, x: ensemble.storage.get('yyy')})
+                      ensemble.messageSocket('echo', {msg: socketMessageBox.value, x: ensemble.storage.yyy})
 
         - Text:
             styles:
@@ -175,7 +175,6 @@ Global:
 
 Import:
   - common
-
 
 Socket:
   echo:
@@ -197,4 +196,3 @@ API:
   ERROR500:
     method: GET
     uri: https://httpstat.us/500
-
