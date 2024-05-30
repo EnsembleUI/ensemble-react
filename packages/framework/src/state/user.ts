@@ -26,4 +26,7 @@ export const userAtom = atomWithStorage<EnsembleUser>(
       };
     },
   },
+  {
+    getOnInit: true,
+  },
 );
