@@ -136,6 +136,10 @@ const Stepper: React.FC<StepperProps> = (props) => {
     ? (activeStep + 1) * stepPercentage
     : 0;
 
+  if (activeStep === undefined) {
+    return null;
+  }
+
   return (
     <div ref={rootRef}>
       <div style={{ position: "relative" }}>
