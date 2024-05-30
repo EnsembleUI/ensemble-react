@@ -22,7 +22,7 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
   return (
     <AntForm.Item
       className={values?.styles?.names}
-      initialValue={values?.value}
+      initialValue={values?.initialValue}
       label={
         values?.label ? (
           <label

@@ -81,6 +81,7 @@ View:
                         id: dropdown
                         label: Dropdown
                         hintText: Choose One
+                        value: option2
                         items:
                           - label: Option 1
                             value: option1
@@ -148,6 +149,16 @@ View:
                     - Button:
                         submitForm: true
                         label: Submit
+                    - Button:
+                        label: Reset
+                        onTap:
+                          executeCode: |
+                            myForm.reset()
+                    - Button:
+                        label: Clear
+                        onTap:
+                          executeCode: |
+                            myForm.clear()
               - Markdown:
                   id: result
                   text: Check here for the result!
