@@ -70,17 +70,13 @@ const Stepper: React.FC<StepperProps> = (props) => {
 
   const handleNext = useCallback(() => {
     if (activeStep !== undefined && activeStep < namedData.length - 1) {
-      setActiveStep((prevStep) =>
-        prevStep === undefined ? undefined : prevStep + 1,
-      );
+      setActiveStep(activeStep === undefined ? undefined : activeStep + 1);
     }
   }, [activeStep, namedData.length]);
 
   const handleBack = useCallback(() => {
     if (activeStep) {
-      setActiveStep((prevStep) =>
-        prevStep === undefined ? undefined : prevStep - 1,
-      );
+      setActiveStep(activeStep === undefined ? undefined : activeStep - 1);
     }
   }, [activeStep]);
 
