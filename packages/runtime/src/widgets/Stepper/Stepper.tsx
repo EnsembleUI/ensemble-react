@@ -69,14 +69,19 @@ const Stepper: React.FC<StepperProps> = (props) => {
   const action = useEnsembleAction(props.onChange);
 
   const handleNext = useCallback(() => {
-    if (activeStep && activeStep < namedData.length - 1) {
-      setActiveStep((prevStep) => (prevStep ? prevStep + 1 : undefined));
+    console.log("handleNext", activeStep, namedData);
+    if (activeStep !== undefined && activeStep < namedData.length - 1) {
+      setActiveStep((prevStep) =>
+        prevStep === undefined ? undefined : prevStep + 1,
+      );
     }
   }, [activeStep, namedData.length]);
 
   const handleBack = useCallback(() => {
-    if (activeStep !== 0) {
-      setActiveStep((prevStep) => (prevStep ? prevStep - 1 : undefined));
+    if (activeStep) {
+      setActiveStep((prevStep) =>
+        prevStep === undefined ? undefined : prevStep - 1,
+      );
     }
   }, [activeStep]);
 
