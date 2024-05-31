@@ -60,7 +60,7 @@ interface CustomConnectorProps {
 }
 
 const Stepper: React.FC<StepperProps> = (props) => {
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState<number | undefined>(undefined);
 
   const itemTemplate = props["item-template"];
   const { namedData } = useTemplateData({ ...itemTemplate });
@@ -69,14 +69,14 @@ const Stepper: React.FC<StepperProps> = (props) => {
   const action = useEnsembleAction(props.onChange);
 
   const handleNext = useCallback(() => {
-    if (activeStep < namedData.length - 1) {
-      setActiveStep((prevStep) => prevStep + 1);
+    if (activeStep !== undefined && activeStep < namedData.length - 1) {
+      setActiveStep(activeStep + 1);
     }
   }, [activeStep, namedData.length]);
 
   const handleBack = useCallback(() => {
-    if (activeStep !== 0) {
-      setActiveStep((prevStep) => prevStep - 1);
+    if (activeStep) {
+      setActiveStep(activeStep - 1);
     }
   }, [activeStep]);
 
@@ -110,6 +110,10 @@ const Stepper: React.FC<StepperProps> = (props) => {
     },
     [action],
   );
+
+  if (activeStep === undefined) {
+    return null;
+  }
 
   if (!stepTypes) {
     return (
