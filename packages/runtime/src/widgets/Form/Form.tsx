@@ -60,6 +60,7 @@ export const Form: React.FC<FormProps> = (props) => {
     getValues,
     reset: handleResetForm,
     clear: handleClearForm,
+    submit: form.submit,
   });
 
   return (
