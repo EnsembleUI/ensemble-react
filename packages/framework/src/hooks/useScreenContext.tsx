@@ -9,6 +9,7 @@ import {
   screenAtom,
   screenDataAtom,
   themeAtom,
+  userAtom,
 } from "../state";
 import type {
   ApplicationContextDefinition,
@@ -78,6 +79,7 @@ const HydrateAtoms: React.FC<
     [
       [appAtom, appContext],
       [themeAtom, themeScope.theme],
+      [userAtom, appContext.user],
     ],
     {
       dangerouslyForceHydrate: true,

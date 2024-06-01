@@ -3,16 +3,16 @@ import { merge } from "lodash-es";
 import { useMemo } from "react";
 import { userAtom, type EnsembleUser } from "../state";
 
-type EnsembleUserBuffer = {
-  set: (items: Record<string, unknown>) => void;
-};
+interface EnsembleUserBuffer {
+  set: (items: { [key: string]: unknown }) => void;
+}
 
 export const useEnsembleUser = (): EnsembleUser & EnsembleUserBuffer => {
   const [user, setUser] = useAtom(userAtom);
 
   const storageBuffer = useMemo<EnsembleUserBuffer>(
     () => ({
-      set: (items: Record<string, unknown>): void => {
+      set: (items: { [key: string]: unknown }): void => {
         const updatedUser = merge({}, user, items);
         setUser(updatedUser);
         window.dispatchEvent(
@@ -26,9 +26,5 @@ export const useEnsembleUser = (): EnsembleUser & EnsembleUserBuffer => {
     [setUser, user],
   );
 
-  useMemo(() => {
-    merge(storageBuffer, user);
-  }, [storageBuffer, user]);
-
-  return storageBuffer;
+  return { ...storageBuffer, ...user };
 };
