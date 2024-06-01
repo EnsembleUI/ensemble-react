@@ -18,13 +18,18 @@ import {
   unwrapWidget,
   isExpression,
 } from "@ensembleui/react-framework";
-import type { EnsembleWidget, Expression } from "@ensembleui/react-framework";
+import type {
+  EnsembleAction,
+  EnsembleWidget,
+  Expression,
+} from "@ensembleui/react-framework";
 import Alert from "@mui/material/Alert";
 import type { EnsembleWidgetProps, HasItemTemplate } from "../../shared/types";
 import { EnsembleRuntime } from "../../runtime";
 import { WidgetRegistry } from "../../registry";
 import { StepType } from "./StepType";
 import type { StepTypeProps } from "./StepType";
+import { useEnsembleAction } from "../../runtime/hooks";
 
 const widgetName = "Stepper";
 
@@ -44,6 +49,7 @@ export type StepperProps = {
     borderRadius?: Expression<string>;
     padding?: string;
   };
+  onChange?: EnsembleAction;
 } & EnsembleWidgetProps &
   HasItemTemplate;
 
@@ -54,25 +60,26 @@ interface CustomConnectorProps {
 }
 
 const Stepper: React.FC<StepperProps> = (props) => {
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState<number | undefined>(undefined);
 
   const itemTemplate = props["item-template"];
   const { namedData } = useTemplateData({ ...itemTemplate });
   const stepsLength = namedData.length;
   const stepTypes = itemTemplate?.template;
+  const action = useEnsembleAction(props.onChange);
+
   const handleNext = useCallback(() => {
-    if (activeStep < namedData.length - 1) {
-      setActiveStep((prevStep) => prevStep + 1);
+    if (activeStep !== undefined && activeStep < namedData.length - 1) {
+      setActiveStep(activeStep + 1);
     }
   }, [activeStep, namedData.length]);
+
   const handleBack = useCallback(() => {
-    if (activeStep !== 0) {
-      setActiveStep((prevStep) => prevStep - 1);
+    if (activeStep) {
+      setActiveStep(activeStep - 1);
     }
   }, [activeStep]);
-  const handleStep = (step: number) => () => {
-    setActiveStep(step);
-  };
+
   const { values, rootRef } = useRegisterBindings(
     { ...props, activeStep, widgetName },
     props.id,
@@ -81,6 +88,7 @@ const Stepper: React.FC<StepperProps> = (props) => {
       handleBack,
     },
   );
+
   useEffect(() => {
     if (
       isExpression(props.activeStepIndex) &&
@@ -89,7 +97,24 @@ const Stepper: React.FC<StepperProps> = (props) => {
       setActiveStep(values?.activeStepIndex ?? 0);
     }
   }, [props.activeStepIndex, values?.activeStepIndex]);
+
   const steps = unwrapContent(props.steps);
+
+  const onChangeCallback = useCallback(
+    (step: number) => () => {
+      setActiveStep(step);
+      if (!action) {
+        return;
+      }
+      action?.callback({ step });
+    },
+    [action],
+  );
+
+  if (activeStep === undefined) {
+    return null;
+  }
+
   if (!stepTypes) {
     return (
       <Alert
@@ -136,7 +161,7 @@ const Stepper: React.FC<StepperProps> = (props) => {
         >
           {namedData.map((data, index) => (
             <Step key={index}>
-              <StepButton onClick={handleStep(index)}>
+              <StepButton onClick={onChangeCallback(index)}>
                 <StepLabel
                   StepIconComponent={(iconProps: StepOwnProps) => {
                     const newProps = {

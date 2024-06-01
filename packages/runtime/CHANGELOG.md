@@ -1,5 +1,19 @@
 # @ensembleui/react-runtime
 
+## 0.1.56
+
+### Patch Changes
+
+- e44293c: expose submit method on Form
+
+## 0.1.55
+
+### Patch Changes
+
+- d1c218f: add onChange action in Stepped widget
+- c91b22a: delay showing stepper until its stepIndex is initialized
+- af14ce4: added support for reset form
+
 ## 0.1.54
 
 ### Patch Changes
