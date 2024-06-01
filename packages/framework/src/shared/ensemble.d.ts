@@ -18,14 +18,14 @@ export interface EnsembleInterface {
   copyToClipboard: (value: unknown) => void;
 }
 
-interface EnsembleStorage {
-  set: (key: string, value: unknown) => void;
-  get: (key: string) => unknown;
-  delete: (key: string) => void;
-}
-
 interface EnsembleApiResponse {
   body: { data: unknown } & Record<string, unknown>;
   headers: Record<string, unknown>;
   progress: number;
 }
+
+export type EnsembleStorage = {
+  set: (key: string, value: unknown) => void;
+  get: (key: string) => unknown;
+  delete: (key: string) => unknown;
+} & { [key: string]: unknown };

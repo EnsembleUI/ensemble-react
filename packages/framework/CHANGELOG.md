@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.41
+
+### Patch Changes
+
+- dbb6a69: Fix user atom propagation across app
+
 ## 0.1.40
 
 ### Patch Changes
