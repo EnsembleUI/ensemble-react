@@ -267,11 +267,20 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
         isSuccess: false,
         isError: false,
       });
+
+      if (action?.id) {
+        setData(action.id, {
+          isLoading: true,
+          isSuccess: false,
+          isError: false,
+        });
+      }
+
       setIsComplete(false);
       setContext(args as { [key: string]: unknown });
     };
     return { callback };
-  }, [api, setData]);
+  }, [api, setData, action]);
 
   useEffect(() => {
     if (!api || isComplete !== false || isLoading) {
@@ -289,10 +298,30 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
           },
         });
         setData(api.name, res);
+
+        if (action?.id) {
+          setData(action.id, res);
+        }
+
         onAPIResponseAction?.callback({ ...context, response: res });
         onInvokeAPIResponseAction?.callback({ ...context, response: res });
       } catch (e) {
         logError(e);
+
+        setData(api.name, {
+          isLoading: false,
+          isSuccess: false,
+          isError: true,
+        });
+
+        if (action?.id) {
+          setData(action.id, {
+            isLoading: false,
+            isSuccess: false,
+            isError: true,
+          });
+        }
+
         onAPIErrorAction?.callback({ ...context, error: e });
         onInvokeAPIErrorAction?.callback({ ...context, error: e });
       } finally {
@@ -304,6 +333,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     void fireRequest();
   }, [
     api,
+    action,
     evaluatedInputs,
     isComplete,
     isLoading,
@@ -313,6 +343,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     onAPIResponseAction,
     setData,
     context,
+    appContext?.env,
   ]);
 
   return invokeApi;
