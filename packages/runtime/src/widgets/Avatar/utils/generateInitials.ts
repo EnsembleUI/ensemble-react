@@ -1,7 +1,7 @@
 export const generateInitials = (name?: string): string => {
-  if (!name) return "";
+  if (!name || name.trim().length === 0) return "";
 
-  const words = name.split(" ");
+  const words = name.trim().split(/\s+/);
   if (words.length === 1) {
     return words[0][0].toUpperCase();
   } else if (words.length >= 2) {
