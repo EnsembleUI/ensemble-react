@@ -1,24 +1,19 @@
-import React, {
-  useCallback,
-  useEffect,
-  useState,
-  useMemo,
-  type ReactElement,
-} from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import { useDebounce } from "react-use";
 import {
   useTemplateData,
   useRegisterBindings,
   CustomScopeProvider,
+  evaluate,
+  defaultScreenContext,
 } from "@ensembleui/react-framework";
 import type {
   CustomScope,
   EnsembleAction,
-  EnsembleWidget,
+  Expression,
 } from "@ensembleui/react-framework";
-import { AutoComplete, Input } from "antd";
-import { SearchOutlined } from "@mui/icons-material";
-import { get, isNull, isNumber } from "lodash-es";
+import { Select as SelectComponent } from "antd";
+import { get, isEmpty, isNull, isObject } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type {
   EnsembleWidgetProps,
@@ -27,6 +22,7 @@ import type {
 } from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { EnsembleRuntime } from "../runtime";
+import { Icon } from "./Icon";
 
 const widgetName = "Search";
 
@@ -40,21 +36,18 @@ export type SearchProps = {
   onSelect?: EnsembleAction;
   iconStyles?: EnsembleWidgetStyles;
 } & EnsembleWidgetProps &
-  HasItemTemplate;
+  HasItemTemplate & {
+    "item-template"?: { value: Expression<string> };
+  };
 
 export const Search: React.FC<SearchProps> = ({
   "item-template": itemTemplate,
-  searchKey,
   styles,
-  id,
   onSearch,
   onChange,
   onSelect,
   ...rest
 }) => {
-  const [options, setOptions] = useState<
-    { label: string | ReactElement; value: unknown; data: unknown }[]
-  >([]);
   const [searchValue, setSearchValue] = useState<string | null>(null);
   const [value, setValue] = useState<unknown>();
 
@@ -63,12 +56,11 @@ export const Search: React.FC<SearchProps> = ({
     name: itemTemplate?.name,
   });
 
-  const { rootRef, values } = useRegisterBindings(
-    { styles, value, options, ...rest, widgetName },
-    id,
+  const { id, rootRef, values } = useRegisterBindings(
+    { styles, value, ...rest, widgetName },
+    rest.id,
     {
       setValue,
-      setOptions,
     },
   );
 
@@ -76,42 +68,38 @@ export const Search: React.FC<SearchProps> = ({
   const onChangeAction = useEnsembleAction(onChange);
   const onSelectAction = useEnsembleAction(onSelect);
 
-  useEffect(() => {
-    const newOptions = namedData.map((item) => {
-      const itemData = itemTemplate?.name
-        ? (get(item, itemTemplate.name) as unknown)
-        : item;
+  // rendered options
+  const renderOptions = useMemo(() => {
+    let dropdownOptions = null;
 
-      const optionValue = get(itemData, searchKey ?? "") as unknown;
-      const option = {
-        data: itemData,
-        value: optionValue,
-        label: itemTemplate?.template ? (
-          <SearchOption
-            context={item as CustomScope}
-            template={itemTemplate.template}
-          />
-        ) : (
-          JSON.stringify(optionValue)
-        ),
-      };
-      return option;
-    });
-    setOptions(newOptions);
-  }, [itemTemplate, namedData, searchKey, setOptions, value]);
+    if (isObject(itemTemplate) && !isEmpty(namedData)) {
+      const tempOptions = namedData.map((item: unknown) => {
+        const optionValue = evaluate<string | number>(
+          defaultScreenContext,
+          itemTemplate.value,
+          {
+            [itemTemplate.name]: get(item, itemTemplate.name) as unknown,
+          },
+        );
 
-  const filteredOptions = useMemo(() => {
-    // We assume the search callback does the result filtering
-    if (onSearchAction?.callback) {
-      return options;
+        return (
+          <SelectComponent.Option
+            className={`${values?.id || ""}_option`}
+            key={optionValue}
+            value={optionValue}
+          >
+            <CustomScopeProvider value={item as CustomScope}>
+              {EnsembleRuntime.render([itemTemplate.template])}
+            </CustomScopeProvider>
+          </SelectComponent.Option>
+        );
+      });
+
+      dropdownOptions = [...(dropdownOptions || []), ...tempOptions];
     }
-    if (!searchValue?.trim().length) {
-      return options;
-    }
-    return options.filter(({ value: optionValue }) =>
-      JSON.stringify(optionValue).includes(searchValue.trim()),
-    );
-  }, [onSearchAction?.callback, options, searchValue]);
+
+    return dropdownOptions;
+  }, [values, itemTemplate, namedData]);
 
   useDebounce(
     () => {
@@ -132,74 +120,57 @@ export const Search: React.FC<SearchProps> = ({
 
   const handleSelect = useCallback(
     (selectedValue: unknown): void => {
-      const selectedData = options.find(
-        ({ value: optionValue }) => optionValue === selectedValue,
-      )?.data;
-      setValue(selectedData);
-      onSelectAction?.callback({ value: selectedData });
+      setValue(selectedValue);
+      if (onSelectAction) {
+        onSelectAction.callback({ selectedValue });
+      }
     },
-    [onSelectAction, options],
+    [onSelectAction],
   );
 
   return (
-    <>
-      <AutoComplete
+    <div
+      ref={rootRef}
+      style={{
+        display: "flex",
+        overflow: "hidden",
+        alignItems: "center",
+        paddingLeft: "5px",
+        ...values?.styles,
+      }}
+    >
+      <style>
+        {`
+        .${id}_input {
+          width: 100%;
+          height: 100%;
+        }
+        .${id}_input .ant-select-selector {
+          border: unset !important;
+        }
+        .${id}_input.ant-select-focused .ant-select-selector {
+          box-shadow: unset !important;
+        }
+        `}
+      </style>
+      <Icon name="Search" />
+      <SelectComponent
         allowClear
-        id={id}
+        className={`${values?.styles?.names || ""} ${id}_input`}
+        filterOption={false}
+        id={values?.id}
+        notFoundContent="No Results"
         onChange={handleChange}
         onSearch={(search): void => setSearchValue(search)}
         onSelect={handleSelect}
-        options={filteredOptions}
-        popupMatchSelectWidth={
-          isNumber(values?.styles?.width) ? values?.styles?.width : false
-        }
-        ref={rootRef}
+        optionFilterProp="children"
+        placeholder={values?.placeholder}
+        showSearch
+        suffixIcon={null}
       >
-        <Input
-          placeholder={values?.placeholder}
-          prefix={
-            <SearchOutlined
-              style={{
-                ...values?.iconStyles,
-              }}
-            />
-          }
-          style={{
-            boxShadow: "none",
-            ...values?.styles,
-            ...(values?.styles?.visible === false
-              ? { display: "none" }
-              : undefined),
-          }}
-        />
-      </AutoComplete>
-      {id ? (
-        <style>
-          {`
-			/* Linear loader animation */
-			#${id ?? ""} {
-				background-color: ${
-          values?.styles?.backgroundColor ? values.styles.backgroundColor : ""
-        }
-			}
-		  `}
-        </style>
-      ) : null}
-    </>
-  );
-};
-
-const SearchOption = ({
-  template,
-  context,
-}: {
-  template: EnsembleWidget;
-  context: CustomScope;
-}): ReactElement => {
-  return (
-    <CustomScopeProvider value={context}>
-      {EnsembleRuntime.render([template])}
-    </CustomScopeProvider>
+        {renderOptions}
+      </SelectComponent>
+    </div>
   );
 };
 
