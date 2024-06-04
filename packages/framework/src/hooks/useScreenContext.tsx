@@ -103,7 +103,10 @@ export const useScreenContext = ():
   const screenContext = useAtomValue(screenAtom);
   const setDataAtom = useSetAtom(screenDataAtom);
   const setData = useCallback(
-    (name: string, response: Response | WebSocketConnection) => {
+    (
+      name: string,
+      response: Response | WebSocketConnection | { [key: string]: unknown },
+    ) => {
       const data = screenContext.data;
       data[name] = response;
       setDataAtom(clone(data));

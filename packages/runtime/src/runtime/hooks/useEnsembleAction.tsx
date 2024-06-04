@@ -32,6 +32,7 @@ import type {
   DisconnectSocketAction,
   SendSocketMessageAction,
   EnsembleActionHookResult,
+  DispatchEventAction,
 } from "@ensembleui/react-framework";
 import {
   isEmpty,
@@ -43,6 +44,7 @@ import {
   mapKeys,
   cloneDeep,
   isEqual,
+  keys,
 } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -674,6 +676,31 @@ export const useActionGroup: EnsembleActionHook<ExecuteActionGroupAction> = (
   return { callback };
 };
 
+export const useDispatchEvent: EnsembleActionHook<DispatchEventAction> = (
+  action,
+) => {
+  const { data } = useScreenData();
+  const eventName = keys(action)[0];
+  const events = get(data.customEvents, eventName) as {
+    [key: string]: unknown;
+  };
+
+  // Prepare an array to store actions
+  const eventActions = Object.keys(events || {}).map((customAction) => ({
+    [customAction]: events[customAction],
+  }));
+
+  // Use a separate hook call for each event action
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const ensembleActions = eventActions.map((event) => useEnsembleAction(event));
+
+  const callback = useCallback((): void => {
+    console.log("jiij", { ensembleActions });
+    // dispatchEventCallback?.callback({ args });
+  }, [ensembleActions]);
+  return { callback };
+};
+
 /* eslint-disable react-hooks/rules-of-hooks */
 export const useEnsembleAction = (
   action?: EnsembleAction,
@@ -758,6 +785,10 @@ export const useEnsembleAction = (
 
   if ("disconnectSocket" in action) {
     return useDisconnectSocket(action.disconnectSocket);
+  }
+
+  if ("dispatchEvent" in action) {
+    return useDispatchEvent(action.dispatchEvent);
   }
 };
 /* eslint-enable react-hooks/rules-of-hooks */

@@ -1,0 +1,16 @@
+Widget:
+  events:
+    onFormSubmit:
+      data:
+        name:
+        email:
+
+  body:
+    Button:
+      label: dispatch event
+      onTap:
+        dispatchEvent:
+          onFormSubmit:
+            data:
+              name: Sagar
+              email: sagardspeed2@gmail.com

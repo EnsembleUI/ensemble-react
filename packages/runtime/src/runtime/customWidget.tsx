@@ -2,6 +2,7 @@ import {
   CustomScopeProvider,
   error,
   useRegisterBindings,
+  useScreenData,
 } from "@ensembleui/react-framework";
 import type {
   CustomWidgetModel,
@@ -12,19 +13,27 @@ import { EnsembleRuntime } from "./runtime";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { useEnsembleAction } from "./hooks/useEnsembleAction";
+const customEventKey = "customEvents";
 
 export interface CustomWidgetProps {
   inputs: { [key: string]: unknown };
+  events: { [key: string]: EnsembleAction };
 }
 
 export const createCustomWidget = (
   widget: CustomWidgetModel,
 ): React.FC<CustomWidgetProps> => {
-  const CustomWidget: React.FC<CustomWidgetProps> = ({ inputs }) => {
+  const CustomWidget: React.FC<CustomWidgetProps> = ({ inputs, events }) => {
+    const { setData } = useScreenData();
+
     const { values } = useRegisterBindings<{ [key: string]: unknown }>({
       ...inputs,
       widgetName: widget.name,
     });
+
+    useEffect(() => {
+      setData(customEventKey, events);
+    }, []);
 
     return (
       <CustomScopeProvider value={values ?? inputs}>

@@ -157,6 +157,10 @@ export type EnsembleActionHookResult =
     }
   | undefined;
 
+export interface DispatchEventAction {
+  [k: string]: unknown;
+}
+
 /**
  * @uiType action
  */
@@ -189,4 +193,5 @@ export type EnsembleAction =
   | { executeActionGroup?: ExecuteActionGroupAction }
   | { connectSocket?: ConnectSocketAction }
   | { messageSocket?: SendSocketMessageAction }
-  | { disconnectSocket?: DisconnectSocketAction };
+  | { disconnectSocket?: DisconnectSocketAction }
+  | { dispatchEvent?: DispatchEventAction };

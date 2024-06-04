@@ -46,6 +46,12 @@ View:
                 onResponse:
                   executeCode: console.log('onresponse', response)
 
+        - DispatchButton:
+            events:
+              onFormSubmit:
+                openUrl:
+                  name: google.ocm
+
         - Text:
             styles:
               names: heading-1
@@ -176,7 +182,6 @@ Global:
 Import:
   - common
 
-
 Socket:
   echo:
     uri: wss://echo.websocket.org/
@@ -197,4 +202,3 @@ API:
   ERROR500:
     method: GET
     uri: https://httpstat.us/500
-
