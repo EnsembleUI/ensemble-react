@@ -2,27 +2,24 @@ import { useAtom } from "jotai";
 import { createJSONStorage, atomWithStorage } from "jotai/utils";
 import { clone, merge } from "lodash-es";
 import { useMemo } from "react";
+import { type EnsembleStorage } from "../shared/ensemble";
 
-export interface EnsembleStorage {
-  set: (key: string, value: unknown) => void;
-  get: (key: string) => unknown;
-  delete: (key: string) => unknown;
-}
-
-const backingStorage = createJSONStorage<Record<string, unknown>>(
+const backingStorage = createJSONStorage<{ [key: string]: unknown }>(
   () => sessionStorage,
 );
 
-export const screenStorageAtom = atomWithStorage<Record<string, unknown>>(
+export const screenStorageAtom = atomWithStorage<{ [key: string]: unknown }>(
   "ensemble.storage",
   {},
   backingStorage,
+  {
+    getOnInit: true,
+  },
 );
 
 export const useEnsembleStorage = (): EnsembleStorage => {
   const [storage, setStorage] = useAtom(screenStorageAtom);
-  // Use a buffer so we can perform imperative changes without forcing re-render
-  const storageBuffer = useMemo<Record<string, unknown>>(() => ({}), []);
+  const storageBuffer = useMemo<{ [key: string]: unknown }>(() => ({}), []);
 
   useMemo(() => {
     merge(storageBuffer, storage);
@@ -37,8 +34,8 @@ export const useEnsembleStorage = (): EnsembleStorage => {
 };
 
 export const createStorageApi = (
-  storage?: Record<string, unknown>,
-  setStorage?: (storage: Record<string, unknown>) => void,
+  storage?: { [key: string]: unknown },
+  setStorage?: (storage: { [key: string]: unknown }) => void,
 ): EnsembleStorage => {
   return {
     set: (key: string, value: unknown): void => {
@@ -59,5 +56,6 @@ export const createStorageApi = (
       }
       return oldVal;
     },
+    ...storage,
   };
 };

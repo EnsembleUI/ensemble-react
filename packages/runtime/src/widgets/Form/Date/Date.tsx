@@ -85,11 +85,13 @@ export const Date: React.FC<DateProps> = (props) => {
   }, [value, formInstance]);
 
   return (
-    <EnsembleFormItem initialValue={undefined} values={values}>
+    <EnsembleFormItem
+      initialValue={
+        values?.initialValue ? dayjs(values.initialValue) : undefined
+      }
+      values={values}
+    >
       <DatePicker
-        defaultPickerValue={
-          values?.initialValue ? dayjs(values.initialValue) : undefined
-        }
         disabled={values?.enabled === false}
         disabledDate={(d): boolean =>
           (Boolean(values?.lastDate) && d.isAfter(values?.lastDate)) ||

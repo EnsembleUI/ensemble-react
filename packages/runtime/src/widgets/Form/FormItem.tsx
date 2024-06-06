@@ -15,14 +15,15 @@ export type EnsembleFormItemProps<T> = FormItemProps & {
 export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
   props,
 ) => {
-  const { values, ...rest } = props;
+  const { values, rules, ...rest } = props;
   const { backgroundColor: _, ...formItemStyles } = values?.styles ?? {};
   const formInstance = AntForm.useFormInstance();
+  const requiredRule = { required: Boolean(values?.required) };
 
   return (
     <AntForm.Item
       className={values?.styles?.names}
-      initialValue={values?.value}
+      initialValue={values?.initialValue}
       label={
         values?.label ? (
           <label
@@ -39,7 +40,10 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
         ) : null
       }
       name={formInstance ? values?.id ?? values?.label : undefined}
-      rules={[{ required: Boolean(values?.required) }]}
+      rules={rules?.concat(requiredRule) || [requiredRule]}
+      validateTrigger={
+        values?.validateOnUserInteraction === true ? "onChange" : "onSubmit"
+      }
       style={{
         margin: "0px",
         ...(values?.styles?.visible === false

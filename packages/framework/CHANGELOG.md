@@ -1,5 +1,18 @@
 # @ensembleui/react-framework
 
+## 0.1.41
+
+### Patch Changes
+
+- dbb6a69: Fix user atom propagation across app
+
+## 0.1.40
+
+### Patch Changes
+
+- 42d6dc7: fix ensemble.user on widget load action
+- debd207: implement executeConditionalAction
+
 ## 0.1.39
 
 ### Patch Changes

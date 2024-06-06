@@ -34,6 +34,7 @@ import type {
   SendSocketMessageAction,
   EnsembleActionHookResult,
   DispatchEventAction,
+  ExecuteConditionalActionAction,
 } from "@ensembleui/react-framework";
 import {
   isEmpty,
@@ -46,6 +47,8 @@ import {
   cloneDeep,
   isEqual,
   keys,
+  last,
+  toNumber,
 } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -65,6 +68,10 @@ import {
   handleMessageSocket,
   handleDisconnectSocket,
 } from "../websocket";
+import {
+  extractCondition,
+  hasProperStructure,
+} from "../../widgets/Conditional";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { useNavigateModalScreen } from "./useNavigateModal";
@@ -263,11 +270,20 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
         isSuccess: false,
         isError: false,
       });
+
+      if (action?.id) {
+        setData(action.id, {
+          isLoading: true,
+          isSuccess: false,
+          isError: false,
+        });
+      }
+
       setIsComplete(false);
       setContext(args as { [key: string]: unknown });
     };
     return { callback };
-  }, [api, setData]);
+  }, [api, setData, action]);
 
   useEffect(() => {
     if (!api || isComplete !== false || isLoading) {
@@ -285,10 +301,30 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
           },
         });
         setData(api.name, res);
+
+        if (action?.id) {
+          setData(action.id, res);
+        }
+
         onAPIResponseAction?.callback({ ...context, response: res });
         onInvokeAPIResponseAction?.callback({ ...context, response: res });
       } catch (e) {
         logError(e);
+
+        setData(api.name, {
+          isLoading: false,
+          isSuccess: false,
+          isError: true,
+        });
+
+        if (action?.id) {
+          setData(action.id, {
+            isLoading: false,
+            isSuccess: false,
+            isError: true,
+          });
+        }
+
         onAPIErrorAction?.callback({ ...context, error: e });
         onInvokeAPIErrorAction?.callback({ ...context, error: e });
       } finally {
@@ -300,6 +336,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     void fireRequest();
   }, [
     api,
+    action,
     evaluatedInputs,
     isComplete,
     isLoading,
@@ -309,6 +346,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     onAPIResponseAction,
     setData,
     context,
+    appContext?.env,
   ]);
 
   return invokeApi;
@@ -704,6 +742,81 @@ export const useDispatchEvent: EnsembleActionHook<DispatchEventAction> = (
   return { callback };
 };
 
+export const useConditionalAction: EnsembleActionHook<
+  ExecuteConditionalActionAction
+> = (action) => {
+  if (!action?.conditions) {
+    throw new Error("No conditions provided for executeConditionalAction");
+  }
+
+  const [isValid, errorMessage] = hasProperStructure(action.conditions);
+  if (!isValid) {
+    throw Error(errorMessage);
+  }
+
+  const conditionStatements = action.conditions.map(extractCondition);
+  const execActs = action.conditions.map((condition) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useEnsembleAction(condition.action);
+  });
+  const [isComplete, setIsComplete] = useState<boolean>();
+  const [context, setContext] = useState<unknown>();
+  const [trueActionIndex, setTrueActionIndex] = useState<number>();
+  const evaluatedStatements = useEvaluate(
+    conditionStatements as unknown as { [key: string]: unknown },
+    {
+      context,
+    },
+  );
+
+  useEffect(() => {
+    if (trueActionIndex === undefined) {
+      return;
+    }
+
+    execActs[trueActionIndex]?.callback(context);
+    setTrueActionIndex(undefined);
+  }, [context, execActs, trueActionIndex]);
+
+  useEffect(() => {
+    if (!action || isComplete !== false) {
+      return;
+    }
+
+    const index = Object.keys(evaluatedStatements).find(
+      (key) => evaluatedStatements[key] === true,
+    );
+
+    let trueIndex: number | undefined;
+    if (index !== undefined) {
+      trueIndex = toNumber(index);
+    }
+
+    if (trueIndex === undefined || trueIndex < 0) {
+      // check if last condition is 'else'
+      const lastCondition = last(action.conditions);
+      if (lastCondition && "else" in lastCondition) {
+        trueIndex = action.conditions.length - 1;
+      }
+      // if no condition is true, return
+      else {
+        setIsComplete(true);
+        return;
+      }
+    }
+
+    setTrueActionIndex(trueIndex);
+    setIsComplete(true);
+  }, [action, evaluatedStatements, isComplete, context]);
+
+  const callback = (args: unknown): void => {
+    setContext(args);
+    setIsComplete(false);
+  };
+
+  return { callback };
+};
+
 /* eslint-disable react-hooks/rules-of-hooks */
 export const useEnsembleAction = (
   action?: EnsembleAction,
@@ -792,6 +905,10 @@ export const useEnsembleAction = (
 
   if ("dispatchEvent" in action) {
     return useDispatchEvent(action.dispatchEvent);
+  }
+       
+  if ("executeConditionalAction" in action) {
+    return useConditionalAction(action.executeConditionalAction);
   }
 };
 /* eslint-enable react-hooks/rules-of-hooks */
