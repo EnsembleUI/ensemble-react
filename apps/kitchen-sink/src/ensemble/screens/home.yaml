@@ -49,8 +49,7 @@ View:
         - DispatchButton:
             events:
               onFormSubmit:
-                openUrl:
-                  url: https://google.com
+                executeCode: console.log('onresponse', data)
 
         - Text:
             styles:

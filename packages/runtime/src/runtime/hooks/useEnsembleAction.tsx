@@ -719,7 +719,13 @@ export const useDispatchEvent: EnsembleActionHook<DispatchEventAction> = (
   action,
 ) => {
   const eventName = keys(action)[0];
+  const [isComplete, setIsComplete] = useState<boolean>();
+  const [context, setContext] = useState<unknown>();
+  const eventData = (action ? action[eventName] : {}) as {
+    [key: string]: unknown;
+  };
   const eventScopre = useCustomEventScope();
+  const evaluatedInputs = useEvaluate(eventData, { context });
 
   const events = get(eventScopre, eventName) as {
     [key: string]: unknown;
@@ -733,12 +739,21 @@ export const useDispatchEvent: EnsembleActionHook<DispatchEventAction> = (
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const ensembleActions = eventActions.map((event) => useEnsembleAction(event));
 
-  const callback = useCallback(
-    (args: unknown): void => {
-      ensembleActions.forEach((act) => act?.callback(args));
-    },
-    [ensembleActions],
-  );
+  const callback = useCallback((args: unknown): void => {
+    setContext(args);
+    setIsComplete(false);
+  }, []);
+
+  useEffect(() => {
+    if (isComplete !== false) {
+      return;
+    }
+
+    ensembleActions.forEach((act) => act?.callback(evaluatedInputs));
+
+    setIsComplete(true);
+  }, [ensembleActions, evaluatedInputs, isComplete]);
+
   return { callback };
 };
 
@@ -906,7 +921,7 @@ export const useEnsembleAction = (
   if ("dispatchEvent" in action) {
     return useDispatchEvent(action.dispatchEvent);
   }
-       
+
   if ("executeConditionalAction" in action) {
     return useConditionalAction(action.executeConditionalAction);
   }
