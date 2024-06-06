@@ -7,7 +7,6 @@ import type { Response, WebSocketConnection } from "../data";
 import type {
   EnsembleAPIModel,
   EnsembleAppModel,
-  EnsembleCustomEventModel,
   EnsembleScreenModel,
   EnsembleSocketModel,
 } from "../shared";
@@ -17,7 +16,7 @@ export interface ScreenContextDefinition {
   app?: EnsembleAppModel;
   model?: EnsembleScreenModel;
   data: {
-    [key: string]: Response | WebSocketConnection | { [key: string]: unknown };
+    [key: string]: Response | WebSocketConnection;
   };
   widgets: { [key: string]: WidgetState };
   inputs?: { [key: string]: unknown };
@@ -26,10 +25,7 @@ export interface ScreenContextDefinition {
 
 export interface ScreenContextActions {
   setWidget: (id: string, state: WidgetState) => void;
-  setData: (
-    name: string,
-    response: Response | WebSocketConnection | { [key: string]: unknown },
-  ) => void;
+  setData: (name: string, response: Response | WebSocketConnection) => void;
   setCustom: (id: string, data: unknown) => void;
 }
 
@@ -53,10 +49,6 @@ export const screenSocketAtom = focusAtom(screenAtom, (optic) => {
   return optic.prop("model").optional().prop("sockets");
 });
 
-export const screenCustomEventsAtom = focusAtom(screenAtom, (optic) => {
-  return optic.prop("model").optional().prop("events");
-});
-
 export const screenInputAtom = focusAtom(screenAtom, (optic) =>
   optic.prop("inputs"),
 );
@@ -71,19 +63,14 @@ export const screenImportScriptAtom = focusAtom(screenAtom, (optic) =>
 
 export const useScreenData = (): { apis?: EnsembleAPIModel[] } & {
   sockets?: EnsembleSocketModel[];
-  events?: EnsembleCustomEventModel[];
 } & Pick<ScreenContextDefinition, "data"> &
   Pick<ScreenContextActions, "setData"> => {
   const apis = useAtomValue(screenApiAtom);
   const sockets = useAtomValue(screenSocketAtom);
-  const events = useAtomValue(screenCustomEventsAtom);
   const [data, setDataAtom] = useAtom(screenDataAtom);
 
   const setData = useCallback(
-    (
-      name: string,
-      response: Response | WebSocketConnection | { [key: string]: unknown },
-    ) => {
+    (name: string, response: Response | WebSocketConnection) => {
       if (isEqual(data[name], response)) {
         return;
       }
@@ -96,7 +83,6 @@ export const useScreenData = (): { apis?: EnsembleAPIModel[] } & {
   return {
     apis,
     sockets,
-    events,
     data,
     setData,
   };
