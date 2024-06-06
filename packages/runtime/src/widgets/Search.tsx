@@ -4,8 +4,7 @@ import {
   useTemplateData,
   useRegisterBindings,
   CustomScopeProvider,
-  evaluate,
-  defaultScreenContext,
+  useEvaluate,
 } from "@ensembleui/react-framework";
 import type {
   CustomScope,
@@ -44,6 +43,7 @@ export const Search: React.FC<SearchProps> = ({
   "item-template": itemTemplate,
   styles,
   onSearch,
+  searchKey,
   onChange,
   onSelect,
   ...rest
@@ -55,6 +55,8 @@ export const Search: React.FC<SearchProps> = ({
     data: itemTemplate?.data,
     name: itemTemplate?.name,
   });
+
+  const evaluatedNamedData = useEvaluate({ namedData });
 
   const { id, rootRef, values } = useRegisterBindings(
     { styles, value, ...rest, widgetName },
@@ -72,15 +74,12 @@ export const Search: React.FC<SearchProps> = ({
   const renderOptions = useMemo(() => {
     let dropdownOptions = null;
 
-    if (isObject(itemTemplate) && !isEmpty(namedData)) {
-      const tempOptions = namedData.map((item: unknown) => {
-        const optionValue = evaluate<string | number>(
-          defaultScreenContext,
-          itemTemplate.value,
-          {
-            [itemTemplate.name]: get(item, itemTemplate.name) as unknown,
-          },
-        );
+    if (isObject(itemTemplate) && !isEmpty(evaluatedNamedData.namedData)) {
+      const tempOptions = evaluatedNamedData.namedData.map((item: unknown) => {
+        const optionValue = get(item, [
+          itemTemplate.name,
+          searchKey || "value",
+        ]) as string | number;
 
         return (
           <SelectComponent.Option
@@ -99,7 +98,7 @@ export const Search: React.FC<SearchProps> = ({
     }
 
     return dropdownOptions;
-  }, [values, itemTemplate, namedData]);
+  }, [values, itemTemplate, evaluatedNamedData, searchKey]);
 
   useDebounce(
     () => {

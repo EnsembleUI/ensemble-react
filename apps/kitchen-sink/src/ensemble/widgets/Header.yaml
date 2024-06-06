@@ -28,11 +28,10 @@ Widget:
             item-template:
               data: ${findUsers.body.users}
               name: user
-              value: ${user.id}
               template:
                 Text:
                   text: ${user.firstName + ' ' + user.lastName}
-            searchKey: firstName
+            searchKey: id
             onSearch:
               invokeAPI:
                 name: findUsers
