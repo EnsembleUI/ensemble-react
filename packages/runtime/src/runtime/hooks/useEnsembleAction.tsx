@@ -12,6 +12,7 @@ import {
   useEnsembleUser,
   useEvaluate,
   useCustomScope,
+  useCustomEventScope,
   CustomScopeProvider,
   CustomThemeContext,
 } from "@ensembleui/react-framework";
@@ -679,13 +680,13 @@ export const useActionGroup: EnsembleActionHook<ExecuteActionGroupAction> = (
 export const useDispatchEvent: EnsembleActionHook<DispatchEventAction> = (
   action,
 ) => {
-  const { data } = useScreenData();
   const eventName = keys(action)[0];
-  const events = get(data.customEvents, eventName) as {
+  const eventScopre = useCustomEventScope();
+
+  const events = get(eventScopre, eventName) as {
     [key: string]: unknown;
   };
 
-  // Prepare an array to store actions
   const eventActions = Object.keys(events || {}).map((customAction) => ({
     [customAction]: events[customAction],
   }));
@@ -694,10 +695,12 @@ export const useDispatchEvent: EnsembleActionHook<DispatchEventAction> = (
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const ensembleActions = eventActions.map((event) => useEnsembleAction(event));
 
-  const callback = useCallback((): void => {
-    console.log("jiij", { ensembleActions });
-    // dispatchEventCallback?.callback({ args });
-  }, [ensembleActions]);
+  const callback = useCallback(
+    (args: unknown): void => {
+      ensembleActions.forEach((act) => act?.callback(args));
+    },
+    [ensembleActions],
+  );
   return { callback };
 };
 

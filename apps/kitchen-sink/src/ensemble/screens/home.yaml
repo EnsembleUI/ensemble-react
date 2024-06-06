@@ -50,7 +50,7 @@ View:
             events:
               onFormSubmit:
                 openUrl:
-                  name: google.ocm
+                  url: https://google.com
 
         - Text:
             styles:
