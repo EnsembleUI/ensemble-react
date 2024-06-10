@@ -1,5 +1,18 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.49
+
+### Patch Changes
+
+- a77fdcd: Convert autocomplete widget with select widget
+- 7af61a2: Added support to read storage without get method
+- Updated dependencies [a77fdcd]
+- Updated dependencies [7af61a2]
+- Updated dependencies [5ea833d]
+- Updated dependencies [7accf42]
+  - @ensembleui/react-runtime@0.1.57
+  - @ensembleui/react-framework@0.1.42
+
 ## 0.0.48
 
 ### Patch Changes
