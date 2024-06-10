@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.42
+
+### Patch Changes
+
+- 7af61a2: Added support to read storage without get method
+
 ## 0.1.41
 
 ### Patch Changes

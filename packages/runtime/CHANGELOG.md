@@ -1,5 +1,15 @@
 # @ensembleui/react-runtime
 
+## 0.1.57
+
+### Patch Changes
+
+- a77fdcd: Convert autocomplete widget with select widget
+- 5ea833d: fix Avatar's inital generation logic
+- 7accf42: Added support for id and loading access of invokeAPI action level
+- Updated dependencies [7af61a2]
+  - @ensembleui/react-framework@0.1.42
+
 ## 0.1.56
 
 ### Patch Changes
