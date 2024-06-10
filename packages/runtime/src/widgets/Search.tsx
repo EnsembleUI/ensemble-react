@@ -137,7 +137,7 @@ export const Search: React.FC<SearchProps> = ({
         });
 
         onSelectAction?.callback({
-          value: get(selectedOption, [itemTemplate.name]),
+          value: get(selectedOption, [itemTemplate.name]) as unknown,
         });
       }
     },
