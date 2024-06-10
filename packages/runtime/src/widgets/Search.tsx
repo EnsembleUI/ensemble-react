@@ -119,12 +119,23 @@ export const Search: React.FC<SearchProps> = ({
 
   const handleSelect = useCallback(
     (selectedValue: unknown): void => {
-      setValue(selectedValue);
-      if (onSelectAction) {
-        onSelectAction.callback({ selectedValue });
+      if (isObject(itemTemplate) && !isEmpty(evaluatedNamedData.namedData)) {
+        setValue(selectedValue);
+        const selectedOption = evaluatedNamedData.namedData.find((option) => {
+          const optionValue = get(option, [
+            itemTemplate.name,
+            searchKey || "value",
+          ]) as string | number;
+
+          return optionValue === selectedValue;
+        });
+
+        onSelectAction?.callback({
+          value: get(selectedOption, [itemTemplate.name]),
+        });
       }
     },
-    [onSelectAction],
+    [onSelectAction, itemTemplate, evaluatedNamedData, searchKey],
   );
 
   return (
