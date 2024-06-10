@@ -72,29 +72,33 @@ export const Search: React.FC<SearchProps> = ({
 
   // rendered options
   const renderOptions = useMemo(() => {
-    let dropdownOptions = null;
+    let dropdownOptions: JSX.Element[] = [];
 
     if (isObject(itemTemplate) && !isEmpty(evaluatedNamedData.namedData)) {
-      const tempOptions = evaluatedNamedData.namedData.map((item: unknown) => {
-        const optionValue = get(item, [
-          itemTemplate.name,
-          searchKey || "value",
-        ]) as string | number;
+      const tempOptions = evaluatedNamedData.namedData.map(
+        (item: unknown, index: number) => {
+          const optionValue = get(
+            item,
+            searchKey
+              ? [itemTemplate.name, searchKey]
+              : [itemTemplate.value || itemTemplate.name],
+          ) as string | number;
 
-        return (
-          <SelectComponent.Option
-            className={`${values?.id || ""}_option`}
-            key={optionValue}
-            value={optionValue}
-          >
-            <CustomScopeProvider value={item as CustomScope}>
-              {EnsembleRuntime.render([itemTemplate.template])}
-            </CustomScopeProvider>
-          </SelectComponent.Option>
-        );
-      });
+          return (
+            <SelectComponent.Option
+              className={`${values?.id || ""}_option`}
+              key={`${optionValue}_${index}`}
+              value={optionValue}
+            >
+              <CustomScopeProvider value={item as CustomScope}>
+                {EnsembleRuntime.render([itemTemplate.template])}
+              </CustomScopeProvider>
+            </SelectComponent.Option>
+          );
+        },
+      );
 
-      dropdownOptions = [...(dropdownOptions || []), ...tempOptions];
+      dropdownOptions = [...dropdownOptions, ...tempOptions];
     }
 
     return dropdownOptions;
@@ -122,10 +126,12 @@ export const Search: React.FC<SearchProps> = ({
       if (isObject(itemTemplate) && !isEmpty(evaluatedNamedData.namedData)) {
         setValue(selectedValue);
         const selectedOption = evaluatedNamedData.namedData.find((option) => {
-          const optionValue = get(option, [
-            itemTemplate.name,
-            searchKey || "value",
-          ]) as string | number;
+          const optionValue = get(
+            option,
+            searchKey
+              ? [itemTemplate.name, searchKey]
+              : [itemTemplate.value || itemTemplate.name],
+          ) as string | number;
 
           return optionValue === selectedValue;
         });
