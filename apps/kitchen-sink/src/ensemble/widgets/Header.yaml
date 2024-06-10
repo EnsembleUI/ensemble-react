@@ -30,8 +30,8 @@ Widget:
               name: user
               template:
                 Text:
-                  text: ${user.firstName}
-            searchKey: firstName
+                  text: ${user.firstName + ' ' + user.lastName}
+            searchKey: id
             onSearch:
               invokeAPI:
                 name: findUsers
