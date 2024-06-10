@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.1.56
+
+### Patch Changes
+
+- e44293c: expose submit method on Form
+
 ## 0.1.55
 
 ### Patch Changes

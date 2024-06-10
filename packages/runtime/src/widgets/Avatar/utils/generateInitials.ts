@@ -1,12 +1,7 @@
-export const generateInitials = (name?: string): string => {
-  if (!name) return "";
+import { filter, isEmpty } from "lodash-es";
 
-  const words = name.split(" ");
-  if (words.length === 1) {
-    return words[0][0].toUpperCase();
-  } else if (words.length >= 2) {
-    return `${words[0][0].toUpperCase()}${words[1][0].toUpperCase()}`;
-  }
-
-  return "";
-};
+export const generateInitials = (name?: string): string =>
+  filter<string>(name?.split(/\s+/), (word) => !isEmpty(word))
+    .map((word) => word[0].toUpperCase())
+    .join("")
+    .slice(0, 2);

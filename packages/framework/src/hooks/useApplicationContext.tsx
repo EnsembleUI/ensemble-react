@@ -7,8 +7,10 @@ import {
   defaultApplicationContext,
   selectedThemeNameAtom,
   themeAtom,
+  userAtom,
 } from "../state";
 import type { EnsembleAppModel } from "../shared/models";
+import { useEnsembleUser } from "./useEnsembleUser";
 
 interface ApplicationContextProps {
   app: EnsembleAppModel;
@@ -21,6 +23,8 @@ type ApplicationContextProviderProps =
 export const ApplicationContextProvider: React.FC<
   ApplicationContextProviderProps
 > = ({ app, environmentOverrides, children }) => {
+  const user = useEnsembleUser();
+
   return (
     <Provider key={app.id}>
       <HydrateAtoms
@@ -32,6 +36,7 @@ export const ApplicationContextProvider: React.FC<
             app.config?.environmentVariables,
             environmentOverrides,
           ),
+          user,
         }}
       >
         {children}
@@ -62,6 +67,7 @@ const HydrateAtoms: React.FC<
   useHydrateAtoms([
     [appAtom, appContext],
     [themeAtom, activeTheme],
+    [userAtom, appContext.user],
   ]);
 
   return <>{children}</>;
