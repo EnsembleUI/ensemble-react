@@ -24,7 +24,7 @@ export const EnsembleBody: React.FC<EnsembleBodyProps> = ({ body, styles }) => {
   const defaultStyles = {
     styles: {
       flex: 1,
-      overflow: "auto",
+      overflow: !styles?.scrollableView ? "hidden" : "auto",
       ...styles,
     },
   };
