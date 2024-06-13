@@ -66,8 +66,30 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({
   }
 
   if (location.pathname !== "/") {
-    return <Outlet />;
+    return (
+      <div
+        style={{
+          flexGrow: 1,
+          height: "100vh",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Outlet />
+      </div>
+    );
   }
 
-  return <EnsembleScreen screen={entry} />;
+  return (
+    <div
+      style={{
+        flexGrow: 1,
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <EnsembleScreen screen={entry} />
+    </div>
+  );
 };
