@@ -39,7 +39,7 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
           </label>
         ) : null
       }
-      name={formInstance ? values?.id ?? values?.label : undefined}
+      name={formInstance ? values?.label ?? values?.id : undefined}
       rules={rules?.concat(requiredRule) || [requiredRule]}
       validateTrigger={
         values?.validateOnUserInteraction === true ? "onChange" : "onSubmit"
