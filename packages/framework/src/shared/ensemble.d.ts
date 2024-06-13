@@ -1,5 +1,5 @@
 export interface EnsembleInterface {
-  storage: EnsembleStorage;
+  storage: { [key: string]: unknown };
   formatter: Partial<EnsembleFormatter>;
   app: EnsembleAppConfig;
   env: EnsembleEnvConfig;

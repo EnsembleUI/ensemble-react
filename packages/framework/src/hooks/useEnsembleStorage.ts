@@ -1,21 +1,37 @@
-import { useAtom } from "jotai";
-import { createJSONStorage, atomWithStorage } from "jotai/utils";
+import { atom, useAtom, type WritableAtom } from "jotai";
 import { clone, merge } from "lodash-es";
 import { useMemo } from "react";
 import { type EnsembleStorage } from "../shared/ensemble";
 
-const backingStorage = createJSONStorage<{ [key: string]: unknown }>(
-  () => sessionStorage,
-);
+// Custom storage atom so it's writable and hydrate-able so values remain consistent
+const atomWithSessionStorage = <T = unknown>(
+  key: string,
+  initialValue: T,
+): WritableAtom<T, unknown[], unknown> => {
+  const getInitialValue = (): T => {
+    const item = sessionStorage.getItem(key);
+    if (item !== null) {
+      return JSON.parse(item) as T;
+    }
+    return initialValue;
+  };
+  const baseAtom = atom<T>(getInitialValue());
+  const derivedAtom = atom<T, unknown[], unknown>(
+    (get) => get(baseAtom),
+    (get, set, update) => {
+      const nextValue = (
+        typeof update === "function" ? update(get(baseAtom)) : update
+      ) as T;
+      set(baseAtom, nextValue);
+      sessionStorage.setItem(key, JSON.stringify(nextValue));
+    },
+  );
+  return derivedAtom;
+};
 
-export const screenStorageAtom = atomWithStorage<{ [key: string]: unknown }>(
-  "ensemble.storage",
-  {},
-  backingStorage,
-  {
-    getOnInit: true,
-  },
-);
+export const screenStorageAtom = atomWithSessionStorage<{
+  [key: string]: unknown;
+}>("ensemble.storage", {});
 
 export const useEnsembleStorage = (): EnsembleStorage => {
   const [storage, setStorage] = useAtom(screenStorageAtom);

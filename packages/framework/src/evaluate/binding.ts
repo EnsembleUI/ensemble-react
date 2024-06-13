@@ -88,11 +88,10 @@ export const createBindingAtom = <T = unknown>(
         data,
       },
       ensemble: {
-        storage: createStorageApi(
-          rawJsExpression.includes("ensemble.storage")
-            ? get(screenStorageAtom)
-            : undefined,
-        ),
+        storage: rawJsExpression.includes("ensemble.storage")
+          ? get(screenStorageAtom)
+          : undefined,
+
         user: rawJsExpression.includes("ensemble.user")
           ? get(userAtom)
           : undefined,
