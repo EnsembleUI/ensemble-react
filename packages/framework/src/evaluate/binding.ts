@@ -4,10 +4,7 @@ import { atom } from "jotai";
 import { isNil, merge, omitBy } from "lodash-es";
 import type { Expression } from "../shared";
 import { isExpression, sanitizeJs, debug, error } from "../shared";
-import {
-  createStorageApi,
-  screenStorageAtom,
-} from "../hooks/useEnsembleStorage";
+import { screenStorageAtom } from "../hooks/useEnsembleStorage";
 import { DateFormatter } from "../date/dateFormatter";
 import {
   themeAtom,
