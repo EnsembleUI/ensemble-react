@@ -20,6 +20,7 @@ import type { Response, WebSocketConnection } from "../data";
 import type { EnsembleScreenModel } from "../shared/models";
 import { useApplicationContext } from "./useApplicationContext";
 import { CustomThemeContext } from "./useThemeContext";
+import { storageAtom } from "./useEnsembleStorage";
 
 interface ScreenContextProps {
   screen: EnsembleScreenModel;
@@ -80,6 +81,7 @@ const HydrateAtoms: React.FC<
       [appAtom, appContext],
       [themeAtom, themeScope.theme],
       [userAtom, appContext.user],
+      [storageAtom, appContext.storage],
     ],
     {
       dangerouslyForceHydrate: true,

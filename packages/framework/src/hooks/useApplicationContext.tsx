@@ -11,6 +11,7 @@ import {
 } from "../state";
 import type { EnsembleAppModel } from "../shared/models";
 import { useEnsembleUser } from "./useEnsembleUser";
+import { storageAtom, useEnsembleStorage } from "./useEnsembleStorage";
 
 interface ApplicationContextProps {
   app: EnsembleAppModel;
@@ -24,6 +25,7 @@ export const ApplicationContextProvider: React.FC<
   ApplicationContextProviderProps
 > = ({ app, environmentOverrides, children }) => {
   const user = useEnsembleUser();
+  const storage = useEnsembleStorage();
 
   return (
     <Provider key={app.id}>
@@ -37,6 +39,7 @@ export const ApplicationContextProvider: React.FC<
             environmentOverrides,
           ),
           user,
+          storage,
         }}
       >
         {children}
@@ -68,6 +71,7 @@ const HydrateAtoms: React.FC<
     [appAtom, appContext],
     [themeAtom, activeTheme],
     [userAtom, appContext.user],
+    [storageAtom, appContext.storage],
   ]);
 
   return <>{children}</>;

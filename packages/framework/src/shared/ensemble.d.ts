@@ -1,5 +1,5 @@
 export interface EnsembleInterface {
-  storage: { [key: string]: unknown };
+  storage: EnsembleStorage;
   formatter: Partial<EnsembleFormatter>;
   app: EnsembleAppConfig;
   env: EnsembleEnvConfig;
@@ -23,9 +23,3 @@ interface EnsembleApiResponse {
   headers: Record<string, unknown>;
   progress: number;
 }
-
-export type EnsembleStorage = {
-  set: (key: string, value: unknown) => void;
-  get: (key: string) => unknown;
-  delete: (key: string) => unknown;
-} & { [key: string]: unknown };
