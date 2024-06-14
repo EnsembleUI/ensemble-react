@@ -1,6 +1,8 @@
+import { act, renderHook } from "@testing-library/react";
 import { evaluate } from "../evaluate/evaluate";
-import { createStorageApi } from "../hooks";
+import { storageAtom, useEnsembleStorage } from "../hooks";
 import { ensembleStore, screenAtom } from "../state";
+import { useAtomValue } from "jotai";
 
 const TEST_SCREEN_CONTEXT = {
   widgets: {
@@ -34,38 +36,54 @@ return test.value.concat(bar)
 });
 
 test("sets values in storage", () => {
-  const value = ensembleStore.get(screenAtom);
-  const store: Record<string, unknown> = {};
+  const initialValue = ensembleStore.get(screenAtom);
 
-  evaluate(
-    value,
-    `
+  // storage hook
+  const { result: storageHookResult } = renderHook(() => useEnsembleStorage());
+  const storageStore = storageHookResult.current as { [key: string]: unknown };
+
+  act(() => {
+    evaluate(
+      initialValue,
+      `
     const value = "foo" + "bar"
     ensemble.storage.set("value", value)
     `,
-    {
-      ensemble: { storage: createStorageApi(store) },
-    },
+      {
+        ensemble: { storage: storageStore },
+      },
+    );
+  });
+
+  // storage value
+  const { result: updatedStorageValue } = renderHook(() =>
+    useAtomValue(storageAtom),
   );
 
-  expect(store.value).toEqual("foobar");
+  expect(updatedStorageValue.current.value).toEqual("foobar");
 });
 
 test("reads back values from storage", () => {
-  const value = ensembleStore.get(screenAtom);
-  const store: Record<string, unknown> = {};
+  const initialValue = ensembleStore.get(screenAtom);
 
-  const result = evaluate(
-    value,
-    `
+  // storage hook
+  const { result: storageHookResult } = renderHook(() => useEnsembleStorage());
+  const storageStore = storageHookResult.current as { [key: string]: unknown };
+
+  let response = "";
+  act(() => {
+    response = evaluate(
+      initialValue,
+      `
     const value = "foo" + "baz"
     ensemble.storage.set("value", value)
     return ensemble.storage.get("value")
     `,
-    {
-      ensemble: { storage: createStorageApi(store) },
-    },
-  );
+      {
+        ensemble: { storage: storageStore },
+      },
+    );
+  });
 
-  expect(result).toEqual("foobaz");
+  expect(response).toEqual("foobaz");
 });
