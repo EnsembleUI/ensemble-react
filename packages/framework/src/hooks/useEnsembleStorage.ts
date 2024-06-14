@@ -32,6 +32,14 @@ export const useEnsembleStorage = (): EnsembleStorage &
       get: (key: string): unknown => {
         return storage[key];
       },
+      delete: (key: string): unknown => {
+        const oldVal = storage[key];
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+        delete storage[key];
+        setStorage(clone(storage));
+
+        return oldVal;
+      },
     }),
     [setStorage, storage],
   );
