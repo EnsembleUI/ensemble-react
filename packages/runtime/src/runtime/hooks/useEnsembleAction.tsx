@@ -724,20 +724,18 @@ export const useDispatchEvent: EnsembleActionHook<DispatchEventAction> = (
   const eventData = (action ? action[eventName] : {}) as {
     [key: string]: unknown;
   };
-  const eventScopre = useCustomEventScope();
+  const eventScope = useCustomEventScope();
   const evaluatedInputs = useEvaluate(eventData, { context });
 
-  const events = get(eventScopre, eventName) as {
+  const events = get(eventScope, eventName) as {
     [key: string]: unknown;
   };
 
-  const eventActions = Object.keys(events || {}).map((customAction) => ({
-    [customAction]: events[customAction],
-  }));
-
   // Use a separate hook call for each event action
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const ensembleActions = eventActions.map((event) => useEnsembleAction(event));
+  const ensembleActions = Object.keys(events || {}).map((customAction) =>
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useEnsembleAction({ [customAction]: events[customAction] }),
+  );
 
   const callback = useCallback((args: unknown): void => {
     setContext(args);

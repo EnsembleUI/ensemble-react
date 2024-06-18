@@ -16,7 +16,7 @@ import { useEnsembleAction } from "./hooks/useEnsembleAction";
 
 export interface CustomWidgetProps {
   inputs: { [key: string]: unknown };
-  events: { [key: string]: EnsembleAction };
+  events: { [key: string]: unknown };
 }
 
 export const createCustomWidget = (
