@@ -1,4 +1,5 @@
 import { Modal } from "antd";
+import { Outlet } from "react-router-dom";
 import type { PropsWithChildren } from "react";
 import {
   createContext,
@@ -11,9 +12,9 @@ import { createPortal } from "react-dom";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
 import { CloseOutlined } from "@ant-design/icons";
-import { getComponentStyles } from "../shared/styles";
 import { useEvaluate } from "@ensembleui/react-framework";
 import { isEmpty, isString, omit, pick } from "lodash-es";
+import { getComponentStyles } from "../shared/styles";
 
 interface ModalProps {
   title?: string | React.ReactNode;
@@ -60,7 +61,7 @@ interface ModalDimensions {
   height: number;
 }
 
-export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
+export const ModalWrapper: React.FC<PropsWithChildren> = () => {
   const [modalState, setModalState] = useState<ModalState[]>([]);
   const [modalDimensions, setModalDimensions] = useState<ModalDimensions[]>([]);
   const [isFullScreen, setIsFullScreen] = useState<boolean[]>([]);
@@ -276,7 +277,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
         closeAllModals,
       }}
     >
-      {children}
+      <Outlet />
 
       {modalState.map((modal, index) => {
         if (!modal.visible) {

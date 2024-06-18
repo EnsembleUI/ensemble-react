@@ -15,6 +15,7 @@ import { ThemeProvider } from "./ThemeProvider";
 import { EnsembleEntry } from "./runtime/entry";
 import { EnsembleScreen } from "./runtime/screen";
 import { ErrorPage } from "./runtime/error";
+import { ModalWrapper } from "./runtime/modal";
 // Register built in widgets;
 import "./widgets";
 import { WidgetRegistry } from "./registry";
@@ -80,25 +81,31 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
         ? createBrowserRouter(
             [
               {
-                path: "/",
-                element: (
-                  <EnsembleEntry
-                    entry={app.home}
-                    screen={app.screens.find(
-                      (screen) => Boolean(screenId) && screen.id === screenId,
-                    )}
-                  />
-                ),
-                errorElement: <ErrorPage />,
-                children: app.screens.map((screen) => {
-                  const screenPath = screen.name.toLowerCase();
-                  return {
-                    path: screen.path ?? `${screenPath}`,
+                element: <ModalWrapper />,
+                children: [
+                  {
+                    path: "/",
                     element: (
-                      <EnsembleScreen key={screenPath} screen={screen} />
+                      <EnsembleEntry
+                        entry={app.home}
+                        screen={app.screens.find(
+                          (screen) =>
+                            Boolean(screenId) && screen.id === screenId,
+                        )}
+                      />
                     ),
-                  };
-                }),
+                    errorElement: <ErrorPage />,
+                    children: app.screens.map((screen) => {
+                      const screenPath = screen.name.toLowerCase();
+                      return {
+                        path: screen.path ?? `${screenPath}`,
+                        element: (
+                          <EnsembleScreen key={screenPath} screen={screen} />
+                        ),
+                      };
+                    }),
+                  },
+                ],
               },
             ],
             { basename: path },

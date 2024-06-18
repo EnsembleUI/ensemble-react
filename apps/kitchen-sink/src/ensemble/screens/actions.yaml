@@ -1,4 +1,7 @@
 View:
+  styles:
+    scrollableView: true
+
   header:
     title:
       Header:

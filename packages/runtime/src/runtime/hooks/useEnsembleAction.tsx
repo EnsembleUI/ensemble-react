@@ -441,6 +441,7 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
   const { openModal } = useContext(ModalContext) || {};
   const ensembleAction = useEnsembleAction(action?.onDialogDismiss);
   const customScope = useCustomScope();
+  const screenContext = useScreenContext();
 
   const onDismissCallback = useCallback(() => {
     if (!ensembleAction) {
@@ -474,6 +475,7 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
           value={merge(
             {},
             customScope,
+            screenContext,
             isObject(args) ? (args as CustomScope) : undefined,
           )}
         >
@@ -484,11 +486,19 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
         merge(
           {},
           customScope,
+          screenContext,
           isObject(args) ? (args as CustomScope) : undefined,
         ),
       );
     },
-    [widget, onDismissCallback, action.options, openModal, customScope],
+    [
+      widget,
+      onDismissCallback,
+      action.options,
+      openModal,
+      customScope,
+      screenContext,
+    ],
   );
 
   return { callback };
