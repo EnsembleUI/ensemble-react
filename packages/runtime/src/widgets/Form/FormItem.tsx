@@ -39,11 +39,9 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
           </label>
         ) : null
       }
-      name={formInstance ? values?.label ?? values?.id : undefined}
+      messageVariables={{ label: values?.label ?? values?.id ?? "" }}
+      name={formInstance ? values?.id ?? values?.label : undefined}
       rules={rules?.concat(requiredRule) || [requiredRule]}
-      validateTrigger={
-        values?.validateOnUserInteraction === true ? "onChange" : "onSubmit"
-      }
       style={{
         margin: "0px",
         ...(values?.styles?.visible === false
@@ -51,6 +49,9 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
           : undefined),
         ...formItemStyles,
       }}
+      validateTrigger={
+        values?.validateOnUserInteraction === true ? "onChange" : "onSubmit"
+      }
       {...rest}
     >
       {props.children}
