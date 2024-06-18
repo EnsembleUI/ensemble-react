@@ -1,8 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { evaluate } from "../evaluate/evaluate";
-import { storageAtom, useEnsembleStorage } from "../hooks";
+import { useEnsembleStorage } from "../hooks";
 import { ensembleStore, screenAtom } from "../state";
-import { useAtomValue } from "jotai";
 
 const TEST_SCREEN_CONTEXT = {
   widgets: {
@@ -55,12 +54,7 @@ test("sets values in storage", () => {
     );
   });
 
-  // storage value
-  const { result: updatedStorageValue } = renderHook(() =>
-    useAtomValue(storageAtom),
-  );
-
-  expect(updatedStorageValue.current.value).toEqual("foobar");
+  expect(storageHookResult.current.value).toEqual("foobar");
 });
 
 test("reads back values from storage", () => {

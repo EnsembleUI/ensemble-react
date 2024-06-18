@@ -3,7 +3,7 @@ import { renderHook } from "@testing-library/react";
 import { getDefaultStore } from "jotai";
 import { useRegisterBindings } from "../useRegisterBindings";
 import { screenAtom } from "../../state";
-import { storageAtom } from "../useEnsembleStorage";
+import { screenStorageAtom } from "../useEnsembleStorage";
 
 const mockInvokable = {
   id: "test",
@@ -42,7 +42,7 @@ test("instantiates state from props", () => {
 });
 
 test("evaluates nested bindings", () => {
-  store.set(storageAtom, {
+  store.set(screenStorageAtom, {
     paddingValue: 2,
   });
   store.set(screenAtom, {

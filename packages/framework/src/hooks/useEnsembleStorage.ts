@@ -7,7 +7,7 @@ export interface EnsembleStorage {
   [key: string]: unknown;
 }
 
-export const storageAtom = atomWithSessionStorage<EnsembleStorage>(
+export const screenStorageAtom = atomWithSessionStorage<EnsembleStorage>(
   "ensemble.storage",
   {},
 );
@@ -18,7 +18,7 @@ interface EnsembleStorageBuffer {
 
 export const useEnsembleStorage = (): EnsembleStorage &
   EnsembleStorageBuffer => {
-  const [storage, setStorage] = useAtom(storageAtom);
+  const [storage, setStorage] = useAtom(screenStorageAtom);
 
   const storageBuffer = useMemo<EnsembleStorageBuffer>(
     () => ({

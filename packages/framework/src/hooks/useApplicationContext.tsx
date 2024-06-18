@@ -11,7 +11,7 @@ import {
 } from "../state";
 import type { EnsembleAppModel } from "../shared/models";
 import { useEnsembleUser } from "./useEnsembleUser";
-import { storageAtom, useEnsembleStorage } from "./useEnsembleStorage";
+import { screenStorageAtom, useEnsembleStorage } from "./useEnsembleStorage";
 
 interface ApplicationContextProps {
   app: EnsembleAppModel;
@@ -71,7 +71,7 @@ const HydrateAtoms: React.FC<
     [appAtom, appContext],
     [themeAtom, activeTheme],
     [userAtom, appContext.user],
-    [storageAtom, appContext.storage],
+    [screenStorageAtom, appContext.storage],
   ]);
 
   return <>{children}</>;
