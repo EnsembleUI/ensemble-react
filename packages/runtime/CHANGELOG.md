@@ -1,5 +1,15 @@
 # @ensembleui/react-runtime
 
+## 0.1.59
+
+### Patch Changes
+
+- 8fdb0da: Fix tab bar children widget rendering
+- ce026a1: Added support for custom event support
+- Updated dependencies [493afdf]
+- Updated dependencies [ce026a1]
+  - @ensembleui/react-framework@0.1.43
+
 ## 0.1.58
 
 ### Patch Changes
