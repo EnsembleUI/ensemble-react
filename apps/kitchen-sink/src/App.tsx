@@ -13,6 +13,7 @@ import ProductYAML from "./ensemble/screens/product.yaml";
 // Widgets
 import HeaderWidgetYAML from "./ensemble/widgets/Header.yaml";
 import StyledTextWidgetYAML from "./ensemble/widgets/StyledText.yaml";
+import DispatchButtonWidgetYAML from "./ensemble/widgets/Button.yaml";
 // Scripts
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
@@ -65,6 +66,11 @@ const testApp: ApplicationDTO = {
       id: "StyledText",
       name: "StyledText",
       content: String(StyledTextWidgetYAML),
+    },
+    {
+      id: "DispatchButton",
+      name: "DispatchButton",
+      content: String(DispatchButtonWidgetYAML),
     },
   ],
   screens: [

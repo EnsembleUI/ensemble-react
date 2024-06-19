@@ -1,5 +1,6 @@
 import {
   CustomScopeProvider,
+  CustomEventScopeProvider,
   error,
   useRegisterBindings,
 } from "@ensembleui/react-framework";
@@ -15,6 +16,7 @@ import { useEnsembleAction } from "./hooks/useEnsembleAction";
 
 export interface CustomWidgetProps {
   inputs: { [key: string]: unknown };
+  events: { [key: string]: unknown };
 }
 
 export const createCustomWidget = (
@@ -28,7 +30,7 @@ export const createCustomWidget = (
     {} as { [key: string]: undefined },
   );
 
-  const CustomWidget: React.FC<CustomWidgetProps> = ({ inputs }) => {
+  const CustomWidget: React.FC<CustomWidgetProps> = ({ inputs, events }) => {
     const { values } = useRegisterBindings<{ [key: string]: unknown }>({
       ...tempVar,
       ...inputs,
@@ -36,11 +38,13 @@ export const createCustomWidget = (
     });
 
     return (
-      <CustomScopeProvider value={values ?? inputs}>
-        <OnLoadAction action={widget?.onLoad} context={values ?? inputs}>
-          {EnsembleRuntime.render([widget.body])}
-        </OnLoadAction>
-      </CustomScopeProvider>
+      <CustomEventScopeProvider value={events}>
+        <CustomScopeProvider value={values ?? inputs}>
+          <OnLoadAction action={widget?.onLoad} context={values ?? inputs}>
+            {EnsembleRuntime.render([widget.body])}
+          </OnLoadAction>
+        </CustomScopeProvider>
+      </CustomEventScopeProvider>
     );
   };
   return CustomWidget;

@@ -46,6 +46,13 @@ View:
                 onResponse:
                   executeCode: console.log('onresponse', response)
 
+        - DispatchButton:
+            events:
+              onFormSubmit:
+                executeCode: |
+                  console.log('onresponse', data)
+                  console.log('onresponse2', response)
+
         - Text:
             styles:
               names: heading-1

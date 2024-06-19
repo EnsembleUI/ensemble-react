@@ -12,6 +12,7 @@ import {
   useEnsembleUser,
   useEvaluate,
   useCustomScope,
+  useCustomEventScope,
   CustomScopeProvider,
   CustomThemeContext,
 } from "@ensembleui/react-framework";
@@ -32,6 +33,7 @@ import type {
   DisconnectSocketAction,
   SendSocketMessageAction,
   EnsembleActionHookResult,
+  DispatchEventAction,
   ExecuteConditionalActionAction,
 } from "@ensembleui/react-framework";
 import {
@@ -44,6 +46,7 @@ import {
   mapKeys,
   cloneDeep,
   isEqual,
+  keys,
   last,
   toNumber,
 } from "lodash-es";
@@ -712,6 +715,51 @@ export const useActionGroup: EnsembleActionHook<ExecuteActionGroupAction> = (
   return { callback };
 };
 
+export const useDispatchEvent: EnsembleActionHook<DispatchEventAction> = (
+  action,
+) => {
+  const eventName = keys(action)[0];
+  const [isComplete, setIsComplete] = useState<boolean>();
+  const [context, setContext] = useState<unknown>();
+  const eventData = (action ? action[eventName] : {}) as {
+    [key: string]: unknown;
+  };
+  const eventScope = useCustomEventScope();
+  const evaluatedInputs = useEvaluate(eventData, { context });
+
+  const events = get(eventScope, eventName) as {
+    [key: string]: unknown;
+  };
+
+  // Use a separate hook call for each event action
+  const ensembleActions = Object.keys(events || {}).map((customAction) =>
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useEnsembleAction({ [customAction]: events[customAction] }),
+  );
+
+  const callback = useCallback((args: unknown): void => {
+    setContext(args);
+    setIsComplete(false);
+  }, []);
+
+  useEffect(() => {
+    if (isComplete !== false) {
+      return;
+    }
+
+    ensembleActions.forEach((act) =>
+      act?.callback({
+        ...evaluatedInputs,
+        ...(context as { [key: string]: unknown }),
+      }),
+    );
+
+    setIsComplete(true);
+  }, [ensembleActions, evaluatedInputs, isComplete]);
+
+  return { callback };
+};
+
 export const useConditionalAction: EnsembleActionHook<
   ExecuteConditionalActionAction
 > = (action) => {
@@ -871,6 +919,10 @@ export const useEnsembleAction = (
 
   if ("disconnectSocket" in action) {
     return useDisconnectSocket(action.disconnectSocket);
+  }
+
+  if ("dispatchEvent" in action) {
+    return useDispatchEvent(action.dispatchEvent);
   }
 
   if ("executeConditionalAction" in action) {

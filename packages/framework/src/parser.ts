@@ -29,6 +29,7 @@ import type {
   CustomWidgetModel,
   EnsembleThemeModel,
   EnsembleSocketModel,
+  EnsembleCustomEventModel,
 } from "./shared/models";
 import type { ApplicationDTO, EnsembleConfigYAML } from "./shared/dto";
 import { findExpressions, type EnsembleAction } from "./shared";
@@ -65,6 +66,11 @@ export const EnsembleParser = {
       (widget) => widget.apis ?? [],
     );
 
+    const widgetCustomEvents: EnsembleCustomEventModel[] = flatMap(
+      customWidgets,
+      (widget) => widget.events ?? [],
+    );
+
     const screens = app.screens.map(({ id, name, content: yaml, ...rest }) => {
       const screen = parse(yaml) as EnsembleScreenYAML;
       const viewGroup = get(screen, "ViewGroup");
@@ -76,6 +82,7 @@ export const EnsembleParser = {
       return {
         ...pageScreen,
         apis: concat(pageScreen.apis ?? [], widgetApis),
+        events: widgetCustomEvents,
         ...rest,
       };
     });
@@ -224,12 +231,15 @@ export const EnsembleParser = {
 
     const body = unwrapWidget(rawBody);
     const apis = unwrapApiModels(yaml);
+    const events = unwrapCustomEventsModels(widget);
+
     return {
       name,
       onLoad: get(widget, "onLoad"),
       inputs: get(widget, "inputs") ?? [],
       body,
       apis,
+      events,
     };
   },
 
@@ -299,6 +309,30 @@ const unwrapSocketModels = (screen: unknown): EnsembleSocketModel[] => {
     });
   }
 
+  return [];
+};
+
+const unwrapCustomEventsModels = (
+  widget: unknown,
+): EnsembleCustomEventModel[] => {
+  const eventNode = get(widget, "events");
+  if (isArray(eventNode)) {
+    return map<object, EnsembleCustomEventModel>(eventNode, (value) => {
+      const name = head(Object.keys(value));
+      return {
+        name,
+        ...value,
+      } as EnsembleCustomEventModel;
+    });
+  }
+  if (isObject(eventNode)) {
+    return map(Object.entries<object>(eventNode), ([name, value]) => {
+      return {
+        name,
+        ...value,
+      } as EnsembleCustomEventModel;
+    });
+  }
   return [];
 };
 
