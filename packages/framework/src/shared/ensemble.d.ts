@@ -24,8 +24,8 @@ interface EnsembleApiResponse {
   progress: number;
 }
 
-export type EnsembleStorage = {
+export interface EnsembleStorage {
   set: (key: string, value: unknown) => void;
   get: (key: string) => unknown;
   delete: (key: string) => unknown;
-} & { [key: string]: unknown };
+}
