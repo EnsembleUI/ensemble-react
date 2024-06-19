@@ -7,7 +7,7 @@ import React, {
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import type { Expression, EnsembleWidget } from "@ensembleui/react-framework";
 import { Tabs, ConfigProvider } from "antd";
-import { isNumber } from "lodash-es";
+import { isNumber, zip } from "lodash-es";
 import type {
   EnsembleWidgetProps,
   EnsembleWidgetStyles,
@@ -62,9 +62,23 @@ export interface TabBarProps extends EnsembleWidgetProps<TabBarStyles> {
 
 export const TabBar: React.FC<TabBarProps> = (props) => {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
-  const { values } = useRegisterBindings({ ...props, widgetName }, props.id, {
-    setSelectedIndex,
-  });
+  // need to destructure widget template from other bindings before combining again
+  const bindings = {
+    ...props,
+    items: props.items.map(({ label, icon }) => ({
+      label,
+      icon,
+    })),
+  };
+  const { values } = useRegisterBindings(
+    { ...bindings, widgetName },
+    props.id,
+    {
+      setSelectedIndex,
+    },
+  );
+
+  const tabsWithWidgets = zip(values?.items ?? [], props.items);
 
   useEffect(() => {
     if (values?.selectedIndex && isNumber(values.selectedIndex)) {
@@ -206,12 +220,12 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
         onChange={handleSelectedTabChange}
         style={{ ...values?.styles }}
       >
-        {values?.items.map((tabItem) => (
+        {tabsWithWidgets.map(([tabItem, widget]) => (
           <TabPane
-            key={tabItem.label}
-            tab={renderLabel(tabItem.label, tabItem.icon)}
+            key={tabItem?.label}
+            tab={renderLabel(tabItem?.label ?? "", tabItem?.icon)}
           >
-            {tabItem.widget ? EnsembleRuntime.render([tabItem.widget]) : null}
+            {widget?.widget ? EnsembleRuntime.render([widget.widget]) : null}
           </TabPane>
         ))}
       </Tabs>
