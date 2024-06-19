@@ -1,5 +1,14 @@
 # @ensembleui/react-runtime
 
+## 0.1.58
+
+### Patch Changes
+
+- e00ed50: fix form fields validation error message with field label
+- 768d07f: Added support for scrollable properties on view
+- 60bd855: Fix widget input intialized when no inputs have been passed
+- 9ad4c4e: Fix tab bar selected index change with expressions
+
 ## 0.1.57
 
 ### Patch Changes
