@@ -9,8 +9,16 @@ Widget:
     Button:
       label: dispatch event
       onTap:
-        dispatchEvent:
-          onFormSubmit:
-            data:
-              name: Sagar
-              email: sagardspeed2@gmail.com
+        invokeAPI:
+          name: getDummyProducts
+          onResponse:
+            dispatchEvent:
+              onFormSubmit:
+                data:
+                  name: Sagar
+                  email: sagardspeed2@gmail.com
+
+API:
+  getDummyProducts:
+    method: GET
+    uri: https://dummyjson.com/products

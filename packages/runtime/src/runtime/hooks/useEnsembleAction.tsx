@@ -747,7 +747,12 @@ export const useDispatchEvent: EnsembleActionHook<DispatchEventAction> = (
       return;
     }
 
-    ensembleActions.forEach((act) => act?.callback(evaluatedInputs));
+    ensembleActions.forEach((act) =>
+      act?.callback({
+        ...evaluatedInputs,
+        ...(context as { [key: string]: unknown }),
+      }),
+    );
 
     setIsComplete(true);
   }, [ensembleActions, evaluatedInputs, isComplete]);
