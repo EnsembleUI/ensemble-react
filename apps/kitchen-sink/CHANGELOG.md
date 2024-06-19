@@ -1,5 +1,16 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.50
+
+### Patch Changes
+
+- 9ad4c4e: Fix tab bar selected index change with expressions
+- Updated dependencies [e00ed50]
+- Updated dependencies [768d07f]
+- Updated dependencies [60bd855]
+- Updated dependencies [9ad4c4e]
+  - @ensembleui/react-runtime@0.1.58
+
 ## 0.0.49
 
 ### Patch Changes
