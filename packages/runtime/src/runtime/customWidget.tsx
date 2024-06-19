@@ -22,8 +22,17 @@ export interface CustomWidgetProps {
 export const createCustomWidget = (
   widget: CustomWidgetModel,
 ): React.FC<CustomWidgetProps> => {
+  const tempVar = widget.inputs.reduce(
+    (acc, item: string) => {
+      acc[item] = undefined;
+      return acc;
+    },
+    {} as { [key: string]: undefined },
+  );
+
   const CustomWidget: React.FC<CustomWidgetProps> = ({ inputs, events }) => {
     const { values } = useRegisterBindings<{ [key: string]: unknown }>({
+      ...tempVar,
       ...inputs,
       widgetName: widget.name,
     });

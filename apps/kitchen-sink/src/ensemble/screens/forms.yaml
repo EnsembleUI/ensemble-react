@@ -100,6 +100,7 @@ View:
                     - TextInput:
                         id: minMaxTextInput
                         validator:
+                          required: true
                           minLength: 4
                           maxLength: 10
                         label: Text input with min and max length

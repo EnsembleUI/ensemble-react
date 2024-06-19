@@ -5,6 +5,8 @@ View:
         ensemble.storage.set('activeIndex',3);
         ensemble.storage.set('loaderStat', false);
         ensemble.storage.set("skip", 10)
+        ensemble.storage.set("iconSize", 40)
+        ensemble.storage.set("iconName", "Abc")
 
       onComplete:
         invokeApi:
@@ -34,6 +36,41 @@ View:
             name: ArrowBack
             onTap:
               navigateBack:
+        - Row:
+            gap: 4px
+            children:
+              - Avatar:
+                  name: null
+              - Avatar:
+                  name: "    "
+              - Avatar:
+                  icon:
+                    name: ${ensemble.storage.get('iconName')}
+                    size: ${ensemble.storage.get('iconSize')}
+                    color: red
+              - Avatar:
+                  icon:
+                    name: Person
+                  menu:
+                    - label: ${ensemble.storage.get('iconName')}
+                      icon:
+                        name: ${ensemble.storage.get('iconName')}
+                      onTap:
+                        executeCode: |
+                          console.log("Option 1")
+                          console.log(label, icon)
+                    - label: "Option 2"
+                      icon:
+                        name: Circle
+                      onTap:
+                        executeCode: console.log("Option 2")
+              - Avatar:
+                  name: "  Dr.   cabin2"
+                  styles:
+                    backgroundColor: darkgray
+                    color: yellow
+              - Avatar:
+                  name: "  4Dr.  cabin4  i  "
         - Lottie:
             id: MyLottie
             source: https://lottie.host/3568da34-6083-42fc-a254-74d9c1e15b2f/wcVmO2igxm.json
