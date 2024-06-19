@@ -1,5 +1,17 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.51
+
+### Patch Changes
+
+- 493afdf: revert ensemble storage property access without get method
+- ce026a1: Added support for custom event support
+- Updated dependencies [8fdb0da]
+- Updated dependencies [493afdf]
+- Updated dependencies [ce026a1]
+  - @ensembleui/react-runtime@0.1.59
+  - @ensembleui/react-framework@0.1.43
+
 ## 0.0.50
 
 ### Patch Changes

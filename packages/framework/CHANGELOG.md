@@ -1,5 +1,12 @@
 # @ensembleui/react-framework
 
+## 0.1.43
+
+### Patch Changes
+
+- 493afdf: revert ensemble storage property access without get method
+- ce026a1: Added support for custom event support
+
 ## 0.1.42
 
 ### Patch Changes
