@@ -40,49 +40,53 @@ export const useNavigateModalScreen: EnsembleActionHook<
     return { matchingScreen: screen };
   }, [screenContext, screenName]);
 
-  const callback = useCallback(() => {
-    if (!matchingScreen) {
-      return;
-    }
+  const callback = useCallback(
+    (args: unknown) => {
+      if (!matchingScreen) {
+        return;
+      }
 
-    const inputs =
-      !isString(action) && action?.inputs ? cloneDeep(action.inputs) : {};
-    if (screenContext) {
-      const expressionMap: string[][] = [];
-      findExpressions(inputs, [], expressionMap);
-      expressionMap.forEach(([path, value]) => {
-        const result = evaluate(screenContext, value, {
-          ensemble: { storage },
-          ...customScope,
+      const inputs =
+        !isString(action) && action?.inputs ? cloneDeep(action.inputs) : {};
+      if (screenContext) {
+        const expressionMap: string[][] = [];
+        findExpressions(inputs, [], expressionMap);
+        expressionMap.forEach(([path, value]) => {
+          const result = evaluate(screenContext, value, {
+            ensemble: { storage },
+            ...customScope,
+            ...(args as { [key: string]: unknown }),
+          });
+          set(inputs, path, result);
         });
-        set(inputs, path, result);
-      });
-    }
+      }
 
-    // modal options
-    const modalOptions = {
-      maskClosable: true,
-      hideCloseIcon: true,
-      hideFullScreenIcon: true,
-      padding: "12px",
-    };
-    if (isObject(action)) {
-      merge(modalOptions, action, { ...action.styles }, { title });
-    }
+      // modal options
+      const modalOptions = {
+        maskClosable: true,
+        hideCloseIcon: true,
+        hideFullScreenIcon: true,
+        padding: "12px",
+      };
+      if (isObject(action)) {
+        merge(modalOptions, action, { ...action.styles }, { title });
+      }
 
-    openModal?.(
-      <EnsembleScreen inputs={inputs} screen={matchingScreen} />,
-      modalOptions,
-    );
-  }, [
-    matchingScreen,
-    action,
-    screenContext,
-    openModal,
-    storage,
-    customScope,
-    title,
-  ]);
+      openModal?.(
+        <EnsembleScreen inputs={inputs} screen={matchingScreen} />,
+        modalOptions,
+      );
+    },
+    [
+      matchingScreen,
+      action,
+      screenContext,
+      openModal,
+      storage,
+      customScope,
+      title,
+    ],
+  );
 
   return { callback };
 };
