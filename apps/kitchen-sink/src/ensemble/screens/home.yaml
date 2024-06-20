@@ -4,6 +4,8 @@ View:
       ensemble.storage.set('yyy' , 'page')
       ensemble.storage.set('zzz' , 'button')
       ensemble.storage.set('aaa' , '1')
+      console.log(ensemble.storage.yyy)
+      console.log(ensemble.storage.get('yyy'))
   header:
     title:
       Header:
@@ -20,7 +22,7 @@ View:
             styles:
               names: heading-1
               color: ${colors.primary['900']}
-            text: The Kitchen Sink
+            text: ${ensemble.storage.get('yyy')}
         - Markdown:
             text: This application is built with Ensemble and serves as a guide for how to implement common UI patterns with Ensemble React.
         - Button:

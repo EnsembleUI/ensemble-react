@@ -20,7 +20,11 @@ import type { Response, WebSocketConnection } from "../data";
 import type { EnsembleScreenModel } from "../shared/models";
 import { useApplicationContext } from "./useApplicationContext";
 import { CustomThemeContext } from "./useThemeContext";
-import { screenStorageAtom } from "./useEnsembleStorage";
+import {
+  screenStorageAtom,
+  useEnsembleStorage,
+  type EnsembleStorage,
+} from "./useEnsembleStorage";
 
 interface ScreenContextProps {
   screen: EnsembleScreenModel;
@@ -36,6 +40,7 @@ export const ScreenContextProvider: React.FC<ScreenContextProviderProps> = ({
 }) => {
   const [location] = useAtom(locationAtom);
   const appContext = useApplicationContext();
+  const storage = useEnsembleStorage();
 
   if (!appContext) {
     throw new Error("Missing application context for screen!");
@@ -59,6 +64,7 @@ export const ScreenContextProvider: React.FC<ScreenContextProviderProps> = ({
             context,
           ) as ScreenContextDefinition
         }
+        storage={storage}
       >
         {children}
       </HydrateAtoms>
@@ -70,8 +76,9 @@ const HydrateAtoms: React.FC<
   React.PropsWithChildren<{
     appContext: ApplicationContextDefinition;
     screenContext: ScreenContextDefinition;
+    storage: EnsembleStorage;
   }>
-> = ({ appContext, screenContext, children }) => {
+> = ({ appContext, screenContext, storage, children }) => {
   const themeScope = useContext(CustomThemeContext);
 
   // initialising on state with prop on render here
@@ -81,7 +88,7 @@ const HydrateAtoms: React.FC<
       [appAtom, appContext],
       [themeAtom, themeScope.theme],
       [userAtom, appContext.user],
-      [screenStorageAtom, appContext.storage],
+      [screenStorageAtom, storage],
     ],
     {
       dangerouslyForceHydrate: true,
