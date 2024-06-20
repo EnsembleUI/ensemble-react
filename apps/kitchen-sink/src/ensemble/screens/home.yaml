@@ -4,6 +4,7 @@ View:
       ensemble.storage.set('yyy' , 'page')
       ensemble.storage.set('zzz' , 'button')
       ensemble.storage.set('aaa' , '1')
+
   header:
     title:
       Header:
@@ -20,7 +21,7 @@ View:
             styles:
               names: heading-1
               color: ${colors.primary['900']}
-            text: The Kitchen Sink
+            text: r@kitchenSink
         - Markdown:
             text: This application is built with Ensemble and serves as a guide for how to implement common UI patterns with Ensemble React.
         - Button:
@@ -52,6 +53,18 @@ View:
                 executeCode: |
                   console.log('onresponse', data)
                   console.log('onresponse2', response)
+
+        - Button:
+            label: Change language to हिंदी
+            onTap:
+              executeCode: |
+                ensemble.setLocale({languageCode: 'hi'})
+
+        - Button:
+            label: Change language to english
+            onTap:
+              executeCode: |
+                ensemble.setLocale({languageCode: 'en'})
 
         - Text:
             styles:

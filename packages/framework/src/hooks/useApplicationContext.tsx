@@ -1,6 +1,7 @@
 import { Provider, useAtomValue } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 import { isEmpty, merge } from "lodash-es";
+import { useTranslation } from "react-i18next";
 import {
   appAtom,
   type ApplicationContextDefinition,
@@ -24,6 +25,12 @@ export const ApplicationContextProvider: React.FC<
   ApplicationContextProviderProps
 > = ({ app, environmentOverrides, children }) => {
   const user = useEnsembleUser();
+  const { i18n } = useTranslation();
+
+  // load all the locales
+  app.locales?.forEach((locale) => {
+    i18n.addResources(locale.name, "translation", locale.resources);
+  });
 
   return (
     <Provider key={app.id}>

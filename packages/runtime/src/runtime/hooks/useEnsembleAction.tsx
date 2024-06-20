@@ -15,6 +15,7 @@ import {
   useCustomEventScope,
   CustomScopeProvider,
   CustomThemeContext,
+  useLocaleScope,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -94,6 +95,10 @@ type UploadStatus =
   | "cancelled"
   | "failed";
 
+interface SetLocaleProps {
+  languageCode: string;
+}
+
 export interface UseExecuteCodeActionOptions {
   context?: { [key: string]: unknown };
 }
@@ -114,6 +119,7 @@ export const useExecuteCode: EnsembleActionHook<
   const user = useEnsembleUser();
   const appContext = useApplicationContext();
   const screenData = useScreenData();
+  const { i18n } = useLocaleScope();
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,
   );
@@ -196,6 +202,8 @@ export const useExecuteCode: EnsembleActionHook<
                 ) => handleMessageSocket(screenData, name, message),
                 disconnectSocket: (name: string) =>
                   handleDisconnectSocket(screenData, name),
+                setLocale: ({ languageCode }: SetLocaleProps) =>
+                  i18n.changeLanguage(languageCode),
               },
             },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
@@ -725,6 +733,7 @@ export const useDispatchEvent: EnsembleActionHook<DispatchEventAction> = (
     [key: string]: unknown;
   };
   const eventScope = useCustomEventScope();
+
   const evaluatedInputs = useEvaluate(eventData, { context });
 
   const events = get(eventScope, eventName) as {

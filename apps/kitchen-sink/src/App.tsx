@@ -26,6 +26,9 @@ import EnsembleConfig from "./ensemble/config.yaml";
 // Theme
 import ThemeYAML from "./ensemble/theme.yaml";
 import DarkThemeYAML from "./ensemble/dark.yaml";
+// Locals
+import EnLocale from "./ensemble/locales/en.yaml";
+import HiLocale from "./ensemble/locales/hi.yaml";
 
 import "./App.css";
 
@@ -42,6 +45,16 @@ const testApp: ApplicationDTO = {
       id: "darkTheme",
       name: "dark",
       content: String(DarkThemeYAML),
+    },
+  ],
+  languages: [
+    {
+      name: "en",
+      content: String(EnLocale),
+    },
+    {
+      name: "hi",
+      content: String(HiLocale),
     },
   ],
   scripts: [

@@ -1,3 +1,5 @@
+import "./i18n";
+
 export * from "./shared";
 export * from "./loader";
 export * from "./serializer";

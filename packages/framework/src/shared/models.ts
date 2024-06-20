@@ -37,6 +37,7 @@ export interface EnsembleAppModel {
   themes?: { [key: string]: EnsembleThemeModel | undefined };
   scripts: EnsembleScriptModel[];
   config?: EnsembleConfigYAML;
+  locales?: EnsembleLocaleModel[];
 }
 
 export interface EnsembleMenuModel {
@@ -132,4 +133,9 @@ export interface EnsembleThemeModel {
 export interface EnsembleScriptModel {
   name: string;
   body: string;
+}
+
+export interface EnsembleLocaleModel {
+  name: string;
+  resources: { [key: string]: unknown };
 }

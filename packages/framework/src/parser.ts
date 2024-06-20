@@ -31,7 +31,11 @@ import type {
   EnsembleSocketModel,
   EnsembleCustomEventModel,
 } from "./shared/models";
-import type { ApplicationDTO, EnsembleConfigYAML } from "./shared/dto";
+import type {
+  ApplicationDTO,
+  EnsembleConfigYAML,
+  LanguageDTO,
+} from "./shared/dto";
 import { findExpressions, type EnsembleAction } from "./shared";
 import { evaluate } from "./evaluate/evaluate";
 import { defaultScreenContext } from "./state";
@@ -123,6 +127,8 @@ export const EnsembleParser = {
       ensembleConfigData = parse(config) as EnsembleConfigYAML;
     }
 
+    const locales = app.languages?.map((locale) => unwrapLocale(locale));
+
     return {
       id: app.id,
       menu,
@@ -133,6 +139,7 @@ export const EnsembleParser = {
       themes,
       scripts,
       config: ensembleConfigData,
+      locales,
     };
   },
 
@@ -447,4 +454,11 @@ const unwrapTheme = (theme?: string): EnsembleThemeModel | undefined => {
   );
 
   return workingTheme;
+};
+
+const unwrapLocale = (locale: LanguageDTO) => {
+  return {
+    name: locale.name,
+    resources: parse(locale.content) as { [key: string]: unknown },
+  };
 };

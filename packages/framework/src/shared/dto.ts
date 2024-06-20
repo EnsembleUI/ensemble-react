@@ -20,6 +20,7 @@ export interface ApplicationDTO extends Omit<EnsembleDocument, "content"> {
   readonly scripts: ScriptDTO[];
   readonly theme?: ThemeDTO;
   readonly themes?: ThemeDTO[];
+  readonly languages?: LanguageDTO[];
   readonly config?: string;
 
   readonly description?: string;
@@ -39,10 +40,15 @@ export interface ThemeDTO {
   readonly content: string;
 }
 
+export interface LanguageDTO {
+  readonly name: string;
+  readonly content: string;
+}
+
 export interface EnsembleEnvironmentDTO {
   googleOAuthId?: string;
 }
 
 export interface EnsembleConfigYAML {
-  environmentVariables?: Record<string, unknown>;
+  environmentVariables?: { [key: string]: unknown };
 }
