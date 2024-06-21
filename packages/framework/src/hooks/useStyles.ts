@@ -59,7 +59,7 @@ export const useStyles = <T extends { [key: string]: unknown }>(
   const styleProperties = useMemo(() => {
     return styleNames && themeContext
       ? resolveStyleNames(
-          [...styleNames.split(" "), widgetName || ""].filter(
+          [widgetName || "", ...styleNames.split(" ")].filter(
             (styleName) => !isEmpty(styleName),
           ),
           themeContext,
