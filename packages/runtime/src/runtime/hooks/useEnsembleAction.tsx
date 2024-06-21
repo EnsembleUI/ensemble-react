@@ -15,7 +15,7 @@ import {
   useCustomEventScope,
   CustomScopeProvider,
   CustomThemeContext,
-  useLocaleScope,
+  useLanguageScope,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -119,7 +119,7 @@ export const useExecuteCode: EnsembleActionHook<
   const user = useEnsembleUser();
   const appContext = useApplicationContext();
   const screenData = useScreenData();
-  const { i18n } = useLocaleScope();
+  const { i18n } = useLanguageScope();
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,
   );

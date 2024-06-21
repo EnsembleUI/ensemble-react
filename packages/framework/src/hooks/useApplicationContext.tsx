@@ -27,9 +27,9 @@ export const ApplicationContextProvider: React.FC<
   const user = useEnsembleUser();
   const { i18n } = useTranslation();
 
-  // load all the locales
-  app.locales?.forEach((locale) => {
-    i18n.addResources(locale.name, "translation", locale.resources);
+  // load all the langauges
+  app.languages?.forEach((langauge) => {
+    i18n.addResources(langauge.languageCode, "translation", langauge.resources);
   });
 
   return (

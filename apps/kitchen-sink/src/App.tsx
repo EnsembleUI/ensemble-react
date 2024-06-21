@@ -49,11 +49,15 @@ const testApp: ApplicationDTO = {
   ],
   languages: [
     {
-      name: "en",
+      name: "English",
+      nativeName: "English",
+      languageCode: "en",
       content: String(EnLocale),
     },
     {
-      name: "hi",
+      name: "Hindi",
+      nativeName: "हिंदी",
+      languageCode: "hi",
       content: String(HiLocale),
     },
   ],

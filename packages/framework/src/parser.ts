@@ -127,7 +127,9 @@ export const EnsembleParser = {
       ensembleConfigData = parse(config) as EnsembleConfigYAML;
     }
 
-    const locales = app.languages?.map((locale) => unwrapLocale(locale));
+    const languages = app.languages?.map((language) =>
+      unwrapLanguage(language),
+    );
 
     return {
       id: app.id,
@@ -139,7 +141,7 @@ export const EnsembleParser = {
       themes,
       scripts,
       config: ensembleConfigData,
-      locales,
+      languages,
     };
   },
 
@@ -456,9 +458,9 @@ const unwrapTheme = (theme?: string): EnsembleThemeModel | undefined => {
   return workingTheme;
 };
 
-const unwrapLocale = (locale: LanguageDTO) => {
+const unwrapLanguage = (language: LanguageDTO) => {
   return {
-    name: locale.name,
-    resources: parse(locale.content) as { [key: string]: unknown },
+    ...language,
+    resources: parse(language.content) as { [key: string]: unknown },
   };
 };

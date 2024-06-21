@@ -42,6 +42,8 @@ export interface ThemeDTO {
 
 export interface LanguageDTO {
   readonly name: string;
+  readonly nativeName: string;
+  readonly languageCode: string;
   readonly content: string;
 }
 

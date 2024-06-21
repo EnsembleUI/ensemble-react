@@ -1,8 +1,8 @@
 import { useTranslation } from "react-i18next";
 
-export interface CustomLocaleScope {
+export interface CustomLanguageScope {
   [key: string]: unknown;
 }
-export const useLocaleScope = () => {
+export const useLanguageScope = () => {
   return useTranslation();
 };

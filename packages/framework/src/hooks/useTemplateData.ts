@@ -4,6 +4,7 @@ import { isString, map, merge } from "lodash-es";
 import { createBindingAtom } from "../evaluate";
 import { isExpression, type Expression } from "../shared/common";
 import { useCustomScope } from "./useCustomScope";
+import { useScreenContext } from "./useScreenContext";
 
 export type TemplateData = object | unknown[] | undefined | null;
 export interface TemplateDataProps {
@@ -29,13 +30,14 @@ export const useTemplateData = ({
   namedData: object[];
 } => {
   const customScope = useCustomScope();
+  const screen = useScreenContext();
   const isDataString = isString(data);
   const dataAtom = useMemo<Atom<TemplateData>>(() => {
     if (!isDataString) {
       return atom(data);
     }
     if (isExpression(data)) {
-      return createBindingAtom(data, merge({}, customScope, context));
+      return createBindingAtom(data, merge({}, screen, customScope, context));
     }
     // Support legacy case where we don't always require curly braces
     return createBindingAtom(

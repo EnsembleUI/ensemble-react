@@ -54,17 +54,21 @@ View:
                   console.log('onresponse', data)
                   console.log('onresponse2', response)
 
-        - Button:
-            label: Change language to हिंदी
-            onTap:
-              executeCode: |
-                ensemble.setLocale({languageCode: 'hi'})
-
-        - Button:
-            label: Change language to english
-            onTap:
-              executeCode: |
-                ensemble.setLocale({languageCode: 'en'})
+        - Dropdown:
+            label: With the label widget
+            hintText: Hint Text
+            item-template:
+              data: ${app.languages}
+              name: language
+              value: ${language.languageCode}
+              template:
+                Text:
+                  text: ${language.name + ` ( `+ language.nativeName +` )`}
+            onItemSelect:
+              executeCode:
+                body: |
+                  ensemble.storage.set('language', selectedValue)
+                  ensemble.setLocale({languageCode: selectedValue})
 
         - Text:
             styles:
