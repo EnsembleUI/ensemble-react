@@ -26,14 +26,47 @@ export const buildEvaluateFn = (
   const globalBlock = screen.model?.global;
   const importedScriptBlock = screen.model?.importedScripts;
 
+  const modifiedJs = modifyJs(Object.fromEntries([...widgets]), js);
+
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
   const jsFunc = new Function(
     ...Object.keys(invokableObj),
-    addScriptBlock(formatJs(js), globalBlock, importedScriptBlock),
+    addScriptBlock(formatJs(modifiedJs), globalBlock, importedScriptBlock),
   );
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return () => jsFunc(...Object.values(invokableObj));
+};
+
+const modifyJs = (
+  invokables: { [key: string]: InvokableMethods | undefined },
+  js?: string,
+): string => {
+  if (!js || isEmpty(js)) {
+    return js || "";
+  }
+
+  // check if the code is assigning a value to a property
+  // eslint-disable-next-line prefer-named-capture-group
+  const assignmentRegex = /(\w+)\.(\w+)\s*=\s*(.*)$/gm; // matches widgetId.setter = value
+  let modifiedCode = js;
+
+  let match;
+  while ((match = assignmentRegex.exec(js))) {
+    const [fullMatch, widgetId, setter, value] = match;
+    const setterName = `set${setter.charAt(0).toUpperCase() + setter.slice(1)}`;
+    const originalSetter = invokables[widgetId]?.[setterName];
+
+    if (originalSetter) {
+      // if a setter function exists, replace the assignment with a function call
+      modifiedCode = modifiedCode.replace(
+        fullMatch,
+        `${widgetId}.${setterName}(${value});`,
+      );
+    }
+  }
+
+  return modifiedCode;
 };
 
 const formatJs = (js?: string): string => {
