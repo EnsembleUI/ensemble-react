@@ -1,5 +1,6 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+import { debug, error } from "./shared";
 
 i18n
   .use(initReactI18next)
@@ -15,10 +16,8 @@ i18n
     },
   })
   .then(() => {
-    // eslint-disable-next-line no-console
-    console.log("i18next initialized successfully");
+    debug("i18next initialized successfully");
   })
-  .catch((error) => {
-    // eslint-disable-next-line no-console
-    console.error("Error initializing i18next:", error);
+  .catch((e) => {
+    error(e);
   });

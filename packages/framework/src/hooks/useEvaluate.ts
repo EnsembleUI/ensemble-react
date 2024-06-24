@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { findExpressions, findTranslationKeys } from "../shared";
 import { createBindingAtom } from "../evaluate";
 import { useCustomScope } from "./useCustomScope";
-import { useScreenContext } from "./useScreenContext";
 
 export const useEvaluate = <T extends Record<string, unknown>>(
   values?: T,
@@ -16,7 +15,6 @@ export const useEvaluate = <T extends Record<string, unknown>>(
   },
 ): T => {
   const customScope = useCustomScope();
-  const screen = useScreenContext();
   const { t: translate } = useTranslation();
 
   const expressions = useMemo(
@@ -33,7 +31,7 @@ export const useEvaluate = <T extends Record<string, unknown>>(
       expressions.map(([name, expr]) => {
         const valueAtom = createBindingAtom(
           expr,
-          merge({}, screen, customScope, options?.context),
+          merge({}, customScope, options?.context),
           options?.debugId,
         );
         return { name, valueAtom };
