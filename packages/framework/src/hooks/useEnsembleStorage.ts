@@ -19,7 +19,6 @@ interface EnsembleStorageBuffer {
 export const useEnsembleStorage = (): EnsembleStorage &
   EnsembleStorageBuffer => {
   const [storage, setStorage] = useAtom(screenStorageAtom);
-
   const storageBuffer = useMemo<EnsembleStorageBuffer>(
     () => ({
       set: (key: string, value: unknown): void => {

@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { type Atom, atom, useAtomValue } from "jotai";
 import { isString, map, merge } from "lodash-es";
+import isEqual from "react-fast-compare";
 import { createBindingAtom } from "../evaluate";
 import { isExpression, type Expression } from "../shared/common";
 import { useCustomScope } from "./useCustomScope";
@@ -28,6 +29,7 @@ export const useTemplateData = ({
   rawData: TemplateData;
   namedData: object[];
 } => {
+  const [namedData, setNamedData] = useState<{ [key: string]: unknown }[]>([]);
   const customScope = useCustomScope();
   const isDataString = isString(data);
   const dataAtom = useMemo<Atom<TemplateData>>(() => {
@@ -44,10 +46,15 @@ export const useTemplateData = ({
     );
   }, [customScope, data, isDataString, context]);
   const rawData = useAtomValue(dataAtom);
-  const namedData = useMemo(
-    () => map(rawData, (value: unknown) => ({ [name]: value })),
-    [name, rawData],
-  );
+
+  useEffect(() => {
+    const tempData = map(rawData, (value: unknown) => ({ [name]: value }));
+    if (isEqual(tempData, namedData)) {
+      return;
+    }
+
+    setNamedData(tempData);
+  }, [name, rawData, namedData]);
 
   return {
     rawData,
