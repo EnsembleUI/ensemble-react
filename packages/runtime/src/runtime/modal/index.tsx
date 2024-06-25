@@ -15,9 +15,10 @@ import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
 import { CloseOutlined } from "@ant-design/icons";
 import { useEvaluate } from "@ensembleui/react-framework";
 import { isEmpty, isString, omit, pick } from "lodash-es";
-import { getComponentStyles } from "../shared/styles";
+import { getComponentStyles } from "../../shared/styles";
+import { getCustomStyles, getFullScreenStyles } from "./utils";
 
-interface ModalProps {
+export interface ModalProps {
   title?: string | React.ReactNode;
   maskClosable?: boolean;
   mask?: boolean;
@@ -61,6 +62,11 @@ interface ModalDimensions {
   width: number;
   height: number;
 }
+
+const iconStyles = {
+  color: "rgba(0, 0, 0, 0.45)",
+  cursor: "pointer",
+};
 
 export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
   const [modalState, setModalState] = useState<ModalState[]>([]);
@@ -191,56 +197,6 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     () => ({ openModal, closeAllModals }),
     [closeAllModals, openModal],
   );
-
-  const getCustomStyles = (options: ModalProps, index: number): string =>
-    `
-      .ant-modal-root .ant-modal-centered .ant-modal {
-        top: unset;
-      }
-      .ensemble-modal-${index} {
-        max-height: 100vh;
-        max-width: 100vw;
-      }
-      .ensemble-modal-${index} > div {
-        height: ${options.height || "auto"};
-      }
-      .ensemble-modal-${index} .ant-modal-content {
-        display: flex;
-        flex-direction: column;
-        ${
-          getComponentStyles(
-            "",
-            omit(options, [
-              "width",
-              "position",
-              "top",
-              "left",
-              "bottom",
-              "right",
-            ]) as React.CSSProperties,
-          ) as string
-        }
-        ${options.showShadow === false ? "box-shadow: none !important;" : ""}
-      }
-      .ensemble-modal-${index} .ant-modal-body {
-        height: 100%;
-        overflow-y: auto;
-      }
-    `;
-
-  const getFullScreenStyles = (index: number): string => `
-    .ensemble-modal-${index} .ant-modal-content {
-      height: 100vh;
-      width: 100vw;
-      margin: 0;
-      inset: 0;
-    }
-  `;
-
-  const iconStyles = {
-    color: "rgba(0, 0, 0, 0.45)",
-    cursor: "pointer",
-  };
 
   const getFullScreenIcon = (index: number): React.ReactNode =>
     isFullScreen[index] ? (
