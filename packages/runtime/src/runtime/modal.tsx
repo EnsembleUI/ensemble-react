@@ -2,8 +2,10 @@ import { Modal } from "antd";
 import type { PropsWithChildren } from "react";
 import {
   createContext,
+  useCallback,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -11,9 +13,9 @@ import { createPortal } from "react-dom";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
 import { CloseOutlined } from "@ant-design/icons";
-import { getComponentStyles } from "../shared/styles";
 import { useEvaluate } from "@ensembleui/react-framework";
 import { isEmpty, isString, omit, pick } from "lodash-es";
+import { getComponentStyles } from "../shared/styles";
 
 interface ModalProps {
   title?: string | React.ReactNode;
@@ -38,7 +40,7 @@ interface ModalContextProps {
     content: React.ReactNode,
     options: ModalProps,
     isDialog?: boolean,
-    context?: Record<string, unknown>,
+    context?: { [key: string]: unknown },
   ) => void;
   closeAllModals: () => void;
 }
@@ -69,11 +71,13 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     content: React.ReactNode;
     options: ModalProps;
     isDialog: boolean;
-    context?: Record<string, unknown>;
+    context?: { [key: string]: unknown };
   }>();
   const [isDialogSet, setIsDialogSet] = useState<boolean>(false);
+  const [shouldCloseAllModals, setShouldCloseAllModals] =
+    useState<boolean>(false);
   const evaluatedOptions = useEvaluate(
-    newModal?.options as Record<string, unknown>,
+    newModal?.options as { [key: string]: unknown },
     {
       context: newModal?.context,
       refreshExpressions: true,
@@ -115,54 +119,78 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     }
   }, [evaluatedOptions, isDialogSet, newModal]);
 
-  const openModal = (
-    content: React.ReactNode,
-    options: ModalProps,
-    isDialog = false,
-    modalContext?: Record<string, unknown>,
-  ): void => {
-    if (!isDialog && modalState.length > 0) {
-      // hide the last modal
-      setModalState((oldModalState) => [
-        ...oldModalState.slice(0, -1),
-        {
-          ...oldModalState[oldModalState.length - 1],
-          visible: false,
-        },
-      ]);
+  const openModal = useCallback(
+    (
+      content: React.ReactNode,
+      options: ModalProps,
+      isDialog = false,
+      modalContext?: { [key: string]: unknown },
+    ): void => {
+      if (!isDialog) {
+        // hide the last modal
+        setModalState((oldModalState) => {
+          if (oldModalState.length === 0) {
+            return oldModalState;
+          }
+          return [
+            ...oldModalState.slice(0, -1),
+            {
+              ...oldModalState[oldModalState.length - 1],
+              visible: false,
+            },
+          ];
+        });
+      }
+
+      setNewModal({
+        content,
+        options: omit(options, [!isString(options.title) ? "title" : ""]),
+        isDialog,
+        context: modalContext,
+      });
+      setIsDialogSet(false);
+    },
+    [],
+  );
+
+  const closeModal = useCallback(
+    (index?: number): void => {
+      if (index !== undefined) {
+        modalState[index].options.onClose?.();
+      }
+
+      setModalState((oldModalState) =>
+        oldModalState.filter((_, i) => i !== index),
+      );
+      setModalDimensions((oldModalDimensions) =>
+        oldModalDimensions.filter((_, i) => i !== index),
+      );
+      setIsFullScreen((oldIsFullScreen) =>
+        oldIsFullScreen.filter((_, i) => i !== index),
+      );
+    },
+    [modalState],
+  );
+
+  useEffect(() => {
+    if (!shouldCloseAllModals) {
+      return;
     }
-
-    setNewModal({
-      content,
-      options: omit(options, [!isString(options.title) ? "title" : ""]),
-      isDialog,
-      context: modalContext,
-    });
-    setIsDialogSet(false);
-  };
-
-  const closeModal = (index?: number): void => {
-    if (index !== undefined) {
-      modalState[index].options.onClose?.();
-    }
-
-    setModalState((oldModalState) =>
-      oldModalState.filter((_, i) => i !== index),
-    );
-    setModalDimensions((oldModalDimensions) =>
-      oldModalDimensions.filter((_, i) => i !== index),
-    );
-    setIsFullScreen((oldIsFullScreen) =>
-      oldIsFullScreen.filter((_, i) => i !== index),
-    );
-  };
-
-  const closeAllModals = (): void => {
     for (let i = modalState.length - 1; i >= 0; i--) {
       if (!modalState[i].isDialog) break;
       else closeModal(i);
     }
-  };
+    setShouldCloseAllModals(false);
+  }, [closeModal, modalState, shouldCloseAllModals]);
+
+  const closeAllModals = useCallback((): void => {
+    setShouldCloseAllModals(true);
+  }, []);
+
+  const modalContext = useMemo(
+    () => ({ openModal, closeAllModals }),
+    [closeAllModals, openModal],
+  );
 
   const getCustomStyles = (options: ModalProps, index: number): string =>
     `
@@ -270,12 +298,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     );
 
   return (
-    <ModalContext.Provider
-      value={{
-        openModal,
-        closeAllModals,
-      }}
-    >
+    <ModalContext.Provider value={modalContext}>
       {children}
 
       {modalState.map((modal, index) => {
@@ -286,7 +309,9 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
         const modalContent = (
           <>
             <style>{getCustomStyles(options, index)}</style>
-            {isFullScreen[index] && <style>{getFullScreenStyles(index)}</style>}
+            {Boolean(isFullScreen[index]) && (
+              <style>{getFullScreenStyles(index)}</style>
+            )}
             <Modal
               centered={!isFullScreen[index]}
               className={`ensemble-modal-${index}`}
