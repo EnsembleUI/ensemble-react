@@ -42,8 +42,8 @@ export const useStyles = <T extends { [key: string]: unknown }>(
 
   const { classStyles: classStylesEval, namedStyles: namedStylesEval } =
     useEvaluate({
-      classStyles: `\${\`${classStyles || ""}\`}`,
-      namedStyles: `\${\`${namedStyles || ""}\`}`,
+      classStyles: classStyles || "",
+      namedStyles: namedStyles || "",
     });
 
   const styleNames = compact(

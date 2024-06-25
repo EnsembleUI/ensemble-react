@@ -10,6 +10,7 @@ View:
 
   styles:
     backgroundColor: ${colors.primary['200']}
+    scrollableView: true
 
   body:
     Column:
@@ -176,6 +177,59 @@ View:
             styles:
               margin: 10px 0px
             id: socketReceivedMessage
+
+        - Text:
+            styles:
+              names: heading-1
+            text: Expression Examples
+
+        - Row:
+            styles:
+              gap: 8
+              margin: 10px 0px
+            children:
+              - Text:
+                  styles:
+                    fontWeight: 900
+                  text: Simple Expression
+              - Text:
+                  text: ${ensemble.storage.get('yyy')}
+
+        - Row:
+            styles:
+              gap: 8
+              margin: 10px 0px
+            children:
+              - Text:
+                  styles:
+                    fontWeight: 900
+                  text: Multiple Expression
+              - Text:
+                  text: ${ensemble.storage.get('yyy')} ${ensemble.storage.get('zzz')}
+
+        - Row:
+            styles:
+              gap: 8
+              margin: 10px 0px
+            children:
+              - Text:
+                  styles:
+                    fontWeight: 900
+                  text: Expression with Strings
+              - Text:
+                  text: ${ensemble.storage.get('yyy')} style
+
+        - Row:
+            styles:
+              gap: 8
+              margin: 10px 0px
+            children:
+              - Text:
+                  styles:
+                    fontWeight: 900
+                  text: Expression with mix strings
+              - Text:
+                  text: ${ensemble.storage.get('yyy')} style ${ensemble.storage.get('yyy')}
 
 Global:
   scriptName: test.js
