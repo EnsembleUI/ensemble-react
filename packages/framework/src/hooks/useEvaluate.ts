@@ -51,23 +51,17 @@ export const useEvaluate = <T extends Record<string, unknown>>(
 
   const [bindings] = useAtom(bindingsAtom);
 
-  const translationKeys = useMemo(
-    () => {
-      const translationMap: string[][] = [];
-      findTranslationKeys(values, [], translationMap);
-      return translationMap;
-    },
-    options?.refreshExpressions ? [values] : [], // values.styles can change when there are expressions in class names,
-  );
-
   const translatedkeys = useMemo(() => {
+    const translationMap: string[][] = [];
+    findTranslationKeys(values, [], translationMap);
+
     const result = {};
-    translationKeys.forEach(([name, translateKey]) => {
+    translationMap.forEach(([name, translateKey]) => {
       set(result, name, translate(translateKey));
     });
 
     return result;
-  }, [translationKeys, translate]);
+  }, [values, translate]);
 
   return merge({}, values, bindings, translatedkeys);
 };
