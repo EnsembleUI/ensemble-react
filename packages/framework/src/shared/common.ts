@@ -13,6 +13,32 @@ export const isExpression = (
   return regex.test(maybeExpression);
 };
 
+export const isMultipleExpressions = (input: string): boolean => {
+  const placeholders = [];
+  let stack = 0,
+    start = -1;
+
+  for (let i = 0; i < input.length; i++) {
+    if (input[i] === "$" && input[i + 1] === "{") {
+      if (stack === 0) start = i;
+      stack++;
+      i++;
+    } else if (input[i] === "}") {
+      stack--;
+      if (stack === 0 && start !== -1) {
+        placeholders.push(input.slice(start, i + 1));
+        start = -1;
+      }
+    }
+  }
+
+  return (
+    placeholders.length > 1 ||
+    (placeholders.length === 1 &&
+      input.replace(placeholders[0], "").trim().length > 0)
+  );
+};
+
 export const sanitizeJs = (string: string): string => {
   const trimmedString = string.trim();
   if (trimmedString.startsWith("${") && trimmedString.endsWith("}")) {
@@ -33,7 +59,10 @@ export const findExpressions = (
   Object.entries(obj).forEach(([key, value]) => {
     const curPath = path.concat(key);
     if (isExpression(value)) {
-      expressionMap.push([curPath.join("."), combineExpressions(value)]);
+      expressionMap.push([
+        curPath.join("."),
+        isMultipleExpressions(value) ? `\${\`${value || ""}\`}` : value,
+      ]);
     } else if (isObject(value)) {
       findExpressions(value, curPath, expressionMap);
     }
@@ -50,27 +79,4 @@ export const debug = (value: unknown): void => {
 export const error = (value: unknown): void => {
   // eslint-disable-next-line no-console
   console.error(value);
-};
-
-export const combineExpressions = (input: string): string => {
-  // Regular expression to split the input into literals and template variables
-  // eslint-disable-next-line prefer-named-capture-group
-  const parts = input.split(/(\$\{[^}]+\})/g).filter((x) => x);
-
-  // Initialize an array to store the processed parts of the new string
-  const resultParts: string[] = [];
-
-  // Iterate over each part and process accordingly
-  parts.forEach((part) => {
-    if (part.startsWith("${") && part.endsWith("}")) {
-      // If the part is a template variable, remove the delimiters and add to resultParts
-      resultParts.push(part.slice(2, -1));
-    } else if (part) {
-      // If the part is a literal, wrap it in single quotes and add to resultParts
-      resultParts.push(`'${part}'`);
-    }
-  });
-
-  // Combine all parts with ' + ' and return the result
-  return resultParts.length ? `\${${resultParts.join(" + ")}}` : input;
 };

@@ -231,6 +231,18 @@ View:
               - Text:
                   text: ${ensemble.storage.get('yyy')} style ${ensemble.storage.get('yyy')}
 
+        - Row:
+            styles:
+              gap: 8
+              margin: 10px 0px
+            children:
+              - Text:
+                  styles:
+                    fontWeight: 900
+                  text: Expression with mix strings
+              - Text:
+                  text: ${`interpolate ${ensemble.storage.get('yyy')} multiple times ${ensemble.storage.get('yyy')}`}
+
 Global:
   scriptName: test.js
 

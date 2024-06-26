@@ -17,12 +17,12 @@ test("find deeply nested expressions", () => {
   findExpressions(testObj, [], expressionMap);
 
   expect(expressionMap).toEqual([
-    ["styles.names", "${'test ' + blah}"],
+    ["styles.names", "${`test ${blah}`}"],
     ["styles.borderRadius", "${foo}"],
     ["styles.padding.1", "${baz}"],
     ["styles.padding.2.value", "${beef}"],
-    ["styles.border", "${blah + ' xyz ' + foo}"],
-    ["styles.borderColor", "${blah + ' ' + foo}"],
+    ["styles.border", "${`${blah} xyz ${foo}`}"],
+    ["styles.borderColor", "${`${blah} ${foo}`}"],
     ["value", "${bar}"],
   ]);
   /* eslint-enable no-template-curly-in-string */
