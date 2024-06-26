@@ -195,6 +195,8 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     setShouldCloseAllModals(false);
   }, [closeModal, modalState, shouldCloseAllModals]);
 
+  // Recursively check modal contexts if there is a modal
+  // screen to close
   useEffect(() => {
     if (!shouldNavigateBack) {
       return;
@@ -218,6 +220,8 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     shouldNavigateBack,
   ]);
 
+  // Use async trigger so this callback doesn't need to
+  // be updated each time modal states are changed
   const closeAllModals = useCallback((): void => {
     setShouldCloseAllModals(true);
   }, []);

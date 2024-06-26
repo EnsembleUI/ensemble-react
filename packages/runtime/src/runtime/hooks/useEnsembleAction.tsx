@@ -54,7 +54,6 @@ import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   navigateApi,
-  navigateBack,
   navigateUrl,
   navigateExternalScreen,
 } from "../navigation";
@@ -109,7 +108,8 @@ export const useExecuteCode: EnsembleActionHook<
   const navigate = useNavigate();
   const location = useLocation();
   const customScope = useCustomScope();
-  const { openModal, closeAllModals } = useContext(ModalContext) || {};
+  const { openModal, closeAllModals, navigateBack } =
+    useContext(ModalContext) || {};
   const themescope = useContext(CustomThemeContext);
   const user = useEnsembleUser();
   const appContext = useApplicationContext();
@@ -183,7 +183,8 @@ export const useExecuteCode: EnsembleActionHook<
                       env: appContext?.env,
                     },
                   }),
-                navigateBack: (): void => navigateBack(navigate),
+                navigateBack: (): void =>
+                  navigateBack ? navigateBack() : navigate(-1),
                 navigateExternalScreen: (url: NavigateExternalScreen) =>
                   navigateExternalScreen(url),
                 openUrl: (url: NavigateExternalScreen) =>
@@ -233,6 +234,7 @@ export const useExecuteCode: EnsembleActionHook<
     openModal,
     closeAllModals,
     screenData,
+    navigateBack,
   ]);
 
   return execute ? { callback: execute } : undefined;
@@ -692,7 +694,7 @@ export const useNavigateBack: EnsembleActionHook<NavigateBackAction> = () => {
 
   const callback = useCallback(() => {
     modalContext?.navigateBack();
-  }, [navigateBack]);
+  }, []);
 
   return { callback };
 };

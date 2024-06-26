@@ -33,16 +33,12 @@ export const navigateApi = (
 export const navigateUrl = (
   url: string,
   navigate: NavigateFunction,
-  inputs?: Record<string, unknown>,
+  inputs?: { [key: string]: unknown },
 ): void => {
   // set additional inputs
   const urlInputs = inputs && isObject(inputs) ? cloneDeep(inputs) : {};
 
   navigate(url, { state: urlInputs });
-};
-
-export const navigateBack = (navigate: NavigateFunction): void => {
-  navigate(-1);
 };
 
 export const openExternalScreen = (action: NavigateExternalScreen): void => {
