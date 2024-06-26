@@ -688,11 +688,11 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
 };
 
 export const useNavigateBack: EnsembleActionHook<NavigateBackAction> = () => {
-  const navigate = useNavigate();
+  const modalContext = useContext(ModalContext);
 
   const callback = useCallback(() => {
-    navigateBack(navigate);
-  }, [navigateBack, navigate]);
+    modalContext?.navigateBack();
+  }, [navigateBack]);
 
   return { callback };
 };
