@@ -9,6 +9,7 @@ View:
       Header:
 
   styles:
+    scrollableView: true
     backgroundColor: ${colors.primary['200']}
     scrollableView: true
 
@@ -178,6 +179,7 @@ View:
               margin: 10px 0px
             id: socketReceivedMessage
 
+
         - Text:
             styles:
               names: heading-1
@@ -218,6 +220,7 @@ View:
                   text: Expression with Strings
               - Text:
                   text: ${ensemble.storage.get('yyy')} style
+
 
         - Row:
             styles:
