@@ -74,14 +74,12 @@ import {
   extractCondition,
   hasProperStructure,
 } from "../../widgets/Conditional";
-// FIXME: refactor
-
 import { useNavigateModalScreen } from "./useNavigateModal";
 import { useNavigateScreen } from "./useNavigateScreen";
 import { useShowToast } from "./useShowToast";
 import { useCloseAllDialogs } from "./useCloseAllDialogs";
 import { useNavigateUrl } from "./useNavigateUrl";
-import { useNavigateExternalScreen } from "./useNavigteExternalScreen";
+import { useNavigateExternalScreen } from "./useNavigateExternalScreen";
 
 export type EnsembleActionHook<
   T = unknown,
