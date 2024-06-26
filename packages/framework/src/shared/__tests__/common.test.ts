@@ -7,8 +7,8 @@ test("find deeply nested expressions", () => {
       names: "test ${blah}",
       borderRadius: "${foo}",
       padding: [0, "${baz}", { value: "${beef}" }],
-      border: "${blah} xyz ${foo}}",
-      borderColor: "${blah} ${foo}}",
+      border: "${blah} xyz ${foo}",
+      borderColor: "${blah} ${foo}",
     },
     value: "${bar}",
   };
@@ -17,13 +17,13 @@ test("find deeply nested expressions", () => {
   findExpressions(testObj, [], expressionMap);
 
   expect(expressionMap).toEqual([
-    ["styles.names", "${`test ${blah}`}"],
-    ["styles.borderRadius", "${`${foo}`}"],
-    ["styles.padding.1", "${`${baz}`}"],
-    ["styles.padding.2.value", "${`${beef}`}"],
-    ["styles.border", "${`${blah} xyz ${foo}}`}"],
-    ["styles.borderColor", "${`${blah} ${foo}}`}"],
-    ["value", "${`${bar}`}"],
+    ["styles.names", "${'test ' + blah}"],
+    ["styles.borderRadius", "${foo}"],
+    ["styles.padding.1", "${baz}"],
+    ["styles.padding.2.value", "${beef}"],
+    ["styles.border", "${blah + ' xyz ' + foo}"],
+    ["styles.borderColor", "${blah + ' ' + foo}"],
+    ["value", "${bar}"],
   ]);
   /* eslint-enable no-template-curly-in-string */
 });
