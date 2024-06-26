@@ -11,4 +11,4 @@ export * from "./useHtmlPassThrough";
 export * from "./useEnsembleUser";
 export * from "./useThemeContext";
 export * from "./useEventContext";
-export * from "./useLaungaugeScope";
+export * from "./useLangaugeScope";
