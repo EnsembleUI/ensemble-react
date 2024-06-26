@@ -1,5 +1,14 @@
 # @ensembleui/react-runtime
 
+## 0.1.60
+
+### Patch Changes
+
+- 795ef25: Fix modal rendering performance
+- Updated dependencies [3a78789]
+- Updated dependencies [c1a7607]
+  - @ensembleui/react-framework@0.1.44
+
 ## 0.1.59
 
 ### Patch Changes
