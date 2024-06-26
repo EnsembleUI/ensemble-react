@@ -13,7 +13,7 @@ export const isExpression = (
   return regex.test(maybeExpression);
 };
 
-export const isMultipleExpressions = (input: string): boolean => {
+export const isCompoundExpression = (input: string): boolean => {
   const placeholders = [];
   let stack = 0,
     start = -1;
@@ -61,7 +61,7 @@ export const findExpressions = (
     if (isExpression(value)) {
       expressionMap.push([
         curPath.join("."),
-        isMultipleExpressions(value) ? `\${\`${value || ""}\`}` : value,
+        isCompoundExpression(value) ? `\${\`${value || ""}\`}` : value,
       ]);
     } else if (isObject(value)) {
       findExpressions(value, curPath, expressionMap);
