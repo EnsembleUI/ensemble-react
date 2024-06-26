@@ -81,6 +81,7 @@ export const createBindingAtom = <T = unknown>(
         application: {
           theme: get(themeAtom),
         },
+        env: get(envAtom),
       },
       screenContext: {
         inputs: get(screenInputAtom),
