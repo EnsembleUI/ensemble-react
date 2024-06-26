@@ -36,5 +36,7 @@ export const createEvaluationContext = ({
     screenContext.widgets,
     screenContext.data,
   );
-  return merge({}, { ensemble }, appInputs, screenInputs, context);
+
+  const env = applicationContext.env;
+  return merge({}, { ensemble, env }, appInputs, screenInputs, context);
 };

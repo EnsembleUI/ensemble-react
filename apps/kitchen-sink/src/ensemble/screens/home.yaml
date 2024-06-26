@@ -9,6 +9,7 @@ View:
       Header:
 
   styles:
+    scrollableView: true
     backgroundColor: ${colors.primary['200']}
 
   body:
@@ -176,6 +177,24 @@ View:
             styles:
               margin: 10px 0px
             id: socketReceivedMessage
+
+        - Divider:
+
+        - Text:
+            styles:
+              names: heading-1
+            text: Access environment values using env
+
+        - Row:
+            styles:
+              gap: 8
+            children:
+              - Text:
+                  fontWeight: 900
+                  text: "Random Id :"
+
+              - Text:
+                  text: ${env.randomId}
 
 Global:
   scriptName: test.js
