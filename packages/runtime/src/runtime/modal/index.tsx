@@ -38,7 +38,7 @@ export interface ModalProps {
   showShadow?: boolean;
 }
 
-interface ModalContextProps {
+export interface ModalContextProps {
   openModal: (
     content: React.ReactNode,
     options: ModalProps,

@@ -35,6 +35,7 @@ import type {
   EnsembleActionHookResult,
   DispatchEventAction,
   ExecuteConditionalActionAction,
+  NavigateModalScreenAction,
 } from "@ensembleui/react-framework";
 import {
   isEmpty,
@@ -52,10 +53,12 @@ import {
 } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+// eslint-disable-next-line import/no-cycle
 import {
   navigateApi,
   navigateUrl,
   navigateExternalScreen,
+  navigateModalScreen,
 } from "../navigation";
 import { locationApi } from "../locationApi";
 import { ModalContext } from "../modal";
@@ -72,7 +75,7 @@ import {
   hasProperStructure,
 } from "../../widgets/Conditional";
 // FIXME: refactor
-// eslint-disable-next-line import/no-cycle
+
 import { useNavigateModalScreen } from "./useNavigateModal";
 import { useNavigateScreen } from "./useNavigateScreen";
 import { useShowToast } from "./useShowToast";
@@ -108,8 +111,7 @@ export const useExecuteCode: EnsembleActionHook<
   const navigate = useNavigate();
   const location = useLocation();
   const customScope = useCustomScope();
-  const { openModal, closeAllModals, navigateBack } =
-    useContext(ModalContext) || {};
+  const modalContext = useContext(ModalContext);
   const themescope = useContext(CustomThemeContext);
   const user = useEnsembleUser();
   const appContext = useApplicationContext();
@@ -165,14 +167,29 @@ export const useExecuteCode: EnsembleActionHook<
                 env: appContext?.env,
                 navigateScreen: (targetScreen: NavigateScreenAction): void =>
                   navigateApi(targetScreen, screen, navigate),
+                navigateModalScreen: (
+                  navigateModalScreenAction: NavigateModalScreenAction,
+                ): void => {
+                  if (!modalContext) {
+                    return;
+                  }
+                  navigateModalScreen(
+                    navigateModalScreenAction,
+                    screen,
+                    modalContext,
+                  );
+                },
                 location: locationApi(location),
                 navigateUrl: (
                   url: string,
                   inputs?: { [key: string]: unknown },
                 ) => navigateUrl(url, navigate, inputs),
                 showDialog: (dialogAction?: ShowDialogAction): void =>
-                  showDialog({ action: dialogAction, openModal }),
-                closeAllDialogs: (): void => closeAllModals?.(),
+                  showDialog({
+                    action: dialogAction,
+                    openModal: modalContext?.openModal,
+                  }),
+                closeAllDialogs: (): void => modalContext?.closeAllModals(),
                 invokeAPI: async (
                   apiName: string,
                   apiInputs?: { [key: string]: unknown },
@@ -184,7 +201,7 @@ export const useExecuteCode: EnsembleActionHook<
                     },
                   }),
                 navigateBack: (): void =>
-                  navigateBack ? navigateBack() : navigate(-1),
+                  modalContext ? modalContext.navigateBack() : navigate(-1),
                 navigateExternalScreen: (url: NavigateExternalScreen) =>
                   navigateExternalScreen(url),
                 openUrl: (url: NavigateExternalScreen) =>
@@ -231,10 +248,8 @@ export const useExecuteCode: EnsembleActionHook<
     options?.context,
     onCompleteAction,
     navigate,
-    openModal,
-    closeAllModals,
+    modalContext,
     screenData,
-    navigateBack,
   ]);
 
   return execute ? { callback: execute } : undefined;
