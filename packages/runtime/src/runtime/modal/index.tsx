@@ -278,12 +278,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
         {options.title}
         {options.hideCloseIcon ? null : (
           <CloseOutlined
-            onClick={(): void =>
-              setModalState((oldModalState) => [
-                ...oldModalState.slice(0, -1),
-                { ...oldModalState[oldModalState.length - 1], visible: false },
-              ])
-            }
+            onClick={(): void => closeModal(index)}
             style={iconStyles}
           />
         )}
