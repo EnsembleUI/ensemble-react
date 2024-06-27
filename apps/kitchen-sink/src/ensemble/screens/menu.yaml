@@ -51,6 +51,9 @@ ViewGroup:
       - label: Help
         icon: HelpOutlineOutlined
         page: help
+      - label: Test
+        icon: ExtensionOutlined
+        page: test
     footer:
       Row:
         styles:

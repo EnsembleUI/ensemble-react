@@ -94,10 +94,9 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
       screen={screen}
     >
       <ModalWrapper>
-        <OnLoadAction action={screen.onLoad} context={{ ...mergedInputs }}>
-          <EnsembleHeader header={screen.header} />
-          <EnsembleBody body={screen.body} styles={screen.styles} />
-        </OnLoadAction>
+        <OnLoadAction action={screen.onLoad} context={{ ...mergedInputs }} />
+        <EnsembleHeader header={screen.header} />
+        <EnsembleBody body={screen.body} styles={screen.styles} />
         <EnsembleFooter footer={screen.footer} />
       </ModalWrapper>
     </ScreenContextProvider>

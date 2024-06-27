@@ -1,0 +1,13 @@
+View:
+  onLoad:
+    executeCode: |
+      console.log('Test screen loaded')
+      ensemble.storage.set('testOnLoad' , true)
+
+  body:
+    Column:
+      children:
+        - Text:
+            text: Test screen
+        - CustomWidget1:
+        - CustomWidget2:

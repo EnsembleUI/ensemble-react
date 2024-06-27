@@ -10,10 +10,13 @@ import FormsYAML from "./ensemble/screens/forms.yaml";
 import CustomWidgetsYAML from "./ensemble/screens/customWidgets.yaml";
 import HelpYAML from "./ensemble/screens/help.yaml";
 import ProductYAML from "./ensemble/screens/product.yaml";
+import TestYAML from "./ensemble/screens/test.yaml";
 // Widgets
 import HeaderWidgetYAML from "./ensemble/widgets/Header.yaml";
 import StyledTextWidgetYAML from "./ensemble/widgets/StyledText.yaml";
 import DispatchButtonWidgetYAML from "./ensemble/widgets/Button.yaml";
+import CustomWidget1 from "./ensemble/widgets/CustomWidget1.yaml";
+import CustomWidget2 from "./ensemble/widgets/CustomWidget2.yaml";
 // Scripts
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
@@ -89,6 +92,16 @@ const testApp: ApplicationDTO = {
       name: "DispatchButton",
       content: String(DispatchButtonWidgetYAML),
     },
+    {
+      id: "CustomWidget1",
+      name: "CustomWidget1",
+      content: String(CustomWidget1),
+    },
+    {
+      id: "CustomWidget2",
+      name: "CustomWidget2",
+      content: String(CustomWidget2),
+    },
   ],
   screens: [
     {
@@ -141,6 +154,11 @@ const testApp: ApplicationDTO = {
       name: "Product",
       path: "/product/:product_name",
       content: String(ProductYAML),
+    },
+    {
+      id: "test",
+      name: "Test",
+      content: String(TestYAML),
     },
   ],
   config: EnsembleConfig,
