@@ -3,6 +3,7 @@ import type { PropsWithChildren } from "react";
 import {
   createContext,
   useCallback,
+  useContext,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -15,6 +16,7 @@ import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
 import { CloseOutlined } from "@ant-design/icons";
 import { useEvaluate } from "@ensembleui/react-framework";
 import { isEmpty, isString, omit, pick } from "lodash-es";
+import { useNavigate } from "react-router-dom";
 import { getComponentStyles } from "../../shared/styles";
 import { getCustomStyles, getFullScreenStyles } from "./utils";
 
@@ -36,7 +38,7 @@ export interface ModalProps {
   showShadow?: boolean;
 }
 
-interface ModalContextProps {
+export interface ModalContextProps {
   openModal: (
     content: React.ReactNode,
     options: ModalProps,
@@ -44,6 +46,7 @@ interface ModalContextProps {
     context?: { [key: string]: unknown },
   ) => void;
   closeAllModals: () => void;
+  navigateBack: () => void;
 }
 
 export const ModalContext = createContext<ModalContextProps | undefined>(
@@ -82,6 +85,9 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
   const [isDialogSet, setIsDialogSet] = useState<boolean>(false);
   const [shouldCloseAllModals, setShouldCloseAllModals] =
     useState<boolean>(false);
+  const parentModalContext = useContext(ModalContext);
+  const [shouldNavigateBack, setShouldNavigateBack] = useState<boolean>(false);
+  const navigate = useNavigate();
   const evaluatedOptions = useEvaluate(
     newModal?.options as { [key: string]: unknown },
     {
@@ -189,13 +195,44 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     setShouldCloseAllModals(false);
   }, [closeModal, modalState, shouldCloseAllModals]);
 
+  // Recursively check modal contexts if there is a modal
+  // screen to close
+  useEffect(() => {
+    if (!shouldNavigateBack) {
+      return;
+    }
+    const lastModalScreen = modalState
+      .reverse()
+      .find((modal) => !modal.isDialog);
+    if (lastModalScreen) {
+      closeModal(modalState.indexOf(lastModalScreen));
+    } else if (parentModalContext) {
+      parentModalContext.navigateBack();
+    } else {
+      navigate(-1);
+    }
+    setShouldNavigateBack(false);
+  }, [
+    closeModal,
+    modalState,
+    navigate,
+    parentModalContext,
+    shouldNavigateBack,
+  ]);
+
+  // Use async trigger so this callback doesn't need to
+  // be updated each time modal states are changed
   const closeAllModals = useCallback((): void => {
     setShouldCloseAllModals(true);
   }, []);
 
+  const navigateBack = useCallback((): void => {
+    setShouldNavigateBack(true);
+  }, []);
+
   const modalContext = useMemo(
-    () => ({ openModal, closeAllModals }),
-    [closeAllModals, openModal],
+    () => ({ openModal, closeAllModals, navigateBack }),
+    [closeAllModals, openModal, navigateBack],
   );
 
   const getFullScreenIcon = (index: number): React.ReactNode =>
@@ -241,12 +278,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
         {options.title}
         {options.hideCloseIcon ? null : (
           <CloseOutlined
-            onClick={(): void =>
-              setModalState((oldModalState) => [
-                ...oldModalState.slice(0, -1),
-                { ...oldModalState[oldModalState.length - 1], visible: false },
-              ])
-            }
+            onClick={(): void => closeModal(index)}
             style={iconStyles}
           />
         )}
