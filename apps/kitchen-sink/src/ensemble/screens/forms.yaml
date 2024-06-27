@@ -30,6 +30,10 @@ View:
             text: Forms
         - Markdown:
             text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).
+        - Button:
+            label: Go Back
+            onTap:
+              navigateBack:
         - Card:
             styles:
               maxWidth: unset
