@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.45
+
+### Patch Changes
+
+- c475b7e: Added support for multiple expression support
+
 ## 0.1.44
 
 ### Patch Changes
