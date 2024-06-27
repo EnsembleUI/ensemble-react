@@ -1,5 +1,12 @@
 # @ensembleui/react-framework
 
+## 0.1.44
+
+### Patch Changes
+
+- 3a78789: fix: style priority issue
+- c1a7607: added support of access environment variables through env into expressions
+
 ## 0.1.43
 
 ### Patch Changes
