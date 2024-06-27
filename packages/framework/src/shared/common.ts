@@ -39,6 +39,11 @@ export const isCompoundExpression = (input: string): boolean => {
   );
 };
 
+export const isTranslationKey = (
+  maybeExpression: Expression<unknown>,
+): maybeExpression is string =>
+  isString(maybeExpression) && maybeExpression.startsWith("r@");
+
 export const sanitizeJs = (string: string): string => {
   const trimmedString = string.trim();
   if (trimmedString.startsWith("${") && trimmedString.endsWith("}")) {
@@ -65,6 +70,25 @@ export const findExpressions = (
       ]);
     } else if (isObject(value)) {
       findExpressions(value, curPath, expressionMap);
+    }
+  });
+};
+
+export const findTranslationKeys = (
+  obj?: object,
+  path: string[] = [],
+  translationMap: string[][] = [],
+): void => {
+  if (!obj) {
+    return;
+  }
+
+  Object.entries(obj).forEach(([key, value]) => {
+    const curPath = path.concat(key);
+    if (isTranslationKey(value)) {
+      translationMap.push([curPath.join("."), value.replace("r@", "")]);
+    } else if (isObject(value)) {
+      findTranslationKeys(value, curPath, translationMap);
     }
   });
 };
