@@ -1,5 +1,16 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.52
+
+### Patch Changes
+
+- c1a7607: added support of access environment variables through env into expressions
+- Updated dependencies [795ef25]
+- Updated dependencies [3a78789]
+- Updated dependencies [c1a7607]
+  - @ensembleui/react-runtime@0.1.60
+  - @ensembleui/react-framework@0.1.44
+
 ## 0.0.51
 
 ### Patch Changes
