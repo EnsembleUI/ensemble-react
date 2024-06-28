@@ -14,34 +14,41 @@ export const screenStorageAtom = atomWithSessionStorage<EnsembleStorage>(
 
 interface EnsembleStorageBuffer {
   set: (key: string, value: unknown) => void;
+  get: (key: string) => unknown;
+  delete: (key: string) => unknown;
 }
 
 export const useEnsembleStorage = (): EnsembleStorage &
   EnsembleStorageBuffer => {
   const [storage, setStorage] = useAtom(screenStorageAtom);
   const storageBuffer = useMemo<EnsembleStorageBuffer>(
-    () => ({
-      set: (key: string, value: unknown): void => {
-        storage[key] = value;
-        setStorage(clone(storage));
-        window.dispatchEvent(
-          new StorageEvent("storage", { key: "ensemble.storage" }),
-        );
-      },
-      get: (key: string): unknown => {
-        return storage[key];
-      },
-      delete: (key: string): unknown => {
-        const oldVal = storage[key];
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-        delete storage[key];
-        setStorage(clone(storage));
-
-        return oldVal;
-      },
-    }),
+    () => createStorageApi(storage, setStorage),
     [setStorage, storage],
   );
 
   return { ...storageBuffer, ...storage };
+};
+
+export const createStorageApi = (
+  storage: { [key: string]: unknown },
+  setStorage?: (storage: { [key: string]: unknown }) => void,
+): EnsembleStorageBuffer => {
+  return {
+    set: (key: string, value: unknown): void => {
+      storage[key] = value;
+      setStorage?.(clone(storage));
+      window.dispatchEvent(
+        new StorageEvent("storage", { key: "ensemble.storage" }),
+      );
+    },
+    get: (key: string): unknown => {
+      return storage[key];
+    },
+    delete: (key: string): unknown => {
+      const oldVal = storage[key];
+      delete storage?.[key];
+      setStorage?.(clone(storage));
+      return oldVal;
+    },
+  };
 };

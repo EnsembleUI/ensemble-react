@@ -58,7 +58,7 @@ test("evaluates nested bindings", () => {
   const mockData = {
     ...mockValues,
     // eslint-disable-next-line no-template-curly-in-string
-    styles: { padding: "${ensemble.storage.paddingValue}" },
+    styles: { padding: "${ensemble.storage.get('paddingValue')}" },
   };
 
   const { result } = renderHook(() =>

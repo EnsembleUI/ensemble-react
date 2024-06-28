@@ -1,6 +1,5 @@
-import { act, renderHook } from "@testing-library/react";
 import { evaluate } from "../evaluate/evaluate";
-import { useEnsembleStorage } from "../hooks";
+import { createStorageApi } from "../hooks";
 import { ensembleStore, screenAtom } from "../state";
 
 const TEST_SCREEN_CONTEXT = {
@@ -35,49 +34,38 @@ return test.value.concat(bar)
 });
 
 test("sets values in storage", () => {
-  const initialValue = ensembleStore.get(screenAtom);
+  const value = ensembleStore.get(screenAtom);
+  const store: Record<string, unknown> = {};
 
-  // storage hook
-  const { result: storageHookResult } = renderHook(() => useEnsembleStorage());
-  const storageStore = storageHookResult.current as { [key: string]: unknown };
-
-  act(() => {
-    evaluate(
-      initialValue,
-      `
+  evaluate(
+    value,
+    `
     const value = "foo" + "bar"
     ensemble.storage.set("value", value)
     `,
-      {
-        ensemble: { storage: storageStore },
-      },
-    );
-  });
+    {
+      ensemble: { storage: createStorageApi(store) },
+    },
+  );
 
-  expect(storageHookResult.current.value).toEqual("foobar");
+  expect(store.value).toEqual("foobar");
 });
 
 test("reads back values from storage", () => {
-  const initialValue = ensembleStore.get(screenAtom);
+  const value = ensembleStore.get(screenAtom);
+  const store: Record<string, unknown> = {};
 
-  // storage hook
-  const { result: storageHookResult } = renderHook(() => useEnsembleStorage());
-  const storageStore = storageHookResult.current as { [key: string]: unknown };
-
-  let response = "";
-  act(() => {
-    response = evaluate(
-      initialValue,
-      `
+  const result = evaluate(
+    value,
+    `
     const value = "foo" + "baz"
     ensemble.storage.set("value", value)
     return ensemble.storage.get("value")
     `,
-      {
-        ensemble: { storage: storageStore },
-      },
-    );
-  });
+    {
+      ensemble: { storage: createStorageApi(store) },
+    },
+  );
 
-  expect(response).toEqual("foobaz");
+  expect(result).toEqual("foobaz");
 });

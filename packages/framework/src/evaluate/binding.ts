@@ -4,7 +4,10 @@ import { atom } from "jotai";
 import { isNil, merge, omitBy } from "lodash-es";
 import type { Expression } from "../shared";
 import { isExpression, sanitizeJs, debug, error } from "../shared";
-import { screenStorageAtom } from "../hooks/useEnsembleStorage";
+import {
+  createStorageApi,
+  screenStorageAtom,
+} from "../hooks/useEnsembleStorage";
 import { DateFormatter } from "../date/dateFormatter";
 import {
   themeAtom,
@@ -90,7 +93,7 @@ export const createBindingAtom = <T = unknown>(
       },
       ensemble: {
         storage: rawJsExpression.includes("ensemble.storage")
-          ? get(screenStorageAtom)
+          ? createStorageApi(get(screenStorageAtom))
           : undefined,
         user: rawJsExpression.includes("ensemble.user")
           ? get(userAtom)
