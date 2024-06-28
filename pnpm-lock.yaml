@@ -228,12 +228,14 @@ importers:
       dayjs: ^1.11.10
       eslint-config-custom: workspace:*
       firebase: 9.10.0
+      i18next: ^23.11.5
       jotai: ^2.8.2
       jotai-location: ^0.5.2
       jotai-optics: ^0.3.1
       lodash-es: ^4.17.21
       optics-ts: ^2.4.1
       react-fast-compare: ^3.2.2
+      react-i18next: ^14.1.2
       tsconfig: workspace:*
       tsup: ^7.2.0
       yaml: ^2.3.2
@@ -246,12 +248,14 @@ importers:
       dayjs: 1.11.10
       eslint-config-custom: link:../eslint-config-custom
       firebase: 9.10.0
+      i18next: 23.11.5
       jotai: 2.8.2_@types+react@18.2.62
       jotai-location: 0.5.5_jotai@2.8.2
       jotai-optics: 0.3.2_jotai@2.8.2+optics-ts@2.4.1
       lodash-es: 4.17.21
       optics-ts: 2.4.1
       react-fast-compare: 3.2.2
+      react-i18next: 14.1.2_i18next@23.11.5
       tsconfig: link:../tsconfig
       tsup: 7.2.0_ts-node@10.9.2
       yaml: 2.4.0
@@ -9191,6 +9195,12 @@ packages:
       terser: 5.28.1
     dev: true
 
+  /html-parse-stringify/3.0.1:
+    resolution: {integrity: sha512-KknJ50kTInJ7qIScF3jeaFRpMpE8/lfiTdzf/twXyPBLAGrLRTmkz3AdTnKeh40X8k9L2fdYwEp/42WGXIRGcg==}
+    dependencies:
+      void-elements: 3.1.0
+    dev: true
+
   /html-webpack-plugin/5.6.0_webpack@5.90.3:
     resolution: {integrity: sha512-iwaY4wzbe48AfKLZ/Cc8k0L+FKG6oSNRaZ8x5A/T/IVDGyXcbHncM9TdDa93wn0FsSm82FhTKW7f3vS61thXAw==}
     engines: {node: '>=10.13.0'}
@@ -9339,6 +9349,12 @@ packages:
 
   /hyphenate-style-name/1.0.4:
     resolution: {integrity: sha512-ygGZLjmXfPHj+ZWh6LwbC37l43MhfztxetbFCoYTM2VjkIUpeHgSNn7QIyVFj7YQ1Wl9Cbw5sholVJPzWvC2MQ==}
+    dev: true
+
+  /i18next/23.11.5:
+    resolution: {integrity: sha512-41pvpVbW9rhZPk5xjCX2TPJi2861LEig/YRhUkY+1FQ2IQPS0bKUDYnEqY8XPPbB48h1uIwLnP9iiEfuSl20CA==}
+    dependencies:
+      '@babel/runtime': 7.24.0
     dev: true
 
   /iconv-lite/0.4.24:
@@ -14330,6 +14346,24 @@ packages:
     resolution: {integrity: sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==}
     dev: true
 
+  /react-i18next/14.1.2_i18next@23.11.5:
+    resolution: {integrity: sha512-FSIcJy6oauJbGEXfhUgVeLzvWBhIBIS+/9c6Lj4niwKZyGaGb4V4vUbATXSlsHJDXXB+ociNxqFNiFuV1gmoqg==}
+    peerDependencies:
+      i18next: '>= 23.2.3'
+      react: '>= 16.8.0'
+      react-dom: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.24.0
+      html-parse-stringify: 3.0.1
+      i18next: 23.11.5
+    dev: true
+
   /react-is/16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
     dev: true
@@ -16860,6 +16894,11 @@ packages:
 
   /vm-browserify/1.1.2:
     resolution: {integrity: sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==}
+    dev: true
+
+  /void-elements/3.1.0:
+    resolution: {integrity: sha512-Dhxzh5HZuiHQhbvTW9AMetFfBHDMYpo23Uo9btPXgdYP+3T5S+p+jgNy7spra+veYhBP2dCSgxR/i2Y02h5/6w==}
+    engines: {node: '>=0.10.0'}
     dev: true
 
   /w3c-hr-time/1.0.2:

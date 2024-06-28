@@ -13,6 +13,7 @@ import ProductYAML from "./ensemble/screens/product.yaml";
 // Widgets
 import HeaderWidgetYAML from "./ensemble/widgets/Header.yaml";
 import StyledTextWidgetYAML from "./ensemble/widgets/StyledText.yaml";
+import DispatchButtonWidgetYAML from "./ensemble/widgets/Button.yaml";
 // Scripts
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
@@ -25,6 +26,9 @@ import EnsembleConfig from "./ensemble/config.yaml";
 // Theme
 import ThemeYAML from "./ensemble/theme.yaml";
 import DarkThemeYAML from "./ensemble/dark.yaml";
+// Locals
+import EnLocale from "./ensemble/locales/en.yaml";
+import HiLocale from "./ensemble/locales/hi.yaml";
 
 import "./App.css";
 
@@ -41,6 +45,20 @@ const testApp: ApplicationDTO = {
       id: "darkTheme",
       name: "dark",
       content: String(DarkThemeYAML),
+    },
+  ],
+  languages: [
+    {
+      name: "English",
+      nativeName: "English",
+      languageCode: "en",
+      content: String(EnLocale),
+    },
+    {
+      name: "Hindi",
+      nativeName: "हिंदी",
+      languageCode: "hi",
+      content: String(HiLocale),
     },
   ],
   scripts: [
@@ -65,6 +83,11 @@ const testApp: ApplicationDTO = {
       id: "StyledText",
       name: "StyledText",
       content: String(StyledTextWidgetYAML),
+    },
+    {
+      id: "DispatchButton",
+      name: "DispatchButton",
+      content: String(DispatchButtonWidgetYAML),
     },
   ],
   screens: [

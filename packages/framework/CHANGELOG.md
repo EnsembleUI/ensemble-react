@@ -1,5 +1,19 @@
 # @ensembleui/react-framework
 
+## 0.1.44
+
+### Patch Changes
+
+- 3a78789: fix: style priority issue
+- c1a7607: added support of access environment variables through env into expressions
+
+## 0.1.43
+
+### Patch Changes
+
+- 493afdf: revert ensemble storage property access without get method
+- ce026a1: Added support for custom event support
+
 ## 0.1.42
 
 ### Patch Changes

@@ -1,8 +1,13 @@
-import React, { useEffect, useState, type ReactElement } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  type ReactElement,
+} from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import type { Expression, EnsembleWidget } from "@ensembleui/react-framework";
 import { Tabs, ConfigProvider } from "antd";
-import { zip } from "lodash-es";
+import { isNumber, zip } from "lodash-es";
 import type {
   EnsembleWidgetProps,
   EnsembleWidgetStyles,
@@ -57,6 +62,7 @@ export interface TabBarProps extends EnsembleWidgetProps<TabBarStyles> {
 
 export const TabBar: React.FC<TabBarProps> = (props) => {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  // need to destructure widget template from other bindings before combining again
   const bindings = {
     ...props,
     items: props.items.map(({ label, icon }) => ({
@@ -64,22 +70,21 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
       icon,
     })),
   };
-
   const { values } = useRegisterBindings(
-    { ...bindings, widgetName, selectedIndex },
+    { ...bindings, widgetName },
     props.id,
     {
       setSelectedIndex,
     },
   );
 
+  const tabsWithWidgets = zip(values?.items ?? [], props.items);
+
   useEffect(() => {
-    if (values?.selectedIndex) {
+    if (values?.selectedIndex && isNumber(values.selectedIndex)) {
       setSelectedIndex(values.selectedIndex);
     }
   }, [values?.selectedIndex]);
-
-  const tabs = zip(values?.items ?? [], props.items);
 
   const renderLabel = (label: string, icon?: IconProps): ReactElement => {
     return (
@@ -179,17 +184,22 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
     }
   `;
 
-  const getActiveKey = (): string => {
-    if (selectedIndex && selectedIndex <= props.items.length) {
-      return props.items[selectedIndex].label;
+  const getActiveKey = (): string | undefined => {
+    if (!values?.items) {
+      return;
     }
-    return props.items[0].label;
+    if (selectedIndex >= 0 && selectedIndex <= values.items.length) {
+      return values.items[selectedIndex].label;
+    }
   };
 
-  const handleSelectedTabChange = (key: string): void => {
-    const tabIndex = props.items.findIndex((tab) => tab.label === key);
-    setSelectedIndex(tabIndex);
-  };
+  const handleSelectedTabChange = useCallback(
+    (key: string): void => {
+      const tabIndex = values?.items.findIndex((tab) => tab.label === key);
+      setSelectedIndex(tabIndex ?? 0);
+    },
+    [values?.items],
+  );
 
   return (
     <ConfigProvider
@@ -210,7 +220,7 @@ export const TabBar: React.FC<TabBarProps> = (props) => {
         onChange={handleSelectedTabChange}
         style={{ ...values?.styles }}
       >
-        {tabs.map(([tabItem, widget]) => (
+        {tabsWithWidgets.map(([tabItem, widget]) => (
           <TabPane
             key={tabItem?.label}
             tab={renderLabel(tabItem?.label ?? "", tabItem?.icon)}

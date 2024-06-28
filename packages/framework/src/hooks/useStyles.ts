@@ -42,8 +42,8 @@ export const useStyles = <T extends { [key: string]: unknown }>(
 
   const { classStyles: classStylesEval, namedStyles: namedStylesEval } =
     useEvaluate({
-      classStyles: `\${\`${classStyles || ""}\`}`,
-      namedStyles: `\${\`${namedStyles || ""}\`}`,
+      classStyles: classStyles || "",
+      namedStyles: namedStyles || "",
     });
 
   const styleNames = compact(
@@ -59,7 +59,7 @@ export const useStyles = <T extends { [key: string]: unknown }>(
   const styleProperties = useMemo(() => {
     return styleNames && themeContext
       ? resolveStyleNames(
-          [...styleNames.split(" "), widgetName || ""].filter(
+          [widgetName || "", ...styleNames.split(" ")].filter(
             (styleName) => !isEmpty(styleName),
           ),
           themeContext,

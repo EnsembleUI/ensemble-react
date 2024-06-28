@@ -1,6 +1,6 @@
 {
   "name": "@ensembleui/react-framework",
-  "version": "0.1.42",
+  "version": "0.1.44",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
@@ -17,9 +17,9 @@
     "*.{ts,tsx}": "eslint --fix"
   },
   "peerDependencies": {
+    "firebase": "9.10.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "firebase": "9.10.0"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@testing-library/react": "^13.4.0",
@@ -30,12 +30,14 @@
     "dayjs": "^1.11.10",
     "eslint-config-custom": "workspace:*",
     "firebase": "9.10.0",
+    "i18next": "^23.11.5",
     "jotai": "^2.8.2",
     "jotai-location": "^0.5.2",
     "jotai-optics": "^0.3.1",
     "lodash-es": "^4.17.21",
     "optics-ts": "^2.4.1",
     "react-fast-compare": "^3.2.2",
+    "react-i18next": "^14.1.2",
     "tsconfig": "workspace:*",
     "tsup": "^7.2.0",
     "yaml": "^2.3.2"

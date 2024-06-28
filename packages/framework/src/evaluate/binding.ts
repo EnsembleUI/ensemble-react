@@ -16,6 +16,7 @@ import {
   screenGlobalScriptAtom,
   screenImportScriptAtom,
   userAtom,
+  appAtom,
 } from "../state";
 import { evaluate } from "./evaluate";
 import { createEvaluationContext } from "./context";
@@ -63,6 +64,7 @@ export const createBindingAtom = <T = unknown>(
 
   const bindingAtom = atom((get) => {
     const data = get(screenDataAtom);
+    const appData = get(appAtom);
     const valueEntries = dependencyEntries.map(({ name, dependencyAtom }) => {
       const value = get(dependencyAtom);
       debug(
@@ -77,7 +79,9 @@ export const createBindingAtom = <T = unknown>(
       applicationContext: {
         application: {
           theme: get(themeAtom),
+          languages: appData.application?.languages,
         },
+        env: get(envAtom),
       },
       screenContext: {
         inputs: get(screenInputAtom),

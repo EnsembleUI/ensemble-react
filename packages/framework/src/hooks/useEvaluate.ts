@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { atom, useAtom } from "jotai";
 import { compact, merge, set } from "lodash-es";
-import { findExpressions } from "../shared";
+import { useTranslation } from "react-i18next";
+import { findExpressions, findTranslationKeys } from "../shared";
 import { createBindingAtom } from "../evaluate";
 import { useCustomScope } from "./useCustomScope";
 
@@ -14,6 +15,7 @@ export const useEvaluate = <T extends Record<string, unknown>>(
   },
 ): T => {
   const customScope = useCustomScope();
+  const { t: translate } = useTranslation();
 
   const expressions = useMemo(
     () => {
@@ -48,5 +50,18 @@ export const useEvaluate = <T extends Record<string, unknown>>(
   }, [expressions, customScope, options?.context, options?.debugId]);
 
   const [bindings] = useAtom(bindingsAtom);
-  return merge({}, values, bindings);
+
+  const translatedkeys = useMemo(() => {
+    const translationMap: string[][] = [];
+    findTranslationKeys(values, [], translationMap);
+
+    const result = {};
+    translationMap.forEach(([name, translateKey]) => {
+      set(result, name, translate(translateKey));
+    });
+
+    return result;
+  }, [values, translate]);
+
+  return merge({}, values, bindings, translatedkeys);
 };

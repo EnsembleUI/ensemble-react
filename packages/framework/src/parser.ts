@@ -29,8 +29,13 @@ import type {
   CustomWidgetModel,
   EnsembleThemeModel,
   EnsembleSocketModel,
+  EnsembleCustomEventModel,
 } from "./shared/models";
-import type { ApplicationDTO, EnsembleConfigYAML } from "./shared/dto";
+import type {
+  ApplicationDTO,
+  EnsembleConfigYAML,
+  LanguageDTO,
+} from "./shared/dto";
 import { findExpressions, type EnsembleAction } from "./shared";
 import { evaluate } from "./evaluate/evaluate";
 import { defaultScreenContext } from "./state";
@@ -65,6 +70,11 @@ export const EnsembleParser = {
       (widget) => widget.apis ?? [],
     );
 
+    const widgetCustomEvents: EnsembleCustomEventModel[] = flatMap(
+      customWidgets,
+      (widget) => widget.events ?? [],
+    );
+
     const screens = app.screens.map(({ id, name, content: yaml, ...rest }) => {
       const screen = parse(yaml) as EnsembleScreenYAML;
       const viewGroup = get(screen, "ViewGroup");
@@ -76,6 +86,7 @@ export const EnsembleParser = {
       return {
         ...pageScreen,
         apis: concat(pageScreen.apis ?? [], widgetApis),
+        events: widgetCustomEvents,
         ...rest,
       };
     });
@@ -116,6 +127,10 @@ export const EnsembleParser = {
       ensembleConfigData = parse(config) as EnsembleConfigYAML;
     }
 
+    const languages = app.languages?.map((language) =>
+      unwrapLanguage(language),
+    );
+
     return {
       id: app.id,
       menu,
@@ -126,6 +141,7 @@ export const EnsembleParser = {
       themes,
       scripts,
       config: ensembleConfigData,
+      languages,
     };
   },
 
@@ -224,12 +240,15 @@ export const EnsembleParser = {
 
     const body = unwrapWidget(rawBody);
     const apis = unwrapApiModels(yaml);
+    const events = unwrapCustomEventsModels(widget);
+
     return {
       name,
       onLoad: get(widget, "onLoad"),
       inputs: get(widget, "inputs") ?? [],
       body,
       apis,
+      events,
     };
   },
 
@@ -299,6 +318,30 @@ const unwrapSocketModels = (screen: unknown): EnsembleSocketModel[] => {
     });
   }
 
+  return [];
+};
+
+const unwrapCustomEventsModels = (
+  widget: unknown,
+): EnsembleCustomEventModel[] => {
+  const eventNode = get(widget, "events");
+  if (isArray(eventNode)) {
+    return map<object, EnsembleCustomEventModel>(eventNode, (value) => {
+      const name = head(Object.keys(value));
+      return {
+        name,
+        ...value,
+      } as EnsembleCustomEventModel;
+    });
+  }
+  if (isObject(eventNode)) {
+    return map(Object.entries<object>(eventNode), ([name, value]) => {
+      return {
+        name,
+        ...value,
+      } as EnsembleCustomEventModel;
+    });
+  }
   return [];
 };
 
@@ -413,4 +456,11 @@ const unwrapTheme = (theme?: string): EnsembleThemeModel | undefined => {
   );
 
   return workingTheme;
+};
+
+const unwrapLanguage = (language: LanguageDTO) => {
+  return {
+    ...language,
+    resources: parse(language.content) as { [key: string]: unknown },
+  };
 };

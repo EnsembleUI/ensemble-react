@@ -22,6 +22,7 @@ export interface EnsembleScreenModel {
   importedScripts?: string;
   customWidgets?: CustomWidgetModel[];
   sockets?: EnsembleSocketModel[];
+  events?: EnsembleCustomEventModel[];
 }
 
 export type EnsembleEntryPoint = EnsembleScreenModel | EnsembleMenuModel;
@@ -36,6 +37,7 @@ export interface EnsembleAppModel {
   themes?: { [key: string]: EnsembleThemeModel | undefined };
   scripts: EnsembleScriptModel[];
   config?: EnsembleConfigYAML;
+  languages?: EnsembleLanguageModel[];
 }
 
 export interface EnsembleMenuModel {
@@ -63,6 +65,11 @@ export interface EnsembleAPIModel {
   body?: string | object;
   onResponse?: EnsembleAction;
   onError?: EnsembleAction;
+}
+
+export interface EnsembleCustomEventModel {
+  name: string;
+  data?: { [key: string]: unknown };
 }
 
 export interface EnsembleSocketModel {
@@ -106,6 +113,7 @@ export interface CustomWidgetModel {
   onLoad?: EnsembleAction;
   body: EnsembleWidget;
   apis?: EnsembleAPIModel[];
+  events?: EnsembleCustomEventModel[];
 }
 
 export interface EnsembleThemeModel {
@@ -125,4 +133,11 @@ export interface EnsembleThemeModel {
 export interface EnsembleScriptModel {
   name: string;
   body: string;
+}
+
+export interface EnsembleLanguageModel {
+  name: string;
+  nativeName: string;
+  languageCode: string;
+  resources: { [key: string]: unknown };
 }

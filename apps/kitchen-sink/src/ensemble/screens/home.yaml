@@ -6,17 +6,20 @@ View:
       ensemble.storage.set('aaa' , '1')
       console.log(ensemble.storage.yyy)
       console.log(ensemble.storage.get('yyy'))
+
   header:
     title:
       Header:
 
   styles:
+    scrollableView: true
     backgroundColor: ${colors.primary['200']}
+    scrollableView: true
 
   body:
     Column:
       styles:
-        names: ${ensemble.storage.yyy}
+        names: ${ensemble.storage.get('yyy')}
       children:
         - Text:
             styles:
@@ -27,7 +30,7 @@ View:
             text: This application is built with Ensemble and serves as a guide for how to implement common UI patterns with Ensemble React.
         - Button:
             styles:
-              className: page-1 ${ensemble.storage.zzz + '-' + ensemble.storage.aaa}
+              className: page-1 ${ensemble.storage.get('zzz') + '-' + ensemble.storage.get('aaa')}
             label: ${productTitleName}
             onTap:
               executeCode: |
@@ -47,6 +50,29 @@ View:
                       position: topRight
                 onResponse:
                   executeCode: console.log('onresponse', response)
+
+        - DispatchButton:
+            events:
+              onFormSubmit:
+                executeCode: |
+                  console.log('onresponse', data)
+                  console.log('onresponse2', response)
+
+        - Dropdown:
+            label: With the label widget
+            hintText: Hint Text
+            item-template:
+              data: ${app.languages}
+              name: language
+              value: ${language.languageCode}
+              template:
+                Text:
+                  text: ${language.name + ` ( `+ language.nativeName +` )`}
+            onItemSelect:
+              executeCode:
+                body: |
+                  ensemble.storage.set('language', selectedValue)
+                  ensemble.setLocale({languageCode: selectedValue})
 
         - Text:
             styles:
@@ -153,13 +179,13 @@ View:
                       name: echo
                       message:
                         msg: ${socketMessageBox.value}
-                        x: ${ensemble.storage.yyy}
+                        x: ${ensemble.storage.get('yyy')}
 
               - Button:
                   label: Send Message JS
                   onTap:
                     executeCode: |
-                      ensemble.messageSocket('echo', {msg: socketMessageBox.value, x: ensemble.storage.yyy})
+                      ensemble.messageSocket('echo', {msg: socketMessageBox.value, x: ensemble.storage.get('yyy')})
 
         - Text:
             styles:
@@ -171,6 +197,73 @@ View:
             styles:
               margin: 10px 0px
             id: socketReceivedMessage
+
+
+        - Text:
+            styles:
+              names: heading-1
+            text: Expression Examples
+
+        - Row:
+            styles:
+              gap: 8
+              margin: 10px 0px
+            children:
+              - Text:
+                  styles:
+                    fontWeight: 900
+                  text: Simple Expression
+              - Text:
+                  text: ${ensemble.storage.get('yyy')}
+
+        - Row:
+            styles:
+              gap: 8
+              margin: 10px 0px
+            children:
+              - Text:
+                  styles:
+                    fontWeight: 900
+                  text: Multiple Expression
+              - Text:
+                  text: ${ensemble.storage.get('yyy')} ${ensemble.storage.get('zzz')}
+
+        - Row:
+            styles:
+              gap: 8
+              margin: 10px 0px
+            children:
+              - Text:
+                  styles:
+                    fontWeight: 900
+                  text: Expression with Strings
+              - Text:
+                  text: ${ensemble.storage.get('yyy')} style
+
+
+        - Row:
+            styles:
+              gap: 8
+              margin: 10px 0px
+            children:
+              - Text:
+                  styles:
+                    fontWeight: 900
+                  text: Expression with mix strings
+              - Text:
+                  text: ${ensemble.storage.get('yyy')} style ${ensemble.storage.get('yyy')}
+
+        - Row:
+            styles:
+              gap: 8
+              margin: 10px 0px
+            children:
+              - Text:
+                  styles:
+                    fontWeight: 900
+                  text: Expression with mix strings
+              - Text:
+                  text: ${`interpolate ${ensemble.storage.get('yyy')} multiple times ${ensemble.storage.get('yyy')}`}
 
 Global:
   scriptName: test.js

@@ -149,7 +149,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
         }}
       >
         {/* FIXME: just use props here https://ant.design/components/menu#examples */}
-        {props.items.map((item) => (
+        {values?.items.map((item) => (
           <>
             <AntMenu.Item
               data-testid={item.id ?? item.testId}

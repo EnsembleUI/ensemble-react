@@ -77,6 +77,124 @@ test("evaluates nested bindings", () => {
   });
 });
 
+test("evaluates nested bindings 2", () => {
+  store.set(screenStorageAtom, {
+    paddingValue: 2,
+  });
+  store.set(screenAtom, {
+    widgets: {
+      test: {
+        values: mockValues,
+        invokable: mockInvokable,
+      },
+    },
+    data: {},
+  });
+
+  const mockData = {
+    ...mockValues,
+    styles: {
+      padding:
+        // eslint-disable-next-line no-template-curly-in-string
+        "${ensemble.storage.get('paddingValue')} ${ensemble.storage.get('paddingValue')}",
+    },
+  };
+
+  const { result } = renderHook(() =>
+    useRegisterBindings(mockData, mockInvokable.id, mockInvokable.methods),
+  );
+
+  expect(result.current).toMatchObject({
+    id: "test",
+    values: {
+      foo: "bar",
+      baz: "deadbeef",
+      styles: {
+        padding: "2 2",
+      },
+    },
+  });
+});
+
+test("evaluates multiple bindings within a single string", () => {
+  store.set(screenStorageAtom, {
+    paddingValue: 2,
+    marginValue: 5,
+  });
+  store.set(screenAtom, {
+    widgets: {
+      test: {
+        values: mockValues,
+        invokable: mockInvokable,
+      },
+    },
+    data: {},
+  });
+
+  const mockData = {
+    ...mockValues,
+    styles: {
+      padding:
+        // eslint-disable-next-line no-template-curly-in-string
+        "${ensemble.storage.get('paddingValue')} ${ensemble.storage.get('marginValue')}",
+    },
+  };
+
+  const { result } = renderHook(() =>
+    useRegisterBindings(mockData, mockInvokable.id, mockInvokable.methods),
+  );
+
+  expect(result.current).toMatchObject({
+    id: "test",
+    values: {
+      foo: "bar",
+      baz: "deadbeef",
+      styles: {
+        padding: "2 5",
+      },
+    },
+  });
+});
+
+test("evaluates bindings with text surrounding the placeholders", () => {
+  store.set(screenStorageAtom, {
+    paddingValue: 2,
+  });
+  store.set(screenAtom, {
+    widgets: {
+      test: {
+        values: mockValues,
+        invokable: mockInvokable,
+      },
+    },
+    data: {},
+  });
+
+  const mockData = {
+    ...mockValues,
+    styles: {
+      padding:
+        // eslint-disable-next-line no-template-curly-in-string
+        "Padding value: ${ensemble.storage.get('paddingValue')}",
+    },
+  };
+
+  const { result } = renderHook(() =>
+    useRegisterBindings(mockData, mockInvokable.id, mockInvokable.methods),
+  );
+
+  expect(result.current).toMatchObject({
+    id: "test",
+    values: {
+      foo: "bar",
+      baz: "deadbeef",
+      styles: {
+        padding: "Padding value: 2",
+      },
+    },
+  });
+});
+
 test("updates bindings when incoming values update", () => {
   let mockMutableValues = {
     foo: "bar",

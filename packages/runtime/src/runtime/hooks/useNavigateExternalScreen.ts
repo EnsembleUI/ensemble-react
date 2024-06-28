@@ -4,6 +4,7 @@ import {
   useEvaluate,
   type NavigateExternalScreen,
 } from "@ensembleui/react-framework";
+// eslint-disable-next-line import/no-cycle
 import { openExternalScreen } from "../navigation";
 import { type EnsembleActionHook } from "./useEnsembleAction";
 

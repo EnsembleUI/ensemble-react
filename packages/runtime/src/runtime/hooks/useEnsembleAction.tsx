@@ -12,8 +12,10 @@ import {
   useEnsembleUser,
   useEvaluate,
   useCustomScope,
+  useCustomEventScope,
   CustomScopeProvider,
   CustomThemeContext,
+  useLanguageScope,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -32,7 +34,9 @@ import type {
   DisconnectSocketAction,
   SendSocketMessageAction,
   EnsembleActionHookResult,
+  DispatchEventAction,
   ExecuteConditionalActionAction,
+  NavigateModalScreenAction,
 } from "@ensembleui/react-framework";
 import {
   isEmpty,
@@ -44,16 +48,18 @@ import {
   mapKeys,
   cloneDeep,
   isEqual,
+  keys,
   last,
   toNumber,
 } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+// eslint-disable-next-line import/no-cycle
 import {
   navigateApi,
-  navigateBack,
   navigateUrl,
   navigateExternalScreen,
+  navigateModalScreen,
 } from "../navigation";
 import { locationApi } from "../locationApi";
 import { ModalContext } from "../modal";
@@ -69,14 +75,12 @@ import {
   extractCondition,
   hasProperStructure,
 } from "../../widgets/Conditional";
-// FIXME: refactor
-// eslint-disable-next-line import/no-cycle
 import { useNavigateModalScreen } from "./useNavigateModal";
 import { useNavigateScreen } from "./useNavigateScreen";
 import { useShowToast } from "./useShowToast";
 import { useCloseAllDialogs } from "./useCloseAllDialogs";
 import { useNavigateUrl } from "./useNavigateUrl";
-import { useNavigateExternalScreen } from "./useNavigteExternalScreen";
+import { useNavigateExternalScreen } from "./useNavigateExternalScreen";
 
 export type EnsembleActionHook<
   T = unknown,
@@ -90,6 +94,10 @@ type UploadStatus =
   | "completed"
   | "cancelled"
   | "failed";
+
+interface SetLocaleProps {
+  languageCode: string;
+}
 
 export interface UseExecuteCodeActionOptions {
   context?: { [key: string]: unknown };
@@ -106,11 +114,12 @@ export const useExecuteCode: EnsembleActionHook<
   const navigate = useNavigate();
   const location = useLocation();
   const customScope = useCustomScope();
-  const { openModal, closeAllModals } = useContext(ModalContext) || {};
+  const modalContext = useContext(ModalContext);
   const themescope = useContext(CustomThemeContext);
   const user = useEnsembleUser();
   const appContext = useApplicationContext();
   const screenData = useScreenData();
+  const { i18n } = useLanguageScope();
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,
   );
@@ -162,14 +171,29 @@ export const useExecuteCode: EnsembleActionHook<
                 env: appContext?.env,
                 navigateScreen: (targetScreen: NavigateScreenAction): void =>
                   navigateApi(targetScreen, screen, navigate),
+                navigateModalScreen: (
+                  navigateModalScreenAction: NavigateModalScreenAction,
+                ): void => {
+                  if (!modalContext) {
+                    return;
+                  }
+                  navigateModalScreen(
+                    navigateModalScreenAction,
+                    screen,
+                    modalContext,
+                  );
+                },
                 location: locationApi(location),
                 navigateUrl: (
                   url: string,
                   inputs?: { [key: string]: unknown },
                 ) => navigateUrl(url, navigate, inputs),
                 showDialog: (dialogAction?: ShowDialogAction): void =>
-                  showDialog({ action: dialogAction, openModal }),
-                closeAllDialogs: (): void => closeAllModals?.(),
+                  showDialog({
+                    action: dialogAction,
+                    openModal: modalContext?.openModal,
+                  }),
+                closeAllDialogs: (): void => modalContext?.closeAllModals(),
                 invokeAPI: async (
                   apiName: string,
                   apiInputs?: { [key: string]: unknown },
@@ -180,7 +204,8 @@ export const useExecuteCode: EnsembleActionHook<
                       env: appContext?.env,
                     },
                   }),
-                navigateBack: (): void => navigateBack(navigate),
+                navigateBack: (): void =>
+                  modalContext ? modalContext.navigateBack() : navigate(-1),
                 navigateExternalScreen: (url: NavigateExternalScreen) =>
                   navigateExternalScreen(url),
                 openUrl: (url: NavigateExternalScreen) =>
@@ -193,6 +218,8 @@ export const useExecuteCode: EnsembleActionHook<
                 ) => handleMessageSocket(screenData, name, message),
                 disconnectSocket: (name: string) =>
                   handleDisconnectSocket(screenData, name),
+                setLocale: ({ languageCode }: SetLocaleProps) =>
+                  i18n.changeLanguage(languageCode),
               },
             },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
@@ -227,8 +254,7 @@ export const useExecuteCode: EnsembleActionHook<
     options?.context,
     onCompleteAction,
     navigate,
-    openModal,
-    closeAllModals,
+    modalContext,
     screenData,
   ]);
 
@@ -685,11 +711,11 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
 };
 
 export const useNavigateBack: EnsembleActionHook<NavigateBackAction> = () => {
-  const navigate = useNavigate();
+  const modalContext = useContext(ModalContext);
 
   const callback = useCallback(() => {
-    navigateBack(navigate);
-  }, [navigateBack, navigate]);
+    modalContext?.navigateBack();
+  }, []);
 
   return { callback };
 };
@@ -708,6 +734,52 @@ export const useActionGroup: EnsembleActionHook<ExecuteActionGroupAction> = (
   const callback = (args: unknown): void => {
     execActs.forEach((act) => act?.callback(args));
   };
+
+  return { callback };
+};
+
+export const useDispatchEvent: EnsembleActionHook<DispatchEventAction> = (
+  action,
+) => {
+  const eventName = keys(action)[0];
+  const [isComplete, setIsComplete] = useState<boolean>();
+  const [context, setContext] = useState<unknown>();
+  const eventData = (action ? action[eventName] : {}) as {
+    [key: string]: unknown;
+  };
+  const eventScope = useCustomEventScope();
+
+  const evaluatedInputs = useEvaluate(eventData, { context });
+
+  const events = get(eventScope, eventName) as {
+    [key: string]: unknown;
+  };
+
+  // Use a separate hook call for each event action
+  const ensembleActions = Object.keys(events || {}).map((customAction) =>
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useEnsembleAction({ [customAction]: events[customAction] }),
+  );
+
+  const callback = useCallback((args: unknown): void => {
+    setContext(args);
+    setIsComplete(false);
+  }, []);
+
+  useEffect(() => {
+    if (isComplete !== false) {
+      return;
+    }
+
+    ensembleActions.forEach((act) =>
+      act?.callback({
+        ...evaluatedInputs,
+        ...(context as { [key: string]: unknown }),
+      }),
+    );
+
+    setIsComplete(true);
+  }, [ensembleActions, evaluatedInputs, isComplete]);
 
   return { callback };
 };
@@ -871,6 +943,10 @@ export const useEnsembleAction = (
 
   if ("disconnectSocket" in action) {
     return useDisconnectSocket(action.disconnectSocket);
+  }
+
+  if ("dispatchEvent" in action) {
+    return useDispatchEvent(action.dispatchEvent);
   }
 
   if ("executeConditionalAction" in action) {

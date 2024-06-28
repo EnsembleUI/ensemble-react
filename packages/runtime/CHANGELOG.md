@@ -1,5 +1,33 @@
 # @ensembleui/react-runtime
 
+## 0.1.60
+
+### Patch Changes
+
+- 795ef25: Fix modal rendering performance
+- Updated dependencies [3a78789]
+- Updated dependencies [c1a7607]
+  - @ensembleui/react-framework@0.1.44
+
+## 0.1.59
+
+### Patch Changes
+
+- 8fdb0da: Fix tab bar children widget rendering
+- ce026a1: Added support for custom event support
+- Updated dependencies [493afdf]
+- Updated dependencies [ce026a1]
+  - @ensembleui/react-framework@0.1.43
+
+## 0.1.58
+
+### Patch Changes
+
+- e00ed50: fix form fields validation error message with field label
+- 768d07f: Added support for scrollable properties on view
+- 60bd855: Fix widget input intialized when no inputs have been passed
+- 9ad4c4e: Fix tab bar selected index change with expressions
+
 ## 0.1.57
 
 ### Patch Changes

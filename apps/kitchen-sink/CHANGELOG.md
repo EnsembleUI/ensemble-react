@@ -1,5 +1,39 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.52
+
+### Patch Changes
+
+- c1a7607: added support of access environment variables through env into expressions
+- Updated dependencies [795ef25]
+- Updated dependencies [3a78789]
+- Updated dependencies [c1a7607]
+  - @ensembleui/react-runtime@0.1.60
+  - @ensembleui/react-framework@0.1.44
+
+## 0.0.51
+
+### Patch Changes
+
+- 493afdf: revert ensemble storage property access without get method
+- ce026a1: Added support for custom event support
+- Updated dependencies [8fdb0da]
+- Updated dependencies [493afdf]
+- Updated dependencies [ce026a1]
+  - @ensembleui/react-runtime@0.1.59
+  - @ensembleui/react-framework@0.1.43
+
+## 0.0.50
+
+### Patch Changes
+
+- 9ad4c4e: Fix tab bar selected index change with expressions
+- Updated dependencies [e00ed50]
+- Updated dependencies [768d07f]
+- Updated dependencies [60bd855]
+- Updated dependencies [9ad4c4e]
+  - @ensembleui/react-runtime@0.1.58
+
 ## 0.0.49
 
 ### Patch Changes

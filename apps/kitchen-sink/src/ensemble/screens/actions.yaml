@@ -1,4 +1,6 @@
 View:
+  styles:
+    scrollableView: true
   header:
     title:
       Header:
@@ -209,6 +211,18 @@ View:
                         width: 604px
                         right: 105px
                         top: 304px
+              - Button:
+                  label: navigateModalScreen with code
+                  onTap:
+                    executeCode:
+                      body: |
+                        ensemble.navigateModalScreen({
+                          name: 'Forms',
+                          hideCloseIcon: false,
+                          hideFullScreenIcon: false,
+                          mask: false
+                        });
+
         - Card:
             styles:
               maxWidth: unset
