@@ -117,6 +117,7 @@ export interface CustomWidgetModel {
 }
 
 export interface EnsembleThemeModel {
+  Themes?: [string];
   Tokens?: {
     Colors?: {
       primary?: string;

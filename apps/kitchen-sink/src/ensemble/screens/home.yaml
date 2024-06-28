@@ -1,10 +1,4 @@
 View:
-  onLoad:
-    executeCode: |
-      ensemble.storage.set('yyy' , 'page')
-      ensemble.storage.set('zzz' , 'button')
-      ensemble.storage.set('aaa' , '1')
-
   header:
     title:
       Header:
@@ -12,7 +6,6 @@ View:
   styles:
     scrollableView: true
     backgroundColor: ${colors.primary['200']}
-    scrollableView: true
 
   body:
     Column:
@@ -81,17 +74,24 @@ View:
             styles:
               width: 100px
               backgroundColor: ${colors.primary['500']}
-            items:
-              - label: Light
-                value: default
-              - label: Dark
-                value: dark
+            item-template:
+              data: ${app.themes}
+              name: theme
+              value: theme
+              template:
+                Text:
+                  text: ${theme}
             widget:
               Icon:
                 name: Settings
             onItemSelect:
               executeCode: |
-                ensemble.setTheme(value)
+                console.log({app})
+
+        - Text:
+            styles:
+              names: heading-1
+            text: Selected Theme ${app.theme}
 
         - Divider:
 
@@ -196,7 +196,6 @@ View:
               margin: 10px 0px
             id: socketReceivedMessage
 
-
         - Text:
             styles:
               names: heading-1
@@ -237,7 +236,6 @@ View:
                   text: Expression with Strings
               - Text:
                   text: ${ensemble.storage.get('yyy')} style
-
 
         - Row:
             styles:

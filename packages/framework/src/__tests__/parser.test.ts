@@ -84,6 +84,5 @@ test("parses application with no custom widgets", () => {
     id: "test",
     menu: undefined,
     customWidgets: [],
-    theme: undefined,
   });
 });

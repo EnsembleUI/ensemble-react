@@ -64,7 +64,10 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
       const tempItems = values.items.map((item, index) => {
         return (
           <React.Fragment key={item.value}>
-            <Menu.Item key={item.value} onClick={() => action?.callback(item)}>
+            <Menu.Item
+              key={item.value}
+              onClick={() => action?.callback({ value: item.value })}
+            >
               {isString(item.label)
                 ? item.label
                 : EnsembleRuntime.render([unwrapWidget(item.label)])}
@@ -91,7 +94,7 @@ export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
 
         return (
           <React.Fragment key={value}>
-            <Menu.Item key={value} onClick={() => action?.callback(item)}>
+            <Menu.Item key={value} onClick={() => action?.callback({ value })}>
               <CustomScopeProvider value={item as CustomScope}>
                 {EnsembleRuntime.render([itemTemplate.template])}
               </CustomScopeProvider>
