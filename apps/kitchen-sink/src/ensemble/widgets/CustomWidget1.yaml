@@ -1,0 +1,13 @@
+Widget:
+  onLoad:
+    executeCode: |
+      console.log('CustomWidget1 loaded')
+      ensemble.storage.set('testOnWidget1' , true)
+
+  body:
+    Button:
+      label: Custom widget 1
+      onTap:
+        executeCode:
+          body: |
+            ensemble.storage.set('testOnButton1' , true)
