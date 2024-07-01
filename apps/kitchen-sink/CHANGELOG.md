@@ -1,5 +1,16 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.53
+
+### Patch Changes
+
+- c475b7e: Added support for multiple expression support
+- 0b517c8: navigateBack works properly with modal screens
+- Updated dependencies [c475b7e]
+- Updated dependencies [0b517c8]
+  - @ensembleui/react-framework@0.1.45
+  - @ensembleui/react-runtime@0.1.61
+
 ## 0.0.52
 
 ### Patch Changes

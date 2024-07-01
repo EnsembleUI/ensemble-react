@@ -1,5 +1,13 @@
 # @ensembleui/react-runtime
 
+## 0.1.61
+
+### Patch Changes
+
+- 0b517c8: navigateBack works properly with modal screens
+- Updated dependencies [c475b7e]
+  - @ensembleui/react-framework@0.1.45
+
 ## 0.1.60
 
 ### Patch Changes
