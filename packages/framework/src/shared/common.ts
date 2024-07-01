@@ -44,6 +44,11 @@ export const isTranslationKey = (
 ): maybeExpression is string =>
   isString(maybeExpression) && maybeExpression.startsWith("r@");
 
+export const isHexCode = (
+  maybeExpression: Expression<unknown>,
+): maybeExpression is string =>
+  isString(maybeExpression) && /^0x[0-9A-Fa-f]{8}$/.test(maybeExpression);
+
 export const sanitizeJs = (string: string): string => {
   const trimmedString = string.trim();
   if (trimmedString.startsWith("${") && trimmedString.endsWith("}")) {
@@ -91,6 +96,37 @@ export const findTranslationKeys = (
       findTranslationKeys(value, curPath, translationMap);
     }
   });
+};
+
+export const findHexCodes = (
+  obj?: object,
+  path: string[] = [],
+  hexCodesMaps: string[][] = [],
+): void => {
+  if (!obj) {
+    return;
+  }
+
+  Object.entries(obj).forEach(([key, value]) => {
+    const curPath = path.concat(key);
+    if (isHexCode(value)) {
+      hexCodesMaps.push([curPath.join("."), convertColor(value)]);
+    } else if (isObject(value)) {
+      findHexCodes(value, curPath, hexCodesMaps);
+    }
+  });
+};
+
+export const convertColor = (hex: string): string => {
+  const hexValue = hex.slice(2); // Remove "0x"
+
+  const alphaDec = parseInt(hexValue.slice(0, 2), 16) / 255;
+  const redDec = parseInt(hexValue.slice(2, 4), 16);
+  const greenDec = parseInt(hexValue.slice(4, 6), 16);
+  const blueDec = parseInt(hexValue.slice(6, 8), 16);
+
+  // RGBA format
+  return `rgba(${redDec}, ${greenDec}, ${blueDec}, ${alphaDec.toFixed(2)})`;
 };
 
 export const debug = (value: unknown): void => {
