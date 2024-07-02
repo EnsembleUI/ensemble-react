@@ -64,10 +64,12 @@ export const useEvaluate = <T extends Record<string, unknown>>(
     return result;
   }, [values, translate]);
 
+  const updatedValues = merge({}, values, bindings, translatedkeys);
+
   // evaluate flutter color hex codes
   const hexCodes = useMemo(() => {
     const hexCodesMaps: string[][] = [];
-    findHexCodes(values, [], hexCodesMaps);
+    findHexCodes(updatedValues, [], hexCodesMaps);
 
     const result = {};
     hexCodesMaps.forEach(([name, value]) => {
@@ -75,7 +77,7 @@ export const useEvaluate = <T extends Record<string, unknown>>(
     });
 
     return result;
-  }, [values]);
+  }, [updatedValues]);
 
-  return merge({}, values, bindings, translatedkeys, hexCodes);
+  return merge({}, updatedValues, hexCodes);
 };

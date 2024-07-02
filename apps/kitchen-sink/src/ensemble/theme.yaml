@@ -85,7 +85,7 @@ Styles:
   heading-1:
     fontSize: ${typography.fontSize['32']}
     fontWeight: ${typography.fontWeight.medium}
-    color: "0xffb91c1c"
+
   heading-3:
     fontSize: ${typography.fontSize['24']}
     fontWeight: ${typography.fontWeight.bold}

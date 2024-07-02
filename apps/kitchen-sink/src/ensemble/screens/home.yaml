@@ -4,6 +4,7 @@ View:
       ensemble.storage.set('yyy' , 'page')
       ensemble.storage.set('zzz' , 'button')
       ensemble.storage.set('aaa' , '1')
+      ensemble.storage.set('bbb' , "0xffb91c1c")
 
   header:
     title:
@@ -12,7 +13,6 @@ View:
   styles:
     scrollableView: true
     backgroundColor: ${colors.primary['200']}
-    scrollableView: true
 
   body:
     Column:
@@ -22,7 +22,7 @@ View:
         - Text:
             styles:
               names: heading-1
-              color: ${colors.primary['900']}
+              color: ${ensemble.storage.get('bbb')}
             text: r@kitchenSink
         - Markdown:
             text: This application is built with Ensemble and serves as a guide for how to implement common UI patterns with Ensemble React.
@@ -196,7 +196,6 @@ View:
               margin: 10px 0px
             id: socketReceivedMessage
 
-
         - Text:
             styles:
               names: heading-1
@@ -237,7 +236,6 @@ View:
                   text: Expression with Strings
               - Text:
                   text: ${ensemble.storage.get('yyy')} style
-
 
         - Row:
             styles:
