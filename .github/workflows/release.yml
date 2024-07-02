@@ -24,6 +24,12 @@ jobs:
       # TODO only do this when changesets are empty
       - name: Build Packages
         run: pnpm run build --filter=./packages
+      - name: Create Release Pull Request
+        uses: changesets/action@v1
+        with:
+          publish: pnpm release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Generate Schema
         run: pnpm run schema:generate
       - name: Build Applications
@@ -52,9 +58,3 @@ jobs:
           destination: "ensemble-react-starter"
           parent: false
           glob: "*.zip"
-      - name: Create Release Pull Request
-        uses: changesets/action@v1
-        with:
-          publish: pnpm release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
