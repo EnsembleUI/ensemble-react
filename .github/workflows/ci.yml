@@ -47,6 +47,12 @@ jobs:
 
       - name: Test
         run: pnpm test
+      - name: Package Starter
+        working-directory: ./apps/starter
+        run: |
+          version=$(jq -r '.version' package.json)
+          zip -r "ensemble-starter-${version}.zip" build
+          cp "ensemble-starter-${version}.zip" ensemble-starter-latest.zip
       - id: "auth"
         uses: "google-github-actions/auth@v2"
         with:
@@ -55,5 +61,7 @@ jobs:
       - id: "upload-file"
         uses: "google-github-actions/upload-cloud-storage@v2"
         with:
-          path: "apps/starter/build"
+          path: "apps/starter"
           destination: "ensemble-react-starter"
+          parent: false
+          glob: "*.zip"
