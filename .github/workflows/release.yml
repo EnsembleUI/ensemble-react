@@ -26,7 +26,7 @@ jobs:
         run: pnpm run build --filter=./packages
       - name: Generate Schema
         run: pnpm run schema:generate
-      - name: Build Preview Dev
+      - name: Build Applications
         run: pnpm run build
         working-directory: ./apps/preview
       - uses: FirebaseExtended/action-hosting-deploy@v0

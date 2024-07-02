@@ -1,7 +1,11 @@
 {
   "name": "@ensembleui/react-starter",
   "version": "0.3.51",
-  "private": true,
+  "main": "./build/index.html",
+  "files": [
+    "./build/**"
+  ],
+  "repository": "https://github.com/EnsembleUI/ensemble-react",
   "dependencies": {
     "@ensembleui/react-framework": "workspace:*",
     "@ensembleui/react-runtime": "workspace:*",
