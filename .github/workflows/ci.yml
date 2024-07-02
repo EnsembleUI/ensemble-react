@@ -47,3 +47,13 @@ jobs:
 
       - name: Test
         run: pnpm test
+      - id: "auth"
+        uses: "google-github-actions/auth@v2"
+        with:
+          credentials_json: ${GCP_SERVICE_ACCT_KEY_JSON}
+
+      - id: "upload-file"
+        uses: "google-github-actions/upload-cloud-storage@v2"
+        with:
+          path: "apps/starter/build"
+          destination: "ensemble-react-starter"
