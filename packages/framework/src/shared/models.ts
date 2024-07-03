@@ -129,6 +129,7 @@ export interface EnsembleThemeModel {
     } & { [key: string]: string };
   };
   Styles?: { [key: string]: CSSProperties };
+  [key: string]: unknown;
 }
 
 export interface EnsembleScriptModel {

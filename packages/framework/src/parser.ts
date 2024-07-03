@@ -428,7 +428,8 @@ const unwrapTheme = (
   }
 
   if (isEmpty(workingTheme.Themes)) {
-    return;
+    workingTheme.default = workingTheme;
+    workingTheme.Themes = ["default"];
   }
 
   const themes = workingTheme.Themes?.reduce(
