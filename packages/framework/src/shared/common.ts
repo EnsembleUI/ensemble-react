@@ -15,28 +15,43 @@ export const isExpression = (
 
 export const isCompoundExpression = (input: string): boolean => {
   const placeholders = [];
-  let stack = 0,
-    start = -1;
+  let start = [],
+    sc = 0,
+    ec = 0;
 
   for (let i = 0; i < input.length; i++) {
-    if (input[i] === "$" && input[i + 1] === "{") {
-      if (stack === 0) start = i;
-      stack++;
-      i++;
+    if (input[i] === "{") {
+      sc++;
     } else if (input[i] === "}") {
-      stack--;
-      if (stack === 0 && start !== -1) {
-        placeholders.push(input.slice(start, i + 1));
-        start = -1;
-      }
+      ec++;
+    }
+
+    if (input[i] === "$" && input[i + 1] === "{") {
+      start.push(i);
+    }
+
+    if (sc !== 0 && ec !== 0 && sc === ec) {
+      sc = 0;
+      ec = 0;
+      placeholders.push(input.slice(start[0], i + 1));
+      start = [];
     }
   }
 
-  return (
-    placeholders.length > 1 ||
-    (placeholders.length === 1 &&
-      input.replace(placeholders[0], "").trim().length > 0)
-  );
+  if (placeholders.length === 0) {
+    return false; // No placeholders, not a compound expression
+  }
+
+  if (placeholders.length > 1) {
+    return true; // Multiple placeholders, compound expression
+  }
+
+  // Single placeholder
+  const placeholder = placeholders[0];
+  const remainingString = input.replace(placeholder, "").trim();
+
+  // Check if there is text around the placeholder
+  return remainingString.length > 0;
 };
 
 export const isTranslationKey = (
