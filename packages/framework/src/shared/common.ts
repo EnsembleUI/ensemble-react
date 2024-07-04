@@ -15,26 +15,30 @@ export const isExpression = (
 
 export const isCompoundExpression = (input: string): boolean => {
   const placeholders = [];
-  let start = [],
-    sc = 0,
-    ec = 0;
+  let placeholderStartIndices = [],
+    openBraceCount = 0,
+    closeBraceCount = 0;
 
   for (let i = 0; i < input.length; i++) {
     if (input[i] === "{") {
-      sc++;
+      openBraceCount++;
     } else if (input[i] === "}") {
-      ec++;
+      closeBraceCount++;
     }
 
     if (input[i] === "$" && input[i + 1] === "{") {
-      start.push(i);
+      placeholderStartIndices.push(i);
     }
 
-    if (sc !== 0 && ec !== 0 && sc === ec) {
-      sc = 0;
-      ec = 0;
-      placeholders.push(input.slice(start[0], i + 1));
-      start = [];
+    if (
+      openBraceCount !== 0 &&
+      closeBraceCount !== 0 &&
+      openBraceCount === closeBraceCount
+    ) {
+      openBraceCount = 0;
+      closeBraceCount = 0;
+      placeholders.push(input.slice(placeholderStartIndices[0], i + 1));
+      placeholderStartIndices = [];
     }
   }
 
