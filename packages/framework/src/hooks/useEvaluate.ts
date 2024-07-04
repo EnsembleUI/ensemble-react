@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { atom, useAtom } from "jotai";
-import { compact, merge, set } from "lodash-es";
+import { compact, get, merge, set } from "lodash-es";
 import { useTranslation } from "react-i18next";
 import { findExpressions, findHexCodes, findTranslationKeys } from "../shared";
 import { createBindingAtom } from "../evaluate";
@@ -69,11 +69,15 @@ export const useEvaluate = <T extends Record<string, unknown>>(
   // evaluate flutter color hex codes
   const hexCodes = useMemo(() => {
     const hexCodesMaps: string[][] = [];
-    findHexCodes(updatedValues, [], hexCodesMaps);
+    findHexCodes(
+      get(updatedValues, "styles") as { [key: string]: unknown },
+      [],
+      hexCodesMaps,
+    );
 
     const result = {};
     hexCodesMaps.forEach(([name, value]) => {
-      set(result, name, value);
+      set(result, `styles.${name}`, value);
     });
 
     return result;
