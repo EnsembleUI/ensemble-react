@@ -192,7 +192,7 @@ View:
                                 styles:
                                   fontSize: ${typography.fontSize['14']}
                                   fontWeight: ${typography.fontWeight.light}
-                      onDialogDismiss:
+                      onModalDismiss:
                         executeCode:
                           body: |
                             console.log('Modal Screen Dismissed');
