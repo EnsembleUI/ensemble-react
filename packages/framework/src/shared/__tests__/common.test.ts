@@ -73,5 +73,13 @@ describe("isCompoundExpression", () => {
   test("Multiple placeholders with nested placeholders", () => {
     expect(isCompoundExpression("${a${b}c} ${d${e}f}")).toBe(true);
   });
+
+  test("Complex expression with nested brackets", () => {
+    expect(
+      isCompoundExpression(
+        "${[{ value: 'ledger', label: 'Ledger' }, ...getUser.body.data.userById.configurationType === 'BPO' ? [{ value: 'clientProductivity', label: 'Client Productivity' }] : [], { value: 'advocateProductivity', label: 'Advocate Productivity' }]}",
+      ),
+    ).toBe(false);
+  });
 });
 /* eslint-enable no-template-curly-in-string */

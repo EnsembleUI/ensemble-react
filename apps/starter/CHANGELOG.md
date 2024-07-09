@@ -1,5 +1,17 @@
 # @ensembleui/react-starter
 
+## 0.4.0
+
+### Minor Changes
+
+- 919b635: Publish react starter project as configurable release
+
+### Patch Changes
+
+- Updated dependencies [790bbb9]
+  - @ensembleui/react-framework@0.1.46
+  - @ensembleui/react-runtime@0.1.61
+
 ## 0.3.51
 
 ### Patch Changes

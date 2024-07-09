@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.46
+
+### Patch Changes
+
+- 790bbb9: fix combine expression checker
+
 ## 0.1.45
 
 ### Patch Changes
