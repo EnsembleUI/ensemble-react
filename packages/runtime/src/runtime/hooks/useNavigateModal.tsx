@@ -29,7 +29,10 @@ export const useNavigateModalScreen: EnsembleActionHook<
   const screenContext = useScreenContext();
   const customScope = useCustomScope();
   const storage = useEnsembleStorage();
-  const ensembleAction = useEnsembleAction(action?.onModalDismiss);
+  const ensembleAction = useEnsembleAction(
+    (!isString(action) && (action?.onModalDismiss as EnsembleAction)) ||
+      undefined,
+  );
 
   const onDismissCallback = useCallback(() => {
     if (!ensembleAction) {
