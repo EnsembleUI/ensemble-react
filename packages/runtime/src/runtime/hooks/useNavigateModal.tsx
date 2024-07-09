@@ -1,4 +1,7 @@
-import type { NavigateModalScreenAction } from "@ensembleui/react-framework";
+import type {
+  EnsembleAction,
+  NavigateModalScreenAction,
+} from "@ensembleui/react-framework";
 import {
   evaluate,
   findExpressions,
@@ -14,7 +17,10 @@ import { EnsembleRuntime } from "../runtime";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { navigateModalScreen } from "../navigation";
-import type { EnsembleActionHook } from "./useEnsembleAction";
+import {
+  useEnsembleAction,
+  type EnsembleActionHook,
+} from "./useEnsembleAction";
 
 export const useNavigateModalScreen: EnsembleActionHook<
   NavigateModalScreenAction
@@ -23,6 +29,17 @@ export const useNavigateModalScreen: EnsembleActionHook<
   const screenContext = useScreenContext();
   const customScope = useCustomScope();
   const storage = useEnsembleStorage();
+  const ensembleAction = useEnsembleAction(
+    (!isString(action) && (action?.onModalDismiss as EnsembleAction)) ||
+      undefined,
+  );
+
+  const onDismissCallback = useCallback(() => {
+    if (!ensembleAction) {
+      return;
+    }
+    ensembleAction.callback();
+  }, [ensembleAction]);
 
   const isStringAction = isString(action);
 
@@ -53,9 +70,24 @@ export const useNavigateModalScreen: EnsembleActionHook<
         });
       }
 
-      navigateModalScreen(action, screenContext, modalContext, inputs, title);
+      navigateModalScreen(
+        action,
+        screenContext,
+        modalContext,
+        inputs,
+        title,
+        onDismissCallback,
+      );
     },
-    [action, screenContext, modalContext, title, storage, customScope],
+    [
+      action,
+      screenContext,
+      modalContext,
+      title,
+      storage,
+      customScope,
+      onDismissCallback,
+    ],
   );
 
   return { callback };

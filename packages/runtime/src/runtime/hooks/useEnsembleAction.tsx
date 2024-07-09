@@ -75,6 +75,7 @@ import {
   extractCondition,
   hasProperStructure,
 } from "../../widgets/Conditional";
+// eslint-disable-next-line import/no-cycle
 import { useNavigateModalScreen } from "./useNavigateModal";
 import { useNavigateScreen } from "./useNavigateScreen";
 import { useShowToast } from "./useShowToast";
