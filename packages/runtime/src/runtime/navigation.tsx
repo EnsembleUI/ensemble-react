@@ -49,12 +49,14 @@ const MODAL_SCREEN_DEFAULT_OPTIONS = {
   hideFullScreenIcon: true,
   padding: "12px",
 };
+
 export const navigateModalScreen = (
   action: NavigateModalScreenAction,
   screenContext: ScreenContextDefinition,
   modalContext: ModalContextProps,
   inputs?: { [key: string]: unknown },
   title?: React.ReactNode[],
+  onClose?: () => void,
 ): void => {
   const hasOptions = !isString(action);
   const screenName = hasOptions ? action.name : action;
@@ -64,7 +66,7 @@ export const navigateModalScreen = (
   if (!matchingScreen) {
     return;
   }
-  const modalOptions = { ...MODAL_SCREEN_DEFAULT_OPTIONS };
+  const modalOptions = { ...MODAL_SCREEN_DEFAULT_OPTIONS, onClose };
   if (isObject(action)) {
     merge(
       modalOptions,
