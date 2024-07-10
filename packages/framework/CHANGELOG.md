@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.47
+
+### Patch Changes
+
+- 49059ad: Added support for onModalDismiss in navigateScreenModal
+
 ## 0.1.46
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @ensembleui/react-starter
 
+## 0.4.1
+
+### Patch Changes
+
+- bb19876: Fix starter default font import
+- Updated dependencies [49059ad]
+- Updated dependencies [fb65bd1]
+  - @ensembleui/react-framework@0.1.47
+  - @ensembleui/react-runtime@0.1.62
+
 ## 0.4.0
 
 ### Minor Changes
