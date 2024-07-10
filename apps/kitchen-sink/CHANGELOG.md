@@ -1,5 +1,15 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.55
+
+### Patch Changes
+
+- 49059ad: Added support for onModalDismiss in navigateScreenModal
+- Updated dependencies [49059ad]
+- Updated dependencies [fb65bd1]
+  - @ensembleui/react-framework@0.1.47
+  - @ensembleui/react-runtime@0.1.62
+
 ## 0.0.54
 
 ### Patch Changes
