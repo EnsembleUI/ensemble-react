@@ -4,20 +4,13 @@ import { DatePicker, Form } from "antd";
 import { useState, useCallback, useEffect } from "react";
 import dayjs from "dayjs";
 import { WidgetRegistry } from "../../../registry";
-import type {
-  EnsembleWidgetProps,
-  EnsembleWidgetStyles,
-} from "../../../shared/types";
+import type { EnsembleWidgetProps } from "../../../shared/types";
 import { useEnsembleAction } from "../../../runtime/hooks/useEnsembleAction";
 import type { FormInputProps } from "../types";
 import { EnsembleFormItem } from "../FormItem";
 import { DateDisplayFormat } from "./utils/DateConstants";
 
 const widgetName = "Date";
-
-type DateStyles = {
-  visible?: boolean;
-} & EnsembleWidgetStyles;
 
 export type DateProps = {
   initialValue?: Expression<string>;
@@ -26,7 +19,7 @@ export type DateProps = {
   showCalendarIcon?: boolean;
   onChange?: EnsembleAction;
 } & FormInputProps<string> &
-  EnsembleWidgetProps<DateStyles>;
+  EnsembleWidgetProps;
 
 export const Date: React.FC<DateProps> = (props) => {
   const [value, setValue] = useState<string>();
@@ -67,10 +60,12 @@ export const Date: React.FC<DateProps> = (props) => {
   };
 
   useEffect(() => {
-    if (!value) {
+    if (!value && !values?.value) {
       setValue(
         values?.initialValue ? String(dayjs(values.initialValue)) : undefined,
       );
+    } else if (values?.value && dayjs(values.value).isValid()) {
+      setValue(String(dayjs(values.value)));
     }
   }, [values]);
 
