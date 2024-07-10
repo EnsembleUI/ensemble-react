@@ -64,8 +64,8 @@ export const Date: React.FC<DateProps> = (props) => {
       setValue(
         values?.initialValue ? String(dayjs(values.initialValue)) : undefined,
       );
-    } else if (values?.value) {
-      setValue(values.value);
+    } else if (values?.value && dayjs(values.value).isValid()) {
+      setValue(String(dayjs(values.value)));
     }
   }, [values]);
 
