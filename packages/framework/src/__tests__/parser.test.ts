@@ -86,3 +86,66 @@ test("parses application with no custom widgets", () => {
     customWidgets: [],
   });
 });
+
+test("parses application with theme (old style)", () => {
+  const app = EnsembleParser.parseApplication({
+    screens: [
+      {
+        name: "home",
+        content: fs
+          .readFileSync(`${__dirname}/__resources__/helloworld.yaml`)
+          .toString(),
+      },
+    ],
+    theme: {
+      id: "theme",
+      content: fs
+        .readFileSync(`${__dirname}/__resources__/oldtheme.yaml`)
+        .toString(),
+    },
+    scripts: [],
+    name: "test",
+    id: "test",
+  } as unknown as ApplicationDTO);
+
+  expect(app).toMatchObject({
+    id: "test",
+    menu: undefined,
+    customWidgets: [],
+    themes: {
+      default: {},
+    },
+  });
+});
+
+test("parses application with theme (new style)", () => {
+  const app = EnsembleParser.parseApplication({
+    screens: [
+      {
+        name: "home",
+        content: fs
+          .readFileSync(`${__dirname}/__resources__/helloworld.yaml`)
+          .toString(),
+      },
+    ],
+    theme: {
+      id: "theme",
+      content: fs
+        .readFileSync(`${__dirname}/__resources__/newtheme.yaml`)
+        .toString(),
+    },
+    scripts: [],
+    name: "test",
+    id: "test",
+  } as unknown as ApplicationDTO);
+
+  expect(app).toMatchObject({
+    id: "test",
+    menu: undefined,
+    customWidgets: [],
+    themes: {
+      Light: {},
+      Dark: {},
+    },
+  });
+});
