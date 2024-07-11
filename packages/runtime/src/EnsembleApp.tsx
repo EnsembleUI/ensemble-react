@@ -7,6 +7,7 @@ import type {
 import {
   ApplicationContextProvider,
   EnsembleParser,
+  useDeviceData,
 } from "@ensembleui/react-framework";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
@@ -40,6 +41,7 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
   environmentOverrides,
 }) => {
   const [app, setApp] = useState<EnsembleAppModel>();
+  const { setData: updateDeviceData } = useDeviceData();
 
   useEffect(() => {
     if (app) {
@@ -110,6 +112,14 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
   if (!app || !router) {
     return null;
   }
+
+  const resizeObserver = new ResizeObserver((_) => {
+    updateDeviceData({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+  });
+  resizeObserver.observe(document.body);
 
   return (
     <ApplicationContextProvider

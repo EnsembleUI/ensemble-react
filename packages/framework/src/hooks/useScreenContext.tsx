@@ -10,6 +10,7 @@ import {
   screenDataAtom,
   themeAtom,
   userAtom,
+  deviceAtom,
 } from "../state";
 import type {
   ApplicationContextDefinition,
@@ -54,6 +55,7 @@ export const ScreenContextProvider: React.FC<ScreenContextProviderProps> = ({
               inputs: Object.fromEntries(
                 location.searchParams?.entries() ?? [],
               ),
+              device: useAtomValue(deviceAtom),
             },
             context,
           ) as ScreenContextDefinition
