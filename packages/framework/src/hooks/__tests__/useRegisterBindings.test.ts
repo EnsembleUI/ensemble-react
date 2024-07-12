@@ -269,3 +269,56 @@ test("updates bindings when invokable updates", () => {
   expect(result.current.values).toEqual(mockValues);
   expect(updatedScreen.widgets.test?.invokable.methods?.setter).not.toBeNull();
 });
+
+test("evaluates flutter style hex codes ", () => {
+  const mockData = {
+    styles: { color: "0xffb74093" },
+  };
+
+  const { result } = renderHook(() =>
+    useRegisterBindings(mockData, mockInvokable.id, mockInvokable.methods),
+  );
+
+  expect(result.current).toMatchObject({
+    id: "test",
+    values: {
+      styles: {
+        color: "rgba(183, 64, 147, 1.00)",
+      },
+    },
+  });
+});
+
+test("evaluates flutter style hex codes expressions", () => {
+  store.set(screenStorageAtom, {
+    flutterColorCode: "0xffb74093",
+  });
+  store.set(screenAtom, {
+    widgets: {
+      test: {
+        values: mockValues,
+        invokable: mockInvokable,
+      },
+    },
+    data: {},
+  });
+
+  const mockData = {
+    ...mockValues,
+    // eslint-disable-next-line no-template-curly-in-string
+    styles: { color: "${ensemble.storage.get('flutterColorCode')}" },
+  };
+
+  const { result } = renderHook(() =>
+    useRegisterBindings(mockData, mockInvokable.id, mockInvokable.methods),
+  );
+
+  expect(result.current).toMatchObject({
+    id: "test",
+    values: {
+      styles: {
+        color: "rgba(183, 64, 147, 1.00)",
+      },
+    },
+  });
+});
