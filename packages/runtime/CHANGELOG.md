@@ -1,5 +1,13 @@
 # @ensembleui/react-runtime
 
+## 0.1.63
+
+### Patch Changes
+
+- 70715ab: rebind form's methods on every render
+- Updated dependencies [70715ab]
+  - @ensembleui/react-framework@0.1.49
+
 ## 0.1.62
 
 ### Patch Changes
