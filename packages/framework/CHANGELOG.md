@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.49
+
+### Patch Changes
+
+- 70715ab: rebind form's methods on every render
+
 ## 0.1.48
 
 ### Patch Changes
