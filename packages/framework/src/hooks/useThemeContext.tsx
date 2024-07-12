@@ -1,5 +1,5 @@
 import { useAtom, useAtomValue } from "jotai";
-import { clone, isEmpty } from "lodash-es";
+import { keys } from "lodash-es";
 import { createContext, useCallback } from "react";
 import { type EnsembleThemeModel } from "../shared";
 import { appAtom, selectedThemeNameAtom, themeAtom } from "../state";
@@ -22,16 +22,12 @@ export const useThemeScope = (): {
 
   const setTheme = useCallback(
     (name: string) => {
-      updateThemeName(name);
-
-      let newTheme = appContext.application?.theme;
-      if (!isEmpty(appContext.application?.themes)) {
-        newTheme = appContext.application?.themes[name];
+      if (keys(appContext.application?.themes).includes(name)) {
+        updateThemeName(name);
+        updateTheme(appContext.application?.themes?.[name]);
       }
-
-      updateTheme(clone(newTheme));
     },
-    [updateTheme, updateThemeName],
+    [updateTheme, updateThemeName, appContext.application?.themes],
   );
 
   return { theme, themeName, setTheme };
