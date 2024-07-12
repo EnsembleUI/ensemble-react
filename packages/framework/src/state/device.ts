@@ -1,4 +1,5 @@
 import { atom, useAtom } from "jotai";
+import { merge } from "lodash-es";
 import { useCallback } from "react";
 
 // https://wicg.github.io/ua-client-hints/#navigatorua
@@ -45,7 +46,7 @@ export const useDeviceData = (): DeviceDefinition &
 
   const setData = useCallback(
     (values: { [key: string]: unknown }) => {
-      setDataAtom({ ...data, ...values });
+      setDataAtom(merge({}, data, values));
     },
     [data, setDataAtom],
   );
