@@ -1,5 +1,23 @@
 # @ensembleui/react-framework
 
+## 0.1.47
+
+### Patch Changes
+
+- 49059ad: Added support for onModalDismiss in navigateScreenModal
+
+## 0.1.46
+
+### Patch Changes
+
+- 790bbb9: fix combine expression checker
+
+## 0.1.45
+
+### Patch Changes
+
+- c475b7e: Added support for multiple expression support
+
 ## 0.1.44
 
 ### Patch Changes

@@ -79,6 +79,7 @@ export type NavigateModalScreenAction =
       hideCloseIcon?: boolean;
       title?: string | { [key: string]: unknown };
       styles?: NavigateModalScreenStyles;
+      onModalDismiss?: EnsembleAction;
     });
 
 export type NavigateScreenAction = string | NavigateScreenOptions;

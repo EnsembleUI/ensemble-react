@@ -3,4 +3,4 @@
 "@ensembleui/react-kitchen-sink": patch
 ---
 
-Added support for multiple expression support
+Added support for flutter style hex color codes
