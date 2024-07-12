@@ -65,6 +65,7 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
       (options?.comparator
         ? options.comparator(newValues, widgetState?.values)
         : isEqual(newValues, widgetState?.values)) &&
+      // compare invokable methods too to get rid of stale methods
       lodashIsEqual(keys(methods), keys(widgetState?.invokable.methods))
     ) {
       return;
