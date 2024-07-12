@@ -20,7 +20,6 @@ import {
   screenImportScriptAtom,
   userAtom,
   appAtom,
-  selectedThemeNameAtom,
 } from "../state";
 import { evaluate } from "./evaluate";
 import { createEvaluationContext } from "./context";
@@ -84,9 +83,7 @@ export const createBindingAtom = <T = unknown>(
         application: {
           theme: get(themeAtom),
           languages: appData.application?.languages,
-          themes: appData.application?.themes,
         },
-        themeName: get(selectedThemeNameAtom),
         env: get(envAtom),
       },
       screenContext: {

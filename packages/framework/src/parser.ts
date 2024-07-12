@@ -12,6 +12,7 @@ import {
   set,
   isString,
   concat,
+  clone,
   filter,
   includes,
   omit,
@@ -107,7 +108,13 @@ export const EnsembleParser = {
       );
     }
 
-    const themes = unwrapTheme(app.theme?.content);
+    const theme = unwrapTheme(app.theme?.content);
+    const themes: { [key: string]: EnsembleThemeModel | undefined } = {};
+    if (isArray(app.themes)) {
+      app.themes.forEach((item) => {
+        themes[item.name || item.id] = unwrapTheme(clone(item.content));
+      });
+    }
 
     const scripts = app.scripts.map(({ name, content }) => ({
       name,
@@ -130,8 +137,9 @@ export const EnsembleParser = {
       screens: screens as EnsembleScreenModel[],
       customWidgets,
       home: menu ?? screens[0],
-      scripts,
+      theme,
       themes,
+      scripts,
       config: ensembleConfigData,
       languages,
     };
@@ -415,9 +423,7 @@ const unwrapFooter = (
   }
 };
 
-const unwrapTheme = (
-  theme?: string,
-): { [key: string]: EnsembleThemeModel } | undefined => {
+const unwrapTheme = (theme?: string): EnsembleThemeModel | undefined => {
   if (!theme || isEmpty(theme)) {
     return;
   }
@@ -427,45 +433,29 @@ const unwrapTheme = (
     return;
   }
 
-  if (isEmpty(workingTheme.Themes)) {
-    workingTheme.default = workingTheme;
-    workingTheme.Themes = ["default"];
+  if (!workingTheme.Styles) {
+    return workingTheme;
   }
 
-  const themes = workingTheme.Themes?.reduce(
-    (acc: { [key: string]: EnsembleThemeModel }, themeName: string) => {
-      const themeContent = get(workingTheme, themeName) as EnsembleThemeModel;
+  const expressionMap: string[][] = [];
+  findExpressions(workingTheme.Styles, [], expressionMap);
 
-      if (!themeContent.Styles) {
-        acc[themeName] = themeContent;
-        return acc;
-      }
-
-      const expressionMap: string[][] = [];
-      findExpressions(themeContent.Styles, [], expressionMap);
-
-      const resolvedProps: [string, unknown][] = expressionMap.map(
-        ([path, expression]) => {
-          const result = evaluate(
-            defaultScreenContext,
-            expression,
-            mapKeys(themeContent.Tokens ?? {}, (_, key) => key.toLowerCase()),
-          );
-          return [path, result];
-        },
+  const resolvedProps: [string, unknown][] = expressionMap.map(
+    ([path, expression]) => {
+      const result = evaluate(
+        defaultScreenContext,
+        expression,
+        mapKeys(workingTheme.Tokens ?? {}, (_, key) => key.toLowerCase()),
       );
-
-      resolvedProps.forEach(([path, value]) =>
-        set(themeContent.Styles!, path, value),
-      );
-
-      acc[themeName] = themeContent;
-      return acc;
+      return [path, result];
     },
-    {},
   );
 
-  return themes;
+  resolvedProps.forEach(([path, value]) =>
+    set(workingTheme.Styles!, path, value),
+  );
+
+  return workingTheme;
 };
 
 const unwrapLanguage = (language: LanguageDTO) => {
