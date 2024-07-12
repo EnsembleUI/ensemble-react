@@ -24,11 +24,16 @@ jobs:
       # TODO only do this when changesets are empty
       - name: Build Packages
         run: pnpm run build --filter=./packages
+      - name: Create Release Pull Request
+        uses: changesets/action@v1
+        with:
+          publish: pnpm release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Generate Schema
         run: pnpm run schema:generate
-      - name: Build Preview Dev
+      - name: Build Applications
         run: pnpm run build
-        working-directory: ./apps/preview
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
@@ -36,9 +41,20 @@ jobs:
           channelId: live
           projectId: ensemble-web-studio
           entryPoint: ./apps/preview
-      - name: Create Release Pull Request
-        uses: changesets/action@v1
+      - name: Package Starter
+        working-directory: ./apps/starter
+        run: |
+          version=$(jq -r '.version' package.json)
+          zip -r "ensemble-starter-${version}.zip" build
+          cp "ensemble-starter-${version}.zip" ensemble-starter-latest.zip
+      - id: "auth"
+        uses: "google-github-actions/auth@v2"
         with:
-          publish: pnpm release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCT_KEY_JSON }}
+      - id: "upload-file"
+        uses: "google-github-actions/upload-cloud-storage@v2"
+        with:
+          path: "apps/starter"
+          destination: "ensemble-react-starter"
+          parent: false
+          glob: "*.zip"

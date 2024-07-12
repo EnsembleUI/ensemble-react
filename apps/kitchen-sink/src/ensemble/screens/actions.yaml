@@ -192,6 +192,10 @@ View:
                                 styles:
                                   fontSize: ${typography.fontSize['14']}
                                   fontWeight: ${typography.fontWeight.light}
+                      onModalDismiss:
+                        executeCode:
+                          body: |
+                            console.log('Modal Screen Dismissed');
                       styles:
                         height: 100%
                         width: 500px
