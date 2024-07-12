@@ -117,7 +117,6 @@ export interface CustomWidgetModel {
 }
 
 export interface EnsembleThemeModel {
-  Themes?: [string];
   Tokens?: {
     Colors?: {
       primary?: string;
@@ -129,7 +128,6 @@ export interface EnsembleThemeModel {
     } & { [key: string]: string };
   };
   Styles?: { [key: string]: CSSProperties };
-  [key: string]: unknown;
 }
 
 export interface EnsembleScriptModel {
