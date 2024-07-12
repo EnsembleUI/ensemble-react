@@ -1,13 +1,6 @@
 import type { RefCallback } from "react";
 import { useEffect, useMemo } from "react";
-import {
-  get,
-  isEmpty,
-  isString,
-  keys,
-  debounce,
-  isEqual as lodashIsEqual,
-} from "lodash-es";
+import { get, isEmpty, isString, keys, debounce } from "lodash-es";
 import isEqual from "react-fast-compare";
 import type { InvokableMethods } from "../state";
 import { useWidgetId } from "./useWidgetId";
@@ -65,8 +58,7 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
       (options?.comparator
         ? options.comparator(newValues, widgetState?.values)
         : isEqual(newValues, widgetState?.values)) &&
-      // compare invokable methods too to get rid of stale methods
-      lodashIsEqual(keys(methods), keys(widgetState?.invokable.methods))
+      isEqual(keys(methods), keys(widgetState?.invokable.methods))
     ) {
       return;
     }
