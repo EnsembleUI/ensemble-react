@@ -81,24 +81,17 @@ View:
             styles:
               width: 100px
               backgroundColor: ${colors.primary['500']}
-            item-template:
-              data: ${app.themes}
-              name: theme
-              value: theme
-              template:
-                Text:
-                  text: ${theme}
+            items:
+              - label: Light
+                value: default
+              - label: Dark
+                value: dark
             widget:
               Icon:
                 name: Settings
             onItemSelect:
               executeCode: |
-                console.log({app})
-
-        - Text:
-            styles:
-              names: heading-1
-            text: Selected Theme ${app.theme}
+                ensemble.setTheme(value)
 
         - Divider:
 
