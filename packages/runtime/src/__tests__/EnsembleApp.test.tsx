@@ -17,6 +17,15 @@ jest.mock("@ensembleui/react-framework", () => ({
 
 jest.mock("react-markdown", jest.fn());
 
+global.Request = jest
+  .fn()
+  .mockImplementation((input: RequestInfo, init: RequestInit) => ({
+    url: input,
+    method: init.method || "GET",
+    headers: init.headers || {},
+    body: init.body || null,
+  }));
+
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: jest.fn().mockImplementation((query) => ({
@@ -30,6 +39,11 @@ Object.defineProperty(window, "matchMedia", {
     removeEventListener: jest.fn(),
     dispatchEvent: jest.fn(),
   })),
+});
+
+afterEach(() => {
+  // Reset the route or any global state here
+  window.history.pushState({}, "", "/");
 });
 
 test("Renders error page", () => {

@@ -6,6 +6,7 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { SideBarMenu } from "./menu";
 import { EnsembleScreen } from "./screen";
+import { keys } from "lodash-es";
 
 interface EnsembleEntryProps {
   entry: EnsembleEntryPoint;
@@ -20,24 +21,32 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({
 
   const hasMenu = "items" in entry;
   useEffect(() => {
-    if (screen && location.pathname !== `/${screen.name.toLowerCase()}`) {
-      navigate({
-        pathname: `/${screen.name.toLowerCase()}`,
-        search: location.search,
-      });
+    if (!keys(entry).length) {
       return;
     }
 
-    if (!(hasMenu && location.pathname === "/")) {
+    const navigateToPath = (pathname: string, search = ""): void => {
+      navigate({ pathname, search });
+    };
+
+    const getLowerCasePath = (name: string): string => `/${name.toLowerCase()}`;
+
+    const currentPath = location.pathname;
+
+    if (screen && currentPath !== getLowerCasePath(screen.name)) {
+      navigateToPath(getLowerCasePath(screen.name), location.search);
       return;
     }
 
-    const selectedItem =
-      entry.items.find((item) => item.selected) ?? entry.items[0];
-    navigate({
-      pathname: `/${selectedItem.page.toLowerCase()}`,
-      search: location.search,
-    });
+    if (hasMenu) {
+      if (currentPath === "/") {
+        const selectedItem =
+          entry.items.find((item) => item.selected) ?? entry.items[0];
+        navigateToPath(getLowerCasePath(selectedItem.page), location.search);
+      }
+    } else if (currentPath === "/") {
+      navigateToPath(getLowerCasePath(entry.name));
+    }
   }, [entry, hasMenu, navigate, location, screen]);
 
   if (hasMenu) {
