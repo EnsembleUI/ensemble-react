@@ -25,6 +25,9 @@ View:
         inputs:
           message: "Inputs to header widget"
 
+  styles:
+    scrollableView: true
+
   body:
     Column:
       crossAxis: stretch
@@ -544,6 +547,8 @@ View:
                                     {
                                       label: "legend is displayed",
                                       data: [65, 59, 80, 81, 56, 55, 40, 50, 60],
+                                      fill: 'start',
+                                      backgroundColor: 'rgba(255, 99, 132, 0.5)',
                                     },
                                   ]
                               }
