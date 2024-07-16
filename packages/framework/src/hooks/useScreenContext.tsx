@@ -1,6 +1,6 @@
 import { Provider, useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useCallback, useContext } from "react";
-import { clone, merge } from "lodash-es";
+import { useCallback, useContext, useEffect, useMemo } from "react";
+import { clone, debounce, merge } from "lodash-es";
 import { useHydrateAtoms } from "jotai/utils";
 import {
   appAtom,
@@ -11,6 +11,7 @@ import {
   themeAtom,
   userAtom,
   deviceAtom,
+  useDeviceData,
 } from "../state";
 import type {
   ApplicationContextDefinition,
@@ -55,7 +56,6 @@ export const ScreenContextProvider: React.FC<ScreenContextProviderProps> = ({
               inputs: Object.fromEntries(
                 location.searchParams?.entries() ?? [],
               ),
-              device: useAtomValue(deviceAtom),
             },
             context,
           ) as ScreenContextDefinition
@@ -74,6 +74,7 @@ const HydrateAtoms: React.FC<
   }>
 > = ({ appContext, screenContext, children }) => {
   const themeScope = useContext(CustomThemeContext);
+  const deviceAtomValue = useAtomValue(deviceAtom);
 
   // initialising on state with prop on render here
   useHydrateAtoms([[screenAtom, screenContext]]);
@@ -82,13 +83,20 @@ const HydrateAtoms: React.FC<
       [appAtom, appContext],
       [themeAtom, themeScope.theme],
       [userAtom, appContext.user],
+      [deviceAtom, deviceAtomValue],
     ],
     {
       dangerouslyForceHydrate: true,
     },
   );
 
-  return <>{children}</>;
+  return (
+    <>
+      {" "}
+      <DeviceObserver />
+      {children}
+    </>
+  );
 };
 
 /**
@@ -115,4 +123,30 @@ export const useScreenContext = ():
     [screenContext.data, setDataAtom],
   );
   return { ...screenContext, setData };
+};
+
+const DeviceObserver = (): null => {
+  const { setData: updateDeviceData } = useDeviceData();
+
+  const debouncedUpdateDeviceData = useMemo(() => {
+    const handleResize = (): void => {
+      updateDeviceData({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+    return debounce(handleResize, 500);
+  }, [updateDeviceData]);
+
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(debouncedUpdateDeviceData);
+    resizeObserver.observe(document.body);
+
+    return (): void => {
+      resizeObserver.disconnect();
+      debouncedUpdateDeviceData.cancel(); // Cancel any pending debounced calls on cleanup
+    };
+  }, [debouncedUpdateDeviceData]);
+
+  return null;
 };

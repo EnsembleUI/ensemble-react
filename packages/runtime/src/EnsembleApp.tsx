@@ -7,7 +7,6 @@ import type {
 import {
   ApplicationContextProvider,
   EnsembleParser,
-  useDeviceData,
 } from "@ensembleui/react-framework";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
@@ -20,7 +19,6 @@ import { ErrorPage } from "./runtime/error";
 import "./widgets";
 import { WidgetRegistry } from "./registry";
 import { createCustomWidget } from "./runtime/customWidget";
-import { debounce } from "lodash-es";
 
 injectStyle();
 
@@ -42,7 +40,6 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
   environmentOverrides,
 }) => {
   const [app, setApp] = useState<EnsembleAppModel>();
-  const { setData: updateDeviceData } = useDeviceData();
 
   useEffect(() => {
     if (app) {
@@ -109,28 +106,6 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
         : null,
     [app, path],
   );
-
-  const handleResize = (): void => {
-    updateDeviceData({
-      width: window.innerWidth,
-      height: window.innerHeight,
-    });
-  };
-
-  const debouncedUpdateDeviceData = useMemo(
-    () => debounce(handleResize, 500),
-    [],
-  );
-
-  useEffect(() => {
-    const resizeObserver = new ResizeObserver(debouncedUpdateDeviceData);
-    resizeObserver.observe(document.body);
-
-    return () => {
-      resizeObserver.disconnect();
-      debouncedUpdateDeviceData.cancel(); // Cancel any pending debounced calls on cleanup
-    };
-  }, [debouncedUpdateDeviceData]);
 
   if (!app || !router) {
     return null;

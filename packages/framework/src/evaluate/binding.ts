@@ -20,6 +20,7 @@ import {
   screenImportScriptAtom,
   userAtom,
   appAtom,
+  deviceAtom,
 } from "../state";
 import { evaluate } from "./evaluate";
 import { createEvaluationContext } from "./context";
@@ -85,6 +86,7 @@ export const createBindingAtom = <T = unknown>(
           languages: appData.application?.languages,
         },
         env: get(envAtom),
+        device: get(deviceAtom),
       },
       screenContext: {
         inputs: get(screenInputAtom),
