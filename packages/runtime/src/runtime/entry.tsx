@@ -31,22 +31,25 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({
 
     const getLowerCasePath = (name: string): string => `/${name.toLowerCase()}`;
 
-    const currentPath = location.pathname;
+    const initialScreen = location.pathname;
 
-    if (screen && currentPath !== getLowerCasePath(screen.name)) {
+    if (initialScreen !== "/") {
+      return;
+    }
+
+    if (screen && initialScreen !== getLowerCasePath(screen.name)) {
       navigateToPath(getLowerCasePath(screen.name), location.search);
       return;
     }
 
     if (hasMenu) {
-      if (currentPath === "/") {
-        const selectedItem =
-          entry.items.find((item) => item.selected) ?? entry.items[0];
-        navigateToPath(getLowerCasePath(selectedItem.page), location.search);
-      }
-    } else if (currentPath === "/") {
-      navigateToPath(getLowerCasePath(entry.name));
+      const selectedItem =
+        entry.items.find((item) => item.selected) ?? entry.items[0];
+      navigateToPath(getLowerCasePath(selectedItem.page), location.search);
+      return;
     }
+
+    navigateToPath(getLowerCasePath(entry.name));
   }, [entry, hasMenu, navigate, location, screen]);
 
   if (hasMenu) {
