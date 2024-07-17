@@ -24,11 +24,14 @@ export type FlexProps = {
   EnsembleWidgetProps<FlexStyles & FlexboxStyles>;
 
 export const FlexWidget: React.FC<FlexProps> = (props) => {
-  const { values } = useRegisterBindings({ ...props }, props.id);
+  const { values } = useRegisterBindings(
+    { styles: { direction: props.styles?.direction } },
+    props.id,
+  );
 
   return (
     <>
-      {values?.styles?.direction === "vertical" ? (
+      {values?.styles.direction === "vertical" ? (
         <Column {...props} styles={{ ...omit(props.styles, ["direction"]) }} />
       ) : (
         <Row {...props} styles={{ ...omit(props.styles, ["direction"]) }} />
