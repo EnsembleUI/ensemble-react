@@ -1,5 +1,13 @@
 # @ensembleui/react-runtime
 
+## 0.1.64
+
+### Patch Changes
+
+- 036b966: added translations into studio
+- Updated dependencies [036b966]
+  - @ensembleui/react-framework@0.1.50
+
 ## 0.1.63
 
 ### Patch Changes
