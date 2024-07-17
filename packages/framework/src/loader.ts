@@ -15,39 +15,7 @@ import type {
   WidgetDTO,
   LanguageDTO,
 } from "./shared/dto";
-
-export const languageMap: { [key: string]: string } = {
-  ar: "Arabic",
-  bn: "Bengali",
-  de: "German",
-  en: "English",
-  es: "Spanish",
-  fr: "French",
-  hi: "Hindi",
-  id: "Indonesian",
-  it: "Italian",
-  ja: "Japanese",
-  jv: "Javanese",
-  ko: "Korean",
-  ms: "Malay",
-  nl: "Dutch",
-  pa: "Punjabi",
-  pl: "Polish",
-  pt: "Portuguese",
-  ro: "Romanian",
-  ru: "Russian",
-  sv: "Swedish",
-  ta: "Tamil",
-  te: "Telugu",
-  th: "Thai",
-  tr: "Turkish",
-  uk: "Ukrainian",
-  ur: "Urdu",
-  vi: "Vietnamese",
-  zh: "Chinese",
-  el: "Greek",
-  da: "Danish",
-};
+import { languageMap } from "./i18n";
 
 const getArtifacts = async (
   appRef: DocumentReference,
