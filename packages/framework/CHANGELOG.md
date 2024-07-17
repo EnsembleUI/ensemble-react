@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.50
+
+### Patch Changes
+
+- 036b966: added translations into studio
+
 ## 0.1.49
 
 ### Patch Changes
