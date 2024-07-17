@@ -13,7 +13,41 @@ import type {
   ScriptDTO,
   ThemeDTO,
   WidgetDTO,
+  LanguageDTO,
 } from "./shared/dto";
+
+export const languageMap: { [key: string]: string } = {
+  ar: "Arabic",
+  bn: "Bengali",
+  de: "German",
+  en: "English",
+  es: "Spanish",
+  fr: "French",
+  hi: "Hindi",
+  id: "Indonesian",
+  it: "Italian",
+  ja: "Japanese",
+  jv: "Javanese",
+  ko: "Korean",
+  ms: "Malay",
+  nl: "Dutch",
+  pa: "Punjabi",
+  pl: "Polish",
+  pt: "Portuguese",
+  ro: "Romanian",
+  ru: "Russian",
+  sv: "Swedish",
+  ta: "Tamil",
+  te: "Telugu",
+  th: "Thai",
+  tr: "Turkish",
+  uk: "Ukrainian",
+  ur: "Urdu",
+  vi: "Vietnamese",
+  zh: "Chinese",
+  el: "Greek",
+  da: "Danish",
+};
 
 const getArtifacts = async (
   appRef: DocumentReference,
@@ -22,6 +56,7 @@ const getArtifacts = async (
   widgets: WidgetDTO[];
   theme?: ThemeDTO;
   scripts: ScriptDTO[];
+  languages?: LanguageDTO[];
 }> => {
   const snapshot = await getDocs(
     query(collection(appRef, "artifacts"), where("isArchived", "!=", true)),
@@ -37,12 +72,21 @@ const getArtifacts = async (
   const screens = [];
   const widgets = [];
   const scripts = [];
+  const languages = [];
   for (const artifact of snapshot.docs) {
     const document = artifact.data();
+
     if (document.type === "screen") {
       screens.push({ ...document, id: artifact.id } as ScreenDTO);
     } else if (document.type === "theme") {
       theme = { ...document, id: artifact.id } as ThemeDTO;
+    } else if (document.type === "i18n") {
+      languages.push({
+        name: languageMap[document.name as string],
+        nativeName: languageMap[document.name as string],
+        languageCode: document.name as string,
+        content: document.content as string,
+      });
     }
   }
   for (const artifact of internalArtifactsSnapshot.docs) {
@@ -58,6 +102,7 @@ const getArtifacts = async (
     widgets,
     theme,
     scripts,
+    languages,
   };
 };
 
@@ -76,13 +121,15 @@ export const getFirestoreApplicationLoader = (
       ...appDoc.data(),
     } as ApplicationDTO;
 
-    const { screens, widgets, theme, scripts } = await getArtifacts(appDocRef);
+    const { screens, widgets, theme, scripts, languages } =
+      await getArtifacts(appDocRef);
     return {
       ...app,
       screens,
       widgets,
       theme,
       scripts,
+      languages,
     };
   },
 });
