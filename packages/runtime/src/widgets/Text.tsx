@@ -4,6 +4,7 @@ import {
 } from "@ensembleui/react-framework";
 import { useState } from "react";
 import { Typography } from "antd";
+import { toString } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type { BaseTextProps } from "../shared/types";
 import type { TextAlignment } from "../shared/styleSchema";
@@ -46,7 +47,7 @@ export const Text: React.FC<TextProps> = (props) => {
         ...values?.styles,
       }}
     >
-      {values?.text}
+      {`${toString(values?.text)}`}
     </Typography.Text>
   );
 };
