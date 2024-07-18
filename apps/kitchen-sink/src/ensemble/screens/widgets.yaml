@@ -1,4 +1,6 @@
 View:
+  styles:
+    scrollableView: true
   onLoad:
     executeCode:
       body: |-
@@ -71,6 +73,43 @@ View:
                     color: yellow
               - Avatar:
                   name: "  4Dr.  cabin4  i  "
+        - Card: 
+            styles:
+              maxWidth: unset
+              width: unset
+              gap: 10px
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: Collapsible Testing
+              - Collapsible:
+                  headerStyle:
+                    headerBg: "black"
+                    textColor: "#5DCDC8"
+                  contentStyle:
+                    contentBg: "black"
+                  expandIcon: 
+                    name: Remove
+                    color: white
+                  collpaseIcon: 
+                    name: Add
+                    color: white
+                  items:
+                    - key: "2"
+                      label: What house is Harry Potter in?
+                      children:
+                        Text:
+                          styles:
+                            color: white
+                          text: Harry Potter is in Gryffindor.
+                    - key: "3"
+                      label: Who is the half blood prince?
+                      children:
+                        Text:
+                          styles:
+                            color: white
+                          text: The half blood prince is Severus Snape.
         - Lottie:
             id: MyLottie
             source: https://lottie.host/3568da34-6083-42fc-a254-74d9c1e15b2f/wcVmO2igxm.json

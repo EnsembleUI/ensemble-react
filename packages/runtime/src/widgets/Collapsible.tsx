@@ -33,6 +33,7 @@ interface CollapsibleItem {
 interface CollapsibleHeaderStyles {
   headerBg?: string;
   headerPadding?: undefined | string | number;
+  textColor?: string;
 }
 
 interface CollapsibleContentStyles {
@@ -183,15 +184,33 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
     onCallapseActionCallback(value);
   };
 
+  // Since the textColor may be in the headerStyle, we need to extract it if it exists
+  const getHeaderStyles = (headerStyle: CollapsibleHeaderStyles | undefined) => {
+    if (typeof headerStyle === 'undefined') return {};
+    if (headerStyle.textColor) 
+      return { 
+        ...(headerStyle.headerBg ? { headerBg: headerStyle.headerBg } : {}), 
+        ...(headerStyle.headerPadding ? { headerPadding: headerStyle.headerPadding } : {})
+      };
+    return headerStyle;
+  };
+
+  // Retrieves the colorText for the heading if it exists
+  const getColorTextHeading = (textColor: string | undefined) => {
+    if (typeof textColor === 'undefined') return {};
+    return { colorTextHeading: textColor };
+  }
+  
   return (
     <ConfigProvider
       theme={{
         components: {
           Collapse: {
-            ...values?.headerStyle,
+            ...getHeaderStyles(values?.headerStyle),
             ...values?.contentStyle,
           },
         },
+        token: getColorTextHeading(values?.headerStyle?.textColor),
       }}
     >
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
