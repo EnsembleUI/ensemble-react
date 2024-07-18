@@ -1,5 +1,16 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.59
+
+### Patch Changes
+
+- e0edb08: render boolean value in Text widget
+- Updated dependencies [57395ff]
+- Updated dependencies [c10a6a1]
+- Updated dependencies [e0edb08]
+  - @ensembleui/react-framework@0.1.51
+  - @ensembleui/react-runtime@0.1.65
+
 ## 0.0.58
 
 ### Patch Changes
