@@ -46,7 +46,7 @@ export const Text: React.FC<TextProps> = (props) => {
         ...values?.styles,
       }}
     >
-      {values?.text}
+      {`${values?.text}`}
     </Typography.Text>
   );
 };
