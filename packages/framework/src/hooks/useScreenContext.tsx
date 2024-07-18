@@ -90,13 +90,10 @@ const HydrateAtoms: React.FC<
     },
   );
 
-  return (
-    <>
-      {" "}
-      <DeviceObserver />
-      {children}
-    </>
-  );
+  // initiate device resizer observer
+  useDeviceObserver();
+
+  return <>{children}</>;
 };
 
 /**
@@ -125,7 +122,7 @@ export const useScreenContext = ():
   return { ...screenContext, setData };
 };
 
-const DeviceObserver = (): null => {
+const useDeviceObserver = (): null => {
   const { setData: updateDeviceData } = useDeviceData();
 
   const debouncedUpdateDeviceData = useMemo(() => {
