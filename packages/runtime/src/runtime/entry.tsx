@@ -6,7 +6,6 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { SideBarMenu } from "./menu";
 import { EnsembleScreen } from "./screen";
-import { keys } from "lodash-es";
 
 interface EnsembleEntryProps {
   entry: EnsembleEntryPoint;
@@ -14,43 +13,40 @@ interface EnsembleEntryProps {
 }
 export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({
   entry,
-  screen,
+  screen: initialScreen,
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
   const hasMenu = "items" in entry;
   useEffect(() => {
-    if (!keys(entry).length) {
+    const path = location.pathname;
+
+    // If path is not root, render screen on that path. ex: /about
+    if (path !== "/") {
       return;
     }
 
-    const navigateToPath = (pathname: string, search = ""): void => {
-      navigate({ pathname, search });
-    };
-
-    const getLowerCasePath = (name: string): string => `/${name.toLowerCase()}`;
-
-    const initialScreen = location.pathname;
-
-    if (initialScreen !== "/") {
-      return;
-    }
-
-    if (screen && initialScreen !== getLowerCasePath(screen.name)) {
-      navigateToPath(getLowerCasePath(screen.name), location.search);
+    if (initialScreen && path !== initialScreen.name.toLowerCase()) {
+      navigate({
+        pathname: initialScreen.name.toLowerCase(),
+        search: location.search,
+      });
       return;
     }
 
     if (hasMenu) {
       const selectedItem =
         entry.items.find((item) => item.selected) ?? entry.items[0];
-      navigateToPath(getLowerCasePath(selectedItem.page), location.search);
+      navigate({
+        pathname: selectedItem.page.toLowerCase(),
+        search: location.search,
+      });
       return;
     }
 
-    navigateToPath(getLowerCasePath(entry.name));
-  }, [entry, hasMenu, navigate, location, screen]);
+    navigate({ pathname: entry.name.toLowerCase(), search: location.search });
+  }, [entry, hasMenu, navigate, location, initialScreen]);
 
   if (hasMenu) {
     return (
