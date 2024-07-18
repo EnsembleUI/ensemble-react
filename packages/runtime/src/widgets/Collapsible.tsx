@@ -26,16 +26,16 @@ const widgetName = "Collapsible";
 
 interface CollapsibleItem {
   key: Expression<string>;
-  label: Expression<string> | Record<string, unknown>;
-  children: Expression<string> | Record<string, unknown>;
+  label: Expression<string> | { [key: string]: unknown };
+  children: Expression<string> | { [key: string]: unknown };
 }
 
 interface CollapsibleHeaderStyles {
-  headerBg?: string;                              // The background color of the header
-  headerPadding?: undefined | string | number;    // The padding of the header
-  textColor?: string;                             // The color of the text in the header
-  borderColor?: string;                           // The color of the border
-  borderWidth?: number;                           // The width of the border line
+  headerBg?: string; // The background color of the header
+  headerPadding?: undefined | string | number; // The padding of the header
+  textColor?: string; // The color of the text in the header
+  borderColor?: string; // The color of the border
+  borderWidth?: number; // The width of the border line
 }
 
 interface CollapsibleContentStyles {
@@ -44,15 +44,15 @@ interface CollapsibleContentStyles {
 }
 
 export type CollapsibleProps = {
-  items?: CollapsibleItem[];                // The items to be displayed in the Collapsible widget
-  expandIconPosition?: "start" | "end";     // The position of the expand icon (either "start" or "end")
-  value: Expression<string>[];             
-  onCollapse?: EnsembleAction;              // Perform an action when the Collapsible widget is collapsed
-  isAccordion?: boolean;                    // If true, only one panel can be expanded at a time
-  collpaseIcon?: IconProps;                 // The Icon displayed when the Collapsible widget is collapsed
-  expandIcon?: IconProps;                   // The Icon displayed when the Collapsible widget is expanded
-  headerStyle?: CollapsibleHeaderStyles;    // Add one of the following 5 styles to the header: headerBg, headerPadding, textColor, borderColor, borderWidth
-  contentStyle?: CollapsibleContentStyles;  // Add one of the following 2 styles to the content of the Collapsible widget: contentBg, contentPadding
+  items?: CollapsibleItem[]; // The items to be displayed in the Collapsible widget
+  expandIconPosition?: "start" | "end"; // The position of the expand icon (either "start" or "end")
+  value: Expression<string>[];
+  onCollapse?: EnsembleAction; // Perform an action when the Collapsible widget is collapsed
+  isAccordion?: boolean; // If true, only one panel can be expanded at a time
+  collpaseIcon?: IconProps; // The Icon displayed when the Collapsible widget is collapsed
+  expandIcon?: IconProps; // The Icon displayed when the Collapsible widget is expanded
+  headerStyle?: CollapsibleHeaderStyles; // Add one of the following 5 styles to the header: headerBg, headerPadding, textColor, borderColor, borderWidth
+  contentStyle?: CollapsibleContentStyles; // Add one of the following 2 styles to the content of the Collapsible widget: contentBg, contentPadding
 } & EnsembleWidgetProps &
   HasItemTemplate;
 
@@ -116,10 +116,9 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
             <CustomScopeProvider value={item as CustomScope}>
               {EnsembleRuntime.render([
                 unwrapWidget(
-                  itemTemplate.template.properties.label as Record<
-                    string,
-                    unknown
-                  >,
+                  itemTemplate.template.properties.label as {
+                    [key: string]: unknown;
+                  },
                 ),
               ])}
             </CustomScopeProvider>
@@ -130,10 +129,9 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
             <CustomScopeProvider value={item as CustomScope}>
               {EnsembleRuntime.render([
                 unwrapWidget(
-                  itemTemplate.template.properties.children as Record<
-                    string,
-                    unknown
-                  >,
+                  itemTemplate.template.properties.children as {
+                    [key: string]: unknown;
+                  },
                 ),
               ])}
             </CustomScopeProvider>
@@ -186,18 +184,29 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
     onCallapseActionCallback(value);
   };
 
-  // Since I did not like the default names of the properties in the ant design Collapse component, 
+  // Since I did not like the default names of the properties in the ant design Collapse component,
   // I changed them to more meaningful names, and this means I need to rename the keys.
-  const getHeaderStyles = (headerStyle: CollapsibleHeaderStyles | undefined) => {
-    if (typeof headerStyle === 'undefined') return {};
-    return Object.keys(headerStyle).reduce<CollapsibleHeaderStyles>((prev, key) => {
-      if (key === 'textColor') return {...prev, colorTextHeading: headerStyle[key]};
-      if (key === 'borderColor') return {...prev, colorBorder: headerStyle[key]};
-      if (key === 'borderWidth') return {...prev, lineWidth: headerStyle[key]};
-      return {...prev, [key]: headerStyle[key as keyof CollapsibleHeaderStyles]};
-    }, {});
+  const getHeaderStyles = (
+    headerStyle: CollapsibleHeaderStyles | undefined,
+  ): CollapsibleHeaderStyles => {
+    if (typeof headerStyle === "undefined") return {};
+    return Object.keys(headerStyle).reduce<CollapsibleHeaderStyles>(
+      (prev, key) => {
+        if (key === "textColor")
+          return { ...prev, colorTextHeading: headerStyle[key] };
+        if (key === "borderColor")
+          return { ...prev, colorBorder: headerStyle[key] };
+        if (key === "borderWidth")
+          return { ...prev, lineWidth: headerStyle[key] };
+        return {
+          ...prev,
+          [key]: headerStyle[key as keyof CollapsibleHeaderStyles],
+        };
+      },
+      {},
+    );
   };
-  
+
   return (
     <ConfigProvider
       theme={{
@@ -205,7 +214,7 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
           Collapse: {
             ...getHeaderStyles(values?.headerStyle),
             ...values?.contentStyle,
-          }
+          },
         },
       }}
     >
