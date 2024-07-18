@@ -87,6 +87,8 @@ View:
                   headerStyle:
                     headerBg: "black"
                     textColor: "#5DCDC8"
+                    borderColor: "#5DCDC8"
+                    borderWidth: 2
                   contentStyle:
                     contentBg: "black"
                   expandIcon: 
@@ -96,13 +98,20 @@ View:
                     name: Add
                     color: white
                   items:
-                    - key: "2"
+                    - key: "1"
                       label: What house is Harry Potter in?
                       children:
                         Text:
                           styles:
                             color: white
                           text: Harry Potter is in Gryffindor.
+                    - key: "2"
+                      label: Which subject does Professor Flitwick teach?
+                      children:
+                        Text:
+                          styles:
+                            color: white
+                          text: Professor Flitwick teaches Charms.
                     - key: "3"
                       label: Who is the half blood prince?
                       children:

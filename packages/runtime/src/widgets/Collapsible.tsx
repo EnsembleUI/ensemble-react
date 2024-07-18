@@ -31,9 +31,11 @@ interface CollapsibleItem {
 }
 
 interface CollapsibleHeaderStyles {
-  headerBg?: string;
-  headerPadding?: undefined | string | number;
-  textColor?: string;
+  headerBg?: string;                              // The background color of the header
+  headerPadding?: undefined | string | number;    // The padding of the header
+  textColor?: string;                             // The color of the text in the header
+  borderColor?: string;                           // The color of the border
+  borderWidth?: number;                           // The width of the border line
 }
 
 interface CollapsibleContentStyles {
@@ -42,15 +44,15 @@ interface CollapsibleContentStyles {
 }
 
 export type CollapsibleProps = {
-  items?: CollapsibleItem[];
-  expandIconPosition?: "start" | "end";
-  value: Expression<string>[];
-  onCollapse?: EnsembleAction;
-  isAccordion?: boolean;
-  collpaseIcon?: IconProps;
-  expandIcon?: IconProps;
-  headerStyle?: CollapsibleHeaderStyles;
-  contentStyle?: CollapsibleContentStyles;
+  items?: CollapsibleItem[];                // The items to be displayed in the Collapsible widget
+  expandIconPosition?: "start" | "end";     // The position of the expand icon (either "start" or "end")
+  value: Expression<string>[];             
+  onCollapse?: EnsembleAction;              // Perform an action when the Collapsible widget is collapsed
+  isAccordion?: boolean;                    // If true, only one panel can be expanded at a time
+  collpaseIcon?: IconProps;                 // The Icon displayed when the Collapsible widget is collapsed
+  expandIcon?: IconProps;                   // The Icon displayed when the Collapsible widget is expanded
+  headerStyle?: CollapsibleHeaderStyles;    // Add one of the following 5 styles to the header: headerBg, headerPadding, textColor, borderColor, borderWidth
+  contentStyle?: CollapsibleContentStyles;  // Add one of the following 2 styles to the content of the Collapsible widget: contentBg, contentPadding
 } & EnsembleWidgetProps &
   HasItemTemplate;
 
@@ -184,22 +186,17 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
     onCallapseActionCallback(value);
   };
 
-  // Since the textColor may be in the headerStyle, we need to extract it if it exists
+  // Since I did not like the default names of the properties in the ant design Collapse component, 
+  // I changed them to more meaningful names, and this means I need to rename the keys.
   const getHeaderStyles = (headerStyle: CollapsibleHeaderStyles | undefined) => {
     if (typeof headerStyle === 'undefined') return {};
-    if (headerStyle.textColor) 
-      return { 
-        ...(headerStyle.headerBg ? { headerBg: headerStyle.headerBg } : {}), 
-        ...(headerStyle.headerPadding ? { headerPadding: headerStyle.headerPadding } : {})
-      };
-    return headerStyle;
+    return Object.keys(headerStyle).reduce<CollapsibleHeaderStyles>((prev, key) => {
+      if (key === 'textColor') return {...prev, colorTextHeading: headerStyle[key]};
+      if (key === 'borderColor') return {...prev, colorBorder: headerStyle[key]};
+      if (key === 'borderWidth') return {...prev, lineWidth: headerStyle[key]};
+      return {...prev, [key]: headerStyle[key as keyof CollapsibleHeaderStyles]};
+    }, {});
   };
-
-  // Retrieves the colorText for the heading if it exists
-  const getColorTextHeading = (textColor: string | undefined) => {
-    if (typeof textColor === 'undefined') return {};
-    return { colorTextHeading: textColor };
-  }
   
   return (
     <ConfigProvider
@@ -208,9 +205,8 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
           Collapse: {
             ...getHeaderStyles(values?.headerStyle),
             ...values?.contentStyle,
-          },
+          }
         },
-        token: getColorTextHeading(values?.headerStyle?.textColor),
       }}
     >
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
