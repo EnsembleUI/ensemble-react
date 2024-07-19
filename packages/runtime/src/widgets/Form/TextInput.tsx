@@ -1,15 +1,15 @@
 import { Input, Form } from "antd";
 import type { Expression, EnsembleAction } from "@ensembleui/react-framework";
 import { useRegisterBindings } from "@ensembleui/react-framework";
-import { useEffect, useMemo, useState, useCallback} from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
+import type { Rule } from "antd/es/form";
+import { forEach } from "lodash-es";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { WidgetRegistry } from "../../registry";
 import type { TextStyles } from "../Text";
+import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
-import { Rule } from "antd/es/form";
-import { forEach } from "lodash-es";
-import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 
 const widgetName = "TextInput";
 
@@ -45,12 +45,15 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
   const formInstance = Form.useFormInstance();
   const action = useEnsembleAction(props.onChange);
 
-  const actionCallback = useCallback((value: string) => {
-    if (!action) {
-      return;
-    }
-    action.callback({ value });
-  }, [action]);
+  const actionCallback = useCallback(
+    (textValue: string) => {
+      if (!action) {
+        return;
+      }
+      action.callback({ textValue });
+    },
+    [action],
+  );
 
   useEffect(() => {
     setValue(values?.initialValue);
@@ -122,7 +125,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
       }
     });
 
-    return pattern + ")$";
+    return `${pattern})$`;
   }, [values?.mask]);
 
   const rules = useMemo(() => {
@@ -162,14 +165,14 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
   const handleChange = (newValue: string) => {
     setValue(newValue);
     actionCallback(newValue);
-  }
+  };
 
   return (
-    <EnsembleFormItem valuePropName="value" values={values} rules={rules}>
+    <EnsembleFormItem rules={rules} valuePropName="value" values={values}>
       {values?.multiLine ? (
         <Input.TextArea
           defaultValue={values.value}
-          disabled={values?.enabled === false}
+          disabled={values.enabled === false}
           onChange={(event): void => setValue(event.target.value)}
           placeholder={values.hintText ?? ""}
           rows={values.maxLines ? Number(values.maxLines) : 4} // Adjust the number of rows as needed
