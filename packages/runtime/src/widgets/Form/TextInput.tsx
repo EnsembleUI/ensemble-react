@@ -1,7 +1,7 @@
 import { Input, Form } from "antd";
-import type { Expression } from "@ensembleui/react-framework";
+import type { Expression, EnsembleAction } from "@ensembleui/react-framework";
 import { useRegisterBindings } from "@ensembleui/react-framework";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback} from "react";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { WidgetRegistry } from "../../registry";
 import type { TextStyles } from "../Text";
@@ -9,6 +9,7 @@ import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
 import { Rule } from "antd/es/form";
 import { forEach } from "lodash-es";
+import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 
 const widgetName = "TextInput";
 
@@ -25,6 +26,7 @@ export type TextInputProps = {
     regex?: string;
     regexError?: string;
   };
+  onChange?: EnsembleAction;
 } & EnsembleWidgetProps<TextStyles> &
   FormInputProps<string>;
 
@@ -41,6 +43,14 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     },
   );
   const formInstance = Form.useFormInstance();
+  const action = useEnsembleAction(props.onChange);
+
+  const actionCallback = useCallback((value: string) => {
+    if (!action) {
+      return;
+    }
+    action.callback({ value });
+  }, [action]);
 
   useEffect(() => {
     setValue(values?.initialValue);
@@ -149,6 +159,11 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     return rulesArray;
   }, [values?.validator, values?.mask]);
 
+  const handleChange = (newValue: string) => {
+    setValue(newValue);
+    actionCallback(newValue);
+  }
+
   return (
     <EnsembleFormItem valuePropName="value" values={values} rules={rules}>
       {values?.multiLine ? (
@@ -170,7 +185,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
         <Input
           defaultValue={values?.value}
           disabled={values?.enabled === false}
-          onChange={(event): void => setValue(event.target.value)}
+          onChange={(event): void => handleChange(event.target.value)}
           placeholder={values?.hintText ?? ""}
           style={{
             ...(values?.styles ?? values?.hintStyle),
