@@ -1,5 +1,30 @@
 # @ensembleui/react-runtime
 
+## 0.1.65
+
+### Patch Changes
+
+- c10a6a1: fix props evaluate in Flex
+- e0edb08: render boolean value in Text widget
+- Updated dependencies [57395ff]
+  - @ensembleui/react-framework@0.1.51
+
+## 0.1.64
+
+### Patch Changes
+
+- 036b966: added translations into studio
+- Updated dependencies [036b966]
+  - @ensembleui/react-framework@0.1.50
+
+## 0.1.63
+
+### Patch Changes
+
+- 70715ab: rebind form's methods on every render
+- Updated dependencies [70715ab]
+  - @ensembleui/react-framework@0.1.49
+
 ## 0.1.62
 
 ### Patch Changes
