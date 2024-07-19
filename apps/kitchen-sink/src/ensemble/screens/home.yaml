@@ -201,6 +201,9 @@ View:
               names: heading-1
             text: Expression Examples
 
+        - Text:
+            text: ${ensemble.storage.get('yyy').length>13}
+
         - Row:
             styles:
               gap: 8

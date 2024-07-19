@@ -1,5 +1,14 @@
 # @ensembleui/react-runtime
 
+## 0.1.65
+
+### Patch Changes
+
+- c10a6a1: fix props evaluate in Flex
+- e0edb08: render boolean value in Text widget
+- Updated dependencies [57395ff]
+  - @ensembleui/react-framework@0.1.51
+
 ## 0.1.64
 
 ### Patch Changes
