@@ -11,7 +11,7 @@ import {
   defaultScreenContext,
 } from "@ensembleui/react-framework";
 import { Collapse, type CollapseProps, ConfigProvider } from "antd";
-import { get, isArray, isEmpty, isObject, isString } from "lodash-es";
+import { get, isArray, isEmpty, isObject, isString, mapKeys } from "lodash-es";
 import type {
   EnsembleWidgetProps,
   HasItemTemplate,
@@ -31,11 +31,16 @@ interface CollapsibleItem {
 }
 
 interface CollapsibleHeaderStyles {
-  headerBg?: string; // The background color of the header
-  headerPadding?: undefined | string | number; // The padding of the header
-  textColor?: string; // The color of the text in the header
-  borderColor?: string; // The color of the border
-  borderWidth?: number; // The width of the border line
+  /** The background color of the header */
+  headerBg?: string;
+  /** The padding of the header */
+  headerPadding?: undefined | string | number;
+  /** The color of the text in the header */
+  textColor?: string;
+  /** The color of the border */
+  borderColor?: string;
+  /** The width of the border line */
+  borderWidth?: number;
 }
 
 interface CollapsibleContentStyles {
@@ -44,15 +49,23 @@ interface CollapsibleContentStyles {
 }
 
 export type CollapsibleProps = {
-  items?: CollapsibleItem[]; // The items to be displayed in the Collapsible widget
-  expandIconPosition?: "start" | "end"; // The position of the expand icon (either "start" or "end")
+  /** The items to be displayed in the Collapsible widget */
+  items?: CollapsibleItem[];
+  /** The position of the expand icon (either "start" or "end") */
+  expandIconPosition?: "start" | "end";
   value: Expression<string>[];
-  onCollapse?: EnsembleAction; // Perform an action when the Collapsible widget is collapsed
-  isAccordion?: boolean; // If true, only one panel can be expanded at a time
-  collpaseIcon?: IconProps; // The Icon displayed when the Collapsible widget is collapsed
-  expandIcon?: IconProps; // The Icon displayed when the Collapsible widget is expanded
-  headerStyle?: CollapsibleHeaderStyles; // Add one of the following 5 styles to the header: headerBg, headerPadding, textColor, borderColor, borderWidth
-  contentStyle?: CollapsibleContentStyles; // Add one of the following 2 styles to the content of the Collapsible widget: contentBg, contentPadding
+  /** Perform an action when the Collapsible widget is collapsed */
+  onCollapse?: EnsembleAction;
+  /** If true, only one panel can be expanded at a time */
+  isAccordion?: boolean;
+  /** The Icon displayed when the Collapsible widget is collapsed */
+  collapseIcon?: IconProps;
+  /** The Icon displayed when the Collapsible widget is expanded */
+  expandIcon?: IconProps;
+  /** Add one of the following 5 styles to the header: headerBg, headerPadding, textColor, borderColor, borderWidth */
+  headerStyle?: CollapsibleHeaderStyles;
+  /** Add one of the following 2 styles to the content of the Collapsible widget: contentBg, contentPadding */
+  contentStyle?: CollapsibleContentStyles;
 } & EnsembleWidgetProps &
   HasItemTemplate;
 
@@ -153,7 +166,7 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
     const iconName = isActive
       ? "default_collapsed_icon"
       : "default_expand_icon";
-    const iconProps = isActive ? values?.expandIcon : values?.collpaseIcon;
+    const iconProps = isActive ? values?.expandIcon : values?.collapseIcon;
 
     return (
       <Icon
@@ -190,21 +203,12 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
     headerStyle: CollapsibleHeaderStyles | undefined,
   ): CollapsibleHeaderStyles => {
     if (typeof headerStyle === "undefined") return {};
-    return Object.keys(headerStyle).reduce<CollapsibleHeaderStyles>(
-      (prev, key) => {
-        if (key === "textColor")
-          return { ...prev, colorTextHeading: headerStyle[key] };
-        if (key === "borderColor")
-          return { ...prev, colorBorder: headerStyle[key] };
-        if (key === "borderWidth")
-          return { ...prev, lineWidth: headerStyle[key] };
-        return {
-          ...prev,
-          [key]: headerStyle[key as keyof CollapsibleHeaderStyles],
-        };
-      },
-      {},
-    );
+    return mapKeys(headerStyle, (_, key) => {
+      if (key === "textColor") return "colorTextHeading";
+      if (key === "borderColor") return "colorBorder";
+      if (key === "borderWidth") return "lineWidth";
+      return key;
+    });
   };
 
   return (

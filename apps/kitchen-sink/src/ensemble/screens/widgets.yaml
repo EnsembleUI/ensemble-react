@@ -603,7 +603,7 @@ View:
                   expandIcon: 
                     name: Remove
                     color: white
-                  collpaseIcon: 
+                  collapseIcon: 
                     name: Add
                     color: white
                   items:
