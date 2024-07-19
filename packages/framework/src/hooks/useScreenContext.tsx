@@ -122,7 +122,7 @@ export const useScreenContext = ():
   return { ...screenContext, setData };
 };
 
-const useDeviceObserver = (): null => {
+const useDeviceObserver = (): void => {
   const { setData: updateDeviceData } = useDeviceData();
 
   const debouncedUpdateDeviceData = useMemo(() => {
@@ -132,7 +132,7 @@ const useDeviceObserver = (): null => {
         height: window.innerHeight,
       });
     };
-    return debounce(handleResize, 500);
+    return debounce(handleResize, 100);
   }, [updateDeviceData]);
 
   useEffect(() => {
@@ -144,6 +144,4 @@ const useDeviceObserver = (): null => {
       debouncedUpdateDeviceData.cancel(); // Cancel any pending debounced calls on cleanup
     };
   }, [debouncedUpdateDeviceData]);
-
-  return null;
 };

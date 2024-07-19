@@ -86,7 +86,6 @@ export const createBindingAtom = <T = unknown>(
           languages: appData.application?.languages,
         },
         env: get(envAtom),
-        device: get(deviceAtom),
       },
       screenContext: {
         inputs: get(screenInputAtom),
@@ -107,7 +106,7 @@ export const createBindingAtom = <T = unknown>(
           : undefined,
         formatter: DateFormatter(),
       },
-      context,
+      context: { ...context, device: get(deviceAtom) },
     });
 
     try {
