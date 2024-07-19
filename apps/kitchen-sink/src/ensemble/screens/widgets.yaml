@@ -25,6 +25,9 @@ View:
         inputs:
           message: "Inputs to header widget"
 
+  styles:
+    scrollableView: true
+
   body:
     Column:
       crossAxis: stretch
@@ -649,6 +652,17 @@ View:
                       value: 1
                     - label: Option 2
                       value: 2
+                  item-template:
+                    data: [{ name: "Close" }]
+                    name: product
+                    template:
+                      Button:
+                        label: ${product.name}
+                        styles:
+                          width: 100%
+                        onTap:
+                          executeCode: |
+                            myDropdown.close()
               - Dropdown:
                   label: Searchable
                   hintText: Search

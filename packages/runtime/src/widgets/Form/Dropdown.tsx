@@ -61,12 +61,19 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   const [selectedValue, setSelectedValue] = useState<
     string | number | undefined
   >();
+  const [dropdownStat, setDropdownStat] = useState<boolean>(false);
   const { "item-template": itemTemplate, ...rest } = props;
+
+  const handleDropdownClose = (): void => {
+    setDropdownStat(false);
+  };
+
   const { id, rootRef, values } = useRegisterBindings(
     { ...rest, initialValue: props.value, selectedValue, widgetName },
     props.id,
     {
       setSelectedValue,
+      close: handleDropdownClose,
     },
   );
 
@@ -247,7 +254,9 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             disabled={values?.enabled === false}
             dropdownStyle={values?.styles}
             id={values?.id}
+            onDropdownVisibleChange={(stat): void => setDropdownStat(stat)}
             onSelect={onItemSelectCallback}
+            open={dropdownStat}
             placeholder={
               values?.hintText ? (
                 <span style={{ ...values.hintStyle }}>{values.hintText}</span>
