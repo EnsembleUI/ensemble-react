@@ -51,9 +51,10 @@ ViewGroup:
       - label: Help
         icon: HelpOutlineOutlined
         page: help
+        visible: true
       - label: Hidden Page
         icon: HelpOutlineOutlined
-        hidden: true
+        visible: false
     footer:
       Row:
         styles:
