@@ -352,8 +352,8 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
         onAPIErrorAction?.callback({ ...context, error: e });
         onInvokeAPIErrorAction?.callback({ ...context, error: e });
       } finally {
-        setIsLoading(false);
         setIsComplete(true);
+        setIsLoading(false);
       }
     };
 
