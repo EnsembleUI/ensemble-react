@@ -4,7 +4,7 @@ View:
       ensemble.storage.set('yyy' , 'page')
       ensemble.storage.set('zzz' , 'button')
       ensemble.storage.set('aaa' , '1')
-      console.log(device)
+      ensemble.storage.set('bbb' , "0xffb91c1c")
 
   header:
     title:
@@ -26,7 +26,7 @@ View:
         - Text:
             styles:
               names: heading-1
-              color: ${colors.primary['900']}
+              color: ${ensemble.storage.get('bbb')}
             text: r@kitchenSink
         - Markdown:
             text: This application is built with Ensemble and serves as a guide for how to implement common UI patterns with Ensemble React.
@@ -204,6 +204,9 @@ View:
             styles:
               names: heading-1
             text: Expression Examples
+
+        - Text:
+            text: ${ensemble.storage.get('yyy').length>13}
 
         - Row:
             styles:

@@ -1,5 +1,51 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.60
+
+### Patch Changes
+
+- bf4a97c: Added 3 header styles to the Collapsible widget: textColor, borderColor, and borderWidth.Added 3 header styles: textColor, borderColor, and borderWidth.
+- Updated dependencies [eccc02a]
+- Updated dependencies [bf4a97c]
+  - @ensembleui/react-runtime@0.1.66
+
+## 0.0.59
+
+### Patch Changes
+
+- e0edb08: render boolean value in Text widget
+- Updated dependencies [57395ff]
+- Updated dependencies [c10a6a1]
+- Updated dependencies [e0edb08]
+  - @ensembleui/react-framework@0.1.51
+  - @ensembleui/react-runtime@0.1.65
+
+## 0.0.58
+
+### Patch Changes
+
+- Updated dependencies [036b966]
+  - @ensembleui/react-framework@0.1.50
+  - @ensembleui/react-runtime@0.1.64
+
+## 0.0.57
+
+### Patch Changes
+
+- Updated dependencies [70715ab]
+  - @ensembleui/react-framework@0.1.49
+  - @ensembleui/react-runtime@0.1.63
+
+## 0.0.56
+
+### Patch Changes
+
+- 5eaf03d: Added support for flutter style hex color codes
+- Updated dependencies [472d655]
+- Updated dependencies [5eaf03d]
+  - @ensembleui/react-framework@0.1.48
+  - @ensembleui/react-runtime@0.1.62
+
 ## 0.0.55
 
 ### Patch Changes

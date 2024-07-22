@@ -1,5 +1,30 @@
 # @ensembleui/react-framework
 
+## 0.1.51
+
+### Patch Changes
+
+- 57395ff: Added support for translation bundle
+
+## 0.1.50
+
+### Patch Changes
+
+- 036b966: added translations into studio
+
+## 0.1.49
+
+### Patch Changes
+
+- 70715ab: rebind form's methods on every render
+
+## 0.1.48
+
+### Patch Changes
+
+- 472d655: compare invokable methods in register bindings too to get rid of stale methods
+- 5eaf03d: Added support for flutter style hex color codes
+
 ## 0.1.47
 
 ### Patch Changes
