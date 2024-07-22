@@ -73,7 +73,7 @@ View:
                     color: yellow
               - Avatar:
                   name: "  4Dr.  cabin4  i  "
-        
+
         - Lottie:
             id: MyLottie
             source: https://lottie.host/3568da34-6083-42fc-a254-74d9c1e15b2f/wcVmO2igxm.json
@@ -582,7 +582,7 @@ View:
                     color: ${colors.primary['600']}
                     thickness: 4
                     backgroundColor: ${colors.light['200']}
-        - Card: 
+        - Card:
             styles:
               maxWidth: unset
               width: unset
@@ -600,10 +600,10 @@ View:
                     borderWidth: 2
                   contentStyle:
                     contentBg: "black"
-                  expandIcon: 
+                  expandIcon:
                     name: Remove
                     color: white
-                  collapseIcon: 
+                  collapseIcon:
                     name: Add
                     color: white
                   items:
@@ -1102,6 +1102,36 @@ View:
                     names: heading-3
                   text: Custom widget in screen
               - Button:
+
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+              gap: 10px
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: Skeleton Widget
+              - Skeleton:
+                  useShimmer: true
+                  styles:
+                    height: 50px
+
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+              gap: 10px
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: Shape Widget
+              - Shape:
+                  useShimmer: true
+                  styles:
+                    height: 50px
 
 API:
   getDummyProducts:
