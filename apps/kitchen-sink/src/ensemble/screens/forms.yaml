@@ -93,6 +93,9 @@ View:
                             value: option1
                           - label: Option 2
                             value: option2
+                        onChange:
+                          executeCode: |
+                            console.log('dropdown changed', value);
                     # If you omit id, the form value key will be the label
                     - TextInput:
                         id: formTextInput
@@ -126,10 +129,10 @@ View:
                         valueKey: email
                         items: ${ensemble.storage.get('dummyData')}
                         allowCreateOptions: true
-                        onItemSelect:
+                        onChange:
                           executeCode: |
                             console.log('selected', multiselectoptions1);
-                            console.log(1,selectedValues)
+                            console.log(1,value)
                             console.log(1,multiselectoptions1.selectedValues)
                     - MultiSelect:
                         id: multiselectoptions2
@@ -257,10 +260,10 @@ View:
                         labelKey: firstName
                         valueKey: email
                         items: ${ensemble.storage.get('dummyData')}
-                        onItemSelect:
+                        onChange:
                           executeCode: |
                             console.log('selected');
-                            console.log(selectedValues)
+                            console.log(value)
                     - MultiSelect:
                         id: initial_multiselectoptions2
                         label: Choose multiple

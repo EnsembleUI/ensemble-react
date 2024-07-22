@@ -19,6 +19,7 @@ export type TextInputProps = {
   multiLine?: Expression<boolean>;
   maxLines?: number;
   inputType?: "email" | "phone" | "number" | "text" | "url"; //| "ipAddress";
+  onChange?: EnsembleAction;
   mask?: string;
   validator?: {
     minLength?: number;
@@ -26,7 +27,6 @@ export type TextInputProps = {
     regex?: string;
     regexError?: string;
   };
-  onChange?: EnsembleAction;
 } & EnsembleWidgetProps<TextStyles> &
   FormInputProps<string>;
 
@@ -45,12 +45,10 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
   const formInstance = Form.useFormInstance();
   const action = useEnsembleAction(props.onChange);
 
-  const actionCallback = useCallback(
-    (textValue: string) => {
-      if (!action) {
-        return;
-      }
-      action.callback({ textValue });
+  const handleChange = useCallback(
+    (newValue: string) => {
+      setValue(newValue);
+      action?.callback({ value: newValue })
     },
     [action],
   );
@@ -161,11 +159,6 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
 
     return rulesArray;
   }, [values?.validator, values?.mask]);
-
-  const handleChange = (newValue: string) => {
-    setValue(newValue);
-    actionCallback(newValue);
-  };
 
   return (
     <EnsembleFormItem rules={rules} valuePropName="value" values={values}>

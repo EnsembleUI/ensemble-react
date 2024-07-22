@@ -1,4 +1,7 @@
 View:
+  styles:
+    scrollableView:
+      true
   onLoad:
     executeCode:
       body: |-
@@ -685,6 +688,9 @@ View:
                       value: option1
                     - label: Option 2
                       value: option2
+                  onChange: 
+                    executeCode: |
+                      console.log('selected value', value)
               - Dropdown:
                   label: With the label widget
                   hintText: Hint Text
@@ -739,7 +745,7 @@ View:
             id: clientSelector
             value: All Clients
             hintText: Chose Client
-            onItemSelect:
+            onChange:
               executeCode: |
                 console.log(clientSelector, selectedValue);
             items:

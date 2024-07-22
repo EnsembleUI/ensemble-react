@@ -49,7 +49,7 @@ export interface SelectOption {
 
 export type DropdownProps = {
   items?: SelectOption[];
-  onItemSelect: EnsembleAction;
+  onChange?: EnsembleAction;
   autoComplete: Expression<boolean>;
   hintStyle?: EnsembleWidgetStyles;
 } & EnsembleWidgetProps<DropdownStyles> &
@@ -70,13 +70,11 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     },
   );
 
-  const action = useEnsembleAction(props.onItemSelect);
-  const onItemSelectCallback = useCallback(
+  const action = useEnsembleAction(props.onChange);
+  const handleChange = useCallback(
     (value?: number | string) => {
       setSelectedValue(value);
-      if (action) {
-        action.callback({ selectedValue: value });
-      }
+      action?.callback({ value });
     },
     [action],
   );
@@ -100,7 +98,6 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               {item.items?.map((subItem) => (
                 <Select.Option
                   key={subItem.value}
-                  onClick={() => onItemSelectCallback(subItem.value)}
                 >
                   {isString(subItem.label)
                     ? subItem.label
@@ -247,7 +244,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             disabled={values?.enabled === false}
             dropdownStyle={values?.styles}
             id={values?.id}
-            onSelect={onItemSelectCallback}
+            onChange={handleChange}
             placeholder={
               values?.hintText ? (
                 <span style={{ ...values.hintStyle }}>{values.hintText}</span>
