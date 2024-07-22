@@ -1,5 +1,12 @@
 # @ensembleui/react-runtime
 
+## 0.1.66
+
+### Patch Changes
+
+- eccc02a: Fix invokeAPI state call order
+- bf4a97c: Added 3 header styles to the Collapsible widget: textColor, borderColor, and borderWidth.Added 3 header styles: textColor, borderColor, and borderWidth.
+
 ## 0.1.65
 
 ### Patch Changes
