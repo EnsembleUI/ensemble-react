@@ -10,7 +10,6 @@ import {
   screenDataAtom,
   themeAtom,
   userAtom,
-  deviceAtom,
   useDeviceData,
 } from "../state";
 import type {
@@ -74,7 +73,6 @@ const HydrateAtoms: React.FC<
   }>
 > = ({ appContext, screenContext, children }) => {
   const themeScope = useContext(CustomThemeContext);
-  const deviceAtomValue = useAtomValue(deviceAtom);
 
   // initialising on state with prop on render here
   useHydrateAtoms([[screenAtom, screenContext]]);
@@ -83,7 +81,6 @@ const HydrateAtoms: React.FC<
       [appAtom, appContext],
       [themeAtom, themeScope.theme],
       [userAtom, appContext.user],
-      [deviceAtom, deviceAtomValue],
     ],
     {
       dangerouslyForceHydrate: true,

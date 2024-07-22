@@ -106,7 +106,12 @@ export const createBindingAtom = <T = unknown>(
           : undefined,
         formatter: DateFormatter(),
       },
-      context: { ...context, device: get(deviceAtom) },
+      context: {
+        ...(rawJsExpression.includes("device")
+          ? { device: get(deviceAtom) }
+          : {}),
+        ...context,
+      },
     });
 
     try {
