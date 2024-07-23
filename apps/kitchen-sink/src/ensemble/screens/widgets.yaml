@@ -1,4 +1,6 @@
 View:
+  styles:
+    scrollableView: true
   onLoad:
     executeCode:
       body: |-
@@ -74,6 +76,7 @@ View:
                     color: yellow
               - Avatar:
                   name: "  4Dr.  cabin4  i  "
+
         - Lottie:
             id: MyLottie
             source: https://lottie.host/3568da34-6083-42fc-a254-74d9c1e15b2f/wcVmO2igxm.json
@@ -593,6 +596,52 @@ View:
               - Text:
                   styles:
                     names: heading-3
+                  text: Collapsible Testing
+              - Collapsible:
+                  headerStyle:
+                    headerBg: "black"
+                    textColor: "#5DCDC8"
+                    borderColor: "#5DCDC8"
+                    borderWidth: 2
+                  contentStyle:
+                    contentBg: "black"
+                  expandIcon:
+                    name: Remove
+                    color: white
+                  collapseIcon:
+                    name: Add
+                    color: white
+                  items:
+                    - key: "1"
+                      label: What house is Harry Potter in?
+                      children:
+                        Text:
+                          styles:
+                            color: white
+                          text: Harry Potter is in Gryffindor.
+                    - key: "2"
+                      label: Which subject does Professor Flitwick teach?
+                      children:
+                        Text:
+                          styles:
+                            color: white
+                          text: Professor Flitwick teaches Charms.
+                    - key: "3"
+                      label: Who is the half blood prince?
+                      children:
+                        Text:
+                          styles:
+                            color: white
+                          text: The half blood prince is Severus Snape.
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+              gap: 10px
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
                   text: Dropdown
               - MultiSelect:
                   label: Choose multiple
@@ -1058,6 +1107,36 @@ View:
                     names: heading-3
                   text: Custom widget in screen
               - Button:
+
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+              gap: 10px
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: Skeleton Widget
+              - Skeleton:
+                  useShimmer: true
+                  styles:
+                    height: 50px
+
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+              gap: 10px
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: Shape Widget
+              - Shape:
+                  useShimmer: true
+                  styles:
+                    height: 50px
 
 API:
   getDummyProducts:

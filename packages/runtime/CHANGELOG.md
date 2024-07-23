@@ -1,5 +1,27 @@
 # @ensembleui/react-runtime
 
+## 0.1.67
+
+### Patch Changes
+
+- 5613deb: Added visible property for sidebar menu items
+
+## 0.1.66
+
+### Patch Changes
+
+- eccc02a: Fix invokeAPI state call order
+- bf4a97c: Added 3 header styles to the Collapsible widget: textColor, borderColor, and borderWidth.Added 3 header styles: textColor, borderColor, and borderWidth.
+
+## 0.1.65
+
+### Patch Changes
+
+- c10a6a1: fix props evaluate in Flex
+- e0edb08: render boolean value in Text widget
+- Updated dependencies [57395ff]
+  - @ensembleui/react-framework@0.1.51
+
 ## 0.1.64
 
 ### Patch Changes

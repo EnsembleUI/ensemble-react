@@ -6,6 +6,9 @@ import { useExecuteCode } from "../useEnsembleAction";
 jest.mock("react-markdown", jest.fn());
 jest.mock("react-router-dom");
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+global.ResizeObserver = require("resize-observer-polyfill");
+
 const wrapper: React.FC<React.PropsWithChildren> = ({ children }) => (
   <ScreenContextProvider
     context={{
