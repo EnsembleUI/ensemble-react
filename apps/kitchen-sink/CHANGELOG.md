@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.61
+
+### Patch Changes
+
+- 5613deb: Added visible property for sidebar menu items
+- Updated dependencies [5613deb]
+  - @ensembleui/react-runtime@0.1.67
+
 ## 0.0.60
 
 ### Patch Changes

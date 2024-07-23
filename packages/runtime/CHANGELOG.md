@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.1.67
+
+### Patch Changes
+
+- 5613deb: Added visible property for sidebar menu items
+
 ## 0.1.66
 
 ### Patch Changes

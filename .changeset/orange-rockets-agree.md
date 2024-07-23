@@ -3,4 +3,4 @@
 "@ensembleui/react-runtime": patch
 ---
 
-Added visible property for sidebar menu items
+Added shape widget for flutter compatibility
