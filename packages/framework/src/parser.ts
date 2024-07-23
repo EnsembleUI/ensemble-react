@@ -124,7 +124,9 @@ export const EnsembleParser = {
     const config = app.config;
     let ensembleConfigData;
     if (config) {
-      ensembleConfigData = parse(config) as EnsembleConfigYAML;
+      ensembleConfigData = isString(config)
+        ? (parse(config) as EnsembleConfigYAML)
+        : config;
     }
 
     const languages = app.languages?.map((language) =>

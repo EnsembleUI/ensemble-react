@@ -7,7 +7,6 @@ import {
   query,
   where,
 } from "firebase/firestore/lite";
-import { stringify } from "yaml";
 import type {
   ApplicationDTO,
   ScreenDTO,
@@ -15,6 +14,7 @@ import type {
   ThemeDTO,
   WidgetDTO,
   LanguageDTO,
+  EnsembleConfigYAML,
 } from "./shared/dto";
 import { languageMap } from "./i18n";
 
@@ -26,7 +26,7 @@ const getArtifacts = async (
   theme?: ThemeDTO;
   scripts: ScriptDTO[];
   languages?: LanguageDTO[];
-  config?: string;
+  config?: EnsembleConfigYAML;
 }> => {
   const snapshot = await getDocs(
     query(collection(appRef, "artifacts"), where("isArchived", "!=", true)),
@@ -59,11 +59,11 @@ const getArtifacts = async (
         content: document.content as string,
       });
     } else if (document.type === "config") {
-      config = stringify({
+      config = {
         environmentVariables: document.envVariables as {
           [key: string]: unknown;
         },
-      });
+      };
     }
   }
   for (const artifact of internalArtifactsSnapshot.docs) {
