@@ -53,4 +53,5 @@ export interface EnsembleEnvironmentDTO {
 
 export interface EnsembleConfigYAML {
   environmentVariables?: { [key: string]: unknown };
+  secretVariables?: { [key: string]: unknown };
 }
