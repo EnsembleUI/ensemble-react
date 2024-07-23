@@ -64,6 +64,7 @@ export const Form: React.FC<FormProps> = (props) => {
       reset: handleResetForm,
       clear: handleClearForm,
       submit: form.submit,
+      updateValues: form.setFieldsValue,
     },
     { forceState: true },
   );
