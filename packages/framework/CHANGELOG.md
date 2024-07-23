@@ -1,5 +1,12 @@
 # @ensembleui/react-framework
 
+## 0.1.53
+
+### Patch Changes
+
+- 1e1687b: Added support for secrets variables
+- 1b8539e: Added support of env in preview and studio
+
 ## 0.1.52
 
 ### Patch Changes
