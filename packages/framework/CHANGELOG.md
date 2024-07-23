@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.52
+
+### Patch Changes
+
+- 22a3e5e: Added support for device object like flutter
+
 ## 0.1.51
 
 ### Patch Changes
