@@ -177,6 +177,9 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   return (
     <>
       <style>{`
+        .ant-select-single {
+          height: unset !important;
+        }
         .${id}_input .ant-select-selector {
           ${getComponentStyles("dropdown", values?.styles) as string}
         }
@@ -239,6 +242,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               : ""
           }
         `}</style>
+
       <div ref={rootRef} style={{ flex: 1, ...formItemStyles }}>
         <EnsembleFormItem values={values}>
           <Select
