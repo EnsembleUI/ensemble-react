@@ -1,5 +1,20 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.62
+
+### Patch Changes
+
+- 22a3e5e: Added support for device object like flutter
+- 7d11468: added support for filler plugin in charts
+- 8e4996c: Added shape widget for flutter compatibility
+- 2d197b7: add updateValues in Form and onClear in Search widget
+- Updated dependencies [22a3e5e]
+- Updated dependencies [7d11468]
+- Updated dependencies [8e4996c]
+- Updated dependencies [2d197b7]
+  - @ensembleui/react-framework@0.1.52
+  - @ensembleui/react-runtime@0.1.68
+
 ## 0.0.61
 
 ### Patch Changes

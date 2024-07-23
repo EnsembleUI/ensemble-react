@@ -12,6 +12,9 @@ const options: ChartOptions<"line"> = {
     legend: {
       display: false,
     },
+    filler: {
+      propagate: false,
+    },
   },
   scales: {
     x: {

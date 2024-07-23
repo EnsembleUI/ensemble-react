@@ -1,5 +1,16 @@
 # @ensembleui/react-runtime
 
+## 0.1.68
+
+### Patch Changes
+
+- 22a3e5e: Added support for device object like flutter
+- 7d11468: added support for filler plugin in charts
+- 8e4996c: Added shape widget for flutter compatibility
+- 2d197b7: add updateValues in Form and onClear in Search widget
+- Updated dependencies [22a3e5e]
+  - @ensembleui/react-framework@0.1.52
+
 ## 0.1.67
 
 ### Patch Changes
