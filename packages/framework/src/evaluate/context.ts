@@ -28,6 +28,7 @@ export const createEvaluationContext = ({
   const appInputs = merge(
     {},
     applicationContext.env,
+    applicationContext.secrets,
     mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
     { styles: theme?.Styles },
   );

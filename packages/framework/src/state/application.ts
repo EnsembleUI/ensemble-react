@@ -23,7 +23,7 @@ export const defaultApplicationContext = {
   env: {},
   auth: null,
   user: null,
-  secrets: null,
+  secrets: {},
 };
 
 export const appAtom = atom<ApplicationContextDefinition>(
@@ -40,3 +40,5 @@ export const selectedThemeNameAtom = atomWithStorage<string>(
 );
 
 export const envAtom = focusAtom(appAtom, (optic) => optic.prop("env"));
+
+export const secretAtom = focusAtom(appAtom, (optic) => optic.prop("secrets"));
