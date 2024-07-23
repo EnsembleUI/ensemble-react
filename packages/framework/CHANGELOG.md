@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.51
+
+### Patch Changes
+
+- 57395ff: Added support for translation bundle
+
 ## 0.1.50
 
 ### Patch Changes

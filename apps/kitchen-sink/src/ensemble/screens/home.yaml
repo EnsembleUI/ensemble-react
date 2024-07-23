@@ -22,6 +22,10 @@ View:
         - Text:
             styles:
               names: heading-1
+            text: ${device.width}
+        - Text:
+            styles:
+              names: heading-1
               color: ${ensemble.storage.get('bbb')}
             text: r@kitchenSink
         - Markdown:
@@ -200,6 +204,9 @@ View:
             styles:
               names: heading-1
             text: Expression Examples
+
+        - Text:
+            text: ${ensemble.storage.get('yyy').length>13}
 
         - Row:
             styles:

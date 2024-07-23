@@ -20,6 +20,7 @@ import {
   screenImportScriptAtom,
   userAtom,
   appAtom,
+  deviceAtom,
 } from "../state";
 import { evaluate } from "./evaluate";
 import { createEvaluationContext } from "./context";
@@ -105,7 +106,12 @@ export const createBindingAtom = <T = unknown>(
           : undefined,
         formatter: DateFormatter(),
       },
-      context,
+      context: {
+        ...(rawJsExpression.includes("device")
+          ? { device: get(deviceAtom) }
+          : {}),
+        ...context,
+      },
     });
 
     try {

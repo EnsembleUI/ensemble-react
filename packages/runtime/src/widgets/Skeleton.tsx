@@ -26,3 +26,4 @@ export const Skeleton: React.FC<SkeletonProps> = (props) => {
 };
 
 WidgetRegistry.register(widgetName, Skeleton);
+WidgetRegistry.register("Shape", Skeleton);
