@@ -1,6 +1,4 @@
 View:
-  styles:
-    scrollableView: true
   onLoad:
     executeCode:
       body: |-

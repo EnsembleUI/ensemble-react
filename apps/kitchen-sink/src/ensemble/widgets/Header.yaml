@@ -40,6 +40,9 @@ Widget:
             onSelect:
               executeCode: |
                 console.log(value)
+            onClear:
+              executeCode: |
+                console.log("Search cleared")
         - Row:
             styles:
               gap: 10

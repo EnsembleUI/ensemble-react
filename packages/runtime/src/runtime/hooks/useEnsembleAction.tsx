@@ -166,6 +166,7 @@ export const useExecuteCode: EnsembleActionHook<
           merge(
             {
               ...customWidgets,
+              env: appContext?.env,
               device: device,
               ensemble: {
                 ...themescope,
@@ -173,6 +174,7 @@ export const useExecuteCode: EnsembleActionHook<
                 user,
                 formatter,
                 env: appContext?.env,
+                secrets: appContext?.secrets,
                 navigateScreen: (targetScreen: NavigateScreenAction): void =>
                   navigateApi(targetScreen, screen, navigate),
                 navigateModalScreen: (
@@ -206,6 +208,7 @@ export const useExecuteCode: EnsembleActionHook<
                     ...customScope,
                     ensemble: {
                       env: appContext?.env,
+                      secrets: appContext?.secrets,
                     },
                   }),
                 navigateBack: (): void =>
@@ -247,6 +250,7 @@ export const useExecuteCode: EnsembleActionHook<
     js,
     appContext?.application?.customWidgets,
     appContext?.env,
+    appContext?.secrets,
     themescope,
     device,
     storage,
@@ -326,6 +330,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
           ...context,
           ensemble: {
             env: appContext?.env,
+            secrets: appContext?.secrets,
           },
         });
         setData(api.name, res);
@@ -375,6 +380,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     setData,
     context,
     appContext?.env,
+    appContext?.secrets,
   ]);
 
   return invokeApi;

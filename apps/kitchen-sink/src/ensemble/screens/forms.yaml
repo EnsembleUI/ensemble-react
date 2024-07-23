@@ -1,4 +1,7 @@
 View:
+  styles:
+    scrollableView: true
+
   onLoad:
     executeCode:
       body: |
@@ -164,6 +167,11 @@ View:
                         onTap:
                           executeCode: |
                             myForm.clear()
+                    - Button:
+                        label: Update Radio Value to 'Option 2' & regexTextInput by code
+                        onTap:
+                          executeCode: |
+                            myForm.updateValues({radio: '2', regexTextInput: '543210'})
               - Markdown:
                   id: result
                   text: Check here for the result!
