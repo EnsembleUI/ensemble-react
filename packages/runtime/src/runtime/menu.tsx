@@ -41,6 +41,7 @@ interface MenuItem {
   divider?: boolean;
   hasNotifications?: boolean;
   openNewTab?: boolean;
+  visible?: boolean;
 }
 
 interface MenuBaseProps {
@@ -169,7 +170,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
                   selectedItem === item.label
                     ? (values?.styles?.selectedColor as string) ?? "white"
                     : (values?.styles?.labelColor as string) ?? "grey",
-                display: "flex",
+                display: item.visible === false ? "none" : "flex",
                 justifyContent: "center",
                 borderRadius: 0,
                 alignItems: "center",

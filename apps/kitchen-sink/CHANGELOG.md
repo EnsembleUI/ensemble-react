@@ -1,5 +1,22 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.61
+
+### Patch Changes
+
+- 5613deb: Added visible property for sidebar menu items
+- Updated dependencies [5613deb]
+  - @ensembleui/react-runtime@0.1.67
+
+## 0.0.60
+
+### Patch Changes
+
+- bf4a97c: Added 3 header styles to the Collapsible widget: textColor, borderColor, and borderWidth.Added 3 header styles: textColor, borderColor, and borderWidth.
+- Updated dependencies [eccc02a]
+- Updated dependencies [bf4a97c]
+  - @ensembleui/react-runtime@0.1.66
+
 ## 0.0.59
 
 ### Patch Changes
