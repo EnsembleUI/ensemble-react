@@ -33,6 +33,7 @@ export type SearchProps = {
   } & EnsembleAction;
   onChange?: EnsembleAction;
   onSelect?: EnsembleAction;
+  onClear?: EnsembleAction;
   iconStyles?: EnsembleWidgetStyles;
 } & EnsembleWidgetProps &
   HasItemTemplate & {
@@ -46,6 +47,7 @@ export const Search: React.FC<SearchProps> = ({
   searchKey,
   onChange,
   onSelect,
+  onClear,
   ...rest
 }) => {
   const [searchValue, setSearchValue] = useState<string | null>(null);
@@ -69,6 +71,7 @@ export const Search: React.FC<SearchProps> = ({
   const onSearchAction = useEnsembleAction(onSearch);
   const onChangeAction = useEnsembleAction(onChange);
   const onSelectAction = useEnsembleAction(onSelect);
+  const onClearAction = useEnsembleAction(onClear);
 
   // rendered options
   const renderOptions = useMemo(() => {
@@ -144,6 +147,10 @@ export const Search: React.FC<SearchProps> = ({
     [onSelectAction, itemTemplate, evaluatedNamedData, searchKey],
   );
 
+  const handleClear = useCallback(() => {
+    onClearAction?.callback();
+  }, [onClearAction]);
+
   return (
     <div
       ref={rootRef}
@@ -177,6 +184,7 @@ export const Search: React.FC<SearchProps> = ({
         id={values?.id}
         notFoundContent="No Results"
         onChange={handleChange}
+        onClear={handleClear}
         onSearch={(search): void => setSearchValue(search)}
         onSelect={handleSelect}
         optionFilterProp="children"
