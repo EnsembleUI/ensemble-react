@@ -39,7 +39,7 @@ const getArtifacts = async (
   );
 
   let theme;
-  let config;
+  let config = {};
   const screens = [];
   const widgets = [];
   const scripts = [];
@@ -60,9 +60,15 @@ const getArtifacts = async (
       });
     } else if (document.type === "config") {
       config = {
+        ...config,
         environmentVariables: document.envVariables as {
           [key: string]: unknown;
         },
+      };
+    } else if (document.type === "secrets") {
+      config = {
+        ...config,
+        secretVariables: document.secrets as { [key: string]: unknown },
       };
     }
   }
