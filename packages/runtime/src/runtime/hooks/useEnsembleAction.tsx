@@ -166,6 +166,7 @@ export const useExecuteCode: EnsembleActionHook<
           merge(
             {
               ...customWidgets,
+              env: appContext?.env,
               device: device,
               ensemble: {
                 ...themescope,
