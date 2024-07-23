@@ -178,6 +178,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     <>
       <style>{`
         .ant-select-single {
+          min-height: 32px !important;
           height: unset !important;
         }
         .${id}_input .ant-select-selector {
