@@ -33,7 +33,7 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
   const handleChange = useCallback(
     (newValue: string) => {
       setValue(newValue);
-      action?.callback({ value: newValue })
+      action?.callback({ value: newValue });
     },
     [action],
   );
@@ -62,7 +62,7 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
       >
         {values?.items.map((item) => (
           <Radio
-            disabled={values?.enabled === false || item.enabled === false}
+            disabled={values.enabled === false || item.enabled === false}
             key={item.value}
             style={{
               ...item.styles,

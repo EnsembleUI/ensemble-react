@@ -126,7 +126,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   };
 
   // handle option change
-  const handleChange = useCallback((value: string[]): void => {
+  const handleChange = (value: string[]): void => {
     setSelectedValues(value);
     onChangeCallback(value);
     if (newOption) {
@@ -139,13 +139,12 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
       ]);
       setNewOption("");
     }
-  }, [action, newOption]);
+  };
 
   // on item select callback
   const onChangeCallback = useCallback(
-    (value?: string[]) => 
-      action?.callback({ value }),
-    [action]
+    (value?: string[]) => action?.callback({ value }),
+    [action],
   );
 
   // default value

@@ -96,9 +96,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               label={isString(item.label) ? item.label : ""}
             >
               {item.items?.map((subItem) => (
-                <Select.Option
-                  key={subItem.value}
-                >
+                <Select.Option key={subItem.value}>
                   {isString(subItem.label)
                     ? subItem.label
                     : EnsembleRuntime.render([unwrapWidget(subItem.label)])}
