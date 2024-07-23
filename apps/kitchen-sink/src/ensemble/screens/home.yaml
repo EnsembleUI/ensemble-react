@@ -22,6 +22,10 @@ View:
         - Text:
             styles:
               names: heading-1
+            text: ${device.width}
+        - Text:
+            styles:
+              names: heading-1
               color: ${ensemble.storage.get('bbb')}
             text: r@kitchenSink
         - Markdown:
