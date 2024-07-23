@@ -9,6 +9,7 @@ import {
   ArcElement,
   PointElement,
   LineElement,
+  Filler,
 } from "chart.js";
 import type { Plugin, ChartOptions } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
@@ -45,6 +46,7 @@ ChartJS.register(
   PointElement,
   LineElement,
   ChartDataLabels,
+  Filler,
 );
 
 export interface ChartDataSets {

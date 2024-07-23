@@ -1,5 +1,29 @@
 # @ensembleui/react-runtime
 
+## 0.1.68
+
+### Patch Changes
+
+- 22a3e5e: Added support for device object like flutter
+- 7d11468: added support for filler plugin in charts
+- 8e4996c: Added shape widget for flutter compatibility
+- 2d197b7: add updateValues in Form and onClear in Search widget
+- Updated dependencies [22a3e5e]
+  - @ensembleui/react-framework@0.1.52
+
+## 0.1.67
+
+### Patch Changes
+
+- 5613deb: Added visible property for sidebar menu items
+
+## 0.1.66
+
+### Patch Changes
+
+- eccc02a: Fix invokeAPI state call order
+- bf4a97c: Added 3 header styles to the Collapsible widget: textColor, borderColor, and borderWidth.Added 3 header styles: textColor, borderColor, and borderWidth.
+
 ## 0.1.65
 
 ### Patch Changes

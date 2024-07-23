@@ -10,10 +10,12 @@ export interface EvaluationContextProps {
   applicationContext: Omit<
     Partial<ApplicationContextDefinition>,
     "application"
-  > & { application?: Partial<EnsembleAppModel> | null };
+  > & {
+    application?: Partial<EnsembleAppModel> | null;
+  };
   screenContext: Partial<ScreenContextDefinition>;
   ensemble: Partial<EnsembleInterface>;
-  context?: Record<string, unknown>;
+  context?: { [key: string]: unknown };
 }
 
 export const createEvaluationContext = ({
@@ -21,11 +23,12 @@ export const createEvaluationContext = ({
   screenContext,
   ensemble,
   context,
-}: EvaluationContextProps): Record<string, unknown> => {
+}: EvaluationContextProps): { [key: string]: unknown } => {
   const theme = applicationContext.application?.theme;
   const appInputs = merge(
     {},
     applicationContext.env,
+    applicationContext.secrets,
     mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
     { styles: theme?.Styles },
   );
