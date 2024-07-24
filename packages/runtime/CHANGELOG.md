@@ -1,5 +1,27 @@
 # @ensembleui/react-runtime
 
+## 0.1.69
+
+### Patch Changes
+
+- 5f95aed: add visible property in DataColumns of Datagrid widget
+- 1e1687b: Added support for secrets variables
+- 2e7a080: unset selected item height in dropdown
+- Updated dependencies [1e1687b]
+- Updated dependencies [1b8539e]
+  - @ensembleui/react-framework@0.1.53
+
+## 0.1.68
+
+### Patch Changes
+
+- 22a3e5e: Added support for device object like flutter
+- 7d11468: added support for filler plugin in charts
+- 8e4996c: Added shape widget for flutter compatibility
+- 2d197b7: add updateValues in Form and onClear in Search widget
+- Updated dependencies [22a3e5e]
+  - @ensembleui/react-framework@0.1.52
+
 ## 0.1.67
 
 ### Patch Changes

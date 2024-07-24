@@ -1,6 +1,4 @@
 View:
-  styles:
-    scrollableView: true
   onLoad:
     executeCode:
       body: |-
@@ -26,9 +24,6 @@ View:
       Header:
         inputs:
           message: "Inputs to header widget"
-
-  styles:
-    scrollableView: true
 
   body:
     Column:
@@ -349,6 +344,7 @@ View:
                           a.dummyData.id - b.dummyData.id
                     - label: title
                     - label: description
+                      visible: ${ensemble.storage.get('dummyProducts')?.at(0)?.id < 10}
                   hidePagination: true
                   onSort:
                     executeCode: |
