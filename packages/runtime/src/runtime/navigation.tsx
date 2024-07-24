@@ -14,7 +14,7 @@ import { EnsembleScreen } from "./screen";
 
 const findScreen = (
   screenName: string,
-  app?: EnsembleAppModel,
+  app?: EnsembleAppModel | null,
 ): EnsembleScreenModel | undefined => {
   return app?.screens.find(
     (s) => s.name.toLowerCase() === screenName.toLowerCase(),
@@ -52,8 +52,8 @@ const MODAL_SCREEN_DEFAULT_OPTIONS = {
 
 export const navigateModalScreen = (
   action: NavigateModalScreenAction,
-  screenContext: ScreenContextDefinition,
   modalContext: ModalContextProps,
+  app?: EnsembleAppModel | null,
   inputs?: { [key: string]: unknown },
   title?: React.ReactNode[],
   onClose?: () => void,
@@ -61,7 +61,7 @@ export const navigateModalScreen = (
   const hasOptions = !isString(action);
   const screenName = hasOptions ? action.name : action;
 
-  const matchingScreen = findScreen(screenName, screenContext.app);
+  const matchingScreen = findScreen(screenName, app);
 
   if (!matchingScreen) {
     return;
