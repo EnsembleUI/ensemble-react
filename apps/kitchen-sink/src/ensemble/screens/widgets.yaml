@@ -647,6 +647,7 @@ View:
                     backgroundColor: "yellow"
                     selectedBackgroundColor: "gray"
                     selectedTextColor: "purple"
+                  manualClose: true
                   items:
                     - label: Option 1
                       value: 1

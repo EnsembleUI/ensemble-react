@@ -52,6 +52,7 @@ export type DropdownProps = {
   onItemSelect: EnsembleAction;
   autoComplete: Expression<boolean>;
   hintStyle?: EnsembleWidgetStyles;
+  manualClose?: boolean;
 } & EnsembleWidgetProps<DropdownStyles> &
   HasItemTemplate & {
     "item-template"?: { value: Expression<string> };
@@ -254,7 +255,9 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             disabled={values?.enabled === false}
             dropdownStyle={values?.styles}
             id={values?.id}
-            onDropdownVisibleChange={(stat): void => setDropdownStat(stat)}
+            onDropdownVisibleChange={(stat): void =>
+              setDropdownStat(values?.manualClose ? true : stat)
+            }
             onSelect={onItemSelectCallback}
             open={dropdownStat}
             placeholder={
