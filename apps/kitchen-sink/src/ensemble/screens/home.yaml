@@ -75,7 +75,7 @@ View:
               template:
                 Text:
                   text: ${language.name + ` ( `+ language.nativeName +` )`}
-            onItemSelect:
+            onChange:
               executeCode:
                 body: |
                   ensemble.storage.set('language', selectedValue)

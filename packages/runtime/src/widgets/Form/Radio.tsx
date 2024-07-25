@@ -30,20 +30,13 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
   );
   const action = useEnsembleAction(props.onChange);
 
-  const onChangeCallback = useCallback(
+  const handleChange = useCallback(
     (newValue: string) => {
-      if (!action) {
-        return;
-      }
-      action.callback({ value: newValue });
+      setValue(newValue);
+      action?.callback({ value: newValue });
     },
     [action],
   );
-
-  const handleChange = (newValue: string): void => {
-    setValue(newValue);
-    onChangeCallback(newValue);
-  };
 
   const formInstance = Form.useFormInstance();
 
@@ -69,7 +62,7 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
       >
         {values?.items.map((item) => (
           <Radio
-            disabled={values?.enabled === false || item.enabled === false}
+            disabled={values.enabled === false || item.enabled === false}
             key={item.value}
             style={{
               ...item.styles,

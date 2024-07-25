@@ -1,4 +1,5 @@
-import { ReactNode, useCallback, useState } from "react";
+import type { ReactNode } from "react";
+import { useCallback, useState } from "react";
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
 import {
@@ -96,8 +97,8 @@ export const DateRange: React.FC<DateRangeProps> = (props) => {
         onChange={onDateRangeChange}
         placeholder={[values?.hintText ? values.hintText : "Start date", ""]}
         showTime={values?.showTime}
-        suffixIcon={suffixIcon()}
         style={{ width: "100%", ...values?.styles }}
+        suffixIcon={suffixIcon()}
         value={[dayjs(values?.fromValue), dayjs(values?.toValue)]}
       />
     </EnsembleFormItem>
