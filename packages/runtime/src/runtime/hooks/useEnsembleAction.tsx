@@ -142,11 +142,11 @@ export const useExecuteCode: EnsembleActionHook<
     }
 
     if ("scriptName" in action) {
-      return screen?.app?.scripts.find(
+      return appContext?.application?.scripts.find(
         (script) => script.name === action.scriptName,
       )?.body;
     }
-  }, [action, isCodeString, screen]);
+  }, [action, isCodeString, appContext?.application?.scripts]);
 
   const execute = useMemo(() => {
     if (!screen || !js) {
@@ -167,7 +167,7 @@ export const useExecuteCode: EnsembleActionHook<
             {
               ...customWidgets,
               env: appContext?.env,
-              device: device,
+              device,
               ensemble: {
                 ...themescope,
                 storage,
@@ -185,8 +185,8 @@ export const useExecuteCode: EnsembleActionHook<
                   }
                   navigateModalScreen(
                     navigateModalScreenAction,
-                    screen,
                     modalContext,
+                    appContext?.application ?? screen.app,
                   );
                 },
                 location: locationApi(location),
