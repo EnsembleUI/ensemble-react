@@ -133,11 +133,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
         zIndex: 1,
       }}
     >
-      {props.header ? (
-        <Col style={{ width: "100%" }}>
-          {EnsembleRuntime.render([props.header])}
-        </Col>
-      ) : null}
+      {props.header ? EnsembleRuntime.render([props.header]) : null}
       <AntMenu
         mode="inline"
         /* FIXME This is a hack so we can control our own selected styling. Ideally, this should use design tokens */
@@ -168,8 +164,8 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
               style={{
                 color:
                   selectedItem === item.label
-                    ? (values?.styles?.selectedColor as string) ?? "white"
-                    : (values?.styles?.labelColor as string) ?? "grey",
+                    ? (values.styles?.selectedColor as string) ?? "white"
+                    : (values.styles?.labelColor as string) ?? "grey",
                 display: item.visible === false ? "none" : "flex",
                 justifyContent: "center",
                 borderRadius: 0,
@@ -231,11 +227,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
           </>
         ))}
       </AntMenu>
-      {props.footer ? (
-        <Col style={{ width: "100%" }}>
-          {EnsembleRuntime.render([props.footer])}
-        </Col>
-      ) : null}
+      {props.footer ? EnsembleRuntime.render([props.footer]) : null}
     </Col>
   );
 };
