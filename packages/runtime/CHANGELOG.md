@@ -1,5 +1,12 @@
 # @ensembleui/react-runtime
 
+## 0.1.70
+
+### Patch Changes
+
+- cf4fd60: fix designated screen load on own routes
+- 3a8d0ec: Support opening modals from the menu
+
 ## 0.1.69
 
 ### Patch Changes
