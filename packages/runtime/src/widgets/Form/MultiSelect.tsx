@@ -41,6 +41,7 @@ export type MultiSelectProps = {
   valueKey?: string;
   items?: Expression<SelectOption[]>;
   onChange?: EnsembleAction;
+  /** OnItemSelect is deprecated. Please use onChange instead */
   onItemSelect?: EnsembleAction;
   hintStyle?: EnsembleWidgetStyles;
   allowCreateOptions?: boolean;
