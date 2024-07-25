@@ -131,9 +131,10 @@ View:
                         allowCreateOptions: true
                         onChange:
                           executeCode: |
-                            console.log('selected', multiselectoptions1);
-                            console.log(1,value)
-                            console.log(1,multiselectoptions1.selectedValues)
+                            console.log("onChange event! Here are the selected values: ", value);
+                        # onItemSelect: 
+                        #   executeCode: |
+                        #     console.log("This is an onItemSelect function that should not be running.", selectedValue);
                     - MultiSelect:
                         id: multiselectoptions2
                         label: Choose multiple
