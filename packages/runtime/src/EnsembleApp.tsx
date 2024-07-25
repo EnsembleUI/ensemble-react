@@ -19,6 +19,7 @@ import { ErrorPage } from "./runtime/error";
 import "./widgets";
 import { WidgetRegistry } from "./registry";
 import { createCustomWidget } from "./runtime/customWidget";
+import { ModalWrapper } from "./runtime/modal";
 
 injectStyle();
 
@@ -82,12 +83,14 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
               {
                 path: "/",
                 element: (
-                  <EnsembleEntry
-                    entry={app.home}
-                    screen={app.screens.find(
-                      (screen) => Boolean(screenId) && screen.id === screenId,
-                    )}
-                  />
+                  <ModalWrapper>
+                    <EnsembleEntry
+                      entry={app.home}
+                      screen={app.screens.find(
+                        (screen) => Boolean(screenId) && screen.id === screenId,
+                      )}
+                    />
+                  </ModalWrapper>
                 ),
                 errorElement: <ErrorPage />,
                 children: app.screens.map((screen) => {

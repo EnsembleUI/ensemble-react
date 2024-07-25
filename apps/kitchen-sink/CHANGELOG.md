@@ -1,5 +1,26 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.64
+
+### Patch Changes
+
+- Updated dependencies [cf4fd60]
+- Updated dependencies [3a8d0ec]
+  - @ensembleui/react-runtime@0.1.70
+
+## 0.0.63
+
+### Patch Changes
+
+- 5f95aed: add visible property in DataColumns of Datagrid widget
+- 1e1687b: Added support for secrets variables
+- Updated dependencies [5f95aed]
+- Updated dependencies [1e1687b]
+- Updated dependencies [1b8539e]
+- Updated dependencies [2e7a080]
+  - @ensembleui/react-runtime@0.1.69
+  - @ensembleui/react-framework@0.1.53
+
 ## 0.0.62
 
 ### Patch Changes
