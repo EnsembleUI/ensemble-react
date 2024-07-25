@@ -324,6 +324,31 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
 
     const fireRequest = async (): Promise<void> => {
       setIsLoading(true);
+      // First check if useMockResponse is enabled and if a mockResponse exists
+      if (api.mockResponse) {
+        const isSuccess: boolean = api.mockResponse.statusCode >= 200 && api.mockResponse.statusCode <= 299;
+        const mockResponse = { ...api.mockResponse, isLoading: false, isSuccess, isError: !isSuccess, appContext };
+        setData(api.name, mockResponse);
+
+        if (action?.id) {
+          setData(action.id, mockResponse);
+        }
+
+        if (isSuccess) {
+          onAPIResponseAction?.callback({ ...context, response: mockResponse });
+          onInvokeAPIResponseAction?.callback({ ...context, response: mockResponse });
+        }
+        else {
+          onAPIErrorAction?.callback({ ...context, error: mockResponse });
+          onInvokeAPIErrorAction?.callback({ ...context, error: mockResponse });
+        }
+
+        setIsComplete(true);
+        setIsLoading(false);
+        return;
+      }
+
+      // Otherwise, fetch the API data
       try {
         const res = await DataFetcher.fetch(api, {
           ...evaluatedInputs,

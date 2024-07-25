@@ -65,6 +65,14 @@ export interface EnsembleAPIModel {
   body?: string | object;
   onResponse?: EnsembleAction;
   onError?: EnsembleAction;
+  mockResponse?: EnsembleMockResponse;
+}
+
+export interface EnsembleMockResponse {
+  statusCode: number;
+  body: object | string;
+  headers?: Record<string, string>;
+  reasonPhrase?: string;
 }
 
 export interface EnsembleCustomEventModel {
