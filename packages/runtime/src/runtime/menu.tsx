@@ -128,7 +128,9 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
     (item: MenuItem) => {
       const key = selectedItem === item.page ? "activeIcon" : "icon";
       const icon =
-        selectedItem === item.page ? item.activeIcon || item.icon : item.icon;
+        selectedItem === item.page && item.activeIcon
+          ? item.activeIcon
+          : item.icon;
 
       if (typeof icon === "string") {
         return renderMuiIcon(
@@ -156,8 +158,8 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
         return item.label;
       }
       const widget =
-        selectedItem === item.page
-          ? item.customItem.selectedWidget || item.customItem.widget
+        selectedItem === item.page && item.customItem.selectedWidget
+          ? item.customItem.selectedWidget
           : item.customItem.widget;
       return EnsembleRuntime.render([unwrapWidget(widget || {})]);
     },
