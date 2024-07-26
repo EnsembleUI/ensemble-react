@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.54
+
+### Patch Changes
+
+- e451b7a: Revert device api implementation
+
 ## 0.1.53
 
 ### Patch Changes

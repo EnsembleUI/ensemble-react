@@ -1,5 +1,19 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.65
+
+### Patch Changes
+
+- ce61a4f: add customItem in sidebar menu
+- d29ea6d: Remove container elements on menu header and footer
+- 4083e6f: Added an onChange EnsembleAction for the TextInput Widget in Form
+- Updated dependencies [ce61a4f]
+- Updated dependencies [d29ea6d]
+- Updated dependencies [e451b7a]
+- Updated dependencies [4083e6f]
+  - @ensembleui/react-runtime@0.1.71
+  - @ensembleui/react-framework@0.1.54
+
 ## 0.0.64
 
 ### Patch Changes

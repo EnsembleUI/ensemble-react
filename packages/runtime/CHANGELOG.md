@@ -1,5 +1,16 @@
 # @ensembleui/react-runtime
 
+## 0.1.71
+
+### Patch Changes
+
+- ce61a4f: add customItem in sidebar menu
+- d29ea6d: Remove container elements on menu header and footer
+- e451b7a: Revert device api implementation
+- 4083e6f: Added an onChange EnsembleAction for the TextInput Widget in Form
+- Updated dependencies [e451b7a]
+  - @ensembleui/react-framework@0.1.54
+
 ## 0.1.70
 
 ### Patch Changes
