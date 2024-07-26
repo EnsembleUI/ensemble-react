@@ -58,7 +58,6 @@ export const Icon: React.FC<IconProps> = ({
       onMouseLeave={handleMouseLeave}
       sx={{
         cursor: onTap ? "pointer" : "auto",
-        ...values?.styles,
         color: values?.color && getColor(String(values.color)),
         fontSize: props.size,
         backgroundColor: `${
@@ -87,6 +86,7 @@ export const Icon: React.FC<IconProps> = ({
         ...(values?.styles?.visible === false
           ? { display: "none" }
           : undefined),
+        ...values?.styles,
       }}
     />
   );
