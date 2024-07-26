@@ -276,6 +276,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const [isComplete, setIsComplete] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>();
   const [context, setContext] = useState<{ [key: string]: unknown }>();
+
   const evaluatedInputs = useEvaluate(action?.inputs, { context });
   const evaluatedName = useEvaluate({ name: action?.name }, { context });
 
@@ -326,8 +327,16 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
       setIsLoading(true);
       // First check if useMockResponse is enabled and if a mockResponse exists
       if (api.mockResponse) {
-        const isSuccess: boolean = api.mockResponse.statusCode >= 200 && api.mockResponse.statusCode <= 299;
-        const mockResponse = { ...api.mockResponse, isLoading: false, isSuccess, isError: !isSuccess, appContext };
+        const isSuccess: boolean =
+          api.mockResponse.statusCode >= 200 &&
+          api.mockResponse.statusCode <= 299;
+        const mockResponse = {
+          ...api.mockResponse,
+          isLoading: false,
+          isSuccess,
+          isError: !isSuccess,
+        };
+
         setData(api.name, mockResponse);
 
         if (action?.id) {
@@ -336,9 +345,11 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
 
         if (isSuccess) {
           onAPIResponseAction?.callback({ ...context, response: mockResponse });
-          onInvokeAPIResponseAction?.callback({ ...context, response: mockResponse });
-        }
-        else {
+          onInvokeAPIResponseAction?.callback({
+            ...context,
+            response: mockResponse,
+          });
+        } else {
           onAPIErrorAction?.callback({ ...context, error: mockResponse });
           onInvokeAPIErrorAction?.callback({ ...context, error: mockResponse });
         }

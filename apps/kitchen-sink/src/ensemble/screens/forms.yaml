@@ -5,7 +5,8 @@ View:
   onLoad:
     executeCode:
       body: |
-        ensemble.storage.set('inputVal', 'sagar')
+        ensemble.storage.set('inputVal', 'sagar');
+        ensemble.storage.set('mockApiStatusCode', 200);
         ensemble.storage.set('dummyData', [
           { value: "val 1", label: "lab 1" },
           { value: "val 2", label: "lab 2" },
@@ -16,7 +17,7 @@ View:
           name: getData
           onResponse:
             executeCode: |
-              console.log('getData', response.body)
+              console.log('getData', response.body);
   header:
     title:
       Header:
@@ -263,7 +264,7 @@ View:
                         labelKey: firstName
                         valueKey: email
                         items: ${ensemble.storage.get('dummyData')}
-                        onItemSelect:
+                        onChange:
                           executeCode: |
                             console.log('selected');
                             console.log(selectedValues)
@@ -288,6 +289,58 @@ View:
               - Markdown:
                   id: result2
                   text: Check here for the result!
+        - Text:
+            styles:
+              names: heading-3
+            text: "\nMock Response Testing"
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:
+              - Checkbox:
+                  id: useMockResponseCheckbox
+                  trailingText: "Use Mock Response"
+              - Checkbox:
+                  id: throwMockApiErrorCheckbox
+                  trailingText: "Throw Error"
+                  onChange:
+                    executeCode: |
+                      var currStatusCode = ensemble.storage.get('mockApiStatusCode');
+                      if (currStatusCode == 200) {
+                        ensemble.storage.set('mockApiStatusCode', 500);
+                      }
+                      else {
+                        ensemble.storage.set('mockApiStatusCode', 200);
+                      }
+              - Button:
+                  styles:
+                    width: 100
+                  label: Call API!
+                  onTap:
+                    invokeAPI:
+                      name: testMockResponse
+              - Spacer:
+                  styles:
+                    size: 20
+              - Text:
+                  text: "Status Code: ${testMockResponse.statusCode ?? ''} ${testMockResponse.reasonPhrase ?? ''}"
+              - Text:
+                  styles:
+                    overflow: hidden
+                  text: "Body: ${JSON.stringify(testMockResponse.body) ?? ''}"
+              - Spacer:
+              - Dropdown: 
+                  id: mockResponseDropdown
+                  hintText: All items returned
+                  item-template:
+                    data: testMockResponse.body ?? []
+                    name: wizard
+                    value: ${wizard.id}
+                    template:
+                      Text:
+                        text: ${wizard.name}
+
 
   footer:
     children:
@@ -300,6 +353,32 @@ API:
   getData:
     method: GET
     uri: https://dummyjson.com/users
+  testMockResponse:
+    method: GET
+    uri: https://dummyjson.com/users/1
+    mockResponse:
+      statusCode: ensemle.storage.get('mockApiStatusCode');
+      reasonPhrase: "Success!" # TODO: Replace with a code block to prove that code blocks are working
+      body: 
+        - id: 0
+          name: Harry Potter
+          email: chosenOne@gmail.com
+        - id: 1
+          name: Albus Dumbledore
+          email: iTrustSnape@gmail.com
+        - id: 2
+          name: Tom Riddle
+          email: lordVoldemort@gmail.com
+    onResponse:
+      executeCode: |
+        console.log("Mock API called: ",  response)
+  getMockResponseFromFunction:
+    method: GET
+    uri: https:your_url.com/test
+    mockResponse:
+      body:
+        message: Please replace this with code when it is working.
+
 
 Icon:
   body:
