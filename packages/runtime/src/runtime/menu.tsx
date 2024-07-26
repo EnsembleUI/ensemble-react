@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Menu as AntMenu, Col, Divider } from "antd";
 import * as MuiIcons from "@mui/icons-material";
 import {
@@ -96,9 +96,9 @@ const renderMuiIcon = (
 };
 
 export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
-  const [isCollapsed, setCollapsed] = useState<boolean>(false);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const { values } = useRegisterBindings({ ...props, isCollapsed }, id, {
-    setCollapsed,
+    setIsCollapsed,
   });
   const location = useLocation();
   const [selectedItem, setSelectedItem] = useState<string | undefined>();
@@ -124,18 +124,45 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
     }
   }, [location.pathname, props.items]);
 
-  const getIcon = (
-    icon?: string | { [key: string]: unknown },
-    key?: string,
-  ): ReactNode =>
-    typeof icon === "string"
-      ? renderMuiIcon(icon, props.styles?.iconWidth, props.styles?.iconHeight)
-      : EnsembleRuntime.render([
-          {
-            ...unwrapWidget(icon ? { Icon: icon } : {}),
-            key: String(key),
-          },
-        ]);
+  const getIcon = useCallback(
+    (item: MenuItem) => {
+      const key = selectedItem === item.page ? "activeIcon" : "icon";
+      const icon =
+        selectedItem === item.page ? item.activeIcon || item.icon : item.icon;
+
+      if (typeof icon === "string") {
+        return renderMuiIcon(
+          icon,
+          props.styles?.iconWidth,
+          props.styles?.iconHeight,
+        );
+      }
+      return EnsembleRuntime.render([
+        {
+          ...unwrapWidget(icon ? { Icon: icon } : {}),
+          key,
+        },
+      ]);
+    },
+    [props.styles?.iconHeight, props.styles?.iconWidth, selectedItem],
+  );
+
+  const getLabel = useCallback(
+    (item: MenuItem) => {
+      if (isCollapsed) {
+        return null;
+      }
+      if (!item.customItem) {
+        return item.label;
+      }
+      const widget =
+        selectedItem === item.page
+          ? item.customItem.selectedWidget || item.customItem.widget
+          : item.customItem.widget;
+      return EnsembleRuntime.render([unwrapWidget(widget || {})]);
+    },
+    [isCollapsed, selectedItem],
+  );
 
   return (
     <Col
@@ -173,12 +200,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
           <>
             <AntMenu.Item
               data-testid={item.id ?? item.testId}
-              icon={getIcon(
-                selectedItem === item.page
-                  ? item.activeIcon || item.icon
-                  : item.icon,
-                selectedItem === item.page ? "activeIcon" : "icon",
-              )}
+              icon={getIcon(item)}
               key={item.page}
               onClick={(): void => {
                 if (!item.openNewTab) {
@@ -219,17 +241,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
                 target={item.openNewTab ? "_blank" : "_self"}
                 to={item.page ? `/${item.page}` : String(item.url)}
               >
-                {!isCollapsed &&
-                  (item.customItem
-                    ? EnsembleRuntime.render([
-                        unwrapWidget(
-                          (selectedItem === item.page
-                            ? item.customItem.selectedWidget ||
-                              item.customItem.widget
-                            : item.customItem.widget) || {},
-                        ),
-                      ])
-                    : item.label)}
+                {getLabel(item)}
                 {item.hasNotifications ? (
                   <div
                     style={{
