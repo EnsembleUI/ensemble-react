@@ -58,6 +58,7 @@ ViewGroup:
     footer:
       Row:
         styles:
+          width: 100%
           padding: 10px 20px
           justifyContent: end
         children:
