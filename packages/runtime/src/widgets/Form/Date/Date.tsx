@@ -16,7 +16,7 @@ const widgetName = "Date";
 dayjs.extend(utc);
 
 const standardizeTimestamp = (timestamp: string, format?: string) =>
-  dayjs.utc(timestamp).format(format);
+  dayjs.utc(timestamp).format(format || DateDisplayFormat);
 
 export type DateProps = {
   initialValue?: Expression<string>;
@@ -24,6 +24,7 @@ export type DateProps = {
   lastDate?: Expression<string>;
   showCalendarIcon?: boolean;
   onChange?: EnsembleAction;
+  format?: string;
 } & FormInputProps<string> &
   EnsembleWidgetProps;
 
@@ -46,7 +47,7 @@ export const Date: React.FC<DateProps> = (props) => {
 
   useEffect(() => {
     if (values?.initialValue) {
-      setValue(standardizeTimestamp(values.initialValue));
+      setValue(standardizeTimestamp(values.initialValue, values.format));
     }
   }, [values?.initialValue]);
 
@@ -68,7 +69,7 @@ export const Date: React.FC<DateProps> = (props) => {
 
   const onDateChange = (date: string): void => {
     setValue(date);
-    const formattedDate = standardizeTimestamp(date, DateDisplayFormat);
+    const formattedDate = standardizeTimestamp(date, values?.format);
     if (formattedDate === "Invalid Date") {
       onChangeCallback("");
     } else {
@@ -101,6 +102,7 @@ export const Date: React.FC<DateProps> = (props) => {
           (Boolean(values?.lastDate) && d.isAfter(values?.lastDate)) ||
           (Boolean(values?.firstDate) && d.isBefore(values?.firstDate))
         }
+        format={values?.format}
         onChange={onDateChange}
         placeholder={values?.hintText}
         style={{ width: "100%", ...values?.styles }}

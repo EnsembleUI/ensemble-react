@@ -132,7 +132,7 @@ View:
                         onChange:
                           executeCode: |
                             console.log("onChange event! Here are the selected values: ", value);
-                        # onItemSelect: 
+                        # onItemSelect:
                         #   executeCode: |
                         #     console.log("This is an onItemSelect function that should not be running.", selectedValue);
                     - MultiSelect:
@@ -147,11 +147,13 @@ View:
                         id: date0
                         label: Date 0
                         hintText: Choose date 0
+                        format: MM/DD/YYYY
                     - Date:
                         id: date1
                         label: Date 1
                         value: ""
                         hintText: Choose date 1
+                        format: DD-MM-YY
                     - Date:
                         id: date2
                         label: Date 2
@@ -312,7 +314,7 @@ View:
                       onComplete:
                         showToast:
                           message: Form submitted!
-                  children: 
+                  children:
                     - TextInput:
                         id: textInput
                         label: Text input
@@ -326,7 +328,7 @@ View:
                         text: "The text you have entered in the textbox is: ${ensemble.storage.get('textInputLabel') ?? ''}"
                     - Button:
                         submitForm: true
-                        label: Submit 
+                        label: Submit
 
   footer:
     children:
