@@ -1,5 +1,14 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.66
+
+### Patch Changes
+
+- b4bd127: add format property in Date widget
+- Updated dependencies [0468a2d]
+- Updated dependencies [b4bd127]
+  - @ensembleui/react-runtime@0.1.72
+
 ## 0.0.65
 
 ### Patch Changes
