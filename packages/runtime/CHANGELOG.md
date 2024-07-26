@@ -1,5 +1,12 @@
 # @ensembleui/react-runtime
 
+## 0.1.72
+
+### Patch Changes
+
+- 0468a2d: Fix date input bindings
+- b4bd127: add format property in Date widget
+
 ## 0.1.71
 
 ### Patch Changes
