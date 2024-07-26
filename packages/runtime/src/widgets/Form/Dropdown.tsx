@@ -255,10 +255,10 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             disabled={values?.enabled === false}
             dropdownStyle={values?.styles}
             id={values?.id}
+            onChange={handleChange}
             onDropdownVisibleChange={(stat): void =>
               setDropdownStat(values?.manualClose ? true : stat)
             }
-            onSelect={onItemSelectCallback}
             open={dropdownStat}
             placeholder={
               values?.hintText ? (
