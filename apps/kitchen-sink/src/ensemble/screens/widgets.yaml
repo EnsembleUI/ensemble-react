@@ -657,13 +657,19 @@ View:
                     data: [{ name: "Close" }]
                     name: product
                     template:
-                      Button:
-                        label: ${product.name}
-                        styles:
-                          width: 100%
-                        onTap:
-                          executeCode: |
-                            myDropdown.close()
+                      Form:
+                        children:
+                          - Date:
+                              label: Date
+                              id: testDate
+                              onChange:
+                                executeCode: |
+                                  console.log(testDate)
+                          - Button:
+                              label: Close
+                              onTap:
+                                executeCode: |
+                                  myDropdown.close()
               - Dropdown:
                   label: Searchable
                   hintText: Search

@@ -80,27 +80,32 @@ export const Date: React.FC<DateProps> = (props) => {
   }, [value, formInstance]);
 
   return (
-    <EnsembleFormItem
-      initialValue={
-        values?.initialValue ? dayjs(values.initialValue) : undefined
-      }
-      values={values}
-    >
-      <DatePicker
-        disabled={values?.enabled === false}
-        disabledDate={(d): boolean =>
-          (Boolean(values?.lastDate) && d.isAfter(values?.lastDate)) ||
-          (Boolean(values?.firstDate) && d.isBefore(values?.firstDate))
-        }
-        onChange={onDateChange}
-        placeholder={values?.hintText}
-        style={{ width: "100%", ...values?.styles }}
-        value={String(dayjs(values?.value))}
-        {...(values?.showCalendarIcon === false
-          ? { suffixIcon: false }
-          : undefined)}
-      />
-    </EnsembleFormItem>
+    <>
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+      <div onClick={(e) => e.stopPropagation()}>
+        <EnsembleFormItem
+          initialValue={
+            values?.initialValue ? dayjs(values.initialValue) : undefined
+          }
+          values={values}
+        >
+          <DatePicker
+            disabled={values?.enabled === false}
+            disabledDate={(d): boolean =>
+              (Boolean(values?.lastDate) && d.isAfter(values?.lastDate)) ||
+              (Boolean(values?.firstDate) && d.isBefore(values?.firstDate))
+            }
+            onChange={onDateChange}
+            placeholder={values?.hintText}
+            style={{ width: "100%", ...values?.styles }}
+            value={String(dayjs(values?.value))}
+            {...(values?.showCalendarIcon === false
+              ? { suffixIcon: false }
+              : undefined)}
+          />
+        </EnsembleFormItem>
+      </div>
+    </>
   );
 };
 
