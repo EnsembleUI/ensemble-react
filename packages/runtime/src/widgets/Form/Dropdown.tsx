@@ -49,6 +49,8 @@ export interface SelectOption {
 
 export type DropdownProps = {
   items?: SelectOption[];
+  /* deprecated, use onChange */
+  onItemSelect: EnsembleAction;
   onChange?: EnsembleAction;
   autoComplete: Expression<boolean>;
   hintStyle?: EnsembleWidgetStyles;
@@ -61,7 +63,12 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   const [selectedValue, setSelectedValue] = useState<
     string | number | undefined
   >();
-  const { "item-template": itemTemplate, ...rest } = props;
+  const {
+    "item-template": itemTemplate,
+    onItemSelect,
+    onChange,
+    ...rest
+  } = props;
   const { id, rootRef, values } = useRegisterBindings(
     { ...rest, initialValue: props.value, selectedValue, widgetName },
     props.id,
@@ -70,13 +77,16 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     },
   );
 
-  const action = useEnsembleAction(props.onChange);
-  const handleChange = useCallback(
+  const onItemSelectAction = useEnsembleAction(onItemSelect);
+  const onChangeAction = useEnsembleAction(onChange);
+
+  const onSelectCallback = useCallback(
     (value?: number | string) => {
       setSelectedValue(value);
-      action?.callback({ value });
+      onItemSelectAction?.callback({ selectedValue: value });
+      onChangeAction?.callback({ value });
     },
-    [action],
+    [onItemSelectAction],
   );
 
   const { namedData } = useTemplateData({
@@ -96,7 +106,10 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               label={isString(item.label) ? item.label : ""}
             >
               {item.items?.map((subItem) => (
-                <Select.Option key={subItem.value}>
+                <Select.Option
+                  key={subItem.value}
+                  onClick={() => onSelectCallback(subItem.value)}
+                >
                   {isString(subItem.label)
                     ? subItem.label
                     : EnsembleRuntime.render([unwrapWidget(subItem.label)])}
@@ -247,7 +260,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             disabled={values?.enabled === false}
             dropdownStyle={values?.styles}
             id={values?.id}
-            onChange={handleChange}
+            onSelect={onSelectCallback}
             placeholder={
               values?.hintText ? (
                 <span style={{ ...values.hintStyle }}>{values.hintText}</span>
