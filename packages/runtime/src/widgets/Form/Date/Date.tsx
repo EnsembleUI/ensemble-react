@@ -82,7 +82,7 @@ export const Date: React.FC<DateProps> = (props) => {
     if (formInstance) {
       formInstance.setFieldsValue({
         [values?.id ?? values?.label ?? ""]: value
-          ? standardizeTimestamp(value)
+          ? dayjs.utc(value)
           : undefined,
       });
     }
@@ -91,9 +91,7 @@ export const Date: React.FC<DateProps> = (props) => {
   return (
     <EnsembleFormItem
       initialValue={
-        values?.initialValue
-          ? standardizeTimestamp(values.initialValue)
-          : undefined
+        values?.initialValue ? dayjs.utc(values.initialValue) : undefined
       }
       values={values}
     >
