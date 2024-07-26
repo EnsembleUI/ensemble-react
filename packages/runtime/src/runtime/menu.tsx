@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Menu as AntMenu, Col, Divider } from "antd";
 import * as MuiIcons from "@mui/icons-material";
 import {
+  unwrapWidget,
   useRegisterBindings,
   type EnsembleWidget,
 } from "@ensembleui/react-framework";
@@ -32,9 +33,10 @@ type TypeColors =
 interface MenuItem {
   id?: string;
   testId?: string;
-  icon?: string;
+  icon?: string | { [key: string]: unknown };
+  activeIcon?: string | { [key: string]: unknown };
   iconLibrary?: "default" | "fontAwesome";
-  label: string;
+  label?: string;
   url?: string;
   page?: string;
   selected?: boolean;
@@ -42,6 +44,10 @@ interface MenuItem {
   hasNotifications?: boolean;
   openNewTab?: boolean;
   visible?: boolean;
+  customItem?: {
+    widget?: { [key: string]: unknown };
+    selectedWidget?: { [key: string]: unknown };
+  };
 }
 
 interface MenuBaseProps {
@@ -90,12 +96,12 @@ const renderMuiIcon = (
 };
 
 export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
-  const [isCollapsed, setCollapsed] = useState<boolean>(false);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const { values } = useRegisterBindings({ ...props, isCollapsed }, id, {
-    setCollapsed,
+    setIsCollapsed,
   });
   const location = useLocation();
-  const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = useState<string | undefined>();
 
   const backgroundColor = props.styles?.backgroundColor
     ? getColor(props.styles.backgroundColor)
@@ -104,7 +110,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
   useEffect(() => {
     const initiallySelectedItem = props.items.find((item) => item.selected);
     if (initiallySelectedItem) {
-      setSelectedItem(initiallySelectedItem.label);
+      setSelectedItem(initiallySelectedItem.page);
     }
   }, [props.items]);
 
@@ -114,9 +120,51 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
         item.page && `/${item.page.toLowerCase()}` === location.pathname,
     );
     if (locationMatch) {
-      setSelectedItem(locationMatch.label);
+      setSelectedItem(locationMatch.page);
     }
   }, [location.pathname, props.items]);
+
+  const getIcon = useCallback(
+    (item: MenuItem) => {
+      const key = selectedItem === item.page ? "activeIcon" : "icon";
+      const icon =
+        selectedItem === item.page && item.activeIcon
+          ? item.activeIcon
+          : item.icon;
+
+      if (typeof icon === "string") {
+        return renderMuiIcon(
+          icon,
+          props.styles?.iconWidth,
+          props.styles?.iconHeight,
+        );
+      }
+      return EnsembleRuntime.render([
+        {
+          ...unwrapWidget(icon ? { Icon: icon } : {}),
+          key,
+        },
+      ]);
+    },
+    [props.styles?.iconHeight, props.styles?.iconWidth, selectedItem],
+  );
+
+  const getLabel = useCallback(
+    (item: MenuItem) => {
+      if (isCollapsed) {
+        return null;
+      }
+      if (!item.customItem) {
+        return item.label;
+      }
+      const widget =
+        selectedItem === item.page && item.customItem.selectedWidget
+          ? item.customItem.selectedWidget
+          : item.customItem.widget;
+      return EnsembleRuntime.render([unwrapWidget(widget || {})]);
+    },
+    [isCollapsed, selectedItem],
+  );
 
   return (
     <Col
@@ -150,20 +198,16 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
           <>
             <AntMenu.Item
               data-testid={item.id ?? item.testId}
-              icon={renderMuiIcon(
-                item.icon,
-                props.styles?.iconWidth,
-                props.styles?.iconHeight,
-              )}
+              icon={getIcon(item)}
               key={item.page}
               onClick={(): void => {
                 if (!item.openNewTab) {
-                  setSelectedItem(item.label);
+                  setSelectedItem(item.page);
                 }
               }}
               style={{
                 color:
-                  selectedItem === item.label
+                  selectedItem === item.page
                     ? (values.styles?.selectedColor as string) ?? "white"
                     : (values.styles?.labelColor as string) ?? "grey",
                 display: item.visible === false ? "none" : "flex",
@@ -171,7 +215,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
                 borderRadius: 0,
                 alignItems: "center",
                 fontSize:
-                  selectedItem === item.label
+                  selectedItem === item.page
                     ? `${
                         parseInt(
                           `${
@@ -186,7 +230,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
                           ? props.styles.labelFontSize
                           : 1
                       }rem`,
-                ...(selectedItem === item.label
+                ...(selectedItem === item.page
                   ? props.styles?.onSelectStyles ?? {}
                   : {}),
               }}
@@ -195,7 +239,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
                 target={item.openNewTab ? "_blank" : "_self"}
                 to={item.page ? `/${item.page}` : String(item.url)}
               >
-                {!isCollapsed && item.label}
+                {getLabel(item)}
                 {item.hasNotifications ? (
                   <div
                     style={{

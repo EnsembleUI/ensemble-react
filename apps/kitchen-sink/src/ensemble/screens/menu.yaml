@@ -45,11 +45,30 @@ ViewGroup:
       - label: Forms
         icon: CodeOutlined
         page: forms
-      - label: Custom Widgets
-        icon: ExtensionOutlined
+      - customItem:
+          widget:
+            Text:
+              text: Custom Widgets
+              styles:
+                color: green
+          selectedWidget:
+            Text:
+              text: Custom selection
+              styles:
+                color: blue
+        icon:
+          name: ExtensionOutlined
+          color: green
+          size: 30
+        activeIcon:
+          name: GroupOutlined
+          color: yellow
+          size: 30
         page: custom widgets
+        label: Ignored
       - label: Help
         icon: HelpOutlineOutlined
+        activeIcon: QuizOutlined
         page: help
         visible: true
       - label: Hidden Page
