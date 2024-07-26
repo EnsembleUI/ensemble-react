@@ -7,6 +7,9 @@ import { render, screen, act } from "@testing-library/react";
 import type { ApplicationDTO } from "@ensembleui/react-framework";
 import { EnsembleApp } from "../EnsembleApp";
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+global.ResizeObserver = require("resize-observer-polyfill");
+
 // eslint-disable-next-line @typescript-eslint/no-unsafe-return
 jest.mock("@ensembleui/react-framework", () => ({
   ...frameworkActual,
@@ -16,6 +19,15 @@ jest.mock("@ensembleui/react-framework", () => ({
 }));
 
 jest.mock("react-markdown", jest.fn());
+
+global.Request = jest
+  .fn()
+  .mockImplementation((input: RequestInfo, init: RequestInit) => ({
+    url: input,
+    method: init.method || "GET",
+    headers: init.headers || {},
+    body: init.body || null,
+  }));
 
 Object.defineProperty(window, "matchMedia", {
   writable: true,
@@ -30,6 +42,11 @@ Object.defineProperty(window, "matchMedia", {
     removeEventListener: jest.fn(),
     dispatchEvent: jest.fn(),
   })),
+});
+
+afterEach(() => {
+  // Reset the route or any global state here
+  window.history.pushState({}, "", "/");
 });
 
 test("Renders error page", () => {

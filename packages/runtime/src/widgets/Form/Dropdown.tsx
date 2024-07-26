@@ -49,7 +49,7 @@ export interface SelectOption {
 
 export type DropdownProps = {
   items?: SelectOption[];
-  onItemSelect: EnsembleAction;
+  onChange?: EnsembleAction;
   autoComplete: Expression<boolean>;
   hintStyle?: EnsembleWidgetStyles;
   manualClose?: boolean;
@@ -78,13 +78,11 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     },
   );
 
-  const action = useEnsembleAction(props.onItemSelect);
-  const onItemSelectCallback = useCallback(
+  const action = useEnsembleAction(props.onChange);
+  const handleChange = useCallback(
     (value?: number | string) => {
       setSelectedValue(value);
-      if (action) {
-        action.callback({ selectedValue: value });
-      }
+      action?.callback({ value });
     },
     [action],
   );
@@ -106,10 +104,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               label={isString(item.label) ? item.label : ""}
             >
               {item.items?.map((subItem) => (
-                <Select.Option
-                  key={subItem.value}
-                  onClick={() => onItemSelectCallback(subItem.value)}
-                >
+                <Select.Option key={subItem.value}>
                   {isString(subItem.label)
                     ? subItem.label
                     : EnsembleRuntime.render([unwrapWidget(subItem.label)])}
@@ -185,6 +180,10 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   return (
     <>
       <style>{`
+        .ant-select-single {
+          min-height: 32px !important;
+          height: unset !important;
+        }
         .${id}_input .ant-select-selector {
           ${getComponentStyles("dropdown", values?.styles) as string}
         }
@@ -247,6 +246,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               : ""
           }
         `}</style>
+
       <div ref={rootRef} style={{ flex: 1, ...formItemStyles }}>
         <EnsembleFormItem values={values}>
           <Select

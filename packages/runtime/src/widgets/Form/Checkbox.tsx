@@ -43,15 +43,13 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
     }
   }, [values?.trailingText]);
 
-  const onChangeCallback = useCallback(
-    (newValue: boolean) => action?.callback({ value: newValue }),
+  const handleChange = useCallback(
+    (newValue: boolean) => {
+      setChecked(newValue);
+      action?.callback({ value: newValue });
+    },
     [action],
   );
-
-  const handleChange = (newValue: boolean): void => {
-    setChecked(newValue);
-    onChangeCallback(newValue);
-  };
 
   const formInstance = Form.useFormInstance();
 

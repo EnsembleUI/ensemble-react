@@ -1,4 +1,6 @@
 View:
+  styles:
+    scrollableView: true
   onLoad:
     executeCode:
       body: |
@@ -91,6 +93,9 @@ View:
                             value: option1
                           - label: Option 2
                             value: option2
+                        onChange:
+                          executeCode: |
+                            console.log('dropdown changed', value);
                     # If you omit id, the form value key will be the label
                     - TextInput:
                         id: formTextInput
@@ -124,11 +129,12 @@ View:
                         valueKey: email
                         items: ${ensemble.storage.get('dummyData')}
                         allowCreateOptions: true
-                        onItemSelect:
+                        onChange:
                           executeCode: |
-                            console.log('selected', multiselectoptions1);
-                            console.log(1,selectedValues)
-                            console.log(1,multiselectoptions1.selectedValues)
+                            console.log("onChange event! Here are the selected values: ", value);
+                        # onItemSelect: 
+                        #   executeCode: |
+                        #     console.log("This is an onItemSelect function that should not be running.", selectedValue);
                     - MultiSelect:
                         id: multiselectoptions2
                         label: Choose multiple
@@ -164,6 +170,11 @@ View:
                         onTap:
                           executeCode: |
                             myForm.clear()
+                    - Button:
+                        label: Update Radio Value to 'Option 2' & regexTextInput by code
+                        onTap:
+                          executeCode: |
+                            myForm.updateValues({radio: '2', regexTextInput: '543210'})
               - Markdown:
                   id: result
                   text: Check here for the result!
@@ -255,10 +266,10 @@ View:
                         labelKey: firstName
                         valueKey: email
                         items: ${ensemble.storage.get('dummyData')}
-                        onItemSelect:
+                        onChange:
                           executeCode: |
                             console.log('selected');
-                            console.log(selectedValues)
+                            console.log(value)
                     - MultiSelect:
                         id: initial_multiselectoptions2
                         label: Choose multiple
@@ -280,6 +291,42 @@ View:
               - Markdown:
                   id: result2
                   text: Check here for the result!
+        - Text:
+            styles:
+              names: heading-3
+            text: TextInput OnChange event
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:
+              - Form:
+                  id: textInputTest
+                  styles:
+                    gap: 8px
+                    labelPosition: top
+                  onSubmit:
+                    executeCode:
+                      body: |
+                        console.log(vals);
+                      onComplete:
+                        showToast:
+                          message: Form submitted!
+                  children: 
+                    - TextInput:
+                        id: textInput
+                        label: Text input
+                        onChange:
+                          executeCode:
+                            body: |
+                              console.log('textInput changed', value);
+                              ensemble.storage.set("textInputLabel", value);
+                    - Text:
+                        id: textInputLabel
+                        text: "The text you have entered in the textbox is: ${ensemble.storage.get('textInputLabel') ?? ''}"
+                    - Button:
+                        submitForm: true
+                        label: Submit 
 
   footer:
     children:

@@ -16,6 +16,7 @@ import {
   CustomScopeProvider,
   CustomThemeContext,
   useLanguageScope,
+  useDeviceData,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -125,6 +126,7 @@ export const useExecuteCode: EnsembleActionHook<
     isCodeString ? undefined : action?.onComplete,
   );
   const theme = appContext?.application?.theme;
+  const device = useDeviceData();
 
   const js = useMemo(() => {
     if (!action) {
@@ -140,11 +142,11 @@ export const useExecuteCode: EnsembleActionHook<
     }
 
     if ("scriptName" in action) {
-      return screen?.app?.scripts.find(
+      return appContext?.application?.scripts.find(
         (script) => script.name === action.scriptName,
       )?.body;
     }
-  }, [action, isCodeString, screen]);
+  }, [action, isCodeString, appContext?.application?.scripts]);
 
   const execute = useMemo(() => {
     if (!screen || !js) {
@@ -164,12 +166,15 @@ export const useExecuteCode: EnsembleActionHook<
           merge(
             {
               ...customWidgets,
+              env: appContext?.env,
+              device,
               ensemble: {
                 ...themescope,
                 storage,
                 user,
                 formatter,
                 env: appContext?.env,
+                secrets: appContext?.secrets,
                 navigateScreen: (targetScreen: NavigateScreenAction): void =>
                   navigateApi(targetScreen, screen, navigate),
                 navigateModalScreen: (
@@ -180,8 +185,8 @@ export const useExecuteCode: EnsembleActionHook<
                   }
                   navigateModalScreen(
                     navigateModalScreenAction,
-                    screen,
                     modalContext,
+                    appContext?.application ?? screen.app,
                   );
                 },
                 location: locationApi(location),
@@ -203,6 +208,7 @@ export const useExecuteCode: EnsembleActionHook<
                     ...customScope,
                     ensemble: {
                       env: appContext?.env,
+                      secrets: appContext?.secrets,
                     },
                   }),
                 navigateBack: (): void =>
@@ -244,7 +250,9 @@ export const useExecuteCode: EnsembleActionHook<
     js,
     appContext?.application?.customWidgets,
     appContext?.env,
+    appContext?.secrets,
     themescope,
+    device,
     storage,
     user,
     formatter,
@@ -322,6 +330,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
           ...context,
           ensemble: {
             env: appContext?.env,
+            secrets: appContext?.secrets,
           },
         });
         setData(api.name, res);
@@ -352,8 +361,8 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
         onAPIErrorAction?.callback({ ...context, error: e });
         onInvokeAPIErrorAction?.callback({ ...context, error: e });
       } finally {
-        setIsLoading(false);
         setIsComplete(true);
+        setIsLoading(false);
       }
     };
 
@@ -371,6 +380,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     setData,
     context,
     appContext?.env,
+    appContext?.secrets,
   ]);
 
   return invokeApi;

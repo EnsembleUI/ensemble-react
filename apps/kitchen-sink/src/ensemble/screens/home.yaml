@@ -5,6 +5,7 @@ View:
       ensemble.storage.set('zzz' , 'button')
       ensemble.storage.set('aaa' , '1')
       ensemble.storage.set('bbb' , "0xffb91c1c")
+      console.log('>>> secret variable >>>', ensemble.secrets.dummyOauthSecret)
 
   header:
     title:
@@ -19,6 +20,14 @@ View:
       styles:
         names: ${ensemble.storage.get('yyy')}
       children:
+        - Text:
+            styles:
+              names: heading-1
+            text: ${device.width}
+        - Text:
+            styles:
+              names: heading-1
+            text: ${ensemble.secrets.dummyOauthSecret}
         - Text:
             styles:
               names: heading-1
@@ -66,7 +75,7 @@ View:
               template:
                 Text:
                   text: ${language.name + ` ( `+ language.nativeName +` )`}
-            onItemSelect:
+            onChange:
               executeCode:
                 body: |
                   ensemble.storage.set('language', selectedValue)

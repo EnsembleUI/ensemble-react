@@ -1,6 +1,6 @@
 import { Provider, useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useCallback, useContext } from "react";
-import { clone, merge } from "lodash-es";
+import { useCallback, useContext, useEffect, useMemo } from "react";
+import { clone, debounce, merge } from "lodash-es";
 import { useHydrateAtoms } from "jotai/utils";
 import {
   appAtom,
@@ -10,6 +10,7 @@ import {
   screenDataAtom,
   themeAtom,
   userAtom,
+  useDeviceData,
 } from "../state";
 import type {
   ApplicationContextDefinition,
@@ -86,6 +87,9 @@ const HydrateAtoms: React.FC<
     },
   );
 
+  // initiate device resizer observer
+  useDeviceObserver();
+
   return <>{children}</>;
 };
 
@@ -113,4 +117,28 @@ export const useScreenContext = ():
     [screenContext.data, setDataAtom],
   );
   return { ...screenContext, setData };
+};
+
+const useDeviceObserver = (): void => {
+  const { setData: updateDeviceData } = useDeviceData();
+
+  const debouncedUpdateDeviceData = useMemo(() => {
+    const handleResize = (): void => {
+      updateDeviceData({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+    return debounce(handleResize, 100);
+  }, [updateDeviceData]);
+
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(debouncedUpdateDeviceData);
+    resizeObserver.observe(document.body);
+
+    return (): void => {
+      resizeObserver.disconnect();
+      debouncedUpdateDeviceData.cancel(); // Cancel any pending debounced calls on cleanup
+    };
+  }, [debouncedUpdateDeviceData]);
 };

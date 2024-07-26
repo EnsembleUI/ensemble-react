@@ -47,6 +47,7 @@ export const ApplicationContextProvider: React.FC<
             app.config?.environmentVariables,
             environmentOverrides,
           ),
+          secrets: merge({}, app.config?.secretVariables),
           user,
         }}
       >
