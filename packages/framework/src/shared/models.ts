@@ -23,6 +23,7 @@ export interface EnsembleScreenModel {
   customWidgets?: CustomWidgetModel[];
   sockets?: EnsembleSocketModel[];
   events?: EnsembleCustomEventModel[];
+  readonly isRoot?: boolean;
 }
 
 export type EnsembleEntryPoint = EnsembleScreenModel | EnsembleMenuModel;
