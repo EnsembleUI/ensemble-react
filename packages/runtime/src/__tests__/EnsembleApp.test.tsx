@@ -7,9 +7,6 @@ import { render, screen, act } from "@testing-library/react";
 import type { ApplicationDTO } from "@ensembleui/react-framework";
 import { EnsembleApp } from "../EnsembleApp";
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-global.ResizeObserver = require("resize-observer-polyfill");
-
 // eslint-disable-next-line @typescript-eslint/no-unsafe-return
 jest.mock("@ensembleui/react-framework", () => ({
   ...frameworkActual,

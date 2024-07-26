@@ -16,7 +16,6 @@ import {
   CustomScopeProvider,
   CustomThemeContext,
   useLanguageScope,
-  useDeviceData,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -126,7 +125,6 @@ export const useExecuteCode: EnsembleActionHook<
     isCodeString ? undefined : action?.onComplete,
   );
   const theme = appContext?.application?.theme;
-  const device = useDeviceData();
 
   const js = useMemo(() => {
     if (!action) {
@@ -167,7 +165,6 @@ export const useExecuteCode: EnsembleActionHook<
             {
               ...customWidgets,
               env: appContext?.env,
-              device,
               ensemble: {
                 ...themescope,
                 storage,
@@ -252,7 +249,6 @@ export const useExecuteCode: EnsembleActionHook<
     appContext?.env,
     appContext?.secrets,
     themescope,
-    device,
     storage,
     user,
     formatter,
