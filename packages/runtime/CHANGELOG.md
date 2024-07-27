@@ -1,5 +1,15 @@
 # @ensembleui/react-runtime
 
+## 0.1.73
+
+### Patch Changes
+
+- c6ede84: don't route when page/url is not given in menu
+- 083caf1: remove UTC conversion from date widget
+- 0529f2d: fix icon styles overload conflicts
+- Updated dependencies [b5464ce]
+  - @ensembleui/react-framework@0.1.55
+
 ## 0.1.72
 
 ### Patch Changes
