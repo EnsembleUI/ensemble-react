@@ -74,6 +74,28 @@ ViewGroup:
       - label: Hidden Page
         icon: HelpOutlineOutlined
         visible: false
+      - customItem:
+          widget:
+            Button:
+              label: Docs
+              styles:
+                width: 100%
+                textColor: aqua
+                fontWeight: bold
+                backgroundColor: purple
+              onTap:
+                showDialog:
+                  widget:
+                    Column:
+                      children:
+                        - TextInput:
+                            label: Enter your name
+                        - Button:
+                            label: Lets go!
+                            onTap:
+                              navigateExternalScreen:
+                                url: https://docs.ensembleui.com/
+                                openNewTab: true
     footer:
       Row:
         styles:
