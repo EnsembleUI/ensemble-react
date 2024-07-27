@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { PropsWithChildren, ReactNode } from "react";
 import React, { useState, useEffect, useCallback } from "react";
 import { Menu as AntMenu, Col, Divider } from "antd";
 import * as MuiIcons from "@mui/icons-material";
@@ -69,7 +69,6 @@ interface MenuBaseProps {
   };
   header?: EnsembleWidget;
   footer?: EnsembleWidget;
-  enableSearch?: boolean;
 }
 
 const renderMuiIcon = (
@@ -95,10 +94,46 @@ const renderMuiIcon = (
   return null;
 };
 
+const CustomLink: React.FC<PropsWithChildren & { item: MenuItem }> = ({
+  item,
+  children,
+}) => {
+  const content = (
+    <>
+      {children}
+      {item.hasNotifications ? (
+        <div
+          style={{
+            marginTop: "8px",
+            marginLeft: "2px",
+            width: "8px",
+            height: "8px",
+            backgroundColor: "#e07407",
+            borderRadius: "50%",
+          }}
+        />
+      ) : null}
+    </>
+  );
+
+  if (!item.page && !item.url) {
+    return <div>{content}</div>;
+  }
+
+  return (
+    <Link
+      target={item.openNewTab ? "_blank" : "_self"}
+      to={item.page ? `/${item.page}` : String(item.url)}
+    >
+      {content}
+    </Link>
+  );
+};
+
 export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const { values } = useRegisterBindings({ ...props, isCollapsed }, id, {
-    setIsCollapsed,
+    setCollapsed: setIsCollapsed,
   });
   const location = useLocation();
   const [selectedItem, setSelectedItem] = useState<string | undefined>();
@@ -132,6 +167,10 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
           ? item.activeIcon
           : item.icon;
 
+      if (!icon) {
+        return null;
+      }
+
       if (typeof icon === "string") {
         return renderMuiIcon(
           icon,
@@ -141,7 +180,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
       }
       return EnsembleRuntime.render([
         {
-          ...unwrapWidget(icon ? { Icon: icon } : {}),
+          ...unwrapWidget({ Icon: icon }),
           key,
         },
       ]);
@@ -194,14 +233,14 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
         }}
       >
         {/* FIXME: just use props here https://ant.design/components/menu#examples */}
-        {values?.items.map((item) => (
+        {values?.items.map((item, itemIndex) => (
           <>
             <AntMenu.Item
               data-testid={item.id ?? item.testId}
               icon={getIcon(item)}
-              key={item.page}
+              key={item.page || item.url || `customItem${itemIndex}`}
               onClick={(): void => {
-                if (!item.openNewTab) {
+                if (!item.openNewTab && item.page) {
                   setSelectedItem(item.page);
                 }
               }}
@@ -235,24 +274,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
                   : {}),
               }}
             >
-              <Link
-                target={item.openNewTab ? "_blank" : "_self"}
-                to={item.page ? `/${item.page}` : String(item.url)}
-              >
-                {getLabel(item)}
-                {item.hasNotifications ? (
-                  <div
-                    style={{
-                      marginTop: "8px",
-                      marginLeft: "2px",
-                      width: "8px",
-                      height: "8px",
-                      backgroundColor: "#e07407",
-                      borderRadius: "50%",
-                    }}
-                  />
-                ) : null}
-              </Link>
+              <CustomLink item={item}>{getLabel(item)}</CustomLink>
             </AntMenu.Item>
             {item.divider ? (
               <Col

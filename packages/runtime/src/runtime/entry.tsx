@@ -52,7 +52,6 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({
     return (
       <div style={{ display: "flex", flexDirection: "row" }}>
         <SideBarMenu
-          enableSearch={false}
           footer={entry.footer}
           header={entry.header}
           id={entry.id}
