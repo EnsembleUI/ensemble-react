@@ -3,7 +3,6 @@ import type { Expression, EnsembleAction } from "@ensembleui/react-framework";
 import { DatePicker, Form } from "antd";
 import { useState, useCallback, useEffect } from "react";
 import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
 import { WidgetRegistry } from "../../../registry";
 import type { EnsembleWidgetProps } from "../../../shared/types";
 import { useEnsembleAction } from "../../../runtime/hooks/useEnsembleAction";
@@ -13,10 +12,8 @@ import { DateDisplayFormat } from "./utils/DateConstants";
 
 const widgetName = "Date";
 
-dayjs.extend(utc);
-
 const standardizeTimestamp = (timestamp: string, format?: string) =>
-  dayjs.utc(timestamp).format(format || DateDisplayFormat);
+  dayjs(timestamp).format(format || DateDisplayFormat);
 
 export type DateProps = {
   initialValue?: Expression<string>;
@@ -82,9 +79,7 @@ export const Date: React.FC<DateProps> = (props) => {
   useEffect(() => {
     if (formInstance) {
       formInstance.setFieldsValue({
-        [values?.id ?? values?.label ?? ""]: value
-          ? dayjs.utc(value)
-          : undefined,
+        [values?.id ?? values?.label ?? ""]: value ? dayjs(value) : undefined,
       });
     }
   }, [value, formInstance]);
@@ -92,7 +87,7 @@ export const Date: React.FC<DateProps> = (props) => {
   return (
     <EnsembleFormItem
       initialValue={
-        values?.initialValue ? dayjs.utc(values.initialValue) : undefined
+        values?.initialValue ? dayjs(values.initialValue) : undefined
       }
       values={values}
     >
