@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.55
+
+### Patch Changes
+
+- b5464ce: fix home screen load issue
+
 ## 0.1.54
 
 ### Patch Changes
