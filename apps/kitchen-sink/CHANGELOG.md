@@ -1,5 +1,14 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.68
+
+### Patch Changes
+
+- 04454f2: use unique key when applying styles to modal
+- Updated dependencies [04454f2]
+  - @ensembleui/react-framework@0.1.56
+  - @ensembleui/react-runtime@0.1.74
+
 ## 0.0.67
 
 ### Patch Changes

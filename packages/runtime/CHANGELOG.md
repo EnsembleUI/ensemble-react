@@ -1,5 +1,13 @@
 # @ensembleui/react-runtime
 
+## 0.1.74
+
+### Patch Changes
+
+- 04454f2: use unique key when applying styles to modal
+- Updated dependencies [04454f2]
+  - @ensembleui/react-framework@0.1.56
+
 ## 0.1.73
 
 ### Patch Changes
