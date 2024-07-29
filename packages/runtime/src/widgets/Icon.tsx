@@ -4,6 +4,7 @@ import { WidgetRegistry } from "../registry";
 import type { IconProps } from "../shared/types";
 import { getColor, getIcon } from "../shared/styles";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
+import { isInteger } from "lodash-es";
 
 const widgetName = "Icon";
 
@@ -58,6 +59,7 @@ export const Icon: React.FC<IconProps> = ({
       onMouseLeave={handleMouseLeave}
       sx={{
         cursor: onTap ? "pointer" : "auto",
+        ...values?.styles,
         color: values?.color && getColor(String(values.color)),
         fontSize: props.size,
         backgroundColor: `${
@@ -65,20 +67,28 @@ export const Icon: React.FC<IconProps> = ({
             ? values.styles.backgroundColor
             : "transparent"
         }`,
-        padding: `${
-          values?.styles?.padding ? `${values.styles.padding}px` : "0px"
-        }`,
-        margin: `${
-          values?.styles?.margin ? `${values.styles.margin}px` : "0px"
-        }`,
-        borderRadius: `${
-          values?.styles?.borderRadius
-            ? `${values.styles.borderRadius}px`
-            : "0px"
-        }`,
-        borderWidth: `${
-          values?.styles?.borderWidth ? `${values.styles.borderWidth}px` : "0px"
-        }`,
+        padding: (() => {
+          if (values?.styles?.padding) {
+            return isInteger(values.styles.padding)
+              ? `${values.styles.padding}px`
+              : values.styles.padding;
+          }
+          return "0px";
+        })(),
+        margin: (() => {
+          if (values?.styles?.margin) {
+            return isInteger(values.styles.margin)
+              ? `${values.styles.margin}px`
+              : values.styles.margin;
+          }
+          return "0px";
+        })(),
+        borderRadius: values?.styles?.borderRadius
+          ? `${values.styles.borderRadius}px`
+          : "0px",
+        borderWidth: values?.styles?.borderWidth
+          ? `${values.styles.borderWidth}px`
+          : "0px",
         borderColor: values?.styles?.borderColor
           ? getColor(String(values.styles.borderColor))
           : undefined,
@@ -86,7 +96,6 @@ export const Icon: React.FC<IconProps> = ({
         ...(values?.styles?.visible === false
           ? { display: "none" }
           : undefined),
-        ...values?.styles,
       }}
     />
   );
