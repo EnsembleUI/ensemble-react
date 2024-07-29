@@ -138,7 +138,10 @@ export const EnsembleParser = {
       menu,
       screens: screens as EnsembleScreenModel[],
       customWidgets,
-      home: menu ?? screens[0],
+      home:
+        menu ||
+        (screens as EnsembleScreenModel[]).find((screen) => screen.isRoot) ||
+        screens[0],
       theme,
       themes,
       scripts,

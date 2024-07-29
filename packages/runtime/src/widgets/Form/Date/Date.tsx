@@ -12,12 +12,16 @@ import { DateDisplayFormat } from "./utils/DateConstants";
 
 const widgetName = "Date";
 
+const standardizeTimestamp = (timestamp: string, format?: string) =>
+  dayjs(timestamp).format(format || DateDisplayFormat);
+
 export type DateProps = {
   initialValue?: Expression<string>;
   firstDate?: Expression<string>;
   lastDate?: Expression<string>;
   showCalendarIcon?: boolean;
   onChange?: EnsembleAction;
+  format?: string;
 } & FormInputProps<string> &
   EnsembleWidgetProps;
 
@@ -26,12 +30,23 @@ export const Date: React.FC<DateProps> = (props) => {
   const action = useEnsembleAction(props.onChange);
 
   const { id, values } = useRegisterBindings(
-    { ...props, initialValue: props.value, value, widgetName },
+    {
+      ...props,
+      initialValue: props.initialValue ?? props.value,
+      value,
+      widgetName,
+    },
     props.id,
     {
       setValue,
     },
   );
+
+  useEffect(() => {
+    if (values?.initialValue) {
+      setValue(standardizeTimestamp(values.initialValue, values.format));
+    }
+  }, [values?.initialValue]);
 
   const onChangeCallback = useCallback(
     (date?: string) => {
@@ -51,23 +66,13 @@ export const Date: React.FC<DateProps> = (props) => {
 
   const onDateChange = (date: string): void => {
     setValue(date);
-    const formattedDate = dayjs(date).format(DateDisplayFormat);
+    const formattedDate = standardizeTimestamp(date, values?.format);
     if (formattedDate === "Invalid Date") {
       onChangeCallback("");
     } else {
       onChangeCallback(formattedDate);
     }
   };
-
-  useEffect(() => {
-    if (!value && !values?.value) {
-      setValue(
-        values?.initialValue ? String(dayjs(values.initialValue)) : undefined,
-      );
-    } else if (values?.value && dayjs(values.value).isValid()) {
-      setValue(String(dayjs(values.value)));
-    }
-  }, [values]);
 
   const formInstance = Form.useFormInstance();
 
