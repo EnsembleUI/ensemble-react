@@ -65,11 +65,11 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     string | number | undefined
   >();
 
-  const [dropdownStat, setDropdownStat] = useState<boolean>(false);
+  const [dropdownState, setDropdownState] = useState<boolean>(false);
   const { "item-template": itemTemplate, ...rest } = props;
 
   const handleDropdownClose = (): void => {
-    setDropdownStat(false);
+    setDropdownState(false);
   };
 
   const { id, rootRef, values } = useRegisterBindings(
@@ -81,16 +81,13 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     },
   );
 
-  const onItemSelectAction = useEnsembleAction(onItemSelect);
-  const onChangeAction = useEnsembleAction(onChange);
-
-  const onSelectCallback = useCallback(
+  const action = useEnsembleAction(props.onChange);
+  const handleChange = useCallback(
     (value?: number | string) => {
       setSelectedValue(value);
-      onItemSelectAction?.callback({ selectedValue: value });
-      onChangeAction?.callback({ value });
+      action?.callback({ value });
     },
-    [onItemSelectAction],
+    [action],
   );
 
   const { namedData } = useTemplateData({
@@ -110,10 +107,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               label={isString(item.label) ? item.label : ""}
             >
               {item.items?.map((subItem) => (
-                <Select.Option
-                  key={subItem.value}
-                  onClick={() => onSelectCallback(subItem.value)}
-                >
+                <Select.Option key={subItem.value}>
                   {isString(subItem.label)
                     ? subItem.label
                     : EnsembleRuntime.render([unwrapWidget(subItem.label)])}
@@ -265,10 +259,10 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             dropdownStyle={values?.styles}
             id={values?.id}
             onChange={handleChange}
-            onDropdownVisibleChange={(stat): void =>
-              setDropdownStat(values?.manualClose ? true : stat)
+            onDropdownVisibleChange={(state): void =>
+              setDropdownState(values?.manualClose ? true : state)
             }
-            open={dropdownStat}
+            open={dropdownState}
             placeholder={
               values?.hintText ? (
                 <span style={{ ...values.hintStyle }}>{values.hintText}</span>
