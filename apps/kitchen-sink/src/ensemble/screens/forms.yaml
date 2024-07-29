@@ -25,6 +25,23 @@ View:
       styles:
         names: page
       children:
+        - Button:
+            label: open another modal screen
+            onTap:
+              navigateModalScreen:
+                name: widgets
+                height: 200px
+                width: 900px
+        - Button:
+            label: show dialog
+            onTap:
+              showDialog:
+                widget:
+                  Text:
+                    text: i am a text
+                options:
+                  height: 50px
+                  width: 80px
         - Icon:
         - Text:
             styles:
