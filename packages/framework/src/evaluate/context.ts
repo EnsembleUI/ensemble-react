@@ -1,4 +1,4 @@
-import { mapKeys, merge } from "lodash-es";
+import { mapKeys, merge, keys } from "lodash-es";
 import type { EnsembleInterface } from "../shared/ensemble";
 import type {
   ApplicationContextDefinition,
@@ -10,7 +10,7 @@ export interface EvaluationContextProps {
   applicationContext: Omit<
     Partial<ApplicationContextDefinition>,
     "application"
-  > & { application?: Partial<EnsembleAppModel> | null };
+  > & { application?: Partial<EnsembleAppModel> | null; themeName?: string };
   screenContext: Partial<ScreenContextDefinition>;
   ensemble: Partial<EnsembleInterface>;
   context?: { [key: string]: unknown };
@@ -40,7 +40,10 @@ export const createEvaluationContext = ({
 
   const app = {
     languages: applicationContext.application?.languages,
+    themes: keys(applicationContext.application?.themes),
+    theme: applicationContext.themeName,
   };
   const env = applicationContext.env;
+
   return merge({}, { app, ensemble, env }, appInputs, screenInputs, context);
 };

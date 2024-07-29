@@ -7,12 +7,10 @@ import {
   isEmpty,
   isObject,
   map,
-  mapKeys,
   remove,
   set,
   isString,
   concat,
-  clone,
   filter,
   includes,
   omit,
@@ -36,9 +34,7 @@ import type {
   EnsembleConfigYAML,
   LanguageDTO,
 } from "./shared/dto";
-import { findExpressions, type EnsembleAction } from "./shared";
-import { evaluate } from "./evaluate/evaluate";
-import { defaultScreenContext } from "./state";
+import { type EnsembleAction } from "./shared";
 
 export interface EnsembleScreenYAML {
   View?: {
@@ -108,12 +104,18 @@ export const EnsembleParser = {
       );
     }
 
-    const theme = unwrapTheme(app.theme?.content);
-    const themes: { [key: string]: EnsembleThemeModel | undefined } = {};
-    if (isArray(app.themes)) {
-      app.themes.forEach((item) => {
-        themes[item.name || item.id] = unwrapTheme(clone(item.content));
+    let themes: { [key: string]: EnsembleThemeModel } = {};
+
+    if (app.themes && !isEmpty(app.themes)) {
+      app.themes.forEach((theme) => {
+        const defaultTheme = unwrapTheme(theme.content) as {
+          default: EnsembleThemeModel;
+        };
+
+        themes[theme.name || "default"] = defaultTheme.default;
       });
+    } else if (app.theme) {
+      themes = unwrapTheme(app.theme?.content) || {};
     }
 
     const scripts = app.scripts.map(({ name, content }) => ({
@@ -142,7 +144,6 @@ export const EnsembleParser = {
         menu ||
         (screens as EnsembleScreenModel[]).find((screen) => screen.isRoot) ||
         screens[0],
-      theme,
       themes,
       scripts,
       config: ensembleConfigData,
@@ -428,7 +429,9 @@ const unwrapFooter = (
   }
 };
 
-const unwrapTheme = (theme?: string): EnsembleThemeModel | undefined => {
+const unwrapTheme = (
+  theme?: string,
+): { [key: string]: EnsembleThemeModel } | undefined => {
   if (!theme || isEmpty(theme)) {
     return;
   }
@@ -438,29 +441,22 @@ const unwrapTheme = (theme?: string): EnsembleThemeModel | undefined => {
     return;
   }
 
-  if (!workingTheme.Styles) {
-    return workingTheme;
+  if (isEmpty(workingTheme.Themes)) {
+    workingTheme.default = Object.assign({}, workingTheme);
+    workingTheme.Themes = ["default"];
   }
 
-  const expressionMap: string[][] = [];
-  findExpressions(workingTheme.Styles, [], expressionMap);
+  const themes = workingTheme.Themes?.reduce(
+    (acc: { [key: string]: EnsembleThemeModel }, themeName: string) => {
+      const themeContent = get(workingTheme, themeName) as EnsembleThemeModel;
 
-  const resolvedProps: [string, unknown][] = expressionMap.map(
-    ([path, expression]) => {
-      const result = evaluate(
-        defaultScreenContext,
-        expression,
-        mapKeys(workingTheme.Tokens ?? {}, (_, key) => key.toLowerCase()),
-      );
-      return [path, result];
+      acc[themeName] = themeContent;
+      return acc;
     },
+    {},
   );
 
-  resolvedProps.forEach(([path, value]) =>
-    set(workingTheme.Styles!, path, value),
-  );
-
-  return workingTheme;
+  return themes;
 };
 
 const unwrapLanguage = (language: LanguageDTO) => {

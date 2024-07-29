@@ -35,8 +35,11 @@ export const themeAtom = atom<EnsembleThemeModel | undefined>(undefined);
 const backingStorage = createJSONStorage<string>(() => sessionStorage);
 export const selectedThemeNameAtom = atomWithStorage<string>(
   "ensemble.selectedThemeName",
-  "default",
+  "",
   backingStorage,
+  {
+    getOnInit: true,
+  },
 );
 
 export const envAtom = focusAtom(appAtom, (optic) => optic.prop("env"));
