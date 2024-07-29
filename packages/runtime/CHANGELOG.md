@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.1.75
+
+### Patch Changes
+
+- 2e2fc51: fix: added support for default unit for margin and padding in icon
+
 ## 0.1.74
 
 ### Patch Changes
