@@ -65,11 +65,16 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     string | number | undefined
   >();
 
-  const [dropdownState, setDropdownState] = useState<boolean>(false);
-  const { "item-template": itemTemplate, ...rest } = props;
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const {
+    "item-template": itemTemplate,
+    onChange,
+    onItemSelect,
+    ...rest
+  } = props;
 
   const handleDropdownClose = (): void => {
-    setDropdownState(false);
+    setIsOpen(false);
   };
 
   const { id, rootRef, values } = useRegisterBindings(
@@ -81,13 +86,22 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     },
   );
 
-  const action = useEnsembleAction(props.onChange);
+  const action = useEnsembleAction(onChange);
   const handleChange = useCallback(
     (value?: number | string) => {
       setSelectedValue(value);
       action?.callback({ value });
     },
     [action],
+  );
+
+  const onItemSelectAction = useEnsembleAction(onItemSelect);
+  const onItemSelectCallback = useCallback(
+    (value?: number | string) => {
+      setSelectedValue(value);
+      onItemSelectAction?.callback({ selectedValue: value });
+    },
+    [onItemSelectAction],
   );
 
   const { namedData } = useTemplateData({
@@ -268,9 +282,10 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             id={values?.id}
             onChange={handleChange}
             onDropdownVisibleChange={(state): void =>
-              setDropdownState(values?.manualClose ? true : state)
+              setIsOpen(values?.manualClose ? true : state)
             }
-            open={dropdownState}
+            onSelect={onItemSelectCallback}
+            open={isOpen}
             placeholder={
               values?.hintText ? (
                 <span style={{ ...values.hintStyle }}>{values.hintText}</span>
