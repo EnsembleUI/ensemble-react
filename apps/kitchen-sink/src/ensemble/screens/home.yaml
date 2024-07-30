@@ -90,17 +90,24 @@ View:
             styles:
               width: 100px
               backgroundColor: ${colors.primary['500']}
-            items:
-              - label: Light
-                value: default
-              - label: Dark
-                value: dark
+            item-template:
+              data: ${app.themes}
+              name: theme
+              value: theme
+              template:
+                Text:
+                  text: ${theme}
             widget:
               Icon:
                 name: Settings
             onItemSelect:
               executeCode: |
                 ensemble.setTheme(value)
+
+        - Text:
+            styles:
+              names: heading-1
+            text: Selected Theme ${app.theme}
 
         - Divider:
 

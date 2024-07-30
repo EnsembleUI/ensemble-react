@@ -104,19 +104,7 @@ export const EnsembleParser = {
       );
     }
 
-    let themes: { [key: string]: EnsembleThemeModel } = {};
-
-    if (app.themes && !isEmpty(app.themes)) {
-      app.themes.forEach((theme) => {
-        const defaultTheme = unwrapTheme(theme.content) as {
-          default: EnsembleThemeModel;
-        };
-
-        themes[theme.name || "default"] = defaultTheme.default;
-      });
-    } else if (app.theme) {
-      themes = unwrapTheme(app.theme?.content) || {};
-    }
+    const themes = unwrapTheme(app.theme?.content);
 
     const scripts = app.scripts.map(({ name, content }) => ({
       name,
@@ -441,6 +429,7 @@ const unwrapTheme = (
     return;
   }
 
+  // if no themes provided then use theme file as default theme
   if (isEmpty(workingTheme.Themes)) {
     workingTheme.default = Object.assign({}, workingTheme);
     workingTheme.Themes = ["default"];
