@@ -108,9 +108,12 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             >
               {item.items?.map((subItem) => (
                 <Select.Option key={subItem.value}>
-                  {isString(subItem.label)
-                    ? subItem.label
-                    : EnsembleRuntime.render([unwrapWidget(subItem.label)])}
+                  {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+                  <div onClick={(e) => e.stopPropagation()}>
+                    {isString(subItem.label)
+                      ? subItem.label
+                      : EnsembleRuntime.render([unwrapWidget(subItem.label)])}
+                  </div>
                 </Select.Option>
               ))}
             </Select.OptGroup>
@@ -122,9 +125,12 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             key={item.value}
             value={item.value}
           >
-            {isString(item.label)
-              ? item.label
-              : EnsembleRuntime.render([unwrapWidget(item.label)])}
+            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+            <div onClick={(e) => e.stopPropagation()}>
+              {isString(item.label)
+                ? item.label
+                : EnsembleRuntime.render([unwrapWidget(item.label)])}
+            </div>
           </Select.Option>
         );
       });
@@ -148,7 +154,10 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             value={value}
           >
             <CustomScopeProvider value={item as CustomScope}>
-              {EnsembleRuntime.render([itemTemplate.template])}
+              {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+              <div onClick={(e) => e.stopPropagation()}>
+                {EnsembleRuntime.render([itemTemplate.template])}
+              </div>
             </CustomScopeProvider>
           </Select.Option>
         );
@@ -249,7 +258,6 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               : ""
           }
         `}</style>
-
       <div ref={rootRef} style={{ flex: 1, ...formItemStyles }}>
         <EnsembleFormItem values={values}>
           <Select
