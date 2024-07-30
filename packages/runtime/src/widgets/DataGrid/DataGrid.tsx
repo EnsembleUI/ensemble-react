@@ -251,18 +251,22 @@ export const DataGrid: React.FC<GridProps> = (props) => {
 
   // update page number callback
   const updatePageNumber = useCallback(
-    (newPage: number) => {
+    (newPage: number, fireCallback = true) => {
       setCurPage(newPage);
-      onPageChangeActionCallback(newPage, pageSize || 10);
+      if (fireCallback) {
+        onPageChangeActionCallback(newPage, pageSize || 10);
+      }
     },
     [pageSize, onPageChangeActionCallback],
   );
 
   // update pageSize callback
   const updatePageSize = useCallback(
-    (newPageSize: number) => {
+    (newPageSize: number, fireCallback = true) => {
       setPageSize(newPageSize);
-      onPageChangeActionCallback(curPage, newPageSize || 10);
+      if (fireCallback) {
+        onPageChangeActionCallback(curPage, newPageSize || 10);
+      }
     },
     [curPage, onPageChangeActionCallback],
   );
