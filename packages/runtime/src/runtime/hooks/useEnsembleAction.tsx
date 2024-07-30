@@ -38,6 +38,8 @@ import type {
   DispatchEventAction,
   ExecuteConditionalActionAction,
   NavigateModalScreenAction,
+  EnsembleAPIModel,
+  EnsembleMockResponse,
 } from "@ensembleui/react-framework";
 import {
   isEmpty,
@@ -285,6 +287,8 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     [evaluatedName.name, apis],
   );
 
+  const evaluatedMockResponse = useEvaluate({ response: api?.mockResponse }, { context });
+
   const onInvokeAPIResponseAction = useEnsembleAction(action?.onResponse);
   const onInvokeAPIErrorAction = useEnsembleAction(action?.onError);
 
@@ -327,11 +331,16 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
       setIsLoading(true);
       // First check if useMockResponse is enabled and if a mockResponse exists
       if (api.mockResponse) {
-        const isSuccess: boolean =
-          api.mockResponse.statusCode >= 200 &&
-          api.mockResponse.statusCode <= 299;
+        // Ensure that the mock response contains a correctly formatted 
+        if (typeof evaluatedMockResponse.response !== 'object')
+          throw new Error("Improperly formatted mock response: Malformed mockResponse object");
+
+        if (!evaluatedMockResponse.response?.statusCode || typeof evaluatedMockResponse.response.statusCode !== 'number')
+          throw new Error("Improperly formatted mock response: Incorrect Status Code. Please check that you have included a status code and that it is a number");
+
+        const isSuccess: boolean = evaluatedMockResponse.response.statusCode >= 200 && evaluatedMockResponse.response.statusCode <= 299;
         const mockResponse = {
-          ...api.mockResponse,
+          ...evaluatedMockResponse.response,
           isLoading: false,
           isSuccess,
           isError: !isSuccess,
@@ -417,6 +426,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     context,
     appContext?.env,
     appContext?.secrets,
+    appContext?.useMockResponse
   ]);
 
   return invokeApi;

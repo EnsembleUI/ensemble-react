@@ -65,7 +65,7 @@ export interface EnsembleAPIModel {
   body?: string | object;
   onResponse?: EnsembleAction;
   onError?: EnsembleAction;
-  mockResponse?: EnsembleMockResponse;
+  mockResponse?: EnsembleMockResponse | string;
 }
 
 export interface EnsembleMockResponse {

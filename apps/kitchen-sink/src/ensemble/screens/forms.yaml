@@ -7,6 +7,7 @@ View:
       body: |
         ensemble.storage.set('inputVal', 'sagar');
         ensemble.storage.set('mockApiStatusCode', 200);
+        ensemble.storage.set('mockApiReasonPhrase', 'Success!');
         ensemble.storage.set('dummyData', [
           { value: "val 1", label: "lab 1" },
           { value: "val 2", label: "lab 2" },
@@ -301,6 +302,9 @@ View:
               - Checkbox:
                   id: useMockResponseCheckbox
                   trailingText: "Use Mock Response"
+                  onChange: 
+                    executeCode: |
+                        ensemble.useMockResponse = !ensemble.useMockResponse;
               - Checkbox:
                   id: throwMockApiErrorCheckbox
                   trailingText: "Throw Error"
@@ -309,9 +313,11 @@ View:
                       var currStatusCode = ensemble.storage.get('mockApiStatusCode');
                       if (currStatusCode == 200) {
                         ensemble.storage.set('mockApiStatusCode', 500);
+                        ensemble.storage.set('mockApiReasonPhrase', 'An error occurred...');
                       }
                       else {
                         ensemble.storage.set('mockApiStatusCode', 200);
+                        ensemble.storage.set('mockApiReasonPhrase', 'Success!');
                       }
               - Button:
                   styles:
@@ -320,6 +326,9 @@ View:
                   onTap:
                     invokeAPI:
                       name: testMockResponse
+                      onResponse:
+                        executeCode: |
+                          console.log("Mock API called: ",  response);
               - Spacer:
                   styles:
                     size: 20
@@ -327,19 +336,32 @@ View:
                   text: "Status Code: ${testMockResponse.statusCode ?? ''} ${testMockResponse.reasonPhrase ?? ''}"
               - Text:
                   styles:
-                    overflow: hidden
+                    overflow: wrap
+                    width: 500
                   text: "Body: ${JSON.stringify(testMockResponse.body) ?? ''}"
               - Spacer:
               - Dropdown: 
+                  styles:
+                    width: 500
                   id: mockResponseDropdown
                   hintText: All items returned
                   item-template:
                     data: testMockResponse.body ?? []
                     name: wizard
-                    value: ${wizard.id}
+                    value: ${wizard.email}
                     template:
                       Text:
                         text: ${wizard.name}
+              - Spacer:
+                  styles:
+                    size: 20
+              - Button:
+                  styles:
+                    width: 500
+                  label: Call API with response from function! (see the console)
+                  onTap:
+                    invokeAPI:
+                      name: getMockResponseFromFunction
 
 
   footer:
@@ -357,8 +379,8 @@ API:
     method: GET
     uri: https://dummyjson.com/users/1
     mockResponse:
-      statusCode: ensemle.storage.get('mockApiStatusCode');
-      reasonPhrase: "Success!" # TODO: Replace with a code block to prove that code blocks are working
+      statusCode: "${ensemble.storage.get('mockApiStatusCode')}"
+      reasonPhrase: "${ensemble.storage.get('mockApiReasonPhrase')}"
       body: 
         - id: 0
           name: Harry Potter
@@ -372,15 +394,40 @@ API:
     onResponse:
       executeCode: |
         console.log("Mock API called: ",  response)
+    onError:
+      executeCode: |
+        console.log("Mock API errored: ",  error)
   getMockResponseFromFunction:
     method: GET
     uri: https:your_url.com/test
-    mockResponse:
-      body:
-        message: Please replace this with code when it is working.
+    mockResponse: "${mockResponseTestData()}"
+    onResponse:
+      executeCode: |
+        console.log(ensemble.useMockResponse);
+        console.log("Mock API called: ",  response)
+    onError:
+      executeCode: |
+        console.log("Mock API errored: ",  error)
 
 
 Icon:
   body:
     Text:
       text: Hello123
+
+Global: |
+  function mockResponseTestData() {
+    return {
+      statusCode: 200,
+      reasonPhrase: "Success",
+      body: [{
+        name: "Stupify",
+        color: "red",
+        desc: "Stunning Spell"
+      }, {
+        name: "Expecto Patronum",
+        color: "white",
+        desc: "Summons a Patronus"
+      }]
+    }
+  }
