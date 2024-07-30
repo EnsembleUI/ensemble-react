@@ -1,5 +1,12 @@
 # @ensembleui/react-runtime
 
+## 0.1.76
+
+### Patch Changes
+
+- 78f35e7: Fix menu page matching
+- 7eae5b8: Add callback options to grid functions
+
 ## 0.1.75
 
 ### Patch Changes
