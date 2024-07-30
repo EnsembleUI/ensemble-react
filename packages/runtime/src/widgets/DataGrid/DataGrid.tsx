@@ -137,6 +137,10 @@ const ResizableTitle: React.FC<ResizableProps & ResizableState> = (props) => {
   );
 };
 
+const defaultGridMutatorOptions = {
+  suppressCallbacks: false,
+};
+
 export const DataGrid: React.FC<GridProps> = (props) => {
   const {
     "item-template": itemTemplate,
@@ -251,9 +255,9 @@ export const DataGrid: React.FC<GridProps> = (props) => {
 
   // update page number callback
   const updatePageNumber = useCallback(
-    (newPage: number, fireCallback = true) => {
+    (newPage: number, options = defaultGridMutatorOptions) => {
       setCurPage(newPage);
-      if (fireCallback) {
+      if (!options.suppressCallbacks) {
         onPageChangeActionCallback(newPage, pageSize || 10);
       }
     },
@@ -262,9 +266,9 @@ export const DataGrid: React.FC<GridProps> = (props) => {
 
   // update pageSize callback
   const updatePageSize = useCallback(
-    (newPageSize: number, fireCallback = true) => {
+    (newPageSize: number, options = defaultGridMutatorOptions) => {
       setPageSize(newPageSize);
-      if (fireCallback) {
+      if (!options.suppressCallbacks) {
         onPageChangeActionCallback(curPage, newPageSize || 10);
       }
     },
