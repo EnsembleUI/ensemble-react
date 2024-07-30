@@ -152,7 +152,8 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
   useEffect(() => {
     const locationMatch = props.items.find(
       (item) =>
-        item.page && `/${item.page.toLowerCase()}` === location.pathname,
+        item.page &&
+        `/${item.page.toLowerCase()}` === location.pathname.toLowerCase(),
     );
     if (locationMatch) {
       setSelectedItem(locationMatch.page);
