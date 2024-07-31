@@ -1,11 +1,14 @@
 import { useAtom } from "jotai";
-import { useMockResponseAtom } from "../state";
 import { useCallback } from "react";
+import { useMockResponseAtom } from "../state";
 
 export const useMockResponseContext = () => {
-    const [useMockResponse, modifyUseMockResponse] = useAtom(useMockResponseAtom);
-    const setUseMockResponse = useCallback((value: boolean) => {
-        modifyUseMockResponse(value);
-    }, [modifyUseMockResponse]);
-    return { useMockResponse, setUseMockResponse };
+  const [useMockResponse, modifyUseMockResponse] = useAtom(useMockResponseAtom);
+  const setUseMockResponse = useCallback(
+    (value: boolean) => {
+      modifyUseMockResponse(value);
+    },
+    [modifyUseMockResponse],
+  );
+  return { useMockResponse, setUseMockResponse };
 };

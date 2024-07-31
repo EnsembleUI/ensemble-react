@@ -1,5 +1,5 @@
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
-import { atom, useSetAtom } from "jotai";
+import { atom } from "jotai";
 import { focusAtom } from "jotai-optics";
 import type { EnsembleAppModel, EnsembleThemeModel } from "../shared";
 import type { EnsembleUser } from "./user";
@@ -45,4 +45,6 @@ export const envAtom = focusAtom(appAtom, (optic) => optic.prop("env"));
 
 export const secretAtom = focusAtom(appAtom, (optic) => optic.prop("secrets"));
 
-export const useMockResponseAtom = focusAtom(appAtom, (optic) => optic.prop("useMockResponse"));
+export const useMockResponseAtom = focusAtom(appAtom, (optic) =>
+  optic.prop("useMockResponse"),
+);

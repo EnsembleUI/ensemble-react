@@ -1,5 +1,9 @@
-import { DataFetcher, useEvaluate, type EnsembleMockResponse, type Response, type useScreenData } from "@ensembleui/react-framework";
-
+import {
+  DataFetcher,
+  useEvaluate,
+  type Response,
+  type useScreenData,
+} from "@ensembleui/react-framework";
 
 export const invokeAPI = async (
   screenData: ReturnType<typeof useScreenData>,
@@ -8,7 +12,10 @@ export const invokeAPI = async (
   context?: { [key: string]: unknown },
 ): Promise<Response | undefined> => {
   const api = screenData.apis?.find((model) => model.name === apiName);
-  const evaluatedMockResponse = useEvaluate({ response: api?.mockResponse }, { context });
+  const evaluatedMockResponse = useEvaluate(
+    { response: api?.mockResponse },
+    { context },
+  );
 
   if (!api) {
     return;
@@ -23,18 +30,27 @@ export const invokeAPI = async (
 
   // Check to see if mockResponse is enabled and if a mockResponse exists in the API context
   if (api.mockResponse) {
-    // Ensure that the mock response contains a correctly formatted 
-    if (typeof evaluatedMockResponse.response !== 'object')
-      throw new Error("Improperly formatted mock response: Malformed mockResponse object");
+    // Ensure that the mock response contains a correctly formatted
+    if (typeof evaluatedMockResponse.response !== "object")
+      throw new Error(
+        "Improperly formatted mock response: Malformed mockResponse object",
+      );
 
-    if (!evaluatedMockResponse.response?.statusCode || typeof evaluatedMockResponse.response.statusCode !== 'number')
-      throw new Error("Improperly formatted mock response: Incorrect Status Code. Please check that you have included a status code and that it is a number");
+    if (
+      !evaluatedMockResponse.response.statusCode ||
+      typeof evaluatedMockResponse.response.statusCode !== "number"
+    )
+      throw new Error(
+        "Improperly formatted mock response: Incorrect Status Code. Please check that you have included a status code and that it is a number",
+      );
 
-    const isSuccess = evaluatedMockResponse.response.statusCode >= 200 && evaluatedMockResponse.response.statusCode <= 299;
+    const isSuccess =
+      evaluatedMockResponse.response.statusCode >= 200 &&
+      evaluatedMockResponse.response.statusCode <= 299;
     const mockRes = {
       ...evaluatedMockResponse.response,
       isLoading: false,
-      isSuccess: isSuccess,
+      isSuccess,
       isError: !isSuccess,
     };
     screenData.setData(api.name, mockRes);
@@ -43,7 +59,7 @@ export const invokeAPI = async (
 
   // If mock resposne does not exist, fetch the data directly from the API
   const res = await DataFetcher.fetch(api, { ...apiInputs, ...context });
-  const newRes = { ...res, apiInputs, context }
+  const newRes = { ...res, apiInputs, context };
 
   screenData.setData(api.name, newRes);
   return res;

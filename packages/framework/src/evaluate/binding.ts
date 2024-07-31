@@ -1,7 +1,7 @@
 import { parseExpressionAt, tokTypes } from "acorn";
 import type { Atom } from "jotai";
 import { atom } from "jotai";
-import { isNil, merge, omitBy, set } from "lodash-es";
+import { isNil, merge, omitBy } from "lodash-es";
 import type { Expression } from "../shared";
 import { isExpression, sanitizeJs, debug, error } from "../shared";
 import {
@@ -111,7 +111,7 @@ export const createBindingAtom = <T = unknown>(
         secrets: rawJsExpression.includes("ensemble.secrets")
           ? get(secretAtom)
           : undefined,
-        formatter: DateFormatter()
+        formatter: DateFormatter(),
       },
       context: {
         ...(rawJsExpression.includes("device")
