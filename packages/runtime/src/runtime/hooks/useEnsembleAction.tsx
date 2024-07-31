@@ -17,6 +17,7 @@ import {
   CustomThemeContext,
   useLanguageScope,
   useDeviceData,
+  useMockResponseContext,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -120,10 +121,16 @@ export const useExecuteCode: EnsembleActionHook<
   const customScope = useCustomScope();
   const modalContext = useContext(ModalContext);
   const themescope = useContext(CustomThemeContext);
+  const mockResponseContext = useMockResponseContext();
   const user = useEnsembleUser();
   const appContext = useApplicationContext();
   const screenData = useScreenData();
   const { i18n } = useLanguageScope();
+  const customSetUseMockResponse = (value: boolean): void => {
+    console.log("This is the setUseMockResponse function! Value passed in: ", value);
+    console.log("This is the current value: ", mockResponseContext.useMockResponse);
+    mockResponseContext.setUseMockResponse(value);
+  }
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,
   );
@@ -177,6 +184,8 @@ export const useExecuteCode: EnsembleActionHook<
                 formatter,
                 env: appContext?.env,
                 secrets: appContext?.secrets,
+                useMockResponse: appContext?.useMockResponse,
+                setUseMockResponse: customSetUseMockResponse,
                 navigateScreen: (targetScreen: NavigateScreenAction): void =>
                   navigateApi(targetScreen, screen, navigate),
                 navigateModalScreen: (
@@ -253,6 +262,7 @@ export const useExecuteCode: EnsembleActionHook<
     appContext?.application?.customWidgets,
     appContext?.env,
     appContext?.secrets,
+    appContext?.useMockResponse,
     themescope,
     device,
     storage,
@@ -344,6 +354,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
           isLoading: false,
           isSuccess,
           isError: !isSuccess,
+          appContext
         };
 
         setData(api.name, mockResponse);
