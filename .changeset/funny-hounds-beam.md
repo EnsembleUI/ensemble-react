@@ -6,4 +6,4 @@
 "@ensembleui/react-starter": patch
 ---
 
-Added mockResponse support to APIs. This allows you to return a mockResponse from the api with a statusCode, reasonPhrase, body, and headers. It can be toggled using the ensemble.setUseMockResponse() function.
+Added mockResponse support to APIs. This allows you to return a mockResponse from the api with a statusCode, reasonPhrase, body, and headers. It can be accessed and mutated using "app.useMockResponse" in a block of JS code.

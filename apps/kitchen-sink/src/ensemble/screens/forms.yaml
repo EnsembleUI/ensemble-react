@@ -302,9 +302,10 @@ View:
               - Checkbox:
                   id: useMockResponseCheckbox
                   trailingText: "Use Mock Response"
+                  value: app.useMockResponse
                   onChange: 
                     executeCode: |
-                        ensemble.useMockResponse = true;
+                        app.setUseMockResponse(!app.useMockResponse);
               - Checkbox:
                   id: throwMockApiErrorCheckbox
                   trailingText: "Throw Error"
@@ -368,15 +369,14 @@ View:
                   label: "See value of useMockResponse"
                   onTap:
                     executeCode: |
-                      console.log(ensemble.useMockResponse);
+                      console.log(app.useMockResponse);
               - Button:
                   styles:
                     width: 500
-                  label: "Call setUseMockResponse"
+                  label: "Set useMockResponse"
                   onTap:
                     executeCode: |
-                      ensemble.setUseMockResponse(true);
-
+                      app.setUseMockResponse(true);
 
   footer:
     children:
@@ -417,7 +417,7 @@ API:
     mockResponse: "${mockResponseTestData()}"
     onResponse:
       executeCode: |
-        console.log(ensemble.useMockResponse)
+        console.log(app.useMockResponse)
         console.log("Mock API called: ",  response)
     onError:
       executeCode: |

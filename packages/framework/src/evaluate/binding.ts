@@ -22,10 +22,10 @@ import {
   appAtom,
   deviceAtom,
   secretAtom,
-  useMockResponseAtom,
 } from "../state";
 import { evaluate } from "./evaluate";
 import { createEvaluationContext } from "./context";
+import { useMockResponse } from "../hooks";
 
 export const createBindingAtom = <T = unknown>(
   expression?: Expression<unknown>,
@@ -89,7 +89,7 @@ export const createBindingAtom = <T = unknown>(
         },
         env: get(envAtom),
         secrets: get(secretAtom),
-        useMockResponse: get(useMockResponseAtom),
+        useMockResponse: useMockResponse
       },
       screenContext: {
         inputs: get(screenInputAtom),

@@ -10,6 +10,6 @@ export * from "./useStyles";
 export * from "./useHtmlPassThrough";
 export * from "./useEnsembleUser";
 export * from "./useThemeContext";
-export * from "./useMockResponseContext";
+export * from "./useMockResponse";
 export * from "./useEventContext";
 export * from "./useLanguageScope";

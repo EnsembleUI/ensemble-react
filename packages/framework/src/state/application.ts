@@ -3,6 +3,7 @@ import { atom } from "jotai";
 import { focusAtom } from "jotai-optics";
 import type { EnsembleAppModel, EnsembleThemeModel } from "../shared";
 import type { EnsembleUser } from "./user";
+import { useMockResponse } from "../hooks";
 
 export interface ApplicationContextDefinition {
   application: EnsembleAppModel | null;
@@ -25,7 +26,7 @@ export const defaultApplicationContext = {
   auth: null,
   user: null,
   secrets: {},
-  useMockResponse: false,
+  useMockResponse: useMockResponse
 };
 
 export const appAtom = atom<ApplicationContextDefinition>(
@@ -44,7 +45,3 @@ export const selectedThemeNameAtom = atomWithStorage<string>(
 export const envAtom = focusAtom(appAtom, (optic) => optic.prop("env"));
 
 export const secretAtom = focusAtom(appAtom, (optic) => optic.prop("secrets"));
-
-export const useMockResponseAtom = focusAtom(appAtom, (optic) =>
-  optic.prop("useMockResponse"),
-);

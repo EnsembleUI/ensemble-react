@@ -17,7 +17,8 @@ import {
   CustomThemeContext,
   useLanguageScope,
   useDeviceData,
-  useMockResponseContext,
+  useMockResponse,
+  setUseMockResponse
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -119,22 +120,10 @@ export const useExecuteCode: EnsembleActionHook<
   const customScope = useCustomScope();
   const modalContext = useContext(ModalContext);
   const themescope = useContext(CustomThemeContext);
-  const mockResponseContext = useMockResponseContext();
   const user = useEnsembleUser();
   const appContext = useApplicationContext();
   const screenData = useScreenData();
   const { i18n } = useLanguageScope();
-  const customSetUseMockResponse = (value: boolean): void => {
-    console.log(
-      "This is the setUseMockResponse function! Value passed in: ",
-      value,
-    );
-    console.log(
-      "This is the current value: ",
-      mockResponseContext.useMockResponse,
-    );
-    mockResponseContext.setUseMockResponse(value);
-  };
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,
   );
@@ -188,8 +177,6 @@ export const useExecuteCode: EnsembleActionHook<
                 formatter,
                 env: appContext?.env,
                 secrets: appContext?.secrets,
-                useMockResponse: appContext?.useMockResponse,
-                setUseMockResponse: customSetUseMockResponse,
                 navigateScreen: (targetScreen: NavigateScreenAction): void =>
                   navigateApi(targetScreen, screen, navigate),
                 navigateModalScreen: (
@@ -243,6 +230,10 @@ export const useExecuteCode: EnsembleActionHook<
                 setLocale: ({ languageCode }: SetLocaleProps) =>
                   i18n.changeLanguage(languageCode),
               },
+              app: {
+                useMockResponse: useMockResponse,
+                setUseMockResponse: setUseMockResponse
+              },
             },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
             { styles: theme?.Styles },
@@ -266,7 +257,7 @@ export const useExecuteCode: EnsembleActionHook<
     appContext?.application?.customWidgets,
     appContext?.env,
     appContext?.secrets,
-    appContext?.useMockResponse,
+    useMockResponse,
     themescope,
     device,
     storage,
@@ -347,7 +338,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     const fireRequest = async (): Promise<void> => {
       setIsLoading(true);
       // First check if useMockResponse is enabled and if a mockResponse exists
-      if (api.mockResponse) {
+      if (api.mockResponse && useMockResponse) {
         // Ensure that the mock response contains a correctly formatted
         if (typeof evaluatedMockResponse.response !== "object")
           throw new Error(
@@ -453,7 +444,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     context,
     appContext?.env,
     appContext?.secrets,
-    appContext?.useMockResponse,
+    useMockResponse
   ]);
 
   return invokeApi;
