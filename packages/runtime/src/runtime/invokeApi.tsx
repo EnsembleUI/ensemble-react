@@ -60,8 +60,7 @@ export const invokeAPI = async (
 
   // If mock resposne does not exist, fetch the data directly from the API
   const res = await DataFetcher.fetch(api, { ...apiInputs, ...context });
-  const newRes = { ...res, apiInputs, context };
 
-  screenData.setData(api.name, newRes);
+  screenData.setData(api.name, res);
   return res;
 };
