@@ -130,7 +130,7 @@ export interface EnsembleThemeModel {
     } & { [key: string]: string };
   };
   Styles?: { [key: string]: CSSProperties };
-  [key: string]: unknown;
+  [key: string]: unknown; // this is for multiple theme defination, like common, dark, light in single theme file
 }
 
 export interface EnsembleScriptModel {
