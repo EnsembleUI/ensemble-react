@@ -35,7 +35,7 @@ export interface EnsembleAppModel {
   customWidgets: CustomWidgetModel[];
   home: EnsembleEntryPoint;
   theme?: string;
-  themes?: { [key: string]: EnsembleThemeModel | undefined };
+  themes?: { [key: string]: EnsembleThemeModel };
   scripts: EnsembleScriptModel[];
   config?: EnsembleConfigYAML;
   languages?: EnsembleLanguageModel[];
@@ -118,7 +118,7 @@ export interface CustomWidgetModel {
 }
 
 export interface EnsembleThemeModel {
-  Themes?: [string];
+  name?: string;
   Tokens?: {
     Colors?: {
       primary?: string;
@@ -130,7 +130,6 @@ export interface EnsembleThemeModel {
     } & { [key: string]: string };
   };
   Styles?: { [key: string]: CSSProperties };
-  [key: string]: unknown; // this is for multiple theme defination, like common, dark, light in single theme file
 }
 
 export interface EnsembleScriptModel {

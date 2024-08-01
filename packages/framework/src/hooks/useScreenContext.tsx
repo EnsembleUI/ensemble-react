@@ -1,6 +1,6 @@
 import { Provider, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useCallback, useContext } from "react";
-import { clone, merge, set } from "lodash-es";
+import { clone, merge } from "lodash-es";
 import { useHydrateAtoms } from "jotai/utils";
 import {
   appAtom,
@@ -8,7 +8,6 @@ import {
   locationAtom,
   screenAtom,
   screenDataAtom,
-  selectedThemeNameAtom,
   themeAtom,
   userAtom,
 } from "../state";
@@ -74,20 +73,13 @@ const HydrateAtoms: React.FC<
 > = ({ appContext, screenContext, children }) => {
   const themeScope = useContext(CustomThemeContext);
 
-  // update active themeName in appContext and screenContext
-  set(appContext, "application.theme", themeScope.themeName || "");
-  set(screenContext, "app.theme", themeScope.themeName || "");
-
   // initialising on state with prop on render here
-  useHydrateAtoms([[screenAtom, screenContext]], {
-    dangerouslyForceHydrate: true,
-  });
+  useHydrateAtoms([[screenAtom, screenContext]]);
   useHydrateAtoms(
     [
       [appAtom, appContext],
       [themeAtom, themeScope.theme],
       [userAtom, appContext.user],
-      [selectedThemeNameAtom, themeScope.themeName || ""], // update selectedThemeName atom value
     ],
     {
       dangerouslyForceHydrate: true,

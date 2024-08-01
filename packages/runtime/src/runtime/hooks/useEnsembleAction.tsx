@@ -226,6 +226,7 @@ export const useExecuteCode: EnsembleActionHook<
                   i18n.changeLanguage(languageCode),
               },
             },
+            { app: merge(screen.app, { theme: themescope.themeName }) },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
             { styles: theme?.Styles },
             customScope,

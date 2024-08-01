@@ -109,6 +109,12 @@ View:
               names: heading-1
             text: Selected Theme ${app.theme}
 
+        - Button:
+            label: Theme
+            onTap:
+              executeCode: |
+                console.log('>>', app.theme)
+
         - Divider:
 
         - Text:

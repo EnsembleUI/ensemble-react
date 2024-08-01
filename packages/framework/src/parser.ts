@@ -15,6 +15,7 @@ import {
   includes,
   omit,
   keys,
+  merge,
 } from "lodash-es";
 import type {
   EnsembleScreenModel,
@@ -54,6 +55,10 @@ export interface EnsembleWidgetYAML {
     body: { [key: string]: unknown };
   };
 }
+
+export type EnsembleThemeParser = {
+  Themes?: [string];
+} & EnsembleThemeModel & { [key: string]: EnsembleThemeModel };
 
 export const EnsembleParser = {
   parseApplication: (app: ApplicationDTO): EnsembleAppModel => {
@@ -424,22 +429,24 @@ const unwrapTheme = (
     return;
   }
 
-  const workingTheme = parse(theme) as EnsembleThemeModel;
+  const workingTheme = parse(theme) as EnsembleThemeParser;
   if (!workingTheme) {
     return;
   }
 
   // if no themes provided then use theme file as default theme
   if (isEmpty(workingTheme.Themes)) {
-    workingTheme.default = Object.assign({}, workingTheme);
+    workingTheme.default = { ...workingTheme };
     workingTheme.Themes = ["default"];
   }
 
   const themes = workingTheme.Themes?.reduce(
     (acc: { [key: string]: EnsembleThemeModel }, themeName: string) => {
-      const themeContent = get(workingTheme, themeName) as EnsembleThemeModel;
+      const themeContent = get(workingTheme, themeName);
 
-      acc[themeName] = themeContent;
+      acc[themeName] = merge({}, themeContent, {
+        name: themeName,
+      }) as EnsembleThemeModel;
       return acc;
     },
     {},
