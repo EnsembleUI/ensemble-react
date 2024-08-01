@@ -34,7 +34,7 @@ export interface EnsembleAppModel {
   screens: EnsembleScreenModel[];
   customWidgets: CustomWidgetModel[];
   home: EnsembleEntryPoint;
-  theme?: EnsembleThemeModel;
+  theme?: string;
   themes?: { [key: string]: EnsembleThemeModel | undefined };
   scripts: EnsembleScriptModel[];
   config?: EnsembleConfigYAML;

@@ -78,8 +78,8 @@ View:
             onChange:
               executeCode:
                 body: |
-                  ensemble.storage.set('language', selectedValue)
-                  ensemble.setLocale({languageCode: selectedValue})
+                  ensemble.storage.set('language', value)
+                  ensemble.setLocale({languageCode: value})
 
         - Text:
             styles:
@@ -102,7 +102,7 @@ View:
                 name: Settings
             onItemSelect:
               executeCode: |
-                ensemble.setTheme(value)
+                ensemble.setTheme(theme)
 
         - Text:
             styles:

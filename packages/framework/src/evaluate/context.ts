@@ -4,13 +4,16 @@ import type {
   ApplicationContextDefinition,
   ScreenContextDefinition,
 } from "../state";
-import type { EnsembleAppModel } from "../shared";
+import type { EnsembleAppModel, EnsembleThemeModel } from "../shared";
 
 export interface EvaluationContextProps {
   applicationContext: Omit<
     Partial<ApplicationContextDefinition>,
     "application"
-  > & { application?: Partial<EnsembleAppModel> | null; themeName?: string };
+  > & {
+    application?: Partial<EnsembleAppModel> | null;
+    selectedTheme?: { theme?: EnsembleThemeModel; themeName?: string };
+  };
   screenContext: Partial<ScreenContextDefinition>;
   ensemble: Partial<EnsembleInterface>;
   context?: { [key: string]: unknown };
@@ -22,7 +25,7 @@ export const createEvaluationContext = ({
   ensemble,
   context,
 }: EvaluationContextProps): { [key: string]: unknown } => {
-  const theme = applicationContext.application?.theme;
+  const theme = applicationContext.selectedTheme?.theme;
   const appInputs = merge(
     {},
     applicationContext.env,
@@ -41,7 +44,7 @@ export const createEvaluationContext = ({
   const app = {
     languages: applicationContext.application?.languages,
     themes: keys(applicationContext.application?.themes),
-    theme: applicationContext.themeName,
+    theme: applicationContext.selectedTheme?.themeName,
   };
   const env = applicationContext.env;
 

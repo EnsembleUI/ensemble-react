@@ -83,11 +83,13 @@ export const createBindingAtom = <T = unknown>(
     const evaluationContext = createEvaluationContext({
       applicationContext: {
         application: {
-          theme: get(themeAtom),
           languages: appData.application?.languages,
           themes: appData.application?.themes,
         },
-        themeName: get(selectedThemeNameAtom),
+        selectedTheme: merge(
+          {},
+          { theme: get(themeAtom), themeName: get(selectedThemeNameAtom) },
+        ),
         env: get(envAtom),
         secrets: get(secretAtom),
       },

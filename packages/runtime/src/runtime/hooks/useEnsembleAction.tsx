@@ -124,7 +124,7 @@ export const useExecuteCode: EnsembleActionHook<
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,
   );
-  const theme = appContext?.application?.theme;
+  const theme = themescope.theme;
 
   const js = useMemo(() => {
     if (!action) {
