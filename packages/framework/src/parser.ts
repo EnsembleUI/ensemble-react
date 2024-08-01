@@ -36,6 +36,7 @@ import type {
   LanguageDTO,
 } from "./shared/dto";
 import { type EnsembleAction } from "./shared";
+import { defaultThemeDefinition } from "./state";
 
 export interface EnsembleScreenYAML {
   View?: {
@@ -56,7 +57,7 @@ export interface EnsembleWidgetYAML {
   };
 }
 
-export type EnsembleThemeParser = {
+export type EnsembleThemeYAML = {
   Themes?: [string];
 } & EnsembleThemeModel & { [key: string]: EnsembleThemeModel };
 
@@ -137,7 +138,7 @@ export const EnsembleParser = {
         menu ||
         (screens as EnsembleScreenModel[]).find((screen) => screen.isRoot) ||
         screens[0],
-      themes,
+      themes: themes || { default: defaultThemeDefinition },
       scripts,
       config: ensembleConfigData,
       languages,
@@ -429,7 +430,7 @@ const unwrapTheme = (
     return;
   }
 
-  const workingTheme = parse(theme) as EnsembleThemeParser;
+  const workingTheme = parse(theme) as EnsembleThemeYAML;
   if (!workingTheme) {
     return;
   }
