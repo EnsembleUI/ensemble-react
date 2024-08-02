@@ -10,9 +10,7 @@ export interface EvaluationContextProps {
   applicationContext: Omit<
     Partial<ApplicationContextDefinition>,
     "application"
-  > & {
-    application?: Partial<EnsembleAppModel> | null;
-  };
+  > & { application?: Partial<EnsembleAppModel> | null };
   screenContext: Partial<ScreenContextDefinition>;
   ensemble: Partial<EnsembleInterface>;
   context?: { [key: string]: unknown };

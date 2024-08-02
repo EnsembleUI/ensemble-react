@@ -1,5 +1,65 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.70
+
+### Patch Changes
+
+- Updated dependencies [78f35e7]
+- Updated dependencies [7eae5b8]
+  - @ensembleui/react-runtime@0.1.76
+
+## 0.0.69
+
+### Patch Changes
+
+- Updated dependencies [2e2fc51]
+  - @ensembleui/react-runtime@0.1.75
+
+## 0.0.68
+
+### Patch Changes
+
+- 04454f2: use unique key when applying styles to modal
+- Updated dependencies [04454f2]
+  - @ensembleui/react-framework@0.1.56
+  - @ensembleui/react-runtime@0.1.74
+
+## 0.0.67
+
+### Patch Changes
+
+- c6ede84: don't route when page/url is not given in menu
+- 083caf1: remove UTC conversion from date widget
+- Updated dependencies [b5464ce]
+- Updated dependencies [c6ede84]
+- Updated dependencies [083caf1]
+- Updated dependencies [0529f2d]
+  - @ensembleui/react-framework@0.1.55
+  - @ensembleui/react-runtime@0.1.73
+
+## 0.0.66
+
+### Patch Changes
+
+- b4bd127: add format property in Date widget
+- Updated dependencies [0468a2d]
+- Updated dependencies [b4bd127]
+  - @ensembleui/react-runtime@0.1.72
+
+## 0.0.65
+
+### Patch Changes
+
+- ce61a4f: add customItem in sidebar menu
+- d29ea6d: Remove container elements on menu header and footer
+- 4083e6f: Added an onChange EnsembleAction for the TextInput Widget in Form
+- Updated dependencies [ce61a4f]
+- Updated dependencies [d29ea6d]
+- Updated dependencies [e451b7a]
+- Updated dependencies [4083e6f]
+  - @ensembleui/react-runtime@0.1.71
+  - @ensembleui/react-framework@0.1.54
+
 ## 0.0.64
 
 ### Patch Changes

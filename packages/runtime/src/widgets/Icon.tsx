@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import type { IconProps } from "../shared/types";
-import { getColor, getIcon } from "../shared/styles";
+import { evaluateStyleValue, getColor, getIcon } from "../shared/styles";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 
 const widgetName = "Icon";
@@ -66,20 +66,10 @@ export const Icon: React.FC<IconProps> = ({
             ? values.styles.backgroundColor
             : "transparent"
         }`,
-        padding: `${
-          values?.styles?.padding ? `${values.styles.padding}px` : "0px"
-        }`,
-        margin: `${
-          values?.styles?.margin ? `${values.styles.margin}px` : "0px"
-        }`,
-        borderRadius: `${
-          values?.styles?.borderRadius
-            ? `${values.styles.borderRadius}px`
-            : "0px"
-        }`,
-        borderWidth: `${
-          values?.styles?.borderWidth ? `${values.styles.borderWidth}px` : "0px"
-        }`,
+        padding: evaluateStyleValue(values?.styles?.padding),
+        margin: evaluateStyleValue(values?.styles?.margin),
+        borderRadius: evaluateStyleValue(values?.styles?.borderRadius),
+        borderWidth: evaluateStyleValue(values?.styles?.borderWidth),
         borderColor: values?.styles?.borderColor
           ? getColor(String(values.styles.borderColor))
           : undefined,

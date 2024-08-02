@@ -1,7 +1,6 @@
 View:
   styles:
     scrollableView: true
-
   onLoad:
     executeCode:
       body: |
@@ -28,6 +27,23 @@ View:
       styles:
         names: page
       children:
+        - Button:
+            label: open another modal screen
+            onTap:
+              navigateModalScreen:
+                name: widgets
+                height: 200px
+                width: 900px
+        - Button:
+            label: show dialog
+            onTap:
+              showDialog:
+                widget:
+                  Text:
+                    text: i am a text
+                options:
+                  height: 50px
+                  width: 80px
         - Icon:
         - Text:
             styles:
@@ -96,6 +112,9 @@ View:
                             value: option1
                           - label: Option 2
                             value: option2
+                        onChange:
+                          executeCode: |
+                            console.log('dropdown changed', value);
                     # If you omit id, the form value key will be the label
                     - TextInput:
                         id: formTextInput
@@ -129,11 +148,12 @@ View:
                         valueKey: email
                         items: ${ensemble.storage.get('dummyData')}
                         allowCreateOptions: true
-                        onItemSelect:
+                        onChange:
                           executeCode: |
-                            console.log('selected', multiselectoptions1);
-                            console.log(1,selectedValues)
-                            console.log(1,multiselectoptions1.selectedValues)
+                            console.log("onChange event! Here are the selected values: ", value);
+                        # onItemSelect:
+                        #   executeCode: |
+                        #     console.log("This is an onItemSelect function that should not be running.", selectedValue);
                     - MultiSelect:
                         id: multiselectoptions2
                         label: Choose multiple
@@ -146,11 +166,13 @@ View:
                         id: date0
                         label: Date 0
                         hintText: Choose date 0
+                        format: MM/DD/YYYY
                     - Date:
                         id: date1
                         label: Date 1
                         value: ""
                         hintText: Choose date 1
+                        format: DD-MM-YY
                     - Date:
                         id: date2
                         label: Date 2
@@ -268,7 +290,7 @@ View:
                         onChange:
                           executeCode: |
                             console.log('selected');
-                            console.log(selectedValues)
+                            console.log(value)
                     - MultiSelect:
                         id: initial_multiselectoptions2
                         label: Choose multiple
@@ -293,12 +315,17 @@ View:
         - Text:
             styles:
               names: heading-3
+<<<<<<< HEAD
             text: "\nMock Response Testing"
+=======
+            text: TextInput OnChange event
+>>>>>>> origin
         - Card:
             styles:
               maxWidth: unset
               width: unset
             children:
+<<<<<<< HEAD
               - Checkbox:
                   id: useMockResponseCheckbox
                   trailingText: "Use Mock Response"
@@ -377,6 +404,35 @@ View:
                   onTap:
                     executeCode: |
                       app.setUseMockResponse(true);
+=======
+              - Form:
+                  id: textInputTest
+                  styles:
+                    gap: 8px
+                    labelPosition: top
+                  onSubmit:
+                    executeCode:
+                      body: |
+                        console.log(vals);
+                      onComplete:
+                        showToast:
+                          message: Form submitted!
+                  children:
+                    - TextInput:
+                        id: textInput
+                        label: Text input
+                        onChange:
+                          executeCode:
+                            body: |
+                              console.log('textInput changed', value);
+                              ensemble.storage.set("textInputLabel", value);
+                    - Text:
+                        id: textInputLabel
+                        text: "The text you have entered in the textbox is: ${ensemble.storage.get('textInputLabel') ?? ''}"
+                    - Button:
+                        submitForm: true
+                        label: Submit
+>>>>>>> origin
 
   footer:
     children:

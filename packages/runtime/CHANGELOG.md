@@ -1,5 +1,54 @@
 # @ensembleui/react-runtime
 
+## 0.1.76
+
+### Patch Changes
+
+- 78f35e7: Fix menu page matching
+- 7eae5b8: Add callback options to grid functions
+
+## 0.1.75
+
+### Patch Changes
+
+- 2e2fc51: fix: added support for default unit for margin and padding in icon
+
+## 0.1.74
+
+### Patch Changes
+
+- 04454f2: use unique key when applying styles to modal
+- Updated dependencies [04454f2]
+  - @ensembleui/react-framework@0.1.56
+
+## 0.1.73
+
+### Patch Changes
+
+- c6ede84: don't route when page/url is not given in menu
+- 083caf1: remove UTC conversion from date widget
+- 0529f2d: fix icon styles overload conflicts
+- Updated dependencies [b5464ce]
+  - @ensembleui/react-framework@0.1.55
+
+## 0.1.72
+
+### Patch Changes
+
+- 0468a2d: Fix date input bindings
+- b4bd127: add format property in Date widget
+
+## 0.1.71
+
+### Patch Changes
+
+- ce61a4f: add customItem in sidebar menu
+- d29ea6d: Remove container elements on menu header and footer
+- e451b7a: Revert device api implementation
+- 4083e6f: Added an onChange EnsembleAction for the TextInput Widget in Form
+- Updated dependencies [e451b7a]
+  - @ensembleui/react-framework@0.1.54
+
 ## 0.1.70
 
 ### Patch Changes

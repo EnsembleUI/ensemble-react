@@ -16,7 +16,6 @@ import {
   CustomScopeProvider,
   CustomThemeContext,
   useLanguageScope,
-  useDeviceData,
   useMockResponse,
   setUseMockResponse
 } from "@ensembleui/react-framework";
@@ -128,7 +127,6 @@ export const useExecuteCode: EnsembleActionHook<
     isCodeString ? undefined : action?.onComplete,
   );
   const theme = appContext?.application?.theme;
-  const device = useDeviceData();
 
   const js = useMemo(() => {
     if (!action) {
@@ -169,7 +167,6 @@ export const useExecuteCode: EnsembleActionHook<
             {
               ...customWidgets,
               env: appContext?.env,
-              device,
               ensemble: {
                 ...themescope,
                 storage,
@@ -259,7 +256,6 @@ export const useExecuteCode: EnsembleActionHook<
     appContext?.secrets,
     useMockResponse,
     themescope,
-    device,
     storage,
     user,
     formatter,

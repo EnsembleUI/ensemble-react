@@ -1,5 +1,23 @@
 # @ensembleui/react-framework
 
+## 0.1.56
+
+### Patch Changes
+
+- 04454f2: use unique key when applying styles to modal
+
+## 0.1.55
+
+### Patch Changes
+
+- b5464ce: fix home screen load issue
+
+## 0.1.54
+
+### Patch Changes
+
+- e451b7a: Revert device api implementation
+
 ## 0.1.53
 
 ### Patch Changes

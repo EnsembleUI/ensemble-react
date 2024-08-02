@@ -20,7 +20,6 @@ import {
   screenImportScriptAtom,
   userAtom,
   appAtom,
-  deviceAtom,
   secretAtom,
 } from "../state";
 import { evaluate } from "./evaluate";
@@ -113,12 +112,7 @@ export const createBindingAtom = <T = unknown>(
           : undefined,
         formatter: DateFormatter(),
       },
-      context: {
-        ...(rawJsExpression.includes("device")
-          ? { device: get(deviceAtom) }
-          : {}),
-        ...context,
-      },
+      context,
     });
 
     try {

@@ -14,7 +14,7 @@ import { createPortal } from "react-dom";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
 import { CloseOutlined } from "@ant-design/icons";
-import { useEvaluate } from "@ensembleui/react-framework";
+import { generateRandomString, useEvaluate } from "@ensembleui/react-framework";
 import { isEmpty, isString, omit, pick } from "lodash-es";
 import { useNavigate } from "react-router-dom";
 import { getComponentStyles } from "../../shared/styles";
@@ -57,7 +57,7 @@ interface ModalState {
   visible: boolean;
   content: React.ReactNode;
   options: ModalProps;
-  key: number;
+  key: string;
   isDialog: boolean;
 }
 
@@ -116,9 +116,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
           visible: true,
           content: newModal?.content,
           options: evaluatedOptions,
-          key: oldModalState.length
-            ? oldModalState[oldModalState.length - 1].key + 1
-            : 0,
+          key: generateRandomString(10),
           isDialog: Boolean(newModal?.isDialog),
         },
       ]);
@@ -293,16 +291,16 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
         if (!modal.visible) {
           return null;
         }
-        const { options } = modal;
+        const { options, key } = modal;
         const modalContent = (
           <>
-            <style>{getCustomStyles(options, index)}</style>
+            <style>{getCustomStyles(options, key)}</style>
             {Boolean(isFullScreen[index]) && (
-              <style>{getFullScreenStyles(index)}</style>
+              <style>{getFullScreenStyles(key)}</style>
             )}
             <Modal
               centered={!isFullScreen[index]}
-              className={`ensemble-modal-${index}`}
+              className={`ensemble-modal-${key}`}
               closable={false}
               footer={null}
               key={modal.key}
