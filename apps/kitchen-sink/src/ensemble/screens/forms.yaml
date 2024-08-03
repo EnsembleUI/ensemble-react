@@ -315,17 +315,12 @@ View:
         - Text:
             styles:
               names: heading-3
-<<<<<<< HEAD
             text: "\nMock Response Testing"
-=======
-            text: TextInput OnChange event
->>>>>>> origin
         - Card:
             styles:
               maxWidth: unset
               width: unset
             children:
-<<<<<<< HEAD
               - Checkbox:
                   id: useMockResponseCheckbox
                   trailingText: "Use Mock Response"
@@ -404,35 +399,6 @@ View:
                   onTap:
                     executeCode: |
                       app.setUseMockResponse(true);
-=======
-              - Form:
-                  id: textInputTest
-                  styles:
-                    gap: 8px
-                    labelPosition: top
-                  onSubmit:
-                    executeCode:
-                      body: |
-                        console.log(vals);
-                      onComplete:
-                        showToast:
-                          message: Form submitted!
-                  children:
-                    - TextInput:
-                        id: textInput
-                        label: Text input
-                        onChange:
-                          executeCode:
-                            body: |
-                              console.log('textInput changed', value);
-                              ensemble.storage.set("textInputLabel", value);
-                    - Text:
-                        id: textInputLabel
-                        text: "The text you have entered in the textbox is: ${ensemble.storage.get('textInputLabel') ?? ''}"
-                    - Button:
-                        submitForm: true
-                        label: Submit
->>>>>>> origin
 
   footer:
     children:

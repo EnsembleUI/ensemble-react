@@ -228,8 +228,8 @@ export const useExecuteCode: EnsembleActionHook<
                   i18n.changeLanguage(languageCode),
               },
               app: {
-                useMockResponse: useMockResponse,
-                setUseMockResponse: setUseMockResponse
+                useMockResponse: useMockResponse(appContext?.application?.id),
+                setUseMockResponse: (value: boolean) => setUseMockResponse(appContext?.application?.id, value)
               },
             },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
@@ -254,7 +254,6 @@ export const useExecuteCode: EnsembleActionHook<
     appContext?.application?.customWidgets,
     appContext?.env,
     appContext?.secrets,
-    useMockResponse,
     themescope,
     storage,
     user,
@@ -334,7 +333,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     const fireRequest = async (): Promise<void> => {
       setIsLoading(true);
       // First check if useMockResponse is enabled and if a mockResponse exists
-      if (api.mockResponse && useMockResponse) {
+      if (api.mockResponse && useMockResponse(appContext?.application?.id)) {
         // Ensure that the mock response contains a correctly formatted
         if (typeof evaluatedMockResponse.response !== "object")
           throw new Error(
@@ -439,8 +438,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     setData,
     context,
     appContext?.env,
-    appContext?.secrets,
-    useMockResponse
+    appContext?.secrets
   ]);
 
   return invokeApi;

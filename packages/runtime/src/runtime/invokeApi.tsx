@@ -1,5 +1,6 @@
 import {
   DataFetcher,
+  useApplicationContext,
   useEvaluate,
   useMockResponse,
   type Response,
@@ -17,6 +18,7 @@ export const invokeAPI = async (
     { response: api?.mockResponse },
     { context },
   );
+  const appData = useApplicationContext();
 
   if (!api) {
     return;
@@ -30,7 +32,7 @@ export const invokeAPI = async (
   });
 
   // Check to see if mockResponse is enabled and if a mockResponse exists in the API context
-  if (api.mockResponse && useMockResponse) {
+  if (api.mockResponse && useMockResponse(appData?.application?.id)) {
     // Ensure that the mock response contains a correctly formatted
     if (typeof evaluatedMockResponse.response !== "object")
       throw new Error(

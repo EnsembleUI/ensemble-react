@@ -26,7 +26,7 @@ export const defaultApplicationContext = {
   auth: null,
   user: null,
   secrets: {},
-  useMockResponse: useMockResponse
+  useMockResponse: false
 };
 
 export const appAtom = atom<ApplicationContextDefinition>(

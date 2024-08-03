@@ -88,7 +88,7 @@ export const createBindingAtom = <T = unknown>(
         },
         env: get(envAtom),
         secrets: get(secretAtom),
-        useMockResponse: useMockResponse
+        useMockResponse: useMockResponse(appData.application?.id)
       },
       screenContext: {
         inputs: get(screenInputAtom),
