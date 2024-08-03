@@ -84,6 +84,7 @@ import { useShowToast } from "./useShowToast";
 import { useCloseAllDialogs } from "./useCloseAllDialogs";
 import { useNavigateUrl } from "./useNavigateUrl";
 import { useNavigateExternalScreen } from "./useNavigateExternalScreen";
+import { mock } from "../mock";
 
 export type EnsembleActionHook<
   T = unknown,
@@ -287,10 +288,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     [evaluatedName.name, apis],
   );
 
-  const evaluatedMockResponse = useEvaluate(
-    { response: api?.mockResponse },
-    { context },
-  );
+  const evaluatedMockResponse = useEvaluate({ response: api?.mockResponse }, { context });
 
   const onInvokeAPIResponseAction = useEnsembleAction(action?.onResponse);
   const onInvokeAPIErrorAction = useEnsembleAction(action?.onError);
@@ -334,38 +332,16 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
       setIsLoading(true);
       // First check if useMockResponse is enabled and if a mockResponse exists
       if (api.mockResponse && useMockResponse(appContext?.application?.id)) {
-        // Ensure that the mock response contains a correctly formatted
-        if (typeof evaluatedMockResponse.response !== "object")
-          throw new Error(
-            "Improperly formatted mock response: Malformed mockResponse object",
-          );
-
-        if (
-          !evaluatedMockResponse.response.statusCode ||
-          typeof evaluatedMockResponse.response.statusCode !== "number"
-        )
-          throw new Error(
-            "Improperly formatted mock response: Incorrect Status Code. Please check that you have included a status code and that it is a number",
-          );
-
-        const isSuccess: boolean =
-          evaluatedMockResponse.response.statusCode >= 200 &&
-          evaluatedMockResponse.response.statusCode <= 299;
-        const mockResponse = {
-          ...evaluatedMockResponse.response,
-          isLoading: false,
-          isSuccess,
-          isError: !isSuccess,
-          appContext,
-        };
-
+        // Fetch the mock response and set the api data
+        const mockResponse = mock(evaluatedMockResponse);
         setData(api.name, mockResponse);
 
+        // Next, run the appropriate actions
         if (action?.id) {
           setData(action.id, mockResponse);
         }
 
-        if (isSuccess) {
+        if (mockResponse.isSuccess) {
           onAPIResponseAction?.callback({ ...context, response: mockResponse });
           onInvokeAPIResponseAction?.callback({
             ...context,

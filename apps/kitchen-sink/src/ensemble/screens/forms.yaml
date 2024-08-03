@@ -324,7 +324,7 @@ View:
               - Checkbox:
                   id: useMockResponseCheckbox
                   trailingText: "Use Mock Response"
-                  value: app.useMockResponse
+                  initialValue: false
                   onChange: 
                     executeCode: |
                         app.setUseMockResponse(!app.useMockResponse);
@@ -385,20 +385,6 @@ View:
                   onTap:
                     invokeAPI:
                       name: getMockResponseFromFunction
-              - Button:
-                  styles:
-                    width: 500
-                  label: "See value of useMockResponse"
-                  onTap:
-                    executeCode: |
-                      console.log(app.useMockResponse);
-              - Button:
-                  styles:
-                    width: 500
-                  label: "Set useMockResponse"
-                  onTap:
-                    executeCode: |
-                      app.setUseMockResponse(true);
 
   footer:
     children:
