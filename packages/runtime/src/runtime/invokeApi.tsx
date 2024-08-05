@@ -2,7 +2,7 @@ import {
   DataFetcher,
   useApplicationContext,
   useEvaluate,
-  useMockResponse,
+  isUsingMockResponse,
   type Response,
   type useScreenData,
 } from "@ensembleui/react-framework";
@@ -33,7 +33,7 @@ export const invokeAPI = async (
   });
 
   // Check to see if mockResponse is enabled and if a mockResponse exists in the API context
-  if (api.mockResponse && useMockResponse(appData?.application?.id))
+  if (api.mockResponse && isUsingMockResponse(appData?.application?.id))
     return mock(evaluatedMockResponse);
 
   // If mock resposne does not exist, fetch the data directly from the API

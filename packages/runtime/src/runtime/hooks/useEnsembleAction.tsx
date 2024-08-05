@@ -16,7 +16,7 @@ import {
   CustomScopeProvider,
   CustomThemeContext,
   useLanguageScope,
-  useMockResponse,
+  isUsingMockResponse,
   setUseMockResponse,
 } from "@ensembleui/react-framework";
 import type {
@@ -228,7 +228,9 @@ export const useExecuteCode: EnsembleActionHook<
                   i18n.changeLanguage(languageCode),
               },
               app: {
-                useMockResponse: useMockResponse(appContext?.application?.id),
+                useMockResponse: isUsingMockResponse(
+                  appContext?.application?.id,
+                ),
                 setUseMockResponse: (value: boolean) =>
                   setUseMockResponse(appContext?.application?.id, value),
               },
@@ -334,7 +336,10 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     const fireRequest = async (): Promise<void> => {
       setIsLoading(true);
       // First check if useMockResponse is enabled and if a mockResponse exists
-      if (api.mockResponse && useMockResponse(appContext?.application?.id)) {
+      if (
+        api.mockResponse &&
+        isUsingMockResponse(appContext?.application?.id)
+      ) {
         // Fetch the mock response and set the api data
         const mockResponse = mock(evaluatedMockResponse);
         setData(api.name, mockResponse);
