@@ -24,7 +24,6 @@ import {
 } from "../state";
 import { evaluate } from "./evaluate";
 import { createEvaluationContext } from "./context";
-import { useMockResponse } from "../hooks";
 
 export const createBindingAtom = <T = unknown>(
   expression?: Expression<unknown>,
@@ -77,7 +76,7 @@ export const createBindingAtom = <T = unknown>(
           value,
         )}`,
       );
-      return [name, value?.values];
+      return [name, value.values];
     });
 
     const evaluationContext = createEvaluationContext({

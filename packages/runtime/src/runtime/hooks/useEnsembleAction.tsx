@@ -17,7 +17,7 @@ import {
   CustomThemeContext,
   useLanguageScope,
   useMockResponse,
-  setUseMockResponse
+  setUseMockResponse,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -77,14 +77,13 @@ import {
   extractCondition,
   hasProperStructure,
 } from "../../widgets/Conditional";
-// eslint-disable-next-line import/no-cycle
+import { mock } from "../mock";
 import { useNavigateModalScreen } from "./useNavigateModal";
 import { useNavigateScreen } from "./useNavigateScreen";
 import { useShowToast } from "./useShowToast";
 import { useCloseAllDialogs } from "./useCloseAllDialogs";
 import { useNavigateUrl } from "./useNavigateUrl";
 import { useNavigateExternalScreen } from "./useNavigateExternalScreen";
-import { mock } from "../mock";
 
 export type EnsembleActionHook<
   T = unknown,
@@ -230,7 +229,8 @@ export const useExecuteCode: EnsembleActionHook<
               },
               app: {
                 useMockResponse: useMockResponse(appContext?.application?.id),
-                setUseMockResponse: (value: boolean) => setUseMockResponse(appContext?.application?.id, value)
+                setUseMockResponse: (value: boolean) =>
+                  setUseMockResponse(appContext?.application?.id, value),
               },
             },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
@@ -288,7 +288,10 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     [evaluatedName.name, apis],
   );
 
-  const evaluatedMockResponse = useEvaluate({ response: api?.mockResponse }, { context });
+  const evaluatedMockResponse = useEvaluate(
+    { response: api?.mockResponse },
+    { context },
+  );
 
   const onInvokeAPIResponseAction = useEnsembleAction(action?.onResponse);
   const onInvokeAPIErrorAction = useEnsembleAction(action?.onError);
@@ -414,7 +417,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     setData,
     context,
     appContext?.env,
-    appContext?.secrets
+    appContext?.secrets,
   ]);
 
   return invokeApi;
