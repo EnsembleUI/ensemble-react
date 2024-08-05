@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.71
+
+### Patch Changes
+
+- 56036a1: fix TextInput's regex validator not validating on no input
+- Updated dependencies [56036a1]
+  - @ensembleui/react-runtime@0.1.77
+
 ## 0.0.70
 
 ### Patch Changes
