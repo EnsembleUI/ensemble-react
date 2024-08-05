@@ -145,9 +145,10 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
 
     if (values?.validator?.regex) {
       rulesArray.push({
-        validator: (_, inputValue: string) => {
+        validator: (_, inputValue?: string) => {
           if (
-            new RegExp(values.validator?.regex || "").test(inputValue || "")
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            new RegExp(values.validator!.regex || "").test(inputValue || "")
           ) {
             return;
           }
