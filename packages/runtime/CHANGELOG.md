@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.1.77
+
+### Patch Changes
+
+- 56036a1: fix TextInput's regex validator not validating on no input
+
 ## 0.1.76
 
 ### Patch Changes
