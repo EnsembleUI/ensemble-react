@@ -143,13 +143,11 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
       });
     }
 
-    if (values?.validator?.regex) {
+    const regex = values?.validator?.regex;
+    if (regex) {
       rulesArray.push({
         validator: (_, inputValue?: string) => {
-          if (
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            new RegExp(values.validator!.regex || "").test(inputValue || "")
-          ) {
+          if (new RegExp(regex).test(inputValue || "")) {
             return;
           }
           return Promise.reject(
