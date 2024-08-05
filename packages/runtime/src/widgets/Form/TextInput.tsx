@@ -145,8 +145,18 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
 
     if (values?.validator?.regex) {
       rulesArray.push({
-        pattern: new RegExp(values.validator.regex),
-        message: values.validator.regexError || "The field has invalid value",
+        validator: (_, inputValue: string) => {
+          if (
+            new RegExp(values.validator?.regex || "").test(inputValue || "")
+          ) {
+            return;
+          }
+          return Promise.reject(
+            new Error(
+              values.validator?.regexError || "The field has an invalid value",
+            ),
+          );
+        },
       });
     }
 
@@ -158,7 +168,14 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     }
 
     return rulesArray;
-  }, [values?.validator, values?.mask]);
+  }, [
+    values?.validator?.minLength,
+    values?.validator?.maxLength,
+    values?.validator?.regex,
+    values?.validator?.regexError,
+    values?.mask,
+    patternValue,
+  ]);
 
   return (
     <EnsembleFormItem rules={rules} valuePropName="value" values={values}>
