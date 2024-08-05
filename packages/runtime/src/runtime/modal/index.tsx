@@ -15,7 +15,7 @@ import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
 import { CloseOutlined } from "@ant-design/icons";
 import { generateRandomString, useEvaluate } from "@ensembleui/react-framework";
-import { isEmpty, isString, omit, pick } from "lodash-es";
+import { isString, omit, pick } from "lodash-es";
 import { useNavigate } from "react-router-dom";
 import { getComponentStyles } from "../../shared/styles";
 import { getCustomStyles, getFullScreenStyles } from "./utils";
@@ -76,25 +76,31 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
   const [modalDimensions, setModalDimensions] = useState<ModalDimensions[]>([]);
   const [isFullScreen, setIsFullScreen] = useState<boolean[]>([]);
   const contentRef = useRef<HTMLDivElement | null>(null);
-  const [newModal, setNewModal] = useState<{
+  const [nextModal, setNextModal] = useState<{
     content: React.ReactNode;
     options: ModalProps;
     isDialog: boolean;
+    key: string;
     context?: { [key: string]: unknown };
   }>();
-  const [isDialogSet, setIsDialogSet] = useState<boolean>(false);
-  const [shouldCloseAllModals, setShouldCloseAllModals] =
-    useState<boolean>(false);
-  const parentModalContext = useContext(ModalContext);
-  const [shouldNavigateBack, setShouldNavigateBack] = useState<boolean>(false);
-  const navigate = useNavigate();
   const evaluatedOptions = useEvaluate(
-    newModal?.options as { [key: string]: unknown },
+    nextModal
+      ? {
+          key: nextModal.key,
+          options: nextModal.options as { [key: string]: unknown },
+        }
+      : undefined,
     {
-      context: newModal?.context,
+      context: nextModal?.context,
       refreshExpressions: true,
     },
   );
+
+  const parentModalContext = useContext(ModalContext);
+  const [shouldCloseAllModals, setShouldCloseAllModals] =
+    useState<boolean>(false);
+  const [shouldNavigateBack, setShouldNavigateBack] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   useLayoutEffect(() => {
     if (modalState.length > 0 && !isFullScreen[isFullScreen.length - 1])
@@ -107,27 +113,42 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
       ]);
   }, [modalState, isFullScreen, contentRef]);
 
+  // add a new modal
   useEffect(() => {
-    if (!isEmpty(evaluatedOptions) && !isDialogSet) {
-      // add a new modal to the end of the arrays
-      setModalState((oldModalState) => [
-        ...oldModalState,
-        {
-          visible: true,
-          content: newModal?.content,
-          options: evaluatedOptions,
-          key: generateRandomString(10),
-          isDialog: Boolean(newModal?.isDialog),
-        },
-      ]);
+    if (!nextModal || evaluatedOptions.key !== nextModal.key) {
+      return;
+    }
+    const prevModalStateIndex = modalState.findIndex(
+      (modal) => modal.key === nextModal.key,
+    );
+    // add a new modal to the end of the arrays
+    setModalState((oldModalState) => {
+      const nextModalState = {
+        visible: true,
+        content: nextModal.content,
+        options: evaluatedOptions.options,
+        key: nextModal.key,
+        isDialog: Boolean(nextModal.isDialog),
+      };
+      const internalPreviousModalState = modalState.findIndex(
+        (modal) => modal.key === nextModal.key,
+      );
+      if (internalPreviousModalState > -1) {
+        oldModalState.splice(internalPreviousModalState, 1, nextModalState);
+        return [...oldModalState];
+      }
+      return [...oldModalState, nextModalState];
+    });
+
+    if (prevModalStateIndex < 0) {
       setModalDimensions((oldModalDimensions) => [
         ...oldModalDimensions,
         { width: 0, height: 0 },
       ]);
       setIsFullScreen((oldIsFullScreen) => [...oldIsFullScreen, false]);
-      setIsDialogSet(true);
+      setNextModal(undefined);
     }
-  }, [evaluatedOptions, isDialogSet, newModal]);
+  }, [evaluatedOptions, modalState, nextModal]);
 
   const openModal = useCallback(
     (
@@ -142,23 +163,24 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
           if (oldModalState.length === 0) {
             return oldModalState;
           }
-          return [
+          const nextState = [
             ...oldModalState.slice(0, -1),
             {
               ...oldModalState[oldModalState.length - 1],
               visible: false,
             },
           ];
+          return nextState;
         });
       }
 
-      setNewModal({
+      setNextModal({
         content,
         options: omit(options, [!isString(options.title) ? "title" : ""]),
         isDialog,
         context: modalContext,
+        key: generateRandomString(10),
       });
-      setIsDialogSet(false);
     },
     [],
   );
