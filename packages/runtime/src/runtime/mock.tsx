@@ -1,4 +1,5 @@
 import { EnsembleMockResponse, useEvaluate } from "@ensembleui/react-framework";
+import { isObject, isNumber, isEmpty } from "lodash-es";
 
 export const mock = (evaluatedMockResponse: {
     response: string | EnsembleMockResponse | undefined;
@@ -11,15 +12,12 @@ export const mock = (evaluatedMockResponse: {
     headers?: Record<string, string>;
     reasonPhrase?: string;
 } => {
-    if (typeof evaluatedMockResponse.response !== "object" || evaluatedMockResponse.response === null)
+    if (isEmpty(evaluatedMockResponse.response) || !isObject(evaluatedMockResponse.response))
         throw new Error(
             "Improperly formatted mock response: Malformed mockResponse object",
         );
 
-    if (
-        !evaluatedMockResponse.response.statusCode ||
-        typeof evaluatedMockResponse.response.statusCode !== "number"
-    )
+    if (!isNumber(evaluatedMockResponse.response.statusCode))
         throw new Error(
             "Improperly formatted mock response: Incorrect Status Code. Please check that you have included a status code and that it is a number",
         );

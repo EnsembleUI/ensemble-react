@@ -1,13 +1,17 @@
-const mockResponseTable: Record<string, boolean> = {};
+const appConfigTable: Record<string, AppConfig> = {};
+
+interface AppConfig {
+    useMockResponse: boolean
+};
 
 export const useMockResponse = (appId: string | undefined) => {
-    if (typeof appId == 'undefined' || !(appId in mockResponseTable))
+    if (typeof appId == 'undefined' || !(appId in appConfigTable))
         return false;
-    return mockResponseTable[appId];
+    return appConfigTable[appId].useMockResponse;
 }
 
 export const setUseMockResponse = (appId: string | undefined, value: boolean) => {
     if (typeof appId == 'undefined')
         return;
-    mockResponseTable[appId] = value
+    appConfigTable[appId] = { useMockResponse: value }
 };
