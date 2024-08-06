@@ -124,7 +124,7 @@ export const useExecuteCode: EnsembleActionHook<
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,
   );
-  const theme = appContext?.application?.theme;
+  const theme = themescope.theme;
 
   const js = useMemo(() => {
     if (!action) {
@@ -226,6 +226,7 @@ export const useExecuteCode: EnsembleActionHook<
                   i18n.changeLanguage(languageCode),
               },
             },
+            { app: merge(screen.app, { theme: themescope.themeName }) },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
             { styles: theme?.Styles },
             customScope,

@@ -78,8 +78,8 @@ View:
             onChange:
               executeCode:
                 body: |
-                  ensemble.storage.set('language', selectedValue)
-                  ensemble.setLocale({languageCode: selectedValue})
+                  ensemble.storage.set('language', value)
+                  ensemble.setLocale({languageCode: value})
 
         - Text:
             styles:
@@ -90,17 +90,30 @@ View:
             styles:
               width: 100px
               backgroundColor: ${colors.primary['500']}
-            items:
-              - label: Light
-                value: default
-              - label: Dark
-                value: dark
+            item-template:
+              data: ${app.themes}
+              name: theme
+              value: theme
+              template:
+                Text:
+                  text: ${theme}
             widget:
               Icon:
                 name: Settings
             onItemSelect:
               executeCode: |
-                ensemble.setTheme(value)
+                ensemble.setTheme(theme)
+
+        - Text:
+            styles:
+              names: heading-1
+            text: Selected Theme ${app.theme}
+
+        - Button:
+            label: Theme
+            onTap:
+              executeCode: |
+                console.log('>>', app.theme)
 
         - Divider:
 

@@ -1,12 +1,12 @@
 import { Provider, useAtomValue } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
-import { isEmpty, merge } from "lodash-es";
+import { keys, merge } from "lodash-es";
 import { useTranslation } from "react-i18next";
 import {
   appAtom,
   type ApplicationContextDefinition,
   defaultApplicationContext,
-  selectedThemeNameAtom,
+  defaultThemeDefinition,
   themeAtom,
   userAtom,
 } from "../state";
@@ -68,12 +68,12 @@ const HydrateAtoms: React.FC<
     appContext: ApplicationContextDefinition;
   }>
 > = ({ appContext, children }) => {
-  const activeThemeName = useAtomValue(selectedThemeNameAtom);
+  const themeValue = useAtomValue(themeAtom);
+  const activeThemeName =
+    themeValue.name || keys(appContext.application?.themes)[0];
 
-  let activeTheme = appContext.application?.theme;
-  if (!isEmpty(appContext.application?.themes)) {
-    activeTheme = appContext.application?.themes[activeThemeName];
-  }
+  const activeTheme =
+    appContext.application?.themes[activeThemeName] || defaultThemeDefinition;
 
   // initialising on state with prop on render here
   useHydrateAtoms([
