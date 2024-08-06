@@ -1,5 +1,44 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.72
+
+### Patch Changes
+
+- Updated dependencies [ddb575f]
+  - @ensembleui/react-runtime@0.1.78
+
+## 0.0.71
+
+### Patch Changes
+
+- 56036a1: fix TextInput's regex validator not validating on no input
+- Updated dependencies [56036a1]
+  - @ensembleui/react-runtime@0.1.77
+
+## 0.0.70
+
+### Patch Changes
+
+- Updated dependencies [78f35e7]
+- Updated dependencies [7eae5b8]
+  - @ensembleui/react-runtime@0.1.76
+
+## 0.0.69
+
+### Patch Changes
+
+- Updated dependencies [2e2fc51]
+  - @ensembleui/react-runtime@0.1.75
+
+## 0.0.68
+
+### Patch Changes
+
+- 04454f2: use unique key when applying styles to modal
+- Updated dependencies [04454f2]
+  - @ensembleui/react-framework@0.1.56
+  - @ensembleui/react-runtime@0.1.74
+
 ## 0.0.67
 
 ### Patch Changes

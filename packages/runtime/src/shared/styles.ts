@@ -1,6 +1,6 @@
 import * as Icons from "@mui/icons-material";
 import type { SvgIconComponent } from "@mui/icons-material";
-import { get } from "lodash-es";
+import { get, isInteger } from "lodash-es";
 import React from "react";
 import { TextAlignment } from "./styleSchema";
 
@@ -126,4 +126,14 @@ export const getComponentStyles = (
   });
 
   return returnAsString ? result : res;
+};
+
+export const evaluateStyleValue = (
+  value: string | number | undefined,
+  defaultUnit = "px",
+): string | number => {
+  if (value) {
+    return isInteger(value) ? `${value}${defaultUnit}` : value;
+  }
+  return `0${defaultUnit}`;
 };

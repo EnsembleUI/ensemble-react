@@ -1,5 +1,38 @@
 # @ensembleui/react-runtime
 
+## 0.1.78
+
+### Patch Changes
+
+- ddb575f: fix form submission when regex is used in TextInput (bug introduced in runtime 0.1.77)
+
+## 0.1.77
+
+### Patch Changes
+
+- 56036a1: fix TextInput's regex validator not validating on no input
+
+## 0.1.76
+
+### Patch Changes
+
+- 78f35e7: Fix menu page matching
+- 7eae5b8: Add callback options to grid functions
+
+## 0.1.75
+
+### Patch Changes
+
+- 2e2fc51: fix: added support for default unit for margin and padding in icon
+
+## 0.1.74
+
+### Patch Changes
+
+- 04454f2: use unique key when applying styles to modal
+- Updated dependencies [04454f2]
+  - @ensembleui/react-framework@0.1.56
+
 ## 0.1.73
 
 ### Patch Changes

@@ -133,8 +133,8 @@ View:
                     - TextInput:
                         id: regexTextInput
                         validator:
-                          regex: "[0-5]"
-                          regexError: "Only numbers 0 to 5 are allowed"
+                          regex: .{1,}
+                          regexError: "write something atleast"
                         label: Text input with regex
                     - MultiSelect:
                         id: multiselectoptions1
