@@ -118,9 +118,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     if (!nextModal || evaluatedOptions.key !== nextModal.key) {
       return;
     }
-    const prevModalStateIndex = modalState.findIndex(
-      (modal) => modal.key === nextModal.key,
-    );
+
     // add a new modal to the end of the arrays
     setModalState((oldModalState) => {
       const nextModalState = {
@@ -130,24 +128,22 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
         key: nextModal.key,
         isDialog: Boolean(nextModal.isDialog),
       };
-      const internalPreviousModalState = modalState.findIndex(
+      const prevModalStateIndex = modalState.findIndex(
         (modal) => modal.key === nextModal.key,
       );
-      if (internalPreviousModalState > -1) {
-        oldModalState.splice(internalPreviousModalState, 1, nextModalState);
+      if (prevModalStateIndex > -1) {
+        oldModalState.splice(prevModalStateIndex, 1, nextModalState);
         return [...oldModalState];
       }
       return [...oldModalState, nextModalState];
     });
 
-    if (prevModalStateIndex < 0) {
-      setModalDimensions((oldModalDimensions) => [
-        ...oldModalDimensions,
-        { width: 0, height: 0 },
-      ]);
-      setIsFullScreen((oldIsFullScreen) => [...oldIsFullScreen, false]);
-      setNextModal(undefined);
-    }
+    setModalDimensions((oldModalDimensions) => [
+      ...oldModalDimensions,
+      { width: 0, height: 0 },
+    ]);
+    setIsFullScreen((oldIsFullScreen) => [...oldIsFullScreen, false]);
+    setNextModal(undefined);
   }, [evaluatedOptions, modalState, nextModal]);
 
   const openModal = useCallback(
@@ -157,23 +153,6 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
       isDialog = false,
       modalContext?: { [key: string]: unknown },
     ): void => {
-      if (!isDialog) {
-        // hide the last modal
-        setModalState((oldModalState) => {
-          if (oldModalState.length === 0) {
-            return oldModalState;
-          }
-          const nextState = [
-            ...oldModalState.slice(0, -1),
-            {
-              ...oldModalState[oldModalState.length - 1],
-              visible: false,
-            },
-          ];
-          return nextState;
-        });
-      }
-
       setNextModal({
         content,
         options: omit(options, [!isString(options.title) ? "title" : ""]),
