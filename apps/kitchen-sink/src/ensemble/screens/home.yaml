@@ -104,6 +104,12 @@ View:
 
         - Divider:
 
+        - Button:
+            startingIcon:
+              name: MoreHoriz
+            styles:
+              width: 8px
+
         - Text:
             styles:
               names: heading-1

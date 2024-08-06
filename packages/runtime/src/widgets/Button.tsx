@@ -82,7 +82,6 @@ export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
         {!loading && values?.startingIcon ? (
           <Icon {...values.startingIcon} />
         ) : null}
-        {!loading && values?.startingIcon ? <>&nbsp;</> : null}
 
         {!loading && <>{values?.label}</>}
 
