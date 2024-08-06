@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.1.78
+
+### Patch Changes
+
+- ddb575f: fix form submission when regex is used in TextInput (bug introduced in runtime 0.1.77)
+
 ## 0.1.77
 
 ### Patch Changes
