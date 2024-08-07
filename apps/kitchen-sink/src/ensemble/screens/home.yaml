@@ -104,11 +104,24 @@ View:
 
         - Divider:
 
-        - Button:
-            startingIcon:
-              name: MoreHoriz
+        - Row:
             styles:
-              width: 8px
+              gap: 8px
+            children:
+              - Button:
+                  startingIcon:
+                    name: MoreHoriz
+              - Button:
+                  endingIcon:
+                    name: MoreHoriz
+              - Button:
+                  startingIcon:
+                    name: MoreHoriz
+                  label: start
+              - Button:
+                  endingIcon:
+                    name: MoreHoriz
+                  label: end
 
         - Text:
             styles:
