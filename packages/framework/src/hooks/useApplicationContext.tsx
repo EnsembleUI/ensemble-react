@@ -68,9 +68,7 @@ const HydrateAtoms: React.FC<
     appContext: ApplicationContextDefinition;
   }>
 > = ({ appContext, children }) => {
-  const themeValue = useAtomValue(themeAtom);
-  const activeThemeName =
-    themeValue.name || keys(appContext.application?.themes)[0];
+  const activeThemeName = keys(appContext.application?.themes)[0];
 
   const activeTheme =
     appContext.application?.themes[activeThemeName] || defaultThemeDefinition;
