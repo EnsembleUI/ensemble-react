@@ -47,14 +47,19 @@ export type ToggleButtonProps = {
 
 export const ToggleButton: React.FC<ToggleButtonProps> = ({
   id,
-  value: givenValue,
+  value: valueBinding,
   items,
   onChange,
   styles,
 }) => {
   const [value, setValue] = useState<string>();
   const { values, rootRef } = useRegisterBindings(
-    { value, initialValue: givenValue, styles, widgetName },
+    {
+      value,
+      valueBinding,
+      styles,
+      widgetName,
+    },
     id,
     {
       setValue,
@@ -62,8 +67,8 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
   );
 
   useEffect(() => {
-    setValue(values?.initialValue);
-  }, [values?.initialValue]);
+    setValue(values?.valueBinding);
+  }, [values?.valueBinding]);
 
   // onchange action handler
   const action = useEnsembleAction(onChange);
