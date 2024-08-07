@@ -7,9 +7,11 @@ import type { Response, WebSocketConnection } from "../data";
 import type {
   EnsembleAPIModel,
   EnsembleAppModel,
+  EnsembleMockResponse,
   EnsembleScreenModel,
   EnsembleSocketModel,
 } from "../shared";
+import { useEvaluate } from "../hooks";
 import type { WidgetState } from "./widget";
 
 export interface ScreenContextDefinition {
@@ -64,10 +66,27 @@ export const screenImportScriptAtom = focusAtom(screenAtom, (optic) =>
 export const useScreenData = (): { apis?: EnsembleAPIModel[] } & {
   sockets?: EnsembleSocketModel[];
 } & Pick<ScreenContextDefinition, "data"> &
-  Pick<ScreenContextActions, "setData"> => {
+  Pick<ScreenContextActions, "setData"> & {
+    mockResponses: { [key: string]: EnsembleMockResponse | string | undefined };
+  } => {
   const apis = useAtomValue(screenApiAtom);
   const sockets = useAtomValue(screenSocketAtom);
   const [data, setDataAtom] = useAtom(screenDataAtom);
+
+  const mockResponses = useEvaluate(
+    apis
+      ? apis.reduce(
+          (
+            acc: { [key: string]: EnsembleMockResponse | string | undefined },
+            api,
+          ) => {
+            acc[api.name] = api.mockResponse;
+            return acc;
+          },
+          {},
+        )
+      : {},
+  );
 
   const setData = useCallback(
     (name: string, response: Response | WebSocketConnection) => {
@@ -85,5 +104,6 @@ export const useScreenData = (): { apis?: EnsembleAPIModel[] } & {
     sockets,
     data,
     setData,
+    mockResponses,
   };
 };

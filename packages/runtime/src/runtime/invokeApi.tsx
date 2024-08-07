@@ -1,7 +1,5 @@
 import {
   DataFetcher,
-  useApplicationContext,
-  useEvaluate,
   isUsingMockResponse,
   type Response,
   type useScreenData,
@@ -11,15 +9,11 @@ import { mock } from "./mock";
 export const invokeAPI = async (
   screenData: ReturnType<typeof useScreenData>,
   apiName: string,
+  appId: string | undefined,
   apiInputs?: { [key: string]: unknown },
   context?: { [key: string]: unknown },
 ): Promise<Response | undefined> => {
   const api = screenData.apis?.find((model) => model.name === apiName);
-  const evaluatedMockResponse = useEvaluate(
-    { response: api?.mockResponse },
-    { context },
-  );
-  const appData = useApplicationContext();
 
   if (!api) {
     return;
@@ -33,8 +27,11 @@ export const invokeAPI = async (
   });
 
   // Check to see if mockResponse is enabled and if a mockResponse exists in the API context
-  if (api.mockResponse && isUsingMockResponse(appData?.application?.id))
-    return mock(evaluatedMockResponse);
+  if (api.mockResponse && isUsingMockResponse(appId)) {
+    const res = mock({ response: screenData.mockResponses[api.name] });
+    screenData.setData(api.name, res);
+    return res;
+  }
 
   // If mock resposne does not exist, fetch the data directly from the API
   const res = await DataFetcher.fetch(api, { ...apiInputs, ...context });

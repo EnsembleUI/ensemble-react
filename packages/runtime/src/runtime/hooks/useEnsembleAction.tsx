@@ -203,13 +203,20 @@ export const useExecuteCode: EnsembleActionHook<
                   apiName: string,
                   apiInputs?: { [key: string]: unknown },
                 ) =>
-                  invokeAPI(screenData, apiName, apiInputs, {
-                    ...customScope,
-                    ensemble: {
-                      env: appContext?.env,
-                      secrets: appContext?.secrets,
+                  invokeAPI(
+                    screenData,
+                    apiName,
+                    appContext?.application?.id,
+                    apiInputs,
+                    {
+                      ...customScope,
+                      ensemble: {
+                        env: appContext?.env,
+                        secrets: appContext?.secrets,
+                        storage: appContext?.storage,
+                      },
                     },
-                  }),
+                  ),
                 navigateBack: (): void =>
                   modalContext ? modalContext.navigateBack() : navigate(-1),
                 navigateExternalScreen: (url: NavigateExternalScreen) =>
@@ -257,6 +264,8 @@ export const useExecuteCode: EnsembleActionHook<
     appContext?.application?.customWidgets,
     appContext?.env,
     appContext?.secrets,
+    appContext?.application?.id,
+    appContext?.storage,
     themescope,
     storage,
     user,
@@ -276,7 +285,7 @@ export const useExecuteCode: EnsembleActionHook<
 };
 
 export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
-  const { apis, setData } = useScreenData();
+  const { apis, setData, mockResponses } = useScreenData();
   const appContext = useApplicationContext();
   const [isComplete, setIsComplete] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>();
@@ -288,11 +297,6 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const api = useMemo(
     () => apis?.find((model) => model.name === evaluatedName.name),
     [evaluatedName.name, apis],
-  );
-
-  const evaluatedMockResponse = useEvaluate(
-    { response: api?.mockResponse },
-    { context },
   );
 
   const onInvokeAPIResponseAction = useEnsembleAction(action?.onResponse);
@@ -341,7 +345,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
         isUsingMockResponse(appContext?.application?.id)
       ) {
         // Fetch the mock response and set the api data
-        const mockResponse = mock(evaluatedMockResponse);
+        const mockResponse = mock({ response: mockResponses[api.name] });
         setData(api.name, mockResponse);
 
         // Next, run the appropriate actions
