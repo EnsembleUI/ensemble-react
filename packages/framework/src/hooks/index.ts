@@ -12,3 +12,4 @@ export * from "./useEnsembleUser";
 export * from "./useThemeContext";
 export * from "./useEventContext";
 export * from "./useLanguageScope";
+export * from "./useScreenData";
