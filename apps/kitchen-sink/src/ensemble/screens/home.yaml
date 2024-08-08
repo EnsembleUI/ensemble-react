@@ -117,6 +117,25 @@ View:
 
         - Divider:
 
+        - Row:
+            styles:
+              gap: 8px
+            children:
+              - Button:
+                  startingIcon:
+                    name: MoreHoriz
+              - Button:
+                  endingIcon:
+                    name: MoreHoriz
+              - Button:
+                  startingIcon:
+                    name: MoreHoriz
+                  label: start
+              - Button:
+                  endingIcon:
+                    name: MoreHoriz
+                  label: end
+
         - Text:
             styles:
               names: heading-1
