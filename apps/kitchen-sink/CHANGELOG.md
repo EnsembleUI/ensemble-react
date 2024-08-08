@@ -1,5 +1,19 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.73
+
+### Patch Changes
+
+- 298a6df: center align button's icon when no label is given
+- f8c9226: Add html attribute pass through to form widgets
+- Updated dependencies [2fc2ac5]
+- Updated dependencies [2d5b743]
+- Updated dependencies [298a6df]
+- Updated dependencies [f8c9226]
+- Updated dependencies [483a150]
+  - @ensembleui/react-framework@0.1.57
+  - @ensembleui/react-runtime@0.1.79
+
 ## 0.0.72
 
 ### Patch Changes

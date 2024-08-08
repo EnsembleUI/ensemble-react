@@ -1,5 +1,17 @@
 # @ensembleui/react-runtime
 
+## 0.1.79
+
+### Patch Changes
+
+- 298a6df: center align button's icon when no label is given
+- f8c9226: Add html attribute pass through to form widgets
+- 483a150: Fix cases where multiple modal screens are created
+- Updated dependencies [2fc2ac5]
+- Updated dependencies [2d5b743]
+- Updated dependencies [f8c9226]
+  - @ensembleui/react-framework@0.1.57
+
 ## 0.1.78
 
 ### Patch Changes
