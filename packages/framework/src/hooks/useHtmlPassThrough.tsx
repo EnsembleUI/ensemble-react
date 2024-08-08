@@ -9,7 +9,7 @@ export const useHtmlPassThrough = (
 ): { rootRef: RefCallback<never> } => {
   const rootRef = useCallback(
     (node: never) => {
-      let element;
+      let element: any;
       if (node) {
         if ("setAttribute" in node) {
           element = node;
