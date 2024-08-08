@@ -2,6 +2,7 @@ import { Input, Form } from "antd";
 import type { Expression, EnsembleAction } from "@ensembleui/react-framework";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useEffect, useMemo, useState, useCallback } from "react";
+import { runes } from "runes2";
 import type { Rule } from "antd/es/form";
 import { forEach } from "lodash-es";
 import type { EnsembleWidgetProps } from "../../shared/types";
@@ -18,6 +19,10 @@ export type TextInputProps = {
   labelStyle?: TextStyles;
   multiLine?: Expression<boolean>;
   maxLines?: number;
+  maxLength?: Expression<number>;
+  maxLengthEnforcement?: Expression<
+    "none" | "enforced" | "truncateAfterCompositionEnds"
+  >;
   inputType?: "email" | "phone" | "number" | "text" | "url"; //| "ipAddress";
   onChange?: EnsembleAction;
   mask?: string;
@@ -176,10 +181,23 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     patternValue,
   ]);
 
+  const maxLengthConfig = values?.maxLength
+    ? {
+        max: values.maxLength as number,
+        show: true,
+        exceedFormatter:
+          values.maxLengthEnforcement === "none"
+            ? undefined
+            : (txt: string, { max }: { max: number }): string =>
+                runes(txt).slice(0, max).join(""),
+      }
+    : undefined;
+
   return (
     <EnsembleFormItem rules={rules} valuePropName="value" values={values}>
       {values?.multiLine ? (
         <Input.TextArea
+          count={maxLengthConfig}
           defaultValue={values.value}
           disabled={values.enabled === false}
           onChange={(event): void => setValue(event.target.value)}
@@ -196,6 +214,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
         />
       ) : (
         <Input
+          count={maxLengthConfig}
           defaultValue={values?.value}
           disabled={values?.enabled === false}
           onChange={(event): void => handleChange(event.target.value)}

@@ -279,9 +279,11 @@ View:
                           data-testid: testinput-test
                         id: initial_formTextInput
                         value: ${ensemble.storage.get('inputVal')}
+                        maxLength: 10
+                        maxLengthEnforcement: enforced
                         label:
                           Text:
-                            text: Text input
+                            text: Text input with max length enforcement
                     - MultiSelect:
                         id: initial_multiselectoptions1
                         label: Choose multiple from API or storage
