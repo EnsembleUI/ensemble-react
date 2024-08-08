@@ -32,7 +32,7 @@ export type TextInputProps = {
 
 export const TextInput: React.FC<TextInputProps> = (props) => {
   const [value, setValue] = useState<string>();
-  const { values } = useRegisterBindings(
+  const { values, rootRef } = useRegisterBindings(
     { ...props, initialValue: props.value, value, widgetName },
     props.id,
     {
@@ -184,6 +184,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
           disabled={values.enabled === false}
           onChange={(event): void => setValue(event.target.value)}
           placeholder={values.hintText ?? ""}
+          ref={rootRef}
           rows={values.maxLines ? Number(values.maxLines) : 4} // Adjust the number of rows as needed
           style={{
             ...(values.styles ?? values.hintStyle),
@@ -199,6 +200,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
           disabled={values?.enabled === false}
           onChange={(event): void => handleChange(event.target.value)}
           placeholder={values?.hintText ?? ""}
+          ref={rootRef}
           style={{
             ...(values?.styles ?? values?.hintStyle),
             ...(values?.styles?.visible === false
