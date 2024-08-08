@@ -36,7 +36,7 @@ export const DateRange: React.FC<DateRangeProps> = (props) => {
 
   const [fromValue, setFromValue] = useState(props.fromDate);
   const [toValue, setToValue] = useState(props.toDate);
-  const { id, values } = useRegisterBindings(
+  const { id, values, rootRef } = useRegisterBindings(
     { ...props, fromValue, toValue, widgetName },
     props.id,
     {
@@ -96,6 +96,7 @@ export const DateRange: React.FC<DateRangeProps> = (props) => {
         disabled={values?.enabled === false}
         onChange={onDateRangeChange}
         placeholder={[values?.hintText ? values.hintText : "Start date", ""]}
+        ref={rootRef}
         showTime={values?.showTime}
         style={{ width: "100%", ...values?.styles }}
         suffixIcon={suffixIcon()}

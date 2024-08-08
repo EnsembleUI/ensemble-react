@@ -161,6 +161,8 @@ View:
                           - label: Option 2
                             value: option2
                     - Date:
+                        htmlAttributes:
+                          data-testid: date0-test
                         id: date0
                         label: Date 0
                         hintText: Choose date 0
@@ -250,6 +252,8 @@ View:
                     - Row:
                         children:
                           - Checkbox:
+                              htmlAttributes:
+                                data-testid: checkbox-test
                               id: initial_checkbox
                               value: true
                               trailingText: Check me
@@ -271,6 +275,8 @@ View:
                             value: option2
                     # If you omit id, the form value key will be the label
                     - TextInput:
+                        htmlAttributes:
+                          data-testid: testinput-test
                         id: initial_formTextInput
                         value: ${ensemble.storage.get('inputVal')}
                         label:

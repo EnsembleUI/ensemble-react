@@ -1,5 +1,5 @@
 import type { RefCallback } from "react";
-import { mapKeys, isObject } from "lodash-es";
+import { mapKeys, isObject, get } from "lodash-es";
 import { useCallback } from "react";
 import { error } from "../shared";
 
@@ -9,7 +9,15 @@ export const useHtmlPassThrough = (
 ): { rootRef: RefCallback<never> } => {
   const rootRef = useCallback(
     (node: never) => {
-      if (node && "setAttribute" in node) {
+      let element;
+      if (node) {
+        if ("setAttribute" in node) {
+          element = node;
+        } else {
+          element = get(node, "nativeElement");
+        }
+      }
+      if (element && "setAttribute" in element) {
         if (isObject(htmlAttributes)) {
           const htmlAttributesObj = mapKeys(htmlAttributes, (_, key) =>
             key.toLowerCase(),
@@ -17,7 +25,10 @@ export const useHtmlPassThrough = (
 
           Object.keys(htmlAttributesObj).forEach((key: string) => {
             try {
-              (node as HTMLElement).setAttribute(key, htmlAttributesObj[key]);
+              (element as HTMLElement).setAttribute(
+                key,
+                htmlAttributesObj[key],
+              );
             } catch (e) {
               error(e);
             }
@@ -25,7 +36,7 @@ export const useHtmlPassThrough = (
         }
         if (testId) {
           try {
-            (node as HTMLElement).setAttribute("data-testid", testId);
+            (element as HTMLElement).setAttribute("data-testid", testId);
           } catch (e) {
             error(e);
           }

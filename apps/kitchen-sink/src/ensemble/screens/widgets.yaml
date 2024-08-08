@@ -735,7 +735,7 @@ View:
                       value: option1
                     - label: Option 2
                       value: option2
-                  onChange: 
+                  onChange:
                     executeCode: |
                       console.log('selected value', value)
               - Dropdown:
@@ -815,6 +815,8 @@ View:
               width: 300px
               justifySelf: end
         - DateRange:
+            htmlAttributes:
+              data-testid: daterange-test
             id: dateRange1
             enabled: true
             suffixIcon:
