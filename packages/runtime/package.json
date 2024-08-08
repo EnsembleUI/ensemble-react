@@ -41,7 +41,7 @@
     "antd": "^5.20.0",
     "chart.js": "^4.4.2",
     "chartjs-plugin-datalabels": "^2.2.0",
-    "dayjs": "^1.11.10",
+    "dayjs": "^1.11.12",
     "eslint-config-custom": "workspace:*",
     "jest-canvas-mock": "^2.5.2",
     "jwt-decode": "^4.0.0",
