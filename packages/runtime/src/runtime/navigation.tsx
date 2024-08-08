@@ -6,7 +6,7 @@ import type {
   EnsembleAppModel,
   EnsembleScreenModel,
 } from "@ensembleui/react-framework";
-import { cloneDeep, isObject, isString, merge } from "lodash-es";
+import { cloneDeep, isObject, isString, merge, omit } from "lodash-es";
 import type { NavigateFunction } from "react-router-dom";
 import type { ModalContextProps } from "./modal";
 // eslint-disable-next-line import/no-cycle
@@ -70,7 +70,7 @@ export const navigateModalScreen = (
   if (isObject(action)) {
     merge(
       modalOptions,
-      action,
+      omit(action, "inputs"),
       { ...action.styles },
       { title: title ?? action.title },
     );
