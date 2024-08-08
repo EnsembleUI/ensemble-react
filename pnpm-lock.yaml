@@ -283,7 +283,7 @@ importers:
       antd: ^5.20.0
       chart.js: ^4.4.2
       chartjs-plugin-datalabels: ^2.2.0
-      dayjs: ^1.11.10
+      dayjs: ^1.11.12
       eslint-config-custom: workspace:*
       jest-canvas-mock: ^2.5.2
       jwt-decode: ^4.0.0
@@ -306,7 +306,7 @@ importers:
       '@lottiefiles/react-lottie-player': 3.5.3
       '@mui/icons-material': 5.15.11_da55fe8c6e6066fef4b7dc0994910613
       '@mui/material': 5.15.11_d729d530559e435818d6dfbb9bc0bc34
-      '@mui/x-date-pickers': 6.19.6_2c00eda8b93df837cae7ffd0568ce50c
+      '@mui/x-date-pickers': 6.19.6_1dcf445c77f90e2d41581270c9a3b06f
       '@react-oauth/google': 0.12.1
       '@testing-library/react': 13.4.0
       '@testing-library/user-event': 13.5.0
@@ -318,7 +318,7 @@ importers:
       antd: 5.20.0
       chart.js: 4.4.2
       chartjs-plugin-datalabels: 2.2.0_chart.js@4.4.2
-      dayjs: 1.11.10
+      dayjs: 1.11.12
       eslint-config-custom: link:../eslint-config-custom
       jest-canvas-mock: 2.5.2
       jwt-decode: 4.0.0
@@ -3695,7 +3695,7 @@ packages:
       react-is: 18.2.0
     dev: true
 
-  /@mui/x-date-pickers/6.19.6_2c00eda8b93df837cae7ffd0568ce50c:
+  /@mui/x-date-pickers/6.19.6_1dcf445c77f90e2d41581270c9a3b06f:
     resolution: {integrity: sha512-QW9AFcPi0vLpkUhmquhhyhLaBvB0AZJuu3NTrE173qNKx3Z3n51aCLY9bc7c6i4ltZMMsVRHlvzQjsve04TC8A==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -3740,7 +3740,7 @@ packages:
       '@mui/utils': 5.15.11_@types+react@18.2.62
       '@types/react-transition-group': 4.4.10
       clsx: 2.1.0
-      dayjs: 1.11.10
+      dayjs: 1.11.12
       prop-types: 15.8.1
       react-transition-group: 4.4.5
     transitivePeerDependencies:
@@ -14280,7 +14280,7 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
     dependencies:
-      '@babel/runtime': 7.25.0
+      '@babel/runtime': 7.24.0
       react-is: 18.2.0
     dev: true
 
