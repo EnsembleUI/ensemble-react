@@ -78,6 +78,8 @@ import {
   hasProperStructure,
 } from "../../widgets/Conditional";
 import { mock } from "../mock";
+// FIXME: refactor
+// eslint-disable-next-line import/no-cycle
 import { useNavigateModalScreen } from "./useNavigateModal";
 import { useNavigateScreen } from "./useNavigateScreen";
 import { useShowToast } from "./useShowToast";
