@@ -1,5 +1,13 @@
 # @ensembleui/react-framework
 
+## 0.1.57
+
+### Patch Changes
+
+- 2fc2ac5: fix: choose first theme as default from the theme yaml
+- 2d5b743: fix flutter disparity issue
+- f8c9226: Add html attribute pass through to form widgets
+
 ## 0.1.56
 
 ### Patch Changes
