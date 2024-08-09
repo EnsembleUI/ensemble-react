@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "tsup src/index.tsx --format cjs --watch --dts --external react",
     "build": "tsup src/index.tsx --format cjs --dts --external react",
-    "test": "jest",
+    "test": "jest --runInBand",
     "lint": "eslint ."
   },
   "lint-staged": {

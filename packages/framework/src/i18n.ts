@@ -38,8 +38,9 @@ export const languageMap: { [key: string]: string } = {
 i18n
   .use(initReactI18next)
   .init({
+    resources: {},
     lng: "en",
-    debug: true,
+    debug: process.env.NODE_ENV === "development",
     fallbackLng: "en",
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default
