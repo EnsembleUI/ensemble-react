@@ -17,6 +17,7 @@ export interface EvaluationContextProps {
   screenContext: Partial<ScreenContextDefinition>;
   ensemble: Partial<EnsembleInterface>;
   context?: { [key: string]: unknown };
+  app?: { [key: string]: unknown };
 }
 
 export const createEvaluationContext = ({

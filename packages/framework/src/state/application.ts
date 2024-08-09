@@ -12,6 +12,7 @@ export interface ApplicationContextDefinition {
   env: { [key: string]: unknown };
   auth: unknown;
   user: EnsembleUser | null;
+  useMockResponse: boolean;
 }
 
 export interface ApplicationContextActions {
@@ -25,6 +26,7 @@ export const defaultApplicationContext = {
   auth: null,
   user: null,
   secrets: {},
+  useMockResponse: false,
 };
 
 export const appAtom = atom<ApplicationContextDefinition>(

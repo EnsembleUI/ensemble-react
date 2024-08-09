@@ -16,6 +16,9 @@ import {
   CustomScopeProvider,
   CustomThemeContext,
   useLanguageScope,
+  isUsingMockResponse,
+  setUseMockResponse,
+  mockResponse,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -43,6 +46,7 @@ import {
   isString,
   merge,
   isObject,
+  has,
   get,
   set,
   mapKeys,
@@ -75,6 +79,7 @@ import {
   extractCondition,
   hasProperStructure,
 } from "../../widgets/Conditional";
+// FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { useNavigateModalScreen } from "./useNavigateModal";
 import { useNavigateScreen } from "./useNavigateScreen";
@@ -201,13 +206,20 @@ export const useExecuteCode: EnsembleActionHook<
                   apiName: string,
                   apiInputs?: { [key: string]: unknown },
                 ) =>
-                  invokeAPI(screenData, apiName, apiInputs, {
-                    ...customScope,
-                    ensemble: {
-                      env: appContext?.env,
-                      secrets: appContext?.secrets,
+                  invokeAPI(
+                    screenData,
+                    apiName,
+                    appContext?.application?.id,
+                    apiInputs,
+                    {
+                      ...customScope,
+                      ensemble: {
+                        env: appContext?.env,
+                        secrets: appContext?.secrets,
+                        storage: appContext?.storage,
+                      },
                     },
-                  }),
+                  ),
                 navigateBack: (): void =>
                   modalContext ? modalContext.navigateBack() : navigate(-1),
                 navigateExternalScreen: (url: NavigateExternalScreen) =>
@@ -224,6 +236,13 @@ export const useExecuteCode: EnsembleActionHook<
                   handleDisconnectSocket(screenData, name),
                 setLocale: ({ languageCode }: SetLocaleProps) =>
                   i18n.changeLanguage(languageCode),
+              },
+              app: {
+                useMockResponse: isUsingMockResponse(
+                  appContext?.application?.id,
+                ),
+                setUseMockResponse: (value: boolean) =>
+                  setUseMockResponse(appContext?.application?.id, value),
               },
             },
             { app: merge(screen.app, { theme: themescope.themeName }) },
@@ -249,6 +268,8 @@ export const useExecuteCode: EnsembleActionHook<
     appContext?.application?.customWidgets,
     appContext?.env,
     appContext?.secrets,
+    appContext?.application?.id,
+    appContext?.storage,
     themescope,
     storage,
     user,
@@ -268,11 +289,12 @@ export const useExecuteCode: EnsembleActionHook<
 };
 
 export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
-  const { apis, setData } = useScreenData();
+  const { apis, setData, mockResponses } = useScreenData();
   const appContext = useApplicationContext();
   const [isComplete, setIsComplete] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>();
   const [context, setContext] = useState<{ [key: string]: unknown }>();
+
   const evaluatedInputs = useEvaluate(action?.inputs, { context });
   const evaluatedName = useEvaluate({ name: action?.name }, { context });
 
@@ -320,16 +342,29 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     }
 
     const fireRequest = async (): Promise<void> => {
+      const useMockResponse =
+        has(api, "mockResponse") &&
+        isUsingMockResponse(appContext?.application?.id);
       setIsLoading(true);
       try {
-        const res = await DataFetcher.fetch(api, {
-          ...evaluatedInputs,
-          ...context,
-          ensemble: {
-            env: appContext?.env,
-            secrets: appContext?.secrets,
+        const res = await DataFetcher.fetch(
+          api,
+          {
+            ...evaluatedInputs,
+            ...context,
+            ensemble: {
+              env: appContext?.env,
+              secrets: appContext?.secrets,
+            },
           },
-        });
+          {
+            mockResponse: mockResponse(
+              mockResponses[api.name],
+              useMockResponse,
+            ),
+            useMockResponse,
+          },
+        );
         setData(api.name, res);
 
         if (action?.id) {
