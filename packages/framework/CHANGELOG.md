@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.58
+
+### Patch Changes
+
+- cdaa85f: Added mockResponse support to APIs. This allows you to return a mockResponse from the api with a statusCode, reasonPhrase, body, and headers. It can be accessed and mutated using "app.useMockResponse" in a block of JS code.
+
 ## 0.1.57
 
 ### Patch Changes
