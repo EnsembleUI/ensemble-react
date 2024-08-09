@@ -41,6 +41,10 @@ export const DataFetcher = {
   fetch: async (
     api: EnsembleAPIModel,
     context?: { [key: string]: unknown },
+    options?: {
+      mockResponse: EnsembleResponse,
+      useMockResponse: boolean
+    }
   ): Promise<Response> => {
     const resolvedInputs = resolve(
       {
@@ -50,6 +54,10 @@ export const DataFetcher = {
       },
       context,
     );
+    // If useMockResponse is enabled, return the computed mockResponse
+    if (options?.useMockResponse) {
+      return options.mockResponse;
+    }
     const axRes = await axios({
       url: resolvedInputs?.path,
       method: api.method,

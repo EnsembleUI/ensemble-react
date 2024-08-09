@@ -3,8 +3,9 @@ import {
   isUsingMockResponse,
   type Response,
   type useScreenData,
+  mockResponse,
 } from "@ensembleui/react-framework";
-import { mock } from "./mock";
+import { has } from "lodash-es";
 
 export const invokeAPI = async (
   screenData: ReturnType<typeof useScreenData>,
@@ -26,15 +27,11 @@ export const invokeAPI = async (
     isSuccess: false,
   });
 
-  // Check to see if mockResponse is enabled and if a mockResponse exists in the API context
-  if (api.mockResponse && isUsingMockResponse(appId)) {
-    const res = mock({ response: screenData.mockResponses[api.name] });
-    screenData.setData(api.name, res);
-    return res;
-  }
-
   // If mock resposne does not exist, fetch the data directly from the API
-  const res = await DataFetcher.fetch(api, { ...apiInputs, ...context });
+  const res = await DataFetcher.fetch(api, { ...apiInputs, ...context }, {
+    mockResponse: mockResponse(screenData.mockResponses[api.name]),
+    useMockResponse: (has(api, 'mockResponse') && isUsingMockResponse(appId))
+  });
 
   screenData.setData(api.name, res);
   return res;

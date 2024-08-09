@@ -9,3 +9,4 @@ export * from "./data";
 export * from "./date";
 export * from "./state";
 export * from "./evaluate";
+export * from "./appConfig";

@@ -7,12 +7,14 @@ import type { WidgetState } from "./widget";
 export interface ScreenContextDefinition {
   app?: EnsembleAppModel;
   model?: EnsembleScreenModel;
-  data: {
-    [key: string]: Response | WebSocketConnection;
-  };
+  data: ScreenContextData;
   widgets: { [key: string]: WidgetState };
   inputs?: { [key: string]: unknown };
   [key: string]: unknown;
+}
+
+export interface ScreenContextData {
+  [key: string]: Response | WebSocketConnection;
 }
 
 export interface ScreenContextActions {

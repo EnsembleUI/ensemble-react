@@ -1,11 +1,11 @@
 const appConfigTable: { [key: string]: AppConfig } = {};
 
-interface AppConfig {
+export interface AppConfig {
   useMockResponse: boolean;
 }
 
 export const isUsingMockResponse = (appId: string | undefined): boolean => {
-  if (typeof appId === "undefined" || !(appId in appConfigTable)) return false;
+  if (!appId || !(appId in appConfigTable)) return false;
   return appConfigTable[appId].useMockResponse;
 };
 

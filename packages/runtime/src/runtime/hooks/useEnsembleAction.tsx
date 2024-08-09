@@ -18,6 +18,7 @@ import {
   useLanguageScope,
   isUsingMockResponse,
   setUseMockResponse,
+  mockResponse
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -45,6 +46,7 @@ import {
   isString,
   merge,
   isObject,
+  has,
   get,
   set,
   mapKeys,
@@ -77,7 +79,6 @@ import {
   extractCondition,
   hasProperStructure,
 } from "../../widgets/Conditional";
-import { mock } from "../mock";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { useNavigateModalScreen } from "./useNavigateModal";
@@ -341,37 +342,6 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
 
     const fireRequest = async (): Promise<void> => {
       setIsLoading(true);
-      // First check if useMockResponse is enabled and if a mockResponse exists
-      if (
-        api.mockResponse &&
-        isUsingMockResponse(appContext?.application?.id)
-      ) {
-        // Fetch the mock response and set the api data
-        const mockResponse = mock({ response: mockResponses[api.name] });
-        setData(api.name, mockResponse);
-
-        // Next, run the appropriate actions
-        if (action?.id) {
-          setData(action.id, mockResponse);
-        }
-
-        if (mockResponse.isSuccess) {
-          onAPIResponseAction?.callback({ ...context, response: mockResponse });
-          onInvokeAPIResponseAction?.callback({
-            ...context,
-            response: mockResponse,
-          });
-        } else {
-          onAPIErrorAction?.callback({ ...context, error: mockResponse });
-          onInvokeAPIErrorAction?.callback({ ...context, error: mockResponse });
-        }
-
-        setIsComplete(true);
-        setIsLoading(false);
-        return;
-      }
-
-      // Otherwise, fetch the API data
       try {
         const res = await DataFetcher.fetch(api, {
           ...evaluatedInputs,
@@ -380,6 +350,9 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
             env: appContext?.env,
             secrets: appContext?.secrets,
           },
+        }, {
+          mockResponse: mockResponse(mockResponses[api.name]),
+          useMockResponse: (has(api, 'mockResponse') && isUsingMockResponse(appContext?.application?.id))
         });
         setData(api.name, res);
 
