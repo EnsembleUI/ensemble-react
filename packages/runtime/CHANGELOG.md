@@ -1,5 +1,14 @@
 # @ensembleui/react-runtime
 
+## 0.1.80
+
+### Patch Changes
+
+- cdaa85f: Added mockResponse support to APIs. This allows you to return a mockResponse from the api with a statusCode, reasonPhrase, body, and headers. It can be accessed and mutated using "app.useMockResponse" in a block of JS code.
+- e0cbd8e: Add maxLength and maxLengthEnforcement on text input
+- Updated dependencies [cdaa85f]
+  - @ensembleui/react-framework@0.1.58
+
 ## 0.1.79
 
 ### Patch Changes

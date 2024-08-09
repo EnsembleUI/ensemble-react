@@ -1,6 +1,6 @@
 {
   "name": "@ensembleui/react-preview",
-  "version": "0.0.71",
+  "version": "0.0.72",
   "private": true,
   "dependencies": {
     "@ensembleui/react-framework": "workspace:*",
