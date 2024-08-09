@@ -3,6 +3,7 @@ import type { EnsembleMockResponse } from "../shared";
 
 export const mockResponse = (
   evaluatedMockResponse: string | EnsembleMockResponse | undefined,
+  isUsingMockResponse: boolean,
 ): {
   isLoading: boolean;
   isSuccess: boolean;
@@ -12,6 +13,14 @@ export const mockResponse = (
   headers?: { [key: string]: string };
   reasonPhrase?: string;
 } => {
+  if (!isUsingMockResponse)
+    return {
+      isLoading: false,
+      isSuccess: false,
+      isError: true,
+      statusCode: 500,
+      body: "Not using mock response",
+    };
   if (isEmpty(evaluatedMockResponse) || !isObject(evaluatedMockResponse))
     throw new Error(
       "Improperly formatted mock response: Malformed mockResponse object",

@@ -28,12 +28,17 @@ export const invokeAPI = async (
   });
 
   // If mock resposne does not exist, fetch the data directly from the API
+  const useMockResponse =
+    has(api, "mockResponse") && isUsingMockResponse(appId);
   const res = await DataFetcher.fetch(
     api,
     { ...apiInputs, ...context },
     {
-      mockResponse: mockResponse(screenData.mockResponses[api.name]),
-      useMockResponse: has(api, "mockResponse") && isUsingMockResponse(appId),
+      mockResponse: mockResponse(
+        screenData.mockResponses[api.name],
+        useMockResponse,
+      ),
+      useMockResponse,
     },
   );
 

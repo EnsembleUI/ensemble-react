@@ -341,6 +341,9 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     }
 
     const fireRequest = async (): Promise<void> => {
+      const useMockResponse =
+        has(api, "mockResponse") &&
+        isUsingMockResponse(appContext?.application?.id);
       setIsLoading(true);
       try {
         const res = await DataFetcher.fetch(
@@ -354,10 +357,11 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
             },
           },
           {
-            mockResponse: mockResponse(mockResponses[api.name]),
-            useMockResponse:
-              has(api, "mockResponse") &&
-              isUsingMockResponse(appContext?.application?.id),
+            mockResponse: mockResponse(
+              mockResponses[api.name],
+              useMockResponse,
+            ),
+            useMockResponse,
           },
         );
         setData(api.name, res);
