@@ -76,6 +76,21 @@ View:
                         showToast:
                           message: Form submitted!
                   children:
+                    - ToggleButton:
+                        id: tb
+                        items:
+                          - Foo
+                          - Bar
+                        value: ${ensemble.storage.get('tbValue')}
+                    - Button:
+                        label: change tb value
+                        onTap:
+                          executeCode: |
+                            if (tb.value === 'Foo') {
+                              ensemble.storage.set('tbValue', 'Bar')
+                            } else {
+                              ensemble.storage.set('tbValue', 'Foo')
+                            }
                     - Radio:
                         id: radio
                         label: Radio Group
