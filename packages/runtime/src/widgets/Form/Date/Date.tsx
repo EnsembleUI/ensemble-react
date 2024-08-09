@@ -97,12 +97,11 @@ export const Date: React.FC<DateProps> = (props) => {
           (Boolean(values?.lastDate) && d.isAfter(values?.lastDate)) ||
           (Boolean(values?.firstDate) && d.isBefore(values?.firstDate))
         }
-        format={values?.format}
         onChange={onDateChange}
         placeholder={values?.hintText}
         ref={rootRef}
         style={{ width: "100%", ...values?.styles }}
-        value={value}
+        value={String(dayjs(values?.value))}
         {...(values?.showCalendarIcon === false
           ? { suffixIcon: false }
           : undefined)}

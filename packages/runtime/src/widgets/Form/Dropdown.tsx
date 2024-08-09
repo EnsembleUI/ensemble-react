@@ -54,6 +54,7 @@ export type DropdownProps = {
   onChange?: EnsembleAction;
   autoComplete: Expression<boolean>;
   hintStyle?: EnsembleWidgetStyles;
+  manualClose?: boolean;
 } & EnsembleWidgetProps<DropdownStyles> &
   HasItemTemplate & {
     "item-template"?: { value: Expression<string> };
@@ -63,28 +64,42 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   const [selectedValue, setSelectedValue] = useState<
     string | number | undefined
   >();
+
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const {
     "item-template": itemTemplate,
-    onItemSelect,
     onChange,
+    onItemSelect,
     ...rest
   } = props;
+
+  const handleDropdownClose = (): void => {
+    setIsOpen(false);
+  };
+
   const { id, rootRef, values } = useRegisterBindings(
     { ...rest, initialValue: props.value, selectedValue, widgetName },
     props.id,
     {
       setSelectedValue,
+      close: handleDropdownClose,
     },
   );
 
-  const onItemSelectAction = useEnsembleAction(onItemSelect);
-  const onChangeAction = useEnsembleAction(onChange);
+  const action = useEnsembleAction(onChange);
+  const handleChange = useCallback(
+    (value?: number | string) => {
+      setSelectedValue(value);
+      action?.callback({ value });
+    },
+    [action],
+  );
 
-  const onSelectCallback = useCallback(
+  const onItemSelectAction = useEnsembleAction(onItemSelect);
+  const onItemSelectCallback = useCallback(
     (value?: number | string) => {
       setSelectedValue(value);
       onItemSelectAction?.callback({ selectedValue: value });
-      onChangeAction?.callback({ value });
     },
     [onItemSelectAction],
   );
@@ -106,13 +121,13 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               label={isString(item.label) ? item.label : ""}
             >
               {item.items?.map((subItem) => (
-                <Select.Option
-                  key={subItem.value}
-                  onClick={() => onSelectCallback(subItem.value)}
-                >
-                  {isString(subItem.label)
-                    ? subItem.label
-                    : EnsembleRuntime.render([unwrapWidget(subItem.label)])}
+                <Select.Option key={subItem.value}>
+                  {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+                  <div onClick={(e) => e.stopPropagation()}>
+                    {isString(subItem.label)
+                      ? subItem.label
+                      : EnsembleRuntime.render([unwrapWidget(subItem.label)])}
+                  </div>
                 </Select.Option>
               ))}
             </Select.OptGroup>
@@ -124,9 +139,12 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             key={item.value}
             value={item.value}
           >
-            {isString(item.label)
-              ? item.label
-              : EnsembleRuntime.render([unwrapWidget(item.label)])}
+            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+            <div onClick={(e) => e.stopPropagation()}>
+              {isString(item.label)
+                ? item.label
+                : EnsembleRuntime.render([unwrapWidget(item.label)])}
+            </div>
           </Select.Option>
         );
       });
@@ -150,7 +168,10 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             value={value}
           >
             <CustomScopeProvider value={item as CustomScope}>
-              {EnsembleRuntime.render([itemTemplate.template])}
+              {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+              <div onClick={(e) => e.stopPropagation()}>
+                {EnsembleRuntime.render([itemTemplate.template])}
+              </div>
             </CustomScopeProvider>
           </Select.Option>
         );
@@ -251,7 +272,6 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               : ""
           }
         `}</style>
-
       <div ref={rootRef} style={{ flex: 1, ...formItemStyles }}>
         <EnsembleFormItem values={values}>
           <Select
@@ -260,7 +280,12 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             disabled={values?.enabled === false}
             dropdownStyle={values?.styles}
             id={values?.id}
-            onSelect={onSelectCallback}
+            onChange={handleChange}
+            onDropdownVisibleChange={(state): void =>
+              setIsOpen(values?.manualClose ? true : state)
+            }
+            onSelect={onItemSelectCallback}
+            open={isOpen}
             placeholder={
               values?.hintText ? (
                 <span style={{ ...values.hintStyle }}>{values.hintText}</span>

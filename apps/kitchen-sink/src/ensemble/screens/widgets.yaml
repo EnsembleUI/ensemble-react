@@ -25,6 +25,9 @@ View:
         inputs:
           message: "Inputs to header widget"
 
+  styles:
+    scrollableView: true
+
   body:
     Column:
       crossAxis: stretch
@@ -694,11 +697,29 @@ View:
                     backgroundColor: "yellow"
                     selectedBackgroundColor: "gray"
                     selectedTextColor: "purple"
+                  manualClose: true
                   items:
                     - label: Option 1
                       value: 1
                     - label: Option 2
                       value: 2
+                  item-template:
+                    data: [{ name: "Close" }]
+                    name: product
+                    template:
+                      Form:
+                        children:
+                          - Date:
+                              label: Date
+                              id: testDate
+                              onChange:
+                                executeCode: |
+                                  console.log(testDate)
+                          - Button:
+                              label: Close
+                              onTap:
+                                executeCode: |
+                                  myDropdown.close()
               - Dropdown:
                   label: Searchable
                   hintText: Search
