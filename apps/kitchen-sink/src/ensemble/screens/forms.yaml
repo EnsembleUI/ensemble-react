@@ -349,8 +349,6 @@ View:
                   onTap:
                     invokeAPI:
                       name: testMockResponse
-                      inputs:
-                        test: "hello world!"
                       onResponse:
                         executeCode:
                           console.log("Mock API called ", response);
@@ -360,7 +358,7 @@ View:
                   label: Call API from executeCode!
                   onTap:
                     executeCode: |
-                      ensemble.invokeAPI("testMockResponse", { test: "kms" });
+                      ensemble.invokeAPI("testMockResponse");
               - Spacer:
                   styles:
                     size: 20
@@ -419,7 +417,7 @@ API:
     uri: https://dummyjson.com/users/1
     mockResponse:
       statusCode: "${ensemble.storage.get('mockApiStatusCode')}"
-      reasonPhrase: "${ensemble.storage.get('mockApiReasonPhrase')} ${test}"
+      reasonPhrase: "${ensemble.storage.get('mockApiReasonPhrase')}"
       body: 
         - id: 0
           name: Harry Potter
