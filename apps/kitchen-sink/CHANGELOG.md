@@ -1,5 +1,34 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.73
+
+### Patch Changes
+
+- 298a6df: center align button's icon when no label is given
+- f8c9226: Add html attribute pass through to form widgets
+- Updated dependencies [2fc2ac5]
+- Updated dependencies [2d5b743]
+- Updated dependencies [298a6df]
+- Updated dependencies [f8c9226]
+- Updated dependencies [483a150]
+  - @ensembleui/react-framework@0.1.57
+  - @ensembleui/react-runtime@0.1.79
+
+## 0.0.72
+
+### Patch Changes
+
+- Updated dependencies [ddb575f]
+  - @ensembleui/react-runtime@0.1.78
+
+## 0.0.71
+
+### Patch Changes
+
+- 56036a1: fix TextInput's regex validator not validating on no input
+- Updated dependencies [56036a1]
+  - @ensembleui/react-runtime@0.1.77
+
 ## 0.0.70
 
 ### Patch Changes

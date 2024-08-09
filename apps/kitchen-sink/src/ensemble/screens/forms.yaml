@@ -135,8 +135,8 @@ View:
                     - TextInput:
                         id: regexTextInput
                         validator:
-                          regex: "[0-5]"
-                          regexError: "Only numbers 0 to 5 are allowed"
+                          regex: .{1,}
+                          regexError: "write something atleast"
                         label: Text input with regex
                     - MultiSelect:
                         id: multiselectoptions1
@@ -163,6 +163,8 @@ View:
                           - label: Option 2
                             value: option2
                     - Date:
+                        htmlAttributes:
+                          data-testid: date0-test
                         id: date0
                         label: Date 0
                         hintText: Choose date 0
@@ -252,6 +254,8 @@ View:
                     - Row:
                         children:
                           - Checkbox:
+                              htmlAttributes:
+                                data-testid: checkbox-test
                               id: initial_checkbox
                               value: true
                               trailingText: Check me
@@ -273,11 +277,15 @@ View:
                             value: option2
                     # If you omit id, the form value key will be the label
                     - TextInput:
+                        htmlAttributes:
+                          data-testid: testinput-test
                         id: initial_formTextInput
                         value: ${ensemble.storage.get('inputVal')}
+                        maxLength: 10
+                        maxLengthEnforcement: enforced
                         label:
                           Text:
-                            text: Text input
+                            text: Text input with max length enforcement
                     - MultiSelect:
                         id: initial_multiselectoptions1
                         label: Choose multiple from API or storage

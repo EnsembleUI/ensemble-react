@@ -29,7 +29,7 @@ export const Date: React.FC<DateProps> = (props) => {
   const [value, setValue] = useState<string>();
   const action = useEnsembleAction(props.onChange);
 
-  const { id, values } = useRegisterBindings(
+  const { id, values, rootRef } = useRegisterBindings(
     {
       ...props,
       initialValue: props.initialValue ?? props.value,
@@ -100,6 +100,7 @@ export const Date: React.FC<DateProps> = (props) => {
         format={values?.format}
         onChange={onDateChange}
         placeholder={values?.hintText}
+        ref={rootRef}
         style={{ width: "100%", ...values?.styles }}
         value={value}
         {...(values?.showCalendarIcon === false

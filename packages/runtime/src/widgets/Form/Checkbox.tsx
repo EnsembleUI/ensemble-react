@@ -24,7 +24,7 @@ export type CheckBoxProps = {
 
 export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
   const [checked, setChecked] = useState<boolean>();
-  const { values } = useRegisterBindings(
+  const { rootRef, values } = useRegisterBindings(
     { ...props, initialValue: props.value, value: checked, widgetName },
     props.id,
     {
@@ -71,6 +71,7 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
         checked={Boolean(values?.value)}
         disabled={values?.enabled === false}
         onChange={(event): void => handleChange(event.target.checked)}
+        ref={rootRef}
         style={{
           marginLeft: `${props.leadingText ? "4px" : "0px"}`,
           ...values?.styles,

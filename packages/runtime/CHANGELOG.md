@@ -1,5 +1,29 @@
 # @ensembleui/react-runtime
 
+## 0.1.79
+
+### Patch Changes
+
+- 298a6df: center align button's icon when no label is given
+- f8c9226: Add html attribute pass through to form widgets
+- 483a150: Fix cases where multiple modal screens are created
+- Updated dependencies [2fc2ac5]
+- Updated dependencies [2d5b743]
+- Updated dependencies [f8c9226]
+  - @ensembleui/react-framework@0.1.57
+
+## 0.1.78
+
+### Patch Changes
+
+- ddb575f: fix form submission when regex is used in TextInput (bug introduced in runtime 0.1.77)
+
+## 0.1.77
+
+### Patch Changes
+
+- 56036a1: fix TextInput's regex validator not validating on no input
+
 ## 0.1.76
 
 ### Patch Changes

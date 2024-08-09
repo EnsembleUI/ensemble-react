@@ -25,9 +25,10 @@ import {
   useApplicationContext,
   createEvaluationContext,
   useCustomScope,
+  useThemeScope,
 } from "@ensembleui/react-framework";
 import { Alert } from "antd";
-import { isEqualWith } from "lodash-es";
+import { isEqualWith, merge } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { BarChart } from "./BarChart";
@@ -87,6 +88,7 @@ const CONFIG_EVAL_EXPIRY = 5000;
 export const Chart: React.FC<ChartProps> = (props) => {
   const screenContext = useScreenContext();
   const applicationContext = useApplicationContext();
+  const { theme } = useThemeScope();
   const parentScope = useCustomScope();
   const storage = useEnsembleStorage();
   const { resolvedWidgetId, resolvedTestId } = useWidgetId(props.id);
@@ -109,7 +111,9 @@ export const Chart: React.FC<ChartProps> = (props) => {
         // eslint-disable-next-line prefer-named-capture-group
         props.config?.toString()?.replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
         createEvaluationContext({
-          applicationContext: applicationContext ?? {},
+          applicationContext: merge({}, applicationContext, {
+            selectedTheme: theme,
+          }),
           screenContext: screenContext ?? {},
           ensemble: {
             storage,
