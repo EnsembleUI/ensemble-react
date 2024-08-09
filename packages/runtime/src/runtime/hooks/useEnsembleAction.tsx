@@ -18,7 +18,7 @@ import {
   useLanguageScope,
   isUsingMockResponse,
   setUseMockResponse,
-  mockResponse
+  mockResponse,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -343,17 +343,23 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     const fireRequest = async (): Promise<void> => {
       setIsLoading(true);
       try {
-        const res = await DataFetcher.fetch(api, {
-          ...evaluatedInputs,
-          ...context,
-          ensemble: {
-            env: appContext?.env,
-            secrets: appContext?.secrets,
+        const res = await DataFetcher.fetch(
+          api,
+          {
+            ...evaluatedInputs,
+            ...context,
+            ensemble: {
+              env: appContext?.env,
+              secrets: appContext?.secrets,
+            },
           },
-        }, {
-          mockResponse: mockResponse(mockResponses[api.name]),
-          useMockResponse: (has(api, 'mockResponse') && isUsingMockResponse(appContext?.application?.id))
-        });
+          {
+            mockResponse: mockResponse(mockResponses[api.name]),
+            useMockResponse:
+              has(api, "mockResponse") &&
+              isUsingMockResponse(appContext?.application?.id),
+          },
+        );
         setData(api.name, res);
 
         if (action?.id) {

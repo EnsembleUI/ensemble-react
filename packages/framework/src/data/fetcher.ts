@@ -42,9 +42,9 @@ export const DataFetcher = {
     api: EnsembleAPIModel,
     context?: { [key: string]: unknown },
     options?: {
-      mockResponse: EnsembleResponse,
-      useMockResponse: boolean
-    }
+      mockResponse: EnsembleResponse;
+      useMockResponse: boolean;
+    },
   ): Promise<Response> => {
     const resolvedInputs = resolve(
       {

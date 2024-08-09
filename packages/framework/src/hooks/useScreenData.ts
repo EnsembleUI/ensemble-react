@@ -8,16 +8,18 @@ import type {
   EnsembleMockResponse,
   EnsembleSocketModel,
 } from "../shared";
-import type { ScreenContextData, ScreenContextActions } from "../state";
+import type { ScreenContextData } from "../state";
 import { screenApiAtom, screenSocketAtom, screenDataAtom } from "../state";
 import { useEvaluate } from "./useEvaluate";
 
 export const useScreenData = (): {
-  apis?: EnsembleAPIModel[],
-  sockets?: EnsembleSocketModel[],
-  data: ScreenContextData,
-  setData: (name: string, response: Response | WebSocketConnection) => void,
-  mockResponses: { [apiName: string]: EnsembleMockResponse | string | undefined };
+  apis?: EnsembleAPIModel[];
+  sockets?: EnsembleSocketModel[];
+  data: ScreenContextData;
+  setData: (name: string, response: Response | WebSocketConnection) => void;
+  mockResponses: {
+    [apiName: string]: EnsembleMockResponse | string | undefined;
+  };
 } => {
   const apis = useAtomValue(screenApiAtom);
   const sockets = useAtomValue(screenSocketAtom);
@@ -33,8 +35,7 @@ export const useScreenData = (): {
         return acc;
       },
       {},
-    )
-    ,
+    ),
   );
 
   const setData = useCallback(
