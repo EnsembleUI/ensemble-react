@@ -18,7 +18,7 @@ const widgetName = "Form";
 
 export type FormProps = {
   children: EnsembleWidget[];
-  enabled: boolean;
+  enabled?: boolean;
   onSubmit?: EnsembleAction;
   styles?: {
     labelPosition: "top" | "start" | "none";
