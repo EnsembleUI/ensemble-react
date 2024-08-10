@@ -4,7 +4,7 @@ import "@testing-library/jest-dom";
 import { ScreenContextProvider } from "@ensembleui/react-framework";
 import type { PropsWithChildren } from "react";
 import { BrowserRouter } from "react-router-dom";
-import { Button, Form } from "../../index";
+import { Button, Form, Text } from "../../index";
 
 const FormTestWrapper: React.FC<PropsWithChildren> = ({ children }) => {
   return (
@@ -139,7 +139,27 @@ describe("Form", () => {
       expect(screen.getByDisplayValue("foobar")).toBeInTheDocument();
     });
   });
-  test.todo("update values");
+  test("update values", async () => {
+    render(
+      <>
+        <Form children={defaultFormContent} id="form" />
+        <Button
+          label="Update"
+          onTap={{ executeCode: 'form.updateValues({"Enter Text": "foo"})' }}
+        />
+      </>,
+      {
+        wrapper: FormTestWrapper,
+      },
+    );
+
+    const resetButton = screen.getByText("Update");
+    fireEvent.click(resetButton);
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue("foo")).toBeInTheDocument();
+    });
+  });
   test("clear values", async () => {
     render(
       <>
@@ -168,8 +188,50 @@ describe("Form", () => {
       expect(screen.queryAllByDisplayValue("foobar").length).toBe(0);
     });
   });
-  test.todo("get current values");
-  test.todo("validate current values");
-  test.todo("check if values are valid");
+  test("get current values", async () => {
+    const logSpy = jest.spyOn(console, "log");
+    render(
+      <>
+        <Form children={defaultFormContent} id="form" />
+        <Button
+          label="Values"
+          onTap={{ executeCode: "console.log(form.getValues())" }}
+        />
+      </>,
+      {
+        wrapper: FormTestWrapper,
+      },
+    );
+    const textInput = screen.getByLabelText("Enter Text");
+    fireEvent.change(textInput, { target: { value: "hello world" } });
+    const valuesButton = screen.getByText("Values");
+    fireEvent.click(valuesButton);
+
+    await waitFor(() => {
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ "Enter Text": "hello world" }),
+      );
+    });
+  });
+  test("check if values are valid", async () => {
+    render(
+      <>
+        <Form children={defaultFormContent} id="form" />
+        <Button label="Validate" onTap={{ executeCode: "form.validate()" }} />
+        {/* eslint-disable-next-line no-template-curly-in-string */}
+        <Text text="${form.isValid}" />
+      </>,
+      {
+        wrapper: FormTestWrapper,
+      },
+    );
+
+    const validateBtn = screen.getByText("Validate");
+    fireEvent.click(validateBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText("true")).toBeInTheDocument();
+    });
+  });
 });
 /* eslint-enable react/no-children-prop */

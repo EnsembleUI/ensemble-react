@@ -4,7 +4,7 @@ import {
   type EnsembleWidget,
 } from "@ensembleui/react-framework";
 import { Form as AntForm } from "antd";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import type { FormLayout } from "antd/es/form/Form";
 import { WidgetRegistry } from "../../registry";
 import { EnsembleRuntime } from "../../runtime";
@@ -28,7 +28,7 @@ export type FormProps = {
 export const Form: React.FC<FormProps> = (props) => {
   const { children, ...rest } = props;
 
-  const [form] = AntForm.useForm();
+  const [form] = AntForm.useForm<unknown>();
   const getValues = form.getFieldsValue;
 
   const action = useEnsembleAction(props.onSubmit);
@@ -56,8 +56,23 @@ export const Form: React.FC<FormProps> = (props) => {
     });
   }, [form]);
 
+  const [isValid, setIsValid] = useState(false);
+  const validate = useCallback<typeof form.validateFields>(
+    async (...options) => {
+      try {
+        const result = await form.validateFields(options);
+        setIsValid(true);
+        return result;
+      } catch (e) {
+        setIsValid(false);
+        return e;
+      }
+    },
+    [form],
+  );
+
   const { values } = useRegisterBindings(
-    { ...rest },
+    { ...rest, isValid },
     rest.id,
     {
       getValues,
@@ -65,6 +80,7 @@ export const Form: React.FC<FormProps> = (props) => {
       clear: handleClearForm,
       submit: form.submit,
       updateValues: form.setFieldsValue,
+      validate,
     },
     { forceState: true },
   );
