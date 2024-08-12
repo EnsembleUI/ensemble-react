@@ -1,5 +1,17 @@
 # @ensembleui/react-starter
 
+## 0.4.20
+
+### Patch Changes
+
+- cdaa85f: Added mockResponse support to APIs. This allows you to return a mockResponse from the api with a statusCode, reasonPhrase, body, and headers. It can be accessed and mutated using "app.useMockResponse" in a block of JS code.
+- Updated dependencies [cdaa85f]
+- Updated dependencies [dfc5ad5]
+- Updated dependencies [9b50023]
+- Updated dependencies [e0cbd8e]
+  - @ensembleui/react-framework@0.1.58
+  - @ensembleui/react-runtime@0.1.80
+
 ## 0.4.19
 
 ### Patch Changes
