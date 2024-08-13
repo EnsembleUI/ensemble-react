@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.1.81
+
+### Patch Changes
+
+- e683933: Fallback to using action inputs if none are provided
+
 ## 0.1.80
 
 ### Patch Changes
