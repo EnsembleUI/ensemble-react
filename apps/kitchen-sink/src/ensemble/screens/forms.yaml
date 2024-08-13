@@ -44,6 +44,40 @@ View:
                 options:
                   height: 50px
                   width: 80px
+        - Button:
+            label: open drawer
+            onTap:
+              executeCode: |
+                testDrawer.openDrawer()
+        - Drawer:
+            id: testDrawer
+            title: This is a Drawer Menu
+            position: left
+            onClose:
+              executeCode: |
+                console.log("Drawer closed! This is the onClose function :)")
+            children:
+              - Text:
+                  text: "Put any widgets you would like in the children property"
+              - Button:
+                  label: Navigate Home
+                  onTap:
+                    executeCode: |
+                      testDrawer.closeDrawer();
+                      ensemble.navigateScreen("Home");
+              - Button:
+                  label: Navigate to Widgets
+                  onTap:
+                    executeCode: |
+                      testDrawer.closeDrawer();
+                      ensemble.navigateScreen("Widgets");
+              - Button:
+                  label: Navigate to Layouts
+                  onTap:
+                    executeCode: |
+                      testDrawer.closeDrawer();
+                      ensemble.navigateScreen("Layouts");
+              
         - Icon:
         - Text:
             styles:
