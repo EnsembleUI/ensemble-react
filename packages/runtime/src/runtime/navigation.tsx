@@ -77,7 +77,10 @@ export const navigateModalScreen = (
   }
 
   modalContext.openModal(
-    <EnsembleScreen inputs={inputs} screen={matchingScreen} />,
+    <EnsembleScreen
+      inputs={inputs ?? (hasOptions ? action.inputs : {})}
+      screen={matchingScreen}
+    />,
     modalOptions,
   );
 };
