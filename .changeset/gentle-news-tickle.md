@@ -3,4 +3,4 @@
 "@ensembleui/react-runtime": patch
 ---
 
-Added the Drawer component
+Added the Drawer widget
