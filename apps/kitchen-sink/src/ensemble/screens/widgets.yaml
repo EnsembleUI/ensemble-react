@@ -686,23 +686,15 @@ View:
                       value: 1
                     - label: Option 2
                       value: 2
-              - Dropdown:
+              - Dropdown2:
                   id: myDropdown
                   label: With Default Value
-                  value: 1
-                  styles:
-                    dropdownBackgroundColor: "aqua"
-                    dropdownBorderWidth: 1
-                    dropdownBorderColor: "lime"
-                    backgroundColor: "yellow"
-                    selectedBackgroundColor: "gray"
-                    selectedTextColor: "purple"
-                  manualClose: true
                   items:
                     - label: Option 1
                       value: 1
                     - label: Option 2
                       value: 2
+                  manualClose: true
                   item-template:
                     data: [{ name: "Close" }]
                     name: product
@@ -715,6 +707,15 @@ View:
                               onChange:
                                 executeCode: |
                                   console.log(testDate)
+                          - TextInput:
+                              id: formTextInput
+                              value: ${ensemble.storage.get('inputVal')}
+                              hintText: (123) 456-7890
+                              mask: "(###) ###-####"
+                              inputType: phone
+                              label:
+                                Text:
+                                  text: Text input
                           - Button:
                               label: Close
                               onTap:
@@ -756,7 +757,7 @@ View:
                       value: option1
                     - label: Option 2
                       value: option2
-                  onChange: 
+                  onChange:
                     executeCode: |
                       console.log('selected value', value)
               - Dropdown:

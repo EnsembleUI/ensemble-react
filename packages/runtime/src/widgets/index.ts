@@ -37,3 +37,4 @@ export * from "./Switch";
 export * from "./ImageCropper";
 export * from "./Spacer";
 export * from "./Stack";
+export * from "./Dropdown2";

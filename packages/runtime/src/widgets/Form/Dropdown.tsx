@@ -109,8 +109,26 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     name: itemTemplate?.name,
   });
 
+  const stopPropagationWrapper = (content: React.ReactNode) => {
+    return (
+      // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+      <div>{content}</div>
+    );
+  };
+
+  const eventPropagationWrapper = (item: SelectOption) => {
+    const labelContent = isString(item.label)
+      ? item.label
+      : EnsembleRuntime.render([unwrapWidget(item.label)]);
+
+    return values?.manualClose
+      ? stopPropagationWrapper(labelContent)
+      : labelContent;
+  };
+
   const options = useMemo(() => {
-    let dropdownOptions = null;
+    let dropdownOptions: React.ReactNode[] | null = null;
+
     if (values?.items) {
       const tempOptions = values.items.map((item) => {
         if (item.type === "group") {
@@ -122,12 +140,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             >
               {item.items?.map((subItem) => (
                 <Select.Option key={subItem.value}>
-                  {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-                  <div onClick={(e) => e.stopPropagation()}>
-                    {isString(subItem.label)
-                      ? subItem.label
-                      : EnsembleRuntime.render([unwrapWidget(subItem.label)])}
-                  </div>
+                  {eventPropagationWrapper(subItem)}
                 </Select.Option>
               ))}
             </Select.OptGroup>
@@ -139,12 +152,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             key={item.value}
             value={item.value}
           >
-            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-            <div onClick={(e) => e.stopPropagation()}>
-              {isString(item.label)
-                ? item.label
-                : EnsembleRuntime.render([unwrapWidget(item.label)])}
-            </div>
+            {eventPropagationWrapper(item)}
           </Select.Option>
         );
       });
@@ -168,10 +176,9 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             value={value}
           >
             <CustomScopeProvider value={item as CustomScope}>
-              {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-              <div onClick={(e) => e.stopPropagation()}>
-                {EnsembleRuntime.render([itemTemplate.template])}
-              </div>
+              {stopPropagationWrapper(
+                EnsembleRuntime.render([itemTemplate.template]),
+              )}
             </CustomScopeProvider>
           </Select.Option>
         );
