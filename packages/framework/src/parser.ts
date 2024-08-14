@@ -105,9 +105,9 @@ export const EnsembleParser = {
       remove(screens, (screen) => screen === menu);
       menu.items.forEach(
         (item) =>
-        (item.screen = screens.find(
-          (screen) => "name" in screen && screen.name === item.page,
-        ) as EnsembleScreenModel),
+          (item.screen = screens.find(
+            (screen) => "name" in screen && screen.name === item.page,
+          ) as EnsembleScreenModel),
       );
     }
 
@@ -475,7 +475,9 @@ const unwrapMenu = (
 ): EnsembleViewMenuType | undefined => {
   if (!menu || !get(menu, "Drawer")) return;
   const drawerMenu = get(menu, "Drawer");
-  const unwrapedChildren = (get(drawerMenu, "children") || []).map((child) => unwrapWidget(child as { [key: string]: unknown }));
+  const unwrapedChildren = (get(drawerMenu, "children") || []).map((child) =>
+    unwrapWidget(child as { [key: string]: unknown }),
+  );
   return {
     Drawer: {
       id: get(drawerMenu, "id"),
@@ -485,6 +487,6 @@ const unwrapMenu = (
       onClose: get(drawerMenu, "onClose"),
       title: get(drawerMenu, "title"),
       children: unwrapedChildren,
-    }
-  }
+    },
+  };
 };

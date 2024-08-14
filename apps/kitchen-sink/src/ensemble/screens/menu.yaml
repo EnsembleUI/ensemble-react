@@ -110,3 +110,6 @@ ViewGroup:
               onTap:
                 executeCode: |
                   sidebar.setCollapsed(!sidebar.isCollapsed)
+          - Text:
+              text: This is some text in the footer :)
+              id: footerTextTest

@@ -66,7 +66,7 @@ export interface EnsembleViewMenuType {
     onClose?: EnsembleAction;
     title?: string;
     children?: EnsembleWidget[];
-  }
+  };
 }
 
 export interface EnsembleAPIModel {
