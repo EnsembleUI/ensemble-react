@@ -34,6 +34,7 @@ View:
                 name: widgets
                 height: 200px
                 width: 900px
+                draggable: true
         - Button:
             label: show dialog
             onTap:
