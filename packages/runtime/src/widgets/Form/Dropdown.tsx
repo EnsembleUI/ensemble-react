@@ -1,5 +1,5 @@
 import { Select, Form } from "antd";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   CustomScopeProvider,
   evaluate,
@@ -55,10 +55,33 @@ export type DropdownProps = {
   autoComplete: Expression<boolean>;
   hintStyle?: EnsembleWidgetStyles;
   manualClose?: boolean;
+  panel?: { [key: string]: unknown };
 } & EnsembleWidgetProps<DropdownStyles> &
   HasItemTemplate & {
     "item-template"?: { value: Expression<string> };
   } & FormInputProps<string | number>;
+
+const DropdownRenderer = (
+  menu: React.ReactElement,
+  panel?: { [key: string]: unknown },
+): React.ReactElement => {
+  return (
+    <>
+      {menu}
+      {panel ? (
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+        <div
+          onMouseDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          {EnsembleRuntime.render([unwrapWidget(panel)])}
+        </div>
+      ) : null}
+    </>
+  );
+};
 
 const Dropdown: React.FC<DropdownProps> = (props) => {
   const [selectedValue, setSelectedValue] = useState<
@@ -109,23 +132,6 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     name: itemTemplate?.name,
   });
 
-  const stopPropagationWrapper = (content: React.ReactNode) => {
-    return (
-      // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-      <div>{content}</div>
-    );
-  };
-
-  const eventPropagationWrapper = (item: SelectOption) => {
-    const labelContent = isString(item.label)
-      ? item.label
-      : EnsembleRuntime.render([unwrapWidget(item.label)]);
-
-    return values?.manualClose
-      ? stopPropagationWrapper(labelContent)
-      : labelContent;
-  };
-
   const options = useMemo(() => {
     let dropdownOptions: React.ReactNode[] | null = null;
 
@@ -140,7 +146,9 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             >
               {item.items?.map((subItem) => (
                 <Select.Option key={subItem.value}>
-                  {eventPropagationWrapper(subItem)}
+                  {isString(item.label)
+                    ? item.label
+                    : EnsembleRuntime.render([unwrapWidget(item.label)])}
                 </Select.Option>
               ))}
             </Select.OptGroup>
@@ -152,7 +160,9 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             key={item.value}
             value={item.value}
           >
-            {eventPropagationWrapper(item)}
+            {isString(item.label)
+              ? item.label
+              : EnsembleRuntime.render([unwrapWidget(item.label)])}
           </Select.Option>
         );
       });
@@ -176,9 +186,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             value={value}
           >
             <CustomScopeProvider value={item as CustomScope}>
-              {stopPropagationWrapper(
-                EnsembleRuntime.render([itemTemplate.template]),
-              )}
+              {EnsembleRuntime.render([itemTemplate.template])}
             </CustomScopeProvider>
           </Select.Option>
         );
@@ -206,7 +214,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     }
   }, [selectedValue, formInstance]);
 
-  if (isNull(options)) {
+  if (isNull(options) && isNull(values?.panel)) {
     return null;
   }
 
@@ -231,6 +239,9 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               ? `color: ${values.styles.selectedTextColor};`
               : ""
           }
+        }
+        #${id}_list.ant-select-item-empty {
+          ${!isEmpty(values?.panel) ? "display: none;" : ""}
         }
         .ant-col .ant-form-item-label > label[for=${id}] {
           ${
@@ -285,6 +296,9 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             className={`${values?.styles?.names || ""} ${id}_input`}
             defaultValue={values?.value}
             disabled={values?.enabled === false}
+            dropdownRender={(menu): React.ReactElement =>
+              DropdownRenderer(menu, values?.panel)
+            }
             dropdownStyle={values?.styles}
             id={values?.id}
             onChange={handleChange}

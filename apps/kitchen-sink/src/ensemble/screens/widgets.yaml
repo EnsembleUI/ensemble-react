@@ -686,41 +686,33 @@ View:
                       value: 1
                     - label: Option 2
                       value: 2
-              - Dropdown2:
+              - Dropdown:
                   id: myDropdown
                   label: With Default Value
-                  items:
-                    - label: Option 1
-                      value: 1
-                    - label: Option 2
-                      value: 2
-                  manualClose: true
-                  item-template:
-                    data: [{ name: "Close" }]
-                    name: product
-                    template:
-                      Form:
-                        children:
-                          - Date:
-                              label: Date
-                              id: testDate
-                              onChange:
-                                executeCode: |
-                                  console.log(testDate)
-                          - TextInput:
-                              id: formTextInput
-                              value: ${ensemble.storage.get('inputVal')}
-                              hintText: (123) 456-7890
-                              mask: "(###) ###-####"
-                              inputType: phone
-                              label:
-                                Text:
-                                  text: Text input
-                          - Button:
-                              label: Close
-                              onTap:
-                                executeCode: |
-                                  myDropdown.close()
+                  panel:
+                    Form:
+                      children:
+                        - Date:
+                            label: Start Date
+                            id: testDate
+                            onChange:
+                              executeCode: |
+                                console.log(testDate)
+
+                        - Date:
+                            label: End Date
+                            id: testDate1
+                            onChange:
+                              executeCode: |
+                                console.log(testDate1)
+
+                        - Button:
+                            label: Apply
+                            onTap:
+                              executeCode: |
+                                const x = testDate.value;
+                                const y = testDate1.value;
+                                myDropdown.close()
               - Dropdown:
                   label: Searchable
                   hintText: Search
