@@ -29,6 +29,8 @@ import type {
   EnsembleThemeModel,
   EnsembleSocketModel,
   EnsembleCustomEventModel,
+  JoshMenuType,
+  JoshDrawerType,
 } from "./shared/models";
 import type {
   ApplicationDTO,
@@ -104,9 +106,9 @@ export const EnsembleParser = {
       remove(screens, (screen) => screen === menu);
       menu.items.forEach(
         (item) =>
-          (item.screen = screens.find(
-            (screen) => "name" in screen && screen.name === item.page,
-          ) as EnsembleScreenModel),
+        (item.screen = screens.find(
+          (screen) => "name" in screen && screen.name === item.page,
+        ) as EnsembleScreenModel),
       );
     }
 
@@ -155,6 +157,7 @@ export const EnsembleParser = {
     let viewNode = get(view, "body");
     const header = get(view, "header");
     const footer = get(view, "footer");
+    const menu = get(view, "menu");
 
     if (!viewNode) {
       if (view) {
@@ -221,6 +224,7 @@ export const EnsembleParser = {
       global,
       header: unwrapHeader(header),
       footer: unwrapFooter(footer),
+      menu: unwrapMenu(menu),
       body: viewWidget,
       apis,
       styles: get(view, "styles"),
@@ -264,12 +268,16 @@ export const EnsembleParser = {
     const footerDef = get(menu, [menuType, "footer"]) as
       | { [key: string]: unknown }
       | undefined;
+    const drawerDef = get(menu, [menuType, "drawer"]) as
+      | { [key: string]: unknown }
+      | undefined;
     return {
       id: get(menu, [menuType, "id"]) as string | undefined,
       type: String(menuType),
       items: get(menu, [menuType, "items"]) as [],
       header: headerDef ? unwrapWidget(headerDef) : undefined,
       footer: footerDef ? unwrapWidget(footerDef) : undefined,
+      drawer: drawerDef ? unwrapWidget(drawerDef) : undefined,
       styles: get(menu, [menuType, "styles"]) as { [key: string]: unknown },
     };
   },
@@ -461,4 +469,23 @@ const unwrapLanguage = (language: LanguageDTO) => {
     ...language,
     resources: parse(language.content) as { [key: string]: unknown },
   };
+};
+
+const unwrapMenu = (
+  menu: { [key: string]: unknown } | undefined,
+): JoshMenuType | undefined => {
+  if (!menu || !get(menu, "Drawer")) return;
+  const drawerMenu = get(menu, "Drawer");
+  const unwrapedChildren = (get(drawerMenu, "children") || []).map((child) => unwrapWidget(child as { [key: string]: unknown }));
+  return {
+    Drawer: {
+      id: get(drawerMenu, "id"),
+      height: get(drawerMenu, "height"),
+      width: get(drawerMenu, "width"),
+      position: get(drawerMenu, "position"),
+      onClose: get(drawerMenu, "onClose"),
+      title: get(drawerMenu, "title"),
+      children: unwrapedChildren,
+    }
+  }
 };

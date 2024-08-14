@@ -16,6 +16,7 @@ export interface EnsembleScreenModel {
   onLoad?: EnsembleAction;
   header?: EnsembleHeaderModel;
   footer?: EnsembleFooterModel;
+  menu?: JoshMenuType;
   apis?: EnsembleAPIModel[];
   global?: string;
   styles?: { [key: string]: unknown };
@@ -24,6 +25,20 @@ export interface EnsembleScreenModel {
   sockets?: EnsembleSocketModel[];
   events?: EnsembleCustomEventModel[];
   readonly isRoot?: boolean;
+}
+
+export interface JoshMenuType {
+  Drawer: JoshDrawerType
+}
+
+export interface JoshDrawerType {
+  id?: string;
+  height?: string | number;
+  width?: string | number;
+  position?: string;
+  onClose?: EnsembleAction;
+  title?: string;
+  children?: EnsembleWidget[];
 }
 
 export type EnsembleEntryPoint = EnsembleScreenModel | EnsembleMenuModel;
@@ -52,6 +67,7 @@ export interface EnsembleMenuModel {
   }[];
   header?: EnsembleWidget;
   footer?: EnsembleWidget;
+  drawer?: EnsembleWidget;
   styles: { [key: string]: unknown };
 }
 

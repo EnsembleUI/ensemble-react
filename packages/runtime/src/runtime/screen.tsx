@@ -13,6 +13,7 @@ import { useEnsembleAction } from "./hooks/useEnsembleAction";
 import { EnsembleHeader } from "./header";
 import { EnsembleFooter } from "./footer";
 import { EnsembleBody } from "./body";
+import { EnsembleMenu } from "./ensembleMenu";
 import { ModalWrapper } from "./modal";
 import { createCustomWidget } from "./customWidget";
 
@@ -26,6 +27,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
   screen,
   inputs,
 }) => {
+  console.log("We are here in EnsembleScreen!", screen);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { state, search, pathname } = useLocation();
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
@@ -98,6 +100,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
           <EnsembleHeader header={screen.header} />
           <EnsembleBody body={screen.body} styles={screen.styles} />
         </OnLoadAction>
+        <EnsembleMenu {...screen?.menu?.Drawer} />
         <EnsembleFooter footer={screen.footer} />
       </ModalWrapper>
     </ScreenContextProvider>
