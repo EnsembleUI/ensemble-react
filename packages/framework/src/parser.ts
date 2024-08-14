@@ -29,8 +29,7 @@ import type {
   EnsembleThemeModel,
   EnsembleSocketModel,
   EnsembleCustomEventModel,
-  JoshMenuType,
-  JoshDrawerType,
+  EnsembleViewMenuType,
 } from "./shared/models";
 import type {
   ApplicationDTO,
@@ -473,7 +472,7 @@ const unwrapLanguage = (language: LanguageDTO) => {
 
 const unwrapMenu = (
   menu: { [key: string]: unknown } | undefined,
-): JoshMenuType | undefined => {
+): EnsembleViewMenuType | undefined => {
   if (!menu || !get(menu, "Drawer")) return;
   const drawerMenu = get(menu, "Drawer");
   const unwrapedChildren = (get(drawerMenu, "children") || []).map((child) => unwrapWidget(child as { [key: string]: unknown }));

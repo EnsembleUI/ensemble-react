@@ -24,7 +24,6 @@ import type {
   CardProps,
   FittedColumnProps,
   FittedRowProps,
-  DrawerProps,
 } from "../widgets";
 import type { Menu, View } from "./screenSchema";
 import type { FlexboxProps, IconProps } from "./types";
@@ -179,7 +178,6 @@ export type Widget =
   | {
       PopupMenu?: ReplaceChildrenTemplate<PopupMenuProps>;
     }
-  | { Drawer?: DrawerProps }
   | { TextInput?: TextInputProps }
   // | { PasswordInput?: PasswordInput }
   // | { ConfirmationInput?: ConfirmationInput }

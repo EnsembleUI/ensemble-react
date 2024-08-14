@@ -27,7 +27,6 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
   screen,
   inputs,
 }) => {
-  console.log("We are here in EnsembleScreen!", screen);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { state, search, pathname } = useLocation();
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
@@ -100,7 +99,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
           <EnsembleHeader header={screen.header} />
           <EnsembleBody body={screen.body} styles={screen.styles} />
         </OnLoadAction>
-        <EnsembleMenu {...screen?.menu?.Drawer} />
+        {screen?.menu ? <EnsembleMenu {...screen?.menu?.Drawer} /> : null}
         <EnsembleFooter footer={screen.footer} />
       </ModalWrapper>
     </ScreenContextProvider>
