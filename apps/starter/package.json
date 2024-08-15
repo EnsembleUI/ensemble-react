@@ -1,6 +1,6 @@
 {
   "name": "@ensembleui/react-starter",
-  "version": "0.4.21",
+  "version": "0.4.22",
   "private": true,
   "dependencies": {
     "@ensembleui/react-framework": "workspace:*",
