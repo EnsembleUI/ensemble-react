@@ -49,7 +49,9 @@ export interface SelectOption {
 
 export type DropdownProps = {
   items?: SelectOption[];
+  /* deprecated, use onChange */
   onItemSelect: EnsembleAction;
+  onChange?: EnsembleAction;
   autoComplete: Expression<boolean>;
   hintStyle?: EnsembleWidgetStyles;
 } & EnsembleWidgetProps<DropdownStyles> &
@@ -61,7 +63,12 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   const [selectedValue, setSelectedValue] = useState<
     string | number | undefined
   >();
-  const { "item-template": itemTemplate, ...rest } = props;
+  const {
+    "item-template": itemTemplate,
+    onItemSelect,
+    onChange,
+    ...rest
+  } = props;
   const { id, rootRef, values } = useRegisterBindings(
     { ...rest, initialValue: props.value, selectedValue, widgetName },
     props.id,
@@ -70,15 +77,16 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     },
   );
 
-  const action = useEnsembleAction(props.onItemSelect);
-  const onItemSelectCallback = useCallback(
+  const onItemSelectAction = useEnsembleAction(onItemSelect);
+  const onChangeAction = useEnsembleAction(onChange);
+
+  const onSelectCallback = useCallback(
     (value?: number | string) => {
       setSelectedValue(value);
-      if (action) {
-        action.callback({ selectedValue: value });
-      }
+      onItemSelectAction?.callback({ selectedValue: value });
+      onChangeAction?.callback({ value });
     },
-    [action],
+    [onItemSelectAction],
   );
 
   const { namedData } = useTemplateData({
@@ -100,7 +108,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               {item.items?.map((subItem) => (
                 <Select.Option
                   key={subItem.value}
-                  onClick={() => onItemSelectCallback(subItem.value)}
+                  onClick={() => onSelectCallback(subItem.value)}
                 >
                   {isString(subItem.label)
                     ? subItem.label
@@ -177,6 +185,10 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   return (
     <>
       <style>{`
+        .ant-select-single {
+          min-height: 32px !important;
+          height: unset !important;
+        }
         .${id}_input .ant-select-selector {
           ${getComponentStyles("dropdown", values?.styles) as string}
         }
@@ -239,6 +251,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               : ""
           }
         `}</style>
+
       <div ref={rootRef} style={{ flex: 1, ...formItemStyles }}>
         <EnsembleFormItem values={values}>
           <Select
@@ -247,7 +260,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             disabled={values?.enabled === false}
             dropdownStyle={values?.styles}
             id={values?.id}
-            onSelect={onItemSelectCallback}
+            onSelect={onSelectCallback}
             placeholder={
               values?.hintText ? (
                 <span style={{ ...values.hintStyle }}>{values.hintText}</span>

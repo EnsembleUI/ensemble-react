@@ -2,8 +2,9 @@ import {
   useRegisterBindings,
   type Expression,
 } from "@ensembleui/react-framework";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Typography } from "antd";
+import { toString } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type { BaseTextProps } from "../shared/types";
 import type { TextAlignment } from "../shared/styleSchema";
@@ -26,14 +27,21 @@ export type TextProps = {
 } & BaseTextProps;
 
 export const Text: React.FC<TextProps> = (props) => {
-  const [text, setText] = useState(props.text);
+  const [text, setText] = useState<string>();
   const { values, rootRef } = useRegisterBindings(
-    { ...props, text, widgetName },
+    { ...props, textBinding: props.text, text, widgetName },
     props.id,
     {
       setText,
     },
   );
+
+  // Update text if the binding changes
+  useEffect(() => {
+    if (props.text) {
+      setText(values?.textBinding);
+    }
+  }, [props.text, values?.textBinding]);
 
   return (
     <Typography.Text
@@ -46,7 +54,7 @@ export const Text: React.FC<TextProps> = (props) => {
         ...values?.styles,
       }}
     >
-      {values?.text}
+      {`${toString(values?.text)}`}
     </Typography.Text>
   );
 };

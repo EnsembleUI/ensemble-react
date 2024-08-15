@@ -1,5 +1,162 @@
 # @ensembleui/react-runtime
 
+## 0.1.81
+
+### Patch Changes
+
+- e683933: Fallback to using action inputs if none are provided
+
+## 0.1.80
+
+### Patch Changes
+
+- cdaa85f: Added mockResponse support to APIs. This allows you to return a mockResponse from the api with a statusCode, reasonPhrase, body, and headers. It can be accessed and mutated using "app.useMockResponse" in a block of JS code.
+- dfc5ad5: Update text binding if value chages
+- 9b50023: Add functions to help with form validations
+- e0cbd8e: Add maxLength and maxLengthEnforcement on text input
+- Updated dependencies [cdaa85f]
+  - @ensembleui/react-framework@0.1.58
+
+## 0.1.79
+
+### Patch Changes
+
+- 298a6df: center align button's icon when no label is given
+- f8c9226: Add html attribute pass through to form widgets
+- 483a150: Fix cases where multiple modal screens are created
+- Updated dependencies [2fc2ac5]
+- Updated dependencies [2d5b743]
+- Updated dependencies [f8c9226]
+  - @ensembleui/react-framework@0.1.57
+
+## 0.1.78
+
+### Patch Changes
+
+- ddb575f: fix form submission when regex is used in TextInput (bug introduced in runtime 0.1.77)
+
+## 0.1.77
+
+### Patch Changes
+
+- 56036a1: fix TextInput's regex validator not validating on no input
+
+## 0.1.76
+
+### Patch Changes
+
+- 78f35e7: Fix menu page matching
+- 7eae5b8: Add callback options to grid functions
+
+## 0.1.75
+
+### Patch Changes
+
+- 2e2fc51: fix: added support for default unit for margin and padding in icon
+
+## 0.1.74
+
+### Patch Changes
+
+- 04454f2: use unique key when applying styles to modal
+- Updated dependencies [04454f2]
+  - @ensembleui/react-framework@0.1.56
+
+## 0.1.73
+
+### Patch Changes
+
+- c6ede84: don't route when page/url is not given in menu
+- 083caf1: remove UTC conversion from date widget
+- 0529f2d: fix icon styles overload conflicts
+- Updated dependencies [b5464ce]
+  - @ensembleui/react-framework@0.1.55
+
+## 0.1.72
+
+### Patch Changes
+
+- 0468a2d: Fix date input bindings
+- b4bd127: add format property in Date widget
+
+## 0.1.71
+
+### Patch Changes
+
+- ce61a4f: add customItem in sidebar menu
+- d29ea6d: Remove container elements on menu header and footer
+- e451b7a: Revert device api implementation
+- 4083e6f: Added an onChange EnsembleAction for the TextInput Widget in Form
+- Updated dependencies [e451b7a]
+  - @ensembleui/react-framework@0.1.54
+
+## 0.1.70
+
+### Patch Changes
+
+- cf4fd60: fix designated screen load on own routes
+- 3a8d0ec: Support opening modals from the menu
+
+## 0.1.69
+
+### Patch Changes
+
+- 5f95aed: add visible property in DataColumns of Datagrid widget
+- 1e1687b: Added support for secrets variables
+- 2e7a080: unset selected item height in dropdown
+- Updated dependencies [1e1687b]
+- Updated dependencies [1b8539e]
+  - @ensembleui/react-framework@0.1.53
+
+## 0.1.68
+
+### Patch Changes
+
+- 22a3e5e: Added support for device object like flutter
+- 7d11468: added support for filler plugin in charts
+- 8e4996c: Added shape widget for flutter compatibility
+- 2d197b7: add updateValues in Form and onClear in Search widget
+- Updated dependencies [22a3e5e]
+  - @ensembleui/react-framework@0.1.52
+
+## 0.1.67
+
+### Patch Changes
+
+- 5613deb: Added visible property for sidebar menu items
+
+## 0.1.66
+
+### Patch Changes
+
+- eccc02a: Fix invokeAPI state call order
+- bf4a97c: Added 3 header styles to the Collapsible widget: textColor, borderColor, and borderWidth.Added 3 header styles: textColor, borderColor, and borderWidth.
+
+## 0.1.65
+
+### Patch Changes
+
+- c10a6a1: fix props evaluate in Flex
+- e0edb08: render boolean value in Text widget
+- Updated dependencies [57395ff]
+  - @ensembleui/react-framework@0.1.51
+
+## 0.1.64
+
+### Patch Changes
+
+- 036b966: added translations into studio
+- Updated dependencies [036b966]
+  - @ensembleui/react-framework@0.1.50
+
+## 0.1.63
+
+### Patch Changes
+
+- 70715ab: rebind form's methods on every render
+- Updated dependencies [70715ab]
+  - @ensembleui/react-framework@0.1.49
+
 ## 0.1.62
 
 ### Patch Changes

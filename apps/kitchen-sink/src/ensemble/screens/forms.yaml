@@ -1,8 +1,12 @@
 View:
+  styles:
+    scrollableView: true
   onLoad:
     executeCode:
       body: |
-        ensemble.storage.set('inputVal', 'sagar')
+        ensemble.storage.set('inputVal', 'sagar');
+        ensemble.storage.set('mockApiStatusCode', 200);
+        ensemble.storage.set('mockApiReasonPhrase', 'Success!');
         ensemble.storage.set('dummyData', [
           { value: "val 1", label: "lab 1" },
           { value: "val 2", label: "lab 2" },
@@ -13,7 +17,7 @@ View:
           name: getData
           onResponse:
             executeCode: |
-              console.log('getData', response.body)
+              console.log('getData', response.body);
   header:
     title:
       Header:
@@ -23,6 +27,23 @@ View:
       styles:
         names: page
       children:
+        - Button:
+            label: open another modal screen
+            onTap:
+              navigateModalScreen:
+                name: widgets
+                height: 200px
+                width: 900px
+        - Button:
+            label: show dialog
+            onTap:
+              showDialog:
+                widget:
+                  Text:
+                    text: i am a text
+                options:
+                  height: 50px
+                  width: 80px
         - Icon:
         - Text:
             styles:
@@ -55,6 +76,21 @@ View:
                         showToast:
                           message: Form submitted!
                   children:
+                    - ToggleButton:
+                        id: tb
+                        items:
+                          - Foo
+                          - Bar
+                        value: ${ensemble.storage.get('tbValue')}
+                    - Button:
+                        label: change tb value
+                        onTap:
+                          executeCode: |
+                            if (tb.value === 'Foo') {
+                              ensemble.storage.set('tbValue', 'Bar')
+                            } else {
+                              ensemble.storage.set('tbValue', 'Foo')
+                            }
                     - Radio:
                         id: radio
                         label: Radio Group
@@ -91,6 +127,9 @@ View:
                             value: option1
                           - label: Option 2
                             value: option2
+                        onChange:
+                          executeCode: |
+                            console.log('dropdown changed', value);
                     # If you omit id, the form value key will be the label
                     - TextInput:
                         id: formTextInput
@@ -111,8 +150,8 @@ View:
                     - TextInput:
                         id: regexTextInput
                         validator:
-                          regex: "[0-5]"
-                          regexError: "Only numbers 0 to 5 are allowed"
+                          regex: .{1,}
+                          regexError: "write something atleast"
                         label: Text input with regex
                     - MultiSelect:
                         id: multiselectoptions1
@@ -124,11 +163,12 @@ View:
                         valueKey: email
                         items: ${ensemble.storage.get('dummyData')}
                         allowCreateOptions: true
-                        onItemSelect:
+                        onChange:
                           executeCode: |
-                            console.log('selected', multiselectoptions1);
-                            console.log(1,selectedValues)
-                            console.log(1,multiselectoptions1.selectedValues)
+                            console.log("onChange event! Here are the selected values: ", value);
+                        # onItemSelect:
+                        #   executeCode: |
+                        #     console.log("This is an onItemSelect function that should not be running.", selectedValue);
                     - MultiSelect:
                         id: multiselectoptions2
                         label: Choose multiple
@@ -138,14 +178,18 @@ View:
                           - label: Option 2
                             value: option2
                     - Date:
+                        htmlAttributes:
+                          data-testid: date0-test
                         id: date0
                         label: Date 0
                         hintText: Choose date 0
+                        format: MM/DD/YYYY
                     - Date:
                         id: date1
                         label: Date 1
                         value: ""
                         hintText: Choose date 1
+                        format: DD-MM-YY
                     - Date:
                         id: date2
                         label: Date 2
@@ -164,6 +208,11 @@ View:
                         onTap:
                           executeCode: |
                             myForm.clear()
+                    - Button:
+                        label: Update Radio Value to 'Option 2' & regexTextInput by code
+                        onTap:
+                          executeCode: |
+                            myForm.updateValues({radio: '2', regexTextInput: '543210'})
               - Markdown:
                   id: result
                   text: Check here for the result!
@@ -220,6 +269,8 @@ View:
                     - Row:
                         children:
                           - Checkbox:
+                              htmlAttributes:
+                                data-testid: checkbox-test
                               id: initial_checkbox
                               value: true
                               trailingText: Check me
@@ -241,11 +292,15 @@ View:
                             value: option2
                     # If you omit id, the form value key will be the label
                     - TextInput:
+                        htmlAttributes:
+                          data-testid: testinput-test
                         id: initial_formTextInput
                         value: ${ensemble.storage.get('inputVal')}
+                        maxLength: 10
+                        maxLengthEnforcement: enforced
                         label:
                           Text:
-                            text: Text input
+                            text: Text input with max length enforcement
                     - MultiSelect:
                         id: initial_multiselectoptions1
                         label: Choose multiple from API or storage
@@ -255,10 +310,10 @@ View:
                         labelKey: firstName
                         valueKey: email
                         items: ${ensemble.storage.get('dummyData')}
-                        onItemSelect:
+                        onChange:
                           executeCode: |
                             console.log('selected');
-                            console.log(selectedValues)
+                            console.log(value)
                     - MultiSelect:
                         id: initial_multiselectoptions2
                         label: Choose multiple
@@ -280,6 +335,94 @@ View:
               - Markdown:
                   id: result2
                   text: Check here for the result!
+        - Text:
+            styles:
+              names: heading-3
+            text: "\nMock Response Testing"
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:
+              - Checkbox:
+                  id: useMockResponseCheckbox
+                  trailingText: "Use Mock Response"
+                  initialValue: false
+                  onChange: 
+                    executeCode: |
+                        app.setUseMockResponse(!app.useMockResponse);
+              - Checkbox:
+                  id: throwMockApiErrorCheckbox
+                  trailingText: "Throw Error"
+                  onChange:
+                    executeCode: |
+                      var currStatusCode = ensemble.storage.get('mockApiStatusCode');
+                      if (currStatusCode == 200) {
+                        ensemble.storage.set('mockApiStatusCode', 500);
+                        ensemble.storage.set('mockApiReasonPhrase', 'An error occurred...');
+                      }
+                      else {
+                        ensemble.storage.set('mockApiStatusCode', 200);
+                        ensemble.storage.set('mockApiReasonPhrase', 'Success!');
+                      }
+              - Button:
+                  styles:
+                    width: 500
+                  label: Call API!
+                  onTap:
+                    invokeAPI:
+                      name: testMockResponse
+                      onResponse:
+                        executeCode:
+                          console.log("Mock API called ", response);
+              - Button:
+                  styles:
+                    width: 500
+                  label: Call API from executeCode!
+                  onTap:
+                    executeCode: |
+                      ensemble.invokeAPI("testMockResponse");
+              - Spacer:
+                  styles:
+                    size: 20
+              - Text:
+                  text: "Status Code: ${testMockResponse.statusCode ?? ''} ${testMockResponse.reasonPhrase ?? ''}"
+              - Text:
+                  styles:
+                    overflow: wrap
+                    width: 500
+                  text: "Body: ${JSON.stringify(testMockResponse.body) ?? ''}"
+              - Spacer:
+              - Dropdown: 
+                  styles:
+                    width: 500
+                  id: mockResponseDropdown
+                  hintText: All items returned
+                  item-template:
+                    data: testMockResponse.body ?? []
+                    name: wizard
+                    value: ${wizard.email}
+                    template:
+                      Text:
+                        text: ${wizard.name}
+              - Spacer:
+                  styles:
+                    size: 20
+              - Button:
+                  styles:
+                    width: 500
+                  label: Call API with response from function! (see the console)
+                  onTap:
+                    invokeAPI: 
+                      name: getMockResponseFromFunction
+              - Button:
+                  styles:
+                    width: 500
+                  label: Call API from code
+                  onTap:
+                    executeCode: |
+                      ensemble.invokeAPI("getMockResponseFromFunction");
+                      console.log(getMockResponseFromFunction);
 
   footer:
     children:
@@ -292,8 +435,59 @@ API:
   getData:
     method: GET
     uri: https://dummyjson.com/users
+  testMockResponse:
+    method: GET
+    uri: https://dummyjson.com/users/1
+    mockResponse:
+      statusCode: "${ensemble.storage.get('mockApiStatusCode')}"
+      reasonPhrase: "${ensemble.storage.get('mockApiReasonPhrase')}"
+      body: 
+        - id: 0
+          name: Harry Potter
+          email: chosenOne@gmail.com
+        - id: 1
+          name: Albus Dumbledore
+          email: iTrustSnape@gmail.com
+        - id: 2
+          name: Tom Riddle
+          email: lordVoldemort@gmail.com
+    onResponse:
+      executeCode: |
+        console.log("Mock API called: ",  response)
+    onError:
+      executeCode: |
+        console.log("Mock API errored: ",  error)
+  getMockResponseFromFunction:
+    method: GET
+    uri: https:your_url.com/test
+    mockResponse: "${mockResponseTestData()}"
+    onResponse:
+      executeCode: |
+        console.log(app.useMockResponse)
+        console.log("Mock API called: ",  response)
+    onError:
+      executeCode: |
+        console.log("Mock API errored: ",  error)
+
 
 Icon:
   body:
     Text:
       text: Hello123
+
+Global: |
+  function mockResponseTestData() {
+    return {
+      statusCode: 200,
+      reasonPhrase: "Success",
+      body: [{
+        name: "Stupify",
+        color: "red",
+        desc: "Stunning Spell"
+      }, {
+        name: "Expecto Patronum",
+        color: "white",
+        desc: "Summons a Patronus"
+      }]
+    }
+  }

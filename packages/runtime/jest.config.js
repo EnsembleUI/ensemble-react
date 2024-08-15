@@ -5,6 +5,8 @@ module.exports = {
   testEnvironment: "jsdom",
   moduleNameMapper: {
     "^lodash-es$": "lodash",
+    "react-markdown":
+      "<rootDir>/node_modules/react-markdown/react-markdown.min.js",
   },
   setupFilesAfterEnv: ["<rootDir>/setupTests.ts"],
 };

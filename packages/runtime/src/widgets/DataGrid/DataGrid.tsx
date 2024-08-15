@@ -45,6 +45,7 @@ interface DataColumn {
     onFilter: string;
   };
   width?: number;
+  visible?: boolean;
 }
 
 export interface DataGridStyles extends Partial<EnsembleWidgetStyles> {
@@ -136,6 +137,10 @@ const ResizableTitle: React.FC<ResizableProps & ResizableState> = (props) => {
   );
 };
 
+const defaultGridMutatorOptions = {
+  suppressCallbacks: false,
+};
+
 export const DataGrid: React.FC<GridProps> = (props) => {
   const {
     "item-template": itemTemplate,
@@ -155,7 +160,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     props.allowSelection ?? false,
   );
   const [selectionType, setSelectionType] = useState<"checkbox" | "radio">(
-    props?.selectionType ? props.selectionType : "checkbox",
+    props.selectionType ? props.selectionType : "checkbox",
   );
   const containerRef = useRef<HTMLDivElement>(null);
   const { namedData } = useTemplateData({ ...itemTemplate });
@@ -218,7 +223,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   const onSortActionCallback = useCallback(
     (sorter: SorterResult<unknown>) => {
       if (onSortAction) {
-        const namedDataObject = namedData?.[0] as { [key: string]: unknown };
+        const namedDataObject = namedData[0] as { [key: string]: unknown };
         const dataObject = namedDataObject[sorter.field as string] as {
           [key: string]: unknown;
         };
@@ -250,18 +255,22 @@ export const DataGrid: React.FC<GridProps> = (props) => {
 
   // update page number callback
   const updatePageNumber = useCallback(
-    (newPage: number) => {
+    (newPage: number, options = defaultGridMutatorOptions) => {
       setCurPage(newPage);
-      onPageChangeActionCallback(newPage, pageSize || 10);
+      if (!options.suppressCallbacks) {
+        onPageChangeActionCallback(newPage, pageSize || 10);
+      }
     },
     [pageSize, onPageChangeActionCallback],
   );
 
   // update pageSize callback
   const updatePageSize = useCallback(
-    (newPageSize: number) => {
+    (newPageSize: number, options = defaultGridMutatorOptions) => {
       setPageSize(newPageSize);
-      onPageChangeActionCallback(curPage, newPageSize || 10);
+      if (!options.suppressCallbacks) {
+        onPageChangeActionCallback(curPage, newPageSize || 10);
+      }
     },
     [curPage, onPageChangeActionCallback],
   );
@@ -472,6 +481,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
                   text: label,
                   value,
                 }))}
+                hidden={col.visible === false}
                 key={colIndex}
                 onFilter={
                   col.filter?.onFilter

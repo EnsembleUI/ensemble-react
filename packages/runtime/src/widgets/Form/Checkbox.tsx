@@ -24,7 +24,7 @@ export type CheckBoxProps = {
 
 export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
   const [checked, setChecked] = useState<boolean>();
-  const { values } = useRegisterBindings(
+  const { rootRef, values } = useRegisterBindings(
     { ...props, initialValue: props.value, value: checked, widgetName },
     props.id,
     {
@@ -43,15 +43,13 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
     }
   }, [values?.trailingText]);
 
-  const onChangeCallback = useCallback(
-    (newValue: boolean) => action?.callback({ value: newValue }),
+  const handleChange = useCallback(
+    (newValue: boolean) => {
+      setChecked(newValue);
+      action?.callback({ value: newValue });
+    },
     [action],
   );
-
-  const handleChange = (newValue: boolean): void => {
-    setChecked(newValue);
-    onChangeCallback(newValue);
-  };
 
   const formInstance = Form.useFormInstance();
 
@@ -73,6 +71,7 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
         checked={Boolean(values?.value)}
         disabled={values?.enabled === false}
         onChange={(event): void => handleChange(event.target.checked)}
+        ref={rootRef}
         style={{
           marginLeft: `${props.leadingText ? "4px" : "0px"}`,
           ...values?.styles,

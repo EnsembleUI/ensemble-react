@@ -1,5 +1,75 @@
 # @ensembleui/react-framework
 
+## 0.1.58
+
+### Patch Changes
+
+- cdaa85f: Added mockResponse support to APIs. This allows you to return a mockResponse from the api with a statusCode, reasonPhrase, body, and headers. It can be accessed and mutated using "app.useMockResponse" in a block of JS code.
+
+## 0.1.57
+
+### Patch Changes
+
+- 2fc2ac5: fix: choose first theme as default from the theme yaml
+- 2d5b743: fix flutter disparity issue
+- f8c9226: Add html attribute pass through to form widgets
+
+## 0.1.56
+
+### Patch Changes
+
+- 04454f2: use unique key when applying styles to modal
+
+## 0.1.55
+
+### Patch Changes
+
+- b5464ce: fix home screen load issue
+
+## 0.1.54
+
+### Patch Changes
+
+- e451b7a: Revert device api implementation
+
+## 0.1.53
+
+### Patch Changes
+
+- 1e1687b: Added support for secrets variables
+- 1b8539e: Added support of env in preview and studio
+
+## 0.1.52
+
+### Patch Changes
+
+- 22a3e5e: Added support for device object like flutter
+
+## 0.1.51
+
+### Patch Changes
+
+- 57395ff: Added support for translation bundle
+
+## 0.1.50
+
+### Patch Changes
+
+- 036b966: added translations into studio
+
+## 0.1.49
+
+### Patch Changes
+
+- 70715ab: rebind form's methods on every render
+
+## 0.1.48
+
+### Patch Changes
+
+- 472d655: compare invokable methods in register bindings too to get rid of stale methods
+- 5eaf03d: Added support for flutter style hex color codes
+
 ## 0.1.47
 
 ### Patch Changes

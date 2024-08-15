@@ -1,11 +1,9 @@
-import type {
-  EnsembleAction,
-  NavigateModalScreenAction,
-} from "@ensembleui/react-framework";
+import type { NavigateModalScreenAction } from "@ensembleui/react-framework";
 import {
   evaluate,
   findExpressions,
   unwrapWidget,
+  useApplicationContext,
   useCustomScope,
   useEnsembleStorage,
   useScreenContext,
@@ -25,13 +23,13 @@ import {
 export const useNavigateModalScreen: EnsembleActionHook<
   NavigateModalScreenAction
 > = (action?: NavigateModalScreenAction) => {
+  const applicationContext = useApplicationContext();
   const modalContext = useContext(ModalContext);
   const screenContext = useScreenContext();
   const customScope = useCustomScope();
   const storage = useEnsembleStorage();
   const ensembleAction = useEnsembleAction(
-    (!isString(action) && (action?.onModalDismiss as EnsembleAction)) ||
-      undefined,
+    !isString(action) && action ? action.onModalDismiss : undefined,
   );
 
   const onDismissCallback = useCallback(() => {
@@ -72,8 +70,8 @@ export const useNavigateModalScreen: EnsembleActionHook<
 
       navigateModalScreen(
         action,
-        screenContext,
         modalContext,
+        applicationContext?.application,
         inputs,
         title,
         onDismissCallback,

@@ -7,16 +7,15 @@ import {
   isEmpty,
   isObject,
   map,
-  mapKeys,
   remove,
   set,
   isString,
   concat,
-  clone,
   filter,
   includes,
   omit,
   keys,
+  merge,
 } from "lodash-es";
 import type {
   EnsembleScreenModel,
@@ -36,9 +35,8 @@ import type {
   EnsembleConfigYAML,
   LanguageDTO,
 } from "./shared/dto";
-import { findExpressions, type EnsembleAction } from "./shared";
-import { evaluate } from "./evaluate/evaluate";
-import { defaultScreenContext } from "./state";
+import { type EnsembleAction } from "./shared";
+import { defaultThemeDefinition } from "./state";
 
 export interface EnsembleScreenYAML {
   View?: {
@@ -58,6 +56,10 @@ export interface EnsembleWidgetYAML {
     body: { [key: string]: unknown };
   };
 }
+
+export type EnsembleThemeYAML = {
+  Themes?: [string];
+} & EnsembleThemeModel & { [key: string]: EnsembleThemeModel };
 
 export const EnsembleParser = {
   parseApplication: (app: ApplicationDTO): EnsembleAppModel => {
@@ -108,13 +110,7 @@ export const EnsembleParser = {
       );
     }
 
-    const theme = unwrapTheme(app.theme?.content);
-    const themes: { [key: string]: EnsembleThemeModel | undefined } = {};
-    if (isArray(app.themes)) {
-      app.themes.forEach((item) => {
-        themes[item.name || item.id] = unwrapTheme(clone(item.content));
-      });
-    }
+    const themes = unwrapTheme(app.theme?.content);
 
     const scripts = app.scripts.map(({ name, content }) => ({
       name,
@@ -124,7 +120,9 @@ export const EnsembleParser = {
     const config = app.config;
     let ensembleConfigData;
     if (config) {
-      ensembleConfigData = parse(config) as EnsembleConfigYAML;
+      ensembleConfigData = isString(config)
+        ? (parse(config) as EnsembleConfigYAML)
+        : config;
     }
 
     const languages = app.languages?.map((language) =>
@@ -136,9 +134,11 @@ export const EnsembleParser = {
       menu,
       screens: screens as EnsembleScreenModel[],
       customWidgets,
-      home: menu ?? screens[0],
-      theme,
-      themes,
+      home:
+        menu ||
+        (screens as EnsembleScreenModel[]).find((screen) => screen.isRoot) ||
+        screens[0],
+      themes: themes || { default: defaultThemeDefinition },
       scripts,
       config: ensembleConfigData,
       languages,
@@ -423,39 +423,37 @@ const unwrapFooter = (
   }
 };
 
-const unwrapTheme = (theme?: string): EnsembleThemeModel | undefined => {
+const unwrapTheme = (
+  theme?: string,
+): { [key: string]: EnsembleThemeModel } | undefined => {
   if (!theme || isEmpty(theme)) {
     return;
   }
 
-  const workingTheme = parse(theme) as EnsembleThemeModel;
+  const workingTheme = parse(theme) as EnsembleThemeYAML;
   if (!workingTheme) {
     return;
   }
 
-  if (!workingTheme.Styles) {
-    return workingTheme;
+  // if no themes provided then use theme file as default theme
+  if (isEmpty(workingTheme.Themes)) {
+    workingTheme.default = { ...workingTheme };
+    workingTheme.Themes = ["default"];
   }
 
-  const expressionMap: string[][] = [];
-  findExpressions(workingTheme.Styles, [], expressionMap);
+  const themes = workingTheme.Themes?.reduce(
+    (acc: { [key: string]: EnsembleThemeModel }, themeName: string) => {
+      const themeContent = get(workingTheme, themeName);
 
-  const resolvedProps: [string, unknown][] = expressionMap.map(
-    ([path, expression]) => {
-      const result = evaluate(
-        defaultScreenContext,
-        expression,
-        mapKeys(workingTheme.Tokens ?? {}, (_, key) => key.toLowerCase()),
-      );
-      return [path, result];
+      acc[themeName] = merge({}, themeContent, {
+        name: themeName,
+      }) as EnsembleThemeModel;
+      return acc;
     },
+    {},
   );
 
-  resolvedProps.forEach(([path, value]) =>
-    set(workingTheme.Styles!, path, value),
-  );
-
-  return workingTheme;
+  return themes;
 };
 
 const unwrapLanguage = (language: LanguageDTO) => {

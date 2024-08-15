@@ -1,24 +1,47 @@
-import { DataFetcher } from "@ensembleui/react-framework";
-import type { Response, useScreenData } from "@ensembleui/react-framework";
+import {
+  DataFetcher,
+  isUsingMockResponse,
+  type Response,
+  type useScreenData,
+  mockResponse,
+} from "@ensembleui/react-framework";
+import { has } from "lodash-es";
 
 export const invokeAPI = async (
   screenData: ReturnType<typeof useScreenData>,
   apiName: string,
+  appId: string | undefined,
   apiInputs?: { [key: string]: unknown },
   context?: { [key: string]: unknown },
 ): Promise<Response | undefined> => {
   const api = screenData.apis?.find((model) => model.name === apiName);
+
   if (!api) {
     return;
   }
 
+  // Now, because the API exists, set its state to loading
   screenData.setData(api.name, {
     isLoading: true,
     isError: false,
     isSuccess: false,
   });
-  const res = await DataFetcher.fetch(api, { ...apiInputs, ...context });
-  screenData.setData(api.name, res);
 
+  // If mock resposne does not exist, fetch the data directly from the API
+  const useMockResponse =
+    has(api, "mockResponse") && isUsingMockResponse(appId);
+  const res = await DataFetcher.fetch(
+    api,
+    { ...apiInputs, ...context },
+    {
+      mockResponse: mockResponse(
+        screenData.mockResponses[api.name],
+        useMockResponse,
+      ),
+      useMockResponse,
+    },
+  );
+
+  screenData.setData(api.name, res);
   return res;
 };

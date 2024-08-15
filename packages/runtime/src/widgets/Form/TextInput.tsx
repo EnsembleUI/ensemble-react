@@ -1,14 +1,16 @@
 import { Input, Form } from "antd";
-import type { Expression } from "@ensembleui/react-framework";
+import type { Expression, EnsembleAction } from "@ensembleui/react-framework";
 import { useRegisterBindings } from "@ensembleui/react-framework";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
+import { runes } from "runes2";
+import type { Rule } from "antd/es/form";
+import { forEach } from "lodash-es";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { WidgetRegistry } from "../../registry";
 import type { TextStyles } from "../Text";
+import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
-import { Rule } from "antd/es/form";
-import { forEach } from "lodash-es";
 
 const widgetName = "TextInput";
 
@@ -17,7 +19,12 @@ export type TextInputProps = {
   labelStyle?: TextStyles;
   multiLine?: Expression<boolean>;
   maxLines?: number;
+  maxLength?: Expression<number>;
+  maxLengthEnforcement?: Expression<
+    "none" | "enforced" | "truncateAfterCompositionEnds"
+  >;
   inputType?: "email" | "phone" | "number" | "text" | "url"; //| "ipAddress";
+  onChange?: EnsembleAction;
   mask?: string;
   validator?: {
     minLength?: number;
@@ -30,7 +37,7 @@ export type TextInputProps = {
 
 export const TextInput: React.FC<TextInputProps> = (props) => {
   const [value, setValue] = useState<string>();
-  const { values } = useRegisterBindings(
+  const { values, rootRef } = useRegisterBindings(
     { ...props, initialValue: props.value, value, widgetName },
     props.id,
     {
@@ -41,6 +48,15 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     },
   );
   const formInstance = Form.useFormInstance();
+  const action = useEnsembleAction(props.onChange);
+
+  const handleChange = useCallback(
+    (newValue: string) => {
+      setValue(newValue);
+      action?.callback({ value: newValue });
+    },
+    [action],
+  );
 
   useEffect(() => {
     setValue(values?.initialValue);
@@ -112,7 +128,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
       }
     });
 
-    return pattern + ")$";
+    return `${pattern})$`;
   }, [values?.mask]);
 
   const rules = useMemo(() => {
@@ -132,10 +148,19 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
       });
     }
 
-    if (values?.validator?.regex) {
+    const regex = values?.validator?.regex;
+    if (regex) {
       rulesArray.push({
-        pattern: new RegExp(values.validator.regex),
-        message: values.validator.regexError || "The field has invalid value",
+        validator: (_, inputValue?: string) => {
+          if (new RegExp(regex).test(inputValue || "")) {
+            return Promise.resolve();
+          }
+          return Promise.reject(
+            new Error(
+              values.validator?.regexError || "The field has an invalid value",
+            ),
+          );
+        },
       });
     }
 
@@ -147,16 +172,37 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     }
 
     return rulesArray;
-  }, [values?.validator, values?.mask]);
+  }, [
+    values?.validator?.minLength,
+    values?.validator?.maxLength,
+    values?.validator?.regex,
+    values?.validator?.regexError,
+    values?.mask,
+    patternValue,
+  ]);
+
+  const maxLengthConfig = values?.maxLength
+    ? {
+        max: values.maxLength as number,
+        show: true,
+        exceedFormatter:
+          values.maxLengthEnforcement === "none"
+            ? undefined
+            : (txt: string, { max }: { max: number }): string =>
+                runes(txt).slice(0, max).join(""),
+      }
+    : undefined;
 
   return (
-    <EnsembleFormItem valuePropName="value" values={values} rules={rules}>
+    <EnsembleFormItem rules={rules} valuePropName="value" values={values}>
       {values?.multiLine ? (
         <Input.TextArea
+          count={maxLengthConfig}
           defaultValue={values.value}
-          disabled={values?.enabled === false}
+          disabled={values.enabled === false}
           onChange={(event): void => setValue(event.target.value)}
           placeholder={values.hintText ?? ""}
+          ref={rootRef}
           rows={values.maxLines ? Number(values.maxLines) : 4} // Adjust the number of rows as needed
           style={{
             ...(values.styles ?? values.hintStyle),
@@ -168,10 +214,12 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
         />
       ) : (
         <Input
+          count={maxLengthConfig}
           defaultValue={values?.value}
           disabled={values?.enabled === false}
-          onChange={(event): void => setValue(event.target.value)}
+          onChange={(event): void => handleChange(event.target.value)}
           placeholder={values?.hintText ?? ""}
+          ref={rootRef}
           style={{
             ...(values?.styles ?? values?.hintStyle),
             ...(values?.styles?.visible === false

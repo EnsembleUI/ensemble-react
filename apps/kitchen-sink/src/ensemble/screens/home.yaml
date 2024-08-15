@@ -4,7 +4,8 @@ View:
       ensemble.storage.set('yyy' , 'page')
       ensemble.storage.set('zzz' , 'button')
       ensemble.storage.set('aaa' , '1')
-      console.log(device)
+      ensemble.storage.set('bbb' , "0xffb91c1c")
+      console.log('>>> secret variable >>>', ensemble.secrets.dummyOauthSecret)
 
   header:
     title:
@@ -27,6 +28,11 @@ View:
             styles:
               names: heading-1
               color: ${colors.primary['900']}
+            text: ${ensemble.secrets.dummyOauthSecret}
+        - Text:
+            styles:
+              names: heading-1
+              color: ${ensemble.storage.get('bbb')}
             text: r@kitchenSink
         - Markdown:
             text: This application is built with Ensemble and serves as a guide for how to implement common UI patterns with Ensemble React.
@@ -70,11 +76,11 @@ View:
               template:
                 Text:
                   text: ${language.name + ` ( `+ language.nativeName +` )`}
-            onItemSelect:
+            onChange:
               executeCode:
                 body: |
-                  ensemble.storage.set('language', selectedValue)
-                  ensemble.setLocale({languageCode: selectedValue})
+                  ensemble.storage.set('language', value)
+                  ensemble.setLocale({languageCode: value})
 
         - Text:
             styles:
@@ -85,19 +91,51 @@ View:
             styles:
               width: 100px
               backgroundColor: ${colors.primary['500']}
-            items:
-              - label: Light
-                value: default
-              - label: Dark
-                value: dark
+            item-template:
+              data: ${app.themes}
+              name: theme
+              value: theme
+              template:
+                Text:
+                  text: ${theme}
             widget:
               Icon:
                 name: Settings
             onItemSelect:
               executeCode: |
-                ensemble.setTheme(value)
+                ensemble.setTheme(theme)
+
+        - Text:
+            styles:
+              names: heading-1
+            text: Selected Theme ${app.theme}
+
+        - Button:
+            label: Theme
+            onTap:
+              executeCode: |
+                console.log('>>', app.theme)
 
         - Divider:
+
+        - Row:
+            styles:
+              gap: 8px
+            children:
+              - Button:
+                  startingIcon:
+                    name: MoreHoriz
+              - Button:
+                  endingIcon:
+                    name: MoreHoriz
+              - Button:
+                  startingIcon:
+                    name: MoreHoriz
+                  label: start
+              - Button:
+                  endingIcon:
+                    name: MoreHoriz
+                  label: end
 
         - Text:
             styles:
@@ -204,6 +242,9 @@ View:
             styles:
               names: heading-1
             text: Expression Examples
+
+        - Text:
+            text: ${ensemble.storage.get('yyy').length>13}
 
         - Row:
             styles:

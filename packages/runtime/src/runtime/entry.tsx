@@ -13,38 +13,45 @@ interface EnsembleEntryProps {
 }
 export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({
   entry,
-  screen,
+  screen: initialScreen,
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
   const hasMenu = "items" in entry;
   useEffect(() => {
-    if (screen && location.pathname !== `/${screen.name.toLowerCase()}`) {
+    const path = location.pathname;
+
+    // If path is not root, render screen on that path. ex: /about
+    if (path !== "/") {
+      return;
+    }
+
+    if (initialScreen && path !== initialScreen.name.toLowerCase()) {
       navigate({
-        pathname: `/${screen.name.toLowerCase()}`,
+        pathname: initialScreen.name.toLowerCase(),
         search: location.search,
       });
       return;
     }
 
-    if (!(hasMenu && location.pathname === "/")) {
+    if (hasMenu) {
+      const selectedItem =
+        entry.items.find((item) => item.selected) ?? entry.items[0];
+      navigate({
+        pathname: selectedItem.page.toLowerCase(),
+        search: location.search,
+      });
       return;
     }
 
-    const selectedItem =
-      entry.items.find((item) => item.selected) ?? entry.items[0];
-    navigate({
-      pathname: `/${selectedItem.page.toLowerCase()}`,
-      search: location.search,
-    });
-  }, [entry, hasMenu, navigate, location, screen]);
+    navigate({ pathname: entry.name.toLowerCase(), search: location.search });
+  }, [entry, hasMenu, navigate, location, initialScreen]);
 
   if (hasMenu) {
     return (
       <div style={{ display: "flex", flexDirection: "row" }}>
         <SideBarMenu
-          enableSearch={false}
           footer={entry.footer}
           header={entry.header}
           id={entry.id}

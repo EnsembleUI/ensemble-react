@@ -20,6 +20,15 @@ jest.mock("@ensembleui/react-framework", () => ({
 
 jest.mock("react-markdown", jest.fn());
 
+global.Request = jest
+  .fn()
+  .mockImplementation((input: RequestInfo, init: RequestInit) => ({
+    url: input,
+    method: init.method || "GET",
+    headers: init.headers || {},
+    body: init.body || null,
+  }));
+
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: jest.fn().mockImplementation((query) => ({
@@ -35,6 +44,11 @@ Object.defineProperty(window, "matchMedia", {
   })),
 });
 
+afterEach(() => {
+  // Reset the route or any global state here
+  window.history.pushState({}, "", "/");
+});
+
 test("Renders error page", () => {
   /* eslint-disable no-console */
   const consoleErr = console.error;
@@ -43,6 +57,7 @@ test("Renders error page", () => {
     home: {},
     screens: [],
     customWidgets: [],
+    themes: {},
   });
   try {
     render(<EnsembleApp appId="test" application={{} as ApplicationDTO} />);
@@ -78,6 +93,7 @@ test("Renders view widget of home screen", () => {
     home: mockScreen,
     screens: [mockScreen],
     customWidgets: [],
+    themes: {},
   });
   render(
     <EnsembleApp
@@ -122,6 +138,7 @@ test("Bind data from other widgets", async () => {
     home: mockScreen,
     screens: [mockScreen],
     customWidgets: [],
+    themes: {},
   });
   render(
     <EnsembleApp
@@ -170,6 +187,7 @@ test("Updates values through Ensemble state", async () => {
     home: mockScreen,
     screens: [mockScreen],
     customWidgets: [],
+    themes: {},
   });
   render(
     <EnsembleApp

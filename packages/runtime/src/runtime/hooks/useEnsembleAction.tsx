@@ -17,6 +17,9 @@ import {
   CustomThemeContext,
   useLanguageScope,
   useDeviceData,
+  isUsingMockResponse,
+  setUseMockResponse,
+  mockResponse,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -44,6 +47,7 @@ import {
   isString,
   merge,
   isObject,
+  has,
   get,
   set,
   mapKeys,
@@ -76,6 +80,7 @@ import {
   extractCondition,
   hasProperStructure,
 } from "../../widgets/Conditional";
+// FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { useNavigateModalScreen } from "./useNavigateModal";
 import { useNavigateScreen } from "./useNavigateScreen";
@@ -125,8 +130,8 @@ export const useExecuteCode: EnsembleActionHook<
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,
   );
-  const theme = appContext?.application?.theme;
   const device = useDeviceData();
+  const theme = themescope.theme;
 
   const js = useMemo(() => {
     if (!action) {
@@ -142,11 +147,11 @@ export const useExecuteCode: EnsembleActionHook<
     }
 
     if ("scriptName" in action) {
-      return screen?.app?.scripts.find(
+      return appContext?.application?.scripts.find(
         (script) => script.name === action.scriptName,
       )?.body;
     }
-  }, [action, isCodeString, screen]);
+  }, [action, isCodeString, appContext?.application?.scripts]);
 
   const execute = useMemo(() => {
     if (!screen || !js) {
@@ -167,12 +172,14 @@ export const useExecuteCode: EnsembleActionHook<
             {
               ...customWidgets,
               device: device,
+              env: appContext?.env,
               ensemble: {
                 ...themescope,
                 storage,
                 user,
                 formatter,
                 env: appContext?.env,
+                secrets: appContext?.secrets,
                 navigateScreen: (targetScreen: NavigateScreenAction): void =>
                   navigateApi(targetScreen, screen, navigate),
                 navigateModalScreen: (
@@ -183,8 +190,8 @@ export const useExecuteCode: EnsembleActionHook<
                   }
                   navigateModalScreen(
                     navigateModalScreenAction,
-                    screen,
                     modalContext,
+                    appContext?.application ?? screen.app,
                   );
                 },
                 location: locationApi(location),
@@ -202,12 +209,20 @@ export const useExecuteCode: EnsembleActionHook<
                   apiName: string,
                   apiInputs?: { [key: string]: unknown },
                 ) =>
-                  invokeAPI(screenData, apiName, apiInputs, {
-                    ...customScope,
-                    ensemble: {
-                      env: appContext?.env,
+                  invokeAPI(
+                    screenData,
+                    apiName,
+                    appContext?.application?.id,
+                    apiInputs,
+                    {
+                      ...customScope,
+                      ensemble: {
+                        env: appContext?.env,
+                        secrets: appContext?.secrets,
+                        storage: appContext?.storage,
+                      },
                     },
-                  }),
+                  ),
                 navigateBack: (): void =>
                   modalContext ? modalContext.navigateBack() : navigate(-1),
                 navigateExternalScreen: (url: NavigateExternalScreen) =>
@@ -225,7 +240,15 @@ export const useExecuteCode: EnsembleActionHook<
                 setLocale: ({ languageCode }: SetLocaleProps) =>
                   i18n.changeLanguage(languageCode),
               },
+              app: {
+                useMockResponse: isUsingMockResponse(
+                  appContext?.application?.id,
+                ),
+                setUseMockResponse: (value: boolean) =>
+                  setUseMockResponse(appContext?.application?.id, value),
+              },
             },
+            { app: merge(screen.app, { theme: themescope.themeName }) },
             mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
             { styles: theme?.Styles },
             customScope,
@@ -247,6 +270,9 @@ export const useExecuteCode: EnsembleActionHook<
     js,
     appContext?.application?.customWidgets,
     appContext?.env,
+    appContext?.secrets,
+    appContext?.application?.id,
+    appContext?.storage,
     themescope,
     device,
     storage,
@@ -267,11 +293,12 @@ export const useExecuteCode: EnsembleActionHook<
 };
 
 export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
-  const { apis, setData } = useScreenData();
+  const { apis, setData, mockResponses } = useScreenData();
   const appContext = useApplicationContext();
   const [isComplete, setIsComplete] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>();
   const [context, setContext] = useState<{ [key: string]: unknown }>();
+
   const evaluatedInputs = useEvaluate(action?.inputs, { context });
   const evaluatedName = useEvaluate({ name: action?.name }, { context });
 
@@ -319,15 +346,29 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     }
 
     const fireRequest = async (): Promise<void> => {
+      const useMockResponse =
+        has(api, "mockResponse") &&
+        isUsingMockResponse(appContext?.application?.id);
       setIsLoading(true);
       try {
-        const res = await DataFetcher.fetch(api, {
-          ...evaluatedInputs,
-          ...context,
-          ensemble: {
-            env: appContext?.env,
+        const res = await DataFetcher.fetch(
+          api,
+          {
+            ...evaluatedInputs,
+            ...context,
+            ensemble: {
+              env: appContext?.env,
+              secrets: appContext?.secrets,
+            },
           },
-        });
+          {
+            mockResponse: mockResponse(
+              mockResponses[api.name],
+              useMockResponse,
+            ),
+            useMockResponse,
+          },
+        );
         setData(api.name, res);
 
         if (action?.id) {
@@ -356,8 +397,8 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
         onAPIErrorAction?.callback({ ...context, error: e });
         onInvokeAPIErrorAction?.callback({ ...context, error: e });
       } finally {
-        setIsLoading(false);
         setIsComplete(true);
+        setIsLoading(false);
       }
     };
 
@@ -375,6 +416,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     setData,
     context,
     appContext?.env,
+    appContext?.secrets,
   ]);
 
   return invokeApi;

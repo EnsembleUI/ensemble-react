@@ -1,4 +1,5 @@
-import { ReactNode, useCallback, useState } from "react";
+import type { ReactNode } from "react";
+import { useCallback, useState } from "react";
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
 import {
@@ -35,7 +36,7 @@ export const DateRange: React.FC<DateRangeProps> = (props) => {
 
   const [fromValue, setFromValue] = useState(props.fromDate);
   const [toValue, setToValue] = useState(props.toDate);
-  const { id, values } = useRegisterBindings(
+  const { id, values, rootRef } = useRegisterBindings(
     { ...props, fromValue, toValue, widgetName },
     props.id,
     {
@@ -95,9 +96,10 @@ export const DateRange: React.FC<DateRangeProps> = (props) => {
         disabled={values?.enabled === false}
         onChange={onDateRangeChange}
         placeholder={[values?.hintText ? values.hintText : "Start date", ""]}
+        ref={rootRef}
         showTime={values?.showTime}
-        suffixIcon={suffixIcon()}
         style={{ width: "100%", ...values?.styles }}
+        suffixIcon={suffixIcon()}
         value={[dayjs(values?.fromValue), dayjs(values?.toValue)]}
       />
     </EnsembleFormItem>

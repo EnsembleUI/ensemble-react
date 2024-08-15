@@ -11,7 +11,7 @@ import {
   defaultScreenContext,
 } from "@ensembleui/react-framework";
 import { Collapse, type CollapseProps, ConfigProvider } from "antd";
-import { get, isArray, isEmpty, isObject, isString } from "lodash-es";
+import { get, isArray, isEmpty, isObject, isString, mapKeys } from "lodash-es";
 import type {
   EnsembleWidgetProps,
   HasItemTemplate,
@@ -26,13 +26,21 @@ const widgetName = "Collapsible";
 
 interface CollapsibleItem {
   key: Expression<string>;
-  label: Expression<string> | Record<string, unknown>;
-  children: Expression<string> | Record<string, unknown>;
+  label: Expression<string> | { [key: string]: unknown };
+  children: Expression<string> | { [key: string]: unknown };
 }
 
 interface CollapsibleHeaderStyles {
+  /** The background color of the header */
   headerBg?: string;
+  /** The padding of the header */
   headerPadding?: undefined | string | number;
+  /** The color of the text in the header */
+  textColor?: string;
+  /** The color of the border */
+  borderColor?: string;
+  /** The width of the border line */
+  borderWidth?: number;
 }
 
 interface CollapsibleContentStyles {
@@ -41,14 +49,22 @@ interface CollapsibleContentStyles {
 }
 
 export type CollapsibleProps = {
+  /** The items to be displayed in the Collapsible widget */
   items?: CollapsibleItem[];
+  /** The position of the expand icon (either "start" or "end") */
   expandIconPosition?: "start" | "end";
   value: Expression<string>[];
+  /** Perform an action when the Collapsible widget is collapsed */
   onCollapse?: EnsembleAction;
+  /** If true, only one panel can be expanded at a time */
   isAccordion?: boolean;
-  collpaseIcon?: IconProps;
+  /** The Icon displayed when the Collapsible widget is collapsed */
+  collapseIcon?: IconProps;
+  /** The Icon displayed when the Collapsible widget is expanded */
   expandIcon?: IconProps;
+  /** Add one of the following 5 styles to the header: headerBg, headerPadding, textColor, borderColor, borderWidth */
   headerStyle?: CollapsibleHeaderStyles;
+  /** Add one of the following 2 styles to the content of the Collapsible widget: contentBg, contentPadding */
   contentStyle?: CollapsibleContentStyles;
 } & EnsembleWidgetProps &
   HasItemTemplate;
@@ -113,10 +129,9 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
             <CustomScopeProvider value={item as CustomScope}>
               {EnsembleRuntime.render([
                 unwrapWidget(
-                  itemTemplate.template.properties.label as Record<
-                    string,
-                    unknown
-                  >,
+                  itemTemplate.template.properties.label as {
+                    [key: string]: unknown;
+                  },
                 ),
               ])}
             </CustomScopeProvider>
@@ -127,10 +142,9 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
             <CustomScopeProvider value={item as CustomScope}>
               {EnsembleRuntime.render([
                 unwrapWidget(
-                  itemTemplate.template.properties.children as Record<
-                    string,
-                    unknown
-                  >,
+                  itemTemplate.template.properties.children as {
+                    [key: string]: unknown;
+                  },
                 ),
               ])}
             </CustomScopeProvider>
@@ -152,7 +166,7 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
     const iconName = isActive
       ? "default_collapsed_icon"
       : "default_expand_icon";
-    const iconProps = isActive ? values?.expandIcon : values?.collpaseIcon;
+    const iconProps = isActive ? values?.expandIcon : values?.collapseIcon;
 
     return (
       <Icon
@@ -183,12 +197,26 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
     onCallapseActionCallback(value);
   };
 
+  // Since I did not like the default names of the properties in the ant design Collapse component,
+  // I changed them to more meaningful names, and this means I need to rename the keys.
+  const getHeaderStyles = (
+    headerStyle: CollapsibleHeaderStyles | undefined,
+  ): CollapsibleHeaderStyles => {
+    if (typeof headerStyle === "undefined") return {};
+    return mapKeys(headerStyle, (_, key) => {
+      if (key === "textColor") return "colorTextHeading";
+      if (key === "borderColor") return "colorBorder";
+      if (key === "borderWidth") return "lineWidth";
+      return key;
+    });
+  };
+
   return (
     <ConfigProvider
       theme={{
         components: {
           Collapse: {
-            ...values?.headerStyle,
+            ...getHeaderStyles(values?.headerStyle),
             ...values?.contentStyle,
           },
         },

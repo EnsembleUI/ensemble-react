@@ -1,12 +1,12 @@
 import { Provider, useAtomValue } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
-import { isEmpty, merge } from "lodash-es";
+import { keys, merge } from "lodash-es";
 import { useTranslation } from "react-i18next";
 import {
   appAtom,
   type ApplicationContextDefinition,
   defaultApplicationContext,
-  selectedThemeNameAtom,
+  defaultThemeDefinition,
   themeAtom,
   userAtom,
 } from "../state";
@@ -29,7 +29,11 @@ export const ApplicationContextProvider: React.FC<
 
   // load all the langauges
   app.languages?.forEach((langauge) => {
-    i18n.addResources(langauge.languageCode, "translation", langauge.resources);
+    i18n.addResourceBundle(
+      langauge.languageCode,
+      "translation",
+      langauge.resources,
+    );
   });
 
   return (
@@ -43,6 +47,7 @@ export const ApplicationContextProvider: React.FC<
             app.config?.environmentVariables,
             environmentOverrides,
           ),
+          secrets: merge({}, app.config?.secretVariables),
           user,
         }}
       >
@@ -63,12 +68,10 @@ const HydrateAtoms: React.FC<
     appContext: ApplicationContextDefinition;
   }>
 > = ({ appContext, children }) => {
-  const activeThemeName = useAtomValue(selectedThemeNameAtom);
+  const activeThemeName = keys(appContext.application?.themes)[0];
 
-  let activeTheme = appContext.application?.theme;
-  if (!isEmpty(appContext.application?.themes)) {
-    activeTheme = appContext.application?.themes[activeThemeName];
-  }
+  const activeTheme =
+    appContext.application?.themes[activeThemeName] || defaultThemeDefinition;
 
   // initialising on state with prop on render here
   useHydrateAtoms([

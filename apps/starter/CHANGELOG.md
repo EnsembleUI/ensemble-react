@@ -1,5 +1,183 @@
 # @ensembleui/react-starter
 
+## 0.4.21
+
+### Patch Changes
+
+- Updated dependencies [e683933]
+  - @ensembleui/react-runtime@0.1.81
+
+## 0.4.20
+
+### Patch Changes
+
+- cdaa85f: Added mockResponse support to APIs. This allows you to return a mockResponse from the api with a statusCode, reasonPhrase, body, and headers. It can be accessed and mutated using "app.useMockResponse" in a block of JS code.
+- Updated dependencies [cdaa85f]
+- Updated dependencies [dfc5ad5]
+- Updated dependencies [9b50023]
+- Updated dependencies [e0cbd8e]
+  - @ensembleui/react-framework@0.1.58
+  - @ensembleui/react-runtime@0.1.80
+
+## 0.4.19
+
+### Patch Changes
+
+- Updated dependencies [2fc2ac5]
+- Updated dependencies [2d5b743]
+- Updated dependencies [298a6df]
+- Updated dependencies [f8c9226]
+- Updated dependencies [483a150]
+  - @ensembleui/react-framework@0.1.57
+  - @ensembleui/react-runtime@0.1.79
+
+## 0.4.18
+
+### Patch Changes
+
+- Updated dependencies [ddb575f]
+  - @ensembleui/react-runtime@0.1.78
+
+## 0.4.17
+
+### Patch Changes
+
+- Updated dependencies [56036a1]
+  - @ensembleui/react-runtime@0.1.77
+
+## 0.4.16
+
+### Patch Changes
+
+- Updated dependencies [78f35e7]
+- Updated dependencies [7eae5b8]
+  - @ensembleui/react-runtime@0.1.76
+
+## 0.4.15
+
+### Patch Changes
+
+- Updated dependencies [2e2fc51]
+  - @ensembleui/react-runtime@0.1.75
+
+## 0.4.14
+
+### Patch Changes
+
+- Updated dependencies [04454f2]
+  - @ensembleui/react-framework@0.1.56
+  - @ensembleui/react-runtime@0.1.74
+
+## 0.4.13
+
+### Patch Changes
+
+- Updated dependencies [b5464ce]
+- Updated dependencies [c6ede84]
+- Updated dependencies [083caf1]
+- Updated dependencies [0529f2d]
+  - @ensembleui/react-framework@0.1.55
+  - @ensembleui/react-runtime@0.1.73
+
+## 0.4.12
+
+### Patch Changes
+
+- Updated dependencies [0468a2d]
+- Updated dependencies [b4bd127]
+  - @ensembleui/react-runtime@0.1.72
+
+## 0.4.11
+
+### Patch Changes
+
+- Updated dependencies [ce61a4f]
+- Updated dependencies [d29ea6d]
+- Updated dependencies [e451b7a]
+- Updated dependencies [4083e6f]
+  - @ensembleui/react-runtime@0.1.71
+  - @ensembleui/react-framework@0.1.54
+
+## 0.4.10
+
+### Patch Changes
+
+- Updated dependencies [cf4fd60]
+- Updated dependencies [3a8d0ec]
+  - @ensembleui/react-runtime@0.1.70
+
+## 0.4.9
+
+### Patch Changes
+
+- Updated dependencies [5f95aed]
+- Updated dependencies [1e1687b]
+- Updated dependencies [1b8539e]
+- Updated dependencies [2e7a080]
+  - @ensembleui/react-runtime@0.1.69
+  - @ensembleui/react-framework@0.1.53
+
+## 0.4.8
+
+### Patch Changes
+
+- Updated dependencies [22a3e5e]
+- Updated dependencies [7d11468]
+- Updated dependencies [8e4996c]
+- Updated dependencies [2d197b7]
+  - @ensembleui/react-framework@0.1.52
+  - @ensembleui/react-runtime@0.1.68
+
+## 0.4.7
+
+### Patch Changes
+
+- Updated dependencies [5613deb]
+  - @ensembleui/react-runtime@0.1.67
+
+## 0.4.6
+
+### Patch Changes
+
+- Updated dependencies [eccc02a]
+- Updated dependencies [bf4a97c]
+  - @ensembleui/react-runtime@0.1.66
+
+## 0.4.5
+
+### Patch Changes
+
+- Updated dependencies [57395ff]
+- Updated dependencies [c10a6a1]
+- Updated dependencies [e0edb08]
+  - @ensembleui/react-framework@0.1.51
+  - @ensembleui/react-runtime@0.1.65
+
+## 0.4.4
+
+### Patch Changes
+
+- Updated dependencies [036b966]
+  - @ensembleui/react-framework@0.1.50
+  - @ensembleui/react-runtime@0.1.64
+
+## 0.4.3
+
+### Patch Changes
+
+- Updated dependencies [70715ab]
+  - @ensembleui/react-framework@0.1.49
+  - @ensembleui/react-runtime@0.1.63
+
+## 0.4.2
+
+### Patch Changes
+
+- Updated dependencies [472d655]
+- Updated dependencies [5eaf03d]
+  - @ensembleui/react-framework@0.1.48
+  - @ensembleui/react-runtime@0.1.62
+
 ## 0.4.1
 
 ### Patch Changes

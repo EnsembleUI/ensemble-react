@@ -1,6 +1,6 @@
 {
   "name": "@ensembleui/react-runtime",
-  "version": "0.1.62",
+  "version": "0.1.81",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "tsup src/index.tsx --format cjs --watch --dts --external react",
     "build": "tsup src/index.tsx --format cjs --dts --external react",
-    "test": "jest",
+    "test": "jest --runInBand",
     "lint": "eslint ."
   },
   "lint-staged": {
@@ -32,15 +32,16 @@
     "@mui/x-date-pickers": "^6.18.3",
     "@react-oauth/google": "^0.12.1",
     "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
     "@turbo/gen": "^1.10.12",
     "@types/lodash-es": "^4.17.8",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.0",
     "@types/react-resizable": "3.0.7",
-    "antd": "^5.9.0",
+    "antd": "^5.20.0",
     "chart.js": "^4.4.2",
     "chartjs-plugin-datalabels": "^2.2.0",
-    "dayjs": "^1.11.10",
+    "dayjs": "^1.11.12",
     "eslint-config-custom": "workspace:*",
     "jest-canvas-mock": "^2.5.2",
     "jwt-decode": "^4.0.0",
@@ -52,6 +53,7 @@
     "react-router-dom": "^6.16.0",
     "react-toastify": "^9.1.3",
     "react-use": "^17.4.2",
+    "runes2": "^1.1.4",
     "tsconfig": "workspace:*",
     "tsup": "^7.2.0"
   }

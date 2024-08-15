@@ -40,6 +40,8 @@ export type MultiSelectProps = {
   labelKey?: string;
   valueKey?: string;
   items?: Expression<SelectOption[]>;
+  onChange?: EnsembleAction;
+  /** OnItemSelect is deprecated. Please use onChange instead */
   onItemSelect?: EnsembleAction;
   hintStyle?: EnsembleWidgetStyles;
   allowCreateOptions?: boolean;
@@ -52,7 +54,9 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   const [newOption, setNewOption] = useState("");
   const [selectedValues, setSelectedValues] = useState<string[]>();
 
-  const action = useEnsembleAction(props.onItemSelect);
+  const action = useEnsembleAction(props.onChange);
+  const onItemSelectAction = useEnsembleAction(props.onItemSelect);
+
   const { rawData } = useTemplateData({ data });
   const { id, rootRef, values } = useRegisterBindings(
     { ...rest, initialValue: props.value, selectedValues, options, widgetName },
@@ -128,7 +132,9 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   // handle option change
   const handleChange = (value: string[]): void => {
     setSelectedValues(value);
-    onItemSelectCallback(value);
+    if (action) onChangeCallback(value);
+    else onItemSelectCallback(value);
+
     if (newOption) {
       setOptions([
         ...options,
@@ -142,13 +148,18 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   };
 
   // on item select callback
-  const onItemSelectCallback = useCallback(
+  const onChangeCallback = useCallback(
     (value?: string[]) => {
-      if (action) {
-        action.callback({ selectedValues: value });
-      }
+      action?.callback({ value });
     },
     [action],
+  );
+
+  const onItemSelectCallback = useCallback(
+    (value?: string[]) => {
+      onItemSelectAction?.callback({ selectedValue: value });
+    },
+    [onItemSelectAction],
   );
 
   // default value
