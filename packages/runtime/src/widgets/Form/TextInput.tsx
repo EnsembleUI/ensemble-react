@@ -1,4 +1,4 @@
-import { Input, Form } from "antd";
+import { Input, Form, InputNumber } from "antd";
 import type { Expression, EnsembleAction } from "@ensembleui/react-framework";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useEffect, useMemo, useState, useCallback } from "react";
@@ -192,6 +192,32 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
                 runes(txt).slice(0, max).join(""),
       }
     : undefined;
+
+  if (inputType === "number") {
+    return (
+      <EnsembleFormItem rules={rules} valuePropName="value" values={values}>
+        <InputNumber
+          defaultValue={values?.value}
+          disabled={values?.enabled === false}
+          max={
+            values?.maxLength
+              ? String(Math.pow(10, values.maxLength as number) - 1)
+              : undefined
+          }
+          onChange={(newVal): void => handleChange(newVal || "")}
+          placeholder={values?.hintText ?? ""}
+          ref={rootRef}
+          style={{
+            ...(values?.styles ?? values?.hintStyle),
+            ...(values?.styles?.visible === false
+              ? { display: "none" }
+              : undefined),
+          }}
+          value={value}
+        />
+      </EnsembleFormItem>
+    );
+  }
 
   return (
     <EnsembleFormItem rules={rules} valuePropName="value" values={values}>
