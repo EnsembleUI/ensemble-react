@@ -54,7 +54,6 @@ export type DropdownProps = {
   onChange?: EnsembleAction;
   autoComplete: Expression<boolean>;
   hintStyle?: EnsembleWidgetStyles;
-  manualClose?: boolean;
   panel?: { [key: string]: unknown };
 } & EnsembleWidgetProps<DropdownStyles> &
   HasItemTemplate & {
@@ -106,6 +105,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     {
       setSelectedValue,
       close: handleDropdownClose,
+      setValue: setSelectedValue,
     },
   );
 
@@ -240,7 +240,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               : ""
           }
         }
-        #${id}_list.ant-select-item-empty {
+          #${id}_list.ant-select-item-empty {
           ${!isEmpty(values?.panel) ? "display: none;" : ""}
         }
         .ant-col .ant-form-item-label > label[for=${id}] {
@@ -302,9 +302,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             dropdownStyle={values?.styles}
             id={values?.id}
             onChange={handleChange}
-            onDropdownVisibleChange={(state): void =>
-              setIsOpen(values?.manualClose ? true : state)
-            }
+            onDropdownVisibleChange={(state): void => setIsOpen(state)}
             onSelect={onItemSelectCallback}
             open={isOpen}
             placeholder={

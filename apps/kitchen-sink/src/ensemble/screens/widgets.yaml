@@ -712,7 +712,13 @@ View:
                               executeCode: |
                                 const x = testDate.value;
                                 const y = testDate1.value;
+                                myDropdown.setValue('hi')
                                 myDropdown.close()
+              - Button:
+                  label: Open Dropdown
+                  onTap:
+                    executeCode: |
+                      console.log(myDropdown)
               - Dropdown:
                   label: Searchable
                   hintText: Search
