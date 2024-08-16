@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.1.83
+
+### Patch Changes
+
+- 7c08d2d: Fix regression for multiselect
+
 ## 0.1.82
 
 ### Patch Changes
