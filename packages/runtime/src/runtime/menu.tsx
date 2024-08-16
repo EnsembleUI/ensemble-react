@@ -10,6 +10,7 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import { getColor } from "../shared/styles";
 import { EnsembleRuntime } from "./runtime";
+import { Drawer as AntDrawer } from "antd";
 
 type TypeColors =
   | "transparent"
@@ -50,26 +51,45 @@ interface MenuItem {
   };
 }
 
-interface MenuBaseProps {
+interface MenuBaseProps<T> {
   id?: string;
   items: MenuItem[];
-  styles?: {
-    backgroundColor?: TypeColors;
-    labelColor?: TypeColors;
-    selectedColor?: TypeColors;
-    labelFontSize?: number;
-    searchBoxColor?: TypeColors;
-    iconWidth?: string;
-    iconHeight?: string;
-    width?: string;
-    onSelectStyles?: {
-      backgroundColor?: TypeColors;
-      borderRadius?: string;
-    };
-  };
+  styles?: T;
   header?: EnsembleWidget;
   footer?: EnsembleWidget;
 }
+
+interface SideBarMenuStyles {
+  backgroundColor?: TypeColors;
+  labelColor?: TypeColors;
+  selectedColor?: TypeColors;
+  labelFontSize?: number;
+  searchBoxColor?: TypeColors;
+  iconWidth?: string;
+  iconHeight?: string;
+  width?: string;
+  onSelectStyles?: {
+    backgroundColor?: TypeColors;
+    borderRadius?: string;
+  };
+};
+
+interface DrawerMenuStyles {
+  backgroundColor?: TypeColors;
+  labelColor?: TypeColors;
+  selectedColor?: TypeColors;
+  labelFontSize?: number;
+  searchBoxColor?: TypeColors;
+  iconWidth?: string;
+  iconHeight?: string;
+  width?: string;
+  height?: string;
+  position?: 'left' | 'right' | 'top' | 'bottom';
+  onSelectStyles?: {
+    backgroundColor?: TypeColors;
+    borderRadius?: string;
+  };
+};
 
 const renderMuiIcon = (
   iconName?: string,
@@ -130,7 +150,7 @@ const CustomLink: React.FC<PropsWithChildren & { item: MenuItem }> = ({
   );
 };
 
-export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
+export const SideBarMenu: React.FC<MenuBaseProps<SideBarMenuStyles>> = ({ id, ...props }) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const { values } = useRegisterBindings({ ...props, isCollapsed }, id, {
     setCollapsed: setIsCollapsed,
@@ -256,20 +276,17 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
                 alignItems: "center",
                 fontSize:
                   selectedItem === item.page
-                    ? `${
-                        parseInt(
-                          `${
-                            props.styles?.labelFontSize
-                              ? props.styles.labelFontSize
-                              : 1
-                          }` || "1",
-                        ) + 0.2
-                      }rem`
-                    : `${
-                        props.styles?.labelFontSize
-                          ? props.styles.labelFontSize
-                          : 1
-                      }rem`,
+                    ? `${parseInt(
+                      `${props.styles?.labelFontSize
+                        ? props.styles.labelFontSize
+                        : 1
+                      }` || "1",
+                    ) + 0.2
+                    }rem`
+                    : `${props.styles?.labelFontSize
+                      ? props.styles.labelFontSize
+                      : 1
+                    }rem`,
                 ...(selectedItem === item.page
                   ? props.styles?.onSelectStyles ?? {}
                   : {}),
@@ -296,5 +313,47 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
       </AntMenu>
       {props.footer ? EnsembleRuntime.render([props.footer]) : null}
     </Col>
+  );
+};
+
+export const DrawerMenu: React.FC<MenuBaseProps<DrawerMenuStyles>> = ({ id, items, header, footer, styles }) => {
+  const validPositions = ['left', 'right', 'top', 'bottom'] as const;
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+  const { rootRef } = useRegisterBindings(
+    { open: drawerOpen },
+    id,
+    {
+      openDrawer: () => setDrawerOpen(true),
+      closeDrawer: () => setDrawerOpen(false),
+    },
+    {
+      debounceMs: 300,
+    },
+  );
+
+  const handleClose = (): void => {
+    setDrawerOpen(false);
+  };
+
+  return (
+    <div>
+      <button onClick={() => setDrawerOpen(true)}>Open ViewGroup Drawer</button>
+      <AntDrawer
+        closable={false}
+        height={styles?.height}
+        key="placement"
+        onClose={handleClose}
+        open={drawerOpen}
+        panelRef={rootRef}
+        placement={
+          styles?.position && validPositions.includes(styles?.position)
+            ? styles.position
+            : "left"
+        }
+        width={styles?.width}
+      >
+        <SideBarMenu id={`${id}-menu`} {...{ styles, header, footer, items }} />
+      </AntDrawer>
+    </div>
   );
 };

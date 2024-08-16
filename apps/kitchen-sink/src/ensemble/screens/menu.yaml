@@ -1,5 +1,5 @@
 ViewGroup:
-  SideBar:
+  Drawer:
     id: sidebar
     styles:
       width: 240px
@@ -110,6 +110,3 @@ ViewGroup:
               onTap:
                 executeCode: |
                   sidebar.setCollapsed(!sidebar.isCollapsed)
-          - Text:
-              text: This is some text in the footer :)
-              id: footerTextTest

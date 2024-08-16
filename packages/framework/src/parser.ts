@@ -267,16 +267,12 @@ export const EnsembleParser = {
     const footerDef = get(menu, [menuType, "footer"]) as
       | { [key: string]: unknown }
       | undefined;
-    const drawerDef = get(menu, [menuType, "drawer"]) as
-      | { [key: string]: unknown }
-      | undefined;
     return {
       id: get(menu, [menuType, "id"]) as string | undefined,
-      type: String(menuType),
+      type: menuType.toString(),
       items: get(menu, [menuType, "items"]) as [],
       header: headerDef ? unwrapWidget(headerDef) : undefined,
       footer: footerDef ? unwrapWidget(footerDef) : undefined,
-      drawer: drawerDef ? unwrapWidget(drawerDef) : undefined,
       styles: get(menu, [menuType, "styles"]) as { [key: string]: unknown },
     };
   },

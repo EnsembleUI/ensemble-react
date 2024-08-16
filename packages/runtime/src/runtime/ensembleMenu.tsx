@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Drawer as AntDrawer } from "antd";
 import {
   type EnsembleAction,
@@ -11,7 +11,7 @@ import { useEnsembleAction } from "./hooks";
 // eslint-disable-next-line import/no-cycle
 import { EnsembleRuntime } from "./runtime";
 
-export interface DrawerProps {
+interface EnsembleDrawer {
   id?: string;
   height?: string | number;
   width?: string | number;
@@ -21,18 +21,27 @@ export interface DrawerProps {
   children?: EnsembleWidget[];
 }
 
+// NOTE: This would be to display the side bar in a View component but it is not implemented yet
+interface EnsembleSideBar {
+  footer: EnsembleWidget;
+  header: EnsembleWidget;
+  id: string;
+  items: EnsembleWidget[];
+  styles: { [key: string]: unknown };
+};
+
+export interface MenuModel {
+  Drawer?: EnsembleDrawer;
+  SideBarMenu?: EnsembleSideBar;
+}
+
 type Position = "left" | "right" | "top" | "bottom";
 const positions = ["left", "right", "top", "bottom"] as const;
 
-export const EnsembleMenu: React.FC<DrawerProps> = ({
-  id,
-  height,
-  width,
-  position,
-  onClose,
-  title,
-  children,
-}) => {
+export const EnsembleMenu: React.FC<MenuModel> = ({ Drawer, SideBarMenu }) => {
+  if (!Drawer) return null;
+  const { id, height, width, position, onClose, title, children } = Drawer;
+
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   const { rootRef } = useRegisterBindings(
     { open: drawerOpen, height, width, position },

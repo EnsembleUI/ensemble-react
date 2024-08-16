@@ -85,11 +85,6 @@ View:
             onTap:
               executeCode: |
                 testDrawer.openDrawer()
-        - Button:
-            label: test drawer context
-            onTap: 
-              executeCode: |
-                console.log(footerTextTest.text);
               
         - Icon:
         - Text:
