@@ -8,7 +8,6 @@ import {
 } from "@ensembleui/react-framework";
 // eslint-disable-next-line import/no-cycle
 import { useEnsembleAction } from "./hooks";
-// eslint-disable-next-line import/no-cycle
 import { EnsembleRuntime } from "./runtime";
 
 interface EnsembleDrawer {
@@ -28,18 +27,17 @@ interface EnsembleSideBar {
   id: string;
   items: EnsembleWidget[];
   styles: { [key: string]: unknown };
-};
+}
 
 export interface MenuModel {
-  Drawer?: EnsembleDrawer;
-  SideBarMenu?: EnsembleSideBar;
+  Drawer: EnsembleDrawer;
+  SideBarMenu?: EnsembleSideBar; // NOTE: This would be to display the side bar in a View component but it is not implemented yet
 }
 
 type Position = "left" | "right" | "top" | "bottom";
 const positions = ["left", "right", "top", "bottom"] as const;
 
-export const EnsembleMenu: React.FC<MenuModel> = ({ Drawer, SideBarMenu }) => {
-  if (!Drawer) return null;
+export const EnsembleMenu: React.FC<MenuModel> = ({ Drawer }) => {
   const { id, height, width, position, onClose, title, children } = Drawer;
 
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);

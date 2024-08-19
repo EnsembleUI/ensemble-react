@@ -4,7 +4,7 @@ import type {
 } from "@ensembleui/react-framework";
 import { ScreenContextProvider, error } from "@ensembleui/react-framework";
 import React, { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams, useOutletContext } from "react-router-dom";
 import { isEmpty, merge } from "lodash-es";
 import { type WidgetComponent, WidgetRegistry } from "../registry";
 // FIXME: refactor
@@ -34,13 +34,17 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
   const params = new URLSearchParams(search); // query params
   const queryParams: { [key: string]: unknown } = Object.fromEntries(params);
 
-  const mergedInputs = merge(
+  const outletContext = useOutletContext<{ openDrawer: () => void }>();
+
+  // REVIEW: linter was getting mad at me for not having types for mergedInputs, but I did not change any usage, only the openDrawerMenu input
+  const mergedInputs: { [key: string]: unknown } = merge(
     {},
     state as { [key: string]: unknown },
+    { openDrawerMenu: outletContext?.openDrawer },
     routeParams,
     queryParams,
     inputs,
-  );
+  ) as { [key: string]: unknown };
 
   useEffect(() => {
     if (!screen.customWidgets || isEmpty(screen.customWidgets)) {
@@ -99,7 +103,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
           <EnsembleHeader header={screen.header} />
           <EnsembleBody body={screen.body} styles={screen.styles} />
         </OnLoadAction>
-        <EnsembleMenu {...screen?.menu}/>
+        {screen.menu ? <EnsembleMenu {...screen.menu} /> : null}
         <EnsembleFooter footer={screen.footer} />
       </ModalWrapper>
     </ScreenContextProvider>

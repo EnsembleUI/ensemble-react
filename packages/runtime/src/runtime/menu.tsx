@@ -1,6 +1,6 @@
 import type { PropsWithChildren, ReactNode } from "react";
 import React, { useState, useEffect, useCallback } from "react";
-import { Menu as AntMenu, Col, Divider } from "antd";
+import { Menu as AntMenu, Col, Drawer as AntDrawer } from "antd";
 import * as MuiIcons from "@mui/icons-material";
 import {
   unwrapWidget,
@@ -10,7 +10,6 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import { getColor } from "../shared/styles";
 import { EnsembleRuntime } from "./runtime";
-import { Drawer as AntDrawer } from "antd";
 
 type TypeColors =
   | "transparent"
@@ -31,7 +30,13 @@ type TypeColors =
   | "lime"
   | "orange";
 
-interface MenuItem {
+export interface DrawerRef {
+  openDrawer: () => void;
+  closeDrawer: () => void;
+  isDrawerOpen: () => boolean;
+}
+
+interface MenuItemProps {
   id?: string;
   testId?: string;
   icon?: string | { [key: string]: unknown };
@@ -53,10 +58,13 @@ interface MenuItem {
 
 interface MenuBaseProps<T> {
   id?: string;
-  items: MenuItem[];
+  items: MenuItemProps[];
   styles?: T;
   header?: EnsembleWidget;
   footer?: EnsembleWidget;
+  drawerOpen?: boolean;
+  setDrawerOpen?: (open: boolean) => void;
+  // TODO: Add children option to render ensemble widgets as an alternative to menu items
 }
 
 interface SideBarMenuStyles {
@@ -72,7 +80,7 @@ interface SideBarMenuStyles {
     backgroundColor?: TypeColors;
     borderRadius?: string;
   };
-};
+}
 
 interface DrawerMenuStyles {
   backgroundColor?: TypeColors;
@@ -84,12 +92,12 @@ interface DrawerMenuStyles {
   iconHeight?: string;
   width?: string;
   height?: string;
-  position?: 'left' | 'right' | 'top' | 'bottom';
+  position?: "left" | "right" | "top" | "bottom";
   onSelectStyles?: {
     backgroundColor?: TypeColors;
     borderRadius?: string;
   };
-};
+}
 
 const renderMuiIcon = (
   iconName?: string,
@@ -114,7 +122,7 @@ const renderMuiIcon = (
   return null;
 };
 
-const CustomLink: React.FC<PropsWithChildren & { item: MenuItem }> = ({
+const CustomLink: React.FC<PropsWithChildren & { item: MenuItemProps }> = ({
   item,
   children,
 }) => {
@@ -150,7 +158,10 @@ const CustomLink: React.FC<PropsWithChildren & { item: MenuItem }> = ({
   );
 };
 
-export const SideBarMenu: React.FC<MenuBaseProps<SideBarMenuStyles>> = ({ id, ...props }) => {
+export const SideBarMenu: React.FC<MenuBaseProps<SideBarMenuStyles>> = ({
+  id,
+  ...props
+}) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const { values } = useRegisterBindings({ ...props, isCollapsed }, id, {
     setCollapsed: setIsCollapsed,
@@ -180,52 +191,6 @@ export const SideBarMenu: React.FC<MenuBaseProps<SideBarMenuStyles>> = ({ id, ..
     }
   }, [location.pathname, props.items]);
 
-  const getIcon = useCallback(
-    (item: MenuItem) => {
-      const key = selectedItem === item.page ? "activeIcon" : "icon";
-      const icon =
-        selectedItem === item.page && item.activeIcon
-          ? item.activeIcon
-          : item.icon;
-
-      if (!icon) {
-        return null;
-      }
-
-      if (typeof icon === "string") {
-        return renderMuiIcon(
-          icon,
-          props.styles?.iconWidth,
-          props.styles?.iconHeight,
-        );
-      }
-      return EnsembleRuntime.render([
-        {
-          ...unwrapWidget({ Icon: icon }),
-          key,
-        },
-      ]);
-    },
-    [props.styles?.iconHeight, props.styles?.iconWidth, selectedItem],
-  );
-
-  const getLabel = useCallback(
-    (item: MenuItem) => {
-      if (isCollapsed) {
-        return null;
-      }
-      if (!item.customItem) {
-        return item.label;
-      }
-      const widget =
-        selectedItem === item.page && item.customItem.selectedWidget
-          ? item.customItem.selectedWidget
-          : item.customItem.widget;
-      return EnsembleRuntime.render([unwrapWidget(widget || {})]);
-    },
-    [isCollapsed, selectedItem],
-  );
-
   return (
     <Col
       id="ensemble-sidebar"
@@ -242,89 +207,37 @@ export const SideBarMenu: React.FC<MenuBaseProps<SideBarMenuStyles>> = ({ id, ..
       }}
     >
       {props.header ? EnsembleRuntime.render([props.header]) : null}
-      <AntMenu
-        mode="inline"
-        /* FIXME This is a hack so we can control our own selected styling. Ideally, this should use design tokens */
-        selectedKeys={[]}
-        style={{
-          flex: "1",
-          backgroundColor,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        {/* FIXME: just use props here https://ant.design/components/menu#examples */}
-        {values?.items.map((item, itemIndex) => (
-          <>
-            <AntMenu.Item
-              data-testid={item.id ?? item.testId}
-              icon={getIcon(item)}
-              key={item.page || item.url || `customItem${itemIndex}`}
-              onClick={(): void => {
-                if (!item.openNewTab && item.page) {
-                  setSelectedItem(item.page);
-                }
-              }}
-              style={{
-                color:
-                  selectedItem === item.page
-                    ? (values.styles?.selectedColor as string) ?? "white"
-                    : (values.styles?.labelColor as string) ?? "grey",
-                display: item.visible === false ? "none" : "flex",
-                justifyContent: "center",
-                borderRadius: 0,
-                alignItems: "center",
-                fontSize:
-                  selectedItem === item.page
-                    ? `${parseInt(
-                      `${props.styles?.labelFontSize
-                        ? props.styles.labelFontSize
-                        : 1
-                      }` || "1",
-                    ) + 0.2
-                    }rem`
-                    : `${props.styles?.labelFontSize
-                      ? props.styles.labelFontSize
-                      : 1
-                    }rem`,
-                ...(selectedItem === item.page
-                  ? props.styles?.onSelectStyles ?? {}
-                  : {}),
-              }}
-            >
-              <CustomLink item={item}>{getLabel(item)}</CustomLink>
-            </AntMenu.Item>
-            {item.divider ? (
-              <Col
-                span={24}
-                style={{ display: "flex", justifyContent: "center" }}
-              >
-                <Divider
-                  style={{
-                    backgroundColor: "grey",
-                    width: "70%",
-                    minWidth: "70%",
-                  }}
-                />
-              </Col>
-            ) : null}
-          </>
-        ))}
-      </AntMenu>
+      {ItemsMenu(
+        values?.items || [],
+        values?.styles || {},
+        selectedItem,
+        setSelectedItem,
+        values?.isCollapsed,
+      )}
       {props.footer ? EnsembleRuntime.render([props.footer]) : null}
     </Col>
   );
 };
 
-export const DrawerMenu: React.FC<MenuBaseProps<DrawerMenuStyles>> = ({ id, items, header, footer, styles }) => {
-  const validPositions = ['left', 'right', 'top', 'bottom'] as const;
-  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+export const DrawerMenu: React.FC<MenuBaseProps<DrawerMenuStyles>> = ({
+  id,
+  items,
+  header,
+  footer,
+  styles,
+  drawerOpen,
+  setDrawerOpen,
+}) => {
+  const validPosition = ["left", "right", "top", "bottom"];
+
+  const [selectedItem, setSelectedItem] = useState<string | undefined>();
+
   const { rootRef } = useRegisterBindings(
     { open: drawerOpen },
     id,
     {
-      openDrawer: () => setDrawerOpen(true),
-      closeDrawer: () => setDrawerOpen(false),
+      open: () => setDrawerOpen!(true),
+      close: () => setDrawerOpen!(false),
     },
     {
       debounceMs: 300,
@@ -332,28 +245,133 @@ export const DrawerMenu: React.FC<MenuBaseProps<DrawerMenuStyles>> = ({ id, item
   );
 
   const handleClose = (): void => {
-    setDrawerOpen(false);
+    setDrawerOpen!(false);
   };
 
   return (
-    <div>
-      <button onClick={() => setDrawerOpen(true)}>Open ViewGroup Drawer</button>
-      <AntDrawer
-        closable={false}
-        height={styles?.height}
-        key="placement"
-        onClose={handleClose}
-        open={drawerOpen}
-        panelRef={rootRef}
-        placement={
-          styles?.position && validPositions.includes(styles?.position)
-            ? styles.position
-            : "left"
-        }
-        width={styles?.width}
-      >
-        <SideBarMenu id={`${id}-menu`} {...{ styles, header, footer, items }} />
-      </AntDrawer>
-    </div>
+    <AntDrawer
+      closable={false}
+      height={styles?.height}
+      key={id}
+      onClose={handleClose}
+      open={drawerOpen}
+      panelRef={rootRef}
+      placement={
+        !(styles?.position && validPosition.includes(styles.position))
+          ? "left"
+          : styles.position
+      }
+      style={{
+        backgroundColor: styles?.backgroundColor
+          ? getColor(styles?.backgroundColor)
+          : "none",
+      }}
+      width={styles?.width}
+    >
+      {header ? EnsembleRuntime.render([header]) : null}
+      {ItemsMenu(items, styles || {}, selectedItem, setSelectedItem)}
+      {footer ? EnsembleRuntime.render([footer]) : null}
+    </AntDrawer>
+  );
+};
+
+const ItemsMenu = (
+  items: MenuItemProps[],
+  styles: DrawerMenuStyles,
+  selectedItem: string | undefined,
+  setSelectedItem: (si: string) => void,
+  isCollapsed = false,
+) => {
+  const getIcon = useCallback(
+    (item: MenuItemProps) => {
+      const key = selectedItem === item.page ? "activeIcon" : "icon";
+      const icon =
+        selectedItem === item.page && item.activeIcon
+          ? item.activeIcon
+          : item.icon;
+
+      if (!icon) {
+        return null;
+      }
+
+      if (typeof icon === "string") {
+        return renderMuiIcon(icon, styles?.iconWidth, styles?.iconHeight);
+      }
+      return EnsembleRuntime.render([
+        {
+          ...unwrapWidget({ Icon: icon }),
+          key,
+        },
+      ]);
+    },
+    [styles.iconHeight, styles.iconWidth, selectedItem],
+  );
+
+  const getLabel = useCallback(
+    (item: MenuItemProps) => {
+      if (isCollapsed) return null;
+      if (!item.customItem) {
+        return item.label;
+      }
+      const widget =
+        selectedItem === item.page && item.customItem.selectedWidget
+          ? item.customItem.selectedWidget
+          : item.customItem.widget;
+      return EnsembleRuntime.render([unwrapWidget(widget || {})]);
+    },
+    [isCollapsed, selectedItem],
+  );
+
+  return (
+    <AntMenu
+      mode="inline"
+      /* FIXME This is a hack so we can control our own selected styling. Ideally, this should use design tokens */
+      selectedKeys={[]}
+      style={{
+        flex: "1",
+        backgroundColor: styles.backgroundColor
+          ? getColor(styles?.backgroundColor)
+          : "none",
+        display: "flex",
+        flexDirection: "column",
+        width: styles.width,
+        borderRight: "none",
+      }}
+    >
+      {items.map((item, itemIndex) => (
+        <AntMenu.Item
+          data-testid={item.id ?? item.testId}
+          icon={getIcon(item)}
+          key={item.page || item.url || `customItem${itemIndex}`}
+          onClick={(): void => {
+            if (!item.openNewTab && item.page) {
+              setSelectedItem(item.page);
+            }
+          }}
+          style={{
+            color:
+              selectedItem === item.page
+                ? (styles.selectedColor as string) ?? "white"
+                : (styles.labelColor as string) ?? "grey",
+            display: item.visible === false ? "none" : "flex",
+            justifyContent: "center",
+            borderRadius: 0,
+            alignItems: "center",
+            fontSize:
+              selectedItem === item.page
+                ? `${
+                    parseInt(
+                      `${styles?.labelFontSize ? styles.labelFontSize : 1}` ||
+                        "1",
+                    ) + 0.2
+                  }rem`
+                : `${styles.labelFontSize ? styles.labelFontSize : 1}rem`,
+            ...(selectedItem === item.page ? styles?.onSelectStyles ?? {} : {}),
+          }}
+        >
+          <CustomLink item={item}>{getLabel(item)}</CustomLink>
+        </AntMenu.Item>
+      ))}
+    </AntMenu>
   );
 };

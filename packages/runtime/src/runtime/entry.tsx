@@ -3,7 +3,8 @@ import {
   type EnsembleScreenModel,
 } from "@ensembleui/react-framework";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+import { Alert } from "antd";
 import { DrawerMenu, SideBarMenu } from "./menu";
 import { EnsembleScreen } from "./screen";
 
@@ -17,6 +18,8 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
+
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const hasMenu = "items" in entry;
   useEffect(() => {
@@ -48,40 +51,35 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({
     navigate({ pathname: entry.name.toLowerCase(), search: location.search });
   }, [entry, hasMenu, navigate, location, initialScreen]);
 
-  if (hasMenu && entry.type === 'SideBar') {
-    return (
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <SideBarMenu
-          footer={entry.footer}
-          header={entry.header}
-          id={entry.id}
-          items={entry.items}
-          styles={entry.styles}
-        />
-        <div
-          style={{
-            flexGrow: 1,
-            height: "100vh",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <Outlet />
-        </div>
-      </div>
-    );
-  }
-
   if (hasMenu) {
     return (
       <div style={{ display: "flex", flexDirection: "row" }}>
-        <DrawerMenu
-          footer={entry.footer}
-          header={entry.header}
-          id={entry.id}
-          items={entry.items}
-          styles={entry.styles}
-        />
+        {entry.type === "SideBar" ? (
+          <SideBarMenu
+            footer={entry.footer}
+            header={entry.header}
+            id={entry.id}
+            items={entry.items}
+            styles={entry.styles}
+          />
+        ) : null}
+        {entry.type === "Drawer" ? (
+          <DrawerMenu
+            drawerOpen={drawerOpen}
+            footer={entry.footer}
+            header={entry.header}
+            id={entry.id}
+            items={entry.items}
+            setDrawerOpen={setDrawerOpen}
+            styles={entry.styles}
+          />
+        ) : null}
+        {entry.type !== "Drawer" && entry.type !== "SideBar" ? (
+          <Alert
+            message={`Menu Type ${entry.type} not supported`}
+            type="error"
+          />
+        ) : null}
         <div
           style={{
             flexGrow: 1,
@@ -90,12 +88,11 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({
             flexDirection: "column",
           }}
         >
-          <Outlet />
+          <Outlet context={{ openDrawer: () => setDrawerOpen(true) }} />
         </div>
       </div>
     );
   }
-
 
   if (location.pathname !== "/") {
     return (
