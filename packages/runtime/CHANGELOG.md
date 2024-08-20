@@ -1,5 +1,17 @@
 # @ensembleui/react-runtime
 
+## 0.1.83
+
+### Patch Changes
+
+- 7c08d2d: Fix regression for multiselect
+
+## 0.1.82
+
+### Patch Changes
+
+- 9a8a240: Remove unnecessary whitespace from button
+
 ## 0.1.81
 
 ### Patch Changes
