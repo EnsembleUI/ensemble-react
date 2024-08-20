@@ -102,6 +102,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   const { id, rootRef, values } = useRegisterBindings(
     {
       ...rest,
+      isOpen,
       initialValue: props.value,
       value: selectedValue,
       selectedValue,
