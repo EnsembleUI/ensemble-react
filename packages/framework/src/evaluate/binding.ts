@@ -20,9 +20,9 @@ import {
   screenImportScriptAtom,
   userAtom,
   appAtom,
-  deviceAtom,
   secretAtom,
 } from "../state";
+import { deviceAtom } from "../hooks/useDeviceObserver";
 import { evaluate } from "./evaluate";
 import { createEvaluationContext } from "./context";
 

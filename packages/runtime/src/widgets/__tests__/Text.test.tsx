@@ -5,6 +5,9 @@ import { BrowserRouter } from "react-router-dom";
 import { Text } from "../Text";
 import { Button } from "../Button";
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+global.ResizeObserver = require("resize-observer-polyfill");
+
 describe("Text", () => {
   test("initializes value from binding", () => {
     render(<Text text="my first widget" />);

@@ -1,6 +1,6 @@
 import { atom, useAtom } from "jotai";
-import { clone, merge } from "lodash-es";
-import { useCallback } from "react";
+import { clone, debounce, merge } from "lodash-es";
+import { useEffect, useMemo } from "react";
 
 // https://wicg.github.io/ua-client-hints/#navigatorua
 declare interface NavigatorUA {
@@ -40,19 +40,35 @@ export const defaultDevice = {
 
 export const deviceAtom = atom<DeviceDefinition>(defaultDevice);
 
-export const useDeviceData = (): DeviceDefinition &
-  Pick<DeviceActions, "setData"> => {
+export const useDeviceObserver = (): DeviceDefinition => {
   const [data, setDataAtom] = useAtom(deviceAtom);
 
-  const setData = useCallback(
-    (values: { [key: string]: unknown }) => {
-      setDataAtom(clone(merge({}, data, values)));
-    },
-    [data, setDataAtom],
-  );
+  const debouncedUpdateDeviceData = useMemo(() => {
+    const handleResize = (): void => {
+      setDataAtom(
+        clone(
+          merge({}, data, {
+            width: window.innerWidth,
+            height: window.innerHeight,
+          }),
+        ),
+      );
+    };
+
+    return debounce(handleResize, 100);
+  }, [data, setDataAtom]);
+
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(debouncedUpdateDeviceData);
+    resizeObserver.observe(document.body);
+
+    return (): void => {
+      resizeObserver.disconnect();
+      debouncedUpdateDeviceData.cancel(); // Cancel any pending debounced calls on cleanup
+    };
+  }, [debouncedUpdateDeviceData]);
 
   return {
     ...data,
-    setData,
   };
 };

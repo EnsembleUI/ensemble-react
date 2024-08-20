@@ -4,6 +4,9 @@ import { BrowserRouter } from "react-router-dom";
 import { Date as DateComponent } from "../Date";
 import { Button } from "../../../Button";
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+global.ResizeObserver = require("resize-observer-polyfill");
+
 describe("Date widget", () => {
   test("initializes with no value", () => {
     render(<DateComponent label="test" />);

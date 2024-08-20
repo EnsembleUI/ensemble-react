@@ -16,7 +16,7 @@ import {
   CustomScopeProvider,
   CustomThemeContext,
   useLanguageScope,
-  useDeviceData,
+  useDeviceObserver,
   isUsingMockResponse,
   setUseMockResponse,
   mockResponse,
@@ -130,7 +130,7 @@ export const useExecuteCode: EnsembleActionHook<
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,
   );
-  const device = useDeviceData();
+  const device = useDeviceObserver();
   const theme = themescope.theme;
 
   const js = useMemo(() => {
