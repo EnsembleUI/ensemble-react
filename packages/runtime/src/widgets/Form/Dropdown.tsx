@@ -100,7 +100,13 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   };
 
   const { id, rootRef, values } = useRegisterBindings(
-    { ...rest, initialValue: props.value, value: selectedValue, widgetName },
+    {
+      ...rest,
+      initialValue: props.value,
+      value: selectedValue,
+      selectedValue,
+      widgetName,
+    },
     props.id,
     {
       setSelectedValue,
@@ -313,7 +319,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               )
             }
             showSearch={Boolean(values?.autoComplete)}
-            value={values?.value}
+            value={values?.selectedValue}
           >
             {options}
           </Select>
