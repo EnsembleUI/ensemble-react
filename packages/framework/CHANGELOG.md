@@ -1,5 +1,25 @@
 # @ensembleui/react-framework
 
+## 0.1.58
+
+### Patch Changes
+
+- cdaa85f: Added mockResponse support to APIs. This allows you to return a mockResponse from the api with a statusCode, reasonPhrase, body, and headers. It can be accessed and mutated using "app.useMockResponse" in a block of JS code.
+
+## 0.1.57
+
+### Patch Changes
+
+- 2fc2ac5: fix: choose first theme as default from the theme yaml
+- 2d5b743: fix flutter disparity issue
+- f8c9226: Add html attribute pass through to form widgets
+
+## 0.1.56
+
+### Patch Changes
+
+- 04454f2: use unique key when applying styles to modal
+
 ## 0.1.55
 
 ### Patch Changes

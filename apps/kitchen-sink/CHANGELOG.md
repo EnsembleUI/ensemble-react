@@ -1,5 +1,93 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.77
+
+### Patch Changes
+
+- Updated dependencies [7c08d2d]
+  - @ensembleui/react-runtime@0.1.83
+
+## 0.0.76
+
+### Patch Changes
+
+- Updated dependencies [9a8a240]
+  - @ensembleui/react-runtime@0.1.82
+
+## 0.0.75
+
+### Patch Changes
+
+- Updated dependencies [e683933]
+  - @ensembleui/react-runtime@0.1.81
+
+## 0.0.74
+
+### Patch Changes
+
+- cdaa85f: Added mockResponse support to APIs. This allows you to return a mockResponse from the api with a statusCode, reasonPhrase, body, and headers. It can be accessed and mutated using "app.useMockResponse" in a block of JS code.
+- 9b50023: Add functions to help with form validations
+- e0cbd8e: Add maxLength and maxLengthEnforcement on text input
+- Updated dependencies [cdaa85f]
+- Updated dependencies [dfc5ad5]
+- Updated dependencies [9b50023]
+- Updated dependencies [e0cbd8e]
+  - @ensembleui/react-framework@0.1.58
+  - @ensembleui/react-runtime@0.1.80
+
+## 0.0.73
+
+### Patch Changes
+
+- 298a6df: center align button's icon when no label is given
+- f8c9226: Add html attribute pass through to form widgets
+- Updated dependencies [2fc2ac5]
+- Updated dependencies [2d5b743]
+- Updated dependencies [298a6df]
+- Updated dependencies [f8c9226]
+- Updated dependencies [483a150]
+  - @ensembleui/react-framework@0.1.57
+  - @ensembleui/react-runtime@0.1.79
+
+## 0.0.72
+
+### Patch Changes
+
+- Updated dependencies [ddb575f]
+  - @ensembleui/react-runtime@0.1.78
+
+## 0.0.71
+
+### Patch Changes
+
+- 56036a1: fix TextInput's regex validator not validating on no input
+- Updated dependencies [56036a1]
+  - @ensembleui/react-runtime@0.1.77
+
+## 0.0.70
+
+### Patch Changes
+
+- Updated dependencies [78f35e7]
+- Updated dependencies [7eae5b8]
+  - @ensembleui/react-runtime@0.1.76
+
+## 0.0.69
+
+### Patch Changes
+
+- Updated dependencies [2e2fc51]
+  - @ensembleui/react-runtime@0.1.75
+
+## 0.0.68
+
+### Patch Changes
+
+- 04454f2: use unique key when applying styles to modal
+- Updated dependencies [04454f2]
+  - @ensembleui/react-framework@0.1.56
+  - @ensembleui/react-runtime@0.1.74
+
 ## 0.0.67
 
 ### Patch Changes

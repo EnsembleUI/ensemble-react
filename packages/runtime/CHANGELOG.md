@@ -1,5 +1,79 @@
 # @ensembleui/react-runtime
 
+## 0.1.83
+
+### Patch Changes
+
+- 7c08d2d: Fix regression for multiselect
+
+## 0.1.82
+
+### Patch Changes
+
+- 9a8a240: Remove unnecessary whitespace from button
+
+## 0.1.81
+
+### Patch Changes
+
+- e683933: Fallback to using action inputs if none are provided
+
+## 0.1.80
+
+### Patch Changes
+
+- cdaa85f: Added mockResponse support to APIs. This allows you to return a mockResponse from the api with a statusCode, reasonPhrase, body, and headers. It can be accessed and mutated using "app.useMockResponse" in a block of JS code.
+- dfc5ad5: Update text binding if value chages
+- 9b50023: Add functions to help with form validations
+- e0cbd8e: Add maxLength and maxLengthEnforcement on text input
+- Updated dependencies [cdaa85f]
+  - @ensembleui/react-framework@0.1.58
+
+## 0.1.79
+
+### Patch Changes
+
+- 298a6df: center align button's icon when no label is given
+- f8c9226: Add html attribute pass through to form widgets
+- 483a150: Fix cases where multiple modal screens are created
+- Updated dependencies [2fc2ac5]
+- Updated dependencies [2d5b743]
+- Updated dependencies [f8c9226]
+  - @ensembleui/react-framework@0.1.57
+
+## 0.1.78
+
+### Patch Changes
+
+- ddb575f: fix form submission when regex is used in TextInput (bug introduced in runtime 0.1.77)
+
+## 0.1.77
+
+### Patch Changes
+
+- 56036a1: fix TextInput's regex validator not validating on no input
+
+## 0.1.76
+
+### Patch Changes
+
+- 78f35e7: Fix menu page matching
+- 7eae5b8: Add callback options to grid functions
+
+## 0.1.75
+
+### Patch Changes
+
+- 2e2fc51: fix: added support for default unit for margin and padding in icon
+
+## 0.1.74
+
+### Patch Changes
+
+- 04454f2: use unique key when applying styles to modal
+- Updated dependencies [04454f2]
+  - @ensembleui/react-framework@0.1.56
+
 ## 0.1.73
 
 ### Patch Changes

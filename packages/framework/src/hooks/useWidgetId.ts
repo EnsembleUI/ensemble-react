@@ -45,7 +45,7 @@ const JS_ID_REGEX = /^[_$a-zA-Z\xA0-\uFFFF][_$a-zA-Z0-9\xA0-\uFFFF]*$/;
 
 const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-const generateRandomString = (length: number): string => {
+export const generateRandomString = (length: number): string => {
   let randomString = "";
 
   for (let i = 0; i < length; i++) {

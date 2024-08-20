@@ -54,6 +54,7 @@ test("Renders error page", () => {
     home: {},
     screens: [],
     customWidgets: [],
+    themes: {},
   });
   try {
     render(<EnsembleApp appId="test" application={{} as ApplicationDTO} />);
@@ -89,6 +90,7 @@ test("Renders view widget of home screen", () => {
     home: mockScreen,
     screens: [mockScreen],
     customWidgets: [],
+    themes: {},
   });
   render(
     <EnsembleApp
@@ -133,6 +135,7 @@ test("Bind data from other widgets", async () => {
     home: mockScreen,
     screens: [mockScreen],
     customWidgets: [],
+    themes: {},
   });
   render(
     <EnsembleApp
@@ -181,6 +184,7 @@ test("Updates values through Ensemble state", async () => {
     home: mockScreen,
     screens: [mockScreen],
     customWidgets: [],
+    themes: {},
   });
   render(
     <EnsembleApp

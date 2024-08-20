@@ -112,5 +112,6 @@ export const useScreenContext = ():
     },
     [screenContext.data, setDataAtom],
   );
+
   return { ...screenContext, setData };
 };

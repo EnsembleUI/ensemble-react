@@ -835,6 +835,8 @@ View:
               width: 300px
               justifySelf: end
         - DateRange:
+            htmlAttributes:
+              data-testid: daterange-test
             id: dateRange1
             enabled: true
             suffixIcon:

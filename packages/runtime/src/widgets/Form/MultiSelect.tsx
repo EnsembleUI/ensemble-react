@@ -157,7 +157,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
 
   const onItemSelectCallback = useCallback(
     (value?: string[]) => {
-      onItemSelectAction?.callback({ selectedValue: value });
+      onItemSelectAction?.callback({ selectedValues: value });
     },
     [onItemSelectAction],
   );

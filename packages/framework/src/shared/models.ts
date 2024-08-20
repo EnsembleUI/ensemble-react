@@ -34,8 +34,7 @@ export interface EnsembleAppModel {
   screens: EnsembleScreenModel[];
   customWidgets: CustomWidgetModel[];
   home: EnsembleEntryPoint;
-  theme?: EnsembleThemeModel;
-  themes?: { [key: string]: EnsembleThemeModel | undefined };
+  themes: { [key: string]: EnsembleThemeModel };
   scripts: EnsembleScriptModel[];
   config?: EnsembleConfigYAML;
   languages?: EnsembleLanguageModel[];
@@ -66,6 +65,14 @@ export interface EnsembleAPIModel {
   body?: string | object;
   onResponse?: EnsembleAction;
   onError?: EnsembleAction;
+  mockResponse?: EnsembleMockResponse | string;
+}
+
+export interface EnsembleMockResponse {
+  statusCode: number;
+  body: object | string;
+  headers?: Record<string, string>;
+  reasonPhrase?: string;
 }
 
 export interface EnsembleCustomEventModel {
@@ -118,6 +125,7 @@ export interface CustomWidgetModel {
 }
 
 export interface EnsembleThemeModel {
+  name: string;
   Tokens?: {
     Colors?: {
       primary?: string;

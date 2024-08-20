@@ -1,5 +1,87 @@
 # @ensembleui/react-starter
 
+## 0.4.23
+
+### Patch Changes
+
+- Updated dependencies [7c08d2d]
+  - @ensembleui/react-runtime@0.1.83
+
+## 0.4.22
+
+### Patch Changes
+
+- Updated dependencies [9a8a240]
+  - @ensembleui/react-runtime@0.1.82
+
+## 0.4.21
+
+### Patch Changes
+
+- Updated dependencies [e683933]
+  - @ensembleui/react-runtime@0.1.81
+
+## 0.4.20
+
+### Patch Changes
+
+- cdaa85f: Added mockResponse support to APIs. This allows you to return a mockResponse from the api with a statusCode, reasonPhrase, body, and headers. It can be accessed and mutated using "app.useMockResponse" in a block of JS code.
+- Updated dependencies [cdaa85f]
+- Updated dependencies [dfc5ad5]
+- Updated dependencies [9b50023]
+- Updated dependencies [e0cbd8e]
+  - @ensembleui/react-framework@0.1.58
+  - @ensembleui/react-runtime@0.1.80
+
+## 0.4.19
+
+### Patch Changes
+
+- Updated dependencies [2fc2ac5]
+- Updated dependencies [2d5b743]
+- Updated dependencies [298a6df]
+- Updated dependencies [f8c9226]
+- Updated dependencies [483a150]
+  - @ensembleui/react-framework@0.1.57
+  - @ensembleui/react-runtime@0.1.79
+
+## 0.4.18
+
+### Patch Changes
+
+- Updated dependencies [ddb575f]
+  - @ensembleui/react-runtime@0.1.78
+
+## 0.4.17
+
+### Patch Changes
+
+- Updated dependencies [56036a1]
+  - @ensembleui/react-runtime@0.1.77
+
+## 0.4.16
+
+### Patch Changes
+
+- Updated dependencies [78f35e7]
+- Updated dependencies [7eae5b8]
+  - @ensembleui/react-runtime@0.1.76
+
+## 0.4.15
+
+### Patch Changes
+
+- Updated dependencies [2e2fc51]
+  - @ensembleui/react-runtime@0.1.75
+
+## 0.4.14
+
+### Patch Changes
+
+- Updated dependencies [04454f2]
+  - @ensembleui/react-framework@0.1.56
+  - @ensembleui/react-runtime@0.1.74
+
 ## 0.4.13
 
 ### Patch Changes
