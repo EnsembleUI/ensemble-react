@@ -100,7 +100,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   };
 
   const { id, rootRef, values } = useRegisterBindings(
-    { ...rest, initialValue: props.value, selectedValue, widgetName },
+    { ...rest, initialValue: props.value, value: selectedValue, widgetName },
     props.id,
     {
       setSelectedValue,
@@ -109,13 +109,13 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     },
   );
 
-  const action = useEnsembleAction(onChange);
+  const onChangeAction = useEnsembleAction(onChange);
   const handleChange = useCallback(
     (value?: number | string) => {
       setSelectedValue(value);
-      action?.callback({ value });
+      onChangeAction?.callback({ value });
     },
-    [action],
+    [onChangeAction],
   );
 
   const onItemSelectAction = useEnsembleAction(onItemSelect);
@@ -313,7 +313,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               )
             }
             showSearch={Boolean(values?.autoComplete)}
-            value={values?.selectedValue}
+            value={values?.value}
           >
             {options}
           </Select>
