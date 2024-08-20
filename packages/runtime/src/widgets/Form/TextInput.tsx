@@ -1,4 +1,4 @@
-import { Input, Form, InputNumber } from "antd";
+import { Input, Form } from "antd";
 import type { Expression, EnsembleAction } from "@ensembleui/react-framework";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useEffect, useMemo, useState, useCallback } from "react";
@@ -58,6 +58,30 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     [action],
   );
 
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (values?.inputType !== "number") {
+        return;
+      }
+
+      const isNumericKey = /^\d$/.test(e.key); // Numpad keys (96-105)
+      const isControlKey = [
+        "Backspace",
+        "Tab",
+        "ArrowLeft",
+        "ArrowRight",
+      ].includes(e.key);
+      const isCopyPasteCut =
+        (e.ctrlKey || e.metaKey) &&
+        ["c", "v", "x"].includes(e.key.toLowerCase());
+
+      if (!isNumericKey && !isControlKey && !isCopyPasteCut) {
+        e.preventDefault(); // Prevent non-numeric keys
+      }
+    },
+    [values?.inputType],
+  );
+
   useEffect(() => {
     setValue(values?.initialValue);
   }, [values?.initialValue]);
@@ -77,7 +101,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
       case "phone":
         return "tel";
       case "number":
-        return "number";
+        return "tel";
       case "url":
         return "url";
       default:
@@ -193,32 +217,6 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
       }
     : undefined;
 
-  if (inputType === "number") {
-    return (
-      <EnsembleFormItem rules={rules} valuePropName="value" values={values}>
-        <InputNumber
-          defaultValue={values?.value}
-          disabled={values?.enabled === false}
-          max={
-            values?.maxLength
-              ? String(Math.pow(10, values.maxLength as number) - 1)
-              : undefined
-          }
-          onChange={(newVal): void => handleChange(newVal || "")}
-          placeholder={values?.hintText ?? ""}
-          ref={rootRef}
-          style={{
-            ...(values?.styles ?? values?.hintStyle),
-            ...(values?.styles?.visible === false
-              ? { display: "none" }
-              : undefined),
-          }}
-          value={value}
-        />
-      </EnsembleFormItem>
-    );
-  }
-
   return (
     <EnsembleFormItem rules={rules} valuePropName="value" values={values}>
       {values?.multiLine ? (
@@ -244,6 +242,9 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
           defaultValue={values?.value}
           disabled={values?.enabled === false}
           onChange={(event): void => handleChange(event.target.value)}
+          onKeyDown={(event): void => {
+            handleKeyDown(event);
+          }}
           placeholder={values?.hintText ?? ""}
           ref={rootRef}
           style={{
