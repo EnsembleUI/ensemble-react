@@ -71,9 +71,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
         "ArrowLeft",
         "ArrowRight",
       ].includes(e.key);
-      const isCopyPasteCut =
-        (e.ctrlKey || e.metaKey) &&
-        ["c", "v", "x"].includes(e.key.toLowerCase());
+      const isCopyPasteCut = e.ctrlKey || e.metaKey;
 
       if (!isNumericKey && !isControlKey && !isCopyPasteCut) {
         e.preventDefault(); // Prevent non-numeric keys
@@ -242,9 +240,9 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
           defaultValue={values?.value}
           disabled={values?.enabled === false}
           onChange={(event): void => handleChange(event.target.value)}
-          onKeyDown={(event): void => {
-            handleKeyDown(event);
-          }}
+          {...(values?.inputType === "number" && {
+            onKeyDown: (event): void => handleKeyDown(event),
+          })}
           placeholder={values?.hintText ?? ""}
           ref={rootRef}
           style={{
