@@ -27,6 +27,7 @@ View:
         - Text:
             styles:
               names: heading-1
+              color: ${colors.primary['900']}
             text: ${ensemble.secrets.dummyOauthSecret}
         - Text:
             styles:
