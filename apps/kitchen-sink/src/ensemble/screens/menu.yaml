@@ -1,5 +1,5 @@
 ViewGroup:
-  Drawer:
+  SideBar:
     id: sidebar
     styles:
       iconWidth: 20px

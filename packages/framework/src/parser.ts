@@ -257,7 +257,7 @@ export const EnsembleParser = {
 
   parseMenu: (menu: object): EnsembleMenuModel => {
     const menuType = head(Object.keys(menu));
-    if (!menuType) {
+    if (!menuType || !includes(["SideBar", "Drawer"], String(menuType))) {
       throw Error("Invalid ViewGroup definition: invalid menu type");
     }
 
@@ -269,7 +269,7 @@ export const EnsembleParser = {
       | undefined;
     return {
       id: get(menu, [menuType, "id"]) as string | undefined,
-      type: menuType.toString(),
+      type: menuType as "SideBar" | "Drawer",
       items: get(menu, [menuType, "items"]) as [],
       header: headerDef ? unwrapWidget(headerDef) : undefined,
       footer: footerDef ? unwrapWidget(footerDef) : undefined,
@@ -469,20 +469,35 @@ const unwrapLanguage = (language: LanguageDTO) => {
 const unwrapMenu = (
   menu: { [key: string]: unknown } | undefined,
 ): EnsembleViewMenuType | undefined => {
-  if (!menu || !get(menu, "Drawer")) return;
-  const drawerMenu = get(menu, "Drawer");
-  const unwrapedChildren = (get(drawerMenu, "children") || []).map((child) =>
+  if (!menu) return;
+
+  const definedMenus = Object.keys(menu);
+
+  if (isEmpty(definedMenus) || definedMenus.length > 1) {
+    throw Error("Invalid ViewGroup definition: missing singular menu type");
+  }
+
+  const menuType = String(definedMenus[0]);
+  if (!includes(["Drawer"], menuType)) {
+    throw Error("Invalid ViewGroup definition: invalid menu type");
+  }
+
+  const menuDef = get(menu, menuType);
+  const unwrapedChildren = (get(menuDef, "children") || []).map((child) =>
     unwrapWidget(child as { [key: string]: unknown }),
   );
   return {
-    Drawer: {
-      id: get(drawerMenu, "id"),
-      height: get(drawerMenu, "height"),
-      width: get(drawerMenu, "width"),
-      position: get(drawerMenu, "position"),
-      onClose: get(drawerMenu, "onClose"),
-      title: get(drawerMenu, "title"),
-      children: unwrapedChildren,
-    },
+    type: menuType as "Drawer",
+    id: get(menuDef, "id"),
+    header: unwrapWidget(
+      get(menuDef, ["header"]) as { [key: string]: unknown },
+    ),
+    footer: unwrapWidget(
+      get(menuDef, ["footer"]) as { [key: string]: unknown },
+    ),
+    onCollapse: get(menuDef, "onClose"),
+    title: get(menuDef, "title"),
+    children: unwrapedChildren,
+    styles: get(menuDef, "styles"),
   };
 };

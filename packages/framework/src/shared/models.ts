@@ -43,7 +43,7 @@ export interface EnsembleAppModel {
 
 export interface EnsembleMenuModel {
   id?: string;
-  type: string; // Type is either 'SideBar' or 'Drawer'
+  type: "SideBar" | "Drawer";
   items: {
     label: string;
     icon?: string;
@@ -57,15 +57,14 @@ export interface EnsembleMenuModel {
 }
 
 export interface EnsembleViewMenuType {
-  Drawer: {
-    id?: string;
-    height?: string | number;
-    width?: string | number;
-    position?: string;
-    onClose?: EnsembleAction;
-    title?: string;
-    children?: EnsembleWidget[];
-  };
+  type: "Drawer"; // More menu types can be added here and should be supported in the future
+  id?: string;
+  styles?: { [key: string]: unknown };
+  onCollapse?: EnsembleAction;
+  title?: string;
+  children?: EnsembleWidget[];
+  header?: EnsembleWidget;
+  footer?: EnsembleWidget;
 }
 
 export interface EnsembleAPIModel {

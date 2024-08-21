@@ -7,7 +7,7 @@ import {
   useRegisterBindings,
   type EnsembleWidget,
 } from "@ensembleui/react-framework";
-import { Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import { getColor } from "../shared/styles";
 import { EnsembleRuntime } from "./runtime";
 
@@ -36,6 +36,13 @@ export interface DrawerRef {
   isDrawerOpen: () => boolean;
 }
 
+export interface EnsembleMenuContext {
+  openDrawerMenu?: () => void;
+  closeDrawerMenu?: () => void;
+  isMenuCollapsed?: boolean;
+  setMenuCollapsed?: (collapsed: boolean) => void;
+}
+
 interface MenuItemProps {
   id?: string;
   testId?: string;
@@ -62,8 +69,8 @@ interface MenuBaseProps<T> {
   styles?: T;
   header?: EnsembleWidget;
   footer?: EnsembleWidget;
-  drawerOpen?: boolean;
-  setDrawerOpen?: (open: boolean) => void;
+  isCollapsed: boolean;
+  setCollapsed: (open: boolean) => void;
   // TODO: Add children option to render ensemble widgets as an alternative to menu items
 }
 
@@ -158,13 +165,49 @@ const CustomLink: React.FC<PropsWithChildren & { item: MenuItemProps }> = ({
   );
 };
 
+export const RenderMenu: React.FC<{
+  type: "SideBar" | "Drawer";
+  menu: MenuBaseProps<SideBarMenuStyles | DrawerMenuStyles>;
+}> = ({ type, menu }) => {
+  return (
+    <div style={{ display: "flex", flexDirection: "row" }}>
+      {type === "SideBar" ? <SideBarMenu {...menu} /> : null}
+      {type === "Drawer" ? <DrawerMenu {...menu} /> : null}
+      <div
+        style={{
+          flexGrow: 1,
+          height: "100vh",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Outlet
+          context={
+            type === "Drawer"
+              ? {
+                  openDrawerMenu: () => menu.setCollapsed(true),
+                  closeDrawerMenu: () => menu.setCollapsed(false),
+                }
+              : {
+                  isMenuCollapsed: () => menu.isCollapsed,
+                  setMenuCollapsed: (value: boolean) =>
+                    menu.setCollapsed(value),
+                }
+          }
+        />
+      </div>
+    </div>
+  );
+};
+
 export const SideBarMenu: React.FC<MenuBaseProps<SideBarMenuStyles>> = ({
   id,
+  isCollapsed,
+  setCollapsed,
   ...props
 }) => {
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const { values } = useRegisterBindings({ ...props, isCollapsed }, id, {
-    setCollapsed: setIsCollapsed,
+    setCollapsed,
   });
   const location = useLocation();
   const [selectedItem, setSelectedItem] = useState<string | undefined>();
@@ -225,19 +268,19 @@ export const DrawerMenu: React.FC<MenuBaseProps<DrawerMenuStyles>> = ({
   header,
   footer,
   styles,
-  drawerOpen,
-  setDrawerOpen,
+  isCollapsed,
+  setCollapsed,
 }) => {
   const validPosition = ["left", "right", "top", "bottom"];
 
   const [selectedItem, setSelectedItem] = useState<string | undefined>();
 
   const { rootRef } = useRegisterBindings(
-    { open: drawerOpen },
+    { open: isCollapsed },
     id,
     {
-      open: () => setDrawerOpen!(true),
-      close: () => setDrawerOpen!(false),
+      open: () => setCollapsed(true),
+      close: () => setCollapsed(false),
     },
     {
       debounceMs: 300,
@@ -245,16 +288,16 @@ export const DrawerMenu: React.FC<MenuBaseProps<DrawerMenuStyles>> = ({
   );
 
   const handleClose = (): void => {
-    setDrawerOpen!(false);
+    setCollapsed(false);
   };
 
   return (
     <AntDrawer
       closable={false}
-      height={styles?.height}
+      height={styles?.height ? `calc(${styles.height} + 48px)` : undefined}
       key={id}
       onClose={handleClose}
-      open={drawerOpen}
+      open={isCollapsed}
       panelRef={rootRef}
       placement={
         !(styles?.position && validPosition.includes(styles.position))
@@ -263,13 +306,13 @@ export const DrawerMenu: React.FC<MenuBaseProps<DrawerMenuStyles>> = ({
       }
       style={{
         backgroundColor: styles?.backgroundColor
-          ? getColor(styles?.backgroundColor)
+          ? getColor(styles.backgroundColor)
           : "none",
       }}
-      width={styles?.width}
+      width={styles?.width ? `calc(${styles.width} + 48px)` : undefined}
     >
       {header ? EnsembleRuntime.render([header]) : null}
-      {ItemsMenu(items, styles || {}, selectedItem, setSelectedItem)}
+      {ItemsMenu(items, { ...styles }, selectedItem, setSelectedItem)}
       {footer ? EnsembleRuntime.render([footer]) : null}
     </AntDrawer>
   );
@@ -295,7 +338,7 @@ const ItemsMenu = (
       }
 
       if (typeof icon === "string") {
-        return renderMuiIcon(icon, styles?.iconWidth, styles?.iconHeight);
+        return renderMuiIcon(icon, styles.iconWidth, styles.iconHeight);
       }
       return EnsembleRuntime.render([
         {
@@ -330,7 +373,7 @@ const ItemsMenu = (
       style={{
         flex: "1",
         backgroundColor: styles.backgroundColor
-          ? getColor(styles?.backgroundColor)
+          ? getColor(styles.backgroundColor)
           : "none",
         display: "flex",
         flexDirection: "column",
@@ -361,12 +404,12 @@ const ItemsMenu = (
               selectedItem === item.page
                 ? `${
                     parseInt(
-                      `${styles?.labelFontSize ? styles.labelFontSize : 1}` ||
+                      `${styles.labelFontSize ? styles.labelFontSize : 1}` ||
                         "1",
                     ) + 0.2
                   }rem`
                 : `${styles.labelFontSize ? styles.labelFontSize : 1}rem`,
-            ...(selectedItem === item.page ? styles?.onSelectStyles ?? {} : {}),
+            ...(selectedItem === item.page ? styles.onSelectStyles ?? {} : {}),
           }}
         >
           <CustomLink item={item}>{getLabel(item)}</CustomLink>

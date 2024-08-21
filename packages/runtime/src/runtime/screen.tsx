@@ -16,6 +16,7 @@ import { EnsembleBody } from "./body";
 import { EnsembleMenu } from "./ensembleMenu";
 import { ModalWrapper } from "./modal";
 import { createCustomWidget } from "./customWidget";
+import { EnsembleMenuContext } from "./menu";
 
 export interface EnsembleScreenProps {
   screen: EnsembleScreenModel;
@@ -34,13 +35,12 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
   const params = new URLSearchParams(search); // query params
   const queryParams: { [key: string]: unknown } = Object.fromEntries(params);
 
-  const outletContext = useOutletContext<{ openDrawer: () => void }>();
+  const outletContext = useOutletContext<EnsembleMenuContext>();
 
-  // REVIEW: linter was getting mad at me for not having types for mergedInputs, but I did not change any usage, only the openDrawerMenu input
   const mergedInputs: { [key: string]: unknown } = merge(
     {},
     state as { [key: string]: unknown },
-    { openDrawerMenu: outletContext?.openDrawer },
+    { ...outletContext },
     routeParams,
     queryParams,
     inputs,

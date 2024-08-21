@@ -4,8 +4,7 @@ import {
 } from "@ensembleui/react-framework";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Alert } from "antd";
-import { DrawerMenu, SideBarMenu } from "./menu";
+import { RenderMenu } from "./menu";
 import { EnsembleScreen } from "./screen";
 
 interface EnsembleEntryProps {
@@ -19,7 +18,7 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [isCollapsed, setCollapsed] = useState(false);
 
   const hasMenu = "items" in entry;
   useEffect(() => {
@@ -53,44 +52,18 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({
 
   if (hasMenu) {
     return (
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        {entry.type === "SideBar" ? (
-          <SideBarMenu
-            footer={entry.footer}
-            header={entry.header}
-            id={entry.id}
-            items={entry.items}
-            styles={entry.styles}
-          />
-        ) : null}
-        {entry.type === "Drawer" ? (
-          <DrawerMenu
-            drawerOpen={drawerOpen}
-            footer={entry.footer}
-            header={entry.header}
-            id={entry.id}
-            items={entry.items}
-            setDrawerOpen={setDrawerOpen}
-            styles={entry.styles}
-          />
-        ) : null}
-        {entry.type !== "Drawer" && entry.type !== "SideBar" ? (
-          <Alert
-            message={`Menu Type ${entry.type} not supported`}
-            type="error"
-          />
-        ) : null}
-        <div
-          style={{
-            flexGrow: 1,
-            height: "100vh",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <Outlet context={{ openDrawer: () => setDrawerOpen(true) }} />
-        </div>
-      </div>
+      <RenderMenu
+        type={entry.type}
+        menu={{
+          id: entry?.id,
+          items: entry.items,
+          header: entry?.header,
+          footer: entry?.footer,
+          styles: entry?.styles,
+          isCollapsed,
+          setCollapsed,
+        }}
+      />
     );
   }
 
