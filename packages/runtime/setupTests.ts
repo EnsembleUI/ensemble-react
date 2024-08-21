@@ -1,5 +1,7 @@
 import "jest-canvas-mock";
 
+global.ResizeObserver = require('resize-observer-polyfill')
+
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: jest.fn().mockImplementation((query) => ({
