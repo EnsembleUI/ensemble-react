@@ -1,4 +1,4 @@
-import { useAtom } from "jotai";
+import { atom, useAtom } from "jotai";
 import { createJSONStorage, atomWithStorage } from "jotai/utils";
 import { clone, merge } from "lodash-es";
 import { useMemo } from "react";
@@ -13,10 +13,19 @@ const backingStorage = createJSONStorage<{ [key: string]: unknown }>(
   () => sessionStorage,
 );
 
-export const screenStorageAtom = atomWithStorage<{ [key: string]: unknown }>(
+const screenStorageAtomInternal = atomWithStorage<{ [key: string]: unknown }>(
   "ensemble.storage",
   {},
   backingStorage,
+);
+
+export const screenStorageAtom = atom(
+  (get) => get(screenStorageAtomInternal),
+  (get, set, update) => {
+    const currentData = get(screenStorageAtomInternal);
+    const nextData = merge({}, currentData, update);
+    set(screenStorageAtomInternal, nextData);
+  },
 );
 
 export const useEnsembleStorage = (): EnsembleStorage => {
@@ -42,13 +51,12 @@ export const createStorageApi = (
 ): EnsembleStorage => {
   return {
     set: (key: string, value: unknown): void => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const latestStorage: { [key: string]: unknown } = JSON.parse(
-        sessionStorage.getItem("ensemble.storage") ?? "{}",
-      );
-      const nextStorage = merge(storage, latestStorage);
-      nextStorage[key] = value;
-      setStorage?.(clone(nextStorage));
+      const update: { [key: string]: unknown } = {};
+      update[key] = value;
+      if (storage) {
+        merge(storage, update);
+      }
+      setStorage?.(update);
     },
     get: (key: string): unknown => {
       return storage?.[key];
