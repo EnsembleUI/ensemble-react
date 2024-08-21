@@ -1,4 +1,6 @@
 View:
+  styles:
+    scrollableView: true
   onLoad:
     executeCode:
       body: |-
@@ -6,8 +8,7 @@ View:
         ensemble.storage.set('loaderStat', false);
         ensemble.storage.set("skip", 10)
         ensemble.storage.set("iconSize", 40)
-        ensemble.storage.set("iconName", "Abc")
-
+        ensemble.storage.set("iconName", "MoreHoriz")
       onComplete:
         invokeApi:
           name: getDummyProductsByPaginate
@@ -35,10 +36,44 @@ View:
       styles:
         names: page
       children:
-        - Icon:
-            name: ArrowBack
-            onTap:
-              navigateBack:
+        - Row:
+            styles:
+              crossAxis: center
+              mainAxis: spaceBetween
+            children:
+              - Icon:
+                  name: ArrowBack
+                  onTap:
+                    navigateBack:
+              - PopupMenu:
+                  showDivider: true
+                  enabled: ${ensemble.storage.get("dummyProducts")?.at(0)?.id === 1}
+                  trigger: hover
+                  styles:
+                    backgroundColor: beige
+                    height: 200px
+                  onItemSelect:
+                    showToast:
+                      message: Your selected ${value?.product?.brand ? 'title' :'price'} is ${value?.product?.title || value?.value}
+                  item-template:
+                    data: ${ensemble.storage.get("dummyProducts")}
+                    name: product
+                    template:
+                      Text:
+                        text: ${product.title}
+                  items: "${getDummyProductsByPaginate.body.products.map(p => ({label: p.sku, value: p.price})) ?? []}"
+                  widget:
+                    Icon:
+                      name: ${ensemble.storage.get("iconName")}
+                      color: "#365898"
+                      styles:
+                        padding: 5
+                        borderWidth: 1
+                        borderRadius: 6
+                        cursor: pointer
+                        borderColor: "#DFE1E6"
+                        backgroundColor: white
+
         - Row:
             gap: 4px
             children:
