@@ -9,7 +9,9 @@ import {
   render,
   renderHook,
   screen,
+  waitFor,
 } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import { BrowserRouter } from "react-router-dom";
 import { useActionGroup } from "../useEnsembleAction";
 import { createCustomWidget } from "../../customWidget";
@@ -55,18 +57,20 @@ test("execute multiple actions", () => {
   expect(logSpy).toHaveBeenCalledWith("bar");
 });
 
-test.skip("fetch multiple APIs", () => {
+test("fetch multiple APIs", async () => {
   const logSpy = jest.spyOn(console, "log");
 
   fetchMock.mockResolvedValueOnce({
     body: {
       data: "foo",
     },
+    isLoading: false,
   });
   fetchMock.mockResolvedValueOnce({
     body: {
       data: "bar",
     },
+    isLoading: false,
   });
 
   render(
@@ -78,6 +82,20 @@ test.skip("fetch multiple APIs", () => {
           name: "Row",
           properties: {
             children: [
+              {
+                name: "Text",
+                properties: {
+                  // eslint-disable-next-line no-template-curly-in-string
+                  text: "${'test1' + test1.isLoading}",
+                },
+              },
+              {
+                name: "Text",
+                properties: {
+                  // eslint-disable-next-line no-template-curly-in-string
+                  text: "${'test2' + test2.isLoading}",
+                },
+              },
               {
                 name: "Button",
                 properties: {
@@ -129,6 +147,11 @@ test.skip("fetch multiple APIs", () => {
   );
 
   expect(fetchMock).toHaveBeenCalledTimes(2);
+
+  await waitFor(() => {
+    expect(screen.getByText("test1false")).toBeInTheDocument();
+    expect(screen.getByText("test2false")).toBeInTheDocument();
+  });
 
   act(() => {
     const button = screen.getByText("test");
