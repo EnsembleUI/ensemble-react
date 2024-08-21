@@ -4,6 +4,9 @@ import { BrowserRouter } from "react-router-dom";
 import { Date as DateComponent } from "../Date";
 import { Button } from "../../../Button";
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+global.ResizeObserver = require("resize-observer-polyfill");
+
 describe("Date widget", () => {
   test("initializes with no value", () => {
     render(<DateComponent label="test" />);
@@ -24,7 +27,7 @@ describe("Date widget", () => {
         label="test"
         // CHECKME: this may not run in other timezones
         // eslint-disable-next-line no-template-curly-in-string
-        value="${new Date('Apr 04 2024 11:00:00 PST').toISOString()}"
+        value="${new Date('Apr 04 2024 10:00:00 PST').toISOString()}"
       />,
     );
 
