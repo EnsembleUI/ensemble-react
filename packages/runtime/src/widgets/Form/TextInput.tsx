@@ -1,7 +1,13 @@
 import { Input, Form } from "antd";
 import type { Expression, EnsembleAction } from "@ensembleui/react-framework";
 import { useRegisterBindings } from "@ensembleui/react-framework";
-import { useEffect, useMemo, useState, useCallback } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  useCallback,
+  type FormEvent,
+} from "react";
 import { runes } from "runes2";
 import type { Rule } from "antd/es/form";
 import { forEach } from "lodash-es";
@@ -58,27 +64,10 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     [action],
   );
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (values?.inputType !== "number") {
-        return;
-      }
-
-      const isNumericKey = /^\d$/.test(e.key); // Numpad keys (96-105)
-      const isControlKey = [
-        "Backspace",
-        "Tab",
-        "ArrowLeft",
-        "ArrowRight",
-      ].includes(e.key);
-      const isCopyPasteCut = e.ctrlKey || e.metaKey;
-
-      if (!isNumericKey && !isControlKey && !isCopyPasteCut) {
-        e.preventDefault(); // Prevent non-numeric keys
-      }
-    },
-    [values?.inputType],
-  );
+  const handleKeyDown = useCallback((e: FormEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement;
+    target.value = target.value.replace(/[^0-9]/g, "");
+  }, []);
 
   useEffect(() => {
     setValue(values?.initialValue);
@@ -241,7 +230,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
           disabled={values?.enabled === false}
           onChange={(event): void => handleChange(event.target.value)}
           {...(values?.inputType === "number" && {
-            onKeyDown: (event): void => handleKeyDown(event),
+            onInput: (event): void => handleKeyDown(event),
           })}
           placeholder={values?.hintText ?? ""}
           ref={rootRef}

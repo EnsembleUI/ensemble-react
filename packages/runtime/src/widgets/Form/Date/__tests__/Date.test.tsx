@@ -24,7 +24,7 @@ describe("Date widget", () => {
         label="test"
         // CHECKME: this may not run in other timezones
         // eslint-disable-next-line no-template-curly-in-string
-        value="${new Date('Apr 04 2024 11:00:00 PST').toISOString()}"
+        value="${new Date('Apr 04 2024 10:00:00 PST').toISOString()}"
       />,
     );
 
