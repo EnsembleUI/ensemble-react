@@ -9,11 +9,11 @@ export interface EnsembleStorage {
   delete: (key: string) => unknown;
 }
 
-const backingStorage = createJSONStorage<Record<string, unknown>>(
+const backingStorage = createJSONStorage<{ [key: string]: unknown }>(
   () => sessionStorage,
 );
 
-export const screenStorageAtom = atomWithStorage<Record<string, unknown>>(
+export const screenStorageAtom = atomWithStorage<{ [key: string]: unknown }>(
   "ensemble.storage",
   {},
   backingStorage,
@@ -22,7 +22,7 @@ export const screenStorageAtom = atomWithStorage<Record<string, unknown>>(
 export const useEnsembleStorage = (): EnsembleStorage => {
   const [storage, setStorage] = useAtom(screenStorageAtom);
   // Use a buffer so we can perform imperative changes without forcing re-render
-  const storageBuffer = useMemo<Record<string, unknown>>(() => ({}), []);
+  const storageBuffer = useMemo<{ [key: string]: unknown }>(() => ({}), []);
 
   useMemo(() => {
     merge(storageBuffer, storage);
@@ -37,15 +37,18 @@ export const useEnsembleStorage = (): EnsembleStorage => {
 };
 
 export const createStorageApi = (
-  storage?: Record<string, unknown>,
-  setStorage?: (storage: Record<string, unknown>) => void,
+  storage?: { [key: string]: unknown },
+  setStorage?: (storage: { [key: string]: unknown }) => void,
 ): EnsembleStorage => {
   return {
     set: (key: string, value: unknown): void => {
-      if (storage) {
-        storage[key] = value;
-        setStorage?.(clone(storage));
-      }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const latestStorage: { [key: string]: unknown } = JSON.parse(
+        sessionStorage.getItem("ensemble.storage") ?? "{}",
+      );
+      const nextStorage = merge(storage, latestStorage);
+      nextStorage[key] = value;
+      setStorage?.(clone(nextStorage));
     },
     get: (key: string): unknown => {
       return storage?.[key];

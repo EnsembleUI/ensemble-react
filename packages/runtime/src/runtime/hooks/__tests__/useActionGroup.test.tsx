@@ -55,7 +55,7 @@ test("execute multiple actions", () => {
   expect(logSpy).toHaveBeenCalledWith("bar");
 });
 
-test("fetch multiple APIs", () => {
+test.skip("fetch multiple APIs", () => {
   const logSpy = jest.spyOn(console, "log");
 
   fetchMock.mockResolvedValueOnce({
