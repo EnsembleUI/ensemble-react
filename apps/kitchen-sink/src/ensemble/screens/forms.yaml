@@ -143,6 +143,9 @@ View:
                     - TextInput:
                         id: minMaxTextInput
                         inputType: number
+                        hintText: "Enter a number"
+                        hintStyle:
+                          color: red
                         maxLength: 2
                         validator:
                           required: true

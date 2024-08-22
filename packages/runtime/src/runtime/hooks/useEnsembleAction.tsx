@@ -16,6 +16,7 @@ import {
   CustomScopeProvider,
   CustomThemeContext,
   useLanguageScope,
+  useDeviceObserver,
   isUsingMockResponse,
   setUseMockResponse,
   mockResponse,
@@ -129,6 +130,7 @@ export const useExecuteCode: EnsembleActionHook<
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,
   );
+  const device = useDeviceObserver();
   const theme = themescope.theme;
 
   const js = useMemo(() => {
@@ -169,6 +171,7 @@ export const useExecuteCode: EnsembleActionHook<
           merge(
             {
               ...customWidgets,
+              device: device,
               env: appContext?.env,
               ensemble: {
                 ...themescope,
@@ -271,6 +274,7 @@ export const useExecuteCode: EnsembleActionHook<
     appContext?.application?.id,
     appContext?.storage,
     themescope,
+    device,
     storage,
     user,
     formatter,
