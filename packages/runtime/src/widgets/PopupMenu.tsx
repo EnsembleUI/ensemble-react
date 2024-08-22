@@ -29,6 +29,8 @@ const widgetName = "PopupMenu";
 interface PopupMenuItem {
   label: Expression<string> | { [key: string]: unknown };
   value: string;
+  visible?: boolean;
+  enabled?: boolean;
 }
 
 interface PopupMenuStyles {
@@ -70,15 +72,18 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
 
     const items = values?.items;
     if (items) {
-      const tempItems = items.map((item, index) => {
-        const itm: ItemType = {
-          key: `popupmenu_item_${index}`,
-          label: isString(item.label)
-            ? item.label
-            : EnsembleRuntime.render([unwrapWidget(item.label)]),
-        };
-        return itm;
-      });
+      const tempItems = items
+        .filter((itm) => itm.visible !== false)
+        .map((item, index) => {
+          const itm: ItemType = {
+            key: `popupmenu_item_${index}`,
+            label: isString(item.label)
+              ? item.label
+              : EnsembleRuntime.render([unwrapWidget(item.label)]),
+            disabled: item.enabled === false,
+          };
+          return itm;
+        });
 
       popupItems.push(...tempItems);
     }
