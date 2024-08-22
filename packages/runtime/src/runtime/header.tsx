@@ -20,6 +20,7 @@ export const EnsembleHeader: React.FC<EnsembleHeaderProps> = ({ header }) => {
           text: header.title,
           styles: {
             color: header.styles?.titleColor || "black",
+            ...header.styles,
           },
         },
       };
@@ -31,7 +32,7 @@ export const EnsembleHeader: React.FC<EnsembleHeaderProps> = ({ header }) => {
         width: "100%",
         display: "flex",
         justifyContent: "center",
-        alignItems: header.styles?.centerTitle ? "center" : "normal",
+        alignItems: header.styles?.centerTitle === false ? "normal" : "center",
         backgroundColor: header.styles?.backgroundColor || "white",
         height: header.styles?.titleBarHeight || 56,
       }}
