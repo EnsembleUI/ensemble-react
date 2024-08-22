@@ -47,18 +47,45 @@ View:
                   enabled: ${ensemble.storage.get("dummyProducts")?.at(0)?.id === 1}
                   trigger: hover
                   styles:
-                    backgroundColor: beige
                     height: 200px
                   onItemSelect:
                     showToast:
-                      message: Your selected ${value?.product?.brand ? 'title' :'price'} is ${value?.product?.title || value?.value}
+                      message: Your selected brand's ${value?.product ? "rating" :"price"} is ${value?.product?.rating || value?.value}
                   item-template:
                     data: ${ensemble.storage.get("dummyProducts")}
                     name: product
                     template:
                       Text:
-                        text: ${product.title}
-                  items: "${getDummyProductsByPaginate.body.products.map(p => ({label: p.sku, value: p.price})) ?? []}"
+                        text: ${product.rating} stars
+                  # items: "${getDummyProductsByPaginate.body.products.map(p => ({label: p.title, value: p.price, visible: p.price > 10, enabled: p.rating < 4})) ?? []}"
+                  items:
+                    - label: All Clients
+                      value: all clients
+                    - label: Client Name
+                      value: client name
+                    - label: Location Group
+                      type: group
+                      items:
+                        - label: Location Name 1
+                          value: location name 1
+                          visible: false
+                        - label: Location Name 2
+                          value: location name 2
+                          enabled: false
+                        - label: Location Name 3
+                          value: location name 3
+                    - label: Client Menu
+                      items:
+                        - label: Sub Client 1
+                          value: sub client 1
+                        - label: Child Client Menu
+                          items:
+                            - label: Grand Child Client Menu
+                              items:
+                                - label: Grand Child Client Name
+                                  value: grand child client name
+                        - label: Sub Client 2
+                          value: sub client 2
                   widget:
                     Icon:
                       name: ${ensemble.storage.get("iconName")}

@@ -1,7 +1,14 @@
 import React, { useCallback, useMemo } from "react";
 import type { MenuProps } from "antd";
 import { Dropdown as AntdDropdown } from "antd";
-import { cloneDeep, isEmpty, isObject, isString, toNumber } from "lodash-es";
+import {
+  cloneDeep,
+  get,
+  isEmpty,
+  isObject,
+  isString,
+  toNumber,
+} from "lodash-es";
 import {
   CustomScopeProvider,
   unwrapWidget,
@@ -29,8 +36,10 @@ const widgetName = "PopupMenu";
 interface PopupMenuItem {
   label: Expression<string> | { [key: string]: unknown };
   value: string;
+  type?: "group";
   visible?: boolean;
   enabled?: boolean;
+  items?: PopupMenuItem[];
 }
 
 interface PopupMenuStyles {
@@ -67,23 +76,38 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
 
   const evaluatedNamedData = useEvaluate({ namedData });
 
+  const getMenuItem = useCallback(
+    (rawItem: PopupMenuItem, index: string | number): ItemType | null => {
+      if (rawItem.visible === false) {
+        return null;
+      }
+
+      const menuItem: ItemType = {
+        key: `popupmenu_item_${index}`,
+        label: isString(rawItem.label)
+          ? rawItem.label
+          : EnsembleRuntime.render([unwrapWidget(rawItem.label)]),
+        disabled: rawItem.enabled === false,
+        ...(rawItem.items && {
+          children: rawItem.items.map((itm, childIndex) =>
+            getMenuItem(itm, `${index}_${childIndex}`),
+          ),
+        }),
+        type: rawItem.type || "item",
+      };
+      return menuItem;
+    },
+    [],
+  );
+
   const popupMenuItems = useMemo(() => {
     const popupItems: MenuProps["items"] = [];
 
     const items = values?.items;
     if (items) {
       const tempItems = items
-        .filter((itm) => itm.visible !== false)
-        .map((item, index) => {
-          const itm: ItemType = {
-            key: `popupmenu_item_${index}`,
-            label: isString(item.label)
-              ? item.label
-              : EnsembleRuntime.render([unwrapWidget(item.label)]),
-            disabled: item.enabled === false,
-          };
-          return itm;
-        });
+        .map((rawItem, index) => getMenuItem(rawItem, index))
+        .filter(Boolean);
 
       popupItems.push(...tempItems);
     }
@@ -116,11 +140,12 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
     values?.showDivider,
     itemTemplate,
     evaluatedNamedData.namedData,
+    getMenuItem,
   ]);
 
   const getWidget = useCallback(() => {
     if (!values?.widget) {
-      return null;
+      throw Error("PopupMenu requires a widget to render the anchor.");
     }
     const widget = cloneDeep(values.widget);
     const actualWidget = unwrapWidget(widget);
@@ -129,13 +154,20 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
 
   const handleMenuItemClick = useCallback<NonNullable<MenuProps["onClick"]>>(
     ({ key }) => {
-      const itemIndex = toNumber(key.at(-1));
       let item;
       if (key.includes("itemTemplate")) {
+        const itemIndex = toNumber(key.at(-1));
         item = evaluatedNamedData.namedData[itemIndex];
       } else {
-        item = values?.items?.[itemIndex];
+        const itemIndices = key.split("_").filter((_, i) => i > 1);
+        if (itemIndices.length > 1) {
+          for (let i = 1; i < itemIndices.length; i += 2) {
+            itemIndices.splice(i, 0, "items");
+          }
+        }
+        item = get(values?.items, itemIndices) as unknown;
       }
+
       action?.callback({ value: item });
     },
     [action, evaluatedNamedData.namedData, values?.items],
