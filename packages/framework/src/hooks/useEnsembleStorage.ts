@@ -1,4 +1,4 @@
-import { useAtom } from "jotai";
+import { atom, useAtom } from "jotai";
 import { createJSONStorage, atomWithStorage } from "jotai/utils";
 import { clone, merge } from "lodash-es";
 import { useMemo } from "react";
@@ -9,20 +9,29 @@ export interface EnsembleStorage {
   delete: (key: string) => unknown;
 }
 
-const backingStorage = createJSONStorage<Record<string, unknown>>(
+const backingStorage = createJSONStorage<{ [key: string]: unknown }>(
   () => sessionStorage,
 );
 
-export const screenStorageAtom = atomWithStorage<Record<string, unknown>>(
+const screenStorageAtomInternal = atomWithStorage<{ [key: string]: unknown }>(
   "ensemble.storage",
   {},
   backingStorage,
 );
 
+export const screenStorageAtom = atom(
+  (get) => get(screenStorageAtomInternal),
+  (get, set, update) => {
+    const currentData = get(screenStorageAtomInternal);
+    const nextData = merge({}, currentData, update);
+    set(screenStorageAtomInternal, nextData);
+  },
+);
+
 export const useEnsembleStorage = (): EnsembleStorage => {
   const [storage, setStorage] = useAtom(screenStorageAtom);
   // Use a buffer so we can perform imperative changes without forcing re-render
-  const storageBuffer = useMemo<Record<string, unknown>>(() => ({}), []);
+  const storageBuffer = useMemo<{ [key: string]: unknown }>(() => ({}), []);
 
   useMemo(() => {
     merge(storageBuffer, storage);
@@ -37,15 +46,17 @@ export const useEnsembleStorage = (): EnsembleStorage => {
 };
 
 export const createStorageApi = (
-  storage?: Record<string, unknown>,
-  setStorage?: (storage: Record<string, unknown>) => void,
+  storage?: { [key: string]: unknown },
+  setStorage?: (storage: { [key: string]: unknown }) => void,
 ): EnsembleStorage => {
   return {
     set: (key: string, value: unknown): void => {
+      const update: { [key: string]: unknown } = {};
+      update[key] = value;
       if (storage) {
-        storage[key] = value;
-        setStorage?.(clone(storage));
+        merge(storage, update);
       }
+      setStorage?.(update);
     },
     get: (key: string): unknown => {
       return storage?.[key];

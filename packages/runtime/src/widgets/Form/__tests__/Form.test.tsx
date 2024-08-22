@@ -6,9 +6,6 @@ import type { PropsWithChildren } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { Button, Form, Text } from "../../index";
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-global.ResizeObserver = require("resize-observer-polyfill");
-
 const FormTestWrapper: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <BrowserRouter>
