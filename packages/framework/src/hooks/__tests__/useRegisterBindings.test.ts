@@ -267,7 +267,7 @@ test("updates bindings when invokable updates", () => {
 
   const updatedScreen = store.get(screenAtom);
   expect(result.current.values).toEqual(mockValues);
-  expect(updatedScreen.widgets.test?.invokable.methods?.setter).not.toBeNull();
+  expect(updatedScreen.widgets.test?.invokable?.methods?.setter).not.toBeNull();
 });
 
 test("evaluates flutter style hex codes ", () => {

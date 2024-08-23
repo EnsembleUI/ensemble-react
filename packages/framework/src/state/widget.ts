@@ -4,7 +4,7 @@ import { screenAtom } from "./screen";
 
 export interface WidgetState<T = { [key: string]: unknown }> {
   values: T;
-  invokable: Invokable;
+  invokable?: Invokable;
 }
 
 export interface InvokableMethods {
@@ -17,5 +17,5 @@ export interface Invokable {
 }
 
 export const widgetFamilyAtom = atomFamily((id: string) =>
-  focusAtom(screenAtom, (optics) => optics.path("widgets", id).optional()),
+  focusAtom(screenAtom, (optics) => optics.path("widgets", id)),
 );

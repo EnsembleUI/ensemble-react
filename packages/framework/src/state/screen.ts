@@ -9,7 +9,7 @@ export interface ScreenContextDefinition {
   app?: EnsembleAppModel;
   model?: EnsembleScreenModel;
   data: ScreenContextData;
-  widgets: { [key: string]: WidgetState };
+  widgets: { [key: string]: WidgetState | undefined };
   inputs?: { [key: string]: unknown };
   [key: string]: unknown;
 }
