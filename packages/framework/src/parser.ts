@@ -3,6 +3,7 @@ import {
   flatMap,
   get,
   head,
+  compact,
   isArray,
   isEmpty,
   isObject,
@@ -53,8 +54,8 @@ export interface EnsembleWidgetYAML {
   Widget: {
     inputs?: string[];
     onLoad?: EnsembleAction;
-    body: { [key: string]: unknown };
-  };
+    body?: { [key: string]: unknown };
+  } & { [key: string]: { [key: string]: unknown } };
 }
 
 export type EnsembleThemeYAML = {
@@ -135,8 +136,8 @@ export const EnsembleParser = {
       screens: screens as EnsembleScreenModel[],
       customWidgets,
       home:
-        menu ||
-        (screens as EnsembleScreenModel[]).find((screen) => screen.isRoot) ||
+        (screens as EnsembleScreenModel[]).find((screen) => screen.isRoot) ??
+        menu ??
         screens[0],
       themes: themes || { default: defaultThemeDefinition },
       scripts,
@@ -208,11 +209,11 @@ export const EnsembleParser = {
     }
 
     const widgets = omit(screen, ["View", "Global", "API", "Import", "Socket"]);
-    const customWidgets = keys(widgets).map((widgetName) =>
-      EnsembleParser.parseWidget(widgetName, {
+    const customWidgets = keys(widgets).map((widgetName) => {
+      return EnsembleParser.parseWidget(widgetName, {
         Widget: get(widgets, widgetName) as { [key: string]: unknown },
-      } as EnsembleWidgetYAML),
-    );
+      } as EnsembleWidgetYAML);
+    });
 
     return {
       ...(view ?? {}),
@@ -225,7 +226,7 @@ export const EnsembleParser = {
       apis,
       styles: get(view, "styles"),
       importedScripts,
-      customWidgets,
+      customWidgets: compact(customWidgets),
       sockets,
     };
   },
@@ -233,7 +234,13 @@ export const EnsembleParser = {
   parseWidget: (name: string, yaml: EnsembleWidgetYAML): CustomWidgetModel => {
     const widget = get(yaml, "Widget");
 
-    const rawBody = get(widget, "body");
+    let rawBody = get(widget, "body");
+    if (!rawBody) {
+      const maybeWidgetKey = head(keys(widget).filter((k) => k !== "inputs"));
+      if (maybeWidgetKey) {
+        rawBody = get(widget, maybeWidgetKey);
+      }
+    }
     if (!rawBody) {
       throw Error("Widget must have a body");
     }
@@ -345,9 +352,19 @@ const unwrapCustomEventsModels = (
   return [];
 };
 
-export const unwrapWidget = (obj: {
-  [key: string]: unknown;
-}): EnsembleWidget => {
+export const unwrapWidget = (
+  obj:
+    | {
+        [key: string]: unknown;
+      }
+    | string,
+): EnsembleWidget => {
+  if (isString(obj)) {
+    return {
+      name: obj,
+      properties: {},
+    };
+  }
   const name = head(Object.keys(obj));
   if (!name) {
     throw Error("Invalid widget definition");
