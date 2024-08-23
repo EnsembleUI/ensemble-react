@@ -156,7 +156,7 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
     ({ key }) => {
       let item;
       if (key.includes("itemTemplate")) {
-        const itemIndex = toNumber(key.at(-1));
+        const itemIndex = toNumber(key.split("_").at(-1));
         item = evaluatedNamedData.namedData[itemIndex];
       } else {
         const itemIndices = key.split("_").filter((_, i) => i > 1);
