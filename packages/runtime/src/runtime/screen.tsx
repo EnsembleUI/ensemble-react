@@ -13,10 +13,9 @@ import { useEnsembleAction } from "./hooks/useEnsembleAction";
 import { EnsembleHeader } from "./header";
 import { EnsembleFooter } from "./footer";
 import { EnsembleBody } from "./body";
-import { EnsembleMenu } from "./ensembleMenu";
 import { ModalWrapper } from "./modal";
 import { createCustomWidget } from "./customWidget";
-import { EnsembleMenuContext } from "./menu";
+import { EnsembleMenuContext, RenderMenuInView } from "./menu";
 
 export interface EnsembleScreenProps {
   screen: EnsembleScreenModel;
@@ -103,7 +102,9 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
           <EnsembleHeader header={screen.header} />
           <EnsembleBody body={screen.body} styles={screen.styles} />
         </OnLoadAction>
-        {screen.menu ? <EnsembleMenu {...screen.menu} /> : null}
+        {screen.menu ? (
+          <RenderMenuInView  menu={{ ...screen.menu }} type={screen.menu.type} />
+        ) : null}
         <EnsembleFooter footer={screen.footer} />
       </ModalWrapper>
     </ScreenContextProvider>

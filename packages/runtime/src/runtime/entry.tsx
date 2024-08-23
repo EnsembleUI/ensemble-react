@@ -51,18 +51,14 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({
   }, [entry, hasMenu, navigate, location, initialScreen]);
 
   if (hasMenu) {
+    const { type: menuType, ...menu } = entry;
+
     return (
       <RenderMenu
-        type={entry.type}
-        menu={{
-          id: entry?.id,
-          items: entry.items,
-          header: entry?.header,
-          footer: entry?.footer,
-          styles: entry?.styles,
-          isCollapsed,
-          setCollapsed,
-        }}
+        type={menuType}
+        menu={menu}
+        isCollapsed={isCollapsed}
+        setCollapsed={setCollapsed}
       />
     );
   }

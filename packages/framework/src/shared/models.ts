@@ -16,7 +16,7 @@ export interface EnsembleScreenModel {
   onLoad?: EnsembleAction;
   header?: EnsembleHeaderModel;
   footer?: EnsembleFooterModel;
-  menu?: EnsembleViewMenuType;
+  menu?: EnsembleMenuModel;
   apis?: EnsembleAPIModel[];
   global?: string;
   styles?: { [key: string]: unknown };
@@ -54,17 +54,6 @@ export interface EnsembleMenuModel {
   header?: EnsembleWidget;
   footer?: EnsembleWidget;
   styles: { [key: string]: unknown };
-}
-
-export interface EnsembleViewMenuType {
-  type: "Drawer"; // More menu types can be added here and should be supported in the future
-  id?: string;
-  styles?: { [key: string]: unknown };
-  onCollapse?: EnsembleAction;
-  title?: string;
-  children?: EnsembleWidget[];
-  header?: EnsembleWidget;
-  footer?: EnsembleWidget;
 }
 
 export interface EnsembleAPIModel {

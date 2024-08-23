@@ -6,10 +6,13 @@ import {
   unwrapWidget,
   useRegisterBindings,
   type EnsembleWidget,
+  type EnsembleAction,
 } from "@ensembleui/react-framework";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { getColor } from "../shared/styles";
 import { EnsembleRuntime } from "./runtime";
+// eslint-disable-next-line import/no-cycle
+import { useEnsembleAction } from "./hooks";
 
 type TypeColors =
   | "transparent"
@@ -69,12 +72,20 @@ interface MenuBaseProps<T> {
   styles?: T;
   header?: EnsembleWidget;
   footer?: EnsembleWidget;
-  isCollapsed: boolean;
-  setCollapsed: (open: boolean) => void;
-  // TODO: Add children option to render ensemble widgets as an alternative to menu items
+  onCollapse?: EnsembleAction;
 }
 
-interface SideBarMenuStyles {
+interface SideBarMenuProps extends MenuBaseProps<SideBarMenuStyles> {
+  isCollapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
+}
+
+interface DrawerMenuProps extends MenuBaseProps<DrawerMenuStyles> {
+  isOpen: boolean;
+  setOpen: (closed: boolean) => void;
+}
+
+interface MenuStyles {
   backgroundColor?: TypeColors;
   labelColor?: TypeColors;
   selectedColor?: TypeColors;
@@ -82,28 +93,20 @@ interface SideBarMenuStyles {
   searchBoxColor?: TypeColors;
   iconWidth?: string;
   iconHeight?: string;
-  width?: string;
   onSelectStyles?: {
     backgroundColor?: TypeColors;
     borderRadius?: string;
   };
 }
 
-interface DrawerMenuStyles {
-  backgroundColor?: TypeColors;
-  labelColor?: TypeColors;
-  selectedColor?: TypeColors;
-  labelFontSize?: number;
-  searchBoxColor?: TypeColors;
-  iconWidth?: string;
-  iconHeight?: string;
+interface SideBarMenuStyles extends MenuStyles {
+  width?: string;
+}
+
+interface DrawerMenuStyles extends MenuStyles {
   width?: string;
   height?: string;
   position?: "left" | "right" | "top" | "bottom";
-  onSelectStyles?: {
-    backgroundColor?: TypeColors;
-    borderRadius?: string;
-  };
 }
 
 const renderMuiIcon = (
@@ -168,11 +171,21 @@ const CustomLink: React.FC<PropsWithChildren & { item: MenuItemProps }> = ({
 export const RenderMenu: React.FC<{
   type: "SideBar" | "Drawer";
   menu: MenuBaseProps<SideBarMenuStyles | DrawerMenuStyles>;
-}> = ({ type, menu }) => {
+  isCollapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
+}> = ({ type, menu, isCollapsed, setCollapsed }) => {
   return (
     <div style={{ display: "flex", flexDirection: "row" }}>
-      {type === "SideBar" ? <SideBarMenu {...menu} /> : null}
-      {type === "Drawer" ? <DrawerMenu {...menu} /> : null}
+      {type === "SideBar" ? (
+        <SideBarMenu
+          {...menu}
+          isCollapsed={isCollapsed}
+          setCollapsed={setCollapsed}
+        />
+      ) : null}
+      {type === "Drawer" ? (
+        <DrawerMenu {...menu} isOpen={isCollapsed} setOpen={setCollapsed} />
+      ) : null}
       <div
         style={{
           flexGrow: 1,
@@ -185,13 +198,12 @@ export const RenderMenu: React.FC<{
           context={
             type === "Drawer"
               ? {
-                  openDrawerMenu: () => menu.setCollapsed(true),
-                  closeDrawerMenu: () => menu.setCollapsed(false),
+                  openDrawerMenu: () => setCollapsed(true),
+                  closeDrawerMenu: () => setCollapsed(false),
                 }
               : {
-                  isMenuCollapsed: () => menu.isCollapsed,
-                  setMenuCollapsed: (value: boolean) =>
-                    menu.setCollapsed(value),
+                  isMenuCollapsed: () => isCollapsed,
+                  setMenuCollapsed: (value: boolean) => setCollapsed(value),
                 }
           }
         />
@@ -200,7 +212,29 @@ export const RenderMenu: React.FC<{
   );
 };
 
-export const SideBarMenu: React.FC<MenuBaseProps<SideBarMenuStyles>> = ({
+export const RenderMenuInView: React.FC<{
+  type: "SideBar" | "Drawer";
+  menu: MenuBaseProps<SideBarMenuStyles | DrawerMenuStyles>;
+}> = ({ type, menu }) => {
+  const [isCollapsed, setCollapsed] = useState<boolean>(false);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "row" }}>
+      {type === "SideBar" ? (
+        <SideBarMenu
+          {...menu}
+          isCollapsed={isCollapsed}
+          setCollapsed={setCollapsed}
+        />
+      ) : null}
+      {type === "Drawer" ? (
+        <DrawerMenu {...menu} isOpen={isCollapsed} setOpen={setCollapsed} />
+      ) : null}
+    </div>
+  );
+};
+
+export const SideBarMenu: React.FC<SideBarMenuProps> = ({
   id,
   isCollapsed,
   setCollapsed,
@@ -262,25 +296,31 @@ export const SideBarMenu: React.FC<MenuBaseProps<SideBarMenuStyles>> = ({
   );
 };
 
-export const DrawerMenu: React.FC<MenuBaseProps<DrawerMenuStyles>> = ({
+export const DrawerMenu: React.FC<DrawerMenuProps> = ({
   id,
   items,
   header,
   footer,
   styles,
-  isCollapsed,
-  setCollapsed,
+  isOpen,
+  setOpen,
+  onCollapse,
 }) => {
   const validPosition = ["left", "right", "top", "bottom"];
 
   const [selectedItem, setSelectedItem] = useState<string | undefined>();
 
   const { rootRef } = useRegisterBindings(
-    { open: isCollapsed },
+    {
+      open: isOpen,
+      height: styles?.height,
+      width: styles?.width,
+      position: styles?.position,
+    },
     id,
     {
-      open: () => setCollapsed(true),
-      close: () => setCollapsed(false),
+      openDrawer: () => setOpen(true),
+      closeDrawer: () => setOpen(false),
     },
     {
       debounceMs: 300,
@@ -288,8 +328,15 @@ export const DrawerMenu: React.FC<MenuBaseProps<DrawerMenuStyles>> = ({
   );
 
   const handleClose = (): void => {
-    setCollapsed(false);
+    setOpen(false);
+    onCollapseCallback();
   };
+
+  const onCollapseAction = useEnsembleAction(onCollapse);
+  const onCollapseCallback = useCallback(() => {
+    if (!onCollapseAction) return;
+    return onCollapseAction.callback();
+  }, [onCollapseAction]);
 
   return (
     <AntDrawer
@@ -297,7 +344,7 @@ export const DrawerMenu: React.FC<MenuBaseProps<DrawerMenuStyles>> = ({
       height={styles?.height ? `calc(${styles.height} + 48px)` : undefined}
       key={id}
       onClose={handleClose}
-      open={isCollapsed}
+      open={isOpen}
       panelRef={rootRef}
       placement={
         !(styles?.position && validPosition.includes(styles.position))
@@ -312,7 +359,7 @@ export const DrawerMenu: React.FC<MenuBaseProps<DrawerMenuStyles>> = ({
       width={styles?.width ? `calc(${styles.width} + 48px)` : undefined}
     >
       {header ? EnsembleRuntime.render([header]) : null}
-      {ItemsMenu(items, { ...styles }, selectedItem, setSelectedItem)}
+      {ItemsMenu(items, styles || {}, selectedItem, setSelectedItem)}
       {footer ? EnsembleRuntime.render([footer]) : null}
     </AntDrawer>
   );

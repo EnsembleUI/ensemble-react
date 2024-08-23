@@ -21,37 +21,37 @@ View:
   menu:
     Drawer:
       id: testDrawer
-      title: This is a Drawer Menu
-      position: left
-      onClose:
+      onCollapse:
         executeCode: |
           console.log("Drawer closed! This is the onClose function :)")
-      children:
-        - Text:
-            text: "Put any widgets you would like in the children property"
-        - Button:
-            label: Navigate Home
-            onTap:
-              executeCode: |
-                testDrawer.closeDrawer();
-                ensemble.navigateScreen("Home");
-        - Button:
-            label: Navigate to Widgets
-            onTap:
-              executeCode: |
-                testDrawer.closeDrawer();
-                ensemble.navigateScreen("Widgets");
-        - Button:
-            label: Navigate to Layouts
-            onTap:
-              executeCode: |
-                testDrawer.closeDrawer();
-                ensemble.navigateScreen("Layouts");
-        - Button:
-            label: Close Drawer
-            onTap:
-              executeCode: |
-                testDrawer.closeDrawer();
+      header:
+        Column:
+          children:
+            - Text:
+                text: "Put any widgets you would like in the header property"
+            - Button:
+                label: Navigate Home
+                onTap:
+                  executeCode: |
+                    testDrawer.closeDrawer();
+                    ensemble.navigateScreen("Home");
+            - Button:
+                label: Navigate to Widgets
+                onTap:
+                  executeCode: |
+                    testDrawer.closeDrawer();
+                    ensemble.navigateScreen("Widgets");
+            - Button:
+                label: Navigate to Layouts
+                onTap:
+                  executeCode: |
+                    testDrawer.closeDrawer();
+                    ensemble.navigateScreen("Layouts");
+            - Button:
+                label: Close Drawer
+                onTap:
+                  executeCode: |
+                    testDrawer.closeDrawer();
 
   
   header:

@@ -1,7 +1,8 @@
 ViewGroup:
-  SideBar:
+  Drawer:
     id: sidebar
     styles:
+      width: 240px
       iconWidth: 20px
       iconHeight: 20px
       backgroundColor: "#f7fbfa"
@@ -108,4 +109,5 @@ ViewGroup:
               name: ArrowBack
               onTap:
                 executeCode: |
-                  sidebar.setCollapsed(!sidebar.isCollapsed)
+                  //sidebar.setCollapsed(!sidebar.isCollapsed)
+                  sidebar.close();  
