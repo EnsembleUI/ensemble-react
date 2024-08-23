@@ -20,7 +20,7 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
 
   const { matchingScreen } = useMemo(() => {
     const screen = appContext?.application?.screens.find(
-      (s) => s.name.toLowerCase() === screenName?.toLowerCase(),
+      (s) => s.name?.toLowerCase() === screenName?.toLowerCase(),
     );
     return { matchingScreen: screen };
   }, [appContext, screenName]);

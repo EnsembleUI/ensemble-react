@@ -10,7 +10,7 @@ import type { EnsembleConfigYAML } from "./dto";
  */
 export interface EnsembleScreenModel {
   id: string;
-  name: string;
+  name?: string;
   body: EnsembleWidget;
   path?: string;
   onLoad?: EnsembleAction;
@@ -71,7 +71,7 @@ export interface EnsembleAPIModel {
 export interface EnsembleMockResponse {
   statusCode: number;
   body: object | string;
-  headers?: Record<string, string>;
+  headers?: { [key: string]: string };
   reasonPhrase?: string;
 }
 

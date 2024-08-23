@@ -30,7 +30,7 @@ export const ApplicationContextProvider: React.FC<
   // load all the langauges
   app.languages?.forEach((langauge) => {
     i18n.addResourceBundle(
-      langauge.languageCode,
+      langauge.languageCode ?? "",
       "translation",
       langauge.resources,
     );
