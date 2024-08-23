@@ -32,11 +32,13 @@ import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { EnsembleRuntime } from "../runtime";
 
 const widgetName = "PopupMenu";
+const DEFAULT_POPUPMENU_TRIGGER = "click";
+const DEFAULT_POPUPMENUITEM_TYPE = "item";
 
 interface PopupMenuItem {
   label: Expression<string> | { [key: string]: unknown };
   value: string;
-  type?: "group";
+  type?: "group" | "item";
   visible?: boolean;
   enabled?: boolean;
   items?: PopupMenuItem[];
@@ -53,7 +55,7 @@ export type PopupMenuProps = {
   widget?: { [key: string]: unknown };
   onItemSelect?: EnsembleAction;
   showDivider?: boolean | Expression<string>;
-  trigger?: "click" | "hover";
+  trigger?: "click" | "hover" | "contextMenu";
   enabled?: boolean;
 } & EnsembleWidgetProps<PopupMenuStyles & EnsembleWidgetStyles> &
   HasItemTemplate & { "item-template"?: { value: Expression<string> } };
@@ -93,7 +95,7 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
             getMenuItem(itm, `${index}_${childIndex}`),
           ),
         }),
-        type: rawItem.type || "item",
+        type: rawItem.type || DEFAULT_POPUPMENUITEM_TYPE,
       };
       return menuItem;
     },
@@ -183,7 +185,7 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
           onClick: handleMenuItemClick,
           style: { overflow: "auto", ...values?.styles },
         }}
-        trigger={[values?.trigger || "click"]}
+        trigger={[values?.trigger || DEFAULT_POPUPMENU_TRIGGER]}
       >
         <div>{getWidget()}</div>
       </AntdDropdown>
