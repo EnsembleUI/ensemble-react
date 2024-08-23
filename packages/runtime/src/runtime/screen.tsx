@@ -103,7 +103,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
           <EnsembleBody body={screen.body} styles={screen.styles} />
         </OnLoadAction>
         {screen.menu ? (
-          <RenderMenuInView  menu={{ ...screen.menu }} type={screen.menu.type} />
+          <RenderMenuInView menu={{ ...screen.menu }} type={screen.menu.type} />
         ) : null}
         <EnsembleFooter footer={screen.footer} />
       </ModalWrapper>
