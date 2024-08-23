@@ -55,7 +55,7 @@ View:
                     showToast:
                       message: Your selected brand's ${value?.product ? "rating" :"price"} is ${value?.product?.rating || value?.value}
                   item-template:
-                    data: ${ensemble.storage.get("dummyProducts")}
+                    data: ${ensemble.storage.get("dummyProducts").concat(ensemble.storage.get("dummyProducts"))}
                     name: product
                     template:
                       Text:
@@ -89,6 +89,7 @@ View:
                                   value: grand child client name
                         - label: Sub Client 2
                           value: sub client 2
+
                   widget:
                     Icon:
                       name: ${ensemble.storage.get("iconName")}
