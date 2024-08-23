@@ -13,22 +13,24 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
 ) => {
   const navigate = useNavigate();
   const hasOptions = !isString(action);
-  const screenName = hasOptions ? action?.name : action;
   const appContext = useApplicationContext();
   const [context, setContext] = useState<unknown>();
   const [isComplete, setIsComplete] = useState<boolean>();
 
-  const { matchingScreen } = useMemo(() => {
-    const screen = appContext?.application?.screens.find(
-      (s) => s.name?.toLowerCase() === screenName?.toLowerCase(),
-    );
-    return { matchingScreen: screen };
-  }, [appContext, screenName]);
-
   const evaluatedInputs = useEvaluate(
-    !isString(action) ? cloneDeep(action?.inputs) : undefined,
+    {
+      inputs: hasOptions ? cloneDeep(action?.inputs) : null,
+      name: hasOptions ? action?.name : action,
+    },
     { context },
   );
+
+  const { matchingScreen } = useMemo(() => {
+    const screen = appContext?.application?.screens.find(
+      (s) => s.name?.toLowerCase() === evaluatedInputs.name?.toLowerCase(),
+    );
+    return { matchingScreen: screen };
+  }, [appContext, evaluatedInputs.name]);
 
   const callback = useMemo(() => {
     if (!matchingScreen) {
@@ -45,9 +47,9 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
       return;
     }
     navigate(`/${matchingScreen.name.toLowerCase()}`, {
-      state: evaluatedInputs,
+      state: evaluatedInputs.inputs,
     });
     setIsComplete(true);
-  }, [evaluatedInputs, isComplete, matchingScreen, navigate]);
+  }, [evaluatedInputs.inputs, isComplete, matchingScreen, navigate]);
   return callback ? { callback } : undefined;
 };
