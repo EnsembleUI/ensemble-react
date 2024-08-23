@@ -1,5 +1,15 @@
 # @ensembleui/react-framework
 
+## 0.2.0
+
+### Minor Changes
+
+- 767850d: Refactor storage and data atoms to be more resilient in concurrent use cases
+
+### Patch Changes
+
+- b01b675: Added support for device object like flutter
+
 ## 0.1.58
 
 ### Patch Changes

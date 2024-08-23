@@ -1,5 +1,5 @@
 import { Select, Form } from "antd";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   CustomScopeProvider,
   evaluate,
@@ -54,37 +54,82 @@ export type DropdownProps = {
   onChange?: EnsembleAction;
   autoComplete: Expression<boolean>;
   hintStyle?: EnsembleWidgetStyles;
+  panel?: { [key: string]: unknown };
 } & EnsembleWidgetProps<DropdownStyles> &
   HasItemTemplate & {
     "item-template"?: { value: Expression<string> };
   } & FormInputProps<string | number>;
 
+const DropdownRenderer = (
+  menu: React.ReactElement,
+  panel?: { [key: string]: unknown },
+): React.ReactElement => {
+  return (
+    <>
+      {menu}
+      {panel ? (
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+        <div
+          onMouseDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          {EnsembleRuntime.render([unwrapWidget(panel)])}
+        </div>
+      ) : null}
+    </>
+  );
+};
+
 const Dropdown: React.FC<DropdownProps> = (props) => {
   const [selectedValue, setSelectedValue] = useState<
     string | number | undefined
   >();
+
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const {
     "item-template": itemTemplate,
-    onItemSelect,
     onChange,
+    onItemSelect,
     ...rest
   } = props;
+
+  const handleDropdownClose = (): void => {
+    setIsOpen(false);
+  };
+
   const { id, rootRef, values } = useRegisterBindings(
-    { ...rest, initialValue: props.value, selectedValue, widgetName },
+    {
+      ...rest,
+      isOpen,
+      initialValue: props.value,
+      value: selectedValue,
+      selectedValue,
+      widgetName,
+    },
     props.id,
     {
       setSelectedValue,
+      close: handleDropdownClose,
+      setValue: setSelectedValue,
     },
   );
 
-  const onItemSelectAction = useEnsembleAction(onItemSelect);
   const onChangeAction = useEnsembleAction(onChange);
+  const handleChange = useCallback(
+    (value?: number | string) => {
+      setSelectedValue(value);
+      onChangeAction?.callback({ value });
+    },
+    [onChangeAction],
+  );
 
-  const onSelectCallback = useCallback(
+  const onItemSelectAction = useEnsembleAction(onItemSelect);
+  const onItemSelectCallback = useCallback(
     (value?: number | string) => {
       setSelectedValue(value);
       onItemSelectAction?.callback({ selectedValue: value });
-      onChangeAction?.callback({ value });
     },
     [onItemSelectAction],
   );
@@ -95,7 +140,8 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   });
 
   const options = useMemo(() => {
-    let dropdownOptions = null;
+    let dropdownOptions: React.ReactNode[] | null = null;
+
     if (values?.items) {
       const tempOptions = values.items.map((item) => {
         if (item.type === "group") {
@@ -106,13 +152,10 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               label={isString(item.label) ? item.label : ""}
             >
               {item.items?.map((subItem) => (
-                <Select.Option
-                  key={subItem.value}
-                  onClick={() => onSelectCallback(subItem.value)}
-                >
-                  {isString(subItem.label)
-                    ? subItem.label
-                    : EnsembleRuntime.render([unwrapWidget(subItem.label)])}
+                <Select.Option key={subItem.value}>
+                  {isString(item.label)
+                    ? item.label
+                    : EnsembleRuntime.render([unwrapWidget(item.label)])}
                 </Select.Option>
               ))}
             </Select.OptGroup>
@@ -178,7 +221,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     }
   }, [selectedValue, formInstance]);
 
-  if (isNull(options)) {
+  if (isNull(options) && isNull(values?.panel)) {
     return null;
   }
 
@@ -203,6 +246,9 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               ? `color: ${values.styles.selectedTextColor};`
               : ""
           }
+        }
+          #${id}_list.ant-select-item-empty {
+          ${!isEmpty(values?.panel) ? "display: none;" : ""}
         }
         .ant-col .ant-form-item-label > label[for=${id}] {
           ${
@@ -251,16 +297,21 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
               : ""
           }
         `}</style>
-
       <div ref={rootRef} style={{ flex: 1, ...formItemStyles }}>
         <EnsembleFormItem values={values}>
           <Select
             className={`${values?.styles?.names || ""} ${id}_input`}
             defaultValue={values?.value}
             disabled={values?.enabled === false}
+            dropdownRender={(menu): React.ReactElement =>
+              DropdownRenderer(menu, values?.panel)
+            }
             dropdownStyle={values?.styles}
             id={values?.id}
-            onSelect={onSelectCallback}
+            onChange={handleChange}
+            onDropdownVisibleChange={(state): void => setIsOpen(state)}
+            onSelect={onItemSelectCallback}
+            open={isOpen}
             placeholder={
               values?.hintText ? (
                 <span style={{ ...values.hintStyle }}>{values.hintText}</span>

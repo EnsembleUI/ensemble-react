@@ -1,4 +1,4 @@
-import { Input, Form } from "antd";
+import { Input, Form, ConfigProvider } from "antd";
 import type { Expression, EnsembleAction } from "@ensembleui/react-framework";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { useEffect, useMemo, useState, useCallback } from "react";
@@ -194,43 +194,47 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     : undefined;
 
   return (
-    <EnsembleFormItem rules={rules} valuePropName="value" values={values}>
-      {values?.multiLine ? (
-        <Input.TextArea
-          count={maxLengthConfig}
-          defaultValue={values.value}
-          disabled={values.enabled === false}
-          onChange={(event): void => setValue(event.target.value)}
-          placeholder={values.hintText ?? ""}
-          ref={rootRef}
-          rows={values.maxLines ? Number(values.maxLines) : 4} // Adjust the number of rows as needed
-          style={{
-            ...(values.styles ?? values.hintStyle),
-            ...(values.styles?.visible === false
-              ? { display: "none" }
-              : undefined),
-          }}
-          value={values.value}
-        />
-      ) : (
-        <Input
-          count={maxLengthConfig}
-          defaultValue={values?.value}
-          disabled={values?.enabled === false}
-          onChange={(event): void => handleChange(event.target.value)}
-          placeholder={values?.hintText ?? ""}
-          ref={rootRef}
-          style={{
-            ...(values?.styles ?? values?.hintStyle),
-            ...(values?.styles?.visible === false
-              ? { display: "none" }
-              : undefined),
-          }}
-          type={inputType}
-          value={value}
-        />
-      )}
-    </EnsembleFormItem>
+    <ConfigProvider
+      theme={{ token: { colorTextPlaceholder: values?.hintStyle?.color } }}
+    >
+      <EnsembleFormItem rules={rules} valuePropName="value" values={values}>
+        {values?.multiLine ? (
+          <Input.TextArea
+            count={maxLengthConfig}
+            defaultValue={values.value}
+            disabled={values.enabled === false}
+            onChange={(event): void => setValue(event.target.value)}
+            placeholder={values.hintText ?? ""}
+            ref={rootRef}
+            rows={values.maxLines ? Number(values.maxLines) : 4} // Adjust the number of rows as needed
+            style={{
+              ...(values.styles ?? values.hintStyle),
+              ...(values.styles?.visible === false
+                ? { display: "none" }
+                : undefined),
+            }}
+            value={values.value}
+          />
+        ) : (
+          <Input
+            count={maxLengthConfig}
+            defaultValue={values?.value}
+            disabled={values?.enabled === false}
+            onChange={(event): void => handleChange(event.target.value)}
+            placeholder={values?.hintText ?? ""}
+            ref={rootRef}
+            style={{
+              ...(values?.styles ?? values?.hintStyle),
+              ...(values?.styles?.visible === false
+                ? { display: "none" }
+                : undefined),
+            }}
+            type={inputType}
+            value={value}
+          />
+        )}
+      </EnsembleFormItem>
+    </ConfigProvider>
   );
 };
 
