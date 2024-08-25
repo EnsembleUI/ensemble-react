@@ -5,9 +5,6 @@ import { BrowserRouter } from "react-router-dom";
 import { ScreenContextProvider } from "@ensembleui/react-framework";
 import { Button, Form } from "../../index";
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-global.ResizeObserver = require("resize-observer-polyfill");
-
 const FormTestWrapper: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <BrowserRouter>
