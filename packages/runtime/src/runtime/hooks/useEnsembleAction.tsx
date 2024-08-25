@@ -171,7 +171,7 @@ export const useExecuteCode: EnsembleActionHook<
           merge(
             {
               ...customWidgets,
-              device: device,
+              device,
               env: appContext?.env,
               ensemble: {
                 ...themescope,
@@ -249,8 +249,8 @@ export const useExecuteCode: EnsembleActionHook<
               },
             },
             { app: merge(screen.app, { theme: themescope.themeName }) },
-            mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
-            { styles: theme?.Styles },
+            mapKeys(theme.Tokens ?? {}, (_, key) => key.toLowerCase()),
+            { styles: theme.Styles },
             customScope,
             options?.context,
             args,
@@ -279,8 +279,8 @@ export const useExecuteCode: EnsembleActionHook<
     user,
     formatter,
     location,
-    theme?.Tokens,
-    theme?.Styles,
+    theme.Tokens,
+    theme.Styles,
     customScope,
     options?.context,
     onCompleteAction,
@@ -914,6 +914,10 @@ export const useEnsembleAction = (
   // FIXME: Figure out how to chain without breaking rules of hooks and infinite loop
   if (!action) {
     return;
+  }
+
+  if (isString(action)) {
+    return useExecuteCode(action);
   }
 
   if ("invokeAPI" in action) {

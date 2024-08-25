@@ -1,5 +1,20 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.78
+
+### Patch Changes
+
+- b01b675: Added support for device object like flutter
+- 58853c7: Added manual control over dropdown close
+- 767850d: Refactor storage and data atoms to be more resilient in concurrent use cases
+- 83076a4: Added functionality to change placeholder color
+- Updated dependencies [b01b675]
+- Updated dependencies [58853c7]
+- Updated dependencies [767850d]
+- Updated dependencies [83076a4]
+  - @ensembleui/react-framework@0.2.0
+  - @ensembleui/react-runtime@0.2.0
+
 ## 0.0.77
 
 ### Patch Changes

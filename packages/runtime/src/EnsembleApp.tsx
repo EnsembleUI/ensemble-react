@@ -94,9 +94,9 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
                 ),
                 errorElement: <ErrorPage />,
                 children: app.screens.map((screen) => {
-                  const screenPath = screen.name.toLowerCase();
+                  const screenPath = screen.path ?? screen.name?.toLowerCase();
                   return {
-                    path: screen.path ?? `${screenPath}`,
+                    path: screenPath,
                     element: (
                       <EnsembleScreen key={screenPath} screen={screen} />
                     ),
