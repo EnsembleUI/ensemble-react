@@ -150,7 +150,7 @@ View:
                         validator:
                           required: true
                           minLength: 4
-                          maxLength: 10
+                          maxLength: 2
                         label: Text input with min and max length
                     - TextInput:
                         id: regexTextInput
