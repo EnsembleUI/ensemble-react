@@ -14,7 +14,7 @@ View:
           name: getDummyProductsByPaginate
           inputs:
             skip: 0
-            limit: 10
+            limit: 17
           onResponse:
             executeCode: |
               const res = response.body.products;
@@ -25,9 +25,6 @@ View:
       Header:
         inputs:
           message: "Inputs to header widget"
-
-  styles:
-    scrollableView: true
 
   body:
     Column:
@@ -55,7 +52,7 @@ View:
                     showToast:
                       message: Your selected brand's ${value?.product ? "rating" :"price"} is ${value?.product?.rating || value?.value}
                   item-template:
-                    data: ${ensemble.storage.get("dummyProducts").concat(ensemble.storage.get("dummyProducts"))}
+                    data: ${ensemble.storage.get("dummyProducts")}
                     name: product
                     template:
                       Text:
@@ -388,7 +385,7 @@ View:
                           hasDivider: true
                           borderBottom: false
                       DataColumns: ["id", "title", "description"]
-                      pageSize: 10
+                      pageSize: 17
                       totalRows: 100
                       onPageChange:
                         invokeAPI:

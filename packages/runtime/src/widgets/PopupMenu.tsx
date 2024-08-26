@@ -3,11 +3,12 @@ import type { MenuProps } from "antd";
 import { Dropdown as AntdDropdown } from "antd";
 import {
   cloneDeep,
-  get,
   isEmpty,
   isObject,
   isString,
-  toNumber,
+  compact,
+  join,
+  tail,
 } from "lodash-es";
 import {
   CustomScopeProvider,
@@ -107,9 +108,9 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
 
     const items = values?.items;
     if (items) {
-      const tempItems = items
-        .map((rawItem, index) => getMenuItem(rawItem, index))
-        .filter(Boolean);
+      const tempItems = compact(
+        items.map((rawItem, index) => getMenuItem(rawItem, index)),
+      );
 
       popupItems.push(...tempItems);
     }
@@ -154,25 +155,39 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
     return EnsembleRuntime.render([actualWidget]);
   }, [values?.widget]);
 
+  const itemsMap = useMemo(() => {
+    const map = new Map<string, PopupMenuItem>();
+
+    evaluatedNamedData.namedData.forEach((item, index) => {
+      map.set(`itemTemplate_${index}`, item as PopupMenuItem);
+    });
+
+    if (values?.items) {
+      const traverseItems = (
+        items: PopupMenuItem[],
+        path: number[] = [],
+      ): void => {
+        items.forEach((item, index) => {
+          const newPath = [...path, index];
+          map.set(`item_${newPath.join("_")}`, item);
+          if (item.items) {
+            // handle nested items
+            traverseItems(item.items, newPath);
+          }
+        });
+      };
+      traverseItems(values.items);
+    }
+    return map;
+  }, [evaluatedNamedData.namedData, values?.items]);
+
   const handleMenuItemClick = useCallback<NonNullable<MenuProps["onClick"]>>(
     ({ key }) => {
-      let item;
-      if (key.includes("itemTemplate")) {
-        const itemIndex = toNumber(key.split("_").at(-1));
-        item = evaluatedNamedData.namedData[itemIndex];
-      } else {
-        const itemIndices = key.split("_").filter((_, i) => i > 1);
-        if (itemIndices.length > 1) {
-          for (let i = 1; i < itemIndices.length; i += 2) {
-            itemIndices.splice(i, 0, "items");
-          }
-        }
-        item = get(values?.items, itemIndices) as unknown;
-      }
-
+      const mapKey = join(tail(key.split("_")), "_");
+      const item = itemsMap.get(mapKey);
       action?.callback({ value: item });
     },
-    [action, evaluatedNamedData.namedData, values?.items],
+    [action, itemsMap],
   );
 
   return (
@@ -187,7 +202,7 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
         }}
         trigger={[values?.trigger || DEFAULT_POPUPMENU_TRIGGER]}
       >
-        <div>{getWidget()}</div>
+        <>{getWidget()}</>
       </AntdDropdown>
     </div>
   );
