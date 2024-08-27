@@ -1,15 +1,19 @@
 import type { PropsWithChildren, ReactNode } from "react";
 import React, { useState, useEffect, useCallback } from "react";
-import { Menu as AntMenu, Col, Divider } from "antd";
+import { Menu as AntMenu, Col, Drawer as AntDrawer } from "antd";
 import * as MuiIcons from "@mui/icons-material";
 import {
   unwrapWidget,
   useRegisterBindings,
   type EnsembleWidget,
+  type EnsembleAction,
+  type EnsembleMenuModelType,
 } from "@ensembleui/react-framework";
-import { Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import { getColor } from "../shared/styles";
 import { EnsembleRuntime } from "./runtime";
+// eslint-disable-next-line import/no-cycle
+import { useEnsembleAction } from "./hooks";
 
 type TypeColors =
   | "transparent"
@@ -30,7 +34,12 @@ type TypeColors =
   | "lime"
   | "orange";
 
-interface MenuItem {
+export interface EnsembleMenuContext {
+  isMenuCollapsed?: boolean;
+  setMenuCollapsed?: (collapsed: boolean) => void;
+}
+
+interface MenuItemProps {
   id?: string;
   testId?: string;
   icon?: string | { [key: string]: unknown };
@@ -50,25 +59,37 @@ interface MenuItem {
   };
 }
 
-interface MenuBaseProps {
+interface MenuBaseProps<T> {
   id?: string;
-  items: MenuItem[];
-  styles?: {
-    backgroundColor?: TypeColors;
-    labelColor?: TypeColors;
-    selectedColor?: TypeColors;
-    labelFontSize?: number;
-    searchBoxColor?: TypeColors;
-    iconWidth?: string;
-    iconHeight?: string;
-    width?: string;
-    onSelectStyles?: {
-      backgroundColor?: TypeColors;
-      borderRadius?: string;
-    };
-  };
+  items?: MenuItemProps[];
+  styles?: T;
   header?: EnsembleWidget;
   footer?: EnsembleWidget;
+  onCollapse?: EnsembleAction;
+}
+
+interface MenuStyles {
+  backgroundColor?: TypeColors;
+  labelColor?: TypeColors;
+  selectedColor?: TypeColors;
+  labelFontSize?: number;
+  searchBoxColor?: TypeColors;
+  iconWidth?: string;
+  iconHeight?: string;
+  onSelectStyles?: {
+    backgroundColor?: TypeColors;
+    borderRadius?: string;
+  };
+}
+
+interface SideBarMenuStyles extends MenuStyles {
+  width?: string;
+}
+
+interface DrawerMenuStyles extends MenuStyles {
+  width?: string;
+  height?: string;
+  position?: "left" | "right" | "top" | "bottom";
 }
 
 const renderMuiIcon = (
@@ -94,7 +115,7 @@ const renderMuiIcon = (
   return null;
 };
 
-const CustomLink: React.FC<PropsWithChildren & { item: MenuItem }> = ({
+const CustomLink: React.FC<PropsWithChildren & { item: MenuItemProps }> = ({
   item,
   children,
 }) => {
@@ -130,27 +151,37 @@ const CustomLink: React.FC<PropsWithChildren & { item: MenuItem }> = ({
   );
 };
 
-export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
-  const { values } = useRegisterBindings({ ...props, isCollapsed }, id, {
-    setCollapsed: setIsCollapsed,
-  });
+export const EnsembleMenu: React.FC<{
+  type: EnsembleMenuModelType;
+  menu: MenuBaseProps<SideBarMenuStyles | DrawerMenuStyles>;
+  renderOutlet?: boolean;
+}> = ({ type, menu, renderOutlet = true }) => {
+  const [isCollapsed, setCollapsed] = useState<boolean>(type === "Drawer");
+
+  const outletContext = {
+    isMenuCollapsed: isCollapsed,
+    setMenuCollapsed: setCollapsed,
+  };
+  const { id, items, styles, header, footer, onCollapse } = menu;
+  const { values } = useRegisterBindings(
+    { items, styles, header, footer, isCollapsed },
+    id,
+    {
+      setCollapsed,
+    },
+  );
   const location = useLocation();
   const [selectedItem, setSelectedItem] = useState<string | undefined>();
 
-  const backgroundColor = props.styles?.backgroundColor
-    ? getColor(props.styles.backgroundColor)
-    : "none";
-
   useEffect(() => {
-    const initiallySelectedItem = props.items.find((item) => item.selected);
+    const initiallySelectedItem = items?.find((item) => item.selected);
     if (initiallySelectedItem) {
       setSelectedItem(initiallySelectedItem.page);
     }
-  }, [props.items]);
+  }, [items]);
 
   useEffect(() => {
-    const locationMatch = props.items.find(
+    const locationMatch = items?.find(
       (item) =>
         item.page &&
         `/${item.page.toLowerCase()}` === location.pathname.toLowerCase(),
@@ -158,10 +189,155 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
     if (locationMatch) {
       setSelectedItem(locationMatch.page);
     }
-  }, [location.pathname, props.items]);
+  }, [location.pathname, items]);
 
+  const handleClose = (): void => {
+    setCollapsed(true);
+    onCollapseCallback();
+  };
+
+  const onCollapseAction = useEnsembleAction(onCollapse);
+  const onCollapseCallback = useCallback(() => {
+    if (!onCollapseAction) return;
+    return onCollapseAction.callback();
+  }, [onCollapseAction]);
+  return (
+    <div style={{ display: "flex", flexDirection: "row" }}>
+      {type === "SideBar" ? (
+        <SideBarMenu
+          isCollapsed={isCollapsed}
+          selectedItem={selectedItem}
+          setSelectedItem={setSelectedItem}
+          values={values}
+        />
+      ) : (
+        <DrawerMenu
+          handleClose={handleClose}
+          isOpen={!isCollapsed}
+          selectedItem={selectedItem}
+          setSelectedItem={setSelectedItem}
+          values={values}
+        />
+      )}
+      {renderOutlet ? (
+        <div
+          style={{
+            flexGrow: 1,
+            height: "100vh",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Outlet context={outletContext} />
+        </div>
+      ) : null}
+    </div>
+  );
+};
+
+export const SideBarMenu: React.FC<{
+  values?: MenuBaseProps<SideBarMenuStyles>;
+  isCollapsed: boolean;
+  selectedItem: string | undefined;
+  setSelectedItem: (s: string) => void;
+  width?: string;
+}> = ({ values, isCollapsed, selectedItem, setSelectedItem }) => {
+  return (
+    <Col
+      id="ensemble-sidebar"
+      style={{
+        backgroundColor: values?.styles?.backgroundColor
+          ? getColor(values.styles.backgroundColor)
+          : "none",
+        borderRight: "1px solid lightgrey",
+        display: "flex",
+        justifyContent: "space-between",
+        flexDirection: "column",
+        width: isCollapsed ? undefined : values?.styles?.width,
+        height: "100vh",
+        alignItems: "center",
+        zIndex: 1,
+      }}
+    >
+      {values?.header ? EnsembleRuntime.render([values.header]) : null}
+      <MenuItems
+        isCollapsed={isCollapsed}
+        items={values?.items || []}
+        selectedItem={selectedItem}
+        setSelectedItem={setSelectedItem}
+        styles={values?.styles || {}}
+      />
+      {values?.footer ? EnsembleRuntime.render([values.footer]) : null}
+    </Col>
+  );
+};
+
+export const DrawerMenu: React.FC<{
+  values?: MenuBaseProps<DrawerMenuStyles>;
+  handleClose: () => void;
+  isOpen: boolean;
+  selectedItem: string | undefined;
+  setSelectedItem: (s: string) => void;
+}> = ({ values, handleClose, isOpen, selectedItem, setSelectedItem }) => {
+  const validPosition = ["left", "right", "top", "bottom"];
+
+  return (
+    <AntDrawer
+      closable={false}
+      height={
+        values?.styles?.height
+          ? `calc(${values.styles.height} + 48px)`
+          : undefined
+      }
+      key={values?.id}
+      onClose={handleClose}
+      open={isOpen}
+      placement={
+        !(
+          values?.styles?.position &&
+          validPosition.includes(values.styles.position)
+        )
+          ? "left"
+          : values.styles.position
+      }
+      style={{
+        backgroundColor: values?.styles?.backgroundColor
+          ? getColor(values.styles.backgroundColor)
+          : "none",
+      }}
+      width={
+        values?.styles?.width
+          ? `calc(${values.styles.width} + 48px)`
+          : undefined
+      }
+    >
+      {values?.header ? EnsembleRuntime.render([values.header]) : null}
+      <MenuItems
+        items={values?.items || []}
+        selectedItem={selectedItem}
+        setSelectedItem={setSelectedItem}
+        styles={values?.styles || {}}
+      />
+      {values?.footer ? EnsembleRuntime.render([values.footer]) : null}
+    </AntDrawer>
+  );
+};
+
+const MenuItems: React.FC<{
+  items: MenuItemProps[];
+  styles: MenuStyles;
+  selectedItem: string | undefined;
+  setSelectedItem: (s: string) => void;
+  isCollapsed?: boolean;
+}> = ({
+  items,
+  styles,
+  selectedItem,
+  setSelectedItem,
+  isCollapsed = false,
+}) => {
   const getIcon = useCallback(
-    (item: MenuItem) => {
+    (item: MenuItemProps) => {
       const key = selectedItem === item.page ? "activeIcon" : "icon";
       const icon =
         selectedItem === item.page && item.activeIcon
@@ -173,11 +349,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
       }
 
       if (typeof icon === "string") {
-        return renderMuiIcon(
-          icon,
-          props.styles?.iconWidth,
-          props.styles?.iconHeight,
-        );
+        return renderMuiIcon(icon, styles.iconWidth, styles.iconHeight);
       }
       return EnsembleRuntime.render([
         {
@@ -186,14 +358,12 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
         },
       ]);
     },
-    [props.styles?.iconHeight, props.styles?.iconWidth, selectedItem],
+    [styles.iconHeight, styles.iconWidth, selectedItem],
   );
 
   const getLabel = useCallback(
-    (item: MenuItem) => {
-      if (isCollapsed) {
-        return null;
-      }
+    (item: MenuItemProps) => {
+      if (isCollapsed) return null;
       if (!item.customItem) {
         return item.label;
       }
@@ -207,94 +377,54 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
   );
 
   return (
-    <Col
-      id="ensemble-sidebar"
+    <AntMenu
+      mode="inline"
+      /* FIXME This is a hack so we can control our own selected styling. Ideally, this should use design tokens */
+      selectedKeys={[]}
       style={{
-        backgroundColor,
-        borderRight: "1px solid lightgrey",
+        flex: "1",
+        backgroundColor: styles.backgroundColor
+          ? getColor(styles.backgroundColor)
+          : "none",
         display: "flex",
-        justifyContent: "space-between",
         flexDirection: "column",
-        width: isCollapsed ? undefined : props.styles?.width,
-        height: "100vh",
-        alignItems: "center",
-        zIndex: 1,
+        borderRight: "none",
       }}
     >
-      {props.header ? EnsembleRuntime.render([props.header]) : null}
-      <AntMenu
-        mode="inline"
-        /* FIXME This is a hack so we can control our own selected styling. Ideally, this should use design tokens */
-        selectedKeys={[]}
-        style={{
-          flex: "1",
-          backgroundColor,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        {/* FIXME: just use props here https://ant.design/components/menu#examples */}
-        {values?.items.map((item, itemIndex) => (
-          <>
-            <AntMenu.Item
-              data-testid={item.id ?? item.testId}
-              icon={getIcon(item)}
-              key={item.page || item.url || `customItem${itemIndex}`}
-              onClick={(): void => {
-                if (!item.openNewTab && item.page) {
-                  setSelectedItem(item.page);
-                }
-              }}
-              style={{
-                color:
-                  selectedItem === item.page
-                    ? (values.styles?.selectedColor as string) ?? "white"
-                    : (values.styles?.labelColor as string) ?? "grey",
-                display: item.visible === false ? "none" : "flex",
-                justifyContent: "center",
-                borderRadius: 0,
-                alignItems: "center",
-                fontSize:
-                  selectedItem === item.page
-                    ? `${
-                        parseInt(
-                          `${
-                            props.styles?.labelFontSize
-                              ? props.styles.labelFontSize
-                              : 1
-                          }` || "1",
-                        ) + 0.2
-                      }rem`
-                    : `${
-                        props.styles?.labelFontSize
-                          ? props.styles.labelFontSize
-                          : 1
-                      }rem`,
-                ...(selectedItem === item.page
-                  ? props.styles?.onSelectStyles ?? {}
-                  : {}),
-              }}
-            >
-              <CustomLink item={item}>{getLabel(item)}</CustomLink>
-            </AntMenu.Item>
-            {item.divider ? (
-              <Col
-                span={24}
-                style={{ display: "flex", justifyContent: "center" }}
-              >
-                <Divider
-                  style={{
-                    backgroundColor: "grey",
-                    width: "70%",
-                    minWidth: "70%",
-                  }}
-                />
-              </Col>
-            ) : null}
-          </>
-        ))}
-      </AntMenu>
-      {props.footer ? EnsembleRuntime.render([props.footer]) : null}
-    </Col>
+      {items.map((item, itemIndex) => (
+        <AntMenu.Item
+          data-testid={item.id ?? item.testId}
+          icon={getIcon(item)}
+          key={item.page || item.url || `customItem${itemIndex}`}
+          onClick={(): void => {
+            if (!item.openNewTab && item.page) {
+              setSelectedItem(item.page);
+            }
+          }}
+          style={{
+            color:
+              selectedItem === item.page
+                ? (styles.selectedColor as string) ?? "white"
+                : (styles.labelColor as string) ?? "grey",
+            display: item.visible === false ? "none" : "flex",
+            justifyContent: "center",
+            borderRadius: 0,
+            alignItems: "center",
+            fontSize:
+              selectedItem === item.page
+                ? `${
+                    parseInt(
+                      `${styles.labelFontSize ? styles.labelFontSize : 1}` ||
+                        "1",
+                    ) + 0.2
+                  }rem`
+                : `${styles.labelFontSize ? styles.labelFontSize : 1}rem`,
+            ...(selectedItem === item.page ? styles.onSelectStyles ?? {} : {}),
+          }}
+        >
+          <CustomLink item={item}>{getLabel(item)}</CustomLink>
+        </AntMenu.Item>
+      ))}
+    </AntMenu>
   );
 };

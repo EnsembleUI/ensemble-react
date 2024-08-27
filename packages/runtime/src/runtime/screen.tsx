@@ -4,7 +4,7 @@ import type {
 } from "@ensembleui/react-framework";
 import { ScreenContextProvider, error } from "@ensembleui/react-framework";
 import React, { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams, useOutletContext } from "react-router-dom";
 import { isEmpty, merge } from "lodash-es";
 import { type WidgetComponent, WidgetRegistry } from "../registry";
 // FIXME: refactor
@@ -15,6 +15,7 @@ import { EnsembleFooter } from "./footer";
 import { EnsembleBody } from "./body";
 import { ModalWrapper } from "./modal";
 import { createCustomWidget } from "./customWidget";
+import { EnsembleMenuContext, EnsembleMenu } from "./menu";
 
 export interface EnsembleScreenProps {
   screen: EnsembleScreenModel;
@@ -33,13 +34,16 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
   const params = new URLSearchParams(search); // query params
   const queryParams: { [key: string]: unknown } = Object.fromEntries(params);
 
-  const mergedInputs = merge(
+  const outletContext = useOutletContext<EnsembleMenuContext>();
+
+  const mergedInputs: { [key: string]: unknown } = merge(
     {},
     state as { [key: string]: unknown },
+    { ...outletContext },
     routeParams,
     queryParams,
     inputs,
-  );
+  ) as { [key: string]: unknown };
 
   useEffect(() => {
     if (!screen.customWidgets || isEmpty(screen.customWidgets)) {
@@ -98,6 +102,13 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
           <EnsembleHeader header={screen.header} />
           <EnsembleBody body={screen.body} styles={screen.styles} />
         </OnLoadAction>
+        {screen.menu ? (
+          <EnsembleMenu
+            menu={{ ...screen.menu }}
+            type={screen.menu.type}
+            renderOutlet={false}
+          />
+        ) : null}
         <EnsembleFooter footer={screen.footer} />
       </ModalWrapper>
     </ScreenContextProvider>

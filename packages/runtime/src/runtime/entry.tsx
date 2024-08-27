@@ -4,7 +4,7 @@ import {
 } from "@ensembleui/react-framework";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
-import { SideBarMenu } from "./menu";
+import { EnsembleMenu } from "./menu";
 import { EnsembleScreen } from "./screen";
 
 interface EnsembleEntryProps {
@@ -49,27 +49,8 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({
   }, [entry, hasMenu, navigate, location, initialScreen]);
 
   if (hasMenu) {
-    return (
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <SideBarMenu
-          footer={entry.footer}
-          header={entry.header}
-          id={entry.id}
-          items={entry.items}
-          styles={entry.styles}
-        />
-        <div
-          style={{
-            flexGrow: 1,
-            height: "100vh",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <Outlet />
-        </div>
-      </div>
-    );
+    const { type: menuType, ...menu } = entry;
+    return <EnsembleMenu type={menuType} menu={menu} />;
   }
 
   if (location.pathname !== "/") {

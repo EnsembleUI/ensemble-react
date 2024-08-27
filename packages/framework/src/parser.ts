@@ -24,6 +24,7 @@ import type {
   EnsembleWidget,
   EnsembleAppModel,
   EnsembleMenuModel,
+  EnsembleMenuModelType,
   EnsembleHeaderModel,
   EnsembleFooterModel,
   CustomWidgetModel,
@@ -156,6 +157,7 @@ export const EnsembleParser = {
     let viewNode = get(view, "body");
     const header = get(view, "header");
     const footer = get(view, "footer");
+    const menu = get(view, "menu");
 
     if (!viewNode) {
       if (view) {
@@ -222,6 +224,7 @@ export const EnsembleParser = {
       global,
       header: unwrapHeader(header),
       footer: unwrapFooter(footer),
+      menu: menu ? EnsembleParser.parseMenu(menu) : undefined,
       body: viewWidget,
       apis,
       styles: get(view, "styles"),
@@ -261,7 +264,7 @@ export const EnsembleParser = {
 
   parseMenu: (menu: object): EnsembleMenuModel => {
     const menuType = head(Object.keys(menu));
-    if (!menuType) {
+    if (!menuType || !includes(["SideBar", "Drawer"], String(menuType))) {
       throw Error("Invalid ViewGroup definition: invalid menu type");
     }
 
@@ -273,8 +276,8 @@ export const EnsembleParser = {
       | undefined;
     return {
       id: get(menu, [menuType, "id"]) as string | undefined,
-      type: String(menuType),
-      items: get(menu, [menuType, "items"]) as [],
+      type: menuType as EnsembleMenuModelType,
+      items: (get(menu, [menuType, "items"]) as []) ?? [],
       header: headerDef ? unwrapWidget(headerDef) : undefined,
       footer: footerDef ? unwrapWidget(footerDef) : undefined,
       styles: get(menu, [menuType, "styles"]) as { [key: string]: unknown },

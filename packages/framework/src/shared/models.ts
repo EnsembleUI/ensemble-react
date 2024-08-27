@@ -16,6 +16,7 @@ export interface EnsembleScreenModel {
   onLoad?: EnsembleAction;
   header?: EnsembleHeaderModel;
   footer?: EnsembleFooterModel;
+  menu?: EnsembleMenuModel;
   apis?: EnsembleAPIModel[];
   global?: string;
   styles?: { [key: string]: unknown };
@@ -42,7 +43,7 @@ export interface EnsembleAppModel {
 
 export interface EnsembleMenuModel {
   id?: string;
-  type: string;
+  type: EnsembleMenuModelType;
   items: {
     label: string;
     icon?: string;
@@ -53,6 +54,11 @@ export interface EnsembleMenuModel {
   header?: EnsembleWidget;
   footer?: EnsembleWidget;
   styles: { [key: string]: unknown };
+}
+
+export enum EnsembleMenuModelType {
+  SideBar = "SideBar",
+  Drawer = "Drawer",
 }
 
 export interface EnsembleAPIModel {

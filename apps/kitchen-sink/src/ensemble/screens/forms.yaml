@@ -18,6 +18,7 @@ View:
           onResponse:
             executeCode: |
               console.log('getData', response.body);
+  
   header:
     title:
       Header:
@@ -44,6 +45,7 @@ View:
                 options:
                   height: 50px
                   width: 80px
+              
         - Icon:
         - Text:
             styles:
@@ -432,6 +434,7 @@ View:
     children:
       - Text:
           text: Give support us
+          id: testText1
     styles:
       backgroundColor: red
 
