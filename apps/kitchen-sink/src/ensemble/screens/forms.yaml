@@ -18,41 +18,6 @@ View:
           onResponse:
             executeCode: |
               console.log('getData', response.body);
-  menu:
-    Drawer:
-      id: testDrawer
-      onCollapse:
-        executeCode: |
-          console.log("Drawer closed! This is the onClose function :)")
-      header:
-        Column:
-          children:
-            - Text:
-                text: "Put any widgets you would like in the header property"
-            - Button:
-                label: Navigate Home
-                onTap:
-                  executeCode: |
-                    testDrawer.setCollapsed(true);
-                    ensemble.navigateScreen("Home");
-            - Button:
-                label: Navigate to Widgets
-                onTap:
-                  executeCode: |
-                    testDrawer.setCollapsed(true);
-                    ensemble.navigateScreen("Widgets");
-            - Button:
-                label: Navigate to Layouts
-                onTap:
-                  executeCode: |
-                    testDrawer.setCollapsed(true);
-                    ensemble.navigateScreen("Layouts");
-            - Button:
-                label: Close Drawer
-                onTap:
-                  executeCode: |
-                    testDrawer.setCollapsed(true);
-
   
   header:
     title:
@@ -80,11 +45,6 @@ View:
                 options:
                   height: 50px
                   width: 80px
-        - Button:
-            label: open drawer
-            onTap:
-              executeCode: |
-                testDrawer.setCollapsed(false);
               
         - Icon:
         - Text:
