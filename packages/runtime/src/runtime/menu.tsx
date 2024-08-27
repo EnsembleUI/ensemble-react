@@ -34,15 +34,7 @@ type TypeColors =
   | "lime"
   | "orange";
 
-export interface DrawerRef {
-  openDrawer: () => void;
-  closeDrawer: () => void;
-  isDrawerOpen: () => boolean;
-}
-
 export interface EnsembleMenuContext {
-  openDrawerMenu?: () => void;
-  closeDrawerMenu?: () => void;
   isMenuCollapsed?: boolean;
   setMenuCollapsed?: (collapsed: boolean) => void;
 }
@@ -159,78 +151,23 @@ const CustomLink: React.FC<PropsWithChildren & { item: MenuItemProps }> = ({
   );
 };
 
-export const RenderMenu: React.FC<{
+export const EnsembleMenu: React.FC<{
   type: EnsembleMenuModelType;
   menu: MenuBaseProps<SideBarMenuStyles | DrawerMenuStyles>;
-}> = ({ type, menu }) => {
-  const [isCollapsed, setCollapsed] = useState<boolean>(false);
+  renderOutlet?: boolean;
+}> = ({ type, menu, renderOutlet = true }) => {
+  const [isCollapsed, setCollapsed] = useState<boolean>(type === "Drawer");
 
   const outletContext = {
-    openDrawerMenu: type === "Drawer" ? () => setCollapsed(true) : undefined,
-    closeDrawerMenu: type === "Drawer" ? () => setCollapsed(false) : undefined,
-    isCollapsed: type === "SideBar" ? () => isCollapsed : undefined,
-    setCollapsed:
-      type === "SideBar" ? (value: boolean) => setCollapsed(value) : undefined,
+    isMenuCollapsed: isCollapsed,
+    setMenuCollapsed: setCollapsed,
   };
-
-  return (
-    <div style={{ display: "flex", flexDirection: "row" }}>
-      <Menu
-        isCollapsed={isCollapsed}
-        menu={menu}
-        setCollapsed={setCollapsed}
-        type={type}
-      />
-      <div
-        style={{
-          flexGrow: 1,
-          height: "100vh",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <Outlet context={outletContext} />
-      </div>
-    </div>
-  );
-};
-
-export const RenderMenuInView: React.FC<{
-  type: EnsembleMenuModelType;
-  menu: MenuBaseProps<SideBarMenuStyles | DrawerMenuStyles>;
-}> = ({ type, menu }) => {
-  const [isCollapsed, setCollapsed] = useState<boolean>(false);
-
-  return (
-    <div style={{ display: "flex", flexDirection: "row" }}>
-      <Menu
-        isCollapsed={isCollapsed}
-        menu={menu}
-        setCollapsed={setCollapsed}
-        type={type}
-      />
-    </div>
-  );
-};
-
-export const Menu: React.FC<{
-  type: EnsembleMenuModelType;
-  menu: MenuBaseProps<SideBarMenuStyles | DrawerMenuStyles>;
-  isCollapsed: boolean;
-  setCollapsed: (collapsed: boolean) => void;
-}> = ({ type, menu, isCollapsed, setCollapsed }) => {
   const { id, items, styles, header, footer, onCollapse } = menu;
   const { values } = useRegisterBindings(
     { items, styles, header, footer, isCollapsed },
     id,
     {
       setCollapsed,
-      ...(type === "Drawer"
-        ? {
-            openDrawer: () => setCollapsed(true),
-            closeDrawer: () => setCollapsed(false),
-          }
-        : {}),
     },
   );
   const location = useLocation();
@@ -255,7 +192,7 @@ export const Menu: React.FC<{
   }, [location.pathname, items]);
 
   const handleClose = (): void => {
-    setCollapsed(false);
+    setCollapsed(true);
     onCollapseCallback();
   };
 
@@ -264,29 +201,38 @@ export const Menu: React.FC<{
     if (!onCollapseAction) return;
     return onCollapseAction.callback();
   }, [onCollapseAction]);
-
-  if (type === "SideBar") {
-    return (
-      <SideBarMenu
-        isCollapsed={isCollapsed}
-        selectedItem={selectedItem}
-        setSelectedItem={setSelectedItem}
-        values={values}
-      />
-    );
-  }
-  if (type === "Drawer") {
-    return (
-      <DrawerMenu
-        handleClose={handleClose}
-        isOpen={isCollapsed}
-        selectedItem={selectedItem}
-        setSelectedItem={setSelectedItem}
-        values={values}
-      />
-    );
-  }
-  return null;
+  return (
+    <div style={{ display: "flex", flexDirection: "row" }}>
+      {type === "SideBar" ? (
+        <SideBarMenu
+          isCollapsed={isCollapsed}
+          selectedItem={selectedItem}
+          setSelectedItem={setSelectedItem}
+          values={values}
+        />
+      ) : (
+        <DrawerMenu
+          handleClose={handleClose}
+          isOpen={!isCollapsed}
+          selectedItem={selectedItem}
+          setSelectedItem={setSelectedItem}
+          values={values}
+        />
+      )}
+      {renderOutlet ? (
+        <div
+          style={{
+            flexGrow: 1,
+            height: "100vh",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Outlet context={outletContext} />
+        </div>
+      ) : null}
+    </div>
+  );
 };
 
 export const SideBarMenu: React.FC<{
@@ -314,7 +260,7 @@ export const SideBarMenu: React.FC<{
       }}
     >
       {values?.header ? EnsembleRuntime.render([values.header]) : null}
-      <ItemsMenu
+      <MenuItems
         isCollapsed={isCollapsed}
         items={values?.items || []}
         selectedItem={selectedItem}
@@ -366,7 +312,7 @@ export const DrawerMenu: React.FC<{
       }
     >
       {values?.header ? EnsembleRuntime.render([values.header]) : null}
-      <ItemsMenu
+      <MenuItems
         items={values?.items || []}
         selectedItem={selectedItem}
         setSelectedItem={setSelectedItem}
@@ -377,9 +323,9 @@ export const DrawerMenu: React.FC<{
   );
 };
 
-const ItemsMenu: React.FC<{
+const MenuItems: React.FC<{
   items: MenuItemProps[];
-  styles: DrawerMenuStyles;
+  styles: MenuStyles;
   selectedItem: string | undefined;
   setSelectedItem: (s: string) => void;
   isCollapsed?: boolean;

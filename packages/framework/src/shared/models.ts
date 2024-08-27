@@ -56,7 +56,10 @@ export interface EnsembleMenuModel {
   styles: { [key: string]: unknown };
 }
 
-export type EnsembleMenuModelType = "SideBar" | "Drawer";
+export enum EnsembleMenuModelType {
+  SideBar = "SideBar",
+  Drawer = "Drawer",
+}
 
 export interface EnsembleAPIModel {
   name: string;

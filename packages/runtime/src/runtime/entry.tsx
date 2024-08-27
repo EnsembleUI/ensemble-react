@@ -4,7 +4,7 @@ import {
 } from "@ensembleui/react-framework";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
-import { RenderMenu } from "./menu";
+import { EnsembleMenu } from "./menu";
 import { EnsembleScreen } from "./screen";
 
 interface EnsembleEntryProps {
@@ -50,7 +50,7 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({
 
   if (hasMenu) {
     const { type: menuType, ...menu } = entry;
-    return <RenderMenu type={menuType} menu={menu} />;
+    return <EnsembleMenu type={menuType} menu={menu} />;
   }
 
   if (location.pathname !== "/") {

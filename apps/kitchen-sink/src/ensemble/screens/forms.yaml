@@ -33,25 +33,25 @@ View:
                 label: Navigate Home
                 onTap:
                   executeCode: |
-                    testDrawer.closeDrawer();
+                    testDrawer.setCollapsed(true);
                     ensemble.navigateScreen("Home");
             - Button:
                 label: Navigate to Widgets
                 onTap:
                   executeCode: |
-                    testDrawer.closeDrawer();
+                    testDrawer.setCollapsed(true);
                     ensemble.navigateScreen("Widgets");
             - Button:
                 label: Navigate to Layouts
                 onTap:
                   executeCode: |
-                    testDrawer.closeDrawer();
+                    testDrawer.setCollapsed(true);
                     ensemble.navigateScreen("Layouts");
             - Button:
                 label: Close Drawer
                 onTap:
                   executeCode: |
-                    testDrawer.closeDrawer();
+                    testDrawer.setCollapsed(true);
 
   
   header:
@@ -84,7 +84,7 @@ View:
             label: open drawer
             onTap:
               executeCode: |
-                testDrawer.openDrawer()
+                testDrawer.setCollapsed(false);
               
         - Icon:
         - Text:

@@ -19,7 +19,7 @@ Widget:
             label: Open Menu Drawer
             onTap:
               executeCode: |
-                openDrawerMenu();
+                setMenuCollapsed(false);
         - Search:
             id: mySearch
             styles:
