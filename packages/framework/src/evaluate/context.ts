@@ -47,6 +47,7 @@ export const createEvaluationContext = ({
     themes: keys(applicationContext.application?.themes),
     theme: applicationContext.selectedTheme?.name,
   };
+
   const env = applicationContext.env;
 
   return merge({}, { app, ensemble, env }, appInputs, screenInputs, context);

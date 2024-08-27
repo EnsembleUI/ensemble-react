@@ -20,6 +20,7 @@ import type { Response, WebSocketConnection } from "../data";
 import type { EnsembleScreenModel } from "../shared/models";
 import { useApplicationContext } from "./useApplicationContext";
 import { CustomThemeContext } from "./useThemeContext";
+import { useDeviceObserver } from "./useDeviceObserver";
 
 interface ScreenContextProps {
   screen: EnsembleScreenModel;
@@ -85,6 +86,9 @@ const HydrateAtoms: React.FC<
       dangerouslyForceHydrate: true,
     },
   );
+
+  // initiate device resizer observer
+  useDeviceObserver();
 
   return <>{children}</>;
 };

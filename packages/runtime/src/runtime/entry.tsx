@@ -27,9 +27,9 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({
       return;
     }
 
-    if (initialScreen && path !== initialScreen.name.toLowerCase()) {
+    if (initialScreen && path !== initialScreen.name?.toLowerCase()) {
       navigate({
-        pathname: initialScreen.name.toLowerCase(),
+        pathname: initialScreen.name?.toLowerCase(),
         search: location.search,
       });
       return;
@@ -45,7 +45,7 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({
       return;
     }
 
-    navigate({ pathname: entry.name.toLowerCase(), search: location.search });
+    navigate({ pathname: entry.name?.toLowerCase(), search: location.search });
   }, [entry, hasMenu, navigate, location, initialScreen]);
 
   if (hasMenu) {

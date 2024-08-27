@@ -2,12 +2,15 @@ import { focusAtom } from "jotai-optics";
 import { atomFamily } from "jotai/utils";
 import { screenAtom } from "./screen";
 
-export interface WidgetState<T = Record<string, unknown>> {
+export interface WidgetState<T = { [key: string]: unknown }> {
   values: T;
-  invokable: Invokable;
+  invokable?: Invokable;
 }
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type InvokableMethods = Record<string, Function>;
+
+export interface InvokableMethods {
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  [key: string]: Function;
+}
 export interface Invokable {
   id: string;
   methods?: InvokableMethods;

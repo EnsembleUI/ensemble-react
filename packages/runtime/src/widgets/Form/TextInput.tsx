@@ -1,7 +1,13 @@
-import { Input, Form } from "antd";
+import { Input, Form, ConfigProvider } from "antd";
 import type { Expression, EnsembleAction } from "@ensembleui/react-framework";
 import { useRegisterBindings } from "@ensembleui/react-framework";
-import { useEffect, useMemo, useState, useCallback } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  useCallback,
+  type FormEvent,
+} from "react";
 import { runes } from "runes2";
 import type { Rule } from "antd/es/form";
 import { forEach } from "lodash-es";
@@ -58,6 +64,11 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     [action],
   );
 
+  const handleKeyDown = useCallback((e: FormEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement;
+    target.value = target.value.replace(/[^0-9]/g, "");
+  }, []);
+
   useEffect(() => {
     setValue(values?.initialValue);
   }, [values?.initialValue]);
@@ -77,7 +88,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
       case "phone":
         return "tel";
       case "number":
-        return "number";
+        return "tel";
       case "url":
         return "url";
       default:
@@ -194,43 +205,50 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     : undefined;
 
   return (
-    <EnsembleFormItem rules={rules} valuePropName="value" values={values}>
-      {values?.multiLine ? (
-        <Input.TextArea
-          count={maxLengthConfig}
-          defaultValue={values.value}
-          disabled={values.enabled === false}
-          onChange={(event): void => setValue(event.target.value)}
-          placeholder={values.hintText ?? ""}
-          ref={rootRef}
-          rows={values.maxLines ? Number(values.maxLines) : 4} // Adjust the number of rows as needed
-          style={{
-            ...(values.styles ?? values.hintStyle),
-            ...(values.styles?.visible === false
-              ? { display: "none" }
-              : undefined),
-          }}
-          value={values.value}
-        />
-      ) : (
-        <Input
-          count={maxLengthConfig}
-          defaultValue={values?.value}
-          disabled={values?.enabled === false}
-          onChange={(event): void => handleChange(event.target.value)}
-          placeholder={values?.hintText ?? ""}
-          ref={rootRef}
-          style={{
-            ...(values?.styles ?? values?.hintStyle),
-            ...(values?.styles?.visible === false
-              ? { display: "none" }
-              : undefined),
-          }}
-          type={inputType}
-          value={value}
-        />
-      )}
-    </EnsembleFormItem>
+    <ConfigProvider
+      theme={{ token: { colorTextPlaceholder: values?.hintStyle?.color } }}
+    >
+      <EnsembleFormItem rules={rules} valuePropName="value" values={values}>
+        {values?.multiLine ? (
+          <Input.TextArea
+            count={maxLengthConfig}
+            defaultValue={values.value}
+            disabled={values.enabled === false}
+            onChange={(event): void => setValue(event.target.value)}
+            placeholder={values.hintText ?? ""}
+            ref={rootRef}
+            rows={values.maxLines ? Number(values.maxLines) : 4} // Adjust the number of rows as needed
+            style={{
+              ...(values.styles ?? values.hintStyle),
+              ...(values.styles?.visible === false
+                ? { display: "none" }
+                : undefined),
+            }}
+            value={values.value}
+          />
+        ) : (
+          <Input
+            count={maxLengthConfig}
+            defaultValue={values?.value}
+            disabled={values?.enabled === false}
+            onChange={(event): void => handleChange(event.target.value)}
+            {...(values?.inputType === "number" && {
+              onInput: (event): void => handleKeyDown(event),
+            })}
+            placeholder={values?.hintText ?? ""}
+            ref={rootRef}
+            style={{
+              ...(values?.styles ?? values?.hintStyle),
+              ...(values?.styles?.visible === false
+                ? { display: "none" }
+                : undefined),
+            }}
+            type={inputType}
+            value={value}
+          />
+        )}
+      </EnsembleFormItem>
+    </ConfigProvider>
   );
 };
 

@@ -58,7 +58,7 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
       (options?.comparator
         ? options.comparator(newValues, widgetState?.values)
         : isEqual(newValues, widgetState?.values)) &&
-      isEqual(keys(methods), keys(widgetState?.invokable.methods))
+      isEqual(keys(methods), keys(widgetState?.invokable?.methods))
     ) {
       return;
     }
@@ -73,7 +73,7 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
     setWidgetState,
     newValues,
     widgetState?.values,
-    widgetState?.invokable.methods,
+    widgetState?.invokable?.methods,
     id,
     debounceSetState,
     options,

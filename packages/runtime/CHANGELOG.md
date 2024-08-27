@@ -1,5 +1,35 @@
 # @ensembleui/react-runtime
 
+## 0.2.0
+
+### Minor Changes
+
+- 767850d: Refactor storage and data atoms to be more resilient in concurrent use cases
+
+### Patch Changes
+
+- b01b675: Added support for device object like flutter
+- 58853c7: Added manual control over dropdown close
+- 83076a4: Added functionality to change placeholder color
+
+## 0.1.83
+
+### Patch Changes
+
+- 7c08d2d: Fix regression for multiselect
+
+## 0.1.82
+
+### Patch Changes
+
+- 9a8a240: Remove unnecessary whitespace from button
+
+## 0.1.81
+
+### Patch Changes
+
+- e683933: Fallback to using action inputs if none are provided
+
 ## 0.1.80
 
 ### Patch Changes

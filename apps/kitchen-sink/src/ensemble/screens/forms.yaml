@@ -144,10 +144,15 @@ View:
                             text: Text input
                     - TextInput:
                         id: minMaxTextInput
+                        inputType: number
+                        hintText: "Enter a number"
+                        hintStyle:
+                          color: red
+                        maxLength: 2
                         validator:
                           required: true
                           minLength: 4
-                          maxLength: 10
+                          maxLength: 2
                         label: Text input with min and max length
                     - TextInput:
                         id: regexTextInput
@@ -350,9 +355,9 @@ View:
                   id: useMockResponseCheckbox
                   trailingText: "Use Mock Response"
                   initialValue: false
-                  onChange: 
+                  onChange:
                     executeCode: |
-                        app.setUseMockResponse(!app.useMockResponse);
+                      app.setUseMockResponse(!app.useMockResponse);
               - Checkbox:
                   id: throwMockApiErrorCheckbox
                   trailingText: "Throw Error"
@@ -375,8 +380,7 @@ View:
                     invokeAPI:
                       name: testMockResponse
                       onResponse:
-                        executeCode:
-                          console.log("Mock API called ", response);
+                        executeCode: console.log("Mock API called ", response);
               - Button:
                   styles:
                     width: 500
@@ -395,7 +399,7 @@ View:
                     width: 500
                   text: "Body: ${JSON.stringify(testMockResponse.body) ?? ''}"
               - Spacer:
-              - Dropdown: 
+              - Dropdown:
                   styles:
                     width: 500
                   id: mockResponseDropdown
@@ -415,7 +419,7 @@ View:
                     width: 500
                   label: Call API with response from function! (see the console)
                   onTap:
-                    invokeAPI: 
+                    invokeAPI:
                       name: getMockResponseFromFunction
               - Button:
                   styles:
@@ -444,7 +448,7 @@ API:
     mockResponse:
       statusCode: "${ensemble.storage.get('mockApiStatusCode')}"
       reasonPhrase: "${ensemble.storage.get('mockApiReasonPhrase')}"
-      body: 
+      body:
         - id: 0
           name: Harry Potter
           email: chosenOne@gmail.com
@@ -471,7 +475,6 @@ API:
     onError:
       executeCode: |
         console.log("Mock API errored: ",  error)
-
 
 Icon:
   body:

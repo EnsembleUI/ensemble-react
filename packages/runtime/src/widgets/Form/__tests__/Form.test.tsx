@@ -65,6 +65,7 @@ describe("Form", () => {
     expect(screen.getByLabelText("Enter Text")).toBeInTheDocument();
     expect(screen.getByText("Submit")).toBeInTheDocument();
   });
+
   test("render a form with initial values", () => {
     render(
       <Form
@@ -86,6 +87,7 @@ describe("Form", () => {
 
     expect(screen.getByDisplayValue("Charles")).toBeInTheDocument();
   });
+
   test("can submit", async () => {
     const logSpy = jest.spyOn(console, "log");
     render(
@@ -109,6 +111,7 @@ describe("Form", () => {
       );
     });
   });
+
   test("reset values to initial values", async () => {
     render(
       <>
@@ -139,6 +142,7 @@ describe("Form", () => {
       expect(screen.getByDisplayValue("foobar")).toBeInTheDocument();
     });
   });
+
   test("update values", async () => {
     render(
       <>
@@ -160,6 +164,7 @@ describe("Form", () => {
       expect(screen.getByDisplayValue("foo")).toBeInTheDocument();
     });
   });
+
   test("clear values", async () => {
     render(
       <>
@@ -188,6 +193,7 @@ describe("Form", () => {
       expect(screen.queryAllByDisplayValue("foobar").length).toBe(0);
     });
   });
+
   test("get current values", async () => {
     const logSpy = jest.spyOn(console, "log");
     render(
@@ -213,6 +219,7 @@ describe("Form", () => {
       );
     });
   });
+
   test("check if values are valid", async () => {
     render(
       <>
