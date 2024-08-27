@@ -50,7 +50,6 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({
 
   if (hasMenu) {
     const { type: menuType, ...menu } = entry;
-    
     return <RenderMenu type={menuType} menu={menu} />;
   }
 

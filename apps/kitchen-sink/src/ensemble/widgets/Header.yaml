@@ -15,6 +15,11 @@ Widget:
         borderColor: "#D5DAEA"
         width: "100%"
       children:
+        - Button:
+            label: Open Menu Drawer
+            onTap:
+              executeCode: |
+                openDrawerMenu();
         - Search:
             id: mySearch
             styles:
