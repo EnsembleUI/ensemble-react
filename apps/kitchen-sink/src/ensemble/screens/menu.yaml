@@ -1,5 +1,5 @@
 ViewGroup:
-  Drawer:
+  SideBar:
     id: sidebar
     styles:
       width: 240px
@@ -109,5 +109,4 @@ ViewGroup:
               name: ArrowBack
               onTap:
                 executeCode: |
-                  //sidebar.setCollapsed(!sidebar.isCollapsed)
-                  sidebar.close();  
+                  sidebar.setCollapsed(!sidebar.isCollapsed)

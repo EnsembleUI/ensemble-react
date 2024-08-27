@@ -23,6 +23,7 @@ import type {
   EnsembleWidget,
   EnsembleAppModel,
   EnsembleMenuModel,
+  EnsembleMenuModelType,
   EnsembleHeaderModel,
   EnsembleFooterModel,
   CustomWidgetModel,
@@ -268,7 +269,7 @@ export const EnsembleParser = {
       | undefined;
     return {
       id: get(menu, [menuType, "id"]) as string | undefined,
-      type: menuType as "SideBar" | "Drawer",
+      type: menuType as EnsembleMenuModelType,
       items: (get(menu, [menuType, "items"]) as []) ?? [],
       header: headerDef ? unwrapWidget(headerDef) : undefined,
       footer: footerDef ? unwrapWidget(footerDef) : undefined,

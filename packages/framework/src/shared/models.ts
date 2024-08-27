@@ -43,7 +43,7 @@ export interface EnsembleAppModel {
 
 export interface EnsembleMenuModel {
   id?: string;
-  type: "SideBar" | "Drawer";
+  type: EnsembleMenuModelType;
   items: {
     label: string;
     icon?: string;
@@ -55,6 +55,8 @@ export interface EnsembleMenuModel {
   footer?: EnsembleWidget;
   styles: { [key: string]: unknown };
 }
+
+export type EnsembleMenuModelType = "SideBar" | "Drawer";
 
 export interface EnsembleAPIModel {
   name: string;

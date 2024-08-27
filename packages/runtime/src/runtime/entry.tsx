@@ -3,7 +3,7 @@ import {
   type EnsembleScreenModel,
 } from "@ensembleui/react-framework";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { RenderMenu } from "./menu";
 import { EnsembleScreen } from "./screen";
 
@@ -17,8 +17,6 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
-
-  const [isCollapsed, setCollapsed] = useState(false);
 
   const hasMenu = "items" in entry;
   useEffect(() => {
@@ -52,15 +50,8 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({
 
   if (hasMenu) {
     const { type: menuType, ...menu } = entry;
-
-    return (
-      <RenderMenu
-        type={menuType}
-        menu={menu}
-        isCollapsed={isCollapsed}
-        setCollapsed={setCollapsed}
-      />
-    );
+    
+    return <RenderMenu type={menuType} menu={menu} />;
   }
 
   if (location.pathname !== "/") {
