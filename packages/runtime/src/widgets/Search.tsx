@@ -4,7 +4,6 @@ import {
   useTemplateData,
   useRegisterBindings,
   CustomScopeProvider,
-  useEvaluate,
 } from "@ensembleui/react-framework";
 import type {
   CustomScope,
@@ -58,8 +57,6 @@ export const Search: React.FC<SearchProps> = ({
     name: itemTemplate?.name,
   });
 
-  const evaluatedNamedData = useEvaluate({ namedData });
-
   const { id, rootRef, values } = useRegisterBindings(
     { styles, value, ...rest, widgetName },
     rest.id,
@@ -77,35 +74,33 @@ export const Search: React.FC<SearchProps> = ({
   const renderOptions = useMemo(() => {
     let dropdownOptions: JSX.Element[] = [];
 
-    if (isObject(itemTemplate) && !isEmpty(evaluatedNamedData.namedData)) {
-      const tempOptions = evaluatedNamedData.namedData.map(
-        (item: unknown, index: number) => {
-          const optionValue = get(
-            item,
-            searchKey
-              ? [itemTemplate.name, searchKey]
-              : [itemTemplate.value || itemTemplate.name],
-          ) as string | number;
+    if (isObject(itemTemplate) && !isEmpty(namedData)) {
+      const tempOptions = namedData.map((item: unknown, index: number) => {
+        const optionValue = get(
+          item,
+          searchKey
+            ? [itemTemplate.name, searchKey]
+            : [itemTemplate.value || itemTemplate.name],
+        ) as string | number;
 
-          return (
-            <SelectComponent.Option
-              className={`${values?.id || ""}_option`}
-              key={`${optionValue}_${index}`}
-              value={optionValue}
-            >
-              <CustomScopeProvider value={item as CustomScope}>
-                {EnsembleRuntime.render([itemTemplate.template])}
-              </CustomScopeProvider>
-            </SelectComponent.Option>
-          );
-        },
-      );
+        return (
+          <SelectComponent.Option
+            className={`${values?.id || ""}_option`}
+            key={`${optionValue}_${index}`}
+            value={optionValue}
+          >
+            <CustomScopeProvider value={item as CustomScope}>
+              {EnsembleRuntime.render([itemTemplate.template])}
+            </CustomScopeProvider>
+          </SelectComponent.Option>
+        );
+      });
 
       dropdownOptions = [...dropdownOptions, ...tempOptions];
     }
 
     return dropdownOptions;
-  }, [values, itemTemplate, evaluatedNamedData, searchKey]);
+  }, [values, itemTemplate, namedData, searchKey]);
 
   useDebounce(
     () => {
@@ -126,9 +121,9 @@ export const Search: React.FC<SearchProps> = ({
 
   const handleSelect = useCallback(
     (selectedValue: unknown): void => {
-      if (isObject(itemTemplate) && !isEmpty(evaluatedNamedData.namedData)) {
+      if (isObject(itemTemplate) && !isEmpty(namedData)) {
         setValue(selectedValue);
-        const selectedOption = evaluatedNamedData.namedData.find((option) => {
+        const selectedOption = namedData.find((option) => {
           const optionValue = get(
             option,
             searchKey
@@ -144,7 +139,7 @@ export const Search: React.FC<SearchProps> = ({
         });
       }
     },
-    [onSelectAction, itemTemplate, evaluatedNamedData, searchKey],
+    [onSelectAction, itemTemplate, namedData, searchKey],
   );
 
   const handleClear = useCallback(() => {

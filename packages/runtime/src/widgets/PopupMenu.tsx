@@ -13,7 +13,6 @@ import {
 import {
   CustomScopeProvider,
   unwrapWidget,
-  useEvaluate,
   useRegisterBindings,
   useTemplateData,
 } from "@ensembleui/react-framework";
@@ -77,8 +76,6 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
     name: itemTemplate?.name,
   });
 
-  const evaluatedNamedData = useEvaluate({ namedData });
-
   const getMenuItem = useCallback(
     (rawItem: PopupMenuItem, index: string | number): ItemType | null => {
       if (rawItem.visible === false) {
@@ -115,8 +112,8 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
       popupItems.push(...tempItems);
     }
 
-    if (isObject(itemTemplate) && !isEmpty(evaluatedNamedData.namedData)) {
-      const tempItems = evaluatedNamedData.namedData.map((item, index) => {
+    if (isObject(itemTemplate) && !isEmpty(namedData)) {
+      const tempItems = namedData.map((item, index) => {
         const itm: ItemType = {
           key: `popupmenu_itemTemplate_${index}`,
           label: (
@@ -142,11 +139,11 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
     values?.items,
     values?.showDivider,
     itemTemplate,
-    evaluatedNamedData.namedData,
+    namedData,
     getMenuItem,
   ]);
 
-  const getWidget = useCallback(() => {
+  const widgetToRender = useMemo(() => {
     if (!values?.widget) {
       throw Error("PopupMenu requires a widget to render the anchor.");
     }
@@ -158,7 +155,7 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
   const itemsMap = useMemo(() => {
     const map = new Map<string, PopupMenuItem>();
 
-    evaluatedNamedData.namedData.forEach((item, index) => {
+    namedData.forEach((item, index) => {
       map.set(`itemTemplate_${index}`, item as PopupMenuItem);
     });
 
@@ -179,7 +176,7 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
       traverseItems(values.items);
     }
     return map;
-  }, [evaluatedNamedData.namedData, values?.items]);
+  }, [namedData, values?.items]);
 
   const handleMenuItemClick = useCallback<NonNullable<MenuProps["onClick"]>>(
     ({ key }) => {
@@ -202,7 +199,7 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
         }}
         trigger={[values?.trigger || DEFAULT_POPUPMENU_TRIGGER]}
       >
-        <>{getWidget()}</>
+        <div>{widgetToRender}</div>
       </AntdDropdown>
     </div>
   );
