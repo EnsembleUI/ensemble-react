@@ -58,4 +58,25 @@ describe("useEnsembleStorage", () => {
       },
     });
   });
+
+  test("deletes keys", () => {
+    store.set(screenStorageAtom, {
+      test: {
+        foo: ["bar", "baz"],
+        dead: {
+          beef: "hello",
+        },
+      },
+    });
+
+    const { result } = renderHook(() => useEnsembleStorage());
+
+    const storage = result.current;
+
+    act(() => {
+      storage.delete("test");
+    });
+
+    expect(storage.get("test")).toBeUndefined();
+  });
 });
