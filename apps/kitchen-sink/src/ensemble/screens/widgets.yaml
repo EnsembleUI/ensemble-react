@@ -52,12 +52,16 @@ View:
                     showToast:
                       message: Your selected brand's ${value?.product ? "rating" :"price"} is ${value?.product?.rating || value?.value}
                   item-template:
-                    data: ${ensemble.storage.get("dummyProducts")}
+                    data:
+                      [
+                        '${ensemble.storage.get("dummyProducts")[0]}',
+                        '${ensemble.storage.get("dummyProducts")[2]}',
+                        '${ensemble.storage.get("dummyProducts")[4]}',
+                      ]
                     name: product
                     template:
                       Text:
                         text: ${product.rating} stars
-                  # items: "${getDummyProductsByPaginate.body.products.map(p => ({label: p.title, value: p.price, visible: p.price > 10, enabled: p.rating < 4})) ?? []}"
                   items:
                     - label: All Clients
                       value: all clients
@@ -79,14 +83,9 @@ View:
                         - label: Sub Client 1
                           value: sub client 1
                         - label: Child Client Menu
-                          items:
-                            - label: Grand Child Client Menu
-                              items:
-                                - label: Grand Child Client Name
-                                  value: grand child client name
+                          items: "${getDummyProductsByPaginate.body.products.map(p => ({label: p.title, value: p.price, visible: p.price > 10, enabled: p.rating < 4})) ?? []}"
                         - label: Sub Client 2
                           value: sub client 2
-
                   widget:
                     Icon:
                       name: ${ensemble.storage.get("iconName")}
