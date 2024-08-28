@@ -5,7 +5,7 @@ import {
   useEvaluate,
   useApplicationContext,
 } from "@ensembleui/react-framework";
-import { cloneDeep, isString } from "lodash-es";
+import { cloneDeep, isNil, isString } from "lodash-es";
 import type { EnsembleActionHook } from "./useEnsembleAction";
 
 export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
@@ -24,6 +24,7 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
     },
     { context },
   );
+  console.log("useNavigateScreen", action, context, evaluatedInputs);
 
   const { matchingScreen } = useMemo(() => {
     const screen = appContext?.application?.screens.find(
@@ -33,7 +34,7 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
   }, [appContext, evaluatedInputs.name]);
 
   const callback = useMemo(() => {
-    if (!matchingScreen) {
+    if (!matchingScreen && !isNil(context)) {
       return;
     }
     return (args: unknown) => {

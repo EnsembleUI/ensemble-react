@@ -47,25 +47,33 @@ ViewGroup:
         page: forms
       - customItem:
           widget:
-            Text:
-              text: Custom Widgets
-              styles:
-                color: green
-          selectedWidget:
-            Text:
-              text: Custom selection
-              styles:
-                color: blue
+            # TextInput:
+            #   onChange:
+            #     navigateScreen:
+            #       name: ${value}
+            PopupMenu:
+              widget:
+                Text:
+                  text: Insights
+              trigger: hover
+              onItemSelect:
+                # executeCode: console.log(value)
+                # executeCode: ensemble.navigateScreen({name:value.value})
+                navigateScreen:
+                  name: ${value.value}
+                  inputs:
+                    hehe: 1
+              items:
+                - label: Actions
+                  value: actions
+                - label: Forms
+                  value: forms
+                - label: Layouts
+                  value: layouts
         icon:
-          name: ExtensionOutlined
+          name: Insights
           color: green
           size: 30
-        activeIcon:
-          name: GroupOutlined
-          color: yellow
-          size: 30
-        page: custom widgets
-        label: Ignored
       - label: Help
         icon: HelpOutlineOutlined
         activeIcon: QuizOutlined

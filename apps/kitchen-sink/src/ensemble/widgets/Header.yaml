@@ -59,8 +59,8 @@ Widget:
                         executeCode: myText.setText("Spiderman")
                     - label: Collections
                       icon: Settings
-                      onTap:
-                        navigateScreen: Collections
+                      # onTap:
+                      #   navigateScreen: Collections
 
 API:
   findUsers:
