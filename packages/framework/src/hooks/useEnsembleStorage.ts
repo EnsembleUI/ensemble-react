@@ -1,8 +1,9 @@
 import { atom, useAtom } from "jotai";
 import { createJSONStorage, atomWithStorage } from "jotai/utils";
-import { clone, merge } from "lodash-es";
+import { assign, get as lodashGet, has, isObject, merge } from "lodash-es";
 import { useMemo } from "react";
 
+const DELETE_COMMAND = "_ensembleInternalCommand_DELETE";
 export interface EnsembleStorage {
   set: (key: string, value: unknown) => void;
   get: (key: string) => unknown;
@@ -23,8 +24,16 @@ export const screenStorageAtom = atom(
   (get) => get(screenStorageAtomInternal),
   (get, set, update) => {
     const currentData = get(screenStorageAtomInternal);
-    const nextData = merge({}, currentData, update);
-    set(screenStorageAtomInternal, nextData);
+    // overwrite object keys
+    if (has(update, DELETE_COMMAND)) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete currentData[String(lodashGet(update, DELETE_COMMAND))];
+      const nextData = assign({}, currentData);
+      set(screenStorageAtomInternal, nextData);
+    } else if (isObject(update)) {
+      const nextData = assign({}, currentData, update);
+      set(screenStorageAtomInternal, nextData);
+    }
   },
 );
 
@@ -54,7 +63,7 @@ export const createStorageApi = (
       const update: { [key: string]: unknown } = {};
       update[key] = value;
       if (storage) {
-        merge(storage, update);
+        assign(storage, update);
       }
       setStorage?.(update);
     },
@@ -66,8 +75,10 @@ export const createStorageApi = (
       if (storage) {
         // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete storage[key];
-        setStorage?.(clone(storage));
       }
+      const command: { [key: string]: unknown } = {};
+      command[DELETE_COMMAND] = key;
+      setStorage?.(command);
       return oldVal;
     },
   };
