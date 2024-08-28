@@ -1,5 +1,18 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.79
+
+### Patch Changes
+
+- 071fe2c: added inputNumber for input type number
+- 85f332a: Added the Drawer widget
+- Updated dependencies [071fe2c]
+- Updated dependencies [85f332a]
+- Updated dependencies [5163b57]
+- Updated dependencies [4e4d9d6]
+  - @ensembleui/react-runtime@0.2.1
+  - @ensembleui/react-framework@0.2.1
+
 ## 0.0.78
 
 ### Patch Changes
