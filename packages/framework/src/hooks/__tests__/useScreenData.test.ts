@@ -79,4 +79,31 @@ describe("useScreenData", () => {
       test2: mockResponse,
     });
   });
+  test("overwrites data responses", () => {
+    const mockResponse = {
+      foo: "bar",
+      isLoading: false,
+      isError: false,
+      isSuccess: true,
+    } as Response;
+    const mockResponse2 = {
+      dead: "beef",
+      isLoading: false,
+      isError: true,
+      isSuccess: false,
+    } as Response;
+    const { result } = renderHook(() => useScreenData());
+
+    act(() => {
+      result.current.setData("test", mockResponse);
+    });
+
+    act(() => {
+      result.current.setData("test", mockResponse2);
+    });
+
+    expect(result.current.data).toMatchObject({
+      test: mockResponse2,
+    });
+  });
 });

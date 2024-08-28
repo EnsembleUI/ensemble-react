@@ -1,6 +1,6 @@
 import { atom, useAtom } from "jotai";
 import { createJSONStorage, atomWithStorage } from "jotai/utils";
-import { clone, merge } from "lodash-es";
+import { assign, clone, isObject, merge } from "lodash-es";
 import { useMemo } from "react";
 
 export interface EnsembleStorage {
@@ -23,8 +23,11 @@ export const screenStorageAtom = atom(
   (get) => get(screenStorageAtomInternal),
   (get, set, update) => {
     const currentData = get(screenStorageAtomInternal);
-    const nextData = merge({}, currentData, update);
-    set(screenStorageAtomInternal, nextData);
+    // overwrite object keys
+    if (isObject(update)) {
+      const nextData = assign({}, currentData, update);
+      set(screenStorageAtomInternal, nextData);
+    }
   },
 );
 
@@ -54,7 +57,7 @@ export const createStorageApi = (
       const update: { [key: string]: unknown } = {};
       update[key] = value;
       if (storage) {
-        merge(storage, update);
+        assign(storage, update);
       }
       setStorage?.(update);
     },
