@@ -22,6 +22,7 @@ export interface ApplicationDTO extends Omit<EnsembleDocument, "content"> {
   readonly themes?: ThemeDTO[];
   readonly languages?: LanguageDTO[];
   readonly config?: string | EnsembleConfigYAML;
+  readonly fonts?: FontDTO[];
 
   readonly description?: string;
   readonly isPublic?: boolean;
@@ -54,4 +55,13 @@ export interface EnsembleEnvironmentDTO {
 export interface EnsembleConfigYAML {
   environmentVariables?: { [key: string]: unknown };
   secretVariables?: { [key: string]: unknown };
+}
+
+export interface FontDTO {
+  readonly family: string;
+  readonly url: string;
+  readonly options: {
+    readonly weight: string;
+    readonly style: string;
+  };
 }

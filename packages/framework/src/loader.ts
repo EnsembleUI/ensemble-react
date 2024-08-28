@@ -15,6 +15,7 @@ import type {
   WidgetDTO,
   LanguageDTO,
   EnsembleConfigYAML,
+  FontDTO,
 } from "./shared/dto";
 import { languageMap } from "./i18n";
 
@@ -27,6 +28,7 @@ const getArtifacts = async (
   scripts: ScriptDTO[];
   languages?: LanguageDTO[];
   config?: EnsembleConfigYAML;
+  fonts?: FontDTO[];
 }> => {
   const snapshot = await getDocs(
     query(collection(appRef, "artifacts"), where("isArchived", "!=", true)),
@@ -44,6 +46,7 @@ const getArtifacts = async (
   const widgets = [];
   const scripts = [];
   const languages = [];
+  const fonts = [];
   for (const artifact of snapshot.docs) {
     const document = artifact.data();
 
@@ -70,8 +73,20 @@ const getArtifacts = async (
         ...config,
         secretVariables: document.secrets as { [key: string]: unknown },
       };
+    } else if (document.type === "font") {
+      const font = document as { [key: string]: unknown };
+
+      fonts.push({
+        family: font.fontFamily as string,
+        url: font.publicUrl as string,
+        options: {
+          weight: font.fontWeight as string,
+          style: font.fontStyle as string,
+        },
+      });
     }
   }
+
   for (const artifact of internalArtifactsSnapshot.docs) {
     const artifactData = artifact.data();
     if (artifactData.type === "internal_widget") {
@@ -80,6 +95,7 @@ const getArtifacts = async (
       scripts.push({ ...artifactData, id: artifact.id } as ScriptDTO);
     }
   }
+
   return {
     screens,
     widgets,
@@ -87,6 +103,7 @@ const getArtifacts = async (
     scripts,
     languages,
     config,
+    fonts,
   };
 };
 
@@ -105,7 +122,7 @@ export const getFirestoreApplicationLoader = (
       ...appDoc.data(),
     } as ApplicationDTO;
 
-    const { screens, widgets, theme, scripts, languages, config } =
+    const { screens, widgets, theme, scripts, languages, config, fonts } =
       await getArtifacts(appDocRef);
 
     return {
@@ -116,6 +133,7 @@ export const getFirestoreApplicationLoader = (
       scripts,
       languages,
       config,
+      fonts,
     };
   },
 });

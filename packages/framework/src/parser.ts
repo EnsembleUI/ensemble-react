@@ -144,6 +144,7 @@ export const EnsembleParser = {
       scripts,
       config: ensembleConfigData,
       languages,
+      fonts: app.fonts,
     };
   },
 

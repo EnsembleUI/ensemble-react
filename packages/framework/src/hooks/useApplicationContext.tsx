@@ -12,6 +12,7 @@ import {
 } from "../state";
 import type { EnsembleAppModel } from "../shared/models";
 import { useEnsembleUser } from "./useEnsembleUser";
+import { useFonts } from "./useFonts";
 
 interface ApplicationContextProps {
   app: EnsembleAppModel;
@@ -35,6 +36,9 @@ export const ApplicationContextProvider: React.FC<
       langauge.resources,
     );
   });
+
+  // load custom fonts
+  useFonts(app.fonts || []);
 
   return (
     <Provider key={app.id}>
