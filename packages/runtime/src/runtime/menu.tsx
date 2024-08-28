@@ -7,9 +7,10 @@ import {
   useRegisterBindings,
   type EnsembleWidget,
   type EnsembleAction,
-  type EnsembleMenuModelType,
+  EnsembleMenuModelType,
 } from "@ensembleui/react-framework";
 import { Outlet, Link, useLocation } from "react-router-dom";
+import { cloneDeep, omit } from "lodash-es";
 import { getColor } from "../shared/styles";
 import { EnsembleRuntime } from "./runtime";
 // eslint-disable-next-line import/no-cycle
@@ -156,32 +157,43 @@ export const EnsembleMenu: React.FC<{
   menu: MenuBaseProps<SideBarMenuStyles | DrawerMenuStyles>;
   renderOutlet?: boolean;
 }> = ({ type, menu, renderOutlet = true }) => {
-  const [isCollapsed, setCollapsed] = useState<boolean>(type === "Drawer");
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(
+    type === EnsembleMenuModelType.Drawer,
+  );
 
   const outletContext = {
     isMenuCollapsed: isCollapsed,
-    setMenuCollapsed: setCollapsed,
+    setMenuCollapsed: setIsCollapsed,
   };
-  const { id, items, styles, header, footer, onCollapse } = menu;
+  const { id, items: rawItems, styles, header, footer, onCollapse } = menu;
+  // custom items may contain their own bindings to be evaluated in dynamic context
+  const items = rawItems?.map<MenuItemProps>((item) =>
+    omit(item, "customItem"),
+  );
   const { values } = useRegisterBindings(
     { items, styles, header, footer, isCollapsed },
     id,
     {
-      setCollapsed,
+      setIsCollapsed,
     },
   );
+
   const location = useLocation();
   const [selectedItem, setSelectedItem] = useState<string | undefined>();
 
+  values?.items?.forEach((item, index) => {
+    item.customItem = rawItems?.[index].customItem;
+  });
+
   useEffect(() => {
-    const initiallySelectedItem = items?.find((item) => item.selected);
+    const initiallySelectedItem = values?.items?.find((item) => item.selected);
     if (initiallySelectedItem) {
       setSelectedItem(initiallySelectedItem.page);
     }
-  }, [items]);
+  }, [values?.items]);
 
   useEffect(() => {
-    const locationMatch = items?.find(
+    const locationMatch = values?.items?.find(
       (item) =>
         item.page &&
         `/${item.page.toLowerCase()}` === location.pathname.toLowerCase(),
@@ -189,10 +201,10 @@ export const EnsembleMenu: React.FC<{
     if (locationMatch) {
       setSelectedItem(locationMatch.page);
     }
-  }, [location.pathname, items]);
+  }, [location.pathname, values?.items]);
 
   const handleClose = (): void => {
-    setCollapsed(true);
+    setIsCollapsed(true);
     onCollapseCallback();
   };
 
@@ -203,7 +215,7 @@ export const EnsembleMenu: React.FC<{
   }, [onCollapseAction]);
   return (
     <div style={{ display: "flex", flexDirection: "row" }}>
-      {type === "SideBar" ? (
+      {type === EnsembleMenuModelType.SideBar ? (
         <SideBarMenu
           isCollapsed={isCollapsed}
           selectedItem={selectedItem}
@@ -371,7 +383,7 @@ const MenuItems: React.FC<{
         selectedItem === item.page && item.customItem.selectedWidget
           ? item.customItem.selectedWidget
           : item.customItem.widget;
-      return EnsembleRuntime.render([unwrapWidget(widget || {})]);
+      return EnsembleRuntime.render([unwrapWidget(cloneDeep(widget) || {})]);
     },
     [isCollapsed, selectedItem],
   );
