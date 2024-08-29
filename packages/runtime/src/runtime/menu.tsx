@@ -1,5 +1,5 @@
 import type { PropsWithChildren, ReactNode } from "react";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Menu as AntMenu, Col, Drawer as AntDrawer } from "antd";
 import * as MuiIcons from "@mui/icons-material";
 import {
@@ -167,11 +167,12 @@ export const EnsembleMenu: React.FC<{
   };
   const { id, items: rawItems, styles, header, footer, onCollapse } = menu;
   // custom items may contain their own bindings to be evaluated in dynamic context
-  const items = rawItems?.map<MenuItemProps>((item) =>
+  const itemInputs = rawItems?.map<MenuItemProps>((item) =>
     omit(item, "customItem"),
   );
+
   const { values } = useRegisterBindings(
-    { items, styles, header, footer, isCollapsed },
+    { itemInputs, styles, header, footer, isCollapsed },
     id,
     {
       setIsCollapsed,
@@ -181,19 +182,24 @@ export const EnsembleMenu: React.FC<{
   const location = useLocation();
   const [selectedItem, setSelectedItem] = useState<string | undefined>();
 
-  values?.items?.forEach((item, index) => {
-    item.customItem = rawItems?.[index].customItem;
-  });
+  const items = useMemo(
+    () =>
+      values?.itemInputs?.map((item, index) => ({
+        ...item,
+        customItem: rawItems?.[index].customItem,
+      })),
+    [rawItems, values?.itemInputs],
+  );
 
   useEffect(() => {
-    const initiallySelectedItem = values?.items?.find((item) => item.selected);
+    const initiallySelectedItem = items?.find((item) => item.selected);
     if (initiallySelectedItem) {
       setSelectedItem(initiallySelectedItem.page);
     }
-  }, [values?.items]);
+  }, [items]);
 
   useEffect(() => {
-    const locationMatch = values?.items?.find(
+    const locationMatch = items?.find(
       (item) =>
         item.page &&
         `/${item.page.toLowerCase()}` === location.pathname.toLowerCase(),
@@ -201,7 +207,7 @@ export const EnsembleMenu: React.FC<{
     if (locationMatch) {
       setSelectedItem(locationMatch.page);
     }
-  }, [location.pathname, values?.items]);
+  }, [location.pathname, items]);
 
   const handleClose = (): void => {
     setIsCollapsed(true);
@@ -220,7 +226,7 @@ export const EnsembleMenu: React.FC<{
           isCollapsed={isCollapsed}
           selectedItem={selectedItem}
           setSelectedItem={setSelectedItem}
-          values={values}
+          values={{ ...values, items }}
         />
       ) : (
         <DrawerMenu
@@ -228,7 +234,7 @@ export const EnsembleMenu: React.FC<{
           isOpen={!isCollapsed}
           selectedItem={selectedItem}
           setSelectedItem={setSelectedItem}
-          values={values}
+          values={{ ...values, items }}
         />
       )}
       {renderOutlet ? (
