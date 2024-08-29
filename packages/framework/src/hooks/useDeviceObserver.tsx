@@ -45,6 +45,12 @@ export const useDeviceObserver = (): DeviceDefinition => {
 
   const debouncedUpdateDeviceData = useMemo(() => {
     const handleResize = (): void => {
+      if (
+        window.innerWidth === data.width &&
+        window.innerHeight === data.height
+      ) {
+        return;
+      }
       setDataAtom(
         clone(
           merge({}, data, {
