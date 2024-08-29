@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.2.2
+
+### Patch Changes
+
+- 9eab1dc: Fix custom items premature evaluation in menu
+
 ## 0.2.1
 
 ### Patch Changes

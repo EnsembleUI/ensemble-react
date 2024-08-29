@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.2.2
+
+### Patch Changes
+
+- 549a952: Fix device atom reporting same values
+
 ## 0.2.1
 
 ### Patch Changes
