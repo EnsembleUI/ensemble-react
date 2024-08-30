@@ -1,5 +1,5 @@
 import { useAtom } from "jotai";
-import { merge } from "lodash-es";
+import { assign } from "lodash-es";
 import { useMemo } from "react";
 import { userAtom, type EnsembleUser } from "../state";
 
@@ -13,7 +13,7 @@ export const useEnsembleUser = (): EnsembleUser & EnsembleUserBuffer => {
   const storageBuffer = useMemo<EnsembleUserBuffer>(
     () => ({
       set: (items: { [key: string]: unknown }): void => {
-        const updatedUser = merge({}, user, items);
+        const updatedUser = assign({}, user, items);
         setUser(updatedUser);
         window.dispatchEvent(
           new StorageEvent("storage", { key: "ensemble.user" }),
