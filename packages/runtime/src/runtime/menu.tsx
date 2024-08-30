@@ -437,6 +437,7 @@ const MenuItems: React.FC<{
                     ) + 0.2
                   }rem`
                 : `${styles.labelFontSize ? styles.labelFontSize : 1}rem`,
+            height: "auto",
             ...(selectedItem === item.page ? styles.onSelectStyles ?? {} : {}),
           }}
         >
