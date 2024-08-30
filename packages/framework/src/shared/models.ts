@@ -10,12 +10,13 @@ import type { EnsembleConfigYAML } from "./dto";
  */
 export interface EnsembleScreenModel {
   id: string;
-  name: string;
+  name?: string;
   body: EnsembleWidget;
   path?: string;
   onLoad?: EnsembleAction;
   header?: EnsembleHeaderModel;
   footer?: EnsembleFooterModel;
+  menu?: EnsembleMenuModel;
   apis?: EnsembleAPIModel[];
   global?: string;
   styles?: { [key: string]: unknown };
@@ -42,7 +43,7 @@ export interface EnsembleAppModel {
 
 export interface EnsembleMenuModel {
   id?: string;
-  type: string;
+  type: EnsembleMenuModelType;
   items: {
     label: string;
     icon?: string;
@@ -53,6 +54,11 @@ export interface EnsembleMenuModel {
   header?: EnsembleWidget;
   footer?: EnsembleWidget;
   styles: { [key: string]: unknown };
+}
+
+export enum EnsembleMenuModelType {
+  SideBar = "SideBar",
+  Drawer = "Drawer",
 }
 
 export interface EnsembleAPIModel {
@@ -71,7 +77,7 @@ export interface EnsembleAPIModel {
 export interface EnsembleMockResponse {
   statusCode: number;
   body: object | string;
-  headers?: Record<string, string>;
+  headers?: { [key: string]: string };
   reasonPhrase?: string;
 }
 

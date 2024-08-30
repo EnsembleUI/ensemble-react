@@ -11,18 +11,21 @@ export const buildEvaluateFn = (
   const widgets: [string, InvokableMethods | undefined][] = Object.entries(
     screen.widgets ?? {},
   ).map(([id, state]) => {
-    const methods = state?.invokable.methods;
+    const methods = state?.invokable?.methods;
     const values = state?.values;
     return [id, merge({}, values, methods)];
   });
 
-  const invokableObj = Object.fromEntries([
-    ...widgets,
-    ...Object.entries(screen.inputs ?? {}),
-    ...Object.entries(screen.data ?? {}),
-    ...Object.entries(screen),
-    ...Object.entries(context ?? {}),
-  ]);
+  const invokableObj = Object.fromEntries(
+    [
+      ...widgets,
+      ...Object.entries(screen.inputs ?? {}),
+      ...Object.entries(screen.data ?? {}),
+      ...Object.entries(screen),
+      ...Object.entries(context ?? {}),
+      // Need to filter out invalid JS identifiers
+    ].filter(([key, _]) => !key.includes(".")),
+  );
   const globalBlock = screen.model?.global;
   const importedScriptBlock = screen.model?.importedScripts;
 

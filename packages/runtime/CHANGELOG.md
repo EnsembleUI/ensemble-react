@@ -1,5 +1,19 @@
 # @ensembleui/react-runtime
 
+## 0.2.2
+
+### Patch Changes
+
+- 9eab1dc: Fix custom items premature evaluation in menu
+
+## 0.2.1
+
+### Patch Changes
+
+- 071fe2c: added inputNumber for input type number
+- 85f332a: Added the Drawer widget
+- 4e4d9d6: Minor fixes to improve interopability with flutter
+
 ## 0.2.0
 
 ### Minor Changes

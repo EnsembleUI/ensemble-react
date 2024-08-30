@@ -171,7 +171,7 @@ export const useExecuteCode: EnsembleActionHook<
           merge(
             {
               ...customWidgets,
-              device: device,
+              device,
               env: appContext?.env,
               ensemble: {
                 ...themescope,
@@ -914,6 +914,10 @@ export const useEnsembleAction = (
   // FIXME: Figure out how to chain without breaking rules of hooks and infinite loop
   if (!action) {
     return;
+  }
+
+  if (isString(action)) {
+    return useExecuteCode(action);
   }
 
   if ("invokeAPI" in action) {

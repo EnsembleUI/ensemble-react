@@ -17,7 +17,7 @@ const findScreen = (
   app?: EnsembleAppModel | null,
 ): EnsembleScreenModel | undefined => {
   return app?.screens.find(
-    (s) => s.name.toLowerCase() === screenName.toLowerCase(),
+    (s) => s.name?.toLowerCase() === screenName.toLowerCase(),
   );
 };
 
@@ -32,7 +32,7 @@ export const navigateApi = (
   // find the matching screen
   const matchingScreen = findScreen(screenName, screenContext.app);
 
-  if (!matchingScreen) {
+  if (!matchingScreen?.name) {
     return;
   }
 
@@ -40,7 +40,9 @@ export const navigateApi = (
   const inputs =
     !isString(action) && action.inputs ? cloneDeep(action.inputs) : {};
 
-  navigate(`/${matchingScreen.name.toLowerCase()}`, { state: inputs });
+  navigate(`/${matchingScreen.name.toLowerCase()}`, {
+    state: inputs,
+  });
 };
 
 const MODAL_SCREEN_DEFAULT_OPTIONS = {

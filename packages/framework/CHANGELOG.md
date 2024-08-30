@@ -1,5 +1,18 @@
 # @ensembleui/react-framework
 
+## 0.2.2
+
+### Patch Changes
+
+- 549a952: Fix device atom reporting same values
+
+## 0.2.1
+
+### Patch Changes
+
+- 5163b57: Ensure screen and data APIs overwrite keys
+- 4e4d9d6: Minor fixes to improve interopability with flutter
+
 ## 0.2.0
 
 ### Minor Changes

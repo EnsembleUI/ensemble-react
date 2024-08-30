@@ -3,6 +3,7 @@ import {
   flatMap,
   get,
   head,
+  compact,
   isArray,
   isEmpty,
   isObject,
@@ -23,6 +24,7 @@ import type {
   EnsembleWidget,
   EnsembleAppModel,
   EnsembleMenuModel,
+  EnsembleMenuModelType,
   EnsembleHeaderModel,
   EnsembleFooterModel,
   CustomWidgetModel,
@@ -53,8 +55,8 @@ export interface EnsembleWidgetYAML {
   Widget: {
     inputs?: string[];
     onLoad?: EnsembleAction;
-    body: { [key: string]: unknown };
-  };
+    body?: { [key: string]: unknown };
+  } & { [key: string]: { [key: string]: unknown } };
 }
 
 export type EnsembleThemeYAML = {
@@ -135,8 +137,8 @@ export const EnsembleParser = {
       screens: screens as EnsembleScreenModel[],
       customWidgets,
       home:
-        menu ||
-        (screens as EnsembleScreenModel[]).find((screen) => screen.isRoot) ||
+        (screens as EnsembleScreenModel[]).find((screen) => screen.isRoot) ??
+        menu ??
         screens[0],
       themes: themes || { default: defaultThemeDefinition },
       scripts,
@@ -155,6 +157,7 @@ export const EnsembleParser = {
     let viewNode = get(view, "body");
     const header = get(view, "header");
     const footer = get(view, "footer");
+    const menu = get(view, "menu");
 
     if (!viewNode) {
       if (view) {
@@ -208,11 +211,11 @@ export const EnsembleParser = {
     }
 
     const widgets = omit(screen, ["View", "Global", "API", "Import", "Socket"]);
-    const customWidgets = keys(widgets).map((widgetName) =>
-      EnsembleParser.parseWidget(widgetName, {
+    const customWidgets = keys(widgets).map((widgetName) => {
+      return EnsembleParser.parseWidget(widgetName, {
         Widget: get(widgets, widgetName) as { [key: string]: unknown },
-      } as EnsembleWidgetYAML),
-    );
+      } as EnsembleWidgetYAML);
+    });
 
     return {
       ...(view ?? {}),
@@ -221,11 +224,12 @@ export const EnsembleParser = {
       global,
       header: unwrapHeader(header),
       footer: unwrapFooter(footer),
+      menu: menu ? EnsembleParser.parseMenu(menu) : undefined,
       body: viewWidget,
       apis,
       styles: get(view, "styles"),
       importedScripts,
-      customWidgets,
+      customWidgets: compact(customWidgets),
       sockets,
     };
   },
@@ -233,7 +237,13 @@ export const EnsembleParser = {
   parseWidget: (name: string, yaml: EnsembleWidgetYAML): CustomWidgetModel => {
     const widget = get(yaml, "Widget");
 
-    const rawBody = get(widget, "body");
+    let rawBody = get(widget, "body");
+    if (!rawBody) {
+      const maybeWidgetKey = head(keys(widget).filter((k) => k !== "inputs"));
+      if (maybeWidgetKey) {
+        rawBody = get(widget, maybeWidgetKey);
+      }
+    }
     if (!rawBody) {
       throw Error("Widget must have a body");
     }
@@ -254,7 +264,7 @@ export const EnsembleParser = {
 
   parseMenu: (menu: object): EnsembleMenuModel => {
     const menuType = head(Object.keys(menu));
-    if (!menuType) {
+    if (!menuType || !includes(["SideBar", "Drawer"], String(menuType))) {
       throw Error("Invalid ViewGroup definition: invalid menu type");
     }
 
@@ -266,8 +276,8 @@ export const EnsembleParser = {
       | undefined;
     return {
       id: get(menu, [menuType, "id"]) as string | undefined,
-      type: String(menuType),
-      items: get(menu, [menuType, "items"]) as [],
+      type: menuType as EnsembleMenuModelType,
+      items: (get(menu, [menuType, "items"]) as []) ?? [],
       header: headerDef ? unwrapWidget(headerDef) : undefined,
       footer: footerDef ? unwrapWidget(footerDef) : undefined,
       styles: get(menu, [menuType, "styles"]) as { [key: string]: unknown },
@@ -345,9 +355,19 @@ const unwrapCustomEventsModels = (
   return [];
 };
 
-export const unwrapWidget = (obj: {
-  [key: string]: unknown;
-}): EnsembleWidget => {
+export const unwrapWidget = (
+  obj:
+    | {
+        [key: string]: unknown;
+      }
+    | string,
+): EnsembleWidget => {
+  if (isString(obj)) {
+    return {
+      name: obj,
+      properties: {},
+    };
+  }
   const name = head(Object.keys(obj));
   if (!name) {
     throw Error("Invalid widget definition");

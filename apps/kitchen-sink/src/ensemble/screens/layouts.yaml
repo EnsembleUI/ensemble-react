@@ -1,4 +1,6 @@
 View:
+  styles:
+    scrollableView: true
   onLoad:
     executeCode:
       body: |
@@ -18,6 +20,41 @@ View:
   header:
     title:
       Header:
+  
+  menu:
+    Drawer:
+      id: testDrawer
+      onCollapse:
+        executeCode: |
+          console.log("Drawer closed! This is the onClose function :)")
+      header:
+        Column:
+          children:
+            - Text:
+                text: "Put any widgets you would like in the header property"
+            - Button:
+                label: Navigate Home
+                onTap:
+                  executeCode: |
+                    testDrawer.setCollapsed(true);
+                    ensemble.navigateScreen("Home");
+            - Button:
+                label: Navigate to Widgets
+                onTap:
+                  executeCode: |
+                    testDrawer.setCollapsed(true);
+                    ensemble.navigateScreen("Widgets");
+            - Button:
+                label: Navigate to Layouts
+                onTap:
+                  executeCode: |
+                    testDrawer.setCollapsed(true);
+                    ensemble.navigateScreen("Layouts");
+            - Button:
+                label: Close Drawer
+                onTap:
+                  executeCode: |
+                    testDrawer.setCollapsed(true);
 
   body:
     Column:
@@ -114,6 +151,18 @@ View:
                   label: 2
               - Button:
                   label: FittedColumn
+        
+        - Markdown:
+            text: |
+              ## Drawer
+
+              Click the button below to open the drawer in the current view. You can place any widgets you would like in the drawer. The drawer can be opened and closed dynamically using the `setCollapsed` method.
+
+        - Button:
+            label: open drawer
+            onTap:
+              executeCode: |
+                testDrawer.setCollapsed(false);
 
         - Text:
             styles:
