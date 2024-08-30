@@ -16,6 +16,7 @@ import type {
   LanguageDTO,
   EnsembleConfigYAML,
   FontDTO,
+  FirebaseFontDTO,
 } from "./shared/dto";
 import { languageMap } from "./i18n";
 
@@ -74,14 +75,14 @@ const getArtifacts = async (
         secretVariables: document.secrets as { [key: string]: unknown },
       };
     } else if (document.type === "font") {
-      const font = document as { [key: string]: unknown };
+      const font = document as FirebaseFontDTO;
 
       fonts.push({
-        family: font.fontFamily as string,
-        url: font.publicUrl as string,
+        family: font.fontFamily,
+        url: font.publicUrl,
         options: {
-          weight: font.fontWeight as string,
-          style: font.fontStyle as string,
+          weight: font.fontWeight,
+          style: font.fontStyle,
         },
       });
     }

@@ -57,6 +57,13 @@ export interface EnsembleConfigYAML {
   secretVariables?: { [key: string]: unknown };
 }
 
+export interface FirebaseFontDTO {
+  readonly fontFamily: string;
+  readonly publicUrl: string;
+  readonly fontWeight: string;
+  readonly fontStyle: string;
+}
+
 export interface FontDTO {
   readonly family: string;
   readonly url: string;
