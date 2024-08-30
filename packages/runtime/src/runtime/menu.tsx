@@ -270,6 +270,7 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
                           ? props.styles.labelFontSize
                           : 1
                       }rem`,
+                height: "auto",
                 ...(selectedItem === item.page
                   ? props.styles?.onSelectStyles ?? {}
                   : {}),

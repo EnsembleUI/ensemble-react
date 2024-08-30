@@ -1,10 +1,17 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Menu, Dropdown as AntdDropdown } from "antd";
-import { cloneDeep, get, isEmpty, isObject, isString } from "lodash-es";
+import React, { useCallback, useMemo } from "react";
+import type { MenuProps } from "antd";
+import { Dropdown as AntdDropdown } from "antd";
+import {
+  cloneDeep,
+  isEmpty,
+  isObject,
+  isString,
+  compact,
+  join,
+  tail,
+} from "lodash-es";
 import {
   CustomScopeProvider,
-  defaultScreenContext,
-  evaluate,
   unwrapWidget,
   useRegisterBindings,
   useTemplateData,
@@ -12,9 +19,9 @@ import {
 import type {
   CustomScope,
   EnsembleAction,
-  EnsembleWidget,
   Expression,
 } from "@ensembleui/react-framework";
+import type { ItemType } from "antd/es/menu/interface";
 import type {
   EnsembleWidgetProps,
   EnsembleWidgetStyles,
@@ -25,10 +32,16 @@ import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { EnsembleRuntime } from "../runtime";
 
 const widgetName = "PopupMenu";
+const DEFAULT_POPUPMENU_TRIGGER = "click";
+const DEFAULT_POPUPMENUITEM_TYPE = "item";
 
 interface PopupMenuItem {
   label: Expression<string> | { [key: string]: unknown };
   value: string;
+  type?: "group" | "item";
+  visible?: boolean;
+  enabled?: boolean;
+  items?: PopupMenuItem[];
 }
 
 interface PopupMenuStyles {
@@ -38,99 +51,157 @@ interface PopupMenuStyles {
   borderWidth: string;
 }
 export type PopupMenuProps = {
-  [key: string]: unknown;
   items?: PopupMenuItem[];
   widget?: { [key: string]: unknown };
   onItemSelect?: EnsembleAction;
   showDivider?: boolean | Expression<string>;
+  trigger?: "click" | "hover" | "contextMenu";
+  enabled?: boolean;
 } & EnsembleWidgetProps<PopupMenuStyles & EnsembleWidgetStyles> &
   HasItemTemplate & { "item-template"?: { value: Expression<string> } };
 
-export const PopupMenu: React.FC<PopupMenuProps> = (props) => {
-  const { "item-template": itemTemplate, ...rest } = props;
-  const { values } = useRegisterBindings({ ...rest, widgetName }, props.id);
-  const action = useEnsembleAction(props.onItemSelect);
-  const [widgetProps, setWidgetProps] = useState<EnsembleWidget>();
+export const PopupMenu: React.FC<PopupMenuProps> = ({
+  onItemSelect,
+  "item-template": itemTemplate,
+  ...rest
+}) => {
+  const { id, rootRef, values } = useRegisterBindings(
+    { ...rest, widgetName },
+    rest.id,
+  );
+  const action = useEnsembleAction(onItemSelect);
 
   const { namedData } = useTemplateData({
     data: itemTemplate?.data,
     name: itemTemplate?.name,
   });
 
-  const popupMenuItems = useMemo(() => {
-    const popupItems = [];
+  const getMenuItem = useCallback(
+    (rawItem: PopupMenuItem, index: string | number): ItemType | null => {
+      if (rawItem.visible === false) {
+        return null;
+      }
 
-    if (values?.items) {
-      const tempItems = values.items.map((item, index) => {
-        return (
-          <React.Fragment key={item.value}>
-            <Menu.Item key={item.value} onClick={() => action?.callback(item)}>
-              {isString(item.label)
-                ? item.label
-                : EnsembleRuntime.render([unwrapWidget(item.label)])}
-            </Menu.Item>
-            {values.items && values.showDivider
-              ? index < values.items.length - 1 && <Menu.Divider />
-              : null}
-          </React.Fragment>
-        );
-      });
+      const menuItem: ItemType = {
+        key: `popupmenu_item_${index}`,
+        label: isString(rawItem.label)
+          ? rawItem.label
+          : EnsembleRuntime.render([unwrapWidget(rawItem.label)]),
+        disabled: rawItem.enabled === false,
+        ...(rawItem.items && {
+          children: rawItem.items.map((itm, childIndex) =>
+            getMenuItem(itm, `${index}_${childIndex}`),
+          ),
+        }),
+        type: rawItem.type || DEFAULT_POPUPMENUITEM_TYPE,
+      };
+      return menuItem;
+    },
+    [],
+  );
+
+  const popupMenuItems = useMemo(() => {
+    const popupItems: MenuProps["items"] = [];
+
+    const items = values?.items;
+    if (items) {
+      const tempItems = compact(
+        items.map((rawItem, index) => getMenuItem(rawItem, index)),
+      );
 
       popupItems.push(...tempItems);
     }
 
     if (isObject(itemTemplate) && !isEmpty(namedData)) {
       const tempItems = namedData.map((item, index) => {
-        const value = evaluate<string | number>(
-          defaultScreenContext,
-          itemTemplate.value,
-          {
-            [itemTemplate.name]: get(item, itemTemplate.name) as unknown,
-          },
-        );
-
-        return (
-          <React.Fragment key={value}>
-            <Menu.Item key={value} onClick={() => action?.callback(item)}>
-              <CustomScopeProvider value={item as CustomScope}>
-                {EnsembleRuntime.render([itemTemplate.template])}
-              </CustomScopeProvider>
-            </Menu.Item>
-            {values?.showDivider
-              ? index < namedData.length - 1 && <Menu.Divider />
-              : null}
-          </React.Fragment>
-        );
+        const itm: ItemType = {
+          key: `popupmenu_itemTemplate_${index}`,
+          label: (
+            <CustomScopeProvider value={item as CustomScope}>
+              {EnsembleRuntime.render([itemTemplate.template])}
+            </CustomScopeProvider>
+          ),
+        };
+        return itm;
       });
 
       popupItems.push(...tempItems);
     }
 
-    return (
-      <Menu className={values?.styles?.names} style={{ ...values?.styles }}>
-        {popupItems}
-      </Menu>
-    );
-  }, [values?.items, action, namedData, itemTemplate]);
-
-  useEffect((): void => {
-    if (values && !values.widget) {
-      return;
+    if (values?.showDivider) {
+      for (let i = 1; i < popupItems.length; i += 2) {
+        popupItems.splice(i, 0, { type: "divider" });
+      }
     }
-    // clone value so we're not updating the yaml doc
-    const widget = cloneDeep(values?.widget);
-    const actualWidget = unwrapWidget(widget!);
-    setWidgetProps(actualWidget);
-    // Only run once
-  }, []);
+
+    return popupItems;
+  }, [
+    values?.items,
+    values?.showDivider,
+    itemTemplate,
+    namedData,
+    getMenuItem,
+  ]);
+
+  const widgetToRender = useMemo(() => {
+    if (!values?.widget) {
+      throw Error("PopupMenu requires a widget to render the anchor.");
+    }
+    const widget = cloneDeep(values.widget);
+    const actualWidget = unwrapWidget(widget);
+    return EnsembleRuntime.render([actualWidget]);
+  }, [values?.widget]);
+
+  const itemsMap = useMemo(() => {
+    const map = new Map<string, PopupMenuItem>();
+
+    namedData.forEach((item, index) => {
+      map.set(`itemTemplate_${index}`, item as PopupMenuItem);
+    });
+
+    if (values?.items) {
+      const traverseItems = (
+        items: PopupMenuItem[],
+        path: number[] = [],
+      ): void => {
+        items.forEach((item, index) => {
+          const newPath = [...path, index];
+          map.set(`item_${newPath.join("_")}`, item);
+          if (item.items) {
+            // handle nested items
+            traverseItems(item.items, newPath);
+          }
+        });
+      };
+      traverseItems(values.items);
+    }
+    return map;
+  }, [namedData, values?.items]);
+
+  const handleMenuItemClick = useCallback<NonNullable<MenuProps["onClick"]>>(
+    ({ key }) => {
+      const mapKey = join(tail(key.split("_")), "_");
+      const item = itemsMap.get(mapKey);
+      action?.callback({ value: item });
+    },
+    [action, itemsMap],
+  );
 
   return (
-    <>
-      <AntdDropdown overlay={popupMenuItems} trigger={["click"]}>
-        <div>{widgetProps ? EnsembleRuntime.render([widgetProps]) : null}</div>
+    <div ref={rootRef}>
+      <AntdDropdown
+        disabled={values?.enabled === false}
+        menu={{
+          id,
+          items: popupMenuItems,
+          onClick: handleMenuItemClick,
+          style: { overflow: "auto", ...values?.styles },
+        }}
+        trigger={[values?.trigger || DEFAULT_POPUPMENU_TRIGGER]}
+      >
+        <div>{widgetToRender}</div>
       </AntdDropdown>
-      {action && "Modal" in action ? action.Modal : null}
-    </>
+    </div>
   );
 };
 
