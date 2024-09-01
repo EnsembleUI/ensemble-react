@@ -5,21 +5,16 @@ import {
   useRegisterBindings,
   error as logError,
   useScreenData,
-  useEnsembleStorage,
-  DateFormatter,
   useApplicationContext,
   unwrapWidget,
-  useEnsembleUser,
   useEvaluate,
   useCustomScope,
   useCustomEventScope,
   CustomScopeProvider,
-  CustomThemeContext,
-  useLanguageScope,
-  useDeviceObserver,
   isUsingMockResponse,
-  setUseMockResponse,
   mockResponse,
+  useCommandCallback,
+  defaultScreenContext,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -29,10 +24,8 @@ import type {
   UploadFilesAction,
   ScreenContextDefinition,
   ShowDialogAction,
-  NavigateScreenAction,
   CustomScope,
   NavigateBackAction,
-  NavigateExternalScreen,
   ExecuteActionGroupAction,
   ConnectSocketAction,
   DisconnectSocketAction,
@@ -40,7 +33,6 @@ import type {
   EnsembleActionHookResult,
   DispatchEventAction,
   ExecuteConditionalActionAction,
-  NavigateModalScreenAction,
 } from "@ensembleui/react-framework";
 import {
   isEmpty,
@@ -50,7 +42,6 @@ import {
   has,
   get,
   set,
-  mapKeys,
   cloneDeep,
   isEqual,
   keys,
@@ -58,19 +49,9 @@ import {
   toNumber,
 } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-// eslint-disable-next-line import/no-cycle
-import {
-  navigateApi,
-  navigateUrl,
-  navigateExternalScreen,
-  navigateModalScreen,
-} from "../navigation";
-import { locationApi } from "../locationApi";
 import { ModalContext } from "../modal";
 import { EnsembleRuntime } from "../runtime";
-import { getShowDialogOptions, showDialog } from "../showDialog";
-import { invokeAPI } from "../invokeApi";
+import { getShowDialogOptions } from "../showDialog";
 import {
   handleConnectSocket,
   handleMessageSocket,
@@ -81,6 +62,8 @@ import {
   hasProperStructure,
 } from "../../widgets/Conditional";
 // FIXME: refactor
+// eslint-disable-next-line import/no-cycle
+import { EnsembleScreen } from "../screen";
 // eslint-disable-next-line import/no-cycle
 import { useNavigateModalScreen } from "./useNavigateModal";
 import { useNavigateScreen } from "./useNavigateScreen";
@@ -103,10 +86,6 @@ type UploadStatus =
   | "cancelled"
   | "failed";
 
-interface SetLocaleProps {
-  languageCode: string;
-}
-
 export interface UseExecuteCodeActionOptions {
   context?: { [key: string]: unknown };
 }
@@ -114,25 +93,14 @@ export interface UseExecuteCodeActionOptions {
 export const useExecuteCode: EnsembleActionHook<
   ExecuteCodeAction,
   UseExecuteCodeActionOptions
-> = (action, options) => {
+> = (action) => {
   const isCodeString = isString(action);
   const screen = useScreenContext();
-  const storage = useEnsembleStorage();
-  const formatter = DateFormatter();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const customScope = useCustomScope();
   const modalContext = useContext(ModalContext);
-  const themescope = useContext(CustomThemeContext);
-  const user = useEnsembleUser();
   const appContext = useApplicationContext();
-  const screenData = useScreenData();
-  const { i18n } = useLanguageScope();
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,
   );
-  const device = useDeviceObserver();
-  const theme = themescope.theme;
 
   const js = useMemo(() => {
     if (!action) {
@@ -154,144 +122,23 @@ export const useExecuteCode: EnsembleActionHook<
     }
   }, [action, isCodeString, appContext?.application?.scripts]);
 
-  const execute = useMemo(() => {
-    if (!screen || !js) {
-      return;
-    }
-
-    const customWidgets = appContext?.application?.customWidgets.reduce(
-      (acc, widget) => ({ ...acc, [widget.name]: widget }),
-      {},
-    );
-
-    return (args: unknown) => {
-      try {
-        const retVal = evaluate(
-          screen,
-          js,
-          merge(
-            {
-              ...customWidgets,
-              device,
-              env: appContext?.env,
-              ensemble: {
-                ...themescope,
-                storage,
-                user,
-                formatter,
-                env: appContext?.env,
-                secrets: appContext?.secrets,
-                navigateScreen: (targetScreen: NavigateScreenAction): void =>
-                  navigateApi(targetScreen, screen, navigate),
-                navigateModalScreen: (
-                  navigateModalScreenAction: NavigateModalScreenAction,
-                ): void => {
-                  if (!modalContext) {
-                    return;
-                  }
-                  navigateModalScreen(
-                    navigateModalScreenAction,
-                    modalContext,
-                    appContext?.application ?? screen.app,
-                  );
-                },
-                location: locationApi(location),
-                navigateUrl: (
-                  url: string,
-                  inputs?: { [key: string]: unknown },
-                ) => navigateUrl(url, navigate, inputs),
-                showDialog: (dialogAction?: ShowDialogAction): void =>
-                  showDialog({
-                    action: dialogAction,
-                    openModal: modalContext?.openModal,
-                  }),
-                closeAllDialogs: (): void => modalContext?.closeAllModals(),
-                closeAllScreens: (): void => modalContext?.closeAllScreens(),
-                invokeAPI: async (
-                  apiName: string,
-                  apiInputs?: { [key: string]: unknown },
-                ) =>
-                  invokeAPI(
-                    screenData,
-                    apiName,
-                    appContext?.application?.id,
-                    apiInputs,
-                    {
-                      ...customScope,
-                      ensemble: {
-                        env: appContext?.env,
-                        secrets: appContext?.secrets,
-                        storage: appContext?.storage,
-                      },
-                    },
-                  ),
-                navigateBack: (): void =>
-                  modalContext ? modalContext.navigateBack() : navigate(-1),
-                navigateExternalScreen: (url: NavigateExternalScreen) =>
-                  navigateExternalScreen(url),
-                openUrl: (url: NavigateExternalScreen) =>
-                  navigateExternalScreen(url),
-                connectSocket: (name: string) =>
-                  handleConnectSocket(screenData, name),
-                messageSocket: (
-                  name: string,
-                  message: { [key: string]: unknown },
-                ) => handleMessageSocket(screenData, name, message),
-                disconnectSocket: (name: string) =>
-                  handleDisconnectSocket(screenData, name),
-                setLocale: ({ languageCode }: SetLocaleProps) =>
-                  i18n.changeLanguage(languageCode),
-              },
-              app: {
-                useMockResponse: isUsingMockResponse(
-                  appContext?.application?.id,
-                ),
-                setUseMockResponse: (value: boolean) =>
-                  setUseMockResponse(appContext?.application?.id, value),
-              },
-            },
-            { app: merge(screen.app, { theme: themescope.themeName }) },
-            mapKeys(theme.Tokens ?? {}, (_, key) => key.toLowerCase()),
-            { styles: theme.Styles },
-            customScope,
-            options?.context,
-            args,
-          ) as { [key: string]: unknown },
-        );
-        onCompleteAction?.callback({
-          ...(args as { [key: string]: unknown }),
-          result: retVal,
-        });
-        return retVal;
-      } catch (e) {
-        logError(e);
+  const execute = useCommandCallback(
+    (evalContext, ...args) => {
+      if (!screen || !js) {
+        return;
       }
-    };
-  }, [
-    screen,
-    js,
-    appContext?.application?.customWidgets,
-    appContext?.env,
-    appContext?.secrets,
-    appContext?.application?.id,
-    appContext?.storage,
-    themescope,
-    device,
-    storage,
-    user,
-    formatter,
-    location,
-    theme.Tokens,
-    theme.Styles,
-    customScope,
-    options?.context,
-    onCompleteAction,
-    navigate,
-    modalContext,
-    screenData,
-  ]);
+      const retVal = evaluate(defaultScreenContext, js, evalContext);
+      onCompleteAction?.callback({
+        ...(args[0] as { [key: string]: unknown }),
+        result: retVal,
+      });
+      return retVal;
+    },
+    [js, onCompleteAction],
+    { modalContext, render: EnsembleRuntime.render, EnsembleScreen },
+  );
 
-  return execute ? { callback: execute } : undefined;
+  return { callback: execute };
 };
 
 export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
