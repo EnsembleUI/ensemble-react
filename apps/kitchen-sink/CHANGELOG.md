@@ -1,5 +1,15 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.78
+
+### Patch Changes
+
+- 7774c9c: modernize PopupMenu widget
+- a852ba9: Added functionality to change placeholder color
+- Updated dependencies [7774c9c]
+- Updated dependencies [a852ba9]
+  - @ensembleui/react-runtime@0.1.84
+
 ## 0.0.77
 
 ### Patch Changes

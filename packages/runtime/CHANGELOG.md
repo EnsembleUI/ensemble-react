@@ -1,5 +1,12 @@
 # @ensembleui/react-runtime
 
+## 0.1.84
+
+### Patch Changes
+
+- 7774c9c: modernize PopupMenu widget
+- a852ba9: Added functionality to change placeholder color
+
 ## 0.1.83
 
 ### Patch Changes
