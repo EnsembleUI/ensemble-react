@@ -1,8 +1,10 @@
-import type {
-  EnsembleFooterModel,
-  EnsembleHeaderModel,
-  EnsembleWidget,
+import {
+  useRegisterBindings,
+  type EnsembleFooterModel,
+  type EnsembleHeaderModel,
+  type EnsembleWidget,
 } from "@ensembleui/react-framework";
+import { ConfigProvider } from "antd";
 import { WidgetRegistry } from "../registry";
 // eslint-disable-next-line import/no-cycle
 import { Column } from "../widgets/Column";
@@ -16,6 +18,7 @@ interface EnsembleBodyProps {
 }
 
 export const EnsembleBody: React.FC<EnsembleBodyProps> = ({ body, styles }) => {
+  const { values } = useRegisterBindings({ styles });
   const BodyFn = WidgetRegistry.find(body.name);
   if (!(BodyFn instanceof Function))
     throw new Error(`Unknown widget: ${body.name}`);
@@ -29,5 +32,18 @@ export const EnsembleBody: React.FC<EnsembleBodyProps> = ({ body, styles }) => {
     },
   };
 
-  return <Column {...defaultStyles}>{[body]}</Column>;
+  return (
+    <ConfigProvider
+      theme={{
+        token: {
+          colorText: values?.styles?.color as string,
+          fontSize: values?.styles?.fontSize as number,
+          fontFamily: values?.styles?.fontFamily as string,
+          fontWeightStrong: values?.styles?.fontWeight as number,
+        },
+      }}
+    >
+      <Column {...defaultStyles}>{[body]}</Column>
+    </ConfigProvider>
+  );
 };
