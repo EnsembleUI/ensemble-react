@@ -25,7 +25,7 @@ import type {
   ShowDialogAction,
 } from "../shared";
 import { deviceAtom } from "./useDeviceObserver";
-import { createStorageApi, screenStorageAtom } from "./useEnsembleStorage";
+import { useEnsembleStorage } from "./useEnsembleStorage";
 import { useCustomScope } from "./useCustomScope";
 import { useLanguageScope } from "./useLanguageScope";
 
@@ -46,6 +46,7 @@ export const useCommandCallback = <
   callbackContext?: CallbackContext,
 ): ReturnType<typeof useAtomCallback<R, T>> => {
   const customScope = useCustomScope();
+  const storage = useEnsembleStorage();
   const { i18n } = useLanguageScope();
 
   return useAtomCallback(
@@ -53,7 +54,6 @@ export const useCommandCallback = <
       (get, set, ...args: T) => {
         const applicationContext = get(appAtom);
         const screenContext = get(screenAtom);
-        const storage = get(screenStorageAtom);
         const device = get(deviceAtom);
         const theme = get(themeAtom);
         const user = get(userAtom);
@@ -66,13 +66,13 @@ export const useCommandCallback = <
 
         const evalContext = createEvaluationContext({
           applicationContext,
-          screenContext,
+          screenContext: {}, // if screenContext is passed from here, it overrides values of screen's widgets in evaluate function. Yet to confirm if removal of this piece would cause any issue.
           ensemble: {
             user: {
               ...user,
               setUser: (userUpdate: EnsembleUser) => set(userAtom, userUpdate),
             },
-            storage: createStorageApi(storage),
+            storage,
             formatter: DateFormatter(),
             env: applicationContext.env,
             secrets: applicationContext.secrets,

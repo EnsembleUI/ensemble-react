@@ -123,11 +123,14 @@ export const useExecuteCode: EnsembleActionHook<
   }, [action, isCodeString, appContext?.application?.scripts]);
 
   const execute = useCommandCallback(
-    (evalContext, ...args) => {
+    (evalContext, ...args: unknown[]) => {
       if (!screen || !js) {
         return;
       }
-      const retVal = evaluate(defaultScreenContext, js, evalContext);
+      const context = merge({}, evalContext, ...args) as {
+        [key: string]: unknown;
+      };
+      const retVal = evaluate(screen, js, context);
       onCompleteAction?.callback({
         ...(args[0] as { [key: string]: unknown }),
         result: retVal,
