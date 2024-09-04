@@ -81,7 +81,7 @@ const getArtifacts = async (
         family: font.fontFamily,
         url: font.publicUrl,
         options: {
-          weight: font.fontWeight,
+          weight: font.fontWeight.replace(/[^0-9]/g, ""), // this is required, because font face only accept number in font face and we are getting string from the firebase (ex. weight: '400 (normal)')
           style: font.fontStyle,
         },
       });
