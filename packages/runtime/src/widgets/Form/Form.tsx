@@ -4,8 +4,10 @@ import {
   type EnsembleWidget,
 } from "@ensembleui/react-framework";
 import { Form as AntForm } from "antd";
+import type { FormProps as AntFormProps } from "antd";
 import { useCallback, useState } from "react";
 import type { FormLayout } from "antd/es/form/Form";
+import { set } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import { EnsembleRuntime } from "../../runtime";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
@@ -20,11 +22,15 @@ export type FormProps = {
   children: EnsembleWidget[];
   enabled?: boolean;
   onSubmit?: EnsembleAction;
+  onChange?: EnsembleAction;
   styles?: {
     labelPosition: "top" | "start" | "none";
     labelOverflow: "wrap" | "visible" | "clip" | "ellipsis";
   } & EnsembleWidgetStyles;
 } & EnsembleWidgetProps;
+
+type AntFieldData = NonNullable<AntFormProps["fields"]>;
+
 export const Form: React.FC<FormProps> = (props) => {
   const { children, ...rest } = props;
 
@@ -32,6 +38,8 @@ export const Form: React.FC<FormProps> = (props) => {
   const getValues = form.getFieldsValue;
 
   const action = useEnsembleAction(props.onSubmit);
+  const onChangeAction = useEnsembleAction(props.onChange);
+
   const onFinishCallback = useCallback(
     (vals: unknown) => {
       if (!action) {
@@ -41,6 +49,19 @@ export const Form: React.FC<FormProps> = (props) => {
       return action.callback({ vals });
     },
     [action],
+  );
+
+  const onChangeActionCallback = useCallback(
+    (changedFields: AntFieldData) => {
+      const fields = {};
+
+      changedFields.map(({ name, value }) =>
+        set(fields, name as string[], value),
+      );
+
+      onChangeAction?.callback({ fields });
+    },
+    [onChangeAction],
   );
 
   // reset form
@@ -90,6 +111,7 @@ export const Form: React.FC<FormProps> = (props) => {
       colon={false}
       form={form}
       layout={getLayout(values?.styles?.labelPosition)}
+      onFieldsChange={onChangeActionCallback}
       onFinish={onFinishCallback}
       style={{
         display: "flex",
