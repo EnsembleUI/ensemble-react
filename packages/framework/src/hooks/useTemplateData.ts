@@ -4,6 +4,7 @@ import { isString, map, merge } from "lodash-es";
 import { createBindingAtom } from "../evaluate";
 import { isExpression, type Expression } from "../shared/common";
 import { useCustomScope } from "./useCustomScope";
+import { useEvaluate } from "./useEvaluate";
 
 export type TemplateData = object | unknown[] | undefined | null;
 export interface TemplateDataProps {
@@ -48,9 +49,10 @@ export const useTemplateData = ({
     () => map(rawData, (value: unknown) => ({ [name]: value })),
     [name, rawData],
   );
+  const evaluatedNamedData = useEvaluate({ namedData });
 
   return {
     rawData,
-    namedData,
+    namedData: evaluatedNamedData.namedData,
   };
 };

@@ -1,4 +1,6 @@
 View:
+  styles:
+    scrollableView: true
   onLoad:
     executeCode:
       body: |-
@@ -6,14 +8,13 @@ View:
         ensemble.storage.set('loaderStat', false);
         ensemble.storage.set("skip", 10)
         ensemble.storage.set("iconSize", 40)
-        ensemble.storage.set("iconName", "Abc")
-
+        ensemble.storage.set("iconName", "MoreHoriz")
       onComplete:
         invokeApi:
           name: getDummyProductsByPaginate
           inputs:
             skip: 0
-            limit: 10
+            limit: 17
           onResponse:
             executeCode: |
               const res = response.body.products;
@@ -25,9 +26,6 @@ View:
         inputs:
           message: "Inputs to header widget"
 
-  styles:
-    scrollableView: true
-
   body:
     Column:
       crossAxis: stretch
@@ -35,10 +33,71 @@ View:
       styles:
         names: page
       children:
-        - Icon:
-            name: ArrowBack
-            onTap:
-              navigateBack:
+        - Row:
+            styles:
+              crossAxis: center
+              mainAxis: spaceBetween
+            children:
+              - Icon:
+                  name: ArrowBack
+                  onTap:
+                    navigateBack:
+              - PopupMenu:
+                  showDivider: true
+                  enabled: ${ensemble.storage.get("dummyProducts")?.at(0)?.id === 1}
+                  trigger: hover
+                  styles:
+                    height: 200px
+                  onItemSelect:
+                    showToast:
+                      message: Your selected brand's ${value?.product ? "rating" :"price"} is ${value?.product?.rating || value?.value}
+                  item-template:
+                    data:
+                      [
+                        '${ensemble.storage.get("dummyProducts")[0]}',
+                        '${ensemble.storage.get("dummyProducts")[2]}',
+                        '${ensemble.storage.get("dummyProducts")[4]}',
+                      ]
+                    name: product
+                    template:
+                      Text:
+                        text: ${product.rating} stars
+                  items:
+                    - label: All Clients
+                      value: all clients
+                    - label: Client Name
+                      value: client name
+                    - label: Location Group
+                      type: group
+                      items:
+                        - label: Location Name 1
+                          value: location name 1
+                          visible: false
+                        - label: Location Name 2
+                          value: location name 2
+                          enabled: false
+                        - label: Location Name 3
+                          value: location name 3
+                    - label: Client Menu
+                      items:
+                        - label: Sub Client 1
+                          value: sub client 1
+                        - label: Child Client Menu
+                          items: "${getDummyProductsByPaginate.body.products.map(p => ({label: p.title, value: p.price, visible: p.price > 10, enabled: p.rating < 4})) ?? []}"
+                        - label: Sub Client 2
+                          value: sub client 2
+                  widget:
+                    Icon:
+                      name: ${ensemble.storage.get("iconName")}
+                      color: "#365898"
+                      styles:
+                        padding: 5
+                        borderWidth: 1
+                        borderRadius: 6
+                        cursor: pointer
+                        borderColor: "#DFE1E6"
+                        backgroundColor: white
+
         - Row:
             gap: 4px
             children:
@@ -75,32 +134,62 @@ View:
               - Avatar:
                   name: "  4Dr.  cabin4  i  "
 
-        - Lottie:
-            id: MyLottie
-            source: https://lottie.host/3568da34-6083-42fc-a254-74d9c1e15b2f/wcVmO2igxm.json
-            repeat: false
-            autoPlay: true
+        - Row:
             styles:
-              margin: 20px
-              height: 200px
-              backgroundColor: "#f0f0f0"
-              width: 200px
-              transform: rotate(1deg)
-            onTap:
-              executeCode: |-
-                console.log("Tapped");
-            onForward:
-              executeCode: |-
-                console.log("Forwarded");
-            onReverse:
-              executeCode: |-
-                console.log("Reversed");
-            onPause:
-              executeCode: |-
-                console.log("Paused");
-            onComplete:
-              executeCode: |-
-                console.log("Completed");
+              mainAxis: spaceBetween
+              crossAxis: center
+            children:
+              - Lottie:
+                  id: MyLottie
+                  source: https://lottie.host/3568da34-6083-42fc-a254-74d9c1e15b2f/wcVmO2igxm.json
+                  repeat: false
+                  autoPlay: true
+                  styles:
+                    margin: 20px
+                    height: 200px
+                    backgroundColor: "#f0f0f0"
+                    width: 200px
+                    transform: rotate(1deg)
+                  onTap:
+                    executeCode: |-
+                      console.log("Tapped");
+                  onForward:
+                    executeCode: |-
+                      console.log("Forwarded");
+                  onReverse:
+                    executeCode: |-
+                      console.log("Reversed");
+                  onPause:
+                    executeCode: |-
+                      console.log("Paused");
+                  onComplete:
+                    executeCode: |-
+                      console.log("Completed");
+              - PopupMenu:
+                  trigger: contextMenu
+                  styles:
+                    backgroundColor: ${colors.gray['50']}
+                  onItemSelect:
+                    showToast:
+                      message: navigated to ${value.str}
+                  item-template:
+                    data: ["File", "Edit", "View", "Settings", "Help"]
+                    name: str
+                    template:
+                      Row:
+                        children:
+                          - Icon:
+                              name: NavigateNext
+                          - Text:
+                              text: ${str}
+                  widget:
+                    Text:
+                      text: Right Click here
+                      styles:
+                        color: ${colors.gray['700']}
+                        backgroundColor: ${colors.gray['100']}
+                        padding: 100px
+                        borderRadius: 12px
 
         - Row:
             styles:
@@ -295,7 +384,7 @@ View:
                           hasDivider: true
                           borderBottom: false
                       DataColumns: ["id", "title", "description"]
-                      pageSize: 10
+                      pageSize: 17
                       totalRows: 100
                       onPageChange:
                         invokeAPI:
