@@ -98,7 +98,9 @@ export const EnsembleParser = {
       throw Error("Application must have at least one screen");
     }
 
-    const menu = screens.find((screen) => "items" in screen);
+    const menu = screens.find(
+      (screen) => "items" in screen,
+    ) as EnsembleMenuModel;
 
     if (menu) {
       remove(screens, (screen) => screen === menu);
