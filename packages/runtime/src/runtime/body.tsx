@@ -1,5 +1,5 @@
 import {
-  useRegisterBindings,
+  useEvaluate,
   type EnsembleFooterModel,
   type EnsembleHeaderModel,
   type EnsembleWidget,
@@ -18,7 +18,7 @@ interface EnsembleBodyProps {
 }
 
 export const EnsembleBody: React.FC<EnsembleBodyProps> = ({ body, styles }) => {
-  const { values } = useRegisterBindings({ styles });
+  const evaluatedStyles = useEvaluate({ styles });
   const BodyFn = WidgetRegistry.find(body.name);
   if (!(BodyFn instanceof Function))
     throw new Error(`Unknown widget: ${body.name}`);
@@ -36,10 +36,10 @@ export const EnsembleBody: React.FC<EnsembleBodyProps> = ({ body, styles }) => {
     <ConfigProvider
       theme={{
         token: {
-          colorText: values?.styles?.color as string,
-          fontSize: values?.styles?.fontSize as number,
-          fontFamily: values?.styles?.fontFamily as string,
-          fontWeightStrong: values?.styles?.fontWeight as number,
+          colorText: evaluatedStyles.styles?.color as string,
+          fontSize: evaluatedStyles.styles?.fontSize as number,
+          fontFamily: evaluatedStyles.styles?.fontFamily as string,
+          fontWeightStrong: evaluatedStyles.styles?.fontWeight as number,
         },
       }}
     >

@@ -82,7 +82,7 @@ Light:
 
   Styles:
     .topView:
-      color: red
+      color: ${colors.teal['950']}
       fontSize: 12
       fontWeight: 800
       fontFamily: ${typography.fontFamily}
