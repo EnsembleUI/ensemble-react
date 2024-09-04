@@ -14,7 +14,6 @@ import {
   isUsingMockResponse,
   mockResponse,
   useCommandCallback,
-  defaultScreenContext,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,

@@ -132,6 +132,7 @@ export const useCommandCallback = <
           },
           context: {
             ...customWidgets,
+            ...customScope,
             device,
             app: {
               theme,
