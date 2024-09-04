@@ -92,7 +92,7 @@ export interface UseExecuteCodeActionOptions {
 export const useExecuteCode: EnsembleActionHook<
   ExecuteCodeAction,
   UseExecuteCodeActionOptions
-> = (action) => {
+> = (action, options) => {
   const isCodeString = isString(action);
   const screen = useScreenContext();
   const modalContext = useContext(ModalContext);
@@ -126,7 +126,7 @@ export const useExecuteCode: EnsembleActionHook<
       if (!screen || !js) {
         return;
       }
-      const context = merge({}, evalContext, ...args) as {
+      const context = merge({}, evalContext, ...args, options?.context) as {
         [key: string]: unknown;
       };
       const retVal = evaluate(screen, js, context);
