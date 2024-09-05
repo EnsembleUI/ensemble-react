@@ -25,6 +25,9 @@ Widget:
               borderStyle: solid
               borderColor: "#B8BED6"
             placeholder: Search
+            notFoundContent:
+              Text:
+                text: No users found 123
             item-template:
               data: ${findUsers.body.users}
               name: user
