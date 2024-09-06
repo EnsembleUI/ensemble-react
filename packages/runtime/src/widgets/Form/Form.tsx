@@ -60,12 +60,12 @@ export const Form: React.FC<FormProps> = (props) => {
   const validate = useCallback<typeof form.validateFields>(
     async (...options) => {
       try {
-        const result = await form.validateFields(options);
+        await form.validateFields(options.length ? options : undefined);
         setIsValid(true);
-        return result;
-      } catch (e) {
+        return true;
+      } catch (error) {
         setIsValid(false);
-        return e;
+        return false;
       }
     },
     [form],
