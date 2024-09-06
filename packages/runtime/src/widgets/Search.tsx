@@ -153,7 +153,7 @@ export const Search: React.FC<SearchProps> = ({
     const notFoundContent = values?.notFoundContent;
 
     if (!notFoundContent) {
-      return null;
+      return "No Results";
     }
 
     return isString(notFoundContent)
