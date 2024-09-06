@@ -81,6 +81,11 @@ Light:
         thin: 100
 
   Styles:
+    .topView:
+      color: ${colors.teal['950']}
+      fontSize: 12
+      fontWeight: 800
+      fontFamily: ${typography.fontFamily}
     .button-1:
       backgroundColor: ${colors.primary['500']}
     .page-1:
@@ -96,8 +101,6 @@ Light:
       fontWeight: ${typography.fontWeight.bold}
     Button:
       backgroundColor: ${colors.teal['500']}
-    Text:
-      color: ${colors.teal['950']}
 
 Dark:
   Tokens:
