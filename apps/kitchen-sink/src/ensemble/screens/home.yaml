@@ -12,6 +12,7 @@ View:
       Header:
 
   styles:
+    className: topView
     scrollableView: true
     backgroundColor: ${colors.primary['200']}
 
@@ -103,7 +104,7 @@ View:
                 name: Settings
             onItemSelect:
               executeCode: |
-                ensemble.setTheme(theme)
+                ensemble.setTheme(value.theme)
 
         - Text:
             styles:
