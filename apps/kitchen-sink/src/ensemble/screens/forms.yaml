@@ -18,7 +18,7 @@ View:
           onResponse:
             executeCode: |
               console.log('getData', response.body);
-  
+
   header:
     title:
       Header:
@@ -45,7 +45,7 @@ View:
                 options:
                   height: 50px
                   width: 80px
-              
+
         - Icon:
         - Text:
             styles:
@@ -67,6 +67,9 @@ View:
                   styles:
                     gap: 8px
                     labelPosition: top
+                  onChange:
+                    executeCode: |
+                      console.log({fields})
                   onSubmit:
                     executeCode:
                       body: |
