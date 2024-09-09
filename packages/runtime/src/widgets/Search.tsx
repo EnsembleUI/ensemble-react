@@ -4,6 +4,7 @@ import {
   useTemplateData,
   useRegisterBindings,
   CustomScopeProvider,
+  unwrapWidget,
 } from "@ensembleui/react-framework";
 import type {
   CustomScope,
@@ -11,7 +12,7 @@ import type {
   Expression,
 } from "@ensembleui/react-framework";
 import { Select as SelectComponent } from "antd";
-import { get, isEmpty, isNull, isObject } from "lodash-es";
+import { get, isEmpty, isNull, isObject, isString } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type {
   EnsembleWidgetProps,
@@ -34,6 +35,7 @@ export type SearchProps = {
   onSelect?: EnsembleAction;
   onClear?: EnsembleAction;
   iconStyles?: EnsembleWidgetStyles;
+  notFoundContent?: Expression<string> | { [key: string]: unknown };
 } & EnsembleWidgetProps &
   HasItemTemplate & {
     "item-template"?: { value: Expression<string> };
@@ -146,6 +148,19 @@ export const Search: React.FC<SearchProps> = ({
     onClearAction?.callback();
   }, [onClearAction]);
 
+  // handle not found content renderer
+  const notFoundContentRenderer = useMemo(() => {
+    const notFoundContent = values?.notFoundContent;
+
+    if (!notFoundContent) {
+      return "No Results";
+    }
+
+    return isString(notFoundContent)
+      ? notFoundContent
+      : EnsembleRuntime.render([unwrapWidget(notFoundContent)]);
+  }, [values?.notFoundContent]);
+
   return (
     <div
       ref={rootRef}
@@ -177,7 +192,7 @@ export const Search: React.FC<SearchProps> = ({
         className={`${values?.styles?.names || ""} ${id}_input`}
         filterOption={false}
         id={values?.id}
-        notFoundContent="No Results"
+        notFoundContent={notFoundContentRenderer}
         onChange={handleChange}
         onClear={handleClear}
         onSearch={(search): void => setSearchValue(search)}
