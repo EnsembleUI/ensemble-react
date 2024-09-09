@@ -67,6 +67,9 @@ View:
                   styles:
                     gap: 8px
                     labelPosition: top
+                  onChange:
+                    executeCode: |
+                      console.log({fields})
                   onSubmit:
                     executeCode:
                       body: |
