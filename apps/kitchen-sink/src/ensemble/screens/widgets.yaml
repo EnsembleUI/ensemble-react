@@ -6,7 +6,7 @@ View:
       body: |-
         ensemble.storage.set('activeIndex',3);
         ensemble.storage.set('loaderStat', false);
-        ensemble.storage.set("skip", 10)
+        ensemble.storage.set("skip", 17)
         ensemble.storage.set("iconSize", 40)
         ensemble.storage.set("iconName", "MoreHoriz")
       onComplete:
@@ -376,6 +376,7 @@ View:
                   widget:
                     DataGrid:
                       id: "myDataGridExample2"
+                      allowSelection: true
                       styles:
                         headerStyle:
                           backgroundColor: "white"
@@ -387,16 +388,20 @@ View:
                       pageSize: 17
                       totalRows: 100
                       onPageChange:
-                        invokeAPI:
-                          name: getDummyProductsByPaginate
-                          inputs:
-                            skip: ${ensemble.storage.get('skip') * (page - 1)}
-                            limit: ${pageSize}
-                          onResponse:
-                            executeCode: |
-                              const prevItem = ensemble.storage.get("dummyProducts")
-                              const res = response.body.products;
-                              ensemble.storage.set("dummyProducts", [...res])
+                        executeCode:
+                          body: |
+                            myDataGridExample2.setRowsSelected([]);
+                          onComplete:
+                            invokeAPI:
+                              name: getDummyProductsByPaginate
+                              inputs:
+                                skip: ${ensemble.storage.get('skip') * (page - 1)}
+                                limit: ${pageSize}
+                              onResponse:
+                                executeCode: |
+                                  const prevItem = ensemble.storage.get("dummyProducts")
+                                  const res = response.body.products;
+                                  ensemble.storage.set("dummyProducts", [...res])
                       item-template:
                         data: ${ensemble.storage.get('dummyProducts')}
                         name: dummyData
