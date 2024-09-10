@@ -15,7 +15,13 @@ import {
   type EnsembleAction,
   unwrapWidget,
 } from "@ensembleui/react-framework";
-import { useCallback, useState, useMemo, useRef, useEffect } from "react";
+import React, {
+  useCallback,
+  useState,
+  useMemo,
+  useRef,
+  useEffect,
+} from "react";
 import type { ReactEventHandler, ReactElement } from "react";
 import { get, isArray, isString, isObject, cloneDeep } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
@@ -155,7 +161,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   }>({});
   const [curPage, setCurPage] = useState<number>(props.curPage || 1);
   const [pageSize, setPageSize] = useState<number>(props.pageSize || 10);
-  const [rowsSelected, setRowsSelected] = useState<object[]>();
+  const [rowsSelected, setRowsSelected] = useState<React.Key[]>([]);
   const [allowSelection, setAllowSelection] = useState(
     props.allowSelection ?? false,
   );
@@ -447,13 +453,14 @@ export const DataGrid: React.FC<GridProps> = (props) => {
               ? {
                   type: selectionType,
                   onChange: (selectedRowKeys, selectedRows) => {
-                    setRowsSelected(selectedRows);
+                    setRowsSelected(selectedRowKeys);
                     return onRowsSelectedCallback(
                       selectedRowKeys,
                       selectedRows,
                     );
                   },
                   defaultSelectedRowKeys: values?.defaultSelectedRowKeys,
+                  selectedRowKeys: values?.rowsSelected,
                 }
               : undefined
           }
