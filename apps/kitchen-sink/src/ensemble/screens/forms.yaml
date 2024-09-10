@@ -110,6 +110,29 @@ View:
                         onChange:
                           executeCode: |
                             console.log('radio changed', value)
+                    - Radio:
+                        id: radioGroup
+                        label: Radio Group With Template
+                        item-template:
+                          data: getData.body.users.slice(0, 4)
+                          name: user
+                          value: ${user.email}
+                          template:
+                            Row:
+                              styles:
+                                gap: 10px
+                                paddingBlock: 10px
+                                alignItems: center
+                              children:
+                                - Image:
+                                    width: 25
+                                    height: 25
+                                    source: ${user.image}
+                                - Text:
+                                    text: ${user.firstName} ${user.lastName}
+                        onChange:
+                          executeCode: |
+                            console.log('radio changed', value)
                     # Build your own checkbox group
                     - Row:
                         item-template:

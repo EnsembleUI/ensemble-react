@@ -1,17 +1,29 @@
-import type { EnsembleAction, Expression } from "@ensembleui/react-framework";
-import { useRegisterBindings } from "@ensembleui/react-framework";
+import type {
+  CustomScope,
+  EnsembleAction,
+  Expression,
+} from "@ensembleui/react-framework";
+import {
+  CustomScopeProvider,
+  defaultScreenContext,
+  evaluate,
+  useRegisterBindings,
+  useTemplateData,
+} from "@ensembleui/react-framework";
 import { Radio, Form } from "antd";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { get, isEmpty, isObject } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetStyles, HasItemTemplate } from "../../shared/types";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
+import { EnsembleRuntime } from "../../runtime";
 import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
 
 const widgetName = "Radio";
 
 export type RadioWidgetProps = FormInputProps<string> &
-  HasItemTemplate & {
+  HasItemTemplate & { "item-template"?: { value: Expression<string> } } & {
     items: {
       label: Expression<string>;
       value: Expression<string | number>;
@@ -21,28 +33,29 @@ export type RadioWidgetProps = FormInputProps<string> &
     onChange?: EnsembleAction;
   };
 
+interface RadioOptionsProps {
+  disabled: boolean;
+  value: string | number;
+  children: React.ReactElement | string;
+  style: EnsembleWidgetStyles;
+}
+
 export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
+  const { "item-template": itemTemplate, onChange, ...rest } = props;
   const [value, setValue] = useState<string | number | undefined>(undefined);
   const { values, rootRef } = useRegisterBindings(
-    { ...props, initialValue: props.value, value, widgetName },
-    props.id,
+    { ...rest, initialValue: rest.value, value, widgetName },
+    rest.id,
     { setValue },
   );
-  const action = useEnsembleAction(props.onChange);
 
-  const handleChange = useCallback(
-    (newValue: string) => {
-      setValue(newValue);
-      action?.callback({ value: newValue });
-    },
-    [action],
-  );
-
-  const formInstance = Form.useFormInstance();
-
+  // update initial value
   useEffect(() => {
     setValue(values?.initialValue?.toString());
   }, [values?.initialValue]);
+
+  // update form field initial value
+  const formInstance = Form.useFormInstance();
 
   useEffect(() => {
     if (formInstance) {
@@ -52,6 +65,71 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
     }
   }, [value, formInstance]);
 
+  // onchange ensemble action
+  const action = useEnsembleAction(onChange);
+
+  // handle onchange of radio
+  const handleChange = useCallback(
+    (newValue: string) => {
+      setValue(newValue);
+      action?.callback({ value: newValue });
+    },
+    [action],
+  );
+
+  // extract template data
+  const { namedData } = useTemplateData({
+    data: itemTemplate?.data,
+    name: itemTemplate?.name,
+  });
+
+  // handle radio items
+  const radioItems = useMemo(() => {
+    const radioOptions: RadioOptionsProps[] = [];
+
+    const getStyle = (styles: EnsembleWidgetStyles): object => ({
+      ...styles,
+      ...(styles?.visible === false ? { display: "none" } : undefined),
+    });
+
+    if (values?.items) {
+      values.items.forEach((item) => {
+        radioOptions.push({
+          children: item.label,
+          disabled: values.enabled === false || item.enabled === false,
+          value: String(item.value),
+          style: getStyle(item.styles as object),
+        });
+      });
+    }
+
+    if (isObject(itemTemplate) && !isEmpty(namedData)) {
+      namedData.forEach((item: unknown) => {
+        const typedItem = get(item, itemTemplate.name) as CustomScope;
+        const evaluateValue = evaluate<string | number>(
+          defaultScreenContext,
+          itemTemplate.value,
+          { [itemTemplate.name]: typedItem },
+        );
+
+        radioOptions.push({
+          disabled: values?.enabled === false || typedItem.enabled === false,
+          value: evaluateValue,
+          children: (
+            <CustomScopeProvider value={item as CustomScope}>
+              {EnsembleRuntime.render([itemTemplate.template])}
+            </CustomScopeProvider>
+          ),
+          style: getStyle(typedItem.styles as object),
+        });
+      });
+    }
+
+    return radioOptions.map((item: RadioOptionsProps) => (
+      <Radio key={item.value} {...item} />
+    ));
+  }, [values?.items, values?.enabled, itemTemplate, namedData]);
+
   return (
     <EnsembleFormItem values={values}>
       <Radio.Group
@@ -60,21 +138,7 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
         style={values?.styles}
         value={String(values?.value)}
       >
-        {values?.items.map((item) => (
-          <Radio
-            disabled={values.enabled === false || item.enabled === false}
-            key={item.value}
-            style={{
-              ...item.styles,
-              ...(item.styles?.visible === false
-                ? { display: "none" }
-                : undefined),
-            }}
-            value={String(item.value)}
-          >
-            {item.label}
-          </Radio>
-        ))}
+        {radioItems}
       </Radio.Group>
     </EnsembleFormItem>
   );
