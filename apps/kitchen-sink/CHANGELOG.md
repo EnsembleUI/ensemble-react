@@ -1,5 +1,14 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.79
+
+### Patch Changes
+
+- d7ddc2d: Fix datagrid rows deselected issue
+- Updated dependencies [d7ddc2d]
+- Updated dependencies [d7ddc2d]
+  - @ensembleui/react-runtime@0.1.85
+
 ## 0.0.78
 
 ### Patch Changes

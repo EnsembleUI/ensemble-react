@@ -1,5 +1,12 @@
 # @ensembleui/react-runtime
 
+## 0.1.85
+
+### Patch Changes
+
+- d7ddc2d: Remove navigation glitch from sidebar menu
+- d7ddc2d: Fix datagrid rows deselected issue
+
 ## 0.1.84
 
 ### Patch Changes
