@@ -1,6 +1,6 @@
 import type { PropsWithChildren, ReactNode } from "react";
 import React, { useState, useEffect, useCallback } from "react";
-import { Menu as AntMenu, Col, Divider } from "antd";
+import { Menu as AntMenu, Col, ConfigProvider, Divider } from "antd";
 import * as MuiIcons from "@mui/icons-material";
 import {
   unwrapWidget,
@@ -222,79 +222,89 @@ export const SideBarMenu: React.FC<MenuBaseProps> = ({ id, ...props }) => {
       }}
     >
       {props.header ? EnsembleRuntime.render([props.header]) : null}
-      <AntMenu
-        mode="inline"
-        /* FIXME This is a hack so we can control our own selected styling. Ideally, this should use design tokens */
-        selectedKeys={[]}
-        style={{
-          flex: "1",
-          backgroundColor,
-          display: "flex",
-          flexDirection: "column",
+      <ConfigProvider
+        theme={{
+          components: {
+            Menu: {
+              itemActiveBg: "inherit",
+            },
+          },
         }}
       >
-        {/* FIXME: just use props here https://ant.design/components/menu#examples */}
-        {values?.items.map((item, itemIndex) => (
-          <>
-            <AntMenu.Item
-              data-testid={item.id ?? item.testId}
-              icon={getIcon(item)}
-              key={item.page || item.url || `customItem${itemIndex}`}
-              onClick={(): void => {
-                if (!item.openNewTab && item.page) {
-                  setSelectedItem(item.page);
-                }
-              }}
-              style={{
-                color:
-                  selectedItem === item.page
-                    ? (values.styles?.selectedColor as string) ?? "white"
-                    : (values.styles?.labelColor as string) ?? "grey",
-                display: item.visible === false ? "none" : "flex",
-                justifyContent: "center",
-                borderRadius: 0,
-                alignItems: "center",
-                fontSize:
-                  selectedItem === item.page
-                    ? `${
-                        parseInt(
-                          `${
-                            props.styles?.labelFontSize
-                              ? props.styles.labelFontSize
-                              : 1
-                          }` || "1",
-                        ) + 0.2
-                      }rem`
-                    : `${
-                        props.styles?.labelFontSize
-                          ? props.styles.labelFontSize
-                          : 1
-                      }rem`,
-                height: "auto",
-                ...(selectedItem === item.page
-                  ? props.styles?.onSelectStyles ?? {}
-                  : {}),
-              }}
-            >
-              <CustomLink item={item}>{getLabel(item)}</CustomLink>
-            </AntMenu.Item>
-            {item.divider ? (
-              <Col
-                span={24}
-                style={{ display: "flex", justifyContent: "center" }}
+        <AntMenu
+          mode="inline"
+          /* FIXME This is a hack so we can control our own selected styling. Ideally, this should use design tokens */
+          selectedKeys={[]}
+          style={{
+            flex: "1",
+            backgroundColor,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {/* FIXME: just use props here https://ant.design/components/menu#examples */}
+          {values?.items.map((item, itemIndex) => (
+            <>
+              <AntMenu.Item
+                data-testid={item.id ?? item.testId}
+                icon={getIcon(item)}
+                key={item.page || item.url || `customItem${itemIndex}`}
+                onClick={(): void => {
+                  if (!item.openNewTab && item.page) {
+                    setSelectedItem(item.page);
+                  }
+                }}
+                style={{
+                  color:
+                    selectedItem === item.page
+                      ? (values.styles?.selectedColor as string) ?? "white"
+                      : (values.styles?.labelColor as string) ?? "grey",
+                  display: item.visible === false ? "none" : "flex",
+                  justifyContent: "center",
+                  borderRadius: 0,
+                  alignItems: "center",
+                  fontSize:
+                    selectedItem === item.page
+                      ? `${
+                          parseInt(
+                            `${
+                              props.styles?.labelFontSize
+                                ? props.styles.labelFontSize
+                                : 1
+                            }` || "1",
+                          ) + 0.2
+                        }rem`
+                      : `${
+                          props.styles?.labelFontSize
+                            ? props.styles.labelFontSize
+                            : 1
+                        }rem`,
+                  height: "auto",
+                  ...(selectedItem === item.page
+                    ? props.styles?.onSelectStyles ?? {}
+                    : {}),
+                }}
               >
-                <Divider
-                  style={{
-                    backgroundColor: "grey",
-                    width: "70%",
-                    minWidth: "70%",
-                  }}
-                />
-              </Col>
-            ) : null}
-          </>
-        ))}
-      </AntMenu>
+                <CustomLink item={item}>{getLabel(item)}</CustomLink>
+              </AntMenu.Item>
+              {item.divider ? (
+                <Col
+                  span={24}
+                  style={{ display: "flex", justifyContent: "center" }}
+                >
+                  <Divider
+                    style={{
+                      backgroundColor: "grey",
+                      width: "70%",
+                      minWidth: "70%",
+                    }}
+                  />
+                </Col>
+              ) : null}
+            </>
+          ))}
+        </AntMenu>
+      </ConfigProvider>
       {props.footer ? EnsembleRuntime.render([props.footer]) : null}
     </Col>
   );
