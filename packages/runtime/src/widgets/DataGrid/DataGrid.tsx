@@ -23,7 +23,14 @@ import React, {
   useEffect,
 } from "react";
 import type { ReactEventHandler, ReactElement } from "react";
-import { get, isArray, isString, isObject, cloneDeep } from "lodash-es";
+import {
+  get,
+  isArray,
+  isString,
+  isObject,
+  cloneDeep,
+  compact,
+} from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type {
   EnsembleWidgetProps,
@@ -161,7 +168,8 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   }>({});
   const [curPage, setCurPage] = useState<number>(props.curPage || 1);
   const [pageSize, setPageSize] = useState<number>(props.pageSize || 10);
-  const [rowsSelected, setRowsSelected] = useState<React.Key[]>([]);
+  const [rowsSelected, setRowsSelected] = useState<object[]>();
+  const [rowsKey, setRowsKey] = useState<React.Key[]>([]);
   const [allowSelection, setAllowSelection] = useState(
     props.allowSelection ?? false,
   );
@@ -281,6 +289,26 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     [curPage, onPageChangeActionCallback],
   );
 
+  const handleRowsSelection = useCallback(
+    (selectedKeys: React.Key[]) => {
+      setRowsKey(selectedKeys);
+
+      const keyField =
+        itemTemplate.key?.replace("$", "").replace("{", "").replace("}", "") ||
+        "";
+
+      const selectedRows = compact(
+        namedData.map((row) => {
+          const key = get(row, keyField) as React.Key;
+          return selectedKeys.includes(key) ? row : null;
+        }),
+      );
+
+      setRowsSelected(selectedRows);
+    },
+    [namedData, itemTemplate],
+  );
+
   const {
     rootRef,
     id: resolvedWidgetId,
@@ -297,7 +325,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     },
     props.id,
     {
-      setRowsSelected,
+      setRowsSelected: handleRowsSelection,
       setSelectionType,
       setAllowSelection,
       setPageSize: updatePageSize,
@@ -452,15 +480,15 @@ export const DataGrid: React.FC<GridProps> = (props) => {
             allowSelection
               ? {
                   type: selectionType,
-                  onChange: (selectedRowKeys, selectedRows) => {
-                    setRowsSelected(selectedRowKeys);
-                    return onRowsSelectedCallback(
-                      selectedRowKeys,
-                      selectedRows,
-                    );
+                  onChange: (selectedRowKeys, selectedRows): void => {
+                    setRowsKey(selectedRowKeys);
+                    setRowsSelected(selectedRows);
+                    if (rest.onRowsSelected) {
+                      onRowsSelectedCallback(selectedRowKeys, selectedRows);
+                    }
                   },
                   defaultSelectedRowKeys: values?.defaultSelectedRowKeys,
-                  selectedRowKeys: values?.rowsSelected,
+                  selectedRowKeys: rowsKey.length ? rowsKey : undefined,
                 }
               : undefined
           }
