@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.1.86
+
+### Patch Changes
+
+- de6e198: fix Datagrid's defaultSelectedRowKeys
+
 ## 0.1.85
 
 ### Patch Changes
