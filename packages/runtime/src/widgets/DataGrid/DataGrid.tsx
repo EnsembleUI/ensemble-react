@@ -294,8 +294,8 @@ export const DataGrid: React.FC<GridProps> = (props) => {
       setRowsKey(selectedKeys);
 
       const keyField =
-        itemTemplate.key?.replace("$", "").replace("{", "").replace("}", "") ||
-        "";
+        // eslint-disable-next-line prefer-named-capture-group
+        itemTemplate.key?.replace(/^\$\{(.*)\}$/, "$1") || ""; // replace "${...}" or '${...}' with ...
 
       const selectedRows = compact(
         namedData.map((row) => {
