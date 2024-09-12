@@ -6,7 +6,7 @@ View:
       body: |-
         ensemble.storage.set('activeIndex',3);
         ensemble.storage.set('loaderStat', false);
-        ensemble.storage.set("skip", 17)
+        ensemble.storage.set("skip", 10)
         ensemble.storage.set("iconSize", 40)
         ensemble.storage.set("iconName", "MoreHoriz")
       onComplete:
@@ -377,6 +377,7 @@ View:
                     DataGrid:
                       id: "myDataGridExample2"
                       allowSelection: true
+                      defaultSelectedRowKeys: [5, 6]
                       styles:
                         headerStyle:
                           backgroundColor: "white"
@@ -387,6 +388,9 @@ View:
                       DataColumns: ["id", "title", "description"]
                       pageSize: 17
                       totalRows: 100
+                      onRowsSelected:
+                        executeCode: |
+                          console.log(selectedRowKeys, selectedRows)
                       onPageChange:
                         executeCode:
                           body: |
@@ -405,7 +409,7 @@ View:
                       item-template:
                         data: ${ensemble.storage.get('dummyProducts')}
                         name: dummyData
-                        key: ${dummyData.key}
+                        key: ${dummyData.id}
                         template:
                           DataRow:
                             item-template:
@@ -414,7 +418,17 @@ View:
                               template:
                                 Text:
                                   text: ${value}
-
+        - Button:
+            label: get selected rows
+            onTap:
+              executeCode: |
+                console.log(myDataGridExample2.rowsSelected)
+        - Button:
+            label: select first 3 rows
+            onTap:
+              executeCode: |
+                const keys = ensemble.storage.get('dummyProducts').map(dp => dp.id);
+                myDataGridExample2.setRowsSelected(keys.slice(0, 3));
         - Card:
             styles:
               maxWidth: unset
