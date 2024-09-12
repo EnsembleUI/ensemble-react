@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.80
+
+### Patch Changes
+
+- de6e198: fix Datagrid's defaultSelectedRowKeys
+- Updated dependencies [de6e198]
+  - @ensembleui/react-runtime@0.1.86
+
 ## 0.0.79
 
 ### Patch Changes
