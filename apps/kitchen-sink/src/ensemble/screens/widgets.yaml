@@ -36,7 +36,7 @@ View:
         - Button:
             label: close all navigate modal screen
             onTap:
-              closeAllDialogs:
+              closeAllScreens:
         - Row:
             styles:
               crossAxis: center
