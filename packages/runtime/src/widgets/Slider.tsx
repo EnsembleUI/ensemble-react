@@ -17,7 +17,7 @@ interface SliderStyles {
 }
 
 export type SliderProps = {
-  initialValue?: number;
+  initialValue?: number[];
   onChange?: EnsembleAction;
   onComplete?: EnsembleAction;
   min?: number;
@@ -26,6 +26,7 @@ export type SliderProps = {
   reverse?: boolean;
   dots?: boolean;
   divisions?: number;
+  range?: boolean;
 } & FormInputProps<number | number[]> &
   EnsembleWidgetProps<SliderStyles>;
 
@@ -42,7 +43,7 @@ const SliderWidget: React.FC<SliderProps> = (props) => {
   const onCompleteAction = useEnsembleAction(props.onComplete);
 
   const onChangeActionCallback = useCallback(
-    (newValue: number) => {
+    (newValue: number | number[]) => {
       if (!onChangeAction) {
         return;
       }
@@ -53,7 +54,7 @@ const SliderWidget: React.FC<SliderProps> = (props) => {
   );
 
   const onCompleteActionCallback = useCallback(
-    (newValue: number) => {
+    (newValue: number | number[]) => {
       if (!onCompleteAction) {
         return;
       }
@@ -67,12 +68,12 @@ const SliderWidget: React.FC<SliderProps> = (props) => {
     return ((values?.max || 0) - (values?.min || 0)) / (values?.divisions || 1);
   }, [values?.max, values?.min, values?.divisions]);
 
-  const handleChange = (newValue: number): void => {
+  const handleChange = (newValue: number | number[]): void => {
     setValue(newValue);
     onChangeActionCallback(newValue);
   };
 
-  const handleAfterChangeComplete = (newValue: number): void => {
+  const handleAfterChangeComplete = (newValue: number | number[]): void => {
     setValue(newValue);
     onCompleteActionCallback(newValue);
   };
@@ -93,11 +94,12 @@ const SliderWidget: React.FC<SliderProps> = (props) => {
           dots={values?.dots}
           max={values?.max}
           min={values?.min}
-          onAfterChange={handleAfterChangeComplete}
           onChange={handleChange}
+          onChangeComplete={handleAfterChangeComplete}
+          range={values?.range || {}}
           reverse={values?.reverse}
           step={steps}
-          value={values?.value as number}
+          value={values?.value as number[]}
           vertical={values?.vertical}
         />
       </EnsembleFormItem>
