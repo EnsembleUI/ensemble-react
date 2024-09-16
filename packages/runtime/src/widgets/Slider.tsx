@@ -1,5 +1,6 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Slider } from "antd";
+import { isEmpty } from "lodash-es";
 import {
   useRegisterBindings,
   type EnsembleAction,
@@ -31,14 +32,21 @@ export type SliderProps = {
   EnsembleWidgetProps<SliderStyles>;
 
 const SliderWidget: React.FC<SliderProps> = (props) => {
-  const [value, setValue] = useState(props.value);
-  const { values } = useRegisterBindings(
+  const [value, setValue] = useState<number | number[]>();
+  const { values, rootRef } = useRegisterBindings(
     { ...props, value, widgetName },
     props.id,
     {
       setValue,
     },
   );
+
+  useEffect(() => {
+    if (isEmpty(value) && values?.initialValue) {
+      setValue(values.initialValue);
+    }
+  }, [values?.initialValue]);
+
   const onChangeAction = useEnsembleAction(props.onChange);
   const onCompleteAction = useEnsembleAction(props.onComplete);
 
@@ -97,9 +105,10 @@ const SliderWidget: React.FC<SliderProps> = (props) => {
           onChange={handleChange}
           onChangeComplete={handleAfterChangeComplete}
           range={values?.range || {}}
+          ref={rootRef}
           reverse={values?.reverse}
           step={steps}
-          value={values?.value as number[]}
+          value={value as number[]}
           vertical={values?.vertical}
         />
       </EnsembleFormItem>

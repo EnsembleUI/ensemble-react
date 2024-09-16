@@ -307,6 +307,36 @@ View:
               - Text:
                   text: ${`interpolate ${ensemble.storage.get('yyy')} multiple times ${ensemble.storage.get('yyy')}`}
 
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:
+              - Markdown:
+                  text: |
+                    ### Slider
+              - Slider:
+                  id: sliderWidget
+                  initialValue: [28, 30]
+                  styles:
+                    maxWidth: unset
+                  dots: true
+                  min: 20
+                  max: 40
+                  value: 20
+                  divisions: 10
+                  onChange:
+                    executeCode: |
+                      console.log('Slider value changed: ' + value);
+                  onComplete:
+                    executeCode: |
+                      console.log('Slider value completed: ' + value);
+              - Button:
+                  label: checkvalue
+                  onTap:
+                    executeCode: |
+                      console.log('Slider value: ' + sliderWidget.value);
+
 Global:
   scriptName: test.js
 

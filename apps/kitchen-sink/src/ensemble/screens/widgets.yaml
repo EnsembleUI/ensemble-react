@@ -1069,6 +1069,8 @@ View:
                   text: |
                     ### Slider
               - Slider:
+                  id: sliderWidget
+                  initialValue: [28, 30]
                   styles:
                     maxWidth: unset
                   dots: true
@@ -1082,6 +1084,11 @@ View:
                   onComplete:
                     executeCode: |
                       console.log('Slider value completed: ' + value);
+              - Button:
+                  label: checkvalue
+                  onTap:
+                    executeCode: |
+                      console.log('Slider value: ' + sliderWidget.value);
 
         - Card:
             styles:
