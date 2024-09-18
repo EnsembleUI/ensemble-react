@@ -88,6 +88,7 @@ import { useShowToast } from "./useShowToast";
 import { useCloseAllDialogs } from "./useCloseAllDialogs";
 import { useNavigateUrl } from "./useNavigateUrl";
 import { useNavigateExternalScreen } from "./useNavigateExternalScreen";
+import { useCloseAllScreens } from "./useCloseAllModalScreens";
 
 export type EnsembleActionHook<
   T = unknown,
@@ -205,6 +206,7 @@ export const useExecuteCode: EnsembleActionHook<
                     openModal: modalContext?.openModal,
                   }),
                 closeAllDialogs: (): void => modalContext?.closeAllModals(),
+                closeAllScreens: (): void => modalContext?.closeAllScreens(),
                 invokeAPI: async (
                   apiName: string,
                   apiInputs?: { [key: string]: unknown },
@@ -970,6 +972,10 @@ export const useEnsembleAction = (
 
   if ("closeAllDialogs" in action) {
     return useCloseAllDialogs();
+  }
+
+  if ("closeAllScreens" in action) {
+    return useCloseAllScreens();
   }
 
   if ("pickFiles" in action) {
