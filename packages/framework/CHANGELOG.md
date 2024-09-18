@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.1.59
+
+### Patch Changes
+
+- f3ace27: Added support for closeAllScreens action
+
 ## 0.1.58
 
 ### Patch Changes
