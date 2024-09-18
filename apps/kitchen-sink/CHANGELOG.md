@@ -1,5 +1,14 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.81
+
+### Patch Changes
+
+- f3ace27: Added support for closeAllScreens action
+- Updated dependencies [f3ace27]
+  - @ensembleui/react-framework@0.1.59
+  - @ensembleui/react-runtime@0.1.87
+
 ## 0.0.80
 
 ### Patch Changes
