@@ -1288,6 +1288,19 @@ View:
                   onTap:
                     executeCode: |
                       qrcode.setValue('sagar davara 123')
+              - QRCode:
+                  icon: https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg
+                  iconSize: 60
+                  value: sagar davara
+              - QRCode:
+                  status: "scanned"
+                  value: sagar davara
+              - QRCode:
+                  status: "expired"
+                  value: sagar davara
+                  onRefresh:
+                    executeCode: |
+                      console.log('refreshed')
 
 API:
   getDummyProducts:
