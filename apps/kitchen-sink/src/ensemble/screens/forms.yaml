@@ -204,6 +204,12 @@ View:
                         label: Date 2
                         value: "2024/04/04"
                         hintText: Choose date 2
+                    - TextInput:
+                        id: customNumberInput
+                        required: true
+                        validator:
+                          regex: ^\d{10}$
+                          regexError: "Please enter a 10 digit number"
                     - Button:
                         submitForm: true
                         label: Submit

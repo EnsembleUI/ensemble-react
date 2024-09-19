@@ -49,6 +49,7 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
           : undefined),
         ...formItemStyles,
       }}
+      validateFirst
       validateTrigger={
         values?.validateOnUserInteraction === true ? "onChange" : "onSubmit"
       }
