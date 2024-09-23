@@ -6,11 +6,13 @@ import {
   useMemo,
   useState,
   useCallback,
+  useRef,
   type FormEvent,
 } from "react";
 import { runes } from "runes2";
 import type { Rule } from "antd/es/form";
 import { forEach } from "lodash-es";
+import IMask from "imask";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { WidgetRegistry } from "../../registry";
 import type { TextStyles } from "../Text";
@@ -19,6 +21,12 @@ import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
 
 const widgetName = "TextInput";
+
+interface MaskInputRef {
+  input: HTMLInputElement;
+  on: (input: string, func: () => void) => void;
+  value: string;
+}
 
 export type TextInputProps = {
   hintStyle?: TextStyles;
@@ -43,6 +51,8 @@ export type TextInputProps = {
 
 export const TextInput: React.FC<TextInputProps> = (props) => {
   const [value, setValue] = useState<string>();
+  const maskRef = useRef<MaskInputRef | null>(null);
+
   const { values, rootRef } = useRegisterBindings(
     { ...props, initialValue: props.value, value, widgetName },
     props.id,
@@ -80,6 +90,15 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
       });
     }
   }, [value, formInstance, values?.id, values?.label]);
+
+  useEffect(() => {
+    if (values?.mask && maskRef.current) {
+      IMask(maskRef.current.input, {
+        mask: values.mask.replace(/#/g, "0").replace(/A/g, "a"),
+        lazy: true,
+      });
+    }
+  }, [values, value, handleChange]);
 
   const inputType = useMemo(() => {
     switch (values?.inputType) {
@@ -236,7 +255,11 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
               onInput: (event): void => handleKeyDown(event),
             })}
             placeholder={values?.hintText ?? ""}
-            ref={rootRef}
+            ref={(myRef: null): null => {
+              maskRef.current = myRef;
+              rootRef(myRef);
+              return myRef;
+            }}
             style={{
               ...(values?.styles ?? values?.hintStyle),
               ...(values?.styles?.visible === false
