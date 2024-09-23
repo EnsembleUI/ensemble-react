@@ -47,6 +47,7 @@ export interface ModalContextProps {
   ) => void;
   closeAllModals: () => void;
   navigateBack: () => void;
+  closeAllScreens: () => void;
 }
 
 export const ModalContext = createContext<ModalContextProps | undefined>(
@@ -229,8 +230,24 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     setShouldNavigateBack(true);
   }, []);
 
+  // close all navigate modal screens
+  const closeAllScreens = useCallback((): void => {
+    const lastModalScreen = modalState
+      .reverse()
+      .find((modal) => !modal.isDialog);
+
+    if (lastModalScreen) {
+      closeModal(modalState.indexOf(lastModalScreen));
+    }
+
+    if (parentModalContext) {
+      setShouldNavigateBack(true);
+      parentModalContext.closeAllScreens();
+    }
+  }, []);
+
   const modalContext = useMemo(
-    () => ({ openModal, closeAllModals, navigateBack }),
+    () => ({ openModal, closeAllModals, navigateBack, closeAllScreens }),
     [closeAllModals, openModal, navigateBack],
   );
 
