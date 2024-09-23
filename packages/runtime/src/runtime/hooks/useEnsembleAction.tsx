@@ -48,9 +48,11 @@ import {
   toNumber,
 } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ModalContext } from "../modal";
 import { EnsembleRuntime } from "../runtime";
 import { getShowDialogOptions } from "../showDialog";
+import { locationApi } from "../locationApi";
 import {
   handleConnectSocket,
   handleMessageSocket,
@@ -96,6 +98,8 @@ export const useExecuteCode: EnsembleActionHook<
   const isCodeString = isString(action);
   const screen = useScreenContext();
   const modalContext = useContext(ModalContext);
+  const navigate = useNavigate();
+  const location = useLocation();
   const appContext = useApplicationContext();
   const onCompleteAction = useEnsembleAction(
     isCodeString ? undefined : action?.onComplete,
@@ -136,6 +140,7 @@ export const useExecuteCode: EnsembleActionHook<
       });
       return retVal;
     },
+    { navigate, location: locationApi(location) },
     [js, onCompleteAction],
     { modalContext, render: EnsembleRuntime.render, EnsembleScreen },
   );

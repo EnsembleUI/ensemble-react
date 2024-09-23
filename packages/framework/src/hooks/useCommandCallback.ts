@@ -5,16 +5,18 @@ import { mapKeys } from "lodash-es";
 import { createEvaluationContext } from "../evaluate";
 import type { EnsembleUser } from "../state";
 import { appAtom, screenAtom, themeAtom, userAtom } from "../state";
-import type { EnsembleContext } from "../shared/ensemble";
+import type { EnsembleContext, EnsembleLocation } from "../shared/ensemble";
 import { DateFormatter } from "../date";
-import type { ModalContext } from "../api";
+import type { ModalContext, NavigateFunction } from "../api";
 import {
   handleConnectSocket,
   handleDisconnectSocket,
   handleMessageSocket,
   invokeAPI,
+  navigateApi,
   navigateExternalScreen,
   navigateModalScreen,
+  navigateUrl,
   showDialog,
 } from "../api";
 import type {
@@ -22,6 +24,7 @@ import type {
   EnsembleWidget,
   NavigateExternalScreen,
   NavigateModalScreenAction,
+  NavigateScreenAction,
   ShowDialogAction,
 } from "../shared";
 import { deviceAtom } from "./useDeviceObserver";
@@ -37,11 +40,13 @@ interface CallbackContext {
     screen: EnsembleScreenModel;
   }>;
 }
+
 export const useCommandCallback = <
   T extends unknown[] = unknown[],
   R = unknown,
 >(
   command: (evalContext: EnsembleContext, ...args: T) => R,
+  apis: { navigate: NavigateFunction; location: EnsembleLocation },
   dependencies: unknown[] = [],
   callbackContext?: CallbackContext,
 ): ReturnType<typeof useAtomCallback<R, T>> => {
@@ -76,6 +81,15 @@ export const useCommandCallback = <
             formatter: DateFormatter(),
             env: applicationContext.env,
             secrets: applicationContext.secrets,
+            location: apis.location,
+            navigateScreen: (targetScreen: NavigateScreenAction): void =>
+              navigateApi(targetScreen, screenContext, apis.navigate),
+            navigateUrl: (url: string, inputs?: { [key: string]: unknown }) =>
+              navigateUrl(url, apis.navigate, inputs),
+            navigateBack: (): void =>
+              callbackContext?.modalContext
+                ? callbackContext.modalContext.navigateBack()
+                : apis.navigate(-1),
             invokeAPI: async (
               apiName: string,
               apiInputs?: { [key: string]: unknown },

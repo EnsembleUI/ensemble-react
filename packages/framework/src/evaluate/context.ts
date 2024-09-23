@@ -5,7 +5,7 @@ import type {
   ScreenContextDefinition,
 } from "../state";
 import type { EnsembleAppModel, EnsembleThemeModel } from "../shared";
-import { isUsingMockResponse } from "../appConfig";
+import { isUsingMockResponse, setUseMockResponse } from "../appConfig";
 
 export interface EvaluationContextProps {
   applicationContext: Omit<
@@ -48,7 +48,8 @@ export const createEvaluationContext = ({
     themes: keys(applicationContext.application?.themes),
     theme: applicationContext.selectedTheme?.name,
     useMockResponse: isUsingMockResponse(applicationContext.application?.id),
-    setUseMockResponse: noop,
+    setUseMockResponse: (value: boolean) =>
+      setUseMockResponse(applicationContext.application?.id, value), //noop,
   };
 
   const env = applicationContext.env;

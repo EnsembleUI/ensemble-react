@@ -15,7 +15,9 @@ export interface EnsembleInterface {
   secrets: EnsembleSecretsConfig;
   user?: EnsembleUser;
   device: EnsembleDeviceInfo;
+  location: EnsembleLocation;
   navigateScreen: (screenName: string, inputs?: unknown[]) => void;
+  navigateUrl: (url: string, inputs?: { [key: string]: unknown }) => void;
   navigateModalScreen: (screenName: string, inputs?: unknown[]) => void;
   navigateExternalScreen: (url: NavigateExternalScreen) => void;
   openUrl: (url: NavigateExternalScreen) => void;
@@ -56,4 +58,13 @@ interface EnsembleAppConfig {
 
 interface EnsembleUser {
   [k: string]: unknown;
+}
+
+export interface EnsembleLocationInterface {
+  pathname?: string;
+  search?: string;
+}
+
+export interface EnsembleLocation {
+  get: (key: keyof EnsembleLocationInterface) => string | undefined;
 }

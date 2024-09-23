@@ -46,7 +46,10 @@ export const invokeAPI = async (
     api,
     { ...apiInputs, ...context },
     {
-      mockResponse: mockResponse(evaluatedMockResponse, useMockResponse),
+      mockResponse: mockResponse(
+        evaluatedMockResponse ?? api.mockResponse,
+        useMockResponse,
+      ),
       useMockResponse,
     },
   );
