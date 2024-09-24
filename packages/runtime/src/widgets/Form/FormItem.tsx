@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import type { FormItemProps } from "antd";
 import { Form as AntForm } from "antd";
 import { isString } from "lodash-es";
@@ -20,28 +21,32 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
   const formInstance = AntForm.useFormInstance();
   const requiredRule = { required: Boolean(values?.required) };
 
+  const fieldLabel = useMemo(() => {
+    return values?.label ? (
+      <label
+        htmlFor={values.id ?? values.label}
+        style={{
+          ...values.labelStyle,
+        }}
+        title={values.label}
+      >
+        {isString(values.label)
+          ? values.label
+          : EnsembleRuntime.render([unwrapWidget(values.label)])}
+      </label>
+    ) : null;
+  }, []);
+
   return (
     <AntForm.Item
       className={values?.styles?.names}
       initialValue={values?.initialValue}
-      label={
-        values?.label ? (
-          <label
-            htmlFor={values.id ?? values.label}
-            style={{
-              ...values.labelStyle,
-            }}
-            title={values.label}
-          >
-            {isString(values.label)
-              ? values.label
-              : EnsembleRuntime.render([unwrapWidget(values.label)])}
-          </label>
-        ) : null
-      }
-      messageVariables={{ label: values?.label ?? values?.id ?? "" }}
+      label={fieldLabel}
+      messageVariables={{
+        label: isString(values?.label) ? values.label : values?.id || "",
+      }}
       name={formInstance ? values?.id ?? values?.label : undefined}
-      rules={rules?.concat(requiredRule) || [requiredRule]}
+      rules={[requiredRule, ...(rules || [])]}
       style={{
         margin: "0px",
         ...(values?.styles?.visible === false
