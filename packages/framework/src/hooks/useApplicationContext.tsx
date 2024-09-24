@@ -38,7 +38,7 @@ export const ApplicationContextProvider: React.FC<
   });
 
   // load custom fonts
-  useFonts(app.fonts || []);
+  useFonts(app.fonts);
 
   return (
     <Provider key={app.id}>
