@@ -63,23 +63,24 @@ export const useCommandCallback = <
         const theme = get(themeAtom);
         const user = get(userAtom);
 
+        const storageApi = createStorageApi(storage, (next) =>
+          set(screenStorageAtom, next),
+        );
+
         const customWidgets =
           applicationContext.application?.customWidgets.reduce(
             (acc, widget) => ({ ...acc, [widget.name]: widget }),
             {},
           );
-
         const evalContext = createEvaluationContext({
           applicationContext,
-          screenContext: {}, // if screenContext is passed from here, it overrides values of screen's widgets in evaluate function. Yet to confirm if removal of this piece would cause any issue.
+          screenContext,
           ensemble: {
             user: {
               ...user,
               setUser: (userUpdate: EnsembleUser) => set(userAtom, userUpdate),
             },
-            storage: createStorageApi(storage, (next) =>
-              set(screenStorageAtom, next),
-            ),
+            storage: storageApi,
             formatter: DateFormatter(),
             env: applicationContext.env,
             secrets: applicationContext.secrets,
@@ -96,15 +97,21 @@ export const useCommandCallback = <
               apiName: string,
               apiInputs?: { [key: string]: unknown },
             ) =>
-              invokeAPI(apiName, screenContext, apiInputs, {
-                ...customScope,
-                ensemble: {
-                  env: applicationContext.env,
-                  secrets: applicationContext.secrets,
-                  storage: applicationContext.storage,
+              invokeAPI(
+                apiName,
+                screenContext,
+                apiInputs,
+                {
+                  ...customScope,
+                  ensemble: {
+                    env: applicationContext.env,
+                    secrets: applicationContext.secrets,
+                    storage: storageApi,
+                  },
                 },
+                undefined,
                 set,
-              }),
+              ),
             navigateExternalScreen: (url: NavigateExternalScreen) =>
               navigateExternalScreen(url),
             openUrl: (url: NavigateExternalScreen) =>

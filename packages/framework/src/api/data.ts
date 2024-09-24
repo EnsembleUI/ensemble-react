@@ -56,7 +56,7 @@ export const invokeAPI = async (
 
   if (setter) {
     set(update, api.name, res);
-    setter(screenDataAtom, { update });
+    setter(screenDataAtom, { ...update });
   }
   return res;
 };

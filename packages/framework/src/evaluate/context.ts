@@ -6,6 +6,7 @@ import type {
 } from "../state";
 import type { EnsembleAppModel, EnsembleThemeModel } from "../shared";
 import { isUsingMockResponse, setUseMockResponse } from "../appConfig";
+import { widgetStatesToInvokables } from "./evaluate";
 
 export interface EvaluationContextProps {
   applicationContext: Omit<
@@ -39,7 +40,9 @@ export const createEvaluationContext = ({
   const screenInputs = merge(
     {},
     screenContext.inputs,
-    screenContext.widgets,
+    screenContext.widgets
+      ? Object.fromEntries(widgetStatesToInvokables(screenContext.widgets))
+      : {},
     screenContext.data,
   );
 

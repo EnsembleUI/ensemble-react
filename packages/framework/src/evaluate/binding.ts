@@ -77,7 +77,7 @@ export const createBindingAtom = <T = unknown>(
           value,
         )}`,
       );
-      return [name, value?.values];
+      return [name, value];
     });
 
     const evaluationContext = createEvaluationContext({
