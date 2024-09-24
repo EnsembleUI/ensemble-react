@@ -28,7 +28,7 @@ import type {
   ShowDialogAction,
 } from "../shared";
 import { deviceAtom } from "./useDeviceObserver";
-import { useEnsembleStorage } from "./useEnsembleStorage";
+import { createStorageApi, screenStorageAtom } from "./useEnsembleStorage";
 import { useCustomScope } from "./useCustomScope";
 import { useLanguageScope } from "./useLanguageScope";
 
@@ -51,7 +51,6 @@ export const useCommandCallback = <
   callbackContext?: CallbackContext,
 ): ReturnType<typeof useAtomCallback<R, T>> => {
   const customScope = useCustomScope();
-  const storage = useEnsembleStorage();
   const { i18n } = useLanguageScope();
 
   return useAtomCallback(
@@ -59,6 +58,7 @@ export const useCommandCallback = <
       (get, set, ...args: T) => {
         const applicationContext = get(appAtom);
         const screenContext = get(screenAtom);
+        const storage = get(screenStorageAtom);
         const device = get(deviceAtom);
         const theme = get(themeAtom);
         const user = get(userAtom);
@@ -77,7 +77,9 @@ export const useCommandCallback = <
               ...user,
               setUser: (userUpdate: EnsembleUser) => set(userAtom, userUpdate),
             },
-            storage,
+            storage: createStorageApi(storage, (next) =>
+              set(screenStorageAtom, next),
+            ),
             formatter: DateFormatter(),
             env: applicationContext.env,
             secrets: applicationContext.secrets,
@@ -101,6 +103,7 @@ export const useCommandCallback = <
                   secrets: applicationContext.secrets,
                   storage: applicationContext.storage,
                 },
+                set,
               }),
             navigateExternalScreen: (url: NavigateExternalScreen) =>
               navigateExternalScreen(url),

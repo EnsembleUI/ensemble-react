@@ -1,4 +1,4 @@
-import { mapKeys, merge, keys, noop } from "lodash-es";
+import { mapKeys, merge, keys } from "lodash-es";
 import type { EnsembleContext, EnsembleInterface } from "../shared/ensemble";
 import type {
   ApplicationContextDefinition,
