@@ -43,7 +43,10 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
       initialValue={values?.initialValue}
       label={fieldLabel}
       messageVariables={{
-        label: isString(values?.label) ? values.label : values?.id || "",
+        label:
+          values?.label && isString(values.label)
+            ? values.label
+            : values?.id || "",
       }}
       name={formInstance ? values?.id ?? values?.label : undefined}
       rules={[requiredRule, ...(rules || [])]}
