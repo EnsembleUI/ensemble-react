@@ -5,8 +5,6 @@ import type {
 } from "@ensembleui/react-framework";
 import {
   CustomScopeProvider,
-  defaultScreenContext,
-  evaluate,
   useRegisterBindings,
   useTemplateData,
 } from "@ensembleui/react-framework";
@@ -106,11 +104,13 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
     if (isObject(itemTemplate) && !isEmpty(namedData)) {
       namedData.forEach((item: unknown) => {
         const typedItem = get(item, itemTemplate.name) as CustomScope;
-        const evaluateValue = evaluate<string | number>(
-          defaultScreenContext,
-          itemTemplate.value,
-          { [itemTemplate.name]: typedItem },
-        );
+        const evaluateValue = get(
+          item,
+          itemTemplate.value
+            .toString()
+            // eslint-disable-next-line prefer-named-capture-group
+            .replace(/['"]?\$\{([^}]*)\}['"]?/g, "$1"),
+        ) as string | number;
 
         radioOptions.push({
           disabled: values?.enabled === false || typedItem.enabled === false,
