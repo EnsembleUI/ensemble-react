@@ -18,7 +18,7 @@ interface SliderStyles {
 }
 
 export type SliderProps = {
-  initialValue?: number[];
+  initialValue?: number | number[];
   onChange?: EnsembleAction;
   onComplete?: EnsembleAction;
   min?: number;
@@ -92,25 +92,40 @@ const SliderWidget: React.FC<SliderProps> = (props) => {
     }
   `;
 
+  const sliderProps = useMemo(
+    () => ({
+      disabled: values?.enabled === false,
+      dots: values?.dots,
+      max: values?.max,
+      min: values?.min,
+      onChange: handleChange,
+      onChangeComplete: handleAfterChangeComplete,
+      ref: rootRef,
+      reverse: values?.reverse,
+      step: steps,
+      vertical: values?.vertical,
+    }),
+    [values],
+  );
+
   return (
     <>
       <style>{customStyle}</style>
       <EnsembleFormItem values={values}>
-        <Slider
-          defaultValue={values?.initialValue}
-          disabled={values?.enabled === false}
-          dots={values?.dots}
-          max={values?.max}
-          min={values?.min}
-          onChange={handleChange}
-          onChangeComplete={handleAfterChangeComplete}
-          range={values?.range || {}}
-          ref={rootRef}
-          reverse={values?.reverse}
-          step={steps}
-          value={value as number[]}
-          vertical={values?.vertical}
-        />
+        {values?.range ? (
+          <Slider
+            {...sliderProps}
+            defaultValue={values.initialValue as number[]}
+            range
+            value={value as number[]}
+          />
+        ) : (
+          <Slider
+            {...sliderProps}
+            defaultValue={values?.initialValue as number}
+            value={value as number}
+          />
+        )}
       </EnsembleFormItem>
     </>
   );

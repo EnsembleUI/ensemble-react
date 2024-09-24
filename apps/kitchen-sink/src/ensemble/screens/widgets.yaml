@@ -1070,10 +1070,11 @@ View:
                     ### Slider
               - Slider:
                   id: sliderWidget
-                  initialValue: [28, 30]
+                  initialValue: [30, 40]
                   styles:
                     maxWidth: unset
                   dots: true
+                  range: true
                   min: 20
                   max: 40
                   value: 20
