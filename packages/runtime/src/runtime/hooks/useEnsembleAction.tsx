@@ -14,6 +14,7 @@ import {
   isUsingMockResponse,
   mockResponse,
   useCommandCallback,
+  useScreenModel,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -96,7 +97,7 @@ export const useExecuteCode: EnsembleActionHook<
   UseExecuteCodeActionOptions
 > = (action, options) => {
   const isCodeString = isString(action);
-  const screen = useScreenContext();
+  const screenModel = useScreenModel();
   const modalContext = useContext(ModalContext);
   const navigate = useNavigate();
   const location = useLocation();
@@ -127,13 +128,13 @@ export const useExecuteCode: EnsembleActionHook<
 
   const execute = useCommandCallback(
     (evalContext, ...args: unknown[]) => {
-      if (!screen || !js) {
+      if (!js) {
         return;
       }
       const context = merge({}, evalContext, ...args, options?.context) as {
         [key: string]: unknown;
       };
-      const retVal = evaluate(screen, js, context);
+      const retVal = evaluate({ model: screenModel }, js, context);
       onCompleteAction?.callback({
         ...(args[0] as { [key: string]: unknown }),
         result: retVal,
@@ -141,7 +142,7 @@ export const useExecuteCode: EnsembleActionHook<
       return retVal;
     },
     { navigate, location: locationApi(location) },
-    [js, onCompleteAction],
+    [js, onCompleteAction, screenModel],
     { modalContext, render: EnsembleRuntime.render, EnsembleScreen },
   );
 
