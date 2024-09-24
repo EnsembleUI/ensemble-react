@@ -1,20 +1,26 @@
 import { isEmpty, merge, toString } from "lodash-es";
 import type { ScreenContextDefinition } from "../state/screen";
-import type { InvokableMethods } from "../state/widget";
+import type { InvokableMethods, WidgetState } from "../state/widget";
 import { sanitizeJs, debug } from "../shared";
+
+export const widgetStatesToInvokables = (widgets: {
+  [key: string]: WidgetState | undefined;
+}): [string, InvokableMethods | undefined][] => {
+  return Object.entries(widgets).map(([id, state]) => {
+    const methods = state?.invokable?.methods;
+    const values = state?.values;
+    return [id, merge({}, values, methods)];
+  });
+};
 
 export const buildEvaluateFn = (
   screen: Partial<ScreenContextDefinition>,
   js?: string,
   context?: { [key: string]: unknown },
 ): (() => unknown) => {
-  const widgets: [string, InvokableMethods | undefined][] = Object.entries(
-    screen.widgets ?? {},
-  ).map(([id, state]) => {
-    const methods = state?.invokable?.methods;
-    const values = state?.values;
-    return [id, merge({}, values, methods)];
-  });
+  const widgets: [string, InvokableMethods | undefined][] = screen.widgets
+    ? widgetStatesToInvokables(screen.widgets)
+    : [];
 
   const invokableObj = Object.fromEntries(
     [

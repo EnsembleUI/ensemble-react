@@ -4,11 +4,16 @@ Widget:
       console.log('StyledText Widget loaded');
       console.log(inputText);
   body:
-    Text:
-      text: Styled Text
-      styles:
-        fontSize: 24px
-        fontWeight: ${typography.fontWeight['bold']}
-        color: blue
-        backgroundColor: ${colors.dark['300']}
-        padding: 8px
+    Column:
+      onTap:
+        executeCode: |
+          console.log(inputText)
+      children:
+        - Text:
+            text: Styled Text
+            styles:
+              fontSize: 24px
+              fontWeight: ${typography.fontWeight['bold']}
+              color: blue
+              backgroundColor: ${colors.dark['300']}
+              padding: 8px
