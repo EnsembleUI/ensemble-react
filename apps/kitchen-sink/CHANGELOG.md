@@ -1,5 +1,32 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.81
+
+### Patch Changes
+
+- b42978c: Optimize dependencies for useExecuteCode
+- 69d5579: modernize PopupMenu widget
+- ab37ee9: Added support to customize nooption in search widget
+- 8487a99: Added support for closeAllScreens action
+- c9a5acb: Fix datagrid rows deselected issue
+- 0f9525d: fix Datagrid's defaultSelectedRowKeys
+- e42c9b4: added support for screen lavel font colour support
+- Updated dependencies [7602b73]
+- Updated dependencies [b42978c]
+- Updated dependencies [69d5579]
+- Updated dependencies [ab37ee9]
+- Updated dependencies [06cc75e]
+- Updated dependencies [6c59f18]
+- Updated dependencies [8487a99]
+- Updated dependencies [c9a5acb]
+- Updated dependencies [4b8f19a]
+- Updated dependencies [0f9525d]
+- Updated dependencies [f528819]
+- Updated dependencies [f466659]
+- Updated dependencies [e42c9b4]
+  - @ensembleui/react-runtime@0.2.3
+  - @ensembleui/react-framework@0.2.3
+
 ## 0.0.80
 
 ### Patch Changes
