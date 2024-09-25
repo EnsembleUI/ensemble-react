@@ -22,7 +22,11 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
   const requiredRule = { required: Boolean(values?.required) };
 
   const fieldLabel = useMemo(() => {
-    return values?.label ? (
+    if (!values?.label) {
+      return null;
+    }
+
+    return (
       <label
         htmlFor={values.id ?? values.label}
         style={{
@@ -34,7 +38,7 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
           ? values.label
           : EnsembleRuntime.render([unwrapWidget(values.label)])}
       </label>
-    ) : null;
+    );
   }, []);
 
   return (
@@ -43,10 +47,7 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
       initialValue={values?.initialValue}
       label={fieldLabel}
       messageVariables={{
-        label:
-          values?.label && isString(values.label)
-            ? values.label
-            : values?.id || "",
+        label: isString(values?.label) ? values?.label : values?.id || "",
       }}
       name={formInstance ? values?.id ?? values?.label : undefined}
       rules={[requiredRule, ...(rules || [])]}
