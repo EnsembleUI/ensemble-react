@@ -33,6 +33,10 @@ View:
       styles:
         names: page
       children:
+        - Button:
+            label: close all navigate modal screen
+            onTap:
+              closeAllScreens:
         - Row:
             styles:
               crossAxis: center
