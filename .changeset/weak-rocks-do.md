@@ -3,4 +3,4 @@
 "@ensembleui/react-runtime": patch
 ---
 
-modernize PopupMenu widget
+Added support for qr code widget

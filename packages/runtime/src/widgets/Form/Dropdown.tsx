@@ -64,20 +64,22 @@ const DropdownRenderer = (
   menu: React.ReactElement,
   panel?: { [key: string]: unknown },
 ): React.ReactElement => {
+  const panelOption = useMemo(() => {
+    return panel ? EnsembleRuntime.render([unwrapWidget(panel)]) : null;
+  }, []);
+
   return (
     <>
       {menu}
-      {panel ? (
-        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-        <div
-          onMouseDown={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          }}
-        >
-          {EnsembleRuntime.render([unwrapWidget(panel)])}
-        </div>
-      ) : null}
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+      <div
+        onMouseDown={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+      >
+        {panelOption}
+      </div>
     </>
   );
 };
