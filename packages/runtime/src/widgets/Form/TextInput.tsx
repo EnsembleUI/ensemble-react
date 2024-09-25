@@ -8,6 +8,7 @@ import {
   useCallback,
   useRef,
   type FormEvent,
+  RefCallback,
 } from "react";
 import { runes } from "runes2";
 import type { Rule } from "antd/es/form";
@@ -21,12 +22,6 @@ import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
 
 const widgetName = "TextInput";
-
-interface MaskInputRef {
-  input: HTMLInputElement;
-  on: (input: string, func: () => void) => void;
-  value: string;
-}
 
 export type TextInputProps = {
   hintStyle?: TextStyles;
@@ -51,7 +46,7 @@ export type TextInputProps = {
 
 export const TextInput: React.FC<TextInputProps> = (props) => {
   const [value, setValue] = useState<string>();
-  const maskRef = useRef<MaskInputRef | null>(null);
+  const maskRef = useRef<{ input: HTMLInputElement } | null>(null);
 
   const { values, rootRef } = useRegisterBindings(
     { ...props, initialValue: props.value, value, widgetName },
@@ -73,6 +68,11 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     },
     [action],
   );
+
+  const handleRef: RefCallback<never> = (node) => {
+    maskRef.current = node;
+    rootRef(node);
+  };
 
   const handleKeyDown = useCallback((e: FormEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
@@ -98,7 +98,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
         lazy: true,
       });
     }
-  }, [values, value, handleChange]);
+  }, [values?.mask]);
 
   const inputType = useMemo(() => {
     switch (values?.inputType) {
@@ -255,11 +255,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
               onInput: (event): void => handleKeyDown(event),
             })}
             placeholder={values?.hintText ?? ""}
-            ref={(myRef: null): null => {
-              maskRef.current = myRef;
-              rootRef(myRef);
-              return myRef;
-            }}
+            ref={handleRef}
             style={{
               ...(values?.styles ?? values?.hintStyle),
               ...(values?.styles?.visible === false
