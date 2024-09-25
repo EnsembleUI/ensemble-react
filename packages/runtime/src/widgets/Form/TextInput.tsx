@@ -40,6 +40,7 @@ export type TextInputProps = {
     maxLength?: number;
     regex?: string;
     regexError?: string;
+    maskError?: string;
   };
 } & EnsembleWidgetProps<TextStyles> &
   FormInputProps<string>;
@@ -196,8 +197,17 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
 
     if (values?.mask && patternValue) {
       rulesArray.push({
-        pattern: new RegExp(patternValue),
-        message: `The value must be of the format ${values.mask}`,
+        validator: (_, inputValue?: string) => {
+          if (new RegExp(patternValue).test(inputValue || "")) {
+            return Promise.resolve();
+          }
+          return Promise.reject(
+            new Error(
+              values.validator?.maskError ||
+                `The value must be of the format ${values.mask || ""}`,
+            ),
+          );
+        },
       });
     }
 
