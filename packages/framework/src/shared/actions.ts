@@ -148,6 +148,8 @@ export interface UploadFilesAction {
 
 export type CloseAllDialogsAction = null;
 
+export type CloseAllScreensAction = null;
+
 export interface ExecuteActionGroupAction {
   actions: EnsembleAction[];
 }
@@ -199,6 +201,7 @@ export type EnsembleAction =
   // | { dismissBottomModal?: DismissBottomModal }
   | { showDialog?: ShowDialogAction }
   | { closeAllDialogs?: CloseAllDialogsAction }
+  | { closeAllScreens?: CloseAllScreensAction }
   | { showToast?: ShowToastAction }
   // | { startTimer?: StartTimer }
   // | { stopTimer?: StopTimer }

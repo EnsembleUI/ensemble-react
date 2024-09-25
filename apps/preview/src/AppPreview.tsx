@@ -46,9 +46,11 @@ const createCustomWidgetPreviewApp = (
   };
   const customApp: ApplicationDTO = {
     ...customPreviewWidgetApp,
+    config: app.config,
     theme: app.theme,
     screens: [screen],
     widgets: [customWidget],
+    languages: app.languages,
   };
   return customApp;
 };
