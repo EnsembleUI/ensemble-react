@@ -1,5 +1,13 @@
 # @ensembleui/react-runtime
 
+## 0.2.4
+
+### Patch Changes
+
+- 0082369: Added fix for show only one error message for multiple validation rule
+- b77be40: Added support for mask format in textInput
+- f283624: Added support for qr code widget
+
 ## 0.2.3
 
 ### Patch Changes

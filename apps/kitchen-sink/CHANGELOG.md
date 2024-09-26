@@ -1,5 +1,16 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.82
+
+### Patch Changes
+
+- 0082369: Added fix for show only one error message for multiple validation rule
+- f283624: Added support for qr code widget
+- Updated dependencies [0082369]
+- Updated dependencies [b77be40]
+- Updated dependencies [f283624]
+  - @ensembleui/react-runtime@0.2.4
+
 ## 0.0.81
 
 ### Patch Changes
