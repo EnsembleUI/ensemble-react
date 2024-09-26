@@ -1,5 +1,13 @@
 # @ensembleui/react-framework
 
+## 0.2.3
+
+### Patch Changes
+
+- b42978c: Optimize dependencies for useExecuteCode
+- 6c59f18: ensure user atom overwrite keys
+- 8487a99: Added support for closeAllScreens action
+
 ## 0.2.2
 
 ### Patch Changes

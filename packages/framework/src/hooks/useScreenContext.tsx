@@ -8,6 +8,7 @@ import {
   locationAtom,
   screenAtom,
   screenDataAtom,
+  screenModelAtom,
   themeAtom,
   userAtom,
 } from "../state";
@@ -118,4 +119,10 @@ export const useScreenContext = ():
   );
 
   return { ...screenContext, setData };
+};
+
+export const useScreenModel = (): EnsembleScreenModel | undefined => {
+  const model = useAtomValue(screenModelAtom);
+
+  return model;
 };

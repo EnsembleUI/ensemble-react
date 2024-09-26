@@ -1,6 +1,6 @@
 {
   "name": "@ensembleui/react-runtime",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
@@ -43,6 +43,7 @@
     "chartjs-plugin-datalabels": "^2.2.0",
     "dayjs": "^1.11.12",
     "eslint-config-custom": "workspace:*",
+    "imask": "^7.6.1",
     "jest-canvas-mock": "^2.5.2",
     "jwt-decode": "^4.0.0",
     "lodash-es": "^4.17.21",

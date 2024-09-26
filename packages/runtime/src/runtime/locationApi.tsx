@@ -12,7 +12,7 @@ export interface EnsembleLocation {
 export const locationApi = (location: Location): EnsembleLocation => {
   return {
     get: (key: keyof EnsembleLocationInterface): string | undefined => {
-      return location?.[key];
+      return location[key];
     },
   };
 };

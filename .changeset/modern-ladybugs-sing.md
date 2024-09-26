@@ -2,4 +2,4 @@
 "@ensembleui/react-runtime": patch
 ---
 
-hotfix screen level style support
+Added support for mask format in textInput

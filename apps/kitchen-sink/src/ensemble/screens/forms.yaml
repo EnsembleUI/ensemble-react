@@ -7,6 +7,7 @@ View:
         ensemble.storage.set('inputVal', 'sagar');
         ensemble.storage.set('mockApiStatusCode', 200);
         ensemble.storage.set('mockApiReasonPhrase', 'Success!');
+        ensemble.storage.set('mockApiName', 'testMockResponse');
         ensemble.storage.set('dummyData', [
           { value: "val 1", label: "lab 1" },
           { value: "val 2", label: "lab 2" },
@@ -140,11 +141,13 @@ View:
                         id: formTextInput
                         hintText: (123) 456-7890
                         mask: "(###) ###-####"
+                        validator:
+                          maskError: "Please enter valid format"
                         inputType: phone
                         required: true
                         label:
                           Text:
-                            text: Text input
+                            text: Text mask input
                     - TextInput:
                         id: minMaxTextInput
                         inputType: number
@@ -372,6 +375,7 @@ View:
                   initialValue: false
                   onChange:
                     executeCode: |
+                      debugger;
                       app.setUseMockResponse(!app.useMockResponse);
               - Checkbox:
                   id: throwMockApiErrorCheckbox
@@ -393,7 +397,7 @@ View:
                   label: Call API!
                   onTap:
                     invokeAPI:
-                      name: testMockResponse
+                      name: ${ensemble.storage.get('mockApiName')}
                       onResponse:
                         executeCode: console.log("Mock API called ", response);
               - Button:
@@ -402,7 +406,7 @@ View:
                   label: Call API from executeCode!
                   onTap:
                     executeCode: |
-                      ensemble.invokeAPI("testMockResponse");
+                      ensemble.invokeAPI(ensemble.storage.get('mockApiName'));
               - Spacer:
                   styles:
                     size: 20
@@ -462,7 +466,7 @@ API:
     uri: https://dummyjson.com/users/1
     mockResponse:
       statusCode: "${ensemble.storage.get('mockApiStatusCode')}"
-      reasonPhrase: "${ensemble.storage.get('mockApiReasonPhrase')}"
+      reasonPhrase: "${ensemble.env.randomId}"
       body:
         - id: 0
           name: Harry Potter

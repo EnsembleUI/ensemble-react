@@ -285,6 +285,7 @@ importers:
       chartjs-plugin-datalabels: ^2.2.0
       dayjs: ^1.11.12
       eslint-config-custom: workspace:*
+      imask: ^7.6.1
       jest-canvas-mock: ^2.5.2
       jwt-decode: ^4.0.0
       lodash-es: ^4.17.21
@@ -320,6 +321,7 @@ importers:
       chartjs-plugin-datalabels: 2.2.0_chart.js@4.4.2
       dayjs: 1.11.12
       eslint-config-custom: link:../eslint-config-custom
+      imask: 7.6.1
       jest-canvas-mock: 2.5.2
       jwt-decode: 4.0.0
       lodash-es: 4.17.21
@@ -1887,8 +1889,8 @@ packages:
     resolution: {integrity: sha512-x/rqGMdzj+fWZvCOYForTghzbtqPDZ5gPwaoNGHdgDfF2QA/XZbCBp4Moo5scrkAMPhB7z26XM/AaHuIJdgauA==}
     dev: true
 
-  /@babel/runtime-corejs3/7.24.0:
-    resolution: {integrity: sha512-HxiRMOncx3ly6f3fcZ1GVKf+/EROcI9qwPgmij8Czqy6Okm/0T37T4y2ZIlLUuEUFjtM7NRsfdCO8Y3tAiJZew==}
+  /@babel/runtime-corejs3/7.25.6:
+    resolution: {integrity: sha512-Gz0Nrobx8szge6kQQ5Z5MX9L3ObqNwCQY1PSwSNzreFL7aHGxv8Fp2j3ETV6/wWdbiV+mW6OSm8oQhg3Tcsniw==}
     engines: {node: '>=6.9.0'}
     dependencies:
       core-js-pure: 3.36.0
@@ -9478,6 +9480,13 @@ packages:
     engines: {node: '>= 4'}
     dev: true
 
+  /imask/7.6.1:
+    resolution: {integrity: sha512-sJlIFM7eathUEMChTh9Mrfw/IgiWgJqBKq2VNbyXvBZ7ev/IlO6/KQTKlV/Fm+viQMLrFLG/zCuudrLIwgK2dg==}
+    engines: {npm: '>=4.0.0'}
+    dependencies:
+      '@babel/runtime-corejs3': 7.25.6
+    dev: true
+
   /immediate/3.0.6:
     resolution: {integrity: sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ==}
 
@@ -11670,7 +11679,7 @@ packages:
     resolution: {integrity: sha512-Cov028YhBZ5aB7MdMWJEmwyBig43aGL5WT4vdoB28Oitau1zZAcHUn8Sgfk9HM33TqhtLJ9PlM/O0Mv+QpV/4Q==}
     engines: {node: '>=8.9.4'}
     dependencies:
-      '@babel/runtime-corejs3': 7.24.0
+      '@babel/runtime-corejs3': 7.25.6
       '@types/inquirer': 6.5.0
       change-case: 3.1.0
       del: 5.1.0

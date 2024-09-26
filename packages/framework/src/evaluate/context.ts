@@ -1,10 +1,12 @@
 import { mapKeys, merge, keys } from "lodash-es";
-import type { EnsembleInterface } from "../shared/ensemble";
+import type { EnsembleContext, EnsembleInterface } from "../shared/ensemble";
 import type {
   ApplicationContextDefinition,
   ScreenContextDefinition,
 } from "../state";
 import type { EnsembleAppModel, EnsembleThemeModel } from "../shared";
+import { isUsingMockResponse, setUseMockResponse } from "../appConfig";
+import { widgetStatesToInvokables } from "./evaluate";
 
 export interface EvaluationContextProps {
   applicationContext: Omit<
@@ -25,7 +27,7 @@ export const createEvaluationContext = ({
   screenContext,
   ensemble,
   context,
-}: EvaluationContextProps): { [key: string]: unknown } => {
+}: EvaluationContextProps): EnsembleContext => {
   const theme = applicationContext.selectedTheme;
   const appInputs = merge(
     {},
@@ -38,7 +40,9 @@ export const createEvaluationContext = ({
   const screenInputs = merge(
     {},
     screenContext.inputs,
-    screenContext.widgets,
+    screenContext.widgets
+      ? Object.fromEntries(widgetStatesToInvokables(screenContext.widgets))
+      : {},
     screenContext.data,
   );
 
@@ -46,9 +50,19 @@ export const createEvaluationContext = ({
     languages: applicationContext.application?.languages,
     themes: keys(applicationContext.application?.themes),
     theme: applicationContext.selectedTheme?.name,
+    useMockResponse: isUsingMockResponse(applicationContext.application?.id),
+    setUseMockResponse: (value: boolean) =>
+      setUseMockResponse(applicationContext.application?.id, value), //noop,
   };
 
   const env = applicationContext.env;
 
-  return merge({}, { app, ensemble, env }, appInputs, screenInputs, context);
+  // FIXME: this requires ensemble interface to be built outside of this function
+  return merge(
+    {},
+    { app, ensemble, env },
+    appInputs,
+    screenInputs,
+    context,
+  ) as EnsembleContext;
 };
