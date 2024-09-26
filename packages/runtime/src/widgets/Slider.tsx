@@ -92,21 +92,18 @@ const SliderWidget: React.FC<SliderProps> = (props) => {
     }
   `;
 
-  const sliderProps = useMemo(
-    () => ({
-      disabled: values?.enabled === false,
-      dots: values?.dots,
-      max: values?.max,
-      min: values?.min,
-      onChange: handleChange,
-      onChangeComplete: handleAfterChangeComplete,
-      ref: rootRef,
-      reverse: values?.reverse,
-      step: steps,
-      vertical: values?.vertical,
-    }),
-    [values],
-  );
+  const sliderProps = {
+    disabled: values?.enabled === false,
+    dots: values?.dots,
+    max: values?.max,
+    min: values?.min,
+    onChange: handleChange,
+    onChangeComplete: handleAfterChangeComplete,
+    ref: rootRef,
+    reverse: values?.reverse,
+    step: steps,
+    vertical: values?.vertical,
+  };
 
   return (
     <>
