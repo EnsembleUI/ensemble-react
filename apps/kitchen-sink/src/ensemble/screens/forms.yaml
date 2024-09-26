@@ -142,10 +142,12 @@ View:
                         value: ${ensemble.storage.get('inputVal')}
                         hintText: (123) 456-7890
                         mask: "(###) ###-####"
+                        validator:
+                          maskError: "Please enter valid format"
                         inputType: phone
                         label:
                           Text:
-                            text: Text input
+                            text: Text mask input
                     - TextInput:
                         id: minMaxTextInput
                         inputType: number
