@@ -111,6 +111,32 @@ test("call ensemble.invokeAPI", async () => {
   expect(execResult).toBe(apiConfig.limit);
 });
 
+test("does not rerender if context changes", async () => {
+  const apiConfig = {
+    limit: 15,
+    skip: 10,
+  };
+
+  const { result } = renderHook(
+    () =>
+      useExecuteCode(
+        "ensemble.invokeAPI('getDummyProductsByPaginate', apiConfig).then((res) => res.body.products.length)",
+        { context: { apiConfig } },
+      ),
+    {
+      wrapper,
+    },
+  );
+
+  // save old callback fn
+  const prevCallback = result.current?.callback;
+  await act(() => {
+    return result.current?.callback();
+  });
+
+  expect(prevCallback).toBe(result.current?.callback);
+});
+
 test.todo("populates application invokables");
 
 test.todo("resolves values in order of scoping");
