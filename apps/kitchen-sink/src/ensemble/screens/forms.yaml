@@ -139,13 +139,15 @@ View:
                     # If you omit id, the form value key will be the label
                     - TextInput:
                         id: formTextInput
-                        value: ${ensemble.storage.get('inputVal')}
                         hintText: (123) 456-7890
                         mask: "(###) ###-####"
+                        validator:
+                          maskError: "Please enter valid format"
                         inputType: phone
+                        required: true
                         label:
                           Text:
-                            text: Text input
+                            text: Text mask input
                     - TextInput:
                         id: minMaxTextInput
                         inputType: number
@@ -159,6 +161,7 @@ View:
                         label: Text input with min and max length
                     - TextInput:
                         id: regexTextInput
+                        required: true
                         validator:
                           regex: .{1,}
                           regexError: "write something atleast"
@@ -205,6 +208,12 @@ View:
                         label: Date 2
                         value: "2024/04/04"
                         hintText: Choose date 2
+                    - TextInput:
+                        id: customNumberInput
+                        required: true
+                        validator:
+                          regex: ^\d{10}$
+                          regexError: "Please enter a 10 digit number"
                     - Button:
                         submitForm: true
                         label: Submit
