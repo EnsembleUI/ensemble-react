@@ -3,4 +3,4 @@
 "@ensembleui/react-runtime": patch
 ---
 
-Added fix for show only one error message for multiple validation rule
+Added range support in slider widget
