@@ -1,5 +1,12 @@
 # @ensembleui/react-runtime
 
+## 0.2.5
+
+### Patch Changes
+
+- cef48e0: Declare screen inputs even if they are not passed in with value
+- 18fb646: Added range support in slider widget
+
 ## 0.2.4
 
 ### Patch Changes
