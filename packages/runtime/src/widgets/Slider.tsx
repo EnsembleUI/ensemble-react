@@ -18,7 +18,7 @@ interface SliderStyles {
 }
 
 export type SliderProps = {
-  initialValue?: number | number[];
+  initialValue?: number | [number, number];
   onChange?: EnsembleAction;
   onComplete?: EnsembleAction;
   min?: number;
@@ -28,11 +28,11 @@ export type SliderProps = {
   dots?: boolean;
   divisions?: number;
   range?: boolean;
-} & FormInputProps<number | number[]> &
+} & FormInputProps<number | [number, number]> &
   EnsembleWidgetProps<SliderStyles>;
 
 const SliderWidget: React.FC<SliderProps> = (props) => {
-  const [value, setValue] = useState<number | number[]>();
+  const [value, setValue] = useState<number | [number, number]>();
   const { values, rootRef } = useRegisterBindings(
     { ...props, value, widgetName },
     props.id,
@@ -51,7 +51,7 @@ const SliderWidget: React.FC<SliderProps> = (props) => {
   const onCompleteAction = useEnsembleAction(props.onComplete);
 
   const onChangeActionCallback = useCallback(
-    (newValue: number | number[]) => {
+    (newValue: number | [number, number]) => {
       if (!onChangeAction) {
         return;
       }
@@ -62,7 +62,7 @@ const SliderWidget: React.FC<SliderProps> = (props) => {
   );
 
   const onCompleteActionCallback = useCallback(
-    (newValue: number | number[]) => {
+    (newValue: number | [number, number]) => {
       if (!onCompleteAction) {
         return;
       }
@@ -77,13 +77,13 @@ const SliderWidget: React.FC<SliderProps> = (props) => {
   }, [values?.max, values?.min, values?.divisions]);
 
   const handleChange = (newValue: number | number[]): void => {
-    setValue(newValue);
-    onChangeActionCallback(newValue);
+    setValue(newValue as [number, number]);
+    onChangeActionCallback(newValue as [number, number]);
   };
 
   const handleAfterChangeComplete = (newValue: number | number[]): void => {
-    setValue(newValue);
-    onCompleteActionCallback(newValue);
+    setValue(newValue as [number, number]);
+    onCompleteActionCallback(newValue as [number, number]);
   };
 
   const customStyle = `
@@ -112,9 +112,9 @@ const SliderWidget: React.FC<SliderProps> = (props) => {
         {values?.range ? (
           <Slider
             {...sliderProps}
-            defaultValue={values.initialValue as number[]}
+            defaultValue={values.initialValue as [number, number]}
             range
-            value={value as number[]}
+            value={value as [number, number]}
           />
         ) : (
           <Slider
