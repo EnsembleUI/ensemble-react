@@ -1,5 +1,15 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.83
+
+### Patch Changes
+
+- 18fb646: Added range support in slider widget
+- Updated dependencies [cef48e0]
+- Updated dependencies [18fb646]
+  - @ensembleui/react-framework@0.2.4
+  - @ensembleui/react-runtime@0.2.5
+
 ## 0.0.82
 
 ### Patch Changes

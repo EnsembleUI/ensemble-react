@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.2.4
+
+### Patch Changes
+
+- cef48e0: Declare screen inputs even if they are not passed in with value
+
 ## 0.2.3
 
 ### Patch Changes
