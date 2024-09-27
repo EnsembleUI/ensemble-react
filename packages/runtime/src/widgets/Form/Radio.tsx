@@ -10,7 +10,7 @@ import {
 } from "@ensembleui/react-framework";
 import { Radio, Form } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { get, isEmpty, isObject } from "lodash-es";
+import { get, isEmpty, isObject, map } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetStyles, HasItemTemplate } from "../../shared/types";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
@@ -79,6 +79,7 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
   const { namedData } = useTemplateData({
     data: itemTemplate?.data,
     name: itemTemplate?.name,
+    value: itemTemplate?.value,
   });
 
   // handle radio items
@@ -102,19 +103,13 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
     }
 
     if (isObject(itemTemplate) && !isEmpty(namedData)) {
-      namedData.forEach((item: unknown) => {
+      map(namedData, (item: { [key: string]: unknown }) => {
         const typedItem = get(item, itemTemplate.name) as CustomScope;
-        const evaluateValue = get(
-          item,
-          itemTemplate.value
-            .toString()
-            // eslint-disable-next-line prefer-named-capture-group
-            .replace(/['"]?\$\{([^}]*)\}['"]?/g, "$1"),
-        ) as string | number;
+        const evaluatedValue = get(item, "value") as string | number;
 
         radioOptions.push({
           disabled: values?.enabled === false || typedItem.enabled === false,
-          value: evaluateValue,
+          value: evaluatedValue,
           children: (
             <CustomScopeProvider value={item as CustomScope}>
               {EnsembleRuntime.render([itemTemplate.template])}
