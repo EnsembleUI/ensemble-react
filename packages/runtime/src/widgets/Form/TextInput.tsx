@@ -6,11 +6,14 @@ import {
   useMemo,
   useState,
   useCallback,
+  useRef,
   type FormEvent,
+  RefCallback,
 } from "react";
 import { runes } from "runes2";
 import type { Rule } from "antd/es/form";
 import { forEach } from "lodash-es";
+import IMask from "imask";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { WidgetRegistry } from "../../registry";
 import type { TextStyles } from "../Text";
@@ -37,12 +40,15 @@ export type TextInputProps = {
     maxLength?: number;
     regex?: string;
     regexError?: string;
+    maskError?: string;
   };
 } & EnsembleWidgetProps<TextStyles> &
   FormInputProps<string>;
 
 export const TextInput: React.FC<TextInputProps> = (props) => {
   const [value, setValue] = useState<string>();
+  const maskRef = useRef<{ input: HTMLInputElement } | null>(null);
+
   const { values, rootRef } = useRegisterBindings(
     { ...props, initialValue: props.value, value, widgetName },
     props.id,
@@ -64,6 +70,11 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     [action],
   );
 
+  const handleRef: RefCallback<never> = (node) => {
+    maskRef.current = node;
+    rootRef(node);
+  };
+
   const handleKeyDown = useCallback((e: FormEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
     target.value = target.value.replace(/[^0-9]/g, "");
@@ -80,6 +91,15 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
       });
     }
   }, [value, formInstance, values?.id, values?.label]);
+
+  useEffect(() => {
+    if (values?.mask && maskRef.current) {
+      IMask(maskRef.current.input, {
+        mask: values.mask.replace(/#/g, "0").replace(/A/g, "a"),
+        lazy: true,
+      });
+    }
+  }, [values?.mask]);
 
   const inputType = useMemo(() => {
     switch (values?.inputType) {
@@ -177,8 +197,17 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
 
     if (values?.mask && patternValue) {
       rulesArray.push({
-        pattern: new RegExp(patternValue),
-        message: `The value must be of the format ${values.mask}`,
+        validator: (_, inputValue?: string) => {
+          if (new RegExp(patternValue).test(inputValue || "")) {
+            return Promise.resolve();
+          }
+          return Promise.reject(
+            new Error(
+              values.validator?.maskError ||
+                `The value must be of the format ${values.mask || ""}`,
+            ),
+          );
+        },
       });
     }
 
@@ -236,7 +265,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
               onInput: (event): void => handleKeyDown(event),
             })}
             placeholder={values?.hintText ?? ""}
-            ref={rootRef}
+            ref={handleRef}
             style={{
               ...(values?.styles ?? values?.hintStyle),
               ...(values?.styles?.visible === false

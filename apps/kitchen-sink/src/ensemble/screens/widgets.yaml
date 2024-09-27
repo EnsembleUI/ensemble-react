@@ -33,6 +33,10 @@ View:
       styles:
         names: page
       children:
+        - Button:
+            label: close all navigate modal screen
+            onTap:
+              closeAllScreens:
         - Row:
             styles:
               crossAxis: center
@@ -1280,6 +1284,41 @@ View:
                   useShimmer: true
                   styles:
                     height: 50px
+
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+              gap: 10px
+            children:
+              - Text:
+                  styles:
+                    names: heading-3
+                  text: QRCode Widget
+              - QRCode:
+                  id: qrcode
+                  styles:
+                    color: red
+                    backgroundColor: yellow
+                  value: sagar davara
+              - Button:
+                  label: Change QRCode value
+                  onTap:
+                    executeCode: |
+                      qrcode.setValue('sagar davara 123')
+              - QRCode:
+                  icon: https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg
+                  iconSize: 60
+                  value: sagar davara
+              - QRCode:
+                  status: "scanned"
+                  value: sagar davara
+              - QRCode:
+                  status: "expired"
+                  value: sagar davara
+                  onRefresh:
+                    executeCode: |
+                      console.log('refreshed')
 
 API:
   getDummyProducts:

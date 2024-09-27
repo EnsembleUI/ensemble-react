@@ -1,5 +1,30 @@
 # @ensembleui/react-runtime
 
+## 0.2.4
+
+### Patch Changes
+
+- 0082369: Added fix for show only one error message for multiple validation rule
+- b77be40: Added support for mask format in textInput
+- f283624: Added support for qr code widget
+
+## 0.2.3
+
+### Patch Changes
+
+- 7602b73: hotfix screen level style support
+- b42978c: Optimize dependencies for useExecuteCode
+- 69d5579: modernize PopupMenu widget
+- ab37ee9: Added support to customize nooption in search widget
+- 06cc75e: Remove navigation glitch from sidebar menu
+- 8487a99: Added support for closeAllScreens action
+- c9a5acb: Fix datagrid rows deselected issue
+- 4b8f19a: fix required field validation with form.validate
+- 0f9525d: fix Datagrid's defaultSelectedRowKeys
+- f528819: Added support of form.onChange
+- f466659: improve dropdown panel performance
+- e42c9b4: added support for screen lavel font colour support
+
 ## 0.2.2
 
 ### Patch Changes
