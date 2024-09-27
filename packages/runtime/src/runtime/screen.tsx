@@ -15,7 +15,8 @@ import { EnsembleFooter } from "./footer";
 import { EnsembleBody } from "./body";
 import { ModalWrapper } from "./modal";
 import { createCustomWidget } from "./customWidget";
-import { EnsembleMenuContext, EnsembleMenu } from "./menu";
+import type { EnsembleMenuContext } from "./menu";
+import { EnsembleMenu } from "./menu";
 
 export interface EnsembleScreenProps {
   screen: EnsembleScreenModel;
@@ -37,7 +38,10 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
   const outletContext = useOutletContext<EnsembleMenuContext>();
 
   const mergedInputs: { [key: string]: unknown } = merge(
-    {},
+    screen.inputs?.reduce<{ [key: string]: undefined }>((acc, item: string) => {
+      acc[item] = undefined;
+      return acc;
+    }, {}),
     state as { [key: string]: unknown },
     { ...outletContext },
     routeParams,
@@ -53,11 +57,11 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
 
     // initial widget values store
     const initialWidgetValues: {
-      [key: string]: WidgetComponent<any>;
+      [key: string]: WidgetComponent<unknown>;
     } = {};
 
     // load screen custom widgets
-    screen.customWidgets?.forEach((customWidget) => {
+    screen.customWidgets.forEach((customWidget) => {
       const originalImplementation = WidgetRegistry.findOrNull(
         customWidget.name,
       );
@@ -105,8 +109,8 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
         {screen.menu ? (
           <EnsembleMenu
             menu={{ ...screen.menu }}
-            type={screen.menu.type}
             renderOutlet={false}
+            type={screen.menu.type}
           />
         ) : null}
         <EnsembleFooter footer={screen.footer} />

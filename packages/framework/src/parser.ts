@@ -42,11 +42,12 @@ import { defaultThemeDefinition } from "./state";
 
 export interface EnsembleScreenYAML {
   View?: {
+    inputs?: string[];
     header?: { [key: string]: unknown };
     body: { [key: string]: unknown };
     footer?: { [key: string]: unknown };
     styles?: { [key: string]: unknown };
-    [k: string]: { [key: string]: unknown } | undefined;
+    [k: string]: { [key: string]: unknown } | string[] | undefined;
   };
   ViewGroup?: { [key: string]: unknown };
 }
@@ -221,6 +222,7 @@ export const EnsembleParser = {
       ...(view ?? {}),
       id,
       name,
+      inputs: screen.View?.inputs,
       global,
       header: unwrapHeader(header),
       footer: unwrapFooter(footer),
