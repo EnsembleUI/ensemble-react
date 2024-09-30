@@ -3,7 +3,6 @@ import { initializeFirestore } from "firebase/firestore/lite";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AppPreview } from "./AppPreview";
 import { AppSelector } from "./AppSelector";
-import AppConsole from "./AppConsole";
 import "./App.css";
 
 export const firebaseApp = initializeApp({
@@ -30,7 +29,6 @@ const router = createBrowserRouter([
 const App: React.FC = () => {
   return (
     <div className="App">
-      <AppConsole />
       <RouterProvider router={router} />
     </div>
   );

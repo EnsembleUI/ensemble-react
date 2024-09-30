@@ -6,7 +6,7 @@ interface CustomConsole {
   _error: (...keys: unknown[]) => void;
 }
 
-const AppConsole = (): null => {
+export const useAppConsole = (): void => {
   useEffect(() => {
     // eslint-disable-next-line eslint-comments/disable-enable-pair
     /* eslint-disable no-console */
@@ -45,7 +45,4 @@ const AppConsole = (): null => {
       console.error = customConsole._error;
     };
   }, []);
-  return null;
 };
-
-export default AppConsole;
