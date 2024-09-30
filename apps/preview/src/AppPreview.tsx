@@ -10,6 +10,7 @@ import { isString, set } from "lodash-es";
 import type { Firestore } from "firebase/firestore/lite";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
+import { useAppConsole } from "./useAppConsole";
 
 const customWidgetPreviewScaffold = `
 View:
@@ -150,6 +151,8 @@ export const AppPreview: React.FC<{ db: Firestore }> = ({ db }) => {
       window.removeEventListener("message", handleMessage);
     };
   }, [handleMessage]);
+
+  useAppConsole();
 
   if (!previewId) {
     return <Alert message="An app id must be provided" type="error" />;
