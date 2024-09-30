@@ -11,6 +11,7 @@ import type { EnsembleConfigYAML } from "./dto";
 export interface EnsembleScreenModel {
   id: string;
   name?: string;
+  inputs?: string[];
   body: EnsembleWidget;
   path?: string;
   onLoad?: EnsembleAction;

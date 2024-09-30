@@ -22,12 +22,12 @@ export interface CustomWidgetProps {
 export const createCustomWidget = (
   widget: CustomWidgetModel,
 ): React.FC<CustomWidgetProps> => {
-  const tempVar = widget.inputs.reduce(
+  const tempVar = widget.inputs.reduce<{ [key: string]: undefined }>(
     (acc, item: string) => {
       acc[item] = undefined;
       return acc;
     },
-    {} as { [key: string]: undefined },
+    {},
   );
 
   const CustomWidget: React.FC<CustomWidgetProps> = ({ inputs, events }) => {
@@ -40,7 +40,7 @@ export const createCustomWidget = (
     return (
       <CustomEventScopeProvider value={events}>
         <CustomScopeProvider value={values ?? inputs}>
-          <OnLoadAction action={widget?.onLoad} context={values ?? inputs}>
+          <OnLoadAction action={widget.onLoad} context={values ?? inputs}>
             {EnsembleRuntime.render([widget.body])}
           </OnLoadAction>
         </CustomScopeProvider>
