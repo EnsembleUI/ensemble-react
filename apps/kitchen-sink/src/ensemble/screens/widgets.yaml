@@ -1073,13 +1073,27 @@ View:
                   text: |
                     ### Slider
               - Slider:
+                  id: sliderWidget
+                  initialValue: [30, 40]
                   styles:
                     maxWidth: unset
                   dots: true
-                  min: 0
-                  max: 10
-                  value: 2
+                  range: true
+                  min: 20
+                  max: 40
+                  value: 20
                   divisions: 10
+                  onChange:
+                    executeCode: |
+                      console.log('Slider value changed: ' + value);
+                  onComplete:
+                    executeCode: |
+                      console.log('Slider value completed: ' + value);
+              - Button:
+                  label: checkvalue
+                  onTap:
+                    executeCode: |
+                      console.log('Slider value: ' + sliderWidget.value);
 
         - Card:
             styles:

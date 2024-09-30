@@ -22,7 +22,7 @@ const router = createBrowserRouter([
     element: <AppSelector />,
   },
   {
-    path: "/preview/:previewId",
+    path: "/preview/:previewId/*",
     element: <AppPreview db={db} />,
   },
 ]);
