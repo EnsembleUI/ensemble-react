@@ -13,17 +13,17 @@ test("find deeply nested expressions", () => {
     value: "${bar}",
   };
 
-  const expressionMap: string[][] = [];
+  const expressionMap: [string, string, object][] = [];
   findExpressions(testObj, [], expressionMap);
 
   expect(expressionMap).toEqual([
-    ["styles.names", "${`test ${blah}`}"],
-    ["styles.borderRadius", "${foo}"],
-    ["styles.padding.1", "${baz}"],
-    ["styles.padding.2.value", "${beef}"],
-    ["styles.border", "${`${blah} xyz ${foo}`}"],
-    ["styles.borderColor", "${`${blah} ${foo}`}"],
-    ["value", "${bar}"],
+    ["styles.names", "${`test ${blah}`}", testObj.styles],
+    ["styles.borderRadius", "${foo}", testObj.styles],
+    ["styles.padding.1", "${baz}", testObj.styles.padding],
+    ["styles.padding.2.value", "${beef}", testObj.styles.padding[2]],
+    ["styles.border", "${`${blah} xyz ${foo}`}", testObj.styles],
+    ["styles.borderColor", "${`${blah} ${foo}`}", testObj.styles],
+    ["value", "${bar}", testObj],
   ]);
   /* eslint-enable no-template-curly-in-string */
 });
