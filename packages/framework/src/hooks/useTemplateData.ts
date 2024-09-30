@@ -11,6 +11,7 @@ export interface TemplateDataProps {
   data?: Expression<TemplateData>;
   name?: string;
   context?: unknown;
+  value?: Expression<string>;
 }
 
 /**
@@ -25,6 +26,7 @@ export const useTemplateData = ({
   data,
   name = "data",
   context,
+  value,
 }: TemplateDataProps): {
   rawData: TemplateData;
   namedData: object[];
@@ -46,7 +48,8 @@ export const useTemplateData = ({
   }, [customScope, data, isDataString, context]);
   const rawData = useAtomValue(dataAtom);
   const namedData = useMemo(
-    () => map(rawData, (value: unknown) => ({ [name]: value })),
+    () =>
+      map(rawData, (val: unknown) => ({ [name]: val, _ensembleValue: value })),
     [name, rawData],
   );
   const evaluatedNamedData = useEvaluate({ namedData });

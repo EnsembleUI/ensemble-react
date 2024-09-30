@@ -79,7 +79,7 @@ export const sanitizeJs = (string: string): string => {
 export const findExpressions = (
   obj?: object,
   path: string[] = [],
-  expressionMap: string[][] = [],
+  expressionMap: [string, string, object][] = [],
 ): void => {
   if (!obj) {
     return;
@@ -91,6 +91,7 @@ export const findExpressions = (
       expressionMap.push([
         curPath.join("."),
         isCompoundExpression(value) ? `\${\`${value || ""}\`}` : value,
+        obj,
       ]);
     } else if (isObject(value)) {
       findExpressions(value, curPath, expressionMap);

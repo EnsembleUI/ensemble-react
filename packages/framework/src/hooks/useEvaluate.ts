@@ -19,19 +19,21 @@ export const useEvaluate = <T extends Record<string, unknown>>(
 
   const expressions = useMemo(
     () => {
-      const expressionMap: string[][] = [];
+      const expressionMap: [string, string, object][] = [];
       findExpressions(values, [], expressionMap);
       return expressionMap;
     },
-    options?.refreshExpressions ? [values] : [values?.styles], // values.styles can change when there are expressions in class names,
+    options?.refreshExpressions
+      ? [values]
+      : [values?.styles, values?.namedData], // values.styles can change when there are expressions in class names,
   );
 
   const bindingsAtom = useMemo(() => {
     const bindingsEntries = compact(
-      expressions.map(([name, expr]) => {
+      expressions.map(([name, expr, expressionData]) => {
         const valueAtom = createBindingAtom(
           expr,
-          merge({}, customScope, options?.context),
+          merge({}, customScope, options?.context, expressionData),
           options?.debugId,
         );
         return { name, valueAtom };

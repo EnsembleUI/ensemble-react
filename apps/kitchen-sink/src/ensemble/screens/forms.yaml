@@ -111,6 +111,25 @@ View:
                         onChange:
                           executeCode: |
                             console.log('radio changed', value)
+                    - Radio:
+                        id: radioGroup
+                        label: Radio Group With Template
+                        item-template:
+                          data: getData.body.users.slice(0, 4)
+                          name: user
+                          value: ${user.email}
+                          template:
+                            Row:
+                              children:
+                                - Image:
+                                    width: 25
+                                    height: 25
+                                    source: ${user.image}
+                                - Text:
+                                    text: ${user.firstName} ${user.lastName}
+                        onChange:
+                          executeCode: |
+                            console.log('radio changed', value)
                     # Build your own checkbox group
                     - Row:
                         item-template:
@@ -391,15 +410,15 @@ View:
                         ensemble.storage.set('mockApiStatusCode', 200);
                         ensemble.storage.set('mockApiReasonPhrase', 'Success!');
                       }
-              - Button:
-                  styles:
-                    width: 500
-                  label: Call API!
-                  onTap:
-                    invokeAPI:
-                      name: ${ensemble.storage.get('mockApiName')}
-                      onResponse:
-                        executeCode: console.log("Mock API called ", response);
+              # - Button:
+              #     styles:
+              #       width: 500
+              #     label: Call API!
+              #     onTap:
+              #       invokeAPI:
+              #         name: ${ensemble.storage.get('mockApiName')}
+              #         onResponse:
+              #           executeCode: console.log("Mock API called ", response);
               - Button:
                   styles:
                     width: 500
