@@ -58,7 +58,7 @@ export const useTemplateData = ({
     rawData,
     namedData: map(evaluatedNamedData.namedData, (val) => ({
       ...val,
-      value: value
+      _ensembleValue: value
         ? (get(
             val,
             value

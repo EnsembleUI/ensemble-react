@@ -105,7 +105,7 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
     if (isObject(itemTemplate) && !isEmpty(namedData)) {
       map(namedData, (item: { [key: string]: unknown }) => {
         const typedItem = get(item, itemTemplate.name) as CustomScope;
-        const evaluatedValue = get(item, "value") as string | number;
+        const evaluatedValue = get(item, "_ensembleValue") as string | number;
 
         radioOptions.push({
           disabled: values?.enabled === false || typedItem.enabled === false,
