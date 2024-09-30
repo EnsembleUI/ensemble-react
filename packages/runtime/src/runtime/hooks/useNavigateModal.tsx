@@ -56,7 +56,7 @@ export const useNavigateModalScreen: EnsembleActionHook<
       const inputs =
         !isString(action) && action.inputs ? cloneDeep(action.inputs) : {};
       if (screenContext) {
-        const expressionMap: string[][] = [];
+        const expressionMap: [string, string, object][] = [];
         findExpressions(inputs, [], expressionMap);
         expressionMap.forEach(([path, value]) => {
           const result = evaluate(screenContext, value, {
