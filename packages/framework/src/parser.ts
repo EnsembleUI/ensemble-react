@@ -31,10 +31,12 @@ import type {
   EnsembleThemeModel,
   EnsembleSocketModel,
   EnsembleCustomEventModel,
+  EnsembleFontModel,
 } from "./shared/models";
 import type {
   ApplicationDTO,
   EnsembleConfigYAML,
+  FontDTO,
   LanguageDTO,
 } from "./shared/dto";
 import { type EnsembleAction } from "./shared";
@@ -99,9 +101,9 @@ export const EnsembleParser = {
       throw Error("Application must have at least one screen");
     }
 
-    const menu = screens.find((screen) => "items" in screen) as
-      | EnsembleMenuModel
-      | undefined;
+    const menu = screens.find(
+      (screen) => "items" in screen,
+    ) as EnsembleMenuModel;
 
     if (menu) {
       remove(screens, (screen) => screen === menu);
@@ -132,6 +134,8 @@ export const EnsembleParser = {
       unwrapLanguage(language),
     );
 
+    const fonts = app.fonts?.map((font) => unwrapFont(font));
+
     return {
       id: app.id,
       menu,
@@ -145,6 +149,7 @@ export const EnsembleParser = {
       scripts,
       config: ensembleConfigData,
       languages,
+      fonts,
     };
   },
 
@@ -482,5 +487,16 @@ const unwrapLanguage = (language: LanguageDTO) => {
   return {
     ...language,
     resources: parse(language.content) as { [key: string]: unknown },
+  };
+};
+
+const unwrapFont = (font: FontDTO): EnsembleFontModel => {
+  return {
+    family: font.fontFamily,
+    url: font.publicUrl,
+    options: {
+      weight: font.fontWeight,
+      style: font.fontStyle,
+    },
   };
 };

@@ -40,6 +40,7 @@ export interface EnsembleAppModel {
   scripts: EnsembleScriptModel[];
   config?: EnsembleConfigYAML;
   languages?: EnsembleLanguageModel[];
+  fonts?: EnsembleFontModel[];
 }
 
 export interface EnsembleMenuModel {
@@ -156,4 +157,13 @@ export interface EnsembleLanguageModel {
   nativeName: string;
   languageCode: string;
   resources: { [key: string]: unknown };
+}
+
+export interface EnsembleFontModel {
+  family: string;
+  url: string;
+  options: {
+    weight: string;
+    style: string;
+  };
 }
