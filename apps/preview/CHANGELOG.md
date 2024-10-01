@@ -1,5 +1,15 @@
 # @ensembleui/react-preview
 
+## 0.0.82
+
+### Patch Changes
+
+- e1cb8b3: Added support for pipe consoles
+- Updated dependencies [ef1744c]
+- Updated dependencies [489ed91]
+  - @ensembleui/react-framework@0.2.5
+  - @ensembleui/react-runtime@0.2.6
+
 ## 0.0.81
 
 ### Patch Changes

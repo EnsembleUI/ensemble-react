@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.2.5
+
+### Patch Changes
+
+- ef1744c: added support for custom fonts
+
 ## 0.2.4
 
 ### Patch Changes

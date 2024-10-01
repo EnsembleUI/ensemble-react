@@ -1,5 +1,15 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.84
+
+### Patch Changes
+
+- 489ed91: fix form item's label not picking evaluated value
+- Updated dependencies [ef1744c]
+- Updated dependencies [489ed91]
+  - @ensembleui/react-framework@0.2.5
+  - @ensembleui/react-runtime@0.2.6
+
 ## 0.0.83
 
 ### Patch Changes
