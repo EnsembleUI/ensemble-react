@@ -39,7 +39,7 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
           : EnsembleRuntime.render([unwrapWidget(values.label)])}
       </label>
     );
-  }, []);
+  }, [values?.label, values?.labelStyle, values?.id]);
 
   return (
     <AntForm.Item
