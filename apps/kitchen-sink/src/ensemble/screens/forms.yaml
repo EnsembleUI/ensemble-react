@@ -1,3 +1,6 @@
+Import:
+  - common
+
 View:
   styles:
     scrollableView: true
@@ -205,9 +208,13 @@ View:
                         format: DD-MM-YY
                     - Date:
                         id: date2
-                        label: Date 2
+                        label: ${getDateLabel(dropdown.selectedValue)}
+                        labelStyle:
+                          color: ${dropdown.selectedValue === 'option2' ? 'green' :'blue'}
+                        required: true
                         value: "2024/04/04"
-                        hintText: Choose date 2
+                        format: MM/DD/YYYY
+                        hintText: ${ensemble.storage.get('inputVal')}
                     - TextInput:
                         id: customNumberInput
                         required: true
@@ -397,7 +404,7 @@ View:
                   label: Call API!
                   onTap:
                     invokeAPI:
-                      name: ${ensemble.storage.get('mockApiName')}
+                      name: testMockResponse
                       onResponse:
                         executeCode: console.log("Mock API called ", response);
               - Button:
@@ -406,7 +413,7 @@ View:
                   label: Call API from executeCode!
                   onTap:
                     executeCode: |
-                      ensemble.invokeAPI(ensemble.storage.get('mockApiName'));
+                      ensemble.invokeAPI('testMockResponse');
               - Spacer:
                   styles:
                     size: 20
