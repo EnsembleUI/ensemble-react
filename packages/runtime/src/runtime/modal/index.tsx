@@ -1,5 +1,5 @@
 import { Modal } from "antd";
-import type { PropsWithChildren } from "react";
+import type { PropsWithChildren, ReactNode } from "react";
 import {
   createContext,
   useCallback,
@@ -17,11 +17,16 @@ import { CloseOutlined } from "@ant-design/icons";
 import { generateRandomString, useEvaluate } from "@ensembleui/react-framework";
 import { isString, omit, pick } from "lodash-es";
 import { useNavigate } from "react-router-dom";
+import Draggable, {
+  type DraggableData,
+  type DraggableEvent,
+} from "react-draggable";
 import { getComponentStyles } from "../../shared/styles";
 import { getCustomStyles, getFullScreenStyles } from "./utils";
 
 export interface ModalProps {
   title?: string | React.ReactNode;
+  draggable?: boolean;
   maskClosable?: boolean;
   mask?: boolean;
   hideCloseIcon?: boolean;
@@ -301,6 +306,14 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
       </div>
     );
 
+  const draggleRef = useRef<HTMLDivElement>(null);
+  const [bounds, setBounds] = useState({
+    left: 0,
+    top: 0,
+    bottom: 0,
+    right: 0,
+  });
+
   return (
     <ModalContext.Provider value={modalContext}>
       {children}
@@ -309,6 +322,33 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
         if (!modal.visible) {
           return null;
         }
+        const modalRender = (modalBody: ReactNode) => {
+          return modal.options.draggable ? (
+            <Draggable
+              bounds={bounds}
+              disabled={false}
+              nodeRef={draggleRef}
+              onStart={(_event: DraggableEvent, uiData: DraggableData) => {
+                const { clientWidth, clientHeight } =
+                  window.document.documentElement;
+                const targetRect = draggleRef.current?.getBoundingClientRect();
+                if (!targetRect) {
+                  return;
+                }
+                setBounds({
+                  left: -targetRect.left + uiData.x,
+                  right: clientWidth - (targetRect.right - uiData.x),
+                  top: -targetRect.top + uiData.y,
+                  bottom: clientHeight - (targetRect.bottom - uiData.y),
+                });
+              }}
+            >
+              <div ref={draggleRef}>{modalBody}</div>
+            </Draggable>
+          ) : (
+            <div ref={draggleRef}>{modalBody}</div>
+          );
+        };
         const { options, key } = modal;
         const modalContent = (
           <>
@@ -324,6 +364,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
               key={modal.key}
               mask={options.mask}
               maskClosable={options.maskClosable}
+              modalRender={modalRender}
               onCancel={(): void => closeModal(index)}
               open={modal.visible}
               style={{
