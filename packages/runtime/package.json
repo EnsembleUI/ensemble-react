@@ -8,7 +8,7 @@
   ],
   "repository": "https://github.com/EnsembleUI/ensemble-react",
   "scripts": {
-    "dev": "tsup src/index.tsx --format cjs --watch --dts --external react",
+    "dev": "tsup src/index.tsx --format cjs --watch --dts --external react --sourcemap",
     "build": "tsup src/index.tsx --format cjs --dts --external react",
     "test": "jest --runInBand",
     "lint": "eslint ."
