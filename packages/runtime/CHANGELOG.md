@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.2.6
+
+### Patch Changes
+
+- 489ed91: fix form item's label not picking evaluated value
+
 ## 0.2.5
 
 ### Patch Changes
