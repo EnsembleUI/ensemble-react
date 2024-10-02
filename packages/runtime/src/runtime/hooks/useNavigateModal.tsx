@@ -60,7 +60,11 @@ export const useNavigateModalScreen: EnsembleActionHook<
         findExpressions(inputs, [], expressionMap);
         expressionMap.forEach(([path, value]) => {
           const result = evaluate(screenContext, value, {
-            ensemble: { storage },
+            ensemble: {
+              storage,
+              user: applicationContext?.user,
+              env: applicationContext?.env,
+            },
             ...customScope,
             ...(args as { [key: string]: unknown }),
           });

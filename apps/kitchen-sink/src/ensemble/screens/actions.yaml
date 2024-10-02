@@ -180,6 +180,9 @@ View:
                   onTap:
                     navigateModalScreen:
                       name: Forms
+                      inputs:
+                        storVar: ${ensemble.storage.get('dummyId')}
+                        userVar: ${ensemble.user}
                       hideCloseIcon: false
                       hideFullScreenIcon: false
                       title:
