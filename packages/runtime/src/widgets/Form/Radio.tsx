@@ -102,7 +102,6 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
   const { namedData } = useTemplateData({
     data: itemTemplate?.data,
     name: itemTemplate?.name,
-    value: itemTemplate?.value,
   });
 
   const RadioComponent = useMemo(() => withTemplate(Radio), []);

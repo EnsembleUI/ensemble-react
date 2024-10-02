@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { type Atom, atom, useAtomValue } from "jotai";
-import { get, isString, map, merge } from "lodash-es";
+import { isString, map, merge } from "lodash-es";
 import { createBindingAtom } from "../evaluate";
 import { isExpression, type Expression } from "../shared/common";
 import { useCustomScope } from "./useCustomScope";
@@ -11,7 +11,6 @@ export interface TemplateDataProps {
   data?: Expression<TemplateData>;
   name?: string;
   context?: unknown;
-  value?: Expression<string>;
 }
 
 /**
@@ -26,7 +25,6 @@ export const useTemplateData = ({
   data,
   name = "data",
   context,
-  value,
 }: TemplateDataProps): {
   rawData: TemplateData;
   namedData: object[];
@@ -56,17 +54,6 @@ export const useTemplateData = ({
 
   return {
     rawData,
-    namedData: map(evaluatedNamedData.namedData, (val) => ({
-      ...val,
-      _ensembleValue: value
-        ? (get(
-            val,
-            value
-              .toString()
-              // eslint-disable-next-line prefer-named-capture-group
-              .replace(/['"]?\$\{([^}]*)\}['"]?/g, "$1"),
-          ) as string | number)
-        : "",
-    })),
+    namedData: evaluatedNamedData.namedData,
   };
 };
