@@ -5,11 +5,12 @@ import type {
 } from "@ensembleui/react-framework";
 import {
   CustomScopeProvider,
+  useEvaluate,
   useRegisterBindings,
   useTemplateData,
 } from "@ensembleui/react-framework";
 import { Radio, Form } from "antd";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { get, isEmpty, isObject, map } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetStyles, HasItemTemplate } from "../../shared/types";
@@ -19,6 +20,27 @@ import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
 
 const widgetName = "Radio";
+
+const withTemplate = <P extends object>(
+  WrappedComponent: React.ComponentType<P>,
+) => {
+  return function Component(
+    props: P & {
+      templateValue?: Expression<string>;
+    },
+  ): React.ReactElement {
+    const { templateValue } = props;
+    const { evaluatedValue } = useEvaluate({
+      evaluatedValue: templateValue,
+    });
+
+    if (!templateValue) {
+      return <WrappedComponent {...props} />;
+    }
+
+    return <WrappedComponent {...props} value={evaluatedValue} />;
+  };
+};
 
 export type RadioWidgetProps = FormInputProps<string> &
   HasItemTemplate & { "item-template"?: { value: Expression<string> } } & {
@@ -33,9 +55,10 @@ export type RadioWidgetProps = FormInputProps<string> &
 
 interface RadioOptionsProps {
   disabled: boolean;
-  value: string | number;
+  value?: string | number;
   children: React.ReactElement | string;
   style: EnsembleWidgetStyles;
+  item: { [key: string]: unknown };
 }
 
 export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
@@ -82,6 +105,8 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
     value: itemTemplate?.value,
   });
 
+  const RadioComponent = useMemo(() => withTemplate(Radio), []);
+
   // handle radio items
   const radioItems = useMemo(() => {
     const radioOptions: RadioOptionsProps[] = [];
@@ -94,6 +119,7 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
     if (values?.items) {
       values.items.forEach((item) => {
         radioOptions.push({
+          item,
           children: item.label,
           disabled: values.enabled === false || item.enabled === false,
           value: String(item.value),
@@ -105,24 +131,22 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
     if (isObject(itemTemplate) && !isEmpty(namedData)) {
       map(namedData, (item: { [key: string]: unknown }) => {
         const typedItem = get(item, itemTemplate.name) as CustomScope;
-        const evaluatedValue = get(item, "_ensembleValue") as string | number;
-
         radioOptions.push({
+          item,
           disabled: values?.enabled === false || typedItem.enabled === false,
-          value: evaluatedValue,
-          children: (
-            <CustomScopeProvider value={item as CustomScope}>
-              {EnsembleRuntime.render([itemTemplate.template])}
-            </CustomScopeProvider>
-          ),
+          children: <>{EnsembleRuntime.render([itemTemplate.template])}</>,
           style: getStyle(typedItem.styles as object),
         });
       });
     }
 
-    return radioOptions.map((item: RadioOptionsProps) => (
-      <Radio key={item.value} {...item} />
-    ));
+    return radioOptions.map((option: RadioOptionsProps) => {
+      return (
+        <CustomScopeProvider key={option.value} value={option.item}>
+          <RadioComponent {...option} templateValue={itemTemplate?.value} />
+        </CustomScopeProvider>
+      );
+    });
   }, [values?.items, values?.enabled, itemTemplate, namedData]);
 
   return (
