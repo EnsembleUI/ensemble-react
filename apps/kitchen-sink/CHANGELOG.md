@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.85
+
+### Patch Changes
+
+- 6cf7cbd: add ensemble.user and ensemble.env context in navigateModalScreen hook
+- Updated dependencies [6cf7cbd]
+  - @ensembleui/react-runtime@0.2.7
+
 ## 0.0.84
 
 ### Patch Changes

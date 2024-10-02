@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.2.7
+
+### Patch Changes
+
+- 6cf7cbd: add ensemble.user and ensemble.env context in navigateModalScreen hook
+
 ## 0.2.6
 
 ### Patch Changes
