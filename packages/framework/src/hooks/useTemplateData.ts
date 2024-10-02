@@ -46,10 +46,9 @@ export const useTemplateData = ({
   }, [customScope, data, isDataString, context]);
   const rawData = useAtomValue(dataAtom);
   const namedData = useMemo(
-    () => map(rawData, (val: unknown) => ({ [name]: val })),
+    () => map(rawData, (value: unknown) => ({ [name]: value })),
     [name, rawData],
   );
-
   const evaluatedNamedData = useEvaluate({ namedData });
 
   return {
