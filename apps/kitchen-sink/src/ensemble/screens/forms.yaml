@@ -39,6 +39,9 @@ View:
                 name: widgets
                 height: 200px
                 width: 900px
+                inputs:
+                  storVar: ${ensemble.storage.get('inputVal')}
+                  userVar: ${ensemble.user}
         - Button:
             label: show dialog
             onTap:
