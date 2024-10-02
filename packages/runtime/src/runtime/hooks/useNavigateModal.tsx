@@ -1,15 +1,11 @@
 import type { NavigateModalScreenAction } from "@ensembleui/react-framework";
 import {
-  evaluate,
-  findExpressions,
   unwrapWidget,
   useApplicationContext,
-  useCustomScope,
-  useEnsembleStorage,
-  useScreenContext,
+  useEvaluate,
 } from "@ensembleui/react-framework";
-import { cloneDeep, isString, set } from "lodash-es";
-import { useCallback, useContext, useMemo } from "react";
+import { cloneDeep, isString } from "lodash-es";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { ModalContext } from "../modal";
 import { EnsembleRuntime } from "../runtime";
 // FIXME: refactor
@@ -25,11 +21,18 @@ export const useNavigateModalScreen: EnsembleActionHook<
 > = (action?: NavigateModalScreenAction) => {
   const applicationContext = useApplicationContext();
   const modalContext = useContext(ModalContext);
-  const screenContext = useScreenContext();
-  const customScope = useCustomScope();
-  const storage = useEnsembleStorage();
   const ensembleAction = useEnsembleAction(
     !isString(action) && action ? action.onModalDismiss : undefined,
+  );
+  const [context, setContext] = useState<unknown>();
+  const [isComplete, setIsComplete] = useState<boolean>();
+
+  const evaluatedInputs = useEvaluate(
+    {
+      inputs:
+        !isString(action) && action?.inputs ? cloneDeep(action.inputs) : {},
+    },
+    { context },
   );
 
   const onDismissCallback = useCallback(() => {
@@ -49,48 +52,38 @@ export const useNavigateModalScreen: EnsembleActionHook<
 
   const callback = useCallback(
     (args: unknown) => {
-      if (!action || !screenContext || !modalContext) {
+      if (!action) {
         return;
       }
-
-      const inputs =
-        !isString(action) && action.inputs ? cloneDeep(action.inputs) : {};
-      if (screenContext) {
-        const expressionMap: string[][] = [];
-        findExpressions(inputs, [], expressionMap);
-        expressionMap.forEach(([path, value]) => {
-          const result = evaluate(screenContext, value, {
-            ensemble: {
-              storage,
-              user: applicationContext?.user,
-              env: applicationContext?.env,
-            },
-            ...customScope,
-            ...(args as { [key: string]: unknown }),
-          });
-          set(inputs, path, result);
-        });
-      }
-
-      navigateModalScreen(
-        action,
-        modalContext,
-        applicationContext?.application,
-        inputs,
-        title,
-        onDismissCallback,
-      );
+      setIsComplete(false);
+      setContext(args);
     },
-    [
-      action,
-      screenContext,
-      modalContext,
-      title,
-      storage,
-      customScope,
-      onDismissCallback,
-    ],
+    [action],
   );
+
+  useEffect(() => {
+    if (!action || !modalContext || isComplete !== false) {
+      return;
+    }
+
+    navigateModalScreen(
+      action,
+      modalContext,
+      applicationContext?.application,
+      evaluatedInputs.inputs,
+      title,
+      onDismissCallback,
+    );
+    setIsComplete(true);
+  }, [
+    action,
+    applicationContext?.application,
+    evaluatedInputs.inputs,
+    isComplete,
+    modalContext,
+    onDismissCallback,
+    title,
+  ]);
 
   return { callback };
 };
