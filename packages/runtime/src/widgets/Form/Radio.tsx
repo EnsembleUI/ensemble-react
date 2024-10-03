@@ -1,8 +1,4 @@
-import type {
-  CustomScope,
-  EnsembleAction,
-  Expression,
-} from "@ensembleui/react-framework";
+import type { EnsembleAction, Expression } from "@ensembleui/react-framework";
 import {
   CustomScopeProvider,
   useEvaluate,
@@ -21,10 +17,10 @@ import { EnsembleFormItem } from "./FormItem";
 
 const widgetName = "Radio";
 
-const withTemplate = <P extends object>(
+const withValueTemplate = <P extends object>(
   WrappedComponent: React.ComponentType<P>,
-) => {
-  return function Component(
+) =>
+  function Component(
     props: P & {
       templateValue?: Expression<string>;
     },
@@ -40,7 +36,6 @@ const withTemplate = <P extends object>(
 
     return <WrappedComponent {...props} value={evaluatedValue} />;
   };
-};
 
 export type RadioWidgetProps = FormInputProps<string> &
   HasItemTemplate & { "item-template"?: { value: Expression<string> } } & {
@@ -58,8 +53,10 @@ interface RadioOptionsProps {
   value?: string | number;
   children: React.ReactElement | string;
   style: EnsembleWidgetStyles;
-  item: { [key: string]: unknown };
+  scope: { [key: string]: unknown };
 }
+
+const RadioComponent = withValueTemplate(Radio);
 
 export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
   const { "item-template": itemTemplate, onChange, ...rest } = props;
@@ -72,7 +69,7 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
 
   // update initial value
   useEffect(() => {
-    setValue(values?.initialValue?.toString());
+    setValue(values?.initialValue);
   }, [values?.initialValue]);
 
   // update form field initial value
@@ -87,15 +84,15 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
   }, [value, formInstance]);
 
   // onchange ensemble action
-  const action = useEnsembleAction(onChange);
+  const onChangeAction = useEnsembleAction(onChange);
 
   // handle onchange of radio
   const handleChange = useCallback(
     (newValue: string) => {
       setValue(newValue);
-      action?.callback({ value: newValue });
+      onChangeAction?.callback({ value: newValue });
     },
-    [action],
+    [onChangeAction],
   );
 
   // extract template data
@@ -103,8 +100,6 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
     data: itemTemplate?.data,
     name: itemTemplate?.name,
   });
-
-  const RadioComponent = useMemo(() => withTemplate(Radio), []);
 
   // handle radio items
   const radioItems = useMemo(() => {
@@ -116,23 +111,25 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
     });
 
     if (values?.items) {
-      values.items.forEach((item) => {
+      values.items.forEach((scope) => {
         radioOptions.push({
-          item,
-          children: item.label,
-          disabled: values.enabled === false || item.enabled === false,
-          value: String(item.value),
-          style: getStyle(item.styles as object),
+          scope,
+          children: scope.label,
+          disabled: values.enabled === false || scope.enabled === false,
+          value: scope.value,
+          style: getStyle(scope.styles as object),
         });
       });
     }
 
     if (isObject(itemTemplate) && !isEmpty(namedData)) {
-      map(namedData, (item: { [key: string]: unknown }) => {
-        const typedItem = get(item, itemTemplate.name) as CustomScope;
+      map(namedData, (scope: { [key: string]: unknown }) => {
+        const typedItem = get(scope, itemTemplate.name) as {
+          [key: string]: unknown;
+        };
         radioOptions.push({
-          item,
-          disabled: values?.enabled === false || typedItem.enabled === false,
+          scope,
+          disabled: values?.enabled === false,
           children: <>{EnsembleRuntime.render([itemTemplate.template])}</>,
           style: getStyle(typedItem.styles as object),
         });
@@ -141,7 +138,7 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
 
     return radioOptions.map((option: RadioOptionsProps) => {
       return (
-        <CustomScopeProvider key={option.value} value={option.item}>
+        <CustomScopeProvider key={option.value} value={option.scope}>
           <RadioComponent {...option} templateValue={itemTemplate?.value} />
         </CustomScopeProvider>
       );
