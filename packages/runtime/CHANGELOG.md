@@ -1,5 +1,12 @@
 # @ensembleui/react-runtime
 
+## 0.2.8
+
+### Patch Changes
+
+- ff6f3bf: fix mask input required validation
+- 94ca82a: Modernaization radio widget
+
 ## 0.2.7
 
 ### Patch Changes
