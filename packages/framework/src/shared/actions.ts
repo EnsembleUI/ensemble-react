@@ -186,6 +186,7 @@ export interface DispatchEventAction {
  * @uiType action
  */
 export type EnsembleAction =
+  | string
   | {
       executeCode?: ExecuteCodeAction;
     }
