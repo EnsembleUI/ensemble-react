@@ -15,8 +15,7 @@ View:
           inputs:
             skip: 0
             limit: 17
-          onResponse:
-            executeCode: |
+          onResponse: |
               const res = response.body.products;
               ensemble.storage.set("dummyProducts", res);
 
@@ -405,8 +404,7 @@ View:
                               inputs:
                                 skip: ${ensemble.storage.get('skip') * (page - 1)}
                                 limit: ${pageSize}
-                              onResponse:
-                                executeCode: |
+                              onResponse: |
                                   const prevItem = ensemble.storage.get("dummyProducts")
                                   const res = response.body.products;
                                   ensemble.storage.set("dummyProducts", [...res])
@@ -493,8 +491,7 @@ View:
                   onTap:
                     invokeAPI:
                       name: getDummyNumbers
-                      onResponse:
-                        executeCode: |
+                      onResponse: |
                           ensemble.storage.set('dummyNumbers', response.body)
               - Text:
                   styles:
@@ -516,8 +513,7 @@ View:
                   onScrollEnd:
                     invokeAPI:
                       name: getDummyNumbers
-                      onResponse:
-                        executeCode: |
+                      onResponse: |
                           ensemble.storage.set('dummyNumbers', [...ensemble.storage.get('dummyNumbers'), ...response.body])
                   item-template:
                     data: ${ensemble.storage.get('dummyNumbers')}
@@ -1228,8 +1224,7 @@ View:
                   onTap:
                     invokeApi:
                       name: "getDummyProducts"
-                      onResponse:
-                        executeCode: |
+                      onResponse: |
                           ensemble.storage.set('dynamicDropdownOptions', response.body.products)
               - Dropdown:
                   label: With the label widget
@@ -1339,6 +1334,5 @@ API:
   getDummyNumbers:
     method: GET
     uri: https://661e111b98427bbbef034208.mockapi.io/number?limit=10
-    onResponse:
-      executeCode: |
+    onResponse: |
         console.log('dummy number fetched')
