@@ -31,10 +31,12 @@ import type {
   EnsembleThemeModel,
   EnsembleSocketModel,
   EnsembleCustomEventModel,
+  EnsembleFontModel,
 } from "./shared/models";
 import type {
   ApplicationDTO,
   EnsembleConfigYAML,
+  FontDTO,
   LanguageDTO,
 } from "./shared/dto";
 import { type EnsembleAction } from "./shared";
@@ -42,11 +44,12 @@ import { defaultThemeDefinition } from "./state";
 
 export interface EnsembleScreenYAML {
   View?: {
+    inputs?: string[];
     header?: { [key: string]: unknown };
     body: { [key: string]: unknown };
     footer?: { [key: string]: unknown };
     styles?: { [key: string]: unknown };
-    [k: string]: { [key: string]: unknown } | undefined;
+    [k: string]: { [key: string]: unknown } | string[] | undefined;
   };
   ViewGroup?: { [key: string]: unknown };
 }
@@ -98,9 +101,9 @@ export const EnsembleParser = {
       throw Error("Application must have at least one screen");
     }
 
-    const menu = screens.find((screen) => "items" in screen) as
-      | EnsembleMenuModel
-      | undefined;
+    const menu = screens.find(
+      (screen) => "items" in screen,
+    ) as EnsembleMenuModel;
 
     if (menu) {
       remove(screens, (screen) => screen === menu);
@@ -131,6 +134,8 @@ export const EnsembleParser = {
       unwrapLanguage(language),
     );
 
+    const fonts = app.fonts?.map((font) => unwrapFont(font));
+
     return {
       id: app.id,
       menu,
@@ -144,6 +149,7 @@ export const EnsembleParser = {
       scripts,
       config: ensembleConfigData,
       languages,
+      fonts,
     };
   },
 
@@ -221,6 +227,7 @@ export const EnsembleParser = {
       ...(view ?? {}),
       id,
       name,
+      inputs: screen.View?.inputs,
       global,
       header: unwrapHeader(header),
       footer: unwrapFooter(footer),
@@ -480,5 +487,16 @@ const unwrapLanguage = (language: LanguageDTO) => {
   return {
     ...language,
     resources: parse(language.content) as { [key: string]: unknown },
+  };
+};
+
+const unwrapFont = (font: FontDTO): EnsembleFontModel => {
+  return {
+    family: font.fontFamily,
+    url: font.publicUrl,
+    options: {
+      weight: font.fontWeight,
+      style: font.fontStyle,
+    },
   };
 };

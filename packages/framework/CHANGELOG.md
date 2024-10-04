@@ -1,5 +1,25 @@
 # @ensembleui/react-framework
 
+## 0.2.5
+
+### Patch Changes
+
+- ef1744c: added support for custom fonts
+
+## 0.2.4
+
+### Patch Changes
+
+- cef48e0: Declare screen inputs even if they are not passed in with value
+
+## 0.2.3
+
+### Patch Changes
+
+- b42978c: Optimize dependencies for useExecuteCode
+- 6c59f18: ensure user atom overwrite keys
+- 8487a99: Added support for closeAllScreens action
+
 ## 0.2.2
 
 ### Patch Changes

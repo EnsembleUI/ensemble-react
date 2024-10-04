@@ -9,7 +9,8 @@ import { Alert } from "antd";
 import { isString, set } from "lodash-es";
 import type { Firestore } from "firebase/firestore/lite";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useLocation, useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
+import { useAppConsole } from "./useAppConsole";
 
 const customWidgetPreviewScaffold = `
 View:
@@ -46,16 +47,17 @@ const createCustomWidgetPreviewApp = (
   };
   const customApp: ApplicationDTO = {
     ...customPreviewWidgetApp,
+    config: app.config,
     theme: app.theme,
     screens: [screen],
     widgets: [customWidget],
+    languages: app.languages,
   };
   return customApp;
 };
 
 export const AppPreview: React.FC<{ db: Firestore }> = ({ db }) => {
   const { previewId } = useParams();
-  const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
   const [refreshCount, setRefreshCount] = useState<number>(0);
   const [bypassCache, setBypassCache] = useState<boolean>(true);
@@ -150,6 +152,8 @@ export const AppPreview: React.FC<{ db: Firestore }> = ({ db }) => {
     };
   }, [handleMessage]);
 
+  useAppConsole();
+
   if (!previewId) {
     return <Alert message="An app id must be provided" type="error" />;
   }
@@ -158,7 +162,7 @@ export const AppPreview: React.FC<{ db: Firestore }> = ({ db }) => {
       appId={previewId}
       key={refreshCount}
       loader={loader}
-      path={pathname}
+      path={`/preview/${previewId}`}
       screenId={artifactId ?? undefined}
     />
   );

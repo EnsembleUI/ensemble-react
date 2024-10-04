@@ -3,7 +3,6 @@ import { initializeFirestore } from "firebase/firestore/lite";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AppPreview } from "./AppPreview";
 import { AppSelector } from "./AppSelector";
-
 import "./App.css";
 
 export const firebaseApp = initializeApp({
@@ -23,7 +22,7 @@ const router = createBrowserRouter([
     element: <AppSelector />,
   },
   {
-    path: "/preview/:previewId",
+    path: "/preview/:previewId/*",
     element: <AppPreview db={db} />,
   },
 ]);

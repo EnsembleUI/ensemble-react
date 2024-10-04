@@ -1,5 +1,71 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.85
+
+### Patch Changes
+
+- 6cf7cbd: add ensemble.user and ensemble.env context in navigateModalScreen hook
+- Updated dependencies [6cf7cbd]
+  - @ensembleui/react-runtime@0.2.7
+
+## 0.0.84
+
+### Patch Changes
+
+- 489ed91: fix form item's label not picking evaluated value
+- Updated dependencies [ef1744c]
+- Updated dependencies [489ed91]
+  - @ensembleui/react-framework@0.2.5
+  - @ensembleui/react-runtime@0.2.6
+
+## 0.0.83
+
+### Patch Changes
+
+- 18fb646: Added range support in slider widget
+- Updated dependencies [cef48e0]
+- Updated dependencies [18fb646]
+  - @ensembleui/react-framework@0.2.4
+  - @ensembleui/react-runtime@0.2.5
+
+## 0.0.82
+
+### Patch Changes
+
+- 0082369: Added fix for show only one error message for multiple validation rule
+- f283624: Added support for qr code widget
+- Updated dependencies [0082369]
+- Updated dependencies [b77be40]
+- Updated dependencies [f283624]
+  - @ensembleui/react-runtime@0.2.4
+
+## 0.0.81
+
+### Patch Changes
+
+- b42978c: Optimize dependencies for useExecuteCode
+- 69d5579: modernize PopupMenu widget
+- ab37ee9: Added support to customize nooption in search widget
+- 8487a99: Added support for closeAllScreens action
+- c9a5acb: Fix datagrid rows deselected issue
+- 0f9525d: fix Datagrid's defaultSelectedRowKeys
+- e42c9b4: added support for screen lavel font colour support
+- Updated dependencies [7602b73]
+- Updated dependencies [b42978c]
+- Updated dependencies [69d5579]
+- Updated dependencies [ab37ee9]
+- Updated dependencies [06cc75e]
+- Updated dependencies [6c59f18]
+- Updated dependencies [8487a99]
+- Updated dependencies [c9a5acb]
+- Updated dependencies [4b8f19a]
+- Updated dependencies [0f9525d]
+- Updated dependencies [f528819]
+- Updated dependencies [f466659]
+- Updated dependencies [e42c9b4]
+  - @ensembleui/react-runtime@0.2.3
+  - @ensembleui/react-framework@0.2.3
+
 ## 0.0.80
 
 ### Patch Changes

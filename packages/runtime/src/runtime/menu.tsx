@@ -1,6 +1,11 @@
 import type { PropsWithChildren, ReactNode } from "react";
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { Menu as AntMenu, Col, Drawer as AntDrawer } from "antd";
+import {
+  Menu as AntMenu,
+  Col,
+  Drawer as AntDrawer,
+  ConfigProvider,
+} from "antd";
 import * as MuiIcons from "@mui/icons-material";
 import {
   unwrapWidget,
@@ -395,55 +400,67 @@ const MenuItems: React.FC<{
   );
 
   return (
-    <AntMenu
-      mode="inline"
-      /* FIXME This is a hack so we can control our own selected styling. Ideally, this should use design tokens */
-      selectedKeys={[]}
-      style={{
-        flex: "1",
-        backgroundColor: styles.backgroundColor
-          ? getColor(styles.backgroundColor)
-          : "none",
-        display: "flex",
-        flexDirection: "column",
-        borderRight: "none",
+    <ConfigProvider
+      theme={{
+        components: {
+          Menu: {
+            itemActiveBg: "inherit",
+          },
+        },
       }}
     >
-      {items.map((item, itemIndex) => (
-        <AntMenu.Item
-          data-testid={item.id ?? item.testId}
-          icon={getIcon(item)}
-          key={item.page || item.url || `customItem${itemIndex}`}
-          onClick={(): void => {
-            if (!item.openNewTab && item.page) {
-              setSelectedItem(item.page);
-            }
-          }}
-          style={{
-            color:
-              selectedItem === item.page
-                ? (styles.selectedColor as string) ?? "white"
-                : (styles.labelColor as string) ?? "grey",
-            display: item.visible === false ? "none" : "flex",
-            justifyContent: "center",
-            borderRadius: 0,
-            alignItems: "center",
-            fontSize:
-              selectedItem === item.page
-                ? `${
-                    parseInt(
-                      `${styles.labelFontSize ? styles.labelFontSize : 1}` ||
-                        "1",
-                    ) + 0.2
-                  }rem`
-                : `${styles.labelFontSize ? styles.labelFontSize : 1}rem`,
-            height: "auto",
-            ...(selectedItem === item.page ? styles.onSelectStyles ?? {} : {}),
-          }}
-        >
-          <CustomLink item={item}>{getLabel(item)}</CustomLink>
-        </AntMenu.Item>
-      ))}
-    </AntMenu>
+      <AntMenu
+        mode="inline"
+        /* FIXME This is a hack so we can control our own selected styling. Ideally, this should use design tokens */
+        selectedKeys={[]}
+        style={{
+          flex: "1",
+          backgroundColor: styles.backgroundColor
+            ? getColor(styles.backgroundColor)
+            : "none",
+          display: "flex",
+          flexDirection: "column",
+          borderRight: "none",
+        }}
+      >
+        {items.map((item, itemIndex) => (
+          <AntMenu.Item
+            data-testid={item.id ?? item.testId}
+            icon={getIcon(item)}
+            key={item.page || item.url || `customItem${itemIndex}`}
+            onClick={(): void => {
+              if (!item.openNewTab && item.page) {
+                setSelectedItem(item.page);
+              }
+            }}
+            style={{
+              color:
+                selectedItem === item.page
+                  ? (styles.selectedColor as string) ?? "white"
+                  : (styles.labelColor as string) ?? "grey",
+              display: item.visible === false ? "none" : "flex",
+              justifyContent: "center",
+              borderRadius: 0,
+              alignItems: "center",
+              fontSize:
+                selectedItem === item.page
+                  ? `${
+                      parseInt(
+                        `${styles.labelFontSize ? styles.labelFontSize : 1}` ||
+                          "1",
+                      ) + 0.2
+                    }rem`
+                  : `${styles.labelFontSize ? styles.labelFontSize : 1}rem`,
+              height: "auto",
+              ...(selectedItem === item.page
+                ? styles.onSelectStyles ?? {}
+                : {}),
+            }}
+          >
+            <CustomLink item={item}>{getLabel(item)}</CustomLink>
+          </AntMenu.Item>
+        ))}
+      </AntMenu>
+    </ConfigProvider>
   );
 };

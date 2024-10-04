@@ -15,6 +15,7 @@ import type {
   WidgetDTO,
   LanguageDTO,
   EnsembleConfigYAML,
+  FontDTO,
 } from "./shared/dto";
 import { languageMap } from "./i18n";
 
@@ -27,6 +28,7 @@ const getArtifacts = async (
   scripts: ScriptDTO[];
   languages?: LanguageDTO[];
   config?: EnsembleConfigYAML;
+  fonts?: FontDTO[];
 }> => {
   const snapshot = await getDocs(
     query(collection(appRef, "artifacts"), where("isArchived", "!=", true)),
@@ -44,6 +46,7 @@ const getArtifacts = async (
   const widgets = [];
   const scripts = [];
   const languages = [];
+  const fonts = [];
   for (const artifact of snapshot.docs) {
     const document = artifact.data();
 
@@ -70,8 +73,18 @@ const getArtifacts = async (
         ...config,
         secretVariables: document.secrets as { [key: string]: unknown },
       };
+    } else if (document.type === "font") {
+      const font = document as FontDTO;
+
+      fonts.push({
+        fontFamily: font.fontFamily,
+        publicUrl: font.publicUrl,
+        fontWeight: font.fontWeight.replace(/[^0-9]/g, ""), // this is required, because font face only accept number in font face and we are getting string from the firebase (ex. weight: '400 (normal)')
+        fontStyle: font.fontStyle,
+      });
     }
   }
+
   for (const artifact of internalArtifactsSnapshot.docs) {
     const artifactData = artifact.data();
     if (artifactData.type === "internal_widget") {
@@ -80,6 +93,7 @@ const getArtifacts = async (
       scripts.push({ ...artifactData, id: artifact.id } as ScriptDTO);
     }
   }
+
   return {
     screens,
     widgets,
@@ -87,6 +101,7 @@ const getArtifacts = async (
     scripts,
     languages,
     config,
+    fonts,
   };
 };
 
@@ -105,7 +120,7 @@ export const getFirestoreApplicationLoader = (
       ...appDoc.data(),
     } as ApplicationDTO;
 
-    const { screens, widgets, theme, scripts, languages, config } =
+    const { screens, widgets, theme, scripts, languages, config, fonts } =
       await getArtifacts(appDocRef);
 
     return {
@@ -116,6 +131,7 @@ export const getFirestoreApplicationLoader = (
       scripts,
       languages,
       config,
+      fonts,
     };
   },
 });

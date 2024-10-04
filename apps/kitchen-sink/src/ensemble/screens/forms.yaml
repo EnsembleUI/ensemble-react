@@ -1,3 +1,6 @@
+Import:
+  - common
+
 View:
   styles:
     scrollableView: true
@@ -7,6 +10,7 @@ View:
         ensemble.storage.set('inputVal', 'sagar');
         ensemble.storage.set('mockApiStatusCode', 200);
         ensemble.storage.set('mockApiReasonPhrase', 'Success!');
+        ensemble.storage.set('mockApiName', 'testMockResponse');
         ensemble.storage.set('dummyData', [
           { value: "val 1", label: "lab 1" },
           { value: "val 2", label: "lab 2" },
@@ -35,6 +39,9 @@ View:
                 name: widgets
                 height: 200px
                 width: 900px
+                inputs:
+                  storVar: ${ensemble.storage.get('inputVal')}
+                  userVar: ${ensemble.user}
         - Button:
             label: show dialog
             onTap:
@@ -161,13 +168,15 @@ View:
                     # If you omit id, the form value key will be the label
                     - TextInput:
                         id: formTextInput
-                        value: ${ensemble.storage.get('inputVal')}
                         hintText: (123) 456-7890
                         mask: "(###) ###-####"
+                        validator:
+                          maskError: "Please enter valid format"
                         inputType: phone
+                        required: true
                         label:
                           Text:
-                            text: Text input
+                            text: Text mask input
                     - TextInput:
                         id: minMaxTextInput
                         inputType: number
@@ -181,6 +190,7 @@ View:
                         label: Text input with min and max length
                     - TextInput:
                         id: regexTextInput
+                        required: true
                         validator:
                           regex: .{1,}
                           regexError: "write something atleast"
@@ -224,9 +234,19 @@ View:
                         format: DD-MM-YY
                     - Date:
                         id: date2
-                        label: Date 2
+                        label: ${getDateLabel(dropdown.selectedValue)}
+                        labelStyle:
+                          color: ${dropdown.selectedValue === 'option2' ? 'green' :'blue'}
+                        required: true
                         value: "2024/04/04"
-                        hintText: Choose date 2
+                        format: MM/DD/YYYY
+                        hintText: ${ensemble.storage.get('inputVal')}
+                    - TextInput:
+                        id: customNumberInput
+                        required: true
+                        validator:
+                          regex: ^\d{10}$
+                          regexError: "Please enter a 10 digit number"
                     - Button:
                         submitForm: true
                         label: Submit
@@ -388,6 +408,7 @@ View:
                   initialValue: false
                   onChange:
                     executeCode: |
+                      debugger;
                       app.setUseMockResponse(!app.useMockResponse);
               - Checkbox:
                   id: throwMockApiErrorCheckbox
@@ -418,7 +439,7 @@ View:
                   label: Call API from executeCode!
                   onTap:
                     executeCode: |
-                      ensemble.invokeAPI("testMockResponse");
+                      ensemble.invokeAPI('testMockResponse');
               - Spacer:
                   styles:
                     size: 20
@@ -478,7 +499,7 @@ API:
     uri: https://dummyjson.com/users/1
     mockResponse:
       statusCode: "${ensemble.storage.get('mockApiStatusCode')}"
-      reasonPhrase: "${ensemble.storage.get('mockApiReasonPhrase')}"
+      reasonPhrase: "${ensemble.env.randomId}"
       body:
         - id: 0
           name: Harry Potter

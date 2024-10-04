@@ -45,6 +45,10 @@ export const screenDataAtom = atom(
   },
 );
 
+export const screenModelAtom = focusAtom(screenAtom, (optic) =>
+  optic.prop("model"),
+);
+
 export const screenApiAtom = focusAtom(screenAtom, (optic) => {
   return optic.prop("model").optional().prop("apis");
 });
