@@ -198,7 +198,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     if (values?.mask && patternValue) {
       rulesArray.push({
         validator: (_, inputValue?: string) => {
-          if (new RegExp(patternValue).test(inputValue || "")) {
+          if (!inputValue || new RegExp(patternValue).test(inputValue)) {
             return Promise.resolve();
           }
           return Promise.reject(
@@ -217,6 +217,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     values?.validator?.maxLength,
     values?.validator?.regex,
     values?.validator?.regexError,
+    values?.validator?.maskError,
     values?.mask,
     patternValue,
   ]);
