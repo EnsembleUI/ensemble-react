@@ -217,6 +217,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     values?.validator?.maxLength,
     values?.validator?.regex,
     values?.validator?.regexError,
+    values?.validator?.maskError,
     values?.mask,
     patternValue,
   ]);
