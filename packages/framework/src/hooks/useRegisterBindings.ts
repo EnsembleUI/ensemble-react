@@ -88,6 +88,10 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
     }
   }, [options?.forceState]);
 
+  useEffect(() => {
+    setWidgetState({});
+  }, [setWidgetState]);
+
   const updatedValues = widgetState?.values ?? newValues;
   const htmlAttributes = get(updatedValues, "htmlAttributes") as {
     [key: string]: string;
