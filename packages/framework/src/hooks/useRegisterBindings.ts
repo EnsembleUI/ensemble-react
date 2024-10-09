@@ -89,10 +89,15 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
   }, [options?.forceState]);
 
   useEffect(() => {
-    setWidgetState({
-      values: { ...newValues, id: resolvedWidgetId },
-      invokable: { id: resolvedWidgetId, methods },
-    });
+    return () => {
+      setWidgetState({
+        values: newValues,
+        invokable: {
+          id: resolvedWidgetId,
+          methods: { ...methods, getId: () => resolvedWidgetId },
+        },
+      });
+    };
   }, [setWidgetState]);
 
   const updatedValues = widgetState?.values ?? newValues;
