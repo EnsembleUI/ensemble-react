@@ -3,7 +3,7 @@ import { atomFamily } from "jotai/utils";
 import { screenAtom } from "./screen";
 
 export interface WidgetState<T = { [key: string]: unknown }> {
-  values?: T;
+  values: T;
   invokable?: Invokable;
 }
 
