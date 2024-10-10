@@ -1,25 +1,8 @@
 /* eslint-disable react/no-children-prop */
+import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import type { PropsWithChildren } from "react";
-import { BrowserRouter } from "react-router-dom";
-import { ScreenContextProvider } from "@ensembleui/react-framework";
-import { Button, Form } from "../../index";
-
-const FormTestWrapper: React.FC<PropsWithChildren> = ({ children }) => {
-  return (
-    <BrowserRouter>
-      <ScreenContextProvider
-        screen={{
-          id: "formTest",
-          name: "formTest",
-          body: { name: "Column", properties: {} },
-        }}
-      >
-        {children}
-      </ScreenContextProvider>
-    </BrowserRouter>
-  );
-};
+import { Form } from "../../index";
+import { FormTestWrapper } from "../../../shared/fixtures";
 
 const defaultFormContent = [
   {
@@ -31,27 +14,32 @@ const defaultFormContent = [
   },
 ];
 
+const defaultFormButton = [
+  {
+    name: "Button",
+    properties: {
+      label: "Get Value",
+      onTap: {
+        executeCode: "console.log(form.getValues())",
+      },
+    },
+  },
+];
+
 describe("TextInput", () => {
   test("allows numeric keys to be entered", async () => {
     const logSpy = jest.spyOn(console, "log");
     render(
-      <>
-        <Form children={defaultFormContent} id="form" />
-        <Button
-          label="Check value"
-          onTap={{
-            executeCode: "console.log(form.getValues())",
-          }}
-        />
-      </>,
-      {
-        wrapper: FormTestWrapper,
-      },
+      <Form
+        children={[...defaultFormContent, ...defaultFormButton]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
     );
     const input = screen.getByLabelText("Number input");
     fireEvent.change(input, { target: { value: "123" } });
 
-    const getValueButton = screen.getByText("Check value");
+    const getValueButton = screen.getByText("Get Value");
     fireEvent.click(getValueButton);
 
     await waitFor(() => {
@@ -64,23 +52,16 @@ describe("TextInput", () => {
   test("filter numeric keys to be entered", async () => {
     const logSpy = jest.spyOn(console, "log");
     render(
-      <>
-        <Form children={defaultFormContent} id="form" />
-        <Button
-          label="Check value"
-          onTap={{
-            executeCode: "console.log(form.getValues())",
-          }}
-        />
-      </>,
-      {
-        wrapper: FormTestWrapper,
-      },
+      <Form
+        children={[...defaultFormContent, ...defaultFormButton]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
     );
     const input = screen.getByLabelText("Number input");
     fireEvent.change(input, { target: { value: "Hello 123" } });
 
-    const getValueButton = screen.getByText("Check value");
+    const getValueButton = screen.getByText("Get Value");
     fireEvent.click(getValueButton);
 
     await waitFor(() => {
@@ -93,35 +74,26 @@ describe("TextInput", () => {
   test("max number allow", async () => {
     const logSpy = jest.spyOn(console, "log");
     render(
-      <>
-        <Form
-          children={[
-            {
-              name: "TextInput",
-              properties: {
-                label: "Number input",
-                id: "numberInput",
-                maxLength: 4,
-              },
+      <Form
+        children={[
+          {
+            name: "TextInput",
+            properties: {
+              label: "Number input",
+              id: "numberInput",
+              maxLength: 4,
             },
-          ]}
-          id="form"
-        />
-        <Button
-          label="Check value"
-          onTap={{
-            executeCode: "console.log(form.getValues())",
-          }}
-        />
-      </>,
-      {
-        wrapper: FormTestWrapper,
-      },
+          },
+          ...defaultFormButton,
+        ]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
     );
     const input = screen.getByLabelText("Number input");
     fireEvent.change(input, { target: { value: "123456" } });
 
-    const getValueButton = screen.getByText("Check value");
+    const getValueButton = screen.getByText("Get Value");
     fireEvent.click(getValueButton);
 
     await waitFor(() => {
@@ -139,39 +111,30 @@ describe("TextInput", () => {
           {
             name: "TextInput",
             properties: {
-              id: "textInput",
+              id: "initialInput",
               label: "Text Input",
               value: "ensemble",
             },
           },
-          {
-            name: "Button",
-            properties: {
-              label: "Check Value",
-              onTap: {
-                executeCode: "console.log(form.getValues())",
-              },
-            },
-          },
+          ...defaultFormButton,
         ]}
         id="form"
       />,
       { wrapper: FormTestWrapper },
     );
 
-    const getValueButton = screen.getByText("Check Value");
+    const getValueButton = screen.getByText("Get Value");
     fireEvent.click(getValueButton);
 
     await waitFor(() => {
       expect(logSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ textInput: "ensemble" }),
+        expect.objectContaining({ initialInput: "ensemble" }),
       );
     });
   });
 
-  test("updates when binding changes value", async () => {
+  test("updates when calling setValue", async () => {
     const logSpy = jest.spyOn(console, "log");
-
     render(
       <Form
         children={[
@@ -192,31 +155,103 @@ describe("TextInput", () => {
               },
             },
           },
-          {
-            name: "Button",
-            properties: {
-              label: "Check Value",
-              onTap: {
-                executeCode: "console.log(form.getValues())",
-              },
-            },
-          },
+          ...defaultFormButton,
         ]}
         id="form"
       />,
-      {
-        wrapper: FormTestWrapper,
-      },
+      { wrapper: FormTestWrapper },
     );
 
     const setValueButton = screen.getByText("Set Value");
-    const getValueButton = screen.getByText("Check Value");
+    const getValueButton = screen.getByText("Get Value");
     fireEvent.click(setValueButton);
     fireEvent.click(getValueButton);
 
     await waitFor(() => {
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ textInput: "ensemble" }),
+      );
+    });
+  });
+
+  test("updates when binding changes value", async () => {
+    const logSpy = jest.spyOn(console, "log");
+    render(
+      <Form
+        children={[
+          {
+            name: "TextInput",
+            properties: {
+              id: "binding",
+              label: "Text Input",
+              value: `\${ensemble.storage.get('binding')}`,
+            },
+          },
+          {
+            name: "Button",
+            properties: {
+              label: "Set Value",
+              onTap: {
+                executeCode: "ensemble.storage.set('binding','bindingValue')",
+              },
+            },
+          },
+          ...defaultFormButton,
+        ]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
+    );
+
+    const setValueButton = screen.getByText("Set Value");
+    const getValueButton = screen.getByText("Get Value");
+    fireEvent.click(setValueButton);
+
+    await waitFor(() => {
+      fireEvent.click(getValueButton);
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ binding: "bindingValue" }),
+      );
+    });
+  });
+
+  test("binding change overwrites user input value", async () => {
+    const logSpy = jest.spyOn(console, "log");
+    render(
+      <Form
+        children={[
+          {
+            name: "TextInput",
+            properties: {
+              id: "userInput",
+              label: "Text Input",
+              value: `\${ensemble.storage.get('userInput') ?? 'text input'}`,
+            },
+          },
+          {
+            name: "Button",
+            properties: {
+              label: "Set Value",
+              onTap: {
+                executeCode: "ensemble.storage.set('userInput','ensemble')",
+              },
+            },
+          },
+          ...defaultFormButton,
+        ]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
+    );
+
+    const setValueButton = screen.getByText("Set Value");
+    const getValueButton = screen.getByText("Get Value");
+    fireEvent.click(setValueButton);
+
+    await waitFor(() => {
+      fireEvent.click(getValueButton);
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ userInput: "ensemble" }),
       );
     });
   });

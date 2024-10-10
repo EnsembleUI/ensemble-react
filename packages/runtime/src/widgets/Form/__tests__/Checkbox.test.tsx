@@ -1,68 +1,53 @@
 /* eslint-disable react/no-children-prop */
 import "@testing-library/jest-dom";
-import { BrowserRouter } from "react-router-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { ScreenContextProvider } from "@ensembleui/react-framework";
-import type { PropsWithChildren } from "react";
-import { Button, Form } from "../../index";
+import { Form } from "../../index";
+import { FormTestWrapper } from "../../../shared/fixtures";
 
-const FormTestWrapper: React.FC<PropsWithChildren> = ({ children }) => {
-  return (
-    <BrowserRouter>
-      <ScreenContextProvider
-        screen={{
-          id: "formTest",
-          name: "formTest",
-          body: { name: "Column", properties: {} },
-        }}
-      >
-        {children}
-      </ScreenContextProvider>
-    </BrowserRouter>
-  );
-};
+const defaultFormButton = [
+  {
+    name: "Button",
+    properties: {
+      label: "Get Value",
+      onTap: {
+        executeCode: "console.log(form.getValues())",
+      },
+    },
+  },
+];
 
 describe("Checkbox Widget", () => {
   test("initializes with a binding value", async () => {
     const logSpy = jest.spyOn(console, "log");
     render(
-      <>
-        <Form
-          children={[
-            {
-              name: "Checkbox",
-              properties: {
-                id: "checkbox",
-                label: "Check Box",
-                value: true,
-              },
+      <Form
+        children={[
+          {
+            name: "Checkbox",
+            properties: {
+              id: "initialValue",
+              label: "Check Box",
+              value: true,
             },
-          ]}
-          id="form"
-        />
-        <Button
-          label="Check Value"
-          onTap={{
-            executeCode: "console.log(form.getValues())",
-          }}
-        />
-      </>,
-      {
-        wrapper: FormTestWrapper,
-      },
+          },
+          ...defaultFormButton,
+        ]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
     );
 
-    const getValueButton = screen.getByText("Check Value");
+    const getValueButton = screen.getByText("Get Value");
     fireEvent.click(getValueButton);
 
     await waitFor(() => {
       expect(logSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ checkbox: true }),
+        expect.objectContaining({ initialValue: true }),
       );
     });
   });
 
-  test("updates when binding changes value", async () => {
+  test("updates when calling setValue", async () => {
     const logSpy = jest.spyOn(console, "log");
     render(
       <Form
@@ -84,31 +69,103 @@ describe("Checkbox Widget", () => {
               },
             },
           },
-          {
-            name: "Button",
-            properties: {
-              label: "Check Value",
-              onTap: {
-                executeCode: "console.log(form.getValues())",
-              },
-            },
-          },
+          ...defaultFormButton,
         ]}
         id="form"
       />,
-      {
-        wrapper: FormTestWrapper,
-      },
+      { wrapper: FormTestWrapper },
     );
 
     const setValueButton = screen.getByText("Set Value");
-    const getValueButton = screen.getByText("Check Value");
+    const getValueButton = screen.getByText("Get Value");
     fireEvent.click(setValueButton);
     fireEvent.click(getValueButton);
 
     await waitFor(() => {
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ checkbox: true }),
+      );
+    });
+  });
+
+  test("updates when binding changes value", async () => {
+    const logSpy = jest.spyOn(console, "log");
+    render(
+      <Form
+        children={[
+          {
+            name: "Checkbox",
+            properties: {
+              id: "binding",
+              label: "Check Box",
+              value: `\${ensemble.storage.get('binding')}`,
+            },
+          },
+          {
+            name: "Button",
+            properties: {
+              label: "Set Value",
+              onTap: {
+                executeCode: "ensemble.storage.set('binding',true)",
+              },
+            },
+          },
+          ...defaultFormButton,
+        ]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
+    );
+
+    const setValueButton = screen.getByText("Set Value");
+    const getValueButton = screen.getByText("Get Value");
+    fireEvent.click(setValueButton);
+
+    await waitFor(() => {
+      fireEvent.click(getValueButton);
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ binding: true }),
+      );
+    });
+  });
+
+  test("binding change overwrites user input value", async () => {
+    const logSpy = jest.spyOn(console, "log");
+    render(
+      <Form
+        children={[
+          {
+            name: "Checkbox",
+            properties: {
+              id: "userInput",
+              label: "Check Box",
+              value: `\${ensemble.storage.get('userInput') ?? true}`,
+            },
+          },
+          {
+            name: "Button",
+            properties: {
+              label: "Set Value",
+              onTap: {
+                executeCode: "ensemble.storage.set('userInput',false)",
+              },
+            },
+          },
+          ...defaultFormButton,
+        ]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
+    );
+
+    const setValueButton = screen.getByText("Set Value");
+    const getValueButton = screen.getByText("Get Value");
+    fireEvent.click(setValueButton);
+
+    await waitFor(() => {
+      fireEvent.click(getValueButton);
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ userInput: false }),
       );
     });
   });

@@ -1,64 +1,49 @@
 /* eslint-disable react/no-children-prop */
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { ScreenContextProvider } from "@ensembleui/react-framework";
-import type { PropsWithChildren } from "react";
-import { BrowserRouter } from "react-router-dom";
-import { Form, Button } from "../../index";
+import { Form } from "../../index";
+import { FormTestWrapper } from "../../../shared/fixtures";
 
-const FormTestWrapper: React.FC<PropsWithChildren> = ({ children }) => {
-  return (
-    <BrowserRouter>
-      <ScreenContextProvider
-        screen={{
-          id: "formTest",
-          name: "formTest",
-          body: { name: "Column", properties: {} },
-        }}
-      >
-        {children}
-      </ScreenContextProvider>
-    </BrowserRouter>
-  );
-};
+const defaultFormButton = [
+  {
+    name: "Button",
+    properties: {
+      label: "Get Value",
+      onTap: {
+        executeCode: "console.log(form.getValues())",
+      },
+    },
+  },
+];
 
 describe("MultiSelect Widget", () => {
   test("initializes with a binding value", async () => {
     const logSpy = jest.spyOn(console, "log");
     render(
-      <>
-        <Form
-          children={[
-            {
-              name: "MultiSelect",
-              properties: {
-                id: "multiSelect",
-                label: "Choose Option",
-                data: [
-                  { label: "Option 1", value: "option1" },
-                  { label: "Option 2", value: "option2" },
-                  { label: "Option 3", value: "option3" },
-                  { label: "Option 4", value: "option4" },
-                ],
-                value: ["option2", "option4"],
-              },
+      <Form
+        children={[
+          {
+            name: "MultiSelect",
+            properties: {
+              id: "multiSelect",
+              label: "Choose Option",
+              data: [
+                { label: "Option 1", value: "option1" },
+                { label: "Option 2", value: "option2" },
+                { label: "Option 3", value: "option3" },
+                { label: "Option 4", value: "option4" },
+              ],
+              value: ["option2", "option4"],
             },
-          ]}
-          id="form"
-        />
-        <Button
-          label="Check value"
-          onTap={{
-            executeCode: "console.log(form.getValues())",
-          }}
-        />
-      </>,
-      {
-        wrapper: FormTestWrapper,
-      },
+          },
+          ...defaultFormButton,
+        ]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
     );
 
-    const getValueButton = screen.getByText("Check value");
+    const getValueButton = screen.getByText("Get Value");
     fireEvent.click(getValueButton);
 
     await waitFor(() => {
@@ -68,7 +53,7 @@ describe("MultiSelect Widget", () => {
     });
   });
 
-  test("updates when binding changes value", async () => {
+  test("updates when calling setValue", async () => {
     const logSpy = jest.spyOn(console, "log");
     render(
       <Form
@@ -96,29 +81,117 @@ describe("MultiSelect Widget", () => {
               },
             },
           },
-          {
-            name: "Button",
-            properties: {
-              label: "Check value",
-              onTap: { executeCode: "console.log(form.getValues())" },
-            },
-          },
+          ...defaultFormButton,
         ]}
         id="form"
       />,
-      {
-        wrapper: FormTestWrapper,
-      },
+      { wrapper: FormTestWrapper },
     );
 
     const setValueButton = screen.getByText("Set value");
-    const getValueButton = screen.getByText("Check value");
+    const getValueButton = screen.getByText("Get Value");
     fireEvent.click(setValueButton);
     fireEvent.click(getValueButton);
 
     await waitFor(() => {
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ multiSelect: ["option1", "option3"] }),
+      );
+    });
+  });
+
+  test("updates when binding changes value", async () => {
+    const logSpy = jest.spyOn(console, "log");
+    render(
+      <Form
+        children={[
+          {
+            name: "MultiSelect",
+            properties: {
+              id: "binding",
+              label: "Choose Option",
+              data: [
+                { label: "Option 1", value: "option1" },
+                { label: "Option 2", value: "option2" },
+                { label: "Option 3", value: "option3" },
+                { label: "Option 4", value: "option4" },
+              ],
+              value: `\${ensemble.storage.get('binding')}`,
+            },
+          },
+          {
+            name: "Button",
+            properties: {
+              label: "Set value",
+              onTap: {
+                executeCode:
+                  "ensemble.storage.set('binding',['option1', 'option3'])",
+              },
+            },
+          },
+          ...defaultFormButton,
+        ]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
+    );
+
+    const setValueButton = screen.getByText("Set value");
+    const getValueButton = screen.getByText("Get Value");
+    fireEvent.click(setValueButton);
+
+    await waitFor(() => {
+      fireEvent.click(getValueButton);
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ binding: ["option1", "option3"] }),
+      );
+    });
+  });
+
+  test("binding change overwrites user input value", async () => {
+    const logSpy = jest.spyOn(console, "log");
+    render(
+      <Form
+        children={[
+          {
+            name: "MultiSelect",
+            properties: {
+              id: "userInput",
+              label: "Choose Option",
+              data: [
+                { label: "Option 1", value: "option1" },
+                { label: "Option 2", value: "option2" },
+                { label: "Option 3", value: "option3" },
+                { label: "Option 4", value: "option4" },
+              ],
+              value: `\${ensemble.storage.get('userInput') ?? ['option4']}`,
+            },
+          },
+          {
+            name: "Button",
+            properties: {
+              label: "Set value",
+              onTap: {
+                executeCode:
+                  "ensemble.storage.set('userInput', ['option1', 'option3'])",
+              },
+            },
+          },
+          ...defaultFormButton,
+        ]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
+    );
+
+    const setValueButton = screen.getByText("Set value");
+    const getValueButton = screen.getByText("Get Value");
+    fireEvent.click(setValueButton);
+
+    await waitFor(() => {
+      fireEvent.click(getValueButton);
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ userInput: ["option1", "option3"] }),
       );
     });
   });
