@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.2.9
+
+### Patch Changes
+
+- 116c45c: Change collapsible widget name with Accordian
+
 ## 0.2.8
 
 ### Patch Changes
