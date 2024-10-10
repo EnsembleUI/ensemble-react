@@ -4,16 +4,6 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { Form } from "../../index";
 import { FormTestWrapper } from "../../../shared/fixtures";
 
-const defaultFormContent = [
-  {
-    name: "TextInput",
-    properties: {
-      label: "Number input",
-      id: "numberInput",
-    },
-  },
-];
-
 const defaultFormButton = [
   {
     name: "Button",
@@ -26,94 +16,18 @@ const defaultFormButton = [
   },
 ];
 
-describe("TextInput", () => {
-  test("allows numeric keys to be entered", async () => {
-    const logSpy = jest.spyOn(console, "log");
-    render(
-      <Form
-        children={[...defaultFormContent, ...defaultFormButton]}
-        id="form"
-      />,
-      { wrapper: FormTestWrapper },
-    );
-    const input = screen.getByLabelText("Number input");
-    fireEvent.change(input, { target: { value: "123" } });
-
-    const getValueButton = screen.getByText("Get Value");
-    fireEvent.click(getValueButton);
-
-    await waitFor(() => {
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ numberInput: "123" }),
-      );
-    });
-  });
-
-  test("filter numeric keys to be entered", async () => {
-    const logSpy = jest.spyOn(console, "log");
-    render(
-      <Form
-        children={[...defaultFormContent, ...defaultFormButton]}
-        id="form"
-      />,
-      { wrapper: FormTestWrapper },
-    );
-    const input = screen.getByLabelText("Number input");
-    fireEvent.change(input, { target: { value: "Hello 123" } });
-
-    const getValueButton = screen.getByText("Get Value");
-    fireEvent.click(getValueButton);
-
-    await waitFor(() => {
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ numberInput: "123" }),
-      );
-    });
-  });
-
-  test("max number allow", async () => {
-    const logSpy = jest.spyOn(console, "log");
-    render(
-      <Form
-        children={[
-          {
-            name: "TextInput",
-            properties: {
-              label: "Number input",
-              id: "numberInput",
-              maxLength: 4,
-            },
-          },
-          ...defaultFormButton,
-        ]}
-        id="form"
-      />,
-      { wrapper: FormTestWrapper },
-    );
-    const input = screen.getByLabelText("Number input");
-    fireEvent.change(input, { target: { value: "123456" } });
-
-    const getValueButton = screen.getByText("Get Value");
-    fireEvent.click(getValueButton);
-
-    await waitFor(() => {
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ numberInput: "1234" }),
-      );
-    });
-  });
-
+describe("Checkbox Widget", () => {
   test("initializes with a binding value", async () => {
     const logSpy = jest.spyOn(console, "log");
     render(
       <Form
         children={[
           {
-            name: "TextInput",
+            name: "Checkbox",
             properties: {
-              id: "initialInput",
-              label: "Text Input",
-              value: "ensemble",
+              id: "initialValue",
+              label: "Check Box",
+              value: true,
             },
           },
           ...defaultFormButton,
@@ -128,7 +42,7 @@ describe("TextInput", () => {
 
     await waitFor(() => {
       expect(logSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ initialInput: "ensemble" }),
+        expect.objectContaining({ initialValue: true }),
       );
     });
   });
@@ -139,11 +53,11 @@ describe("TextInput", () => {
       <Form
         children={[
           {
-            name: "TextInput",
+            name: "Checkbox",
             properties: {
-              id: "textInput",
-              label: "Text Input",
-              value: "ensemble",
+              id: "checkbox",
+              label: "Check Box",
+              value: false,
             },
           },
           {
@@ -151,7 +65,7 @@ describe("TextInput", () => {
             properties: {
               label: "Set Value",
               onTap: {
-                executeCode: "textInput.setValue('ensemble')",
+                executeCode: "checkbox.setValue(true)",
               },
             },
           },
@@ -169,7 +83,7 @@ describe("TextInput", () => {
 
     await waitFor(() => {
       expect(logSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ textInput: "ensemble" }),
+        expect.objectContaining({ checkbox: true }),
       );
     });
   });
@@ -180,10 +94,10 @@ describe("TextInput", () => {
       <Form
         children={[
           {
-            name: "TextInput",
+            name: "Checkbox",
             properties: {
               id: "binding",
-              label: "Text Input",
+              label: "Check Box",
               value: `\${ensemble.storage.get('binding')}`,
             },
           },
@@ -192,7 +106,7 @@ describe("TextInput", () => {
             properties: {
               label: "Set Value",
               onTap: {
-                executeCode: "ensemble.storage.set('binding','bindingValue')",
+                executeCode: "ensemble.storage.set('binding',true)",
               },
             },
           },
@@ -210,7 +124,7 @@ describe("TextInput", () => {
     await waitFor(() => {
       fireEvent.click(getValueButton);
       expect(logSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ binding: "bindingValue" }),
+        expect.objectContaining({ binding: true }),
       );
     });
   });
@@ -221,11 +135,11 @@ describe("TextInput", () => {
       <Form
         children={[
           {
-            name: "TextInput",
+            name: "Checkbox",
             properties: {
               id: "userInput",
-              label: "Text Input",
-              value: `\${ensemble.storage.get('userInput') ?? 'text input'}`,
+              label: "Check Box",
+              value: `\${ensemble.storage.get('userInput') ?? true}`,
             },
           },
           {
@@ -233,7 +147,7 @@ describe("TextInput", () => {
             properties: {
               label: "Set Value",
               onTap: {
-                executeCode: "ensemble.storage.set('userInput','ensemble')",
+                executeCode: "ensemble.storage.set('userInput',false)",
               },
             },
           },
@@ -251,9 +165,10 @@ describe("TextInput", () => {
     await waitFor(() => {
       fireEvent.click(getValueButton);
       expect(logSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ userInput: "ensemble" }),
+        expect.objectContaining({ userInput: false }),
       );
     });
   });
 });
+
 /* eslint-enable react/no-children-prop */

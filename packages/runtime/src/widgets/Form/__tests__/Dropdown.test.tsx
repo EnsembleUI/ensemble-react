@@ -1,18 +1,8 @@
 /* eslint-disable react/no-children-prop */
-import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import { Form } from "../../index";
 import { FormTestWrapper } from "../../../shared/fixtures";
-
-const defaultFormContent = [
-  {
-    name: "TextInput",
-    properties: {
-      label: "Number input",
-      id: "numberInput",
-    },
-  },
-];
 
 const defaultFormButton = [
   {
@@ -26,94 +16,22 @@ const defaultFormButton = [
   },
 ];
 
-describe("TextInput", () => {
-  test("allows numeric keys to be entered", async () => {
-    const logSpy = jest.spyOn(console, "log");
-    render(
-      <Form
-        children={[...defaultFormContent, ...defaultFormButton]}
-        id="form"
-      />,
-      { wrapper: FormTestWrapper },
-    );
-    const input = screen.getByLabelText("Number input");
-    fireEvent.change(input, { target: { value: "123" } });
-
-    const getValueButton = screen.getByText("Get Value");
-    fireEvent.click(getValueButton);
-
-    await waitFor(() => {
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ numberInput: "123" }),
-      );
-    });
-  });
-
-  test("filter numeric keys to be entered", async () => {
-    const logSpy = jest.spyOn(console, "log");
-    render(
-      <Form
-        children={[...defaultFormContent, ...defaultFormButton]}
-        id="form"
-      />,
-      { wrapper: FormTestWrapper },
-    );
-    const input = screen.getByLabelText("Number input");
-    fireEvent.change(input, { target: { value: "Hello 123" } });
-
-    const getValueButton = screen.getByText("Get Value");
-    fireEvent.click(getValueButton);
-
-    await waitFor(() => {
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ numberInput: "123" }),
-      );
-    });
-  });
-
-  test("max number allow", async () => {
-    const logSpy = jest.spyOn(console, "log");
-    render(
-      <Form
-        children={[
-          {
-            name: "TextInput",
-            properties: {
-              label: "Number input",
-              id: "numberInput",
-              maxLength: 4,
-            },
-          },
-          ...defaultFormButton,
-        ]}
-        id="form"
-      />,
-      { wrapper: FormTestWrapper },
-    );
-    const input = screen.getByLabelText("Number input");
-    fireEvent.change(input, { target: { value: "123456" } });
-
-    const getValueButton = screen.getByText("Get Value");
-    fireEvent.click(getValueButton);
-
-    await waitFor(() => {
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ numberInput: "1234" }),
-      );
-    });
-  });
-
+describe("Dropdown Widget", () => {
   test("initializes with a binding value", async () => {
     const logSpy = jest.spyOn(console, "log");
     render(
       <Form
         children={[
           {
-            name: "TextInput",
+            name: "Dropdown",
             properties: {
-              id: "initialInput",
-              label: "Text Input",
-              value: "ensemble",
+              id: "initialValue",
+              label: "Select One",
+              items: [
+                { label: "Option 1", value: "option1" },
+                { label: "Option 2", value: "option2" },
+              ],
+              value: "option2",
             },
           },
           ...defaultFormButton,
@@ -128,7 +46,7 @@ describe("TextInput", () => {
 
     await waitFor(() => {
       expect(logSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ initialInput: "ensemble" }),
+        expect.objectContaining({ initialValue: "option2" }),
       );
     });
   });
@@ -139,27 +57,30 @@ describe("TextInput", () => {
       <Form
         children={[
           {
-            name: "TextInput",
+            name: "Dropdown",
             properties: {
-              id: "textInput",
-              label: "Text Input",
-              value: "ensemble",
+              id: "dropdown",
+              label: "Select One",
+              items: [
+                { label: "Option 1", value: "option1" },
+                { label: "Option 2", value: "option2" },
+              ],
             },
           },
           {
             name: "Button",
             properties: {
               label: "Set Value",
-              onTap: {
-                executeCode: "textInput.setValue('ensemble')",
-              },
+              onTap: { executeCode: "dropdown.setValue('option2')" },
             },
           },
           ...defaultFormButton,
         ]}
         id="form"
       />,
-      { wrapper: FormTestWrapper },
+      {
+        wrapper: FormTestWrapper,
+      },
     );
 
     const setValueButton = screen.getByText("Set Value");
@@ -169,7 +90,7 @@ describe("TextInput", () => {
 
     await waitFor(() => {
       expect(logSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ textInput: "ensemble" }),
+        expect.objectContaining({ dropdown: "option2" }),
       );
     });
   });
@@ -180,10 +101,15 @@ describe("TextInput", () => {
       <Form
         children={[
           {
-            name: "TextInput",
+            name: "Dropdown",
             properties: {
               id: "binding",
-              label: "Text Input",
+              label: "Select One",
+              items: [
+                { label: "Option 1", value: "option1" },
+                { label: "Option 2", value: "option2" },
+                { label: "Option 3", value: "option3" },
+              ],
               value: `\${ensemble.storage.get('binding')}`,
             },
           },
@@ -192,7 +118,7 @@ describe("TextInput", () => {
             properties: {
               label: "Set Value",
               onTap: {
-                executeCode: "ensemble.storage.set('binding','bindingValue')",
+                executeCode: "ensemble.storage.set('binding', 'option3')",
               },
             },
           },
@@ -210,7 +136,7 @@ describe("TextInput", () => {
     await waitFor(() => {
       fireEvent.click(getValueButton);
       expect(logSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ binding: "bindingValue" }),
+        expect.objectContaining({ binding: "option3" }),
       );
     });
   });
@@ -221,11 +147,16 @@ describe("TextInput", () => {
       <Form
         children={[
           {
-            name: "TextInput",
+            name: "Dropdown",
             properties: {
               id: "userInput",
-              label: "Text Input",
-              value: `\${ensemble.storage.get('userInput') ?? 'text input'}`,
+              label: "Select One",
+              items: [
+                { label: "Option 1", value: "option1" },
+                { label: "Option 2", value: "option2" },
+                { label: "Option 3", value: "option3" },
+              ],
+              value: `\${ensemble.storage.get('userInput') ?? 'option1'}`,
             },
           },
           {
@@ -233,7 +164,7 @@ describe("TextInput", () => {
             properties: {
               label: "Set Value",
               onTap: {
-                executeCode: "ensemble.storage.set('userInput','ensemble')",
+                executeCode: "ensemble.storage.set('userInput', 'option2')",
               },
             },
           },
@@ -251,7 +182,7 @@ describe("TextInput", () => {
     await waitFor(() => {
       fireEvent.click(getValueButton);
       expect(logSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ userInput: "ensemble" }),
+        expect.objectContaining({ userInput: "option2" }),
       );
     });
   });
