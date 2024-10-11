@@ -17,6 +17,8 @@ jobs:
         with:
           node-version-file: ".nvmrc"
           cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install
       - name: Build Packages
         run: pnpm run build --filter=./packages
       - name: Build Kitchen Sink
