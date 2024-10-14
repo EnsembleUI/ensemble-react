@@ -58,6 +58,8 @@ export type CollapsibleProps = {
   onCollapse?: EnsembleAction;
   /** If true, only one panel can be expanded at a time */
   isAccordion?: boolean;
+  /** If true, only one panel can be expanded at a time */
+  limitExpandedToOne?: boolean;
   /** The Icon displayed when the Collapsible widget is collapsed */
   collapseIcon?: IconProps;
   /** The Icon displayed when the Collapsible widget is expanded */
@@ -225,7 +227,7 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <div onClick={(e) => e.stopPropagation()}>
         <Collapse
-          accordion={values?.isAccordion}
+          accordion={values?.limitExpandedToOne || values?.isAccordion}
           activeKey={activeValue}
           expandIcon={expandIcon}
           expandIconPosition={props.expandIconPosition}
@@ -238,3 +240,4 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
 };
 
 WidgetRegistry.register(widgetName, Collapsible);
+WidgetRegistry.register("Accordion", Collapsible);

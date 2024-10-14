@@ -16,8 +16,8 @@ View:
             skip: 0
             limit: 17
           onResponse: |
-              const res = response.body.products;
-              ensemble.storage.set("dummyProducts", res);
+            const res = response.body.products;
+            ensemble.storage.set("dummyProducts", res);
 
   header:
     title:
@@ -405,9 +405,9 @@ View:
                                 skip: ${ensemble.storage.get('skip') * (page - 1)}
                                 limit: ${pageSize}
                               onResponse: |
-                                  const prevItem = ensemble.storage.get("dummyProducts")
-                                  const res = response.body.products;
-                                  ensemble.storage.set("dummyProducts", [...res])
+                                const prevItem = ensemble.storage.get("dummyProducts")
+                                const res = response.body.products;
+                                ensemble.storage.set("dummyProducts", [...res])
                       item-template:
                         data: ${ensemble.storage.get('dummyProducts')}
                         name: dummyData
@@ -492,7 +492,7 @@ View:
                     invokeAPI:
                       name: getDummyNumbers
                       onResponse: |
-                          ensemble.storage.set('dummyNumbers', response.body)
+                        ensemble.storage.set('dummyNumbers', response.body)
               - Text:
                   styles:
                     names: heading-3
@@ -514,7 +514,7 @@ View:
                     invokeAPI:
                       name: getDummyNumbers
                       onResponse: |
-                          ensemble.storage.set('dummyNumbers', [...ensemble.storage.get('dummyNumbers'), ...response.body])
+                        ensemble.storage.set('dummyNumbers', [...ensemble.storage.get('dummyNumbers'), ...response.body])
                   item-template:
                     data: ${ensemble.storage.get('dummyNumbers')}
                     name: dummyData
@@ -740,6 +740,23 @@ View:
                           styles:
                             color: white
                           text: The half blood prince is Severus Snape.
+              - Accordion:
+                  expandIconPosition: "end"
+                  limitExpandedToOne: true
+                  items:
+                    - key: "key1"
+                      label: Here is my label key 1
+                      children:
+                        Text:
+                          text: Here is my value key 1
+                    - key: "key2"
+                      label: Here is my label key 2
+                      children:
+                        Text:
+                          text: Here is my value key 2
+                  onCollapse:
+                    executeCode: |
+                      console.log('HelloC', data)
         - Card:
             styles:
               maxWidth: unset
@@ -1025,6 +1042,7 @@ View:
                         onCollapse:
                           executeCode: |
                             console.log('HelloC', data)
+
         - Card:
             styles:
               maxWidth: unset
@@ -1225,7 +1243,7 @@ View:
                     invokeApi:
                       name: "getDummyProducts"
                       onResponse: |
-                          ensemble.storage.set('dynamicDropdownOptions', response.body.products)
+                        ensemble.storage.set('dynamicDropdownOptions', response.body.products)
               - Dropdown:
                   label: With the label widget
                   hintText: Hint Text
@@ -1335,4 +1353,4 @@ API:
     method: GET
     uri: https://661e111b98427bbbef034208.mockapi.io/number?limit=10
     onResponse: |
-        console.log('dummy number fetched')
+      console.log('dummy number fetched')
