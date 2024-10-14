@@ -2,7 +2,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { Form } from "../../index";
-import { FormTestWrapper } from "../../../shared/fixtures";
+import { FormTestWrapper } from "./__shared__/fixtures";
 
 const defaultFormButton = [
   {
@@ -33,7 +33,7 @@ describe("MultiSelect Widget", () => {
                 { label: "Option 3", value: "option3" },
                 { label: "Option 4", value: "option4" },
               ],
-              value: ["option2", "option4"],
+              value: `\${["option2", "option4"]}`,
             },
           },
           ...defaultFormButton,
@@ -47,6 +47,8 @@ describe("MultiSelect Widget", () => {
     fireEvent.click(getValueButton);
 
     await waitFor(() => {
+      expect(screen.getByText("Option 2")).toBeInTheDocument();
+      expect(screen.getByText("Option 4")).toBeInTheDocument();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ multiSelect: ["option2", "option4"] }),
       );
@@ -94,6 +96,8 @@ describe("MultiSelect Widget", () => {
     fireEvent.click(getValueButton);
 
     await waitFor(() => {
+      expect(screen.getByText("Option 1")).toBeInTheDocument();
+      expect(screen.getByText("Option 3")).toBeInTheDocument();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ multiSelect: ["option1", "option3"] }),
       );
@@ -142,6 +146,8 @@ describe("MultiSelect Widget", () => {
 
     await waitFor(() => {
       fireEvent.click(getValueButton);
+      expect(screen.getByText("Option 1")).toBeInTheDocument();
+      expect(screen.getByText("Option 3")).toBeInTheDocument();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ binding: ["option1", "option3"] }),
       );
@@ -190,6 +196,8 @@ describe("MultiSelect Widget", () => {
 
     await waitFor(() => {
       fireEvent.click(getValueButton);
+      expect(screen.getByText("Option 1")).toBeInTheDocument();
+      expect(screen.getByText("Option 3")).toBeInTheDocument();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ userInput: ["option1", "option3"] }),
       );

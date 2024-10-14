@@ -2,7 +2,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { Form } from "../../index";
-import { FormTestWrapper } from "../../../shared/fixtures";
+import { FormTestWrapper } from "./__shared__/fixtures";
 
 const defaultFormButton = [
   {
@@ -31,7 +31,7 @@ describe("Dropdown Widget", () => {
                 { label: "Option 1", value: "option1" },
                 { label: "Option 2", value: "option2" },
               ],
-              value: "option2",
+              value: `\${"option2"}`,
             },
           },
           ...defaultFormButton,
@@ -45,6 +45,7 @@ describe("Dropdown Widget", () => {
     fireEvent.click(getValueButton);
 
     await waitFor(() => {
+      expect(screen.getByText("Option 2")).toBeInTheDocument();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ initialValue: "option2" }),
       );
@@ -89,6 +90,7 @@ describe("Dropdown Widget", () => {
     fireEvent.click(getValueButton);
 
     await waitFor(() => {
+      expect(screen.getByText("Option 2")).toBeInTheDocument();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ dropdown: "option2" }),
       );
@@ -135,6 +137,7 @@ describe("Dropdown Widget", () => {
 
     await waitFor(() => {
       fireEvent.click(getValueButton);
+      expect(screen.getByText("Option 3")).toBeInTheDocument();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ binding: "option3" }),
       );
@@ -181,6 +184,7 @@ describe("Dropdown Widget", () => {
 
     await waitFor(() => {
       fireEvent.click(getValueButton);
+      expect(screen.getByText("Option 2")).toBeInTheDocument();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ userInput: "option2" }),
       );

@@ -2,7 +2,7 @@
 import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { Form } from "../../index";
-import { FormTestWrapper } from "../../../shared/fixtures";
+import { FormTestWrapper } from "./__shared__/fixtures";
 
 const defaultFormContent = [
   {
@@ -113,7 +113,7 @@ describe("TextInput", () => {
             properties: {
               id: "initialInput",
               label: "Text Input",
-              value: "ensemble",
+              value: `\${"ensemble"}`,
             },
           },
           ...defaultFormButton,
@@ -127,6 +127,7 @@ describe("TextInput", () => {
     fireEvent.click(getValueButton);
 
     await waitFor(() => {
+      expect(screen.getByDisplayValue("ensemble")).toBeInTheDocument();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ initialInput: "ensemble" }),
       );
@@ -168,6 +169,7 @@ describe("TextInput", () => {
     fireEvent.click(getValueButton);
 
     await waitFor(() => {
+      expect(screen.getByDisplayValue("ensemble")).toBeInTheDocument();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ textInput: "ensemble" }),
       );
@@ -209,6 +211,7 @@ describe("TextInput", () => {
 
     await waitFor(() => {
       fireEvent.click(getValueButton);
+      expect(screen.getByDisplayValue("bindingValue")).toBeInTheDocument();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ binding: "bindingValue" }),
       );
@@ -250,6 +253,7 @@ describe("TextInput", () => {
 
     await waitFor(() => {
       fireEvent.click(getValueButton);
+      expect(screen.getByDisplayValue("ensemble")).toBeInTheDocument();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ userInput: "ensemble" }),
       );

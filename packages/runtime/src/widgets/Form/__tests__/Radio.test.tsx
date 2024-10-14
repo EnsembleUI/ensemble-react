@@ -2,7 +2,7 @@
 import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { Form } from "../../index";
-import { FormTestWrapper } from "../../../shared/fixtures";
+import { FormTestWrapper } from "./__shared__/fixtures";
 
 const defaultFormButton = [
   {
@@ -32,7 +32,7 @@ describe("Radio Widget", () => {
                 { label: "Option 2", value: 2 },
                 { label: "Option 3", value: 3 },
               ],
-              value: 3,
+              value: `\${3}`,
             },
           },
           ...defaultFormButton,
@@ -46,6 +46,7 @@ describe("Radio Widget", () => {
     fireEvent.click(getValueButton);
 
     await waitFor(() => {
+      expect(screen.getByLabelText("Option 3")).toBeChecked();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ initialValue: 3 }),
       );
@@ -91,6 +92,7 @@ describe("Radio Widget", () => {
     fireEvent.click(getValueButton);
 
     await waitFor(() => {
+      expect(screen.getByLabelText("Option 3")).toBeChecked();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ radio: 3 }),
       );
@@ -134,10 +136,10 @@ describe("Radio Widget", () => {
     const setValueButton = screen.getByText("Set Value");
     const getValueButton = screen.getByText("Get Value");
     fireEvent.click(setValueButton);
-    fireEvent.click(setValueButton);
 
     await waitFor(() => {
       fireEvent.click(getValueButton);
+      expect(screen.getByLabelText("Option 2")).toBeChecked();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ binding: 2 }),
       );
@@ -158,6 +160,7 @@ describe("Radio Widget", () => {
                 { label: "Option 1", value: 1 },
                 { label: "Option 2", value: 2 },
                 { label: "Option 3", value: 3 },
+                { label: "Option 4", value: 4 },
               ],
               value: `\${ensemble.storage.get('userInput') ?? 1}`,
             },
@@ -167,7 +170,7 @@ describe("Radio Widget", () => {
             properties: {
               label: "Set Value",
               onTap: {
-                executeCode: "ensemble.storage.set('userInput', 3)",
+                executeCode: "ensemble.storage.set('userInput', 4)",
               },
             },
           },
@@ -184,8 +187,9 @@ describe("Radio Widget", () => {
 
     await waitFor(() => {
       fireEvent.click(getValueButton);
+      expect(screen.getByLabelText("Option 4")).toBeChecked();
       expect(logSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ userInput: 3 }),
+        expect.objectContaining({ userInput: 4 }),
       );
     });
   });

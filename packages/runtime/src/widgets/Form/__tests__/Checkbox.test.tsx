@@ -2,7 +2,7 @@
 import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { Form } from "../../index";
-import { FormTestWrapper } from "../../../shared/fixtures";
+import { FormTestWrapper } from "./__shared__/fixtures";
 
 const defaultFormButton = [
   {
@@ -27,7 +27,7 @@ describe("Checkbox Widget", () => {
             properties: {
               id: "initialValue",
               label: "Check Box",
-              value: true,
+              value: `\${true}`,
             },
           },
           ...defaultFormButton,
@@ -41,6 +41,7 @@ describe("Checkbox Widget", () => {
     fireEvent.click(getValueButton);
 
     await waitFor(() => {
+      expect(screen.getByLabelText("Check Box")).toBeChecked();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ initialValue: true }),
       );
@@ -56,7 +57,7 @@ describe("Checkbox Widget", () => {
             name: "Checkbox",
             properties: {
               id: "checkbox",
-              label: "Check Box",
+              label: "Check Box With Value",
               value: false,
             },
           },
@@ -82,6 +83,7 @@ describe("Checkbox Widget", () => {
     fireEvent.click(getValueButton);
 
     await waitFor(() => {
+      expect(screen.getByLabelText("Check Box With Value")).toBeChecked();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ checkbox: true }),
       );
@@ -97,7 +99,7 @@ describe("Checkbox Widget", () => {
             name: "Checkbox",
             properties: {
               id: "binding",
-              label: "Check Box",
+              label: "Check Box With Binding",
               value: `\${ensemble.storage.get('binding')}`,
             },
           },
@@ -123,6 +125,7 @@ describe("Checkbox Widget", () => {
 
     await waitFor(() => {
       fireEvent.click(getValueButton);
+      expect(screen.getByLabelText("Check Box With Binding")).toBeChecked();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ binding: true }),
       );
@@ -138,7 +141,7 @@ describe("Checkbox Widget", () => {
             name: "Checkbox",
             properties: {
               id: "userInput",
-              label: "Check Box",
+              label: "Check Box With User Input",
               value: `\${ensemble.storage.get('userInput') ?? true}`,
             },
           },
@@ -164,6 +167,9 @@ describe("Checkbox Widget", () => {
 
     await waitFor(() => {
       fireEvent.click(getValueButton);
+      expect(
+        screen.getByLabelText("Check Box With User Input"),
+      ).not.toBeChecked();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ userInput: false }),
       );
