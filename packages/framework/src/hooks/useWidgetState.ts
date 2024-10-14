@@ -4,10 +4,13 @@ import { widgetFamilyAtom } from "../state";
 
 export const useWidgetState = <T extends Record<string, unknown>>(
   id: string,
-): [WidgetState<T> | undefined, (state: WidgetState<T>) => void] => {
+): [
+  WidgetState<T> | undefined,
+  (state: WidgetState<T> | undefined) => void,
+] => {
   const widgetState = useAtom(widgetFamilyAtom(id));
   return widgetState as [
     WidgetState<T> | undefined,
-    (state: WidgetState<T>) => void,
+    (state: WidgetState<T> | undefined) => void,
   ];
 };

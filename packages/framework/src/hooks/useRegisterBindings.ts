@@ -90,15 +90,9 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
 
   useEffect(() => {
     return () => {
-      setWidgetState({
-        values: newValues,
-        invokable: {
-          id: resolvedWidgetId,
-          methods: { ...methods, getId: () => resolvedWidgetId },
-        },
-      });
+      setWidgetState(undefined);
     };
-  }, [setWidgetState]);
+  }, []);
 
   const updatedValues = widgetState?.values ?? newValues;
   const htmlAttributes = get(updatedValues, "htmlAttributes") as {
