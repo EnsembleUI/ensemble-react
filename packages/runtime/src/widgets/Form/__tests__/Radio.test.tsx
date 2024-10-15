@@ -162,7 +162,7 @@ describe("Radio Widget", () => {
                 { label: "Option 3", value: 3 },
                 { label: "Option 4", value: 4 },
               ],
-              value: `\${ensemble.storage.get('userInput') ?? 1}`,
+              value: `\${ensemble.storage.get('userInput')}`,
             },
           },
           {
@@ -180,6 +180,9 @@ describe("Radio Widget", () => {
       />,
       { wrapper: FormTestWrapper },
     );
+
+    const inputEl = screen.getByLabelText("Option 3");
+    fireEvent.click(inputEl);
 
     const setValueButton = screen.getByText("Set Value");
     const getValueButton = screen.getByText("Get Value");

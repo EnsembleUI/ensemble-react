@@ -247,6 +247,9 @@ describe("TextInput", () => {
       { wrapper: FormTestWrapper },
     );
 
+    const inputEl = screen.getByRole("textbox");
+    fireEvent.change(inputEl, { target: { value: "user input" } });
+
     const setValueButton = screen.getByText("Set Value");
     const getValueButton = screen.getByText("Get Value");
     fireEvent.click(setValueButton);

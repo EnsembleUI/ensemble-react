@@ -159,7 +159,7 @@ describe("Dropdown Widget", () => {
                 { label: "Option 2", value: "option2" },
                 { label: "Option 3", value: "option3" },
               ],
-              value: `\${ensemble.storage.get('userInput') ?? 'option1'}`,
+              value: `\${ensemble.storage.get('userInput')}`,
             },
           },
           {
@@ -178,13 +178,16 @@ describe("Dropdown Widget", () => {
       { wrapper: FormTestWrapper },
     );
 
-    const setValueButton = screen.getByText("Set Value");
-    const getValueButton = screen.getByText("Get Value");
-    fireEvent.click(setValueButton);
+    fireEvent.mouseDown(screen.getByRole("combobox"));
+    fireEvent.click(screen.getByTitle("Option 3"));
+
+    fireEvent.click(screen.getByText("Set Value"));
+
+    const components = await screen.findAllByText("Option 3");
 
     await waitFor(() => {
-      fireEvent.click(getValueButton);
-      expect(screen.getByText("Option 2")).toBeInTheDocument();
+      fireEvent.click(screen.getByText("Get Value"));
+      expect(components.length).toEqual(2);
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ userInput: "option2" }),
       );

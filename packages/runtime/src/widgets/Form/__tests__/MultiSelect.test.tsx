@@ -170,7 +170,7 @@ describe("MultiSelect Widget", () => {
                 { label: "Option 3", value: "option3" },
                 { label: "Option 4", value: "option4" },
               ],
-              value: `\${ensemble.storage.get('userInput') ?? ['option4']}`,
+              value: `\${ensemble.storage.get('userInput')}`,
             },
           },
           {
@@ -190,14 +190,20 @@ describe("MultiSelect Widget", () => {
       { wrapper: FormTestWrapper },
     );
 
-    const setValueButton = screen.getByText("Set value");
-    const getValueButton = screen.getByText("Get Value");
-    fireEvent.click(setValueButton);
+    fireEvent.mouseDown(screen.getByRole("combobox"));
+    fireEvent.click(screen.getByTitle("Option 2"));
+    fireEvent.click(screen.getByTitle("Option 4"));
+    fireEvent.mouseDown(document.body);
+
+    fireEvent.click(screen.getByText("Set value"));
+
+    const option1 = screen.getByText("Option 1");
+    const option3 = screen.getByText("Option 3");
 
     await waitFor(() => {
-      fireEvent.click(getValueButton);
-      expect(screen.getByText("Option 1")).toBeInTheDocument();
-      expect(screen.getByText("Option 3")).toBeInTheDocument();
+      fireEvent.click(screen.getByText("Get Value"));
+      expect(option1).toBeInTheDocument();
+      expect(option3).toBeInTheDocument();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ userInput: ["option1", "option3"] }),
       );

@@ -142,7 +142,7 @@ describe("Checkbox Widget", () => {
             properties: {
               id: "userInput",
               label: "Check Box With User Input",
-              value: `\${ensemble.storage.get('userInput') ?? true}`,
+              value: `\${ensemble.storage.get('userInput')}`,
             },
           },
           {
@@ -150,7 +150,7 @@ describe("Checkbox Widget", () => {
             properties: {
               label: "Set Value",
               onTap: {
-                executeCode: "ensemble.storage.set('userInput',false)",
+                executeCode: "ensemble.storage.set('userInput', false)",
               },
             },
           },
@@ -161,12 +161,13 @@ describe("Checkbox Widget", () => {
       { wrapper: FormTestWrapper },
     );
 
-    const setValueButton = screen.getByText("Set Value");
-    const getValueButton = screen.getByText("Get Value");
-    fireEvent.click(setValueButton);
+    const inputEl = screen.getByLabelText("Check Box With User Input");
+    fireEvent.click(inputEl);
+
+    fireEvent.click(screen.getByText("Set Value"));
 
     await waitFor(() => {
-      fireEvent.click(getValueButton);
+      fireEvent.click(screen.getByText("Get Value"));
       expect(
         screen.getByLabelText("Check Box With User Input"),
       ).not.toBeChecked();
