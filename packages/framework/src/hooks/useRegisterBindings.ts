@@ -1,5 +1,5 @@
 import type { RefCallback } from "react";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { get, isEmpty, isString, keys, debounce } from "lodash-es";
 import isEqual from "react-fast-compare";
 import type { InvokableMethods } from "../state";
@@ -15,6 +15,11 @@ export interface RegisterBindingsResult<T> {
   rootRef: RefCallback<never>;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
+const areFunctionsEqual = (func1?: Function, func2?: Function): boolean => {
+  return func1?.toString() === func2?.toString();
+};
+
 export const useRegisterBindings = <T extends { [key: string]: unknown }>(
   values: T,
   id?: string,
@@ -26,6 +31,7 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
   },
 ): RegisterBindingsResult<T> => {
   const testId = get(values, ["testId"]);
+  const prevMethodsRef = useRef(methods);
 
   const { resolvedWidgetId, resolvedTestId } = useWidgetId(
     id,
@@ -54,11 +60,25 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
       return;
     }
 
+    const prevStateCheck = keys(methods).every((methodKey: string) => {
+      const fromMethods = get(methods, methodKey);
+      const fromWidgets = get(widgetState?.invokable?.methods, methodKey);
+      const prevMethod = get(prevMethodsRef.current, methodKey);
+
+      // Check if the current method is different from the previous one
+      if (!areFunctionsEqual(fromMethods, prevMethod)) {
+        return false;
+      }
+
+      // If it's the same as the previous, check against the widget state
+      return areFunctionsEqual(fromMethods, fromWidgets);
+    });
+
     if (
       (options?.comparator
         ? options.comparator(newValues, widgetState?.values)
         : isEqual(newValues, widgetState?.values)) &&
-      isEqual(keys(methods), keys(widgetState?.invokable?.methods))
+      prevStateCheck
     ) {
       return;
     }
@@ -67,6 +87,9 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
       values: newValues,
       invokable: { id: resolvedWidgetId, methods },
     });
+
+    // Update the previous methods reference
+    prevMethodsRef.current = methods;
   }, [
     methods,
     resolvedWidgetId,
@@ -87,12 +110,6 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
       });
     }
   }, [options?.forceState]);
-
-  useEffect(() => {
-    return () => {
-      setWidgetState(undefined);
-    };
-  }, []);
 
   const updatedValues = widgetState?.values ?? newValues;
   const htmlAttributes = get(updatedValues, "htmlAttributes") as {
