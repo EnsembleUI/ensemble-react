@@ -55,6 +55,28 @@ describe("TextInput", () => {
     });
   });
 
+  test("allows numeric keys to be entered with decimal", async () => {
+    render(
+      <Form
+        children={[...defaultFormContent, ...defaultFormButton]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
+    );
+    const input = screen.getByLabelText("Number input");
+    fireEvent.change(input, { target: { value: "12.3" } });
+
+    const getValueButton = screen.getByText("Get Value");
+    fireEvent.click(getValueButton);
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue("12.3")).toBeVisible();
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ numberInput: "12.3" }),
+      );
+    });
+  });
+
   test("filter numeric keys to be entered", async () => {
     render(
       <Form
@@ -82,6 +104,38 @@ describe("TextInput", () => {
     await waitFor(() => {
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ numberInput: "123" }),
+      );
+    });
+  });
+
+  test("filter numeric keys to be entered with decimal", async () => {
+    render(
+      <Form
+        children={[
+          {
+            name: "TextInput",
+            properties: {
+              inputType: "number",
+              label: "Number input",
+              id: "numberInput",
+            },
+          },
+          ...defaultFormButton,
+        ]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
+    );
+    const input = screen.getByLabelText("Number input");
+    userEvent.type(input, "Hello 1.23");
+
+    const getValueButton = screen.getByText("Get Value");
+    fireEvent.click(getValueButton);
+
+    await waitFor(() => {
+      expect(screen.getByDisplayValue("1.23")).toBeVisible();
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ numberInput: "1.23" }),
       );
     });
   });
