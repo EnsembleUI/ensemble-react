@@ -77,7 +77,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
 
   const handleKeyDown = useCallback((e: FormEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
-    target.value = target.value.replace(/[^0-9]/g, "");
+    target.value = target.value.replace(/[^0-9.]/g, "");
   }, []);
 
   useEffect(() => {
