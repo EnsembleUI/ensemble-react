@@ -27,7 +27,7 @@ export type TextProps = {
 } & BaseTextProps;
 
 export const Text: React.FC<TextProps> = (props) => {
-  const [text, setText] = useState<string>();
+  const [text, setText] = useState<string>(props.text ?? "");
   const { values, rootRef } = useRegisterBindings(
     { ...props, textBinding: props.text, text, widgetName },
     props.id,
@@ -38,10 +38,10 @@ export const Text: React.FC<TextProps> = (props) => {
 
   // Update text if the binding changes
   useEffect(() => {
-    if (props.text) {
-      setText(values?.textBinding);
+    if (props.text && values?.textBinding !== text) {
+      setText(values?.textBinding ?? "");
     }
-  }, [props.text, values?.textBinding]);
+  }, [props.text, text, values?.textBinding]);
 
   return (
     <Typography.Text
