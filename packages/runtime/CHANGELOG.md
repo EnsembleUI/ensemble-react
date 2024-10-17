@@ -1,5 +1,14 @@
 # @ensembleui/react-runtime
 
+## 0.2.9
+
+### Patch Changes
+
+- 3d33f30: fix loader on on second time button load
+- 116c45c: Change collapsible widget name with Accordian
+- 8f733bf: Initialize text with binding
+- 334c96d: Added testcase for each form elements widgets
+
 ## 0.2.8
 
 ### Patch Changes
