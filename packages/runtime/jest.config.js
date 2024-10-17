@@ -9,4 +9,5 @@ module.exports = {
       "<rootDir>/node_modules/react-markdown/react-markdown.min.js",
   },
   setupFilesAfterEnv: ["<rootDir>/setupTests.ts"],
+  testPathIgnorePatterns: ["/__tests__/__shared__/*"],
 };
