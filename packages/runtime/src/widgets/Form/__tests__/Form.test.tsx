@@ -1,26 +1,8 @@
 /* eslint-disable react/no-children-prop */
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { ScreenContextProvider } from "@ensembleui/react-framework";
-import type { PropsWithChildren } from "react";
-import { BrowserRouter } from "react-router-dom";
 import { Button, Form, Text } from "../../index";
-
-const FormTestWrapper: React.FC<PropsWithChildren> = ({ children }) => {
-  return (
-    <BrowserRouter>
-      <ScreenContextProvider
-        screen={{
-          id: "formTest",
-          name: "formTest",
-          body: { name: "Column", properties: {} },
-        }}
-      >
-        {children}
-      </ScreenContextProvider>
-    </BrowserRouter>
-  );
-};
+import { FormTestWrapper } from "./__shared__/fixtures";
 
 const defaultFormContent = [
   {
