@@ -38,10 +38,10 @@ export const Text: React.FC<TextProps> = (props) => {
 
   // Update text if the binding changes
   useEffect(() => {
-    if (props.text && values?.textBinding !== text) {
+    if (props.text) {
       setText(values?.textBinding ?? "");
     }
-  }, [props.text, text, values?.textBinding]);
+  }, [props.text, values?.textBinding]);
 
   return (
     <Typography.Text
