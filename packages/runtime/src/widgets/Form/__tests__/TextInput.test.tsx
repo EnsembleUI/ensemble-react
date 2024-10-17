@@ -70,6 +70,7 @@ describe("TextInput", () => {
     fireEvent.click(getValueButton);
 
     await waitFor(() => {
+      expect(screen.getByDisplayValue("12.3")).toBeVisible();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ numberInput: "12.3" }),
       );
@@ -132,6 +133,7 @@ describe("TextInput", () => {
     fireEvent.click(getValueButton);
 
     await waitFor(() => {
+      expect(screen.getByDisplayValue("1.23")).toBeVisible();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ numberInput: "1.23" }),
       );
