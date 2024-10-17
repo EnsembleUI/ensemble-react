@@ -1,6 +1,7 @@
 /* eslint-disable react/no-children-prop */
 import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { Form } from "../../index";
 import { FormTestWrapper } from "./__shared__/fixtures";
 
@@ -27,8 +28,13 @@ const defaultFormButton = [
 ];
 
 describe("TextInput", () => {
+  const logSpy = jest.spyOn(console, "log").mockImplementation(jest.fn);
+
+  afterEach(() => {
+    logSpy.mockClear();
+  });
+
   test("allows numeric keys to be entered", async () => {
-    const logSpy = jest.spyOn(console, "log");
     render(
       <Form
         children={[...defaultFormContent, ...defaultFormButton]}
@@ -50,16 +56,25 @@ describe("TextInput", () => {
   });
 
   test("filter numeric keys to be entered", async () => {
-    const logSpy = jest.spyOn(console, "log");
     render(
       <Form
-        children={[...defaultFormContent, ...defaultFormButton]}
+        children={[
+          {
+            name: "TextInput",
+            properties: {
+              inputType: "number",
+              label: "Number input",
+              id: "numberInput",
+            },
+          },
+          ...defaultFormButton,
+        ]}
         id="form"
       />,
       { wrapper: FormTestWrapper },
     );
     const input = screen.getByLabelText("Number input");
-    fireEvent.change(input, { target: { value: "Hello 123" } });
+    userEvent.type(input, "Hello 123");
 
     const getValueButton = screen.getByText("Get Value");
     fireEvent.click(getValueButton);
@@ -72,7 +87,6 @@ describe("TextInput", () => {
   });
 
   test("max number allow", async () => {
-    const logSpy = jest.spyOn(console, "log");
     render(
       <Form
         children={[
@@ -104,7 +118,6 @@ describe("TextInput", () => {
   });
 
   test("initializes with a binding value", async () => {
-    const logSpy = jest.spyOn(console, "log");
     render(
       <Form
         children={[
@@ -135,7 +148,6 @@ describe("TextInput", () => {
   });
 
   test("updates when calling setValue", async () => {
-    const logSpy = jest.spyOn(console, "log");
     render(
       <Form
         children={[
@@ -177,7 +189,6 @@ describe("TextInput", () => {
   });
 
   test("updates when binding changes value", async () => {
-    const logSpy = jest.spyOn(console, "log");
     render(
       <Form
         children={[
@@ -219,7 +230,6 @@ describe("TextInput", () => {
   });
 
   test("binding change overwrites user input value", async () => {
-    const logSpy = jest.spyOn(console, "log");
     render(
       <Form
         children={[

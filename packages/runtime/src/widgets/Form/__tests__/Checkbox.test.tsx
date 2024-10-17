@@ -17,8 +17,13 @@ const defaultFormButton = [
 ];
 
 describe("Checkbox Widget", () => {
+  const logSpy = jest.spyOn(console, "log").mockImplementation(jest.fn());
+
+  afterEach(() => {
+    logSpy.mockClear();
+  });
+
   test("initializes with a binding value", async () => {
-    const logSpy = jest.spyOn(console, "log");
     render(
       <Form
         children={[
@@ -49,7 +54,6 @@ describe("Checkbox Widget", () => {
   });
 
   test("updates when calling setValue", async () => {
-    const logSpy = jest.spyOn(console, "log");
     render(
       <Form
         children={[
@@ -91,7 +95,6 @@ describe("Checkbox Widget", () => {
   });
 
   test("updates when binding changes value", async () => {
-    const logSpy = jest.spyOn(console, "log");
     render(
       <Form
         children={[
@@ -133,7 +136,6 @@ describe("Checkbox Widget", () => {
   });
 
   test("binding change overwrites user input value", async () => {
-    const logSpy = jest.spyOn(console, "log");
     render(
       <Form
         children={[

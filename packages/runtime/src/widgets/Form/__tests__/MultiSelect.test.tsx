@@ -1,6 +1,7 @@
 /* eslint-disable react/no-children-prop */
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
+import userEvent from "@testing-library/user-event";
 import { Form } from "../../index";
 import { FormTestWrapper } from "./__shared__/fixtures";
 
@@ -17,8 +18,15 @@ const defaultFormButton = [
 ];
 
 describe("MultiSelect Widget", () => {
+  const logSpy = jest.spyOn(console, "log").mockImplementation(jest.fn());
+  jest.spyOn(console, "error").mockImplementation(jest.fn());
+
+  afterEach(() => {
+    logSpy.mockClear();
+    jest.clearAllMocks();
+  });
+
   test("initializes with a binding value", async () => {
-    const logSpy = jest.spyOn(console, "log");
     render(
       <Form
         children={[
@@ -56,7 +64,6 @@ describe("MultiSelect Widget", () => {
   });
 
   test("updates when calling setValue", async () => {
-    const logSpy = jest.spyOn(console, "log");
     render(
       <Form
         children={[
@@ -105,7 +112,6 @@ describe("MultiSelect Widget", () => {
   });
 
   test("updates when binding changes value", async () => {
-    const logSpy = jest.spyOn(console, "log");
     render(
       <Form
         children={[
@@ -155,7 +161,6 @@ describe("MultiSelect Widget", () => {
   });
 
   test("binding change overwrites user input value", async () => {
-    const logSpy = jest.spyOn(console, "log");
     render(
       <Form
         children={[
@@ -176,7 +181,7 @@ describe("MultiSelect Widget", () => {
           {
             name: "Button",
             properties: {
-              label: "Set value",
+              label: "Set Value",
               onTap: {
                 executeCode:
                   "ensemble.storage.set('userInput', ['option1', 'option3'])",
@@ -190,20 +195,20 @@ describe("MultiSelect Widget", () => {
       { wrapper: FormTestWrapper },
     );
 
-    fireEvent.mouseDown(screen.getByRole("combobox"));
+    userEvent.click(screen.getByRole("combobox"));
     fireEvent.click(screen.getByTitle("Option 2"));
     fireEvent.click(screen.getByTitle("Option 4"));
-    fireEvent.mouseDown(document.body);
+    userEvent.click(screen.getByRole("combobox"));
 
-    fireEvent.click(screen.getByText("Set value"));
+    fireEvent.click(screen.getByText("Set Value"));
 
-    const option1 = screen.getByText("Option 1");
-    const option3 = screen.getByText("Option 3");
+    await waitFor(() => {
+      expect(screen.getByText("Option 1")).toBeVisible();
+      expect(screen.getByText("Option 3")).toBeVisible();
+    });
 
     await waitFor(() => {
       fireEvent.click(screen.getByText("Get Value"));
-      expect(option1).toBeInTheDocument();
-      expect(option3).toBeInTheDocument();
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ userInput: ["option1", "option3"] }),
       );
