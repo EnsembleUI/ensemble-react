@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.88
+
+### Patch Changes
+
+- d98ae6c: added support for decimal in input type number
+- Updated dependencies [d98ae6c]
+  - @ensembleui/react-runtime@0.2.10
+
 ## 0.0.87
 
 ### Patch Changes
