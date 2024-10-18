@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.2.10
+
+### Patch Changes
+
+- d98ae6c: added support for decimal in input type number
+
 ## 0.2.9
 
 ### Patch Changes
