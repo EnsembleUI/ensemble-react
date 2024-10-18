@@ -183,10 +183,10 @@ View:
                         hintText: "Enter a number"
                         hintStyle:
                           color: red
-                        maxLength: 2
+                        maxLength: 3
                         validator:
                           required: true
-                          maxLength: 2
+                          maxLength: 3
                         label: Text input with min and max length
                     - TextInput:
                         id: regexTextInput
