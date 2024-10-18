@@ -45,7 +45,7 @@ export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
   );
 
   const { values, rootRef } = useRegisterBindings(
-    { ...rest, loading, widgetName },
+    { ...rest, loading: rest.loading, widgetName },
     id,
     {
       click: onClickCallback,
