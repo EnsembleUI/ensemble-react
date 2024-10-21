@@ -344,6 +344,7 @@ View:
               width: unset
             children:
               - Button:
+                  id: testLoaderBtn
                   loading: ${ensemble.storage.get('btnLoader')}
                   label: loading binding button
               - Button:
