@@ -19,7 +19,10 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
   const { values, rules, ...rest } = props;
   const { backgroundColor: _, ...formItemStyles } = values?.styles ?? {};
   const formInstance = AntForm.useFormInstance();
-  const requiredRule = { required: Boolean(values?.required) };
+  const requiredRule = {
+    required: Boolean(values?.required),
+    message: `Please enter ${values?.label && isString(values.label) ? values.label : "a value"}`,
+  };
 
   const fieldLabel = useMemo(() => {
     if (!values?.label) {
@@ -46,9 +49,6 @@ export const EnsembleFormItem: React.FC<EnsembleFormItemProps<unknown>> = (
       className={values?.styles?.names}
       initialValue={values?.initialValue}
       label={fieldLabel}
-      messageVariables={{
-        label: (isString(values?.label) ? values?.label : values?.id) || "",
-      }}
       name={formInstance ? values?.id ?? values?.label : undefined}
       rules={[requiredRule, ...(rules || [])]}
       style={{
