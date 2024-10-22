@@ -31,7 +31,7 @@ export type ButtonProps = {
 } & EnsembleWidgetProps;
 
 export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
-  const [loading, setLoading] = useState<boolean>();
+  const [loading, setLoading] = useState<boolean>(rest.loading || false);
   const action = useEnsembleAction(onTap);
   const onClickCallback = useCallback(
     (e?: MouseEvent) => {
