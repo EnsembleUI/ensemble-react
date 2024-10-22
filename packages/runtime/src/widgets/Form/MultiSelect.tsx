@@ -69,7 +69,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
 
   // load initial values
   useEffect(() => {
-    if (isArray(values?.initialValue)) {
+    if (!selectedValues && isArray(values?.initialValue)) {
       setSelectedValues(values?.initialValue);
     }
   }, [values?.initialValue]);
