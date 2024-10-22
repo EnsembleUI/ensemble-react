@@ -181,6 +181,15 @@ describe("MultiSelect Widget", () => {
           {
             name: "Button",
             properties: {
+              label: "Clear Values",
+              onTap: {
+                executeCode: "userInput.setSelectedValues()",
+              },
+            },
+          },
+          {
+            name: "Button",
+            properties: {
               label: "Set Value",
               onTap: {
                 executeCode:
@@ -196,19 +205,45 @@ describe("MultiSelect Widget", () => {
     );
 
     userEvent.click(screen.getByRole("combobox"));
-    fireEvent.click(screen.getByTitle("Option 2"));
-    fireEvent.click(screen.getByTitle("Option 4"));
+    userEvent.click(screen.getByTitle("Option 2"));
+    userEvent.click(screen.getByTitle("Option 4"));
     userEvent.click(screen.getByRole("combobox"));
+
+    // Wait for the combobox to reflect the selected values
+    await waitFor(() => {
+      expect(
+        screen.getByText("Option 2", {
+          selector: ".ant-select-selection-item-content",
+        }),
+      ).toBeVisible();
+      expect(
+        screen.getByText("Option 4", {
+          selector: ".ant-select-selection-item-content",
+        }),
+      ).toBeVisible();
+    });
+
+    fireEvent.click(screen.getByText("Clear Values"));
 
     fireEvent.click(screen.getByText("Set Value"));
 
+    // Wait for the combobox to reflect the selected values
     await waitFor(() => {
-      expect(screen.getByText("Option 1")).toBeVisible();
-      expect(screen.getByText("Option 3")).toBeVisible();
+      expect(
+        screen.getByText("Option 1", {
+          selector: ".ant-select-selection-item-content",
+        }),
+      ).toBeVisible();
+      expect(
+        screen.getByText("Option 3", {
+          selector: ".ant-select-selection-item-content",
+        }),
+      ).toBeVisible();
     });
 
+    fireEvent.click(screen.getByText("Get Value"));
+
     await waitFor(() => {
-      fireEvent.click(screen.getByText("Get Value"));
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ userInput: ["option1", "option3"] }),
       );
