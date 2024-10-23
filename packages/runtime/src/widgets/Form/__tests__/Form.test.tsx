@@ -222,5 +222,73 @@ describe("Form", () => {
       expect(screen.getByText("true")).toBeInTheDocument();
     });
   });
+
+  test("check required error message with given label", async () => {
+    render(
+      <Form
+        children={[
+          {
+            name: "TextInput",
+            properties: {
+              label: "First name",
+              required: true,
+            },
+          },
+          {
+            name: "Button",
+            properties: {
+              label: "Submit",
+              submitForm: true,
+            },
+          },
+        ]}
+        id="form"
+      />,
+      {
+        wrapper: FormTestWrapper,
+      },
+    );
+
+    const validateBtn = screen.getByText("Submit");
+    fireEvent.click(validateBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText("Please enter First name")).toBeInTheDocument();
+    });
+  });
+
+  test("check required error message without given label", async () => {
+    render(
+      <Form
+        children={[
+          {
+            name: "TextInput",
+            properties: {
+              id: "firstName",
+              required: true,
+            },
+          },
+          {
+            name: "Button",
+            properties: {
+              label: "Submit",
+              submitForm: true,
+            },
+          },
+        ]}
+        id="form"
+      />,
+      {
+        wrapper: FormTestWrapper,
+      },
+    );
+
+    const validateBtn = screen.getByText("Submit");
+    fireEvent.click(validateBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText("Please enter a value")).toBeInTheDocument();
+    });
+  });
 });
 /* eslint-enable react/no-children-prop */
