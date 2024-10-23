@@ -181,9 +181,10 @@ describe("MultiSelect Widget", () => {
           {
             name: "Button",
             properties: {
-              label: "Clear Values",
+              label: "change bindings",
               onTap: {
-                executeCode: "userInput.setSelectedValues()",
+                executeCode:
+                  "ensemble.storage.set('userInput', ['option1', 'option3'])",
               },
             },
           },
@@ -193,7 +194,7 @@ describe("MultiSelect Widget", () => {
               label: "Set Value",
               onTap: {
                 executeCode:
-                  "ensemble.storage.set('userInput', ['option1', 'option3'])",
+                  "userInput.setSelectedValues(['option1', 'option3'])",
               },
             },
           },
@@ -203,6 +204,14 @@ describe("MultiSelect Widget", () => {
       />,
       { wrapper: FormTestWrapper },
     );
+
+    fireEvent.click(screen.getByText("change bindings"));
+
+    // Wait for the combobox to reflect the selected values
+    await waitFor(() => {
+      expect(screen.getByText("Option 1")).toBeVisible();
+      expect(screen.getByText("Option 3")).toBeVisible();
+    });
 
     userEvent.click(screen.getByRole("combobox"));
     userEvent.click(screen.getByTitle("Option 2"));
@@ -222,8 +231,6 @@ describe("MultiSelect Widget", () => {
         }),
       ).toBeVisible();
     });
-
-    fireEvent.click(screen.getByText("Clear Values"));
 
     fireEvent.click(screen.getByText("Set Value"));
 
