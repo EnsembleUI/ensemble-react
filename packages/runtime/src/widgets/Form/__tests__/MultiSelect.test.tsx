@@ -257,7 +257,7 @@ describe("MultiSelect Widget", () => {
     });
   });
 
-  test('overwrite user selected value with initial value through binding change', async () => {
+  test("overwrite user selected value with initial value through binding change", async () => {
     render(
       <Form
         children={[
@@ -317,6 +317,6 @@ describe("MultiSelect Widget", () => {
       expect(screen.getByText("Option 1")).toBeVisible();
       expect(screen.getByText("Option 3")).toBeVisible();
     });
-  })
+  });
 });
 /* eslint-enable react/no-children-prop */
