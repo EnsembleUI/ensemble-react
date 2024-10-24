@@ -4,6 +4,7 @@ import { getDefaultStore } from "jotai";
 import { useRegisterBindings } from "../useRegisterBindings";
 import { screenAtom } from "../../state";
 import { screenStorageAtom } from "../useEnsembleStorage";
+import { useCallback } from "react";
 
 const mockInvokable = {
   id: "test",
@@ -14,6 +15,21 @@ const mockValues = {
   foo: "bar",
   baz: "deadbeef",
 };
+
+// Define the type for the object with callback functions
+type CallbacksObject = {
+  sum: () => number;
+  minus: () => number;
+  multiply: () => number;
+  divide: () => number;
+};
+
+const generateObjectWithCallbacks = (dependency: number): CallbacksObject => ({
+  sum: (): number => dependency + 2,
+  minus: (): number => dependency - 2,
+  multiply: (): number => dependency * 2,
+  divide: (): number => dependency / 2,
+});
 
 const store = getDefaultStore();
 
@@ -321,4 +337,67 @@ test("evaluates flutter style hex codes expressions", () => {
       },
     },
   });
+});
+
+test.only("should keep the same callback reference when dependencies do not change", () => {
+  const { result, rerender } = renderHook(
+    ({ dependency }) =>
+      useCallback(() => {
+        return dependency * 2;
+      }, [dependency]),
+    {
+      initialProps: { dependency: 1 },
+    },
+  );
+
+  const firstCallback = result.current;
+  expect(firstCallback()).toBe(2);
+
+  // Rerender with the same dependency
+  rerender({ dependency: 1 });
+
+  const secondCallback = result.current;
+
+  // Check that the callback reference remains the same
+  expect(firstCallback.toString()).toBe(secondCallback.toString());
+});
+
+test("should keep the same reference for all functions inside an object when dependencies do not change", () => {
+  const { result, rerender } = renderHook(
+    ({ dependency }) =>
+      useCallback(() => generateObjectWithCallbacks(dependency), [dependency]),
+    {
+      initialProps: { dependency: 1 },
+    },
+  );
+
+  const firstObject = result.current();
+  const {
+    sum: firstSum,
+    minus: firstMinus,
+    multiply: firstMultiply,
+    divide: firstDivide,
+  } = firstObject;
+
+  expect(firstSum()).toBe(3);
+  expect(firstMinus()).toBe(-1);
+  expect(firstMultiply()).toBe(2);
+  expect(firstDivide()).toBe(0.5);
+
+  // Rerender with the same dependency
+  rerender({ dependency: 1 });
+
+  const secondObject = result.current();
+  const {
+    sum: secondSum,
+    minus: secondMinus,
+    multiply: secondMultiply,
+    divide: secondDivide,
+  } = secondObject;
+
+  // Check that the reference for all functions inside the object remains the same
+  expect(secondSum.toString()).toEqual(firstSum.toString());
+  expect(firstMinus.toString()).toBe(secondMinus.toString());
+  expect(firstMultiply.toString()).toBe(secondMultiply.toString());
+  expect(firstDivide.toString()).toBe(secondDivide.toString());
 });
