@@ -11,6 +11,7 @@ import { type Widget } from "../shared/coreSchema";
 import { EnsembleRuntime } from "../runtime";
 import { type EnsembleWidgetProps } from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks";
+import { useMemo } from "react";
 
 const widgetName = "ToolTip";
 
@@ -29,7 +30,9 @@ export type ToolTipProps = {
 
 export const ToolTip: React.FC<ToolTipProps> = (props) => {
   const { widget, onTriggered, ...rest } = props;
-  const unwrappedWidget = unwrapWidget(cloneDeep(widget));
+  const unwrappedWidget = useMemo(() => {
+    return unwrapWidget(cloneDeep(widget));
+  }, [widget]);
   const action = useEnsembleAction(onTriggered);
 
   const { values, rootRef } = useRegisterBindings({ ...rest }, props.id);
@@ -38,15 +41,21 @@ export const ToolTip: React.FC<ToolTipProps> = (props) => {
     action?.callback({ tooltipState: open });
   };
 
+  const styleTokens = useMemo(() => {
+    const { fontFamily, fontSize, lineHeight, color } = values?.styles || {};
+
+    return {
+      ...(fontFamily && { fontFamily }),
+      ...(fontSize && { fontSize: fontSize as number }),
+      ...(lineHeight && { lineHeight: lineHeight as number }),
+      ...(color && { colorText: color }),
+    };
+  }, [values?.styles]);
+
   return (
     <ConfigProvider
       theme={{
-        token: {
-          fontFamily: values?.styles?.fontFamily,
-          fontSize: values?.styles?.fontSize as number,
-          lineHeight: values?.styles?.lineHeight as number,
-          colorText: values?.styles?.color,
-        },
+        token: styleTokens,
       }}
     >
       <Tooltip
