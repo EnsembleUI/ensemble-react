@@ -1,5 +1,13 @@
 # @ensembleui/react-runtime
 
+## 0.2.10
+
+### Patch Changes
+
+- d98ae6c: added support for decimal in input type number
+- 0a8fac3: improved required error message when label is not provided
+- bf145b3: fix button loader binding evaluation
+
 ## 0.2.9
 
 ### Patch Changes
