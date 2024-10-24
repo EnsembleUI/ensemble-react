@@ -1,5 +1,11 @@
 import type { ReactElement } from "react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import type { Expression, EnsembleAction } from "@ensembleui/react-framework";
 import {
   unwrapWidget,
@@ -8,7 +14,7 @@ import {
 } from "@ensembleui/react-framework";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { Select as SelectComponent, Space, Form } from "antd";
-import { get, isArray, isString } from "lodash-es";
+import { get, isArray, isEqual, isString } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import type {
@@ -67,9 +73,17 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     },
   );
 
-  // load initial values
+  // used to store previous initial values
+  const prevInitialValue = useRef([] as string[]);
+
+  // check and load initial values
   useEffect(() => {
-    if (!selectedValues && isArray(values?.initialValue)) {
+    // compare previous initial value with current render initial value
+    if (
+      !isEqual(prevInitialValue.current, values?.initialValue) &&
+      isArray(values?.initialValue)
+    ) {
+      prevInitialValue.current = values?.initialValue || [];
       setSelectedValues(values?.initialValue);
     }
   }, [values?.initialValue]);
