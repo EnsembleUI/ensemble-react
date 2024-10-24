@@ -38,3 +38,4 @@ export * from "./ImageCropper";
 export * from "./Spacer";
 export * from "./Stack";
 export * from "./QrCode";
+export * from "./ToolTip";

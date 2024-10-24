@@ -353,6 +353,23 @@ View:
                     executeCode: |
                       ensemble.storage.set('btnLoader' , !ensemble.storage.get('btnLoader'))
 
+        - Card:
+            children:
+              - Markdown:
+                  text: |
+                    ### ToolTip
+              - ToolTip:
+                  widget:
+                    Button:
+                      label: change button loading binding
+                      onTap:
+                        executeCode: |
+                          ensemble.storage.set('btnLoader' , !ensemble.storage.get('btnLoader'))
+                  message: This is tooltip
+                  onTriggered:
+                    executeCode: |
+                      console.log('>>>', {tooltipState})
+
 Global:
   scriptName: test.js
 
