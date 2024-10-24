@@ -1,5 +1,12 @@
 # @ensembleui/react-runtime
 
+## 0.2.11
+
+### Patch Changes
+
+- e2ead08: Added toolTip widget
+- fca1a65: Initialize ToggleButton with binding
+
 ## 0.2.10
 
 ### Patch Changes
