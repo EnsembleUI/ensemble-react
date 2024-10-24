@@ -83,7 +83,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
 
   const handleInputPaste = useCallback(
     (e: React.ClipboardEvent) => {
-      const pastedData = e.clipboardData.getData("Text");
+      const pastedData = e.clipboardData.getData("text");
       if (mask) {
         mask.unmaskedValue = pastedData;
         handleChange(mask.value);
