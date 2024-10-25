@@ -160,7 +160,7 @@ describe("MultiSelect Widget", () => {
     });
   });
 
-  test("binding change overwrites user input value", async () => {
+  test("overwrites binding initial value with user input value then overwrite user input value with setSelectedValue", async () => {
     render(
       <Form
         children={[
@@ -181,10 +181,20 @@ describe("MultiSelect Widget", () => {
           {
             name: "Button",
             properties: {
-              label: "Set Value",
+              label: "change bindings",
               onTap: {
                 executeCode:
                   "ensemble.storage.set('userInput', ['option1', 'option3'])",
+              },
+            },
+          },
+          {
+            name: "Button",
+            properties: {
+              label: "Set Value",
+              onTap: {
+                executeCode:
+                  "userInput.setSelectedValues(['option1', 'option3'])",
               },
             },
           },
@@ -195,23 +205,117 @@ describe("MultiSelect Widget", () => {
       { wrapper: FormTestWrapper },
     );
 
-    userEvent.click(screen.getByRole("combobox"));
-    fireEvent.click(screen.getByTitle("Option 2"));
-    fireEvent.click(screen.getByTitle("Option 4"));
-    userEvent.click(screen.getByRole("combobox"));
+    fireEvent.click(screen.getByText("change bindings"));
 
-    fireEvent.click(screen.getByText("Set Value"));
-
+    // Wait for the combobox to reflect the selected values
     await waitFor(() => {
       expect(screen.getByText("Option 1")).toBeVisible();
       expect(screen.getByText("Option 3")).toBeVisible();
     });
 
+    userEvent.click(screen.getByRole("combobox"));
+    userEvent.click(screen.getByTitle("Option 2"));
+    userEvent.click(screen.getByTitle("Option 4"));
+    userEvent.click(screen.getByRole("combobox"));
+
+    // Wait for the combobox to reflect the selected values
     await waitFor(() => {
-      fireEvent.click(screen.getByText("Get Value"));
+      expect(
+        screen.getByText("Option 2", {
+          selector: ".ant-select-selection-item-content",
+        }),
+      ).toBeVisible();
+      expect(
+        screen.getByText("Option 4", {
+          selector: ".ant-select-selection-item-content",
+        }),
+      ).toBeVisible();
+    });
+
+    fireEvent.click(screen.getByText("Set Value"));
+
+    // Wait for the combobox to reflect the selected values
+    await waitFor(() => {
+      expect(
+        screen.getByText("Option 1", {
+          selector: ".ant-select-selection-item-content",
+        }),
+      ).toBeVisible();
+      expect(
+        screen.getByText("Option 3", {
+          selector: ".ant-select-selection-item-content",
+        }),
+      ).toBeVisible();
+    });
+
+    fireEvent.click(screen.getByText("Get Value"));
+
+    await waitFor(() => {
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({ userInput: ["option1", "option3"] }),
       );
+    });
+  });
+
+  test("overwrite user selected value with initial value through binding change", async () => {
+    render(
+      <Form
+        children={[
+          {
+            name: "MultiSelect",
+            properties: {
+              id: "userInput",
+              label: "Choose Option",
+              data: [
+                { label: "Option 1", value: "option1" },
+                { label: "Option 2", value: "option2" },
+                { label: "Option 3", value: "option3" },
+                { label: "Option 4", value: "option4" },
+              ],
+              value: `\${ensemble.storage.get('userInput')}`,
+            },
+          },
+          {
+            name: "Button",
+            properties: {
+              label: "change bindings",
+              onTap: {
+                executeCode:
+                  "ensemble.storage.set('userInput', ['option1', 'option3'])",
+              },
+            },
+          },
+        ]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
+    );
+
+    userEvent.click(screen.getByRole("combobox"));
+    userEvent.click(screen.getByTitle("Option 2"));
+    userEvent.click(screen.getByTitle("Option 4"));
+    userEvent.click(screen.getByRole("combobox"));
+
+    // Wait for the combobox to reflect the selected values
+    await waitFor(() => {
+      expect(
+        screen.getByText("Option 2", {
+          selector: ".ant-select-selection-item-content",
+        }),
+      ).toBeVisible();
+      expect(
+        screen.getByText("Option 4", {
+          selector: ".ant-select-selection-item-content",
+        }),
+      ).toBeVisible();
+    });
+
+    fireEvent.click(screen.getByText("change bindings"));
+
+    // Wait for the combobox to reflect the selected values
+    await waitFor(() => {
+      expect(screen.getByText("Option 1")).toBeVisible();
+      expect(screen.getByText("Option 3")).toBeVisible();
     });
   });
 });
