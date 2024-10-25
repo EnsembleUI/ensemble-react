@@ -7,24 +7,10 @@ import {
   useTemplateData,
   CustomScopeProvider,
   type CustomScope,
-  evaluate,
-  useScreenContext,
-  type ScreenContextDefinition,
-  createEvaluationContext,
-  useCustomScope,
-  useEnsembleStorage,
-  useApplicationContext,
+  useEvaluate,
 } from "@ensembleui/react-framework";
 import { Collapse, type CollapseProps, ConfigProvider } from "antd";
-import {
-  get,
-  isArray,
-  isEmpty,
-  isObject,
-  isString,
-  mapKeys,
-  merge,
-} from "lodash-es";
+import { get, isArray, isEmpty, isObject, isString, mapKeys } from "lodash-es";
 import type {
   EnsembleWidgetProps,
   HasItemTemplate,
@@ -84,11 +70,21 @@ export type CollapsibleProps = {
 } & EnsembleWidgetProps &
   HasItemTemplate;
 
+const CollapsibleContentRenderer = ({ content }: { content: unknown }) => {
+  const { evaluatedContent } = useEvaluate({ evaluatedContent: content });
+
+  return (
+    <>
+      {isString(content)
+        ? evaluatedContent
+        : EnsembleRuntime.render([
+            unwrapWidget(content as { [key: string]: unknown }),
+          ])}
+    </>
+  );
+};
+
 export const Collapsible: React.FC<CollapsibleProps> = (props) => {
-  const screenContext = useScreenContext();
-  const parentScope = useCustomScope();
-  const storage = useEnsembleStorage();
-  const applicationContext = useApplicationContext();
   const { "item-template": itemTemplate, ...rest } = props;
   const [activeValue, setActiveValue] = useState<string[]>(props.value);
   const { values } = useRegisterBindings(
@@ -123,57 +119,21 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
     }
 
     if (isObject(itemTemplate) && !isEmpty(namedData)) {
-      const collapsibleTemplate = JSON.stringify(
-        itemTemplate.template.properties,
-      );
-
       const tempItems = namedData.map((item) => {
-        const evaluatedConfig = evaluate<CollapsibleItem>(
-          screenContext as ScreenContextDefinition,
-          collapsibleTemplate
-            .toString()
-            // eslint-disable-next-line prefer-named-capture-group
-            .replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
-          createEvaluationContext({
-            applicationContext: merge({}, applicationContext),
-            screenContext: screenContext ?? {},
-            ensemble: {
-              storage,
-            },
-            context: {
-              ...parentScope,
-              [itemTemplate.name]: get(item, itemTemplate.name) as unknown,
-            },
-          }),
-        );
-
         return {
           ...item,
-          key: evaluatedConfig.key,
-          label: isString(itemTemplate.template.properties.label) ? (
-            evaluatedConfig.label
-          ) : (
+          label: (
             <CustomScopeProvider value={item as CustomScope}>
-              {EnsembleRuntime.render([
-                unwrapWidget(
-                  itemTemplate.template.properties.label as {
-                    [key: string]: unknown;
-                  },
-                ),
-              ])}
+              <CollapsibleContentRenderer
+                content={itemTemplate.template.properties.label}
+              />
             </CustomScopeProvider>
           ),
-          children: isString(itemTemplate.template.properties.children) ? (
-            evaluatedConfig.children
-          ) : (
+          children: (
             <CustomScopeProvider value={item as CustomScope}>
-              {EnsembleRuntime.render([
-                unwrapWidget(
-                  itemTemplate.template.properties.children as {
-                    [key: string]: unknown;
-                  },
-                ),
-              ])}
+              <CollapsibleContentRenderer
+                content={itemTemplate.template.properties.children}
+              />
             </CustomScopeProvider>
           ),
         };

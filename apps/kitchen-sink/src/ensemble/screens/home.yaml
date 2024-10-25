@@ -1,6 +1,7 @@
 View:
   onLoad:
     executeCode: |
+      ensemble.storage.set('iconName', 'home')
       ensemble.storage.set('btnLoader' , false)
       ensemble.storage.set('yyy' , 'page')
       ensemble.storage.set('zzz' , 'button')
