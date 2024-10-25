@@ -1,5 +1,15 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.89
+
+### Patch Changes
+
+- e2ead08: Added toolTip widget
+- Updated dependencies [6e29dea]
+- Updated dependencies [e2ead08]
+- Updated dependencies [fca1a65]
+  - @ensembleui/react-runtime@0.2.11
+
 ## 0.0.88
 
 ### Patch Changes
