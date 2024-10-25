@@ -370,6 +370,18 @@ View:
                     executeCode: |
                       console.log('>>>', {tooltipState})
 
+        - Collapsible:
+            item-template:
+              data: [1, 2, 3]
+              name: p
+              template:
+                CollapsibleItem:
+                  key: ${p}
+                  label: ${'hello' + getDateLabel(p)}
+                  children:
+                    Text:
+                      text: ${'world' + p + ensemble.storage.get('iconName')}
+
 Global:
   scriptName: test.js
 

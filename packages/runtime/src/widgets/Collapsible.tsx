@@ -8,10 +8,23 @@ import {
   CustomScopeProvider,
   type CustomScope,
   evaluate,
-  defaultScreenContext,
+  useScreenContext,
+  type ScreenContextDefinition,
+  createEvaluationContext,
+  useCustomScope,
+  useEnsembleStorage,
+  useApplicationContext,
 } from "@ensembleui/react-framework";
 import { Collapse, type CollapseProps, ConfigProvider } from "antd";
-import { get, isArray, isEmpty, isObject, isString, mapKeys } from "lodash-es";
+import {
+  get,
+  isArray,
+  isEmpty,
+  isObject,
+  isString,
+  mapKeys,
+  merge,
+} from "lodash-es";
 import type {
   EnsembleWidgetProps,
   HasItemTemplate,
@@ -72,6 +85,10 @@ export type CollapsibleProps = {
   HasItemTemplate;
 
 export const Collapsible: React.FC<CollapsibleProps> = (props) => {
+  const screenContext = useScreenContext();
+  const parentScope = useCustomScope();
+  const storage = useEnsembleStorage();
+  const applicationContext = useApplicationContext();
   const { "item-template": itemTemplate, ...rest } = props;
   const [activeValue, setActiveValue] = useState<string[]>(props.value);
   const { values } = useRegisterBindings(
@@ -112,14 +129,22 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
 
       const tempItems = namedData.map((item) => {
         const evaluatedConfig = evaluate<CollapsibleItem>(
-          defaultScreenContext,
+          screenContext as ScreenContextDefinition,
           collapsibleTemplate
             .toString()
             // eslint-disable-next-line prefer-named-capture-group
             .replace(/['"]\$\{([^}]*)\}['"]/g, "$1"), // replace "${...}" or '${...}' with ...
-          {
-            [itemTemplate.name]: get(item, itemTemplate.name) as unknown,
-          },
+          createEvaluationContext({
+            applicationContext: merge({}, applicationContext),
+            screenContext: screenContext ?? {},
+            ensemble: {
+              storage,
+            },
+            context: {
+              ...parentScope,
+              [itemTemplate.name]: get(item, itemTemplate.name) as unknown,
+            },
+          }),
         );
 
         return {
