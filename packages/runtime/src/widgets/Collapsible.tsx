@@ -8,6 +8,8 @@ import {
   CustomScopeProvider,
   type CustomScope,
   useEvaluate,
+  evaluate,
+  defaultScreenContext,
 } from "@ensembleui/react-framework";
 import { Collapse, type CollapseProps, ConfigProvider } from "antd";
 import { get, isArray, isEmpty, isObject, isString, mapKeys } from "lodash-es";
@@ -73,15 +75,15 @@ export type CollapsibleProps = {
 const CollapsibleContentRenderer = ({ content }: { content: unknown }) => {
   const { evaluatedContent } = useEvaluate({ evaluatedContent: content });
 
-  return (
-    <>
-      {isString(content)
-        ? evaluatedContent
-        : EnsembleRuntime.render([
-            unwrapWidget(content as { [key: string]: unknown }),
-          ])}
-    </>
-  );
+  const memoizedContent = useMemo(() => {
+    return isString(content)
+      ? evaluatedContent
+      : EnsembleRuntime.render([
+          unwrapWidget(content as { [key: string]: unknown }),
+        ]);
+  }, [content, evaluatedContent]);
+
+  return <>{memoizedContent}</>;
 };
 
 export const Collapsible: React.FC<CollapsibleProps> = (props) => {
@@ -120,8 +122,15 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
 
     if (isObject(itemTemplate) && !isEmpty(namedData)) {
       const tempItems = namedData.map((item) => {
+        const evaluatedKey: string = evaluate(
+          defaultScreenContext,
+          itemTemplate.template.key,
+          { [itemTemplate.name]: get(item, itemTemplate.name) as unknown },
+        );
+
         return {
           ...item,
+          key: evaluatedKey,
           label: (
             <CustomScopeProvider value={item as CustomScope}>
               <CollapsibleContentRenderer
