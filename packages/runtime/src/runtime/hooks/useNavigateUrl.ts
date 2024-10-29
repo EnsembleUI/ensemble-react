@@ -1,45 +1,77 @@
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  type NavigateUrlAction,
-  useEvaluate,
+import type {
+  EnsembleScreenModel,
+  NavigateUrlAction,
 } from "@ensembleui/react-framework";
-import { isString } from "lodash-es";
+import { get, isNil, isString, merge } from "lodash-es";
+import type { NavigateOptions } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useCommandCallback, evaluate } from "@ensembleui/react-framework";
+import { useCallback } from "react";
 import type { EnsembleActionHook } from "./useEnsembleAction";
 
 export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
   action,
 ) => {
   const navigate = useNavigate();
-  const [urlNavigated, setUrlNavigated] = useState<boolean>();
-  const [context, setContext] = useState<{ [key: string]: unknown }>();
 
-  const evaluatedInputs = useEvaluate(
-    isString(action) ? { url: action } : { ...action },
-    { context },
+  const evaluateUrl = useCallback(
+    (
+      url: string,
+      defaultScreenModel?: EnsembleScreenModel,
+      context?: { [key: string]: unknown },
+    ): string => {
+      return evaluate<string>({ model: defaultScreenModel }, url, context);
+    },
+    [],
   );
 
-  const navigateUrl = useMemo(() => {
-    if (!action) {
-      return;
-    }
+  const evaluateInputs = useCallback(
+    (
+      inputs: { [key: string]: unknown },
+      defaultScreenModel?: EnsembleScreenModel,
+      context?: { [key: string]: unknown },
+    ): { [key: string]: unknown } => {
+      const inputString = JSON.stringify(inputs).replace(
+        // eslint-disable-next-line prefer-named-capture-group
+        /['"]\$\{([^}]*)\}['"]/g,
+        "$1",
+      );
+      return evaluate({ model: defaultScreenModel }, inputString, context);
+    },
+    [],
+  );
 
-    const callback = (args: unknown): void => {
-      setUrlNavigated(false);
-      setContext(args as { [key: string]: unknown });
-    };
+  const navigateCommand = useCommandCallback(
+    (evalContext, ...args) => {
+      if (!action) return;
 
-    return { callback };
-  }, [action]);
+      const context = merge({}, evalContext, args[0]);
+      const defaultScreenModel = get(evalContext, "screenContextModel") as
+        | EnsembleScreenModel
+        | undefined;
 
-  useEffect(() => {
-    if (!evaluatedInputs.url || urlNavigated !== false) {
-      return;
-    }
+      if (isString(action)) {
+        const evaluatedUrl = evaluateUrl(action, defaultScreenModel, context);
+        navigate(evaluatedUrl);
+        return;
+      }
 
-    setUrlNavigated(true);
-    return navigate(evaluatedInputs.url, { state: evaluatedInputs.inputs });
-  }, [urlNavigated, evaluatedInputs]);
+      const evaluatedUrl = evaluateUrl(action.url, defaultScreenModel, context);
+      const navigationOptions: NavigateOptions = {};
 
-  return navigateUrl;
+      if (!isNil(action.inputs)) {
+        navigationOptions.state = evaluateInputs(
+          action.inputs,
+          defaultScreenModel,
+          context,
+        );
+      }
+
+      navigate(evaluatedUrl, navigationOptions);
+    },
+    { navigate },
+    [action],
+  );
+
+  return { callback: navigateCommand };
 };

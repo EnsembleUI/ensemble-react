@@ -46,7 +46,7 @@ export const useCommandCallback = <
   R = unknown,
 >(
   command: (evalContext: EnsembleContext, ...args: T) => R,
-  apis: { navigate: NavigateFunction; location: EnsembleLocation },
+  apis: { navigate: NavigateFunction; location?: EnsembleLocation },
   dependencies: unknown[] = [],
   callbackContext?: CallbackContext,
 ): ReturnType<typeof useAtomCallback<R, T>> => {
@@ -163,6 +163,7 @@ export const useCommandCallback = <
             },
             styles: theme.Styles,
             ...mapKeys(theme.Tokens ?? {}, (_, key) => key.toLowerCase()),
+            screenContextModel: screenContext.model,
           },
         });
 
