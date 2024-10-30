@@ -449,6 +449,10 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
 
   const inputEl = useMemo(() => {
     const input = document.createElement("input");
+    if (values?.id) {
+      input.id = values.id;
+    }
+    input.hidden = true;
     input.type = "file";
     input.multiple = values?.allowMultiple || false;
     input.accept =
@@ -456,9 +460,10 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
       "*/*";
 
     return input;
-  }, [values?.allowMultiple, values?.allowedExtensions]);
+  }, [values?.allowMultiple, values?.allowedExtensions, values?.id]);
 
   useEffect(() => {
+    document.body.append(inputEl);
     inputEl.onchange = (event: Event): void => {
       const selectedFiles =
         (event.target as HTMLInputElement).files || undefined;
