@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.2.12
+
+### Patch Changes
+
+- a71d395: Append file input element in document body for UI automation
+
 ## 0.2.11
 
 ### Patch Changes
