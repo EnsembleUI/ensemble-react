@@ -163,7 +163,6 @@ export const useCommandCallback = <
             },
             styles: theme.Styles,
             ...mapKeys(theme.Tokens ?? {}, (_, key) => key.toLowerCase()),
-            screenContextModel: screenContext.model,
           },
         });
 

@@ -1,8 +1,12 @@
 import type { AxiosResponse, AxiosResponseHeaders } from "axios";
 import axios from "axios";
-import { cloneDeep, get, head, isObject, isString, set } from "lodash-es";
+import { get, head, isObject } from "lodash-es";
 import type { EnsembleAPIModel } from "../shared/models";
-import { type UploadFilesAction } from "../shared";
+import {
+  expressionReplacer,
+  visitAndReplaceExpressions,
+  type UploadFilesAction,
+} from "../shared";
 import { evaluate } from "../evaluate/evaluate";
 import { ensembleStore, screenAtom } from "../state";
 import type { Response } from "./index";
@@ -129,40 +133,12 @@ const resolve = <T>(
   }
 
   const screenContext = ensembleStore.get(screenAtom);
-  const replace = (val: string): unknown => {
-    const matches = val.match(/\$\{[^}]+\}/g);
-    if (matches?.length === 1 && matches[0] === val) {
-      return evaluate(screenContext, val, context);
-    }
-    return val.replace(/\$\{[^}]+\}/g, (expression) => {
-      return evaluate(screenContext, expression, context);
-    });
+  const evaluator = (expr: string): string => {
+    return evaluate(screenContext, expr, context);
   };
-  const resolvedBody = visitAndReplaceExpressions(body, replace);
+  const resolvedBody = visitAndReplaceExpressions(
+    body,
+    expressionReplacer(evaluator),
+  );
   return resolvedBody as T;
-};
-
-const visitAndReplaceExpressions = (
-  obj: unknown,
-  replace: (expr: string) => unknown,
-): unknown => {
-  let clonedObj = cloneDeep(obj);
-  if (isObject(clonedObj)) {
-    if (Array.isArray(clonedObj)) {
-      // If obj is an array, recursively visit and replace elements
-      for (let i = 0; i < clonedObj.length; i++) {
-        clonedObj[i] = visitAndReplaceExpressions(clonedObj[i], replace);
-      }
-    } else {
-      // If obj is an object, recursively visit and replace values
-      for (const key in clonedObj) {
-        const result = visitAndReplaceExpressions(get(clonedObj, key), replace);
-        set(clonedObj, key, result);
-      }
-    }
-  } else if (isString(obj)) {
-    clonedObj = replace(obj);
-  }
-
-  return clonedObj;
 };

@@ -2,25 +2,33 @@ import type {
   EnsembleScreenModel,
   NavigateUrlAction,
 } from "@ensembleui/react-framework";
-import { get, isNil, isString, merge } from "lodash-es";
-import type { NavigateOptions } from "react-router-dom";
+import { isNil, isString, merge } from "lodash-es";
 import { useNavigate } from "react-router-dom";
-import { useCommandCallback, evaluate } from "@ensembleui/react-framework";
+import {
+  useCommandCallback,
+  evaluate,
+  visitAndReplaceExpressions,
+  expressionReplacer,
+  useScreenModel,
+} from "@ensembleui/react-framework";
 import { useCallback } from "react";
+// eslint-disable-next-line import/no-cycle
+import { navigateUrl } from "../navigation";
 import type { EnsembleActionHook } from "./useEnsembleAction";
 
 export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
   action,
 ) => {
   const navigate = useNavigate();
+  const screenModal = useScreenModel();
 
   const evaluateUrl = useCallback(
     (
       url: string,
-      defaultScreenModel?: EnsembleScreenModel,
+      screenModel?: EnsembleScreenModel,
       context?: { [key: string]: unknown },
     ): string => {
-      return evaluate<string>({ model: defaultScreenModel }, url, context);
+      return evaluate<string>({ model: screenModel }, url, context);
     },
     [],
   );
@@ -28,15 +36,16 @@ export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
   const evaluateInputs = useCallback(
     (
       inputs: { [key: string]: unknown },
-      defaultScreenModel?: EnsembleScreenModel,
+      screenModel?: EnsembleScreenModel,
       context?: { [key: string]: unknown },
     ): { [key: string]: unknown } => {
-      const inputString = JSON.stringify(inputs).replace(
-        // eslint-disable-next-line prefer-named-capture-group
-        /['"]\$\{([^}]*)\}['"]/g,
-        "$1",
+      const resolvedInputs = visitAndReplaceExpressions(
+        inputs,
+        expressionReplacer((expr) =>
+          evaluate({ model: screenModel }, expr, context),
+        ),
       );
-      return evaluate({ model: defaultScreenModel }, inputString, context);
+      return resolvedInputs as { [key: string]: unknown };
     },
     [],
   );
@@ -46,31 +55,22 @@ export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
       if (!action) return;
 
       const context = merge({}, evalContext, args[0]);
-      const defaultScreenModel = get(evalContext, "screenContextModel") as
-        | EnsembleScreenModel
-        | undefined;
 
       if (isString(action)) {
-        const evaluatedUrl = evaluateUrl(action, defaultScreenModel, context);
+        const evaluatedUrl = evaluateUrl(action, screenModal, context);
         navigate(evaluatedUrl);
         return;
       }
 
-      const evaluatedUrl = evaluateUrl(action.url, defaultScreenModel, context);
-      const navigationOptions: NavigateOptions = {};
+      const evaluatedUrl = evaluateUrl(action.url, screenModal, context);
+      const evaluatedInputs = isNil(action.inputs)
+        ? undefined
+        : evaluateInputs(action.inputs, screenModal, context);
 
-      if (!isNil(action.inputs)) {
-        navigationOptions.state = evaluateInputs(
-          action.inputs,
-          defaultScreenModel,
-          context,
-        );
-      }
-
-      navigate(evaluatedUrl, navigationOptions);
+      navigateUrl(evaluatedUrl, navigate, evaluatedInputs);
     },
     { navigate },
-    [action],
+    [action, screenModal],
   );
 
   return { callback: navigateCommand };

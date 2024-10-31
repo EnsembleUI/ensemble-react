@@ -1,4 +1,4 @@
-import { isObject, isString } from "lodash-es";
+import { cloneDeep, get, isObject, isString, set } from "lodash-es";
 
 export type Expression<T> = string | T;
 
@@ -158,4 +158,41 @@ export const debug = (value: unknown): void => {
 export const error = (value: unknown): void => {
   // eslint-disable-next-line no-console
   console.error(value);
+};
+
+export const expressionReplacer =
+  (evaluate: (expr: string) => string) =>
+  (val: string): unknown => {
+    const matches = val.match(/\$\{[^}]+\}/g);
+    if (matches?.length === 1 && matches[0] === val) {
+      return evaluate(val);
+    }
+    return val.replace(/\$\{[^}]+\}/g, (expression) => {
+      return evaluate(expression);
+    });
+  };
+
+export const visitAndReplaceExpressions = (
+  obj: unknown,
+  replace: (expr: string) => unknown,
+): unknown => {
+  let clonedObj = cloneDeep(obj);
+  if (isObject(clonedObj)) {
+    if (Array.isArray(clonedObj)) {
+      // If obj is an array, recursively visit and replace elements
+      for (let i = 0; i < clonedObj.length; i++) {
+        clonedObj[i] = visitAndReplaceExpressions(clonedObj[i], replace);
+      }
+    } else {
+      // If obj is an object, recursively visit and replace values
+      for (const key in clonedObj) {
+        const result = visitAndReplaceExpressions(get(clonedObj, key), replace);
+        set(clonedObj, key, result);
+      }
+    }
+  } else if (isString(obj)) {
+    clonedObj = replace(obj);
+  }
+
+  return clonedObj;
 };
