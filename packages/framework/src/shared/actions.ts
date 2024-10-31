@@ -61,7 +61,7 @@ interface NavigateScreenOptions {
 
 interface NavigateUrlOptions {
   url: string;
-  inputs: { [key: string]: unknown };
+  inputs?: { [key: string]: unknown };
 }
 
 interface NavigateExternalScreenOptions {
