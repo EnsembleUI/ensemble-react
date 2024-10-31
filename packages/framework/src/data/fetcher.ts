@@ -2,11 +2,7 @@ import type { AxiosResponse, AxiosResponseHeaders } from "axios";
 import axios from "axios";
 import { get, head, isObject } from "lodash-es";
 import type { EnsembleAPIModel } from "../shared/models";
-import {
-  expressionReplacer,
-  visitAndReplaceExpressions,
-  type UploadFilesAction,
-} from "../shared";
+import { replace, visitExpressions, type UploadFilesAction } from "../shared";
 import { evaluate } from "../evaluate/evaluate";
 import { ensembleStore, screenAtom } from "../state";
 import type { Response } from "./index";
@@ -136,9 +132,6 @@ const resolve = <T>(
   const evaluator = (expr: string): string => {
     return evaluate(screenContext, expr, context);
   };
-  const resolvedBody = visitAndReplaceExpressions(
-    body,
-    expressionReplacer(evaluator),
-  );
+  const resolvedBody = visitExpressions(body, replace(evaluator));
   return resolvedBody as T;
 };

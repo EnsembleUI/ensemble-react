@@ -7,8 +7,8 @@ import { useNavigate } from "react-router-dom";
 import {
   useCommandCallback,
   evaluate,
-  visitAndReplaceExpressions,
-  expressionReplacer,
+  visitExpressions,
+  replace,
   useScreenModel,
 } from "@ensembleui/react-framework";
 import { useCallback } from "react";
@@ -39,11 +39,9 @@ export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
       screenModel?: EnsembleScreenModel,
       context?: { [key: string]: unknown },
     ): { [key: string]: unknown } => {
-      const resolvedInputs = visitAndReplaceExpressions(
+      const resolvedInputs = visitExpressions(
         inputs,
-        expressionReplacer((expr) =>
-          evaluate({ model: screenModel }, expr, context),
-        ),
+        replace((expr) => evaluate({ model: screenModel }, expr, context)),
       );
       return resolvedInputs as { [key: string]: unknown };
     },

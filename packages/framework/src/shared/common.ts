@@ -160,38 +160,38 @@ export const error = (value: unknown): void => {
   console.error(value);
 };
 
-export const expressionReplacer =
-  (evaluate: (expr: string) => string) =>
+export const replace =
+  (replacer: (expr: string) => string) =>
   (val: string): unknown => {
     const matches = val.match(/\$\{[^}]+\}/g);
     if (matches?.length === 1 && matches[0] === val) {
-      return evaluate(val);
+      return replacer(val);
     }
     return val.replace(/\$\{[^}]+\}/g, (expression) => {
-      return evaluate(expression);
+      return replacer(expression);
     });
   };
 
-export const visitAndReplaceExpressions = (
+export const visitExpressions = (
   obj: unknown,
-  replace: (expr: string) => unknown,
+  replacer: (expr: string) => unknown,
 ): unknown => {
   let clonedObj = cloneDeep(obj);
   if (isObject(clonedObj)) {
     if (Array.isArray(clonedObj)) {
       // If obj is an array, recursively visit and replace elements
       for (let i = 0; i < clonedObj.length; i++) {
-        clonedObj[i] = visitAndReplaceExpressions(clonedObj[i], replace);
+        clonedObj[i] = visitExpressions(clonedObj[i], replacer);
       }
     } else {
       // If obj is an object, recursively visit and replace values
       for (const key in clonedObj) {
-        const result = visitAndReplaceExpressions(get(clonedObj, key), replace);
+        const result = visitExpressions(get(clonedObj, key), replacer);
         set(clonedObj, key, result);
       }
     }
   } else if (isString(obj)) {
-    clonedObj = replace(obj);
+    clonedObj = replacer(obj);
   }
 
   return clonedObj;
