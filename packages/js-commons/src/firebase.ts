@@ -5,7 +5,9 @@ import {
   getDoc,
   getDocs,
   query,
+  setDoc,
   where,
+  writeBatch,
 } from "firebase/firestore/lite";
 import type {
   ApplicationDTO,
@@ -16,8 +18,7 @@ import type {
   LanguageDTO,
   EnsembleConfigYAML,
   FontDTO,
-} from "./shared/dto";
-import { languageMap } from "./i18n";
+} from "./dto";
 
 const getArtifacts = async (
   appRef: DocumentReference,
@@ -64,14 +65,12 @@ const getArtifacts = async (
     } else if (document.type === "config") {
       config = {
         ...config,
-        environmentVariables: document.envVariables as {
-          [key: string]: unknown;
-        },
+        environmentVariables: document.envVariables as Record<string, unknown>,
       };
     } else if (document.type === "secrets") {
       config = {
         ...config,
-        secretVariables: document.secrets as { [key: string]: unknown },
+        secretVariables: document.secrets as Record<string, unknown>,
       };
     } else if (document.type === "font") {
       const font = document as FontDTO;
@@ -108,6 +107,7 @@ const getArtifacts = async (
 
 export interface ApplicationLoader {
   load: (appId: string) => Promise<ApplicationDTO>;
+  write: (app: ApplicationDTO) => Promise<ApplicationDTO>;
 }
 
 export const getFirestoreApplicationLoader = (
@@ -135,4 +135,122 @@ export const getFirestoreApplicationLoader = (
       fonts,
     };
   },
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  write(app: ApplicationDTO): Promise<ApplicationDTO> {
+    throw new Error("Function not implemented.");
+  },
 });
+
+export const languageMap: Record<string, string> = {
+  ar: "Arabic",
+  bn: "Bengali",
+  de: "German",
+  en: "English",
+  es: "Spanish",
+  fr: "French",
+  hi: "Hindi",
+  id: "Indonesian",
+  it: "Italian",
+  ja: "Japanese",
+  jv: "Javanese",
+  ko: "Korean",
+  ms: "Malay",
+  nl: "Dutch",
+  pa: "Punjabi",
+  pl: "Polish",
+  pt: "Portuguese",
+  ro: "Romanian",
+  ru: "Russian",
+  sv: "Swedish",
+  ta: "Tamil",
+  te: "Telugu",
+  th: "Thai",
+  tr: "Turkish",
+  uk: "Ukrainian",
+  ur: "Urdu",
+  vi: "Vietnamese",
+  zh: "Chinese",
+  el: "Greek",
+  da: "Danish",
+};
+
+export const serializeApp = async (
+  db: Firestore,
+  app: ApplicationDTO,
+  userId: string,
+) => {
+  const appDocRef = doc(db, "apps", app.id);
+  const { screens, widgets, theme, scripts, ...appData } = app;
+  await setDoc(appDocRef, {
+    ...appData,
+    isReact: true,
+    isPublic: false,
+    isArchived: false,
+    collaborators: { [`users_${userId}`]: "owner" },
+  });
+
+  const batch = writeBatch(db);
+  screens.forEach((screen) => {
+    const screenRef = doc(collection(appDocRef, "artifacts"));
+    batch.set(
+      screenRef,
+      {
+        ...screen,
+        type: "screen",
+        isPublic: false,
+        isArchived: false,
+      },
+      {
+        merge: true,
+      },
+    );
+  });
+
+  widgets.forEach((widget) => {
+    const widgetRef = doc(collection(appDocRef, "internal_artifacts"));
+    batch.set(
+      widgetRef,
+      {
+        ...widget,
+        type: "internal_widget",
+        isPublic: false,
+        isArchived: false,
+      },
+      {
+        merge: true,
+      },
+    );
+  });
+
+  scripts.forEach((script) => {
+    const scriptRef = doc(collection(appDocRef, "internal_artifacts"));
+    batch.set(
+      scriptRef,
+      {
+        ...script,
+        type: "internal_script",
+        isPublic: false,
+        isArchived: false,
+      },
+      {
+        merge: true,
+      },
+    );
+  });
+
+  const newThemeRef = doc(collection(appDocRef, "artifacts"));
+  batch.set(
+    newThemeRef,
+    {
+      ...theme,
+      type: "theme",
+      isPublic: false,
+      isArchived: false,
+    },
+    {
+      merge: true,
+    },
+  );
+  await batch.commit();
+};

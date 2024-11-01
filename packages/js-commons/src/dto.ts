@@ -44,6 +44,13 @@ export interface ApplicationDTO
   readonly publishingHistory?: PublishingHistory[];
   readonly groupLabels?: Map<string, string>;
 
+  readonly manifest?: Record<
+    string,
+    Partial<EnsembleDocument> & {
+      filePath?: string;
+    }
+  >;
+
   readonly screens: ScreenDTO[];
   readonly widgets: WidgetDTO[];
   readonly scripts: ScriptDTO[];
@@ -99,8 +106,8 @@ export interface EnsembleEnvironmentDTO {
 }
 
 export interface EnsembleConfigYAML {
-  environmentVariables?: { [key: string]: unknown };
-  secretVariables?: { [key: string]: unknown };
+  environmentVariables?: Record<string, unknown>;
+  secretVariables?: Record<string, unknown>;
 }
 
 export type FontDTO = EnsembleDocument & {
