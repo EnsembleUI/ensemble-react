@@ -56,6 +56,7 @@ describe("Button Component Render Tests", () => {
     expect(renderCount.current).toBe(1);
 
     // Update parent state
+    // eslint-disable-next-line @typescript-eslint/require-await
     await act(async () => {
       fireEvent.click(getByTestId("parent-updater"));
     });
@@ -102,6 +103,7 @@ describe("Button Component Render Tests", () => {
     expect(renderCount.current).toBe(1);
 
     // Update label
+    // eslint-disable-next-line @typescript-eslint/require-await
     await act(async () => {
       fireEvent.click(getByTestId("label-updater"));
     });
@@ -110,6 +112,7 @@ describe("Button Component Render Tests", () => {
     expect(renderCount.current).toBe(2);
 
     // Update styles
+    // eslint-disable-next-line @typescript-eslint/require-await
     await act(async () => {
       fireEvent.click(getByTestId("styles-updater"));
     });
@@ -191,6 +194,7 @@ describe("Button Component Render Tests", () => {
 
     const buttonEl = screen.getByText("Change button label");
     // Trigger the button click
+    // eslint-disable-next-line @typescript-eslint/require-await
     await act(async () => {
       fireEvent.click(buttonEl);
     });
