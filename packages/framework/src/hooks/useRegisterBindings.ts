@@ -1,5 +1,5 @@
 import type { RefCallback } from "react";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import { get, isEmpty, isString, keys, debounce } from "lodash-es";
 import isEqual from "react-fast-compare";
 import type { InvokableMethods } from "../state";
@@ -17,7 +17,9 @@ export interface RegisterBindingsResult<T> {
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 const areFunctionsEqual = (func1?: Function, func2?: Function): boolean => {
-  return func1?.toString() === func2?.toString();
+  if (!func1 && !func2) return true;
+  if (!func1 || !func2) return false;
+  return func1 === func2;
 };
 
 export const useRegisterBindings = <T extends { [key: string]: unknown }>(
@@ -31,7 +33,6 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
   },
 ): RegisterBindingsResult<T> => {
   const testId = get(values, ["testId"]);
-  const prevMethodsRef = useRef(methods);
 
   const { resolvedWidgetId, resolvedTestId } = useWidgetId(
     id,
@@ -55,7 +56,6 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
   );
 
   useEffect(() => {
-    // Improves performance greatly: o need to store state in global if there's no explicit ID to reference it with
     if (isEmpty(id)) {
       return;
     }
@@ -63,14 +63,8 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
     const prevStateCheck = keys(methods).every((methodKey: string) => {
       const fromMethods = get(methods, methodKey);
       const fromWidgets = get(widgetState?.invokable?.methods, methodKey);
-      const prevMethod = get(prevMethodsRef.current, methodKey);
 
-      // Check if the current method is different from the previous one
-      if (!areFunctionsEqual(fromMethods, prevMethod)) {
-        return false;
-      }
-
-      // If it's the same as the previous, check against the widget state
+      // Check if the method references are equal or if their string representations are the same
       return areFunctionsEqual(fromMethods, fromWidgets);
     });
 
@@ -87,13 +81,9 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
       values: newValues,
       invokable: { id: resolvedWidgetId, methods },
     });
-
-    // Update the previous methods reference
-    prevMethodsRef.current = methods;
   }, [
     methods,
     resolvedWidgetId,
-    setWidgetState,
     newValues,
     widgetState?.values,
     widgetState?.invokable?.methods,
@@ -109,7 +99,13 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
         invokable: { id: resolvedWidgetId, methods },
       });
     }
-  }, [options?.forceState]);
+  }, [
+    options?.forceState,
+    newValues,
+    resolvedWidgetId,
+    methods,
+    setWidgetState,
+  ]);
 
   const updatedValues = widgetState?.values ?? newValues;
   const htmlAttributes = get(updatedValues, "htmlAttributes") as {

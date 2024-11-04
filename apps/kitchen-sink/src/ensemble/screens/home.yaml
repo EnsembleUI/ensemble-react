@@ -5,6 +5,7 @@ View:
       ensemble.storage.set('zzz' , 'button')
       ensemble.storage.set('aaa' , '1')
       ensemble.storage.set('bbb' , "0xffb91c1c")
+      ensemble.storage.set('loading', true);
       console.log('>>> secret variable >>>', ensemble.secrets.dummyOauthSecret)
 
   header:
@@ -336,6 +337,36 @@ View:
                   onTap:
                     executeCode: |
                       console.log('Slider value: ' + sliderWidget.value);
+
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+            children:
+              - Markdown:
+                  text: |
+                    ### Show Dialog
+              - Button:
+                  label: show dialog
+                  onTap:
+                    showDialog:
+                      widget:
+                        Column:
+                          children:
+                            - Text:
+                                text: i am a text
+                            - Button:
+                                id: unique
+                                label: Hi I'm Button
+                                onTap:
+                                  executeCode: |-
+                                    unique.setLoading(true)
+                            - Button:
+                                id: unique2
+                                label: Hi I'm Button Close
+                                onTap:
+                                  executeCode: |-
+                                    unique.setLoading(!unique.loading)
 
 Global:
   scriptName: test.js
