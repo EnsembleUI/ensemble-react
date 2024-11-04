@@ -1,5 +1,36 @@
 # @ensembleui/react-runtime
 
+## 0.2.12
+
+### Patch Changes
+
+- a71d395: Append file input element in document body for UI automation
+
+## 0.2.11
+
+### Patch Changes
+
+- 6e29dea: fix mask format on text input value paste
+- e2ead08: Added toolTip widget
+- fca1a65: Initialize ToggleButton with binding
+
+## 0.2.10
+
+### Patch Changes
+
+- d98ae6c: added support for decimal in input type number
+- 0a8fac3: improved required error message when label is not provided
+- bf145b3: fix button loader binding evaluation
+
+## 0.2.9
+
+### Patch Changes
+
+- 3d33f30: fix loader on on second time button load
+- 116c45c: Change collapsible widget name with Accordian
+- 8f733bf: Initialize text with binding
+- 334c96d: Added testcase for each form elements widgets
+
 ## 0.2.8
 
 ### Patch Changes

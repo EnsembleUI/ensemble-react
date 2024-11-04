@@ -1,26 +1,8 @@
 /* eslint-disable react/no-children-prop */
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { ScreenContextProvider } from "@ensembleui/react-framework";
-import type { PropsWithChildren } from "react";
-import { BrowserRouter } from "react-router-dom";
 import { Button, Form, Text } from "../../index";
-
-const FormTestWrapper: React.FC<PropsWithChildren> = ({ children }) => {
-  return (
-    <BrowserRouter>
-      <ScreenContextProvider
-        screen={{
-          id: "formTest",
-          name: "formTest",
-          body: { name: "Column", properties: {} },
-        }}
-      >
-        {children}
-      </ScreenContextProvider>
-    </BrowserRouter>
-  );
-};
+import { FormTestWrapper } from "./__shared__/fixtures";
 
 const defaultFormContent = [
   {
@@ -238,6 +220,74 @@ describe("Form", () => {
 
     await waitFor(() => {
       expect(screen.getByText("true")).toBeInTheDocument();
+    });
+  });
+
+  test("check required error message with given label", async () => {
+    render(
+      <Form
+        children={[
+          {
+            name: "TextInput",
+            properties: {
+              label: "First name",
+              required: true,
+            },
+          },
+          {
+            name: "Button",
+            properties: {
+              label: "Submit",
+              submitForm: true,
+            },
+          },
+        ]}
+        id="form"
+      />,
+      {
+        wrapper: FormTestWrapper,
+      },
+    );
+
+    const validateBtn = screen.getByText("Submit");
+    fireEvent.click(validateBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText("Please enter First name")).toBeInTheDocument();
+    });
+  });
+
+  test("check required error message without given label", async () => {
+    render(
+      <Form
+        children={[
+          {
+            name: "TextInput",
+            properties: {
+              id: "firstName",
+              required: true,
+            },
+          },
+          {
+            name: "Button",
+            properties: {
+              label: "Submit",
+              submitForm: true,
+            },
+          },
+        ]}
+        id="form"
+      />,
+      {
+        wrapper: FormTestWrapper,
+      },
+    );
+
+    const validateBtn = screen.getByText("Submit");
+    fireEvent.click(validateBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText("Please enter a value")).toBeInTheDocument();
     });
   });
 });

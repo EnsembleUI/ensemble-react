@@ -1,4 +1,4 @@
-import { useRegisterBindings } from "@ensembleui/react-framework";
+import { isExpression, useRegisterBindings } from "@ensembleui/react-framework";
 import type { Expression, EnsembleAction } from "@ensembleui/react-framework";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { isString, isEmpty } from "lodash-es";
@@ -52,7 +52,9 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
   onChange,
   styles,
 }) => {
-  const [value, setValue] = useState<string>();
+  const [value, setValue] = useState<string | undefined>(
+    isExpression(valueBinding) ? undefined : valueBinding,
+  );
   const { values, rootRef } = useRegisterBindings(
     {
       value,

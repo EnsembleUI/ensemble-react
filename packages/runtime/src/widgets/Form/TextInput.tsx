@@ -13,7 +13,7 @@ import {
 import { runes } from "runes2";
 import type { Rule } from "antd/es/form";
 import { forEach } from "lodash-es";
-import IMask from "imask";
+import IMask, { InputMask } from "imask";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { WidgetRegistry } from "../../registry";
 import type { TextStyles } from "../Text";
@@ -46,6 +46,7 @@ export type TextInputProps = {
   FormInputProps<string>;
 
 export const TextInput: React.FC<TextInputProps> = (props) => {
+  const [mask, setMask] = useState<InputMask>();
   const [value, setValue] = useState<string>();
   const maskRef = useRef<{ input: HTMLInputElement } | null>(null);
 
@@ -77,8 +78,19 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
 
   const handleKeyDown = useCallback((e: FormEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
-    target.value = target.value.replace(/[^0-9]/g, "");
+    target.value = target.value.replace(/[^0-9.]/g, "");
   }, []);
+
+  const handleInputPaste = useCallback(
+    (e: React.ClipboardEvent) => {
+      const pastedData = e.clipboardData.getData("text");
+      if (mask) {
+        mask.unmaskedValue = pastedData;
+        handleChange(mask.value);
+      }
+    },
+    [handleChange, mask],
+  );
 
   useEffect(() => {
     setValue(values?.initialValue);
@@ -94,10 +106,11 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
 
   useEffect(() => {
     if (values?.mask && maskRef.current) {
-      IMask(maskRef.current.input, {
+      const iMask = IMask(maskRef.current.input, {
         mask: values.mask.replace(/#/g, "0").replace(/A/g, "a"),
         lazy: true,
       });
+      setMask(iMask);
     }
   }, [values?.mask]);
 
@@ -265,6 +278,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
             {...(values?.inputType === "number" && {
               onInput: (event): void => handleKeyDown(event),
             })}
+            onPaste={handleInputPaste}
             placeholder={values?.hintText ?? ""}
             ref={handleRef}
             style={{
