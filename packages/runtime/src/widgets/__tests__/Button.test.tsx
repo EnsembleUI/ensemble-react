@@ -1,3 +1,4 @@
+/* eslint-disable react/no-children-prop */
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { BrowserRouter } from "react-router-dom";
@@ -423,3 +424,4 @@ describe("Button Component Render Tests", () => {
     });
   });
 });
+/* eslint-enable react/no-children-prop */
