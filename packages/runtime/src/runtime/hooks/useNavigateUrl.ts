@@ -22,6 +22,7 @@ const evaluateExpression = (
   screenModel?: EnsembleScreenModel,
   context?: { [key: string]: unknown },
 ): string => {
+  if (!isExpression(expr)) return expr;
   return evaluate<string>({ model: screenModel }, expr, context);
 };
 
@@ -29,17 +30,16 @@ export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
   action,
 ) => {
   const navigate = useNavigate();
-  const screenModal = useScreenModel();
+  const screenModel = useScreenModel();
 
   // Memoize the URL evaluation function
   const evaluateUrl = useCallback(
     (
       url: string,
-      screenModel?: EnsembleScreenModel,
+      model?: EnsembleScreenModel,
       context?: { [key: string]: unknown },
     ): string => {
-      if (!isExpression(url)) return url;
-      return evaluateExpression(url, screenModel, context);
+      return evaluateExpression(url, model, context);
     },
     [],
   );
@@ -48,42 +48,15 @@ export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
   const evaluateInputs = useCallback(
     (
       inputs: { [key: string]: unknown },
-      screenModel?: EnsembleScreenModel,
+      model?: EnsembleScreenModel,
       context?: { [key: string]: unknown },
     ): { [key: string]: unknown } => {
       return visitExpressions(
         inputs,
-        replace((expr) => evaluate({ model: screenModel }, expr, context)),
+        replace((expr) => evaluate({ model }, expr, context)),
       ) as { [key: string]: unknown };
     },
     [],
-  );
-
-  // Memoize the navigation handler for string actions
-  const handleStringAction = useCallback(
-    (actionUrl: string, context: { [key: string]: unknown }) => {
-      const resolvedUrl = evaluateUrl(actionUrl, screenModal, context);
-      navigate(resolvedUrl);
-    },
-    [navigate, evaluateUrl, screenModal],
-  );
-
-  // Memoize the navigation handler for object actions
-  const handleObjectAction = useCallback(
-    (
-      actionUrl: string,
-      actionInputs: { [key: string]: unknown } | undefined,
-      context: { [key: string]: unknown },
-    ) => {
-      const resolvedUrl = evaluateUrl(actionUrl, screenModal, context);
-
-      const resolvedInputs = isNil(actionInputs)
-        ? undefined
-        : evaluateInputs(actionInputs, screenModal, context);
-
-      navigateUrl(resolvedUrl, navigate, resolvedInputs);
-    },
-    [navigate, evaluateUrl, evaluateInputs, screenModal],
   );
 
   const navigateCommand = useCommandCallback(
@@ -93,14 +66,20 @@ export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
       const context = merge({}, evalContext, args[0]);
 
       if (isString(action)) {
-        handleStringAction(action, context);
+        const resolvedUrl = evaluateUrl(action, screenModel, context);
+        navigateUrl(resolvedUrl, navigate);
         return;
       }
 
-      handleObjectAction(action.url, action.inputs, context);
+      const resolvedUrl = evaluateUrl(action.url, screenModel, context);
+      const resolvedInputs = isNil(action.inputs)
+        ? undefined
+        : evaluateInputs(action.inputs, screenModel, context);
+
+      navigateUrl(resolvedUrl, navigate, resolvedInputs);
     },
     { navigate },
-    [action, handleStringAction, handleObjectAction],
+    [action],
   );
 
   return { callback: navigateCommand };
