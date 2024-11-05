@@ -1,256 +1,219 @@
-import type { DocumentReference, Firestore } from "firebase/firestore/lite";
+import type {
+  DocumentData,
+  DocumentReference,
+  Firestore,
+} from "firebase/firestore/lite";
 import {
   collection,
   doc,
   getDoc,
   getDocs,
   query,
-  setDoc,
+  Timestamp,
   where,
   writeBatch,
 } from "firebase/firestore/lite";
+import { groupBy, head } from "lodash-es";
+import { EnsembleDocumentType } from "./dto";
 import type {
+  AssetDTO,
   ApplicationDTO,
   ScreenDTO,
   ScriptDTO,
   ThemeDTO,
   WidgetDTO,
   LanguageDTO,
-  EnsembleConfigYAML,
-  FontDTO,
+  EnvironmentDTO,
 } from "./dto";
+import type { ApplicationTransporter } from "./transporter";
 
-const getArtifacts = async (
-  appRef: DocumentReference,
-): Promise<{
-  screens: ScreenDTO[];
-  widgets: WidgetDTO[];
-  theme?: ThemeDTO;
-  scripts: ScriptDTO[];
-  languages?: LanguageDTO[];
-  config?: EnsembleConfigYAML;
-  fonts?: FontDTO[];
-}> => {
-  const snapshot = await getDocs(
-    query(collection(appRef, "artifacts"), where("isArchived", "!=", true)),
-  );
-  const internalArtifactsSnapshot = await getDocs(
-    query(
-      collection(appRef, "internal_artifacts"),
-      where("isArchived", "!=", true),
-    ),
-  );
-
-  let theme;
-  let config = {};
-  const screens = [];
-  const widgets = [];
-  const scripts = [];
-  const languages = [];
-  const fonts = [];
-  for (const artifact of snapshot.docs) {
-    const document = artifact.data();
-
-    if (document.type === "screen") {
-      screens.push({ ...document, id: artifact.id } as ScreenDTO);
-    } else if (document.type === "theme") {
-      theme = { ...document, id: artifact.id } as ThemeDTO;
-    } else if (document.type === "i18n") {
-      languages.push({
-        name: languageMap[document.name as string],
-        nativeName: languageMap[document.name as string],
-        languageCode: document.name as string,
-        content: document.content as string,
-      });
-    } else if (document.type === "config") {
-      config = {
-        ...config,
-        environmentVariables: document.envVariables as Record<string, unknown>,
-      };
-    } else if (document.type === "secrets") {
-      config = {
-        ...config,
-        secretVariables: document.secrets as Record<string, unknown>,
-      };
-    } else if (document.type === "font") {
-      const font = document as FontDTO;
-
-      fonts.push({
-        ...font,
-        fontFamily: font.fontFamily,
-        publicUrl: font.publicUrl,
-        fontWeight: font.fontWeight.replace(/[^0-9]/g, ""), // this is required, because font face only accept number in font face and we are getting string from the firebase (ex. weight: '400 (normal)')
-        fontStyle: font.fontStyle,
-      });
-    }
-  }
-
-  for (const artifact of internalArtifactsSnapshot.docs) {
-    const artifactData = artifact.data();
-    if (artifactData.type === "internal_widget") {
-      widgets.push({ ...artifactData, id: artifact.id } as WidgetDTO);
-    } else if (artifactData.type === "internal_script") {
-      scripts.push({ ...artifactData, id: artifact.id } as ScriptDTO);
-    }
-  }
-
-  return {
-    screens,
-    widgets,
-    theme,
-    scripts,
-    languages,
-    config,
-    fonts,
-  };
-};
-
-export interface ApplicationLoader {
-  load: (appId: string) => Promise<ApplicationDTO>;
-  write: (app: ApplicationDTO) => Promise<ApplicationDTO>;
-}
-
-export const getFirestoreApplicationLoader = (
+export const getFirestoreApplicationTransporter = (
   db: Firestore,
-): ApplicationLoader => ({
-  load: async (appId: string): Promise<ApplicationDTO> => {
-    const appDocRef = doc(db, "apps", appId);
+): ApplicationTransporter => ({
+  get: async (appId: string): Promise<ApplicationDTO> => {
+    const appDocRef = doc(db, CollectionsName.Apps, appId);
     const appDoc = await getDoc(appDocRef);
     const app = {
       id: appDoc.id,
       ...appDoc.data(),
     } as ApplicationDTO;
 
-    const { screens, widgets, theme, scripts, languages, config, fonts } =
-      await getArtifacts(appDocRef);
+    const artifacts = await getArtifacts(appDocRef);
+
+    const screens = artifacts[EnsembleDocumentType.Screen] as ScreenDTO[];
+    const widgets = artifacts[EnsembleDocumentType.Widget] as WidgetDTO[];
+    const scripts = artifacts[EnsembleDocumentType.Script] as ScriptDTO[];
+    const theme = head(artifacts[EnsembleDocumentType.Theme]) as ThemeDTO;
+    const languages = artifacts[EnsembleDocumentType.I18n] as LanguageDTO[];
+    const assets = artifacts[EnsembleDocumentType.Asset] as AssetDTO[];
+    const env = head(
+      artifacts[EnsembleDocumentType.Environment],
+    ) as EnvironmentDTO;
 
     return {
       ...app,
+      isReact: app.isReact ?? false,
       screens,
       widgets,
       theme,
       scripts,
       languages,
-      config,
-      fonts,
+      assets,
+      env,
     };
   },
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  write(app: ApplicationDTO): Promise<ApplicationDTO> {
-    throw new Error("Function not implemented.");
+  put: async (app: ApplicationDTO, userId: string): Promise<ApplicationDTO> => {
+    const timestamp = Timestamp.now();
+    const userRef = doc(db, CollectionsName.Users, userId);
+    const appDocRef = doc(db, CollectionsName.Apps, app.id);
+    const batch = writeBatch(db);
+    const updatedByDetails = {
+      updatedBy: userRef,
+      updatedAt: timestamp,
+    };
+
+    batch.set(appDocRef, { ...app, ...updatedByDetails });
+
+    const artifactsRef = collection(appDocRef, CollectionsName.Artifacts);
+    const internalArtifactsRef = collection(
+      appDocRef,
+      CollectionsName.InternalArtifacts,
+    );
+
+    const { screens, widgets, scripts, languages, theme, env } = app;
+
+    screens.forEach((screen) => {
+      const screenRef = doc(artifactsRef, screen.id);
+      batch.set(screenRef, {
+        type: EnsembleDocumentType.Screen,
+        name: screen.name,
+        content: screen.content || "",
+        isRoot: screen.isRoot,
+        isArchived: screen.isArchived,
+        ...updatedByDetails,
+      });
+    });
+
+    widgets.forEach((widget) =>
+      batch.set(doc(internalArtifactsRef, widget.id), {
+        type: EnsembleDocumentType.Widget,
+        name: widget.name,
+        content: widget.content ?? "",
+        isArchived: widget.isArchived,
+        ...updatedByDetails,
+      }),
+    );
+
+    // Add theme
+    if (theme) {
+      batch.set(doc(artifactsRef, theme.id), {
+        type: EnsembleDocumentType.Theme,
+        content: theme.content,
+        isRoot: true,
+        isArchived: theme.isArchived,
+        ...updatedByDetails,
+      });
+    }
+
+    scripts.forEach((script) =>
+      batch.set(doc(internalArtifactsRef, script.id), {
+        type: EnsembleDocumentType.Script,
+        name: script.name,
+        content: script.content ?? "",
+        isArchived: script.isArchived,
+        isRoot: true,
+        ...updatedByDetails,
+      }),
+    );
+
+    languages?.forEach((language) =>
+      batch.set(doc(internalArtifactsRef, language.id), {
+        ...language,
+        ...updatedByDetails,
+        type: EnsembleDocumentType.I18n,
+        defaultLocale: language.defaultLocale ?? false,
+      }),
+    );
+
+    batch.set(
+      doc(artifactsRef, "appConfig"),
+      {
+        type: EnsembleDocumentType.Environment,
+        envVariables: env,
+        isRoot: true,
+        isArchived: false,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+        createdBy: userRef,
+        updatedBy: userRef,
+      },
+      { merge: true },
+    );
+
+    await batch.commit();
+    return app;
   },
 });
 
-export const languageMap: Record<string, string> = {
-  ar: "Arabic",
-  bn: "Bengali",
-  de: "German",
-  en: "English",
-  es: "Spanish",
-  fr: "French",
-  hi: "Hindi",
-  id: "Indonesian",
-  it: "Italian",
-  ja: "Japanese",
-  jv: "Javanese",
-  ko: "Korean",
-  ms: "Malay",
-  nl: "Dutch",
-  pa: "Punjabi",
-  pl: "Polish",
-  pt: "Portuguese",
-  ro: "Romanian",
-  ru: "Russian",
-  sv: "Swedish",
-  ta: "Tamil",
-  te: "Telugu",
-  th: "Thai",
-  tr: "Turkish",
-  uk: "Ukrainian",
-  ur: "Urdu",
-  vi: "Vietnamese",
-  zh: "Chinese",
-  el: "Greek",
-  da: "Danish",
-};
+const getArtifacts = async (
+  appRef: DocumentReference,
+): Promise<Record<EnsembleDocumentType, DocumentData[]>> => {
+  const [artifactsSnapshot, internalArtifactsSnapshot, labelsSnapshot] =
+    await Promise.all([
+      getDocs(
+        query(
+          collection(appRef, CollectionsName.Artifacts),
+          QUERY_FILTERS.notArchived,
+        ),
+      ),
+      getDocs(
+        query(
+          collection(appRef, CollectionsName.InternalArtifacts),
+          QUERY_FILTERS.notArchived,
+        ),
+      ),
+      getDocs(
+        query(
+          collection(appRef, CollectionsName.Labels),
+          QUERY_FILTERS.notArchived,
+        ),
+      ),
+    ]);
 
-export const serializeApp = async (
-  db: Firestore,
-  app: ApplicationDTO,
-  userId: string,
-) => {
-  const appDocRef = doc(db, "apps", app.id);
-  const { screens, widgets, theme, scripts, ...appData } = app;
-  await setDoc(appDocRef, {
-    ...appData,
-    isReact: true,
-    isPublic: false,
-    isArchived: false,
-    collaborators: { [`users_${userId}`]: "owner" },
-  });
-
-  const batch = writeBatch(db);
-  screens.forEach((screen) => {
-    const screenRef = doc(collection(appDocRef, "artifacts"));
-    batch.set(
-      screenRef,
-      {
-        ...screen,
-        type: "screen",
-        isPublic: false,
-        isArchived: false,
-      },
-      {
-        merge: true,
-      },
-    );
-  });
-
-  widgets.forEach((widget) => {
-    const widgetRef = doc(collection(appDocRef, "internal_artifacts"));
-    batch.set(
-      widgetRef,
-      {
-        ...widget,
-        type: "internal_widget",
-        isPublic: false,
-        isArchived: false,
-      },
-      {
-        merge: true,
-      },
-    );
-  });
-
-  scripts.forEach((script) => {
-    const scriptRef = doc(collection(appDocRef, "internal_artifacts"));
-    batch.set(
-      scriptRef,
-      {
-        ...script,
-        type: "internal_script",
-        isPublic: false,
-        isArchived: false,
-      },
-      {
-        merge: true,
-      },
-    );
-  });
-
-  const newThemeRef = doc(collection(appDocRef, "artifacts"));
-  batch.set(
-    newThemeRef,
-    {
-      ...theme,
-      type: "theme",
-      isPublic: false,
-      isArchived: false,
-    },
-    {
-      merge: true,
-    },
+  const artifactsByType = groupBy(
+    [...artifactsSnapshot.docs, ...internalArtifactsSnapshot.docs],
+    (artifactDoc) => String(artifactDoc.get("type")),
   );
-  await batch.commit();
+
+  const knownArtifacts = Object.values(EnsembleDocumentType).map<
+    [EnsembleDocumentType, DocumentData[]]
+  >((type) => [
+    type,
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    artifactsByType[type]?.map((snapshot) => snapshot.data()) ?? [],
+  ]);
+
+  const labels = labelsSnapshot.docs.map((label) => {
+    return { id: label.id, name: String(label.data().name) };
+  });
+  knownArtifacts.push([EnsembleDocumentType.Label, labels]);
+
+  return Object.fromEntries(knownArtifacts) as Record<
+    EnsembleDocumentType,
+    DocumentData[]
+  >;
 };
+
+const QUERY_FILTERS = {
+  notArchived: where("isArchived", "!=", true),
+};
+
+enum CollectionsName {
+  Apps = "apps",
+  Users = "users",
+  Labels = "labels",
+  History = "history",
+  Artifacts = "artifacts",
+  InternalArtifacts = "internal_artifacts",
+}

@@ -27,8 +27,9 @@ export enum EnsembleDocumentType {
   Font = "font",
   Widget = "internal_widget",
   Script = "internal_script",
-  Environment = "appConfig",
+  Environment = "config",
   Secrets = "secrets",
+  Label = "label",
 }
 
 export interface ApplicationDTO
@@ -57,26 +58,31 @@ export interface ApplicationDTO
   readonly theme?: ThemeDTO;
   readonly themes?: ThemeDTO[];
   readonly languages?: LanguageDTO[];
-  readonly config?: string | EnsembleConfigYAML;
-  readonly fonts?: FontDTO[];
+  readonly assets?: AssetDTO[];
+  readonly env?: EnvironmentDTO;
 }
 
 export interface HasLabel {
-  labelGroup?: string;
+  readonly labelGroup?: Label;
+}
+
+export interface Label {
+  readonly id: string;
+  readonly name: string;
 }
 
 export interface PublishingHistory {
-  publishedTo: string;
-  createdAt: Date;
-  publishedBy: string;
-  publishingLog: string;
-  role: string;
+  readonly publishedTo: string;
+  readonly createdAt: Date;
+  readonly publishedBy: string;
+  readonly publishingLog: string;
+  readonly role: string;
 }
 
 export type EnsembleLabeledDocument = EnsembleDocument & HasLabel;
 
 export type ScreenDTO = EnsembleLabeledDocument & {
-  type: EnsembleDocumentType.Screen;
+  readonly type: EnsembleDocumentType.Screen;
 
   readonly path?: string;
   // deprecated?
@@ -84,33 +90,34 @@ export type ScreenDTO = EnsembleLabeledDocument & {
 };
 
 export type WidgetDTO = EnsembleLabeledDocument & {
-  type: EnsembleDocumentType.Widget;
+  readonly type: EnsembleDocumentType.Widget;
 };
 
 export type ScriptDTO = EnsembleLabeledDocument & {
-  type: EnsembleDocumentType.Script;
+  readonly type: EnsembleDocumentType.Script;
 };
 export type ThemeDTO = EnsembleDocument & {
-  type: EnsembleDocumentType.Theme;
+  readonly type: EnsembleDocumentType.Theme;
 };
 
-export interface LanguageDTO {
-  readonly name: string;
-  readonly nativeName: string;
-  readonly languageCode: string;
-  readonly content: string;
+export type LanguageDTO = EnsembleDocument & {
+  readonly defaultLocale: boolean;
+};
+
+export interface EnvironmentDTO {
+  readonly envVariables?: Record<string, unknown>;
+  readonly secretVariables?: Record<string, unknown>;
 }
 
-export interface EnsembleEnvironmentDTO {
-  googleOAuthId?: string;
-}
-
-export interface EnsembleConfigYAML {
-  environmentVariables?: Record<string, unknown>;
-  secretVariables?: Record<string, unknown>;
-}
+export type AssetDTO = EnsembleDocument & {
+  readonly type: EnsembleDocumentType.Asset;
+  readonly fileName: string;
+  readonly publicUrl: string;
+  readonly copyText: string;
+};
 
 export type FontDTO = EnsembleDocument & {
+  readonly name?: string;
   readonly fontFamily: string;
   readonly fontWeight: string;
   readonly fontStyle: string;
