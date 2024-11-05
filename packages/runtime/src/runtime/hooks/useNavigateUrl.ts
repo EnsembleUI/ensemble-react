@@ -79,7 +79,7 @@ export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
       navigateUrl(resolvedUrl, navigate, resolvedInputs);
     },
     { navigate },
-    [action],
+    [action, screenModel],
   );
 
   return { callback: navigateCommand };
