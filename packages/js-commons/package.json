@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "lint": "eslint ."
   },
   "lint-staged": {
