@@ -1,5 +1,14 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.91
+
+### Patch Changes
+
+- a4ff806: Automated release changes
+- Updated dependencies [db0cb5e]
+  - @ensembleui/react-framework@0.2.6
+  - @ensembleui/react-runtime@0.2.13
+
 ## 0.0.90
 
 ### Patch Changes
