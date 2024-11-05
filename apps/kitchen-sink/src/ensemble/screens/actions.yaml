@@ -401,7 +401,8 @@ View:
               - Button:
                   label: Route params
                   onTap:
-                    navigateUrl: /product/smart-phone
+                    navigateUrl:
+                      url: /product/smart-phone
               - Button:
                   label: Query params
                   onTap:
