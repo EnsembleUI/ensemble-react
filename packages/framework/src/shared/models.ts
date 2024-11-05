@@ -161,7 +161,7 @@ export interface EnsembleLanguageModel {
 
 export interface EnsembleFontModel {
   family: string;
-  url?: string;
+  url: string;
   options: {
     weight: string;
     style: string;
