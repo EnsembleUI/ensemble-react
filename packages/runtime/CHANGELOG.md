@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.2.13
+
+### Patch Changes
+
+- db0cb5e: improve performance of navigateUrl action
+
 ## 0.2.12
 
 ### Patch Changes
