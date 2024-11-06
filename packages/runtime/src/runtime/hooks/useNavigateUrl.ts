@@ -10,40 +10,51 @@ import {
   visitExpressions,
   replace,
   useScreenModel,
+  isExpression,
 } from "@ensembleui/react-framework";
 import { useCallback } from "react";
 // eslint-disable-next-line import/no-cycle
 import { navigateUrl } from "../navigation";
 import type { EnsembleActionHook } from "./useEnsembleAction";
 
+const evaluateExpression = (
+  expr: string,
+  screenModel?: EnsembleScreenModel,
+  context?: { [key: string]: unknown },
+): string => {
+  if (!isExpression(expr)) return expr;
+  return evaluate<string>({ model: screenModel }, expr, context);
+};
+
 export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
   action,
 ) => {
   const navigate = useNavigate();
-  const screenModal = useScreenModel();
+  const screenModel = useScreenModel();
 
+  // Memoize the URL evaluation function
   const evaluateUrl = useCallback(
     (
       url: string,
-      screenModel?: EnsembleScreenModel,
+      model?: EnsembleScreenModel,
       context?: { [key: string]: unknown },
     ): string => {
-      return evaluate<string>({ model: screenModel }, url, context);
+      return evaluateExpression(url, model, context);
     },
     [],
   );
 
+  // Memoize the inputs evaluation function
   const evaluateInputs = useCallback(
     (
       inputs: { [key: string]: unknown },
-      screenModel?: EnsembleScreenModel,
+      model?: EnsembleScreenModel,
       context?: { [key: string]: unknown },
     ): { [key: string]: unknown } => {
-      const resolvedInputs = visitExpressions(
+      return visitExpressions(
         inputs,
-        replace((expr) => evaluate({ model: screenModel }, expr, context)),
-      );
-      return resolvedInputs as { [key: string]: unknown };
+        replace((expr) => evaluate({ model }, expr, context)),
+      ) as { [key: string]: unknown };
     },
     [],
   );
@@ -55,20 +66,20 @@ export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
       const context = merge({}, evalContext, args[0]);
 
       if (isString(action)) {
-        const evaluatedUrl = evaluateUrl(action, screenModal, context);
-        navigate(evaluatedUrl);
+        const resolvedUrl = evaluateUrl(action, screenModel, context);
+        navigateUrl(resolvedUrl, navigate);
         return;
       }
 
-      const evaluatedUrl = evaluateUrl(action.url, screenModal, context);
-      const evaluatedInputs = isNil(action.inputs)
+      const resolvedUrl = evaluateUrl(action.url, screenModel, context);
+      const resolvedInputs = isNil(action.inputs)
         ? undefined
-        : evaluateInputs(action.inputs, screenModal, context);
+        : evaluateInputs(action.inputs, screenModel, context);
 
-      navigateUrl(evaluatedUrl, navigate, evaluatedInputs);
+      navigateUrl(resolvedUrl, navigate, resolvedInputs);
     },
     { navigate },
-    [action, screenModal],
+    [action, screenModel],
   );
 
   return { callback: navigateCommand };
