@@ -10,10 +10,20 @@ import {
   visitExpressions,
   replace,
   useScreenModel,
+  isExpression,
 } from "@ensembleui/react-framework";
 import { useMemo, useCallback } from "react";
 import { navigateUrl } from "../navigation";
 import type { EnsembleActionHook } from "./useEnsembleAction";
+
+const evaluateExpression = (
+  expr: string,
+  screenModel?: EnsembleScreenModel,
+  context?: { [key: string]: unknown },
+): string => {
+  if (!isExpression(expr)) return expr;
+  return evaluate<string>({ model: screenModel }, expr, context);
+};
 
 export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
   action,
@@ -21,28 +31,29 @@ export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
   const navigate = useNavigate();
   const screenModel = useScreenModel();
 
-  // Memoize url evaluation function
+  // Memoize the URL evaluation function
   const evaluateUrl = useCallback(
     (
       url: string,
       model?: EnsembleScreenModel,
       context?: { [key: string]: unknown },
-    ): string => evaluate<string>({ model }, url, context),
+    ): string => {
+      return evaluateExpression(url, model, context);
+    },
     [],
   );
 
-  // Memoize inputs evaluation function
+  // Memoize the inputs evaluation function
   const evaluateInputs = useCallback(
     (
       inputs: { [key: string]: unknown },
       model?: EnsembleScreenModel,
       context?: { [key: string]: unknown },
     ): { [key: string]: unknown } => {
-      const resolvedInputs = visitExpressions(
+      return visitExpressions(
         inputs,
         replace((expr) => evaluate({ model }, expr, context)),
-      );
-      return resolvedInputs as { [key: string]: unknown };
+      ) as { [key: string]: unknown };
     },
     [],
   );
@@ -75,34 +86,21 @@ export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
 
       const context = merge({}, evalContext, args[0]);
 
-      if (isString(commandDependencies.action)) {
-        const evaluatedUrl = commandDependencies.evaluateUrl(
-          commandDependencies.action,
-          commandDependencies.screenModel,
-          context,
-        );
-        commandDependencies.handleNavigation(evaluatedUrl);
+      if (isString(action)) {
+        const resolvedUrl = evaluateUrl(action, screenModel, context);
+        navigateUrl(resolvedUrl, navigate);
         return;
       }
 
-      const evaluatedUrl = commandDependencies.evaluateUrl(
-        commandDependencies.action.url,
-        commandDependencies.screenModel,
-        context,
-      );
-
-      const evaluatedInputs = isNil(commandDependencies.action.inputs)
+      const resolvedUrl = evaluateUrl(action.url, screenModel, context);
+      const resolvedInputs = isNil(action.inputs)
         ? undefined
-        : commandDependencies.evaluateInputs(
-            commandDependencies.action.inputs,
-            commandDependencies.screenModel,
-            context,
-          );
+        : evaluateInputs(action.inputs, screenModel, context);
 
-      commandDependencies.handleNavigation(evaluatedUrl, evaluatedInputs);
+      navigateUrl(resolvedUrl, navigate, resolvedInputs);
     },
     { navigate },
-    [commandDependencies],
+    [action, screenModel],
   );
 
   console.log("ko");

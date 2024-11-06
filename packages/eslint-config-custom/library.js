@@ -15,8 +15,7 @@ module.exports = {
   extends: [
     "@vercel/style-guide/eslint/node",
     "@vercel/style-guide/eslint/typescript",
-    "plugin:prettier/recommended"
-  ].map(require.resolve),
+  ].map(require.resolve).concat("plugin:prettier/recommended"),
   plugins: ["prettier"],
   parserOptions: {
     project,

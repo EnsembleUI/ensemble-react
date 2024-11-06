@@ -262,6 +262,24 @@ importers:
       tsup: 7.2.0_ts-node@10.9.2
       yaml: 2.4.0
 
+  packages/js-commons:
+    specifiers:
+      '@types/lodash-es': ^4.17.8
+      dayjs: ^1.11.10
+      eslint-config-custom: workspace:*
+      firebase: 9.10.0
+      lodash-es: ^4.17.21
+      tsconfig: workspace:*
+      tsup: ^7.2.0
+    devDependencies:
+      '@types/lodash-es': 4.17.12
+      dayjs: 1.11.12
+      eslint-config-custom: link:../eslint-config-custom
+      firebase: 9.10.0
+      lodash-es: 4.17.21
+      tsconfig: link:../tsconfig
+      tsup: 7.2.0_ts-node@10.9.2
+
   packages/runtime:
     specifiers:
       '@ant-design/icons': ^5.2.6
