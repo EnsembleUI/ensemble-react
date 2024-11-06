@@ -33,7 +33,6 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
   },
 ): RegisterBindingsResult<T> => {
   const testId = get(values, ["testId"]);
-  console.log("isLoop");
 
   const { resolvedWidgetId, resolvedTestId } = useWidgetId(
     id,

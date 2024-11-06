@@ -37,7 +37,6 @@ export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
     (e?: MouseEvent) => {
       e?.stopPropagation();
 
-      console.log(">><<", { action });
       if (!action) {
         return;
       }
