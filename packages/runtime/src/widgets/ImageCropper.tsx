@@ -38,12 +38,15 @@ export const ImageCropper: React.FC<ImageCropperProps> = (props) => {
   });
 
   const onCroppedAction = useEnsembleAction(onCropped);
-  const onCroppedActionCallback = useCallback((file: unknown) => {
-    if (!onCroppedAction) {
-      return;
-    }
-    onCroppedAction.callback({ file });
-  }, []);
+  const onCroppedActionCallback = useCallback(
+    (file: unknown) => {
+      if (!onCroppedAction) {
+        return;
+      }
+      onCroppedAction.callback({ file });
+    },
+    [onCroppedAction],
+  );
 
   const onCropComplete = (croppedArea: Area, croppedAreaPix: Area): void => {
     setcroppedAreaPixels(croppedAreaPix);

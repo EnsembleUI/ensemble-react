@@ -17,9 +17,31 @@ export interface RegisterBindingsResult<T> {
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 const areFunctionsEqual = (func1?: Function, func2?: Function): boolean => {
-  if (!func1 && !func2) return true;
-  if (!func1 || !func2) return false;
   return func1 === func2;
+};
+
+const areValuesAndMethodsEqual = <T>(
+  newValues: T,
+  prevValues: T | undefined,
+  methods: InvokableMethods | undefined,
+  prevMethods: InvokableMethods | undefined,
+  comparator?: (next: T, prev?: T) => boolean,
+): boolean => {
+  // Check values equality
+  const areValuesEqual = comparator
+    ? comparator(newValues, prevValues)
+    : isEqual(newValues, prevValues);
+
+  if (!areValuesEqual) return false;
+
+  // Check methods equality
+  if (!methods) return true;
+
+  return keys(methods).every((methodKey: string) => {
+    const fromMethods = get(methods, methodKey);
+    const fromWidgets = get(prevMethods, methodKey);
+    return areFunctionsEqual(fromMethods, fromWidgets);
+  });
 };
 
 export const useRegisterBindings = <T extends { [key: string]: unknown }>(
@@ -56,23 +78,19 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
   );
 
   useEffect(() => {
+    // Improves performance greatly: o need to store state in global if there's no explicit ID to reference it with
     if (isEmpty(id)) {
       return;
     }
 
-    const prevStateCheck = keys(methods).every((methodKey: string) => {
-      const fromMethods = get(methods, methodKey);
-      const fromWidgets = get(widgetState?.invokable?.methods, methodKey);
-
-      // Check if the method references are equal or if their string representations are the same
-      return areFunctionsEqual(fromMethods, fromWidgets);
-    });
-
     if (
-      (options?.comparator
-        ? options.comparator(newValues, widgetState?.values)
-        : isEqual(newValues, widgetState?.values)) &&
-      prevStateCheck
+      areValuesAndMethodsEqual(
+        newValues,
+        widgetState?.values,
+        methods,
+        widgetState?.invokable?.methods,
+        options?.comparator,
+      )
     ) {
       return;
     }

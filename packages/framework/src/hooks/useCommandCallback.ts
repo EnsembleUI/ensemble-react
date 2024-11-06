@@ -2,7 +2,6 @@ import { useAtomCallback } from "jotai/utils";
 import type { FC, ReactNode } from "react";
 import { useCallback } from "react";
 import { mapKeys } from "lodash-es";
-import type { Getter, Setter } from "jotai";
 import { createEvaluationContext } from "../evaluate";
 import type { EnsembleUser } from "../state";
 import { appAtom, screenAtom, themeAtom, userAtom } from "../state";
@@ -21,14 +20,12 @@ import {
   showDialog,
 } from "../api";
 import type {
-  EnsembleAppModel,
   EnsembleScreenModel,
   EnsembleWidget,
   NavigateExternalScreen,
   NavigateModalScreenAction,
   NavigateScreenAction,
   ShowDialogAction,
-  CustomWidgetModel,
 } from "../shared";
 import { deviceAtom } from "./useDeviceObserver";
 import { createStorageApi, screenStorageAtom } from "./useEnsembleStorage";
@@ -58,7 +55,7 @@ export const useCommandCallback = <
 
   return useAtomCallback(
     useCallback(
-      (get: Getter, set: Setter, ...args: T) => {
+      (get, set, ...args: T) => {
         const applicationContext = get(appAtom);
         const screenContext = get(screenAtom);
         const storage = get(screenStorageAtom);
@@ -71,9 +68,10 @@ export const useCommandCallback = <
         );
 
         const customWidgets =
-          applicationContext.application?.customWidgets.reduce<{
-            [key: string]: CustomWidgetModel | EnsembleWidget;
-          }>((acc, widget) => ({ ...acc, [widget.name]: widget }), {});
+          applicationContext.application?.customWidgets.reduce(
+            (acc, widget) => ({ ...acc, [widget.name]: widget }),
+            {},
+          );
 
         const evalContext = createEvaluationContext({
           applicationContext,
@@ -153,8 +151,7 @@ export const useCommandCallback = <
                 navigateModalScreenAction,
                 callbackContext.modalContext,
                 callbackContext.EnsembleScreen,
-                (applicationContext.application ??
-                  screenContext.app) as EnsembleAppModel,
+                applicationContext.application ?? screenContext.app,
               );
             },
           },

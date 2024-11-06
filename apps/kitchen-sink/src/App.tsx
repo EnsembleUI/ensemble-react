@@ -1,6 +1,7 @@
 import type { ApplicationDTO } from "@ensembleui/react-framework";
 import { EnsembleApp } from "@ensembleui/react-runtime";
 // Screens
+import MenuYAML from "./ensemble/screens/menu.yaml";
 import HomeYAML from "./ensemble/screens/home.yaml";
 import WidgetsYAML from "./ensemble/screens/widgets.yaml";
 import LayoutsYAML from "./ensemble/screens/layouts.yaml";
@@ -9,6 +10,7 @@ import FormsYAML from "./ensemble/screens/forms.yaml";
 import CustomWidgetsYAML from "./ensemble/screens/customWidgets.yaml";
 import HelpYAML from "./ensemble/screens/help.yaml";
 import ProductYAML from "./ensemble/screens/product.yaml";
+import TestActionsYAML from "./ensemble/screens/testActions.yaml";
 // Widgets
 import HeaderWidgetYAML from "./ensemble/widgets/Header.yaml";
 import StyledTextWidgetYAML from "./ensemble/widgets/StyledText.yaml";
@@ -83,6 +85,11 @@ const testApp: ApplicationDTO = {
   ],
   screens: [
     {
+      id: "menu",
+      name: "Menu",
+      content: String(MenuYAML),
+    },
+    {
       id: "home",
       name: "Home",
       content: String(HomeYAML),
@@ -127,6 +134,12 @@ const testApp: ApplicationDTO = {
       name: "Product",
       path: "/product/:product_name",
       content: String(ProductYAML),
+    },
+    {
+      id: "testActions",
+      name: "Test Actions",
+      path: "/test_actions",
+      content: String(TestActionsYAML),
     },
   ],
   config: EnsembleConfig,

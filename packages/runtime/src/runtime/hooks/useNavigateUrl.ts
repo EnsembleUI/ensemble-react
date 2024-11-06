@@ -12,7 +12,7 @@ import {
   useScreenModel,
   isExpression,
 } from "@ensembleui/react-framework";
-import { useMemo, useCallback } from "react";
+import { useCallback } from "react";
 // eslint-disable-next-line import/no-cycle
 import { navigateUrl } from "../navigation";
 import type { EnsembleActionHook } from "./useEnsembleAction";
@@ -59,7 +59,6 @@ export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
     [],
   );
 
-  // Create stable command callback
   const navigateCommand = useCommandCallback(
     (evalContext, ...args) => {
       if (!action) return;
@@ -83,6 +82,5 @@ export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
     [action, screenModel],
   );
 
-  // Return memoized object reference
-  return useMemo(() => ({ callback: navigateCommand }), [navigateCommand]);
+  return { callback: navigateCommand };
 };

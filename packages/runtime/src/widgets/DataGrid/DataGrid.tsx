@@ -215,7 +215,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     if (onScrollEndAction) {
       onScrollEndAction.callback();
     }
-  }, []);
+  }, [onScrollEndAction]);
 
   // page change action
   const onPageChangeAction = useEnsembleAction(onPageChange);
@@ -229,7 +229,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
         });
       }
     },
-    [],
+    [onPageChangeAction],
   );
 
   // column sort action

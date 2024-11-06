@@ -85,5 +85,5 @@ export const useNavigateModalScreen: EnsembleActionHook<
     title,
   ]);
 
-  return useMemo(() => ({ callback }), [callback]);
+  return { callback };
 };
