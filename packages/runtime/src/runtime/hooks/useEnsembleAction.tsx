@@ -293,30 +293,26 @@ export const useConnectSocket: EnsembleActionHook<ConnectSocketAction> = (
   const onMessageReceiveAction = useEnsembleAction(socket?.onReceive);
   const onSocketDisconnectAction = useEnsembleAction(socket?.onDisconnect);
 
-  const connectSocket = useMemo(() => {
+  const callback = useCallback(() => {
     if (!socket) {
       return;
     }
 
-    const callback = (): void => {
-      handleConnectSocket(
-        screenData,
-        socket.name,
-        onSocketConnectAction,
-        onMessageReceiveAction,
-        onSocketDisconnectAction,
-      );
-    };
-    return { callback };
+    handleConnectSocket(
+      screenData,
+      socket.name,
+      onSocketConnectAction,
+      onMessageReceiveAction,
+      onSocketDisconnectAction,
+    );
   }, [
-    screenData,
     socket,
     onSocketConnectAction,
     onMessageReceiveAction,
     onSocketDisconnectAction,
   ]);
 
-  return connectSocket;
+  return useMemo(() => ({ callback }), [callback]);
 };
 
 export const useMessageSocket: EnsembleActionHook<SendSocketMessageAction> = (
@@ -360,9 +356,9 @@ export const useDisconnectSocket: EnsembleActionHook<DisconnectSocketAction> = (
       }
     };
     return { callback };
-  }, [screenData, action]);
+  }, [action]);
 
-  return disconnectSocket;
+  return useMemo(() => disconnectSocket, [disconnectSocket]);
 };
 
 export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
@@ -421,7 +417,7 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
     [widget, onDismissCallback, action.options, openModal, customScope],
   );
 
-  return { callback };
+  return useMemo(() => ({ callback }), [callback]);
 };
 
 export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
@@ -441,10 +437,19 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
     {
       setFiles,
     },
-    {
-      // need to override default comparator with isEqual for File object
-      comparator: isEqual,
+  );
+
+  const handleSelectedFilesCallback = useCallback(
+    (event: Event): void => {
+      const selectedFiles =
+        (event.target as HTMLInputElement).files || undefined;
+
+      if (selectedFiles && !isEqual(selectedFiles, files)) {
+        setIsComplete(false);
+        setFiles(Array.from(selectedFiles));
+      }
     },
+    [files],
   );
 
   const inputEl = useMemo(() => {
@@ -458,25 +463,23 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
     input.accept =
       values?.allowedExtensions?.map((ext) => ".".concat(ext))?.toString() ||
       "*/*";
+    input.onchange = handleSelectedFilesCallback;
 
     return input;
-  }, [values?.allowMultiple, values?.allowedExtensions, values?.id]);
+  }, [
+    values?.allowMultiple,
+    values?.allowedExtensions,
+    values?.id,
+    handleSelectedFilesCallback,
+  ]);
 
   useEffect(() => {
     document.body.append(inputEl);
-    inputEl.onchange = (event: Event): void => {
-      const selectedFiles =
-        (event.target as HTMLInputElement).files || undefined;
 
-      if (selectedFiles && !isEqual(selectedFiles, files)) {
-        setIsComplete(false);
-        setFiles(Array.from(selectedFiles));
-      }
-    };
     return () => {
       inputEl.remove();
     };
-  }, [inputEl, files]);
+  }, [inputEl]);
 
   useEffect(() => {
     // Ensure widget state is up to date with component state
@@ -486,6 +489,8 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
 
     if (isComplete === false) {
       setIsComplete(true);
+
+      // if file extension is not allowed
       if (
         !isEmpty(values?.allowedExtensions) &&
         !values?.files?.every((file) =>
@@ -496,32 +501,42 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
           files: values?.files,
           error: "EXTENSION_NOT_ALLOWED",
         });
+        // if file size is out of allow max size
       } else if (
-        Boolean(values?.allowMaxFileSizeBytes) &&
-        !values?.files?.every((file) => {
-          return file.size < values.allowMaxFileSizeBytes!;
-        })
+        values?.allowMaxFileSizeBytes &&
+        values.files?.some(
+          (file) => file.size >= (values.allowMaxFileSizeBytes || 0),
+        )
       ) {
         onErrorAction?.callback({
-          files: values?.files,
+          files: values.files,
           error: "MAX_FILE_SIZE_EXCEEDED",
         });
+        // successfull file handle
       } else {
         onCompleteAction?.callback({ files: values?.files });
       }
     }
-  }, [onCompleteAction, isComplete, files, values, onErrorAction]);
+  }, [
+    values?.files,
+    values?.allowedExtensions,
+    values?.allowMaxFileSizeBytes,
+    files,
+    isComplete,
+    onErrorAction,
+    onCompleteAction,
+  ]);
 
   const callback = useCallback((): void => {
     try {
       inputEl.click();
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.error(error);
+      console.log({ error });
     }
-  }, [inputEl]);
+  }, []);
 
-  return { callback };
+  return useMemo(() => ({ callback }), [callback]);
 };
 
 export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
@@ -531,10 +546,10 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
   const [headers, setHeaders] = useState<{ [key: string]: unknown }>();
   const [status, setStatus] = useState<UploadStatus>("pending");
   const [progress, setProgress] = useState<number>(0.0);
+  const screenContext = useScreenContext();
 
   const onCompleteAction = useEnsembleAction(action?.onComplete);
   const onErrorAction = useEnsembleAction(action?.onError);
-  const screenContext = useScreenContext();
 
   useRegisterBindings(
     {
@@ -562,36 +577,36 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
 
   const progressCallback = useCallback((progressEvent: ProgressEvent): void => {
     const percentCompleted = (progressEvent.loaded * 100) / progressEvent.total;
-
     setProgress(percentCompleted);
   }, []);
 
-  const evaluatedInputs = useEvaluate(action?.inputs);
-
   const callback = useCallback(
-    async (args: unknown): Promise<void> => {
+    async (args: unknown) => {
       if (!apiModel || !action) return;
 
       const argContext = args as { [key: string]: unknown };
+
       const files = evaluate<FileList>(
         screenContext as ScreenContextDefinition,
         action.files,
         argContext,
       );
+
       if (isEmpty(files)) throw Error("Files not found");
 
       try {
         setStatus("running");
+
         const response = await DataFetcher.uploadFiles(
           apiModel,
           action,
           files,
           progressCallback,
-          { ...evaluatedInputs, ...argContext },
         );
 
         setBody(response.body as { [key: string]: unknown });
         setHeaders(response.headers as { [key: string]: unknown });
+
         if (response.isSuccess) {
           setStatus("completed");
           onCompleteAction?.callback({ response });
@@ -599,7 +614,7 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
           setStatus("failed");
           onErrorAction?.callback({ response });
         }
-      } catch (error: unknown) {
+      } catch (error) {
         setBody(error as { [key: string]: unknown });
         setStatus("failed");
         onErrorAction?.callback({ error });
@@ -609,14 +624,12 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
       apiModel,
       action,
       screenContext,
-      progressCallback,
-      evaluatedInputs,
       onCompleteAction,
       onErrorAction,
+      progressCallback,
     ],
   );
-
-  return { callback };
+  return useMemo(() => ({ callback }), [callback]);
 };
 
 export const useNavigateBack: EnsembleActionHook<NavigateBackAction> = () => {
@@ -626,7 +639,7 @@ export const useNavigateBack: EnsembleActionHook<NavigateBackAction> = () => {
     modalContext?.navigateBack();
   }, []);
 
-  return { callback };
+  return useMemo(() => ({ callback }), [callback]);
 };
 
 export const useActionGroup: EnsembleActionHook<ExecuteActionGroupAction> = (
@@ -640,11 +653,18 @@ export const useActionGroup: EnsembleActionHook<ExecuteActionGroupAction> = (
     return useEnsembleAction(act);
   });
 
-  const callback = (args: unknown): void => {
-    execActs.forEach((act) => act?.callback(args));
-  };
+  const triggerCallbacks = useCallback(
+    (args: unknown) => {
+      execActs.forEach((act) => act?.callback(args));
+    },
+    [execActs],
+  );
 
-  return { callback };
+  const callback = useCallback((args: unknown): void => {
+    triggerCallbacks(args);
+  }, []);
+
+  return useMemo(() => ({ callback }), [callback]);
 };
 
 export const useDispatchEvent: EnsembleActionHook<DispatchEventAction> = (

@@ -20,17 +20,20 @@ import {
   showDialog,
 } from "../api";
 import type {
+  EnsembleAppModel,
   EnsembleScreenModel,
   EnsembleWidget,
   NavigateExternalScreen,
   NavigateModalScreenAction,
   NavigateScreenAction,
   ShowDialogAction,
+  CustomWidgetModel,
 } from "../shared";
 import { deviceAtom } from "./useDeviceObserver";
 import { createStorageApi, screenStorageAtom } from "./useEnsembleStorage";
 import { useCustomScope } from "./useCustomScope";
 import { useLanguageScope } from "./useLanguageScope";
+import type { Getter, Setter } from "jotai";
 
 interface CallbackContext {
   modalContext?: ModalContext;
@@ -55,7 +58,7 @@ export const useCommandCallback = <
 
   return useAtomCallback(
     useCallback(
-      (get, set, ...args: T) => {
+      (get: Getter, set: Setter, ...args: T) => {
         const applicationContext = get(appAtom);
         const screenContext = get(screenAtom);
         const storage = get(screenStorageAtom);
@@ -68,10 +71,10 @@ export const useCommandCallback = <
         );
 
         const customWidgets =
-          applicationContext.application?.customWidgets.reduce(
-            (acc, widget) => ({ ...acc, [widget.name]: widget }),
-            {},
-          );
+          applicationContext.application?.customWidgets.reduce<{
+            [key: string]: CustomWidgetModel | EnsembleWidget;
+          }>((acc, widget) => ({ ...acc, [widget.name]: widget }), {});
+
         const evalContext = createEvaluationContext({
           applicationContext,
           screenContext,
@@ -150,7 +153,8 @@ export const useCommandCallback = <
                 navigateModalScreenAction,
                 callbackContext.modalContext,
                 callbackContext.EnsembleScreen,
-                applicationContext.application ?? screenContext.app,
+                (applicationContext.application ??
+                  screenContext.app) as EnsembleAppModel,
               );
             },
           },
@@ -168,8 +172,14 @@ export const useCommandCallback = <
 
         return command(evalContext, ...args);
       },
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [command, customScope, i18n, ...dependencies],
+      [
+        customScope,
+        i18n,
+        apis.location,
+        apis.navigate,
+        callbackContext,
+        ...dependencies,
+      ],
     ),
   );
 };

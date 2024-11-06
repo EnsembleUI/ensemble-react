@@ -25,12 +25,14 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
     { context },
   );
 
-  const { matchingScreen } = useMemo(() => {
-    const screen = appContext?.application?.screens.find(
-      (s) => s.name?.toLowerCase() === evaluatedInputs.name?.toLowerCase(),
-    );
-    return { matchingScreen: screen };
-  }, [appContext, evaluatedInputs.name]);
+  // Memoize the screen matching logic
+  const matchingScreen = useMemo(
+    () =>
+      appContext?.application?.screens.find(
+        (s) => s.name?.toLowerCase() === evaluatedInputs.name?.toLowerCase(),
+      ),
+    [appContext?.application?.screens, evaluatedInputs.name],
+  );
 
   const callback = useMemo(() => {
     if (!matchingScreen) {
@@ -51,5 +53,6 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
     });
     setIsComplete(true);
   }, [evaluatedInputs.inputs, isComplete, matchingScreen, navigate]);
-  return callback ? { callback } : undefined;
+
+  return useMemo(() => (callback ? { callback } : undefined), [callback]);
 };

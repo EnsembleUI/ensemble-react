@@ -1,7 +1,6 @@
 import type { ApplicationDTO } from "@ensembleui/react-framework";
 import { EnsembleApp } from "@ensembleui/react-runtime";
 // Screens
-import MenuYAML from "./ensemble/screens/menu.yaml";
 import HomeYAML from "./ensemble/screens/home.yaml";
 import WidgetsYAML from "./ensemble/screens/widgets.yaml";
 import LayoutsYAML from "./ensemble/screens/layouts.yaml";
@@ -83,11 +82,6 @@ const testApp: ApplicationDTO = {
     },
   ],
   screens: [
-    {
-      id: "menu",
-      name: "Menu",
-      content: String(MenuYAML),
-    },
     {
       id: "home",
       name: "Home",

@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useCallback, useContext, useMemo } from "react";
 import { type EnsembleActionHookResult } from "@ensembleui/react-framework";
 import { ModalContext } from "../modal";
 import type { EnsembleActionHook } from "./useEnsembleAction";
@@ -8,7 +8,9 @@ export const useCloseAllScreens: EnsembleActionHook<
 > = () => {
   const { closeAllScreens } = useContext(ModalContext) || {};
 
-  const closeAllModalScreens: () => void = () => closeAllScreens?.();
+  const callback = useCallback(() => {
+    closeAllScreens?.();
+  }, [closeAllScreens]);
 
-  return { callback: closeAllModalScreens };
+  return useMemo(() => ({ callback }), [callback]);
 };

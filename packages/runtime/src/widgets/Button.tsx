@@ -33,13 +33,18 @@ export type ButtonProps = {
 export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
   const [loading, setLoading] = useState<boolean>(rest.loading || false);
   const action = useEnsembleAction(onTap);
-  const onClickCallback = useCallback((e?: MouseEvent) => {
-    e?.stopPropagation();
-    if (!action) {
-      return;
-    }
-    action.callback();
-  }, []);
+  const onClickCallback = useCallback(
+    (e?: MouseEvent) => {
+      e?.stopPropagation();
+
+      console.log(">><<", { action });
+      if (!action) {
+        return;
+      }
+      action.callback();
+    },
+    [action],
+  );
 
   const { values, rootRef } = useRegisterBindings(
     { ...rest, loading, widgetName },
