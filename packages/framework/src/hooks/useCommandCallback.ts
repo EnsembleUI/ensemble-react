@@ -2,6 +2,7 @@ import { useAtomCallback } from "jotai/utils";
 import type { FC, ReactNode } from "react";
 import { useCallback } from "react";
 import { mapKeys } from "lodash-es";
+import type { Getter, Setter } from "jotai";
 import { createEvaluationContext } from "../evaluate";
 import type { EnsembleUser } from "../state";
 import { appAtom, screenAtom, themeAtom, userAtom } from "../state";
@@ -33,7 +34,6 @@ import { deviceAtom } from "./useDeviceObserver";
 import { createStorageApi, screenStorageAtom } from "./useEnsembleStorage";
 import { useCustomScope } from "./useCustomScope";
 import { useLanguageScope } from "./useLanguageScope";
-import type { Getter, Setter } from "jotai";
 
 interface CallbackContext {
   modalContext?: ModalContext;
@@ -172,14 +172,7 @@ export const useCommandCallback = <
 
         return command(evalContext, ...args);
       },
-      [
-        customScope,
-        i18n,
-        apis.location,
-        apis.navigate,
-        callbackContext,
-        ...dependencies,
-      ],
+      [customScope, i18n, ...dependencies],
     ),
   );
 };

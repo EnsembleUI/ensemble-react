@@ -17,6 +17,7 @@ View:
               navigateScreen:
                 name: ${ensemble.storage.get('targetScreen')}
         - Button:
+            id: executeCode
             label: change navigate screen to help screen
             onTap:
               executeCode: |

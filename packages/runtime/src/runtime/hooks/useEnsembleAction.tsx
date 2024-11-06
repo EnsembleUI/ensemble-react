@@ -146,7 +146,7 @@ export const useExecuteCode: EnsembleActionHook<
     { modalContext, render: EnsembleRuntime.render, EnsembleScreen },
   );
 
-  return { callback: execute };
+  return useMemo(() => ({ callback: execute }), [execute]);
 };
 
 export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
