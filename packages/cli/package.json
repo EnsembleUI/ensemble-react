@@ -23,6 +23,7 @@
     "@types/node": "^16.18.45",
     "chai": "^4",
     "eslint": "^8",
+    "eslint-plugin-unicorn": "56.0.0",
     "eslint-config-oclif": "^5",
     "eslint-config-oclif-typescript": "^3",
     "eslint-config-prettier": "^9",
