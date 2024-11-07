@@ -209,7 +209,7 @@ const QUERY_FILTERS = {
   notArchived: where("isArchived", "!=", true),
 };
 
-enum CollectionsName {
+export enum CollectionsName {
   Apps = "apps",
   Users = "users",
   Labels = "labels",

@@ -18,9 +18,9 @@ class UpdatePasswordCommand extends Command {
     const { email, newPassword, oldPassword } = flags;
 
     try {
-      let idToken = getStoredToken();
+      let idToken: string | undefined = get(getStoredToken(), 'auth');
       if (!idToken) {
-       idToken = await signInWithEmailPassword(email, oldPassword);
+        idToken = await signInWithEmailPassword(email, oldPassword);
       }
 
       // Step 2: Use the ID token to update the password
