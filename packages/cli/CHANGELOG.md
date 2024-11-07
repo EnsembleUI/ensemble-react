@@ -1,5 +1,11 @@
 # @ensembleui/cli
 
+## 0.0.3
+
+### Patch Changes
+
+- 3cd6fad: Fix js-commons dep versioning in CLI
+
 ## 0.0.2
 
 ### Patch Changes
