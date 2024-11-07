@@ -64,7 +64,7 @@
       }
     }
   },
-  "repository": "@ensembleui/ensemble-react",
+  "repository": "https://github.com/@ensembleui/ensemble-react",
   "scripts": {
     "build": "shx rm -rf dist && tsc -b",
     "lint": "eslint . --ext .ts",

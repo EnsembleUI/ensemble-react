@@ -16,40 +16,60 @@ Ensemble CLI for managing apps
 # Usage
 <!-- usage -->
 ```sh-session
-$ npm install -g mycli123
-$ mycli123 COMMAND
+$ npm install -g ensemble-cli
+$ ensemble COMMAND
 running command...
-$ mycli123 (--version)
-mycli123/0.0.0 darwin-arm64 node-v20.12.2
-$ mycli123 --help [COMMAND]
+$ ensemble (--version)
+ensemble-cli/0.0.0 darwin-arm64 node-v18.18.2
+$ ensemble --help [COMMAND]
 USAGE
-  $ mycli123 COMMAND
+  $ ensemble COMMAND
 ...
 ```
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`mycli123 hello PERSON`](#mycli123-hello-person)
-* [`mycli123 hello world`](#mycli123-hello-world)
-* [`mycli123 help [COMMAND]`](#mycli123-help-command)
-* [`mycli123 plugins`](#mycli123-plugins)
-* [`mycli123 plugins add PLUGIN`](#mycli123-plugins-add-plugin)
-* [`mycli123 plugins:inspect PLUGIN...`](#mycli123-pluginsinspect-plugin)
-* [`mycli123 plugins install PLUGIN`](#mycli123-plugins-install-plugin)
-* [`mycli123 plugins link PATH`](#mycli123-plugins-link-path)
-* [`mycli123 plugins remove [PLUGIN]`](#mycli123-plugins-remove-plugin)
-* [`mycli123 plugins reset`](#mycli123-plugins-reset)
-* [`mycli123 plugins uninstall [PLUGIN]`](#mycli123-plugins-uninstall-plugin)
-* [`mycli123 plugins unlink [PLUGIN]`](#mycli123-plugins-unlink-plugin)
-* [`mycli123 plugins update`](#mycli123-plugins-update)
+* [`ensemble apps list`](#ensemble-apps-list)
+* [`ensemble hello PERSON`](#ensemble-hello-person)
+* [`ensemble hello world`](#ensemble-hello-world)
+* [`ensemble help [COMMAND]`](#ensemble-help-command)
+* [`ensemble login`](#ensemble-login)
+* [`ensemble plugins`](#ensemble-plugins)
+* [`ensemble plugins add PLUGIN`](#ensemble-plugins-add-plugin)
+* [`ensemble plugins:inspect PLUGIN...`](#ensemble-pluginsinspect-plugin)
+* [`ensemble plugins install PLUGIN`](#ensemble-plugins-install-plugin)
+* [`ensemble plugins link PATH`](#ensemble-plugins-link-path)
+* [`ensemble plugins remove [PLUGIN]`](#ensemble-plugins-remove-plugin)
+* [`ensemble plugins reset`](#ensemble-plugins-reset)
+* [`ensemble plugins uninstall [PLUGIN]`](#ensemble-plugins-uninstall-plugin)
+* [`ensemble plugins unlink [PLUGIN]`](#ensemble-plugins-unlink-plugin)
+* [`ensemble plugins update`](#ensemble-plugins-update)
+* [`ensemble update-password`](#ensemble-update-password)
 
-## `mycli123 hello PERSON`
+## `ensemble apps list`
+
+List all apps you have access to
+
+```
+USAGE
+  $ ensemble apps list
+
+DESCRIPTION
+  List all apps you have access to
+
+EXAMPLES
+  $ ensemble apps list
+```
+
+_See code: [dist/commands/apps/list.js](https://github.com/@ensembleui/ensemble-react/blob/v0.0.0/dist/commands/apps/list.js)_
+
+## `ensemble hello PERSON`
 
 Say hello
 
 ```
 USAGE
-  $ mycli123 hello PERSON -f <value>
+  $ ensemble hello PERSON -f <value>
 
 ARGUMENTS
   PERSON  Person to say hello to
@@ -61,37 +81,37 @@ DESCRIPTION
   Say hello
 
 EXAMPLES
-  $ mycli123 hello friend --from oclif
+  $ ensemble hello friend --from oclif
   hello friend from oclif! (./src/commands/hello/index.ts)
 ```
 
-_See code: [src/commands/hello/index.ts](https://github.com/mdonnalley/mycli123/blob/v0.0.0/src/commands/hello/index.ts)_
+_See code: [dist/commands/hello/index.js](https://github.com/@ensembleui/ensemble-react/blob/v0.0.0/dist/commands/hello/index.js)_
 
-## `mycli123 hello world`
+## `ensemble hello world`
 
 Say hello world
 
 ```
 USAGE
-  $ mycli123 hello world
+  $ ensemble hello world
 
 DESCRIPTION
   Say hello world
 
 EXAMPLES
-  $ mycli123 hello world
+  $ ensemble hello world
   hello world! (./src/commands/hello/world.ts)
 ```
 
-_See code: [src/commands/hello/world.ts](https://github.com/mdonnalley/mycli123/blob/v0.0.0/src/commands/hello/world.ts)_
+_See code: [dist/commands/hello/world.js](https://github.com/@ensembleui/ensemble-react/blob/v0.0.0/dist/commands/hello/world.js)_
 
-## `mycli123 help [COMMAND]`
+## `ensemble help [COMMAND]`
 
-Display help for mycli123.
+Display help for ensemble.
 
 ```
 USAGE
-  $ mycli123 help [COMMAND...] [-n]
+  $ ensemble help [COMMAND...] [-n]
 
 ARGUMENTS
   COMMAND...  Command to show help for.
@@ -100,18 +120,36 @@ FLAGS
   -n, --nested-commands  Include all nested commands in the output.
 
 DESCRIPTION
-  Display help for mycli123.
+  Display help for ensemble.
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.0.21/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.16/src/commands/help.ts)_
 
-## `mycli123 plugins`
+## `ensemble login`
+
+Sign in to Ensemble with email and password
+
+```
+USAGE
+  $ ensemble login -e <value> -p <value>
+
+FLAGS
+  -e, --email=<value>     (required) User email
+  -p, --password=<value>  (required) User password
+
+DESCRIPTION
+  Sign in to Ensemble with email and password
+```
+
+_See code: [dist/commands/login.js](https://github.com/@ensembleui/ensemble-react/blob/v0.0.0/dist/commands/login.js)_
+
+## `ensemble plugins`
 
 List installed plugins.
 
 ```
 USAGE
-  $ mycli123 plugins [--json] [--core]
+  $ ensemble plugins [--json] [--core]
 
 FLAGS
   --core  Show core plugins.
@@ -123,18 +161,18 @@ DESCRIPTION
   List installed plugins.
 
 EXAMPLES
-  $ mycli123 plugins
+  $ ensemble plugins
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.16/src/commands/plugins/index.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.15/src/commands/plugins/index.ts)_
 
-## `mycli123 plugins add PLUGIN`
+## `ensemble plugins add PLUGIN`
 
-Installs a plugin into mycli123.
+Installs a plugin into ensemble.
 
 ```
 USAGE
-  $ mycli123 plugins add PLUGIN... [--json] [-f] [-h] [-s | -v]
+  $ ensemble plugins add PLUGIN... [--json] [-f] [-h] [-s | -v]
 
 ARGUMENTS
   PLUGIN...  Plugin to install.
@@ -149,39 +187,39 @@ GLOBAL FLAGS
   --json  Format output as json.
 
 DESCRIPTION
-  Installs a plugin into mycli123.
+  Installs a plugin into ensemble.
 
-  Uses bundled npm executable to install plugins into /Users/mdonnalley/.local/share/mycli123
+  Uses npm to install plugins.
 
   Installation of a user-installed plugin will override a core plugin.
 
-  Use the MYCLI123_NPM_LOG_LEVEL environment variable to set the npm loglevel.
-  Use the MYCLI123_NPM_REGISTRY environment variable to set the npm registry.
+  Use the ENSEMBLE_NPM_LOG_LEVEL environment variable to set the npm loglevel.
+  Use the ENSEMBLE_NPM_REGISTRY environment variable to set the npm registry.
 
 ALIASES
-  $ mycli123 plugins add
+  $ ensemble plugins add
 
 EXAMPLES
   Install a plugin from npm registry.
 
-    $ mycli123 plugins add myplugin
+    $ ensemble plugins add myplugin
 
   Install a plugin from a github url.
 
-    $ mycli123 plugins add https://github.com/someuser/someplugin
+    $ ensemble plugins add https://github.com/someuser/someplugin
 
   Install a plugin from a github slug.
 
-    $ mycli123 plugins add someuser/someplugin
+    $ ensemble plugins add someuser/someplugin
 ```
 
-## `mycli123 plugins:inspect PLUGIN...`
+## `ensemble plugins:inspect PLUGIN...`
 
 Displays installation properties of a plugin.
 
 ```
 USAGE
-  $ mycli123 plugins inspect PLUGIN...
+  $ ensemble plugins inspect PLUGIN...
 
 ARGUMENTS
   PLUGIN...  [default: .] Plugin to inspect.
@@ -197,18 +235,18 @@ DESCRIPTION
   Displays installation properties of a plugin.
 
 EXAMPLES
-  $ mycli123 plugins inspect myplugin
+  $ ensemble plugins inspect myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.16/src/commands/plugins/inspect.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.15/src/commands/plugins/inspect.ts)_
 
-## `mycli123 plugins install PLUGIN`
+## `ensemble plugins install PLUGIN`
 
-Installs a plugin into mycli123.
+Installs a plugin into ensemble.
 
 ```
 USAGE
-  $ mycli123 plugins install PLUGIN... [--json] [-f] [-h] [-s | -v]
+  $ ensemble plugins install PLUGIN... [--json] [-f] [-h] [-s | -v]
 
 ARGUMENTS
   PLUGIN...  Plugin to install.
@@ -223,41 +261,41 @@ GLOBAL FLAGS
   --json  Format output as json.
 
 DESCRIPTION
-  Installs a plugin into mycli123.
+  Installs a plugin into ensemble.
 
-  Uses bundled npm executable to install plugins into /Users/mdonnalley/.local/share/mycli123
+  Uses npm to install plugins.
 
   Installation of a user-installed plugin will override a core plugin.
 
-  Use the MYCLI123_NPM_LOG_LEVEL environment variable to set the npm loglevel.
-  Use the MYCLI123_NPM_REGISTRY environment variable to set the npm registry.
+  Use the ENSEMBLE_NPM_LOG_LEVEL environment variable to set the npm loglevel.
+  Use the ENSEMBLE_NPM_REGISTRY environment variable to set the npm registry.
 
 ALIASES
-  $ mycli123 plugins add
+  $ ensemble plugins add
 
 EXAMPLES
   Install a plugin from npm registry.
 
-    $ mycli123 plugins install myplugin
+    $ ensemble plugins install myplugin
 
   Install a plugin from a github url.
 
-    $ mycli123 plugins install https://github.com/someuser/someplugin
+    $ ensemble plugins install https://github.com/someuser/someplugin
 
   Install a plugin from a github slug.
 
-    $ mycli123 plugins install someuser/someplugin
+    $ ensemble plugins install someuser/someplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.16/src/commands/plugins/install.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.15/src/commands/plugins/install.ts)_
 
-## `mycli123 plugins link PATH`
+## `ensemble plugins link PATH`
 
 Links a plugin into the CLI for development.
 
 ```
 USAGE
-  $ mycli123 plugins link PATH [-h] [--install] [-v]
+  $ ensemble plugins link PATH [-h] [--install] [-v]
 
 ARGUMENTS
   PATH  [default: .] path to plugin
@@ -269,6 +307,7 @@ FLAGS
 
 DESCRIPTION
   Links a plugin into the CLI for development.
+
   Installation of a linked plugin will override a user-installed or core plugin.
 
   e.g. If you have a user-installed or core plugin that has a 'hello' command, installing a linked plugin with a 'hello'
@@ -276,18 +315,18 @@ DESCRIPTION
 
 
 EXAMPLES
-  $ mycli123 plugins link myplugin
+  $ ensemble plugins link myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.16/src/commands/plugins/link.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.15/src/commands/plugins/link.ts)_
 
-## `mycli123 plugins remove [PLUGIN]`
+## `ensemble plugins remove [PLUGIN]`
 
 Removes a plugin from the CLI.
 
 ```
 USAGE
-  $ mycli123 plugins remove [PLUGIN...] [-h] [-v]
+  $ ensemble plugins remove [PLUGIN...] [-h] [-v]
 
 ARGUMENTS
   PLUGIN...  plugin to uninstall
@@ -300,35 +339,35 @@ DESCRIPTION
   Removes a plugin from the CLI.
 
 ALIASES
-  $ mycli123 plugins unlink
-  $ mycli123 plugins remove
+  $ ensemble plugins unlink
+  $ ensemble plugins remove
 
 EXAMPLES
-  $ mycli123 plugins remove myplugin
+  $ ensemble plugins remove myplugin
 ```
 
-## `mycli123 plugins reset`
+## `ensemble plugins reset`
 
 Remove all user-installed and linked plugins.
 
 ```
 USAGE
-  $ mycli123 plugins reset [--hard] [--reinstall]
+  $ ensemble plugins reset [--hard] [--reinstall]
 
 FLAGS
   --hard       Delete node_modules and package manager related files in addition to uninstalling plugins.
   --reinstall  Reinstall all plugins after uninstalling.
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.16/src/commands/plugins/reset.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.15/src/commands/plugins/reset.ts)_
 
-## `mycli123 plugins uninstall [PLUGIN]`
+## `ensemble plugins uninstall [PLUGIN]`
 
 Removes a plugin from the CLI.
 
 ```
 USAGE
-  $ mycli123 plugins uninstall [PLUGIN...] [-h] [-v]
+  $ ensemble plugins uninstall [PLUGIN...] [-h] [-v]
 
 ARGUMENTS
   PLUGIN...  plugin to uninstall
@@ -341,22 +380,22 @@ DESCRIPTION
   Removes a plugin from the CLI.
 
 ALIASES
-  $ mycli123 plugins unlink
-  $ mycli123 plugins remove
+  $ ensemble plugins unlink
+  $ ensemble plugins remove
 
 EXAMPLES
-  $ mycli123 plugins uninstall myplugin
+  $ ensemble plugins uninstall myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.16/src/commands/plugins/uninstall.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.15/src/commands/plugins/uninstall.ts)_
 
-## `mycli123 plugins unlink [PLUGIN]`
+## `ensemble plugins unlink [PLUGIN]`
 
 Removes a plugin from the CLI.
 
 ```
 USAGE
-  $ mycli123 plugins unlink [PLUGIN...] [-h] [-v]
+  $ ensemble plugins unlink [PLUGIN...] [-h] [-v]
 
 ARGUMENTS
   PLUGIN...  plugin to uninstall
@@ -369,20 +408,20 @@ DESCRIPTION
   Removes a plugin from the CLI.
 
 ALIASES
-  $ mycli123 plugins unlink
-  $ mycli123 plugins remove
+  $ ensemble plugins unlink
+  $ ensemble plugins remove
 
 EXAMPLES
-  $ mycli123 plugins unlink myplugin
+  $ ensemble plugins unlink myplugin
 ```
 
-## `mycli123 plugins update`
+## `ensemble plugins update`
 
 Update installed plugins.
 
 ```
 USAGE
-  $ mycli123 plugins update [-h] [-v]
+  $ ensemble plugins update [-h] [-v]
 
 FLAGS
   -h, --help     Show CLI help.
@@ -392,5 +431,24 @@ DESCRIPTION
   Update installed plugins.
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.0.16/src/commands/plugins/update.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.15/src/commands/plugins/update.ts)_
+
+## `ensemble update-password`
+
+Update a user's password in Ensemble
+
+```
+USAGE
+  $ ensemble update-password -e <value> -n <value> -o <value>
+
+FLAGS
+  -e, --email=<value>        (required) Old password
+  -n, --newPassword=<value>  (required) New password
+  -o, --oldPassword=<value>  (required) Old password
+
+DESCRIPTION
+  Update a user's password in Ensemble
+```
+
+_See code: [dist/commands/update-password.js](https://github.com/@ensembleui/ensemble-react/blob/v0.0.0/dist/commands/update-password.js)_
 <!-- commandsstop -->
