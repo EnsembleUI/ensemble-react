@@ -11,13 +11,16 @@
     "@oclif/core": "^4",
     "@oclif/plugin-help": "^6",
     "@oclif/plugin-plugins": "^5",
-    "@ensembleui/js-commons": "workspace:*",
     "axios": "^1.7.7",
     "firebase": "9.10.0",
     "jwt-decode": "^4.0.0",
     "lodash-es": "^4.17.21"
   },
+  "peerDependencies": {
+    "@ensembleui/js-commons": "workspace:*"
+  },
   "devDependencies": {
+    "@ensembleui/js-commons": "workspace:*",
     "@oclif/prettier-config": "^0.2.1",
     "@oclif/test": "^4",
     "@types/chai": "^4",
