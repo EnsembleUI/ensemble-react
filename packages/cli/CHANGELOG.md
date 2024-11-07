@@ -1,5 +1,13 @@
 # @ensembleui/cli
 
+## 0.0.2
+
+### Patch Changes
+
+- f1ee4bf: Fix CLI dependencies
+- Updated dependencies [f1ee4bf]
+  - @ensembleui/js-commons@0.0.4
+
 ## 0.0.1
 
 ### Patch Changes
