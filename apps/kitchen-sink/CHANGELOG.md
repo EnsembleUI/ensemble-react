@@ -1,5 +1,14 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.92
+
+### Patch Changes
+
+- 31850fe: fix navigateUrl to accept normal string url
+- Updated dependencies [31850fe]
+- Updated dependencies [89fa790]
+  - @ensembleui/react-runtime@0.2.14
+
 ## 0.0.91
 
 ### Patch Changes
