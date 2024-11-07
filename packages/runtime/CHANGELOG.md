@@ -1,5 +1,12 @@
 # @ensembleui/react-runtime
 
+## 0.2.14
+
+### Patch Changes
+
+- 31850fe: fix navigateUrl to accept normal string url
+- 89fa790: remove default scrollHeight in Datagrid to get rid of unwanted vertical scrollbar
+
 ## 0.2.13
 
 ### Patch Changes
