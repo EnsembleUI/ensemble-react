@@ -1,4 +1,4 @@
-import { CollectionsName } from '@ensembleui/js-commons'
+import { ApplicationDTO, CollectionsName } from '@ensembleui/js-commons'
 import {Command} from '@oclif/core'
 import { collection, getDocs, query, where } from 'firebase/firestore/lite';
 import { jwtDecode } from "jwt-decode";
@@ -37,9 +37,17 @@ export default class AppsList extends Command {
     );
   
     const result = await getDocs(q);
-    const list = result.docs.map((doc) => doc.data());
-    // const list = await getCloudApps(db, decodedToken.sub)
+    const list = result.docs.map((doc) => {
+      const appData = doc.data() as ApplicationDTO;
+      return {
+        description: appData.description,
+        id: doc.id,
+        name: appData.name,
+        role: appData.collaborators?.[`users_${userId}`]
+      }
+    });
 
+    // TODO: tabulate results
     this.log(JSON.stringify(list, null, 2))
   }
 }
