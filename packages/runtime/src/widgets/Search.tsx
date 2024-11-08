@@ -12,7 +12,7 @@ import type {
   Expression,
 } from "@ensembleui/react-framework";
 import { Select as SelectComponent } from "antd";
-import { get, isEmpty, isNull, isObject, isString } from "lodash-es";
+import { get, isEmpty, isNil, isNull, isObject, isString } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type {
   EnsembleWidgetProps,
@@ -28,6 +28,7 @@ const widgetName = "Search";
 export type SearchProps = {
   placeholder?: string;
   searchKey?: string;
+  selectedLabel?: { [key: string]: unknown };
   onSearch?: {
     debounceMs: number;
   } & EnsembleAction;
@@ -52,6 +53,7 @@ export const Search: React.FC<SearchProps> = ({
   ...rest
 }) => {
   const [searchValue, setSearchValue] = useState<string | null>(null);
+  const [hasCleared, setHasCleared] = useState<boolean>(false);
   const [value, setValue] = useState<unknown>();
 
   const { namedData } = useTemplateData({
@@ -72,18 +74,26 @@ export const Search: React.FC<SearchProps> = ({
   const onSelectAction = useEnsembleAction(onSelect);
   const onClearAction = useEnsembleAction(onClear);
 
-  // rendered options
+  const extractValue = useCallback(
+    (option: unknown): string | number => {
+      return get(
+        option,
+        searchKey
+          ? [itemTemplate?.name ?? "", searchKey]
+          : [(itemTemplate?.value || itemTemplate?.name) ?? ""],
+      ) as string | number;
+    },
+    [itemTemplate?.name, itemTemplate?.value, searchKey],
+  );
+
   const renderOptions = useMemo(() => {
+    if (hasCleared && isNil(searchValue)) return [];
+
     let dropdownOptions: JSX.Element[] = [];
 
     if (isObject(itemTemplate) && !isEmpty(namedData)) {
       const tempOptions = namedData.map((item: unknown, index: number) => {
-        const optionValue = get(
-          item,
-          searchKey
-            ? [itemTemplate.name, searchKey]
-            : [itemTemplate.value || itemTemplate.name],
-        ) as string | number;
+        const optionValue = extractValue(item);
 
         return (
           <SelectComponent.Option
@@ -102,11 +112,19 @@ export const Search: React.FC<SearchProps> = ({
     }
 
     return dropdownOptions;
-  }, [values, itemTemplate, namedData, searchKey]);
+  }, [
+    itemTemplate,
+    namedData,
+    extractValue,
+    values?.id,
+    searchValue,
+    hasCleared,
+  ]);
 
   useDebounce(
     () => {
       if (onSearchAction?.callback && !isNull(searchValue)) {
+        setHasCleared(false);
         onSearchAction.callback({ search: searchValue });
       }
     },
@@ -125,26 +143,21 @@ export const Search: React.FC<SearchProps> = ({
     (selectedValue: unknown): void => {
       if (isObject(itemTemplate) && !isEmpty(namedData)) {
         setValue(selectedValue);
-        const selectedOption = namedData.find((option) => {
-          const optionValue = get(
-            option,
-            searchKey
-              ? [itemTemplate.name, searchKey]
-              : [itemTemplate.value || itemTemplate.name],
-          ) as string | number;
-
-          return optionValue === selectedValue;
-        });
+        const selectedOption = namedData.find(
+          (option) => extractValue(option) === selectedValue,
+        );
 
         onSelectAction?.callback({
           value: get(selectedOption, [itemTemplate.name]) as unknown,
         });
       }
     },
-    [onSelectAction, itemTemplate, namedData, searchKey],
+    [itemTemplate, namedData, onSelectAction, extractValue],
   );
 
   const handleClear = useCallback(() => {
+    setSearchValue(null);
+    setHasCleared(true);
     onClearAction?.callback();
   }, [onClearAction]);
 
@@ -160,6 +173,24 @@ export const Search: React.FC<SearchProps> = ({
       ? notFoundContent
       : EnsembleRuntime.render([unwrapWidget(notFoundContent)]);
   }, [values?.notFoundContent]);
+
+  const renderLabel = useCallback(
+    (label: React.ReactNode, labelValue: string | number): React.ReactNode => {
+      if (isNil(rest.selectedLabel) || isEmpty(namedData)) {
+        return label;
+      }
+
+      const option = namedData.find(
+        (item) => extractValue(item) === labelValue,
+      );
+      return (
+        <CustomScopeProvider value={{ value: option }}>
+          {EnsembleRuntime.render([unwrapWidget(rest.selectedLabel)])}
+        </CustomScopeProvider>
+      );
+    },
+    [extractValue, namedData, rest.selectedLabel],
+  );
 
   return (
     <div
@@ -192,6 +223,9 @@ export const Search: React.FC<SearchProps> = ({
         className={`${values?.styles?.names || ""} ${id}_input`}
         filterOption={false}
         id={values?.id}
+        labelRender={({ label, value: labelValue }): React.ReactNode =>
+          renderLabel(label, labelValue)
+        }
         notFoundContent={notFoundContentRenderer}
         onChange={handleChange}
         onClear={handleClear}
