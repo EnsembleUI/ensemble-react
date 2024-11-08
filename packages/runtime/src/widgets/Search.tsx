@@ -28,7 +28,7 @@ const widgetName = "Search";
 export type SearchProps = {
   placeholder?: string;
   searchKey?: string;
-  searchWidget?: { [key: string]: unknown };
+  selectedLabel?: { [key: string]: unknown };
   onSearch?: {
     debounceMs: number;
   } & EnsembleAction;
@@ -176,7 +176,7 @@ export const Search: React.FC<SearchProps> = ({
 
   const renderLabel = useCallback(
     (label: React.ReactNode, labelValue: string | number): React.ReactNode => {
-      if (isNil(rest.searchWidget) || isEmpty(namedData)) {
+      if (isNil(rest.selectedLabel) || isEmpty(namedData)) {
         return label;
       }
 
@@ -185,11 +185,11 @@ export const Search: React.FC<SearchProps> = ({
       );
       return (
         <CustomScopeProvider value={{ value: option }}>
-          {EnsembleRuntime.render([unwrapWidget(rest.searchWidget)])}
+          {EnsembleRuntime.render([unwrapWidget(rest.selectedLabel)])}
         </CustomScopeProvider>
       );
     },
-    [extractValue, namedData, rest.searchWidget],
+    [extractValue, namedData, rest.selectedLabel],
   );
 
   return (
