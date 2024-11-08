@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.2.15
+
+### Patch Changes
+
+- f0d55ec: add selectedLabel prop to Search component to allow custom widget for selected option
+
 ## 0.2.14
 
 ### Patch Changes
