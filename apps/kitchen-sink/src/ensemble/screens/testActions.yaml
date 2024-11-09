@@ -122,7 +122,7 @@ View:
             label: Tap to pick an image
             onTap:
               pickFiles:
-                allowedExtensions: ["jpg", "png", "pdf", "docs"]
+                allowMultiple: true
                 onComplete:
                   executeConditionalAction:
                     conditions:

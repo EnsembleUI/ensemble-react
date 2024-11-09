@@ -1,6 +1,6 @@
 import { useAtom, useAtomValue } from "jotai";
 import { clone } from "lodash-es";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import isEqual from "react-fast-compare";
 import type { Response, WebSocketConnection } from "../data";
 import type {
@@ -25,8 +25,8 @@ export const useScreenData = (): {
   const sockets = useAtomValue(screenSocketAtom);
   const [data, setDataAtom] = useAtom(screenDataAtom);
 
-  const mockResponses = useEvaluate(
-    apis?.reduce(
+  const apiMockResponses = useMemo(() => {
+    return apis?.reduce(
       (
         acc: { [key: string]: EnsembleMockResponse | string | undefined },
         api,
@@ -35,8 +35,10 @@ export const useScreenData = (): {
         return acc;
       },
       {},
-    ),
-  );
+    );
+  }, [apis]);
+
+  const mockResponses = useEvaluate(apiMockResponses);
 
   const setData = useCallback(
     (name: string, response: Response | WebSocketConnection) => {
@@ -49,11 +51,14 @@ export const useScreenData = (): {
     [data, setDataAtom],
   );
 
-  return {
-    apis,
-    sockets,
-    data,
-    setData,
-    mockResponses,
-  };
+  return useMemo(
+    () => ({
+      apis,
+      sockets,
+      data,
+      setData,
+      mockResponses,
+    }),
+    [apis, sockets, data, mockResponses],
+  );
 };

@@ -309,6 +309,7 @@ export const useConnectSocket: EnsembleActionHook<ConnectSocketAction> = (
     };
     return { callback };
   }, [
+    screenData,
     socket,
     onSocketConnectAction?.callback,
     onMessageReceiveAction?.callback,
@@ -359,7 +360,7 @@ export const useDisconnectSocket: EnsembleActionHook<DisconnectSocketAction> = (
       }
     };
     return { callback };
-  }, [action?.name]);
+  }, [screenData, action?.name]);
 
   return disconnectSocket;
 };
@@ -426,23 +427,20 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
 export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
   action?: PickFilesAction,
 ) => {
+  const { onComplete, onError, ...rest } = action || {};
   const [files, setFiles] = useState<File[]>();
   const [isComplete, setIsComplete] = useState<boolean>();
-  const onCompleteAction = useEnsembleAction(action?.onComplete);
-  const onErrorAction = useEnsembleAction(action?.onError);
+  const onCompleteAction = useEnsembleAction(onComplete);
+  const onErrorAction = useEnsembleAction(onError);
 
   const { values } = useRegisterBindings(
     {
       files,
-      ...action,
+      ...rest,
     },
     action?.id,
     {
       setFiles,
-    },
-    {
-      // need to override default comparator with isEqual for File object
-      comparator: isEqual,
     },
   );
 
@@ -517,6 +515,8 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
     onErrorAction?.callback,
   ]);
 
+  console.log(">>>>> ensemble action");
+
   const callback = useCallback((): void => {
     try {
       inputEl.click();
@@ -524,7 +524,7 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
       // eslint-disable-next-line no-console
       console.error(error);
     }
-  }, []);
+  }, [inputEl]);
 
   return { callback };
 };
@@ -651,7 +651,7 @@ export const useActionGroup: EnsembleActionHook<ExecuteActionGroupAction> = (
     };
 
     return { callback };
-  }, []);
+  }, [actions]);
 };
 
 export const useDispatchEvent: EnsembleActionHook<DispatchEventAction> = (

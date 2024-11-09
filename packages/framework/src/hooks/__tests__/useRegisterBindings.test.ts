@@ -1,10 +1,12 @@
 /* eslint import/first: 0 */
 import { renderHook } from "@testing-library/react";
 import { getDefaultStore } from "jotai";
+import { useCallback } from "react";
+import isEqual from "react-fast-compare";
+import _, { values } from "lodash";
 import { useRegisterBindings } from "../useRegisterBindings";
 import { screenAtom } from "../../state";
 import { screenStorageAtom } from "../useEnsembleStorage";
-import { useCallback } from "react";
 
 const mockInvokable = {
   id: "test",
@@ -339,7 +341,7 @@ test("evaluates flutter style hex codes expressions", () => {
   });
 });
 
-test.only("should keep the same callback reference when dependencies do not change", () => {
+test("should keep the same callback reference when dependencies do not change", () => {
   const { result, rerender } = renderHook(
     ({ dependency }) =>
       useCallback(() => {
@@ -400,4 +402,32 @@ test("should keep the same reference for all functions inside an object when dep
   expect(firstMinus.toString()).toBe(secondMinus.toString());
   expect(firstMultiply.toString()).toBe(secondMultiply.toString());
   expect(firstDivide.toString()).toBe(secondDivide.toString());
+});
+
+test("compare arrays with react fast compare isEqual", () => {
+  const newValues = {
+    allowedExtensions: ["jpg", "png", "pdf", "docs"],
+  };
+
+  const prevValues = {
+    values: {
+      allowedExtensions: ["jpg", "png", "pdf", "docs"],
+    },
+  };
+
+  expect(isEqual(newValues, prevValues.values)).toBe(true);
+});
+
+test("compare arrays with lodash isEqual", () => {
+  const newValues = {
+    allowedExtensions: ["jpg", "png", "pdf", "docs"],
+  };
+
+  const prevValues = {
+    values: {
+      allowedExtensions: ["jpg", "png", "pdf", "docs"],
+    },
+  };
+
+  expect(_.isEqual(newValues, prevValues.values)).toBe(true);
 });
