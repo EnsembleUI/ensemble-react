@@ -14,7 +14,6 @@ import {
   writeBatch,
 } from "firebase/firestore/lite";
 import { groupBy, head } from "lodash-es";
-import { EnsembleDocumentType } from "./dto";
 import type {
   AssetDTO,
   ApplicationDTO,
@@ -26,6 +25,7 @@ import type {
   EnvironmentDTO,
 } from "./dto";
 import type { ApplicationTransporter } from "./transporter";
+import { CollectionsName, EnsembleDocumentType } from "./enums";
 
 export const getFirestoreApplicationTransporter = (
   db: Firestore,
@@ -57,7 +57,7 @@ export const getFirestoreApplicationTransporter = (
       widgets,
       theme,
       scripts,
-      languages,
+      translations: languages,
       assets,
       env,
     };
@@ -81,7 +81,7 @@ export const getFirestoreApplicationTransporter = (
       CollectionsName.InternalArtifacts,
     );
 
-    const { screens, widgets, scripts, languages, theme, env } = app;
+    const { screens, widgets, scripts, translations, theme, env } = app;
 
     screens.forEach((screen) => {
       const screenRef = doc(artifactsRef, screen.id);
@@ -95,7 +95,7 @@ export const getFirestoreApplicationTransporter = (
       });
     });
 
-    widgets.forEach((widget) =>
+    widgets?.forEach((widget) =>
       batch.set(doc(internalArtifactsRef, widget.id), {
         type: EnsembleDocumentType.Widget,
         name: widget.name,
@@ -116,7 +116,7 @@ export const getFirestoreApplicationTransporter = (
       });
     }
 
-    scripts.forEach((script) =>
+    scripts?.forEach((script) =>
       batch.set(doc(internalArtifactsRef, script.id), {
         type: EnsembleDocumentType.Script,
         name: script.name,
@@ -127,12 +127,12 @@ export const getFirestoreApplicationTransporter = (
       }),
     );
 
-    languages?.forEach((language) =>
-      batch.set(doc(internalArtifactsRef, language.id), {
-        ...language,
+    translations?.forEach((translation) =>
+      batch.set(doc(internalArtifactsRef, translation.id), {
+        ...translation,
         ...updatedByDetails,
         type: EnsembleDocumentType.I18n,
-        defaultLocale: language.defaultLocale ?? false,
+        defaultLocale: translation.defaultLocale,
       }),
     );
 
@@ -208,12 +208,3 @@ const getArtifacts = async (
 const QUERY_FILTERS = {
   notArchived: where("isArchived", "!=", true),
 };
-
-export enum CollectionsName {
-  Apps = "apps",
-  Users = "users",
-  Labels = "labels",
-  History = "history",
-  Artifacts = "artifacts",
-  InternalArtifacts = "internal_artifacts",
-}
