@@ -7,6 +7,7 @@ import { createCustomWidget } from "../../runtime/customWidget";
 import { Column } from "../Column";
 import React, { useState } from "react";
 import { act } from "react-dom/test-utils";
+import userEvent from "@testing-library/user-event";
 
 test("test button loading using setLoading", async () => {
   // Render the button component
@@ -425,3 +426,31 @@ describe("Button Component Render Tests", () => {
   });
 });
 /* eslint-enable react/no-children-prop */
+
+test.only("Upload Files Using pick files", async () => {
+  render(
+    <Button
+      label="Pick Image"
+      onTap={{
+        pickFiles: {
+          allowedExtensions: ["jpg", "png"],
+        },
+      }}
+    />,
+    { wrapper: BrowserRouter },
+  );
+
+  const imageBlob = new Blob(["image binary data"], { type: "image/png" });
+
+  const files = [new File([imageBlob], "example1.png", { type: "image/png" })];
+
+  const pickFiles = document.querySelector("input") as HTMLInputElement;
+
+  userEvent.upload(pickFiles, files);
+
+  await waitFor(() => {
+    expect(screen.getByText("Pick Image")).toBeInTheDocument();
+    expect(pickFiles.files).toHaveLength(1);
+    expect(pickFiles.files?.[0].name).toBe("example1.png");
+  });
+});
