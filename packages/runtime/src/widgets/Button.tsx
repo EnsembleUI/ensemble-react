@@ -42,7 +42,7 @@ export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
       }
       action.callback();
     },
-    [action?.callback],
+    [action],
   );
 
   const { values, rootRef } = useRegisterBindings(

@@ -64,9 +64,7 @@ export const useEvaluate = <T extends Record<string, unknown>>(
     return result;
   }, [values, translate]);
 
-  const updatedValues = useMemo(() => {
-    return merge({}, values, bindings, translatedkeys);
-  }, [values, bindings, translatedkeys]);
+  const updatedValues = merge({}, values, bindings, translatedkeys);
 
   // evaluate flutter color hex codes
   const hexCodes = useMemo(() => {

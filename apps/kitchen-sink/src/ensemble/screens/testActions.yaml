@@ -101,8 +101,6 @@ View:
             onTap:
               connectSocket:
                 name: echo
-        - Text:
-            id: socketStatus
         - Button:
             id: socketSendMessage
             label: message socket

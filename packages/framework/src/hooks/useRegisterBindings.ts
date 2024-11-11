@@ -15,11 +15,6 @@ export interface RegisterBindingsResult<T> {
   rootRef: RefCallback<never>;
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-const areFunctionsEqual = (func1?: Function, func2?: Function): boolean => {
-  return func1 === func2;
-};
-
 const areValuesAndMethodsEqual = <T>(
   newValues: T,
   prevValues: T | undefined,
@@ -40,7 +35,7 @@ const areValuesAndMethodsEqual = <T>(
   return keys(methods).every((methodKey: string) => {
     const fromMethods = get(methods, methodKey);
     const fromWidgets = get(prevMethods, methodKey);
-    return areFunctionsEqual(fromMethods, fromWidgets);
+    return fromMethods === fromWidgets;
   });
 };
 

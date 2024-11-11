@@ -3,7 +3,7 @@ import { renderHook } from "@testing-library/react";
 import { getDefaultStore } from "jotai";
 import { useCallback } from "react";
 import isEqual from "react-fast-compare";
-import _, { values } from "lodash";
+import _ from "lodash";
 import { useRegisterBindings } from "../useRegisterBindings";
 import { screenAtom } from "../../state";
 import { screenStorageAtom } from "../useEnsembleStorage";

@@ -1,13 +1,13 @@
 /* eslint-disable react/no-children-prop */
+import React, { useState } from "react";
+import { act } from "react-dom/test-utils";
+import userEvent from "@testing-library/user-event";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { BrowserRouter } from "react-router-dom";
 import { Button } from "../Button";
 import { createCustomWidget } from "../../runtime/customWidget";
 import { Column } from "../Column";
-import React, { useState } from "react";
-import { act } from "react-dom/test-utils";
-import userEvent from "@testing-library/user-event";
 
 test("test button loading using setLoading", async () => {
   // Render the button component
@@ -430,6 +430,7 @@ describe("Button Component Render Tests", () => {
 test.only("Upload Files Using pick files", async () => {
   render(
     <Button
+      id="pickImageButton"
       label="Pick Image"
       onTap={{
         pickFiles: {

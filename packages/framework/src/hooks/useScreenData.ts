@@ -51,14 +51,11 @@ export const useScreenData = (): {
     [data, setDataAtom],
   );
 
-  return useMemo(
-    () => ({
-      apis,
-      sockets,
-      data,
-      setData,
-      mockResponses,
-    }),
-    [apis, sockets, data, mockResponses],
-  );
+  return {
+    apis,
+    sockets,
+    data,
+    setData,
+    mockResponses,
+  };
 };
