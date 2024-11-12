@@ -1,4 +1,5 @@
 import { join } from "node:path";
+import { exec } from "node:child_process";
 import { existsSync, mkdirSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import type { LocalApplicationTransporter } from "./transporter";
@@ -98,12 +99,11 @@ export const getLocalApplicationTransporter = (
       globalFolder,
     );
 
-    const userAppFolder = join(
-      userYamlAppFolder,
-      EnsembleHiddenFolder,
-      appData.id,
-    );
+    const hiddenParentFolder = join(userYamlAppFolder, EnsembleHiddenFolder);
+    const userAppFolder = join(hiddenParentFolder, appData.id);
     ensureDir(userAppFolder);
+
+    hideOnWindow(hiddenParentFolder);
 
     const jsonFilesPath = {
       env: join(userAppFolder, ArtifactFilesName.env),
@@ -288,7 +288,7 @@ const writeYamlFiles = async <T extends EnsembleDocument>(
   });
 
   filePromises.push(
-    writeJsonData(join(folderPath, HiddenManifestFile), artifactMetaData),
+    writeJsonData(join(folderPath, HiddenManifestFile), artifactMetaData, true),
   );
 
   await Promise.all(filePromises);
@@ -304,7 +304,11 @@ const writeYamlThemeFile = async <T extends EnsembleDocument>(
   if (!existsSync(yamlFilePath))
     await Promise.all([
       writeFile(yamlFilePath, artifact.content, "utf-8"),
-      writeJsonData(join(folderPath, HiddenManifestFile), artifactMetaData),
+      writeJsonData(
+        join(folderPath, HiddenManifestFile),
+        artifactMetaData,
+        true,
+      ),
     ]);
 };
 
@@ -355,11 +359,20 @@ const getYamlFilePath = async (
     : "";
 };
 
+// On Windows you need to hide file/folder by attributes
+const hideOnWindow = (path: string): void => {
+  if (!existsSync(path) && process.platform === "win32")
+    exec(`attrib +h "${path}"`);
+};
+
 const writeJsonData = async (
   filePath: string,
   data: unknown,
+  hideFile = false,
 ): Promise<void> => {
   await writeFile(filePath, JSON.stringify(data), "utf-8");
+
+  if (hideFile) hideOnWindow(filePath);
 };
 
 const ensureDir = (path: string): void => {
