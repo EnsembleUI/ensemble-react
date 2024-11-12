@@ -46,70 +46,55 @@ export const getLocalApplicationTransporter = (
   yamlFolder: string,
   globalFolder: string,
 ): LocalApplicationTransporter => ({
-  get: async (appId: string): Promise<ApplicationDTO | null> => {
-    try {
-      const userYamlAppFolder = await getYamlFolderPath(
-        appId,
-        yamlFolder,
-        globalFolder,
-      );
-      const userAppFolder = join(
-        userYamlAppFolder,
-        EnsembleHiddenFolder,
-        appId,
-      );
-      if (!existsSync(userAppFolder)) return null;
+  get: async (appId: string): Promise<ApplicationDTO> => {
+    const userYamlAppFolder = await getYamlFolderPath(
+      appId,
+      yamlFolder,
+      globalFolder,
+    );
+    const userAppFolder = join(userYamlAppFolder, EnsembleHiddenFolder, appId);
+    if (!existsSync(userAppFolder))
+      throw Error("App data not found on user local disk.");
 
-      const [
-        env,
-        theme,
-        assets,
-        screens,
-        widgets,
-        scripts,
-        groupLabels,
-        translations,
-      ] = await Promise.all([
-        readJsonFile<EnvironmentDTO>(
-          join(userAppFolder, ArtifactFilesName.env),
-        ),
-        readJsonFile<ThemeDTO>(join(userAppFolder, ArtifactFilesName.theme)),
-        readJsonFile<AssetDTO[]>(join(userAppFolder, ArtifactFilesName.assets)),
-        readJsonFile<ScreenDTO[]>(
-          join(userAppFolder, ArtifactFilesName.screens),
-        ),
-        readJsonFile<WidgetDTO[]>(
-          join(userAppFolder, ArtifactFilesName.widgets),
-        ),
-        readJsonFile<ScriptDTO[]>(
-          join(userAppFolder, ArtifactFilesName.scripts),
-        ),
-        readJsonFile<Record<string, string>>(
-          join(userAppFolder, ArtifactFilesName.groupLabels),
-        ),
-        readJsonFile<TranslationDTO[]>(
-          join(userAppFolder, ArtifactFilesName.translations),
-        ),
-      ]);
+    const [
+      env,
+      theme,
+      assets,
+      screens,
+      widgets,
+      scripts,
+      groupLabels,
+      translations,
+    ] = await Promise.all([
+      readJsonFile<EnvironmentDTO>(join(userAppFolder, ArtifactFilesName.env)),
+      readJsonFile<ThemeDTO>(join(userAppFolder, ArtifactFilesName.theme)),
+      readJsonFile<AssetDTO[]>(join(userAppFolder, ArtifactFilesName.assets)),
+      readJsonFile<ScreenDTO[]>(join(userAppFolder, ArtifactFilesName.screens)),
+      readJsonFile<WidgetDTO[]>(join(userAppFolder, ArtifactFilesName.widgets)),
+      readJsonFile<ScriptDTO[]>(join(userAppFolder, ArtifactFilesName.scripts)),
+      readJsonFile<Record<string, string>>(
+        join(userAppFolder, ArtifactFilesName.groupLabels),
+      ),
+      readJsonFile<TranslationDTO[]>(
+        join(userAppFolder, ArtifactFilesName.translations),
+      ),
+    ]);
 
-      const applicationData: ApplicationDTO = {
-        env,
-        theme,
-        assets,
-        widgets,
-        scripts,
-        name: "",
-        id: appId,
-        translations,
-        screens: screens ?? [],
-        groupLabels: new Map(Object.entries(groupLabels ?? {})),
-      };
-      return applicationData;
-    } catch (error) {
-      return null;
-    }
+    const applicationData: ApplicationDTO = {
+      env,
+      theme,
+      assets,
+      widgets,
+      scripts,
+      name: "",
+      id: appId,
+      translations,
+      screens: screens ?? [],
+      groupLabels: new Map(Object.entries(groupLabels ?? {})),
+    };
+    return applicationData;
   },
-  put: async (appData: ApplicationDTO): Promise<void> => {
+  put: async (appData: ApplicationDTO): Promise<ApplicationDTO> => {
     const userYamlAppFolder = await getYamlFolderPath(
       appData.id,
       yamlFolder,
@@ -144,6 +129,7 @@ export const getLocalApplicationTransporter = (
       writeJsonData(jsonFilesPath.groupLabels, appData.groupLabels ?? []),
       writeJsonData(jsonFilesPath.translations, appData.translations ?? []),
     ]);
+    return appData;
   },
 });
 
@@ -338,7 +324,7 @@ const getYamlFolderPath = async (
 ): Promise<string> => {
   const appsMetaData = await getAppsMetaData(globalFolder);
   const appMetaData = appsMetaData.find((data) => data.id === appId);
-  if (!appMetaData) throw Error("App not found on local disk.");
+  if (!appMetaData) throw Error("App data not found on user local disk.");
 
   const userAppFolder =
     appMetaData.yamlFolderPath ?? join(yamlFolder, appMetaData.name);
