@@ -248,7 +248,7 @@ describe("Button Component Render Tests", () => {
     jest.useRealTimers();
   });
 
-  test("should prevent unnecessary re-renders with memo", async () => {
+  test("should prevent unnecessary re-renders with memo", () => {
     const { TestButton, renderCount } = createButtonWithRenderCounter();
     const MemoizedTestButton = React.memo(TestButton);
 
@@ -277,8 +277,7 @@ describe("Button Component Render Tests", () => {
     expect(renderCount.current).toBe(1);
 
     // Update parent state
-    // eslint-disable-next-line @typescript-eslint/require-await
-    await act(async () => {
+    act(() => {
       fireEvent.click(getByTestId("parent-updater"));
     });
 
@@ -289,7 +288,7 @@ describe("Button Component Render Tests", () => {
     expect(renderCount.current).toBe(1);
   });
 
-  test("should re-render when props change", async () => {
+  test("should re-render when props change", () => {
     const { TestButton, renderCount } = createButtonWithRenderCounter();
     const MemoizedTestButton = React.memo(TestButton);
 
@@ -324,8 +323,7 @@ describe("Button Component Render Tests", () => {
     expect(renderCount.current).toBe(1);
 
     // Update label
-    // eslint-disable-next-line @typescript-eslint/require-await
-    await act(async () => {
+    act(() => {
       fireEvent.click(getByTestId("label-updater"));
     });
 
@@ -333,8 +331,7 @@ describe("Button Component Render Tests", () => {
     expect(renderCount.current).toBe(2);
 
     // Update styles
-    // eslint-disable-next-line @typescript-eslint/require-await
-    await act(async () => {
+    act(() => {
       fireEvent.click(getByTestId("styles-updater"));
     });
 
@@ -415,8 +412,7 @@ describe("Button Component Render Tests", () => {
 
     const buttonEl = screen.getByText("Change button label");
     // Trigger the button click
-    // eslint-disable-next-line @typescript-eslint/require-await
-    await act(async () => {
+    act(() => {
       fireEvent.click(buttonEl);
     });
 
@@ -427,7 +423,7 @@ describe("Button Component Render Tests", () => {
 });
 /* eslint-enable react/no-children-prop */
 
-test.only("Upload Files Using pick files", async () => {
+test("Upload Files Using pick files", async () => {
   render(
     <Button
       id="pickImageButton"

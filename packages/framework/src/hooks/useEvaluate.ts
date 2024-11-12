@@ -83,7 +83,5 @@ export const useEvaluate = <T extends Record<string, unknown>>(
     return result;
   }, [updatedValues]);
 
-  return useMemo(() => {
-    return merge({}, updatedValues, hexCodes);
-  }, [updatedValues, hexCodes]);
+  return merge({}, updatedValues, hexCodes);
 };
