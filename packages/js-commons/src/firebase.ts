@@ -14,6 +14,7 @@ import {
   writeBatch,
 } from "firebase/firestore/lite";
 import { groupBy, head } from "lodash-es";
+import { EnsembleDocumentType } from "./dto";
 import type {
   AssetDTO,
   ApplicationDTO,
@@ -21,11 +22,10 @@ import type {
   ScriptDTO,
   ThemeDTO,
   WidgetDTO,
-  LanguageDTO,
+  TranslationDTO,
   EnvironmentDTO,
 } from "./dto";
 import type { ApplicationTransporter } from "./transporter";
-import { CollectionsName, EnsembleDocumentType } from "./enums";
 
 export const getFirestoreApplicationTransporter = (
   db: Firestore,
@@ -44,8 +44,10 @@ export const getFirestoreApplicationTransporter = (
     const widgets = artifacts[EnsembleDocumentType.Widget] as WidgetDTO[];
     const scripts = artifacts[EnsembleDocumentType.Script] as ScriptDTO[];
     const theme = head(artifacts[EnsembleDocumentType.Theme]) as ThemeDTO;
-    const languages = artifacts[EnsembleDocumentType.I18n] as LanguageDTO[];
     const assets = artifacts[EnsembleDocumentType.Asset] as AssetDTO[];
+    const translations = artifacts[
+      EnsembleDocumentType.I18n
+    ] as TranslationDTO[];
     const env = head(
       artifacts[EnsembleDocumentType.Environment],
     ) as EnvironmentDTO;
@@ -57,7 +59,7 @@ export const getFirestoreApplicationTransporter = (
       widgets,
       theme,
       scripts,
-      translations: languages,
+      translations,
       assets,
       env,
     };
@@ -208,3 +210,12 @@ const getArtifacts = async (
 const QUERY_FILTERS = {
   notArchived: where("isArchived", "!=", true),
 };
+
+export enum CollectionsName {
+  Apps = "apps",
+  Users = "users",
+  Labels = "labels",
+  History = "history",
+  Artifacts = "artifacts",
+  InternalArtifacts = "internal_artifacts",
+}

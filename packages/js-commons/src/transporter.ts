@@ -16,5 +16,11 @@ export interface YamlApplicationTransporter {
     documentId: string,
     documentType: string,
   ) => Promise<string>;
+  update: (
+    appId: string,
+    documentId: string,
+    documentType: string,
+    content: string,
+  ) => Promise<void>;
   put: (app: ApplicationDTO) => Promise<void>;
 }

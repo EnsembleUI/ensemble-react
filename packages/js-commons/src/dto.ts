@@ -1,5 +1,3 @@
-import type { AccessType, AppCategory, EnsembleDocumentType } from "./enums";
-
 /**
  * DTOs = Data Transfer Objects
  *
@@ -19,6 +17,19 @@ export interface EnsembleDocument {
   readonly updatedBy?: {
     name: string;
   };
+}
+
+export enum EnsembleDocumentType {
+  I18n = "i18n",
+  Theme = "theme",
+  Asset = "asset",
+  Screen = "screen",
+  Font = "font",
+  Widget = "internal_widget",
+  Script = "internal_script",
+  Environment = "config",
+  Secrets = "secrets",
+  Label = "label",
 }
 
 export interface ApplicationMetaDTO
@@ -49,9 +60,9 @@ export interface ApplicationDTO extends ApplicationMetaDTO {
   readonly widgets?: WidgetDTO[];
   readonly scripts?: ScriptDTO[];
   readonly theme?: ThemeDTO;
-  readonly translations?: LanguageDTO[];
   readonly assets?: AssetDTO[];
   readonly env?: EnvironmentDTO;
+  readonly translations?: TranslationDTO[];
 }
 
 export interface HasLabel {
@@ -92,7 +103,7 @@ export type ThemeDTO = EnsembleDocument & {
   readonly type: EnsembleDocumentType.Theme;
 };
 
-export type LanguageDTO = EnsembleDocument & {
+export type TranslationDTO = EnsembleDocument & {
   readonly defaultLocale: boolean;
 };
 
@@ -116,6 +127,17 @@ export type FontDTO = EnsembleDocument & {
   readonly fontType: string;
   readonly publicUrl?: string;
 };
+
+export enum AppCategory {
+  Demo = "Demo",
+  Template = "Template",
+}
+
+export enum AccessType {
+  Read = "read",
+  Write = "write",
+  Owner = "owner",
+}
 
 export type EnsembleDocumentHistoryItem = EnsembleDocument & {
   readonly comment: string;

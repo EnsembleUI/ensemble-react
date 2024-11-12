@@ -6,72 +6,121 @@ import type {
   LocalApplicationTransporter,
 } from "./transporter";
 import {
-  ArtifactFilesName,
-  HiddenManifestFile,
-  AppManifestDataFile,
-  ArtifactYamlFolderNames,
-} from "./constants";
-import type {
-  ThemeDTO,
-  AssetDTO,
-  ScreenDTO,
-  WidgetDTO,
-  ScriptDTO,
-  LanguageDTO,
-  ApplicationDTO,
-  EnvironmentDTO,
-  ApplicationMetaDTO,
-  EnsembleDocument,
+  type ThemeDTO,
+  type AssetDTO,
+  type ScreenDTO,
+  type WidgetDTO,
+  type ScriptDTO,
+  type TranslationDTO,
+  type ApplicationDTO,
+  type EnvironmentDTO,
+  type EnsembleDocument,
+  type ApplicationMetaDTO,
+  EnsembleDocumentType,
 } from "./dto";
-import { EnsembleDocumentType } from "./enums";
+
+export const EnsembleHiddenFolder = ".ensemble";
+export const HiddenManifestFile = ".manifest.json";
+export const AppManifestDataFile = "apps-manifest.json";
+
+export const ArtifactYamlFolderNames = {
+  theme: "Theme",
+  screens: "Screens",
+  widgets: "Widgets",
+  scripts: "Scripts",
+  translations: "Translations",
+} as const;
+
+export const ArtifactFilesName = {
+  theme: "theme.json",
+  assets: "asset.json",
+  screens: "screen.json",
+  widgets: "widget.json",
+  scripts: "script.json",
+  translations: "i18n.json",
+  env: "environment.json",
+  groupLabels: "label.json",
+} as const;
 
 export const getLocalApplicationTransporter = (
-  hiddenEnsembleFolder: string,
+  yamlFolder: string,
+  globalFolder: string,
 ): LocalApplicationTransporter => ({
   get: async (appId: string): Promise<ApplicationDTO | null> => {
-    const userAppFolder = join(hiddenEnsembleFolder, appId);
-    if (!existsSync(userAppFolder)) return null;
+    try {
+      const userYamlAppFolder = await getYamlFolderPath(
+        appId,
+        yamlFolder,
+        globalFolder,
+      );
+      const userAppFolder = join(
+        userYamlAppFolder,
+        EnsembleHiddenFolder,
+        appId,
+      );
+      if (!existsSync(userAppFolder)) return null;
 
-    const [
-      env,
-      theme,
-      assets,
-      screens,
-      widgets,
-      scripts,
-      groupLabels,
-      translations,
-    ] = await Promise.all([
-      readJsonFile<EnvironmentDTO>(join(userAppFolder, ArtifactFilesName.env)),
-      readJsonFile<ThemeDTO>(join(userAppFolder, ArtifactFilesName.theme)),
-      readJsonFile<AssetDTO[]>(join(userAppFolder, ArtifactFilesName.assets)),
-      readJsonFile<ScreenDTO[]>(join(userAppFolder, ArtifactFilesName.screens)),
-      readJsonFile<WidgetDTO[]>(join(userAppFolder, ArtifactFilesName.widgets)),
-      readJsonFile<ScriptDTO[]>(join(userAppFolder, ArtifactFilesName.scripts)),
-      readJsonFile<Record<string, string>>(
-        join(userAppFolder, ArtifactFilesName.groupLabels),
-      ),
-      readJsonFile<LanguageDTO[]>(
-        join(userAppFolder, ArtifactFilesName.translations),
-      ),
-    ]);
+      const [
+        env,
+        theme,
+        assets,
+        screens,
+        widgets,
+        scripts,
+        groupLabels,
+        translations,
+      ] = await Promise.all([
+        readJsonFile<EnvironmentDTO>(
+          join(userAppFolder, ArtifactFilesName.env),
+        ),
+        readJsonFile<ThemeDTO>(join(userAppFolder, ArtifactFilesName.theme)),
+        readJsonFile<AssetDTO[]>(join(userAppFolder, ArtifactFilesName.assets)),
+        readJsonFile<ScreenDTO[]>(
+          join(userAppFolder, ArtifactFilesName.screens),
+        ),
+        readJsonFile<WidgetDTO[]>(
+          join(userAppFolder, ArtifactFilesName.widgets),
+        ),
+        readJsonFile<ScriptDTO[]>(
+          join(userAppFolder, ArtifactFilesName.scripts),
+        ),
+        readJsonFile<Record<string, string>>(
+          join(userAppFolder, ArtifactFilesName.groupLabels),
+        ),
+        readJsonFile<TranslationDTO[]>(
+          join(userAppFolder, ArtifactFilesName.translations),
+        ),
+      ]);
 
-    const applicationData: ApplicationDTO = {
-      env,
-      theme,
-      assets,
-      widgets,
-      scripts,
-      name: "",
-      id: appId,
-      translations,
-      screens: screens ?? [],
-      groupLabels: convertJsonToMap(groupLabels ?? {}),
-    };
-    return applicationData;
+      const applicationData: ApplicationDTO = {
+        env,
+        theme,
+        assets,
+        widgets,
+        scripts,
+        name: "",
+        id: appId,
+        translations,
+        screens: screens ?? [],
+        groupLabels: new Map(Object.entries(groupLabels ?? {})),
+      };
+      return applicationData;
+    } catch (error) {
+      return null;
+    }
   },
   put: async (appData: ApplicationDTO): Promise<void> => {
-    const userAppFolder = join(hiddenEnsembleFolder, appData.id);
+    const userYamlAppFolder = await getYamlFolderPath(
+      appData.id,
+      yamlFolder,
+      globalFolder,
+    );
+
+    const userAppFolder = join(
+      userYamlAppFolder,
+      EnsembleHiddenFolder,
+      appData.id,
+    );
     ensureDir(userAppFolder);
 
     const jsonFilesPath = {
@@ -107,43 +156,62 @@ export const getYamlApplicationTransporter = (
     documentId: string,
     documentType: string,
   ): Promise<string> => {
-    const appsMetaData = await getAppMetaData(globalFolder);
-    const appMetaData = appsMetaData.find((data) => data.id === appId);
-    if (!appMetaData) return "";
+    try {
+      const userAppFolder = await getYamlFolderPath(
+        appId,
+        yamlFolder,
+        globalFolder,
+      );
+      const filePath = await getYamlFilePath(
+        documentId,
+        documentType,
+        userAppFolder,
+      );
 
-    const userAppFolder = join(yamlFolder, appMetaData.name);
-    if (!existsSync(userAppFolder)) return "";
-
-    let path = "";
-    switch (documentType) {
-      case EnsembleDocumentType.Screen:
-        path = join(userAppFolder, ArtifactYamlFolderNames.screens);
-        break;
-      case EnsembleDocumentType.Widget:
-        path = join(userAppFolder, ArtifactYamlFolderNames.widgets);
-        break;
-      case EnsembleDocumentType.Script:
-        path = join(userAppFolder, ArtifactYamlFolderNames.scripts);
-        break;
-      case EnsembleDocumentType.I18n:
-        path = join(userAppFolder, ArtifactYamlFolderNames.translations);
-        break;
-      case EnsembleDocumentType.Theme:
-        path = join(userAppFolder, ArtifactYamlFolderNames.theme);
+      if (!existsSync(filePath)) return "";
+      return readFile(filePath, "utf-8");
+    } catch (error) {
+      return "";
     }
+  },
+  update: async (
+    appId: string,
+    documentId: string,
+    documentType: string,
+    content: string,
+  ): Promise<void> => {
+    const userAppFolder = await getYamlFolderPath(
+      appId,
+      yamlFolder,
+      globalFolder,
+    );
 
-    return readYamlContent(path, documentId);
+    const filePath = await getYamlFilePath(
+      documentId,
+      documentType,
+      userAppFolder,
+    );
+
+    ensureDir(filePath);
+    await writeFile(filePath, content, "utf-8");
   },
   put: async (app: ApplicationDTO): Promise<void> => {
-    const userAppFolder = join(yamlFolder, app.name);
-    ensureDir(userAppFolder);
+    const userYamlAppFolder = await getYamlFolderPath(
+      app.id,
+      yamlFolder,
+      globalFolder,
+    );
+    ensureDir(userYamlAppFolder);
 
     const yamlFolders = {
-      theme: join(userAppFolder, ArtifactYamlFolderNames.theme),
-      screens: join(userAppFolder, ArtifactYamlFolderNames.screens),
-      widgets: join(userAppFolder, ArtifactYamlFolderNames.widgets),
-      scripts: join(userAppFolder, ArtifactYamlFolderNames.scripts),
-      translations: join(userAppFolder, ArtifactYamlFolderNames.translations),
+      theme: join(userYamlAppFolder, ArtifactYamlFolderNames.theme),
+      screens: join(userYamlAppFolder, ArtifactYamlFolderNames.screens),
+      widgets: join(userYamlAppFolder, ArtifactYamlFolderNames.widgets),
+      scripts: join(userYamlAppFolder, ArtifactYamlFolderNames.scripts),
+      translations: join(
+        userYamlAppFolder,
+        ArtifactYamlFolderNames.translations,
+      ),
     };
 
     await Promise.all([
@@ -156,22 +224,11 @@ export const getYamlApplicationTransporter = (
   },
 });
 
-const readJsonFile = async <T>(filePath: string): Promise<T | undefined> => {
-  try {
-    if (!existsSync(filePath)) return undefined;
-
-    const fileContents = await readFile(filePath, "utf-8");
-    return JSON.parse(fileContents) as T;
-  } catch (error) {
-    return undefined;
-  }
-};
-
-export const getAppMetaData = async (
-  folderPath: string,
+export const getAppsMetaData = async (
+  globalFolderPath: string,
 ): Promise<ApplicationMetaDTO[]> => {
   try {
-    const filePath = join(folderPath, AppManifestDataFile);
+    const filePath = join(globalFolderPath, AppManifestDataFile);
 
     // Check if the file exists
     if (!existsSync(filePath)) return [];
@@ -188,6 +245,54 @@ export const getAppMetaData = async (
     return restoredData;
   } catch (error) {
     return [];
+  }
+};
+
+export const setAppsMetaData = async (
+  globalFolder: string,
+  defaultYamlPath: string,
+  appsMetaData: ApplicationMetaDTO[],
+): Promise<void> => {
+  // Write all apps manifest data in a single file
+  if (appsMetaData.length) {
+    let fileData: ApplicationMetaDTO[] = [];
+
+    ensureDir(globalFolder);
+    const filePath = join(globalFolder, AppManifestDataFile);
+
+    if (existsSync(filePath))
+      fileData = JSON.parse(
+        await readFile(filePath, "utf-8"),
+      ) as ApplicationMetaDTO[];
+
+    const localPathMap = new Map(
+      fileData.map((app) => [app.id, app.yamlFolderPath]),
+    );
+
+    // Convert the `collaborators` Map to an object for each app to store
+    const transformedApps = appsMetaData.map((metaData) => {
+      const yamlFolderPath = localPathMap.get(metaData.id);
+      return {
+        ...metaData,
+        yamlFolderPath: yamlFolderPath ?? join(defaultYamlPath, metaData.name), // Add path if there's a match or a default path
+        ...(metaData.collaborators && {
+          collaborators: Object.fromEntries(metaData.collaborators),
+        }),
+      };
+    });
+
+    await writeJsonData(filePath, transformedApps);
+  }
+};
+
+const readJsonFile = async <T>(filePath: string): Promise<T | undefined> => {
+  try {
+    if (!existsSync(filePath)) return undefined;
+
+    const fileContents = await readFile(filePath, "utf-8");
+    return JSON.parse(fileContents) as T;
+  } catch (error) {
+    return undefined;
   }
 };
 
@@ -226,37 +331,60 @@ const writeYamlThemeFile = async <T extends EnsembleDocument>(
     ]);
 };
 
-const readYamlContent = async (
-  folderPath: string,
-  artifactId: string,
+const getYamlFolderPath = async (
+  appId: string,
+  yamlFolder: string,
+  globalFolder: string,
 ): Promise<string> => {
-  try {
-    const filesMetaData = JSON.parse(
-      await readFile(join(folderPath, HiddenManifestFile), "utf-8"),
-    ) as Record<string, string>;
-    const filePath = join(folderPath, `${filesMetaData[artifactId]}.yaml`);
+  const appsMetaData = await getAppsMetaData(globalFolder);
+  const appMetaData = appsMetaData.find((data) => data.id === appId);
+  if (!appMetaData) throw Error("App not found on local disk.");
 
-    if (!existsSync(filePath)) return "";
+  const userAppFolder =
+    appMetaData.yamlFolderPath ?? join(yamlFolder, appMetaData.name);
 
-    return await readFile(filePath, "utf-8");
-  } catch (error) {
-    return "";
-  }
+  return userAppFolder;
 };
 
-export const writeJsonData = async (
+const getYamlFilePath = async (
+  artifactId: string,
+  documentType: string,
+  userAppFolder: string,
+): Promise<string> => {
+  let folderPath = "";
+  switch (documentType) {
+    case EnsembleDocumentType.Screen:
+      folderPath = join(userAppFolder, ArtifactYamlFolderNames.screens);
+      break;
+    case EnsembleDocumentType.Widget:
+      folderPath = join(userAppFolder, ArtifactYamlFolderNames.widgets);
+      break;
+    case EnsembleDocumentType.Script:
+      folderPath = join(userAppFolder, ArtifactYamlFolderNames.scripts);
+      break;
+    case EnsembleDocumentType.I18n:
+      folderPath = join(userAppFolder, ArtifactYamlFolderNames.translations);
+      break;
+    case EnsembleDocumentType.Theme:
+      folderPath = join(userAppFolder, ArtifactYamlFolderNames.theme);
+  }
+
+  const filesMetaData = JSON.parse(
+    await readFile(join(folderPath, HiddenManifestFile), "utf-8"),
+  ) as Record<string, string>;
+
+  return folderPath
+    ? join(folderPath, `${filesMetaData[artifactId]}.yaml`)
+    : "";
+};
+
+const writeJsonData = async (
   filePath: string,
   data: unknown,
 ): Promise<void> => {
   await writeFile(filePath, JSON.stringify(data), "utf-8");
 };
 
-export const convertJsonToMap = (
-  data: Record<string, string>,
-): Map<string, string> => {
-  return new Map<string, string>(Object.entries(data));
-};
-
-export const ensureDir = (path: string): void => {
+const ensureDir = (path: string): void => {
   if (!existsSync(path)) mkdirSync(path, { recursive: true });
 };
