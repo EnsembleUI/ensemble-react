@@ -421,7 +421,6 @@ describe("Button Component Render Tests", () => {
     });
   });
 });
-/* eslint-enable react/no-children-prop */
 
 test("Upload Files Using pick files", async () => {
   render(
@@ -451,3 +450,83 @@ test("Upload Files Using pick files", async () => {
     expect(pickFiles.files?.[0].name).toBe("example1.png");
   });
 });
+
+// Mock window.open before tests
+const originalWindow = window;
+const mockOpen = jest.fn();
+
+beforeAll(() => {
+  window.open = mockOpen;
+});
+
+// Restore original window after tests
+afterAll(() => {
+  window.open = originalWindow.open;
+});
+
+// Clear mock calls before each test
+beforeEach(() => {
+  mockOpen.mockClear();
+});
+
+test("should update the action on bindings changes", async () => {
+  render(
+    <Column
+      children={[
+        {
+          name: "Button",
+          properties: {
+            id: "navigateUrl",
+            label: "Navigate URL",
+            onTap: {
+              navigateExternalScreen: `\${ensemble.storage.get('targetUrl')}`,
+            },
+          },
+        },
+        {
+          name: "Button",
+          properties: {
+            label: "Update target url 1",
+            onTap: {
+              executeCode:
+                "ensemble.storage.set('targetUrl', 'http://google.com')",
+            },
+          },
+        },
+        {
+          name: "Button",
+          properties: {
+            label: "Update target url 2",
+            onTap: {
+              executeCode:
+                "ensemble.storage.set('targetUrl', 'http://youtube.com')",
+            },
+          },
+        },
+      ]}
+    />,
+    {
+      wrapper: BrowserRouter,
+    },
+  );
+
+  const updateUrlbtn1 = screen.getByText("Update target url 1");
+  fireEvent.click(updateUrlbtn1);
+
+  const navigateUrlbtn = screen.getByText("Navigate URL");
+  fireEvent.click(navigateUrlbtn);
+
+  await waitFor(() => {
+    expect(mockOpen).toHaveBeenCalledWith("http://google.com", "_self");
+  });
+
+  const updateUrlbtn2 = screen.getByText("Update target url 2");
+  fireEvent.click(updateUrlbtn2);
+
+  fireEvent.click(navigateUrlbtn);
+
+  await waitFor(() => {
+    expect(mockOpen).toHaveBeenCalledWith("http://youtube.com", "_self");
+  });
+});
+/* eslint-enable react/no-children-prop */
