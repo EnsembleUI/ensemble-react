@@ -1,10 +1,7 @@
 import { join } from "node:path";
 import { existsSync, mkdirSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
-import type {
-  YamlApplicationTransporter,
-  LocalApplicationTransporter,
-} from "./transporter";
+import type { LocalApplicationTransporter } from "./transporter";
 import {
   type ThemeDTO,
   type AssetDTO,
@@ -131,13 +128,7 @@ export const getLocalApplicationTransporter = (
     ]);
     return appData;
   },
-});
-
-export const getYamlApplicationTransporter = (
-  yamlFolder: string,
-  globalFolder: string,
-): YamlApplicationTransporter => ({
-  get: async (
+  getYamlContent: async (
     appId: string,
     documentId: string,
     documentType: string,
@@ -160,7 +151,7 @@ export const getYamlApplicationTransporter = (
       return "";
     }
   },
-  update: async (
+  updateYamlContent: async (
     appId: string,
     documentId: string,
     documentType: string,
@@ -181,7 +172,7 @@ export const getYamlApplicationTransporter = (
     ensureDir(filePath);
     await writeFile(filePath, content, "utf-8");
   },
-  put: async (app: ApplicationDTO): Promise<void> => {
+  putAppYaml: async (app: ApplicationDTO): Promise<void> => {
     const userYamlAppFolder = await getYamlFolderPath(
       app.id,
       yamlFolder,
