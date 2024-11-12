@@ -1,18 +1,22 @@
-import { useCallback, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   type Expression,
   unwrapWidget,
   useRegisterBindings,
   type EnsembleAction,
   useTemplateData,
-  CustomScopeProvider,
-  type CustomScope,
   useEvaluate,
-  evaluate,
-  defaultScreenContext,
+  type CustomScope,
 } from "@ensembleui/react-framework";
-import { Collapse, type CollapseProps, ConfigProvider } from "antd";
-import { get, isArray, isEmpty, isObject, isString, mapKeys } from "lodash-es";
+import type { CollapseProps } from "antd";
+import { Collapse, ConfigProvider } from "antd";
+import { get, isArray, isString, mapKeys } from "lodash-es";
 import type {
   EnsembleWidgetProps,
   HasItemTemplate,
@@ -72,23 +76,76 @@ export type CollapsibleProps = {
 } & EnsembleWidgetProps &
   HasItemTemplate;
 
-const CollapsibleContentRenderer = ({ content }: { content: unknown }) => {
-  const { evaluatedContent } = useEvaluate({ evaluatedContent: content });
+const Panel = ({
+  scope,
+  setTemplateItems,
+  template,
+}: {
+  scope: CustomScope;
+  template: CollapsibleItem;
+  setTemplateItems: React.Dispatch<React.SetStateAction<CollapsibleItem[]>>;
+}): null => {
+  const evaluated = useEvaluate({ ...template }, { context: scope });
+  const itemAddedRef = useRef(0);
 
-  const memoizedContent = useMemo(() => {
-    return isString(content)
-      ? evaluatedContent
-      : EnsembleRuntime.render([
-          unwrapWidget(content as { [key: string]: unknown }),
-        ]);
-  }, [content, evaluatedContent]);
+  const evaluatedItem = useMemo(() => {
+    const { key, label, children } = evaluated as {
+      [key: string]: Expression<string>;
+    };
 
-  return <>{memoizedContent}</>;
+    const header = isString(label)
+      ? label
+      : EnsembleRuntime.render([unwrapWidget(label)]);
+
+    const content = isString(children)
+      ? children
+      : EnsembleRuntime.render([unwrapWidget(children)]);
+
+    return {
+      key,
+      label: header as Expression<string>,
+      children: content as Expression<string>,
+    };
+  }, [evaluated]) as CollapsibleItem;
+
+  useEffect(() => {
+    itemAddedRef.current += 1;
+    if (itemAddedRef.current === 2) {
+      setTemplateItems((prev) => [...prev, { ...evaluatedItem }]);
+    }
+  }, [evaluatedItem, setTemplateItems]);
+
+  return null;
+};
+
+const TemplateItems = ({
+  namedData,
+  template,
+  setTemplateItems,
+}: {
+  namedData: object[];
+  template: CollapsibleItem;
+  setTemplateItems: React.Dispatch<React.SetStateAction<CollapsibleItem[]>>;
+}): React.ReactElement => {
+  return (
+    <>
+      {namedData.map((item, index) => (
+        <Panel
+          key={index}
+          scope={item as CustomScope}
+          setTemplateItems={setTemplateItems}
+          template={template}
+        />
+      ))}
+    </>
+  );
 };
 
 export const Collapsible: React.FC<CollapsibleProps> = (props) => {
   const { "item-template": itemTemplate, ...rest } = props;
   const [activeValue, setActiveValue] = useState<string[]>(props.value);
+  const [templateItems, setTemplateItems] = useState<CollapsibleItem[]>([]);
+
   const { values } = useRegisterBindings(
     { ...rest, activeValue, widgetName },
     props.id,
@@ -104,6 +161,7 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
 
   const collapsibleItems = useMemo(() => {
     const items = [];
+
     if (values?.items) {
       const tempItems = values.items.map((item) => {
         return {
@@ -120,39 +178,8 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
       items.push(...tempItems);
     }
 
-    if (isObject(itemTemplate) && !isEmpty(namedData)) {
-      const tempItems = namedData.map((item) => {
-        const evaluatedKey: string = evaluate(
-          defaultScreenContext,
-          itemTemplate.template.key,
-          { [itemTemplate.name]: get(item, itemTemplate.name) as unknown },
-        );
-
-        return {
-          ...item,
-          key: evaluatedKey,
-          label: (
-            <CustomScopeProvider value={item as CustomScope}>
-              <CollapsibleContentRenderer
-                content={itemTemplate.template.properties.label}
-              />
-            </CustomScopeProvider>
-          ),
-          children: (
-            <CustomScopeProvider value={item as CustomScope}>
-              <CollapsibleContentRenderer
-                content={itemTemplate.template.properties.children}
-              />
-            </CustomScopeProvider>
-          ),
-        };
-      });
-
-      items.push(...tempItems);
-    }
-
-    return items as CollapseProps["items"];
-  }, [values?.items, itemTemplate, namedData]);
+    return (items as CollapseProps["items"]) || [];
+  }, [values?.items]);
 
   // tweak the collapsible icons
   const expandIcon = (collapseStat: unknown) => {
@@ -173,24 +200,19 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
     );
   };
 
-  // trigger onCollapse action
-  const onCallapseActionCallback = useCallback(
+  const onCollapseActionCallback = useCallback(
     (data: string | string[]) => {
-      if (!onCollapseAction) {
-        return;
-      }
-
-      return onCollapseAction.callback({ data });
+      if (!onCollapseAction) return;
+      onCollapseAction.callback({ data });
     },
     [onCollapseAction],
   );
 
-  // handle onchange on callpase
+  // handle onchange on collapse
   const handleCollapsibleChange = (value: string | string[]): void => {
     setActiveValue(isArray(value) ? value : [value]);
-
-    // trigger oncollapse action
-    onCallapseActionCallback(value);
+    // trigger on collapse action
+    onCollapseActionCallback(value);
   };
 
   // Since I did not like the default names of the properties in the ant design Collapse component,
@@ -219,13 +241,22 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
       }}
     >
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-      <div onClick={(e) => e.stopPropagation()}>
+      <div onClick={(e): void => e.stopPropagation()}>
+        <TemplateItems
+          namedData={namedData}
+          setTemplateItems={setTemplateItems}
+          template={
+            itemTemplate?.template.properties as unknown as CollapsibleItem
+          }
+        />
         <Collapse
           accordion={values?.limitExpandedToOne || values?.isAccordion}
           activeKey={activeValue}
           expandIcon={expandIcon}
           expandIconPosition={props.expandIconPosition}
-          items={collapsibleItems}
+          items={
+            [...collapsibleItems, ...templateItems] as CollapseProps["items"]
+          }
           onChange={handleCollapsibleChange}
         />
       </div>

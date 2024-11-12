@@ -372,6 +372,7 @@ View:
                       console.log('>>>', {tooltipState})
 
         - Collapsible:
+            value: [2]
             item-template:
               data: [1, 2, 3]
               name: p
