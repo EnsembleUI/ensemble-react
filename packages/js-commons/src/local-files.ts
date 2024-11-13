@@ -133,11 +133,9 @@ export const getLocalApplicationTransporter = (
 
     return appData;
   },
-  updateYamlContent: async (
+  saveArtifact: async (
     appId: string,
-    documentId: string,
-    documentType: string,
-    content: string,
+    artifact: EnsembleDocument,
   ): Promise<void> => {
     const userAppFolder = await getYamlFolderPath(
       appId,
@@ -145,14 +143,22 @@ export const getLocalApplicationTransporter = (
       globalFolder,
     );
 
-    const filePath = await getYamlFilePath(
-      documentId,
-      documentType,
-      userAppFolder,
-    );
+    const artifactPath = getYamlArtifactPath(artifact.type, userAppFolder);
+    ensureDir(artifactPath);
 
-    ensureDir(filePath);
-    await writeFile(filePath, content, "utf-8");
+    const filesMetaData = JSON.parse(
+      await readFile(join(artifactPath, HiddenManifestFile), "utf-8"),
+    ) as Record<string, string>;
+
+    const updatedMetaData: Record<string, string> = {
+      ...filesMetaData,
+      [artifact.id]: artifact.name,
+    };
+
+    await Promise.all([
+      writeJsonData(join(artifactPath, HiddenManifestFile), updatedMetaData),
+      writeFile(join(artifactPath, artifact.name), artifact.content, "utf-8"),
+    ]);
   },
 });
 
@@ -302,36 +308,23 @@ const getYamlFolderPath = async (
   return userAppFolder;
 };
 
-const getYamlFilePath = async (
-  artifactId: string,
+const getYamlArtifactPath = (
   documentType: string,
   userAppFolder: string,
-): Promise<string> => {
-  let folderPath = "";
+): string => {
   switch (documentType) {
     case EnsembleDocumentType.Screen:
-      folderPath = join(userAppFolder, ArtifactYamlFolderNames.screens);
-      break;
+      return join(userAppFolder, ArtifactYamlFolderNames.screens);
     case EnsembleDocumentType.Widget:
-      folderPath = join(userAppFolder, ArtifactYamlFolderNames.widgets);
-      break;
+      return join(userAppFolder, ArtifactYamlFolderNames.widgets);
     case EnsembleDocumentType.Script:
-      folderPath = join(userAppFolder, ArtifactYamlFolderNames.scripts);
-      break;
+      return join(userAppFolder, ArtifactYamlFolderNames.scripts);
     case EnsembleDocumentType.I18n:
-      folderPath = join(userAppFolder, ArtifactYamlFolderNames.translations);
-      break;
+      return join(userAppFolder, ArtifactYamlFolderNames.translations);
     case EnsembleDocumentType.Theme:
-      folderPath = join(userAppFolder, ArtifactYamlFolderNames.theme);
+      return join(userAppFolder, ArtifactYamlFolderNames.theme);
   }
-
-  const filesMetaData = JSON.parse(
-    await readFile(join(folderPath, HiddenManifestFile), "utf-8"),
-  ) as Record<string, string>;
-
-  return folderPath
-    ? join(folderPath, `${filesMetaData[artifactId]}.yaml`)
-    : "";
+  return "";
 };
 
 // On Windows you need to hide file/folder by attributes
