@@ -1,330 +1,224 @@
 import { join } from "node:path";
 import { exec } from "node:child_process";
+import { homedir } from "node:os";
 import { existsSync, mkdirSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
+import { compact, groupBy } from "lodash-es";
 import type { LocalApplicationTransporter } from "./transporter";
-import {
-  type ApplicationDTO,
-  type EnsembleDocument,
-  type ApplicationMetaDTO,
-  EnsembleDocumentType,
+import { EnsembleDocumentType } from "./dto";
+import type {
+  AssetDTO,
+  ScreenDTO,
+  ScriptDTO,
+  TranslationDTO,
+  WidgetDTO,
+  ApplicationDTO,
+  EnsembleDocument,
+  EnvironmentDTO,
+  ThemeDTO,
+  HasManifest,
 } from "./dto";
 
-export const EnsembleHiddenFolder = ".ensemble";
-export const HiddenManifestFile = ".manifest.json";
-export const AppManifestDataFile = "apps-manifest.json";
+// Lookup where to find each app on the local FS
+const GLOBAL_MANIFEST_FILE = "local-apps-manifest.json";
+type EnsembleGlobalMetadata = Record<string, ApplicationLocalMeta | undefined>;
 
-export const ArtifactYamlFolderNames = {
-  theme: "Theme",
-  screens: "Screens",
-  widgets: "Widgets",
-  scripts: "Scripts",
-  translations: "Translations",
-} as const;
-
-export const ArtifactFilesName = {
-  theme: "theme.json",
-  assets: "asset.json",
-  screens: "screen.json",
-  widgets: "widget.json",
-  scripts: "script.json",
-  translations: "i18n.json",
-  env: "environment.json",
-  groupLabels: "label.json",
-} as const;
-
-export const getLocalApplicationTransporter = (
-  yamlFolder: string,
-  globalFolder: string,
-): LocalApplicationTransporter => ({
-  get: async (appId: string): Promise<ApplicationDTO> => {
-    const userYamlAppFolder = await getYamlFolderPath(
-      appId,
-      yamlFolder,
-      globalFolder,
-    );
-    const userAppFolder = join(userYamlAppFolder, EnsembleHiddenFolder);
-    if (!existsSync(userAppFolder))
-      throw Error("App data not found on user local disk.");
-
-    const applicationData = await readJsonFile<ApplicationDTO>(
-      join(userAppFolder, HiddenManifestFile),
-    );
-
-    const yamlFolders = {
-      theme: join(userYamlAppFolder, ArtifactYamlFolderNames.theme),
-      screens: join(userYamlAppFolder, ArtifactYamlFolderNames.screens),
-      widgets: join(userYamlAppFolder, ArtifactYamlFolderNames.widgets),
-      scripts: join(userYamlAppFolder, ArtifactYamlFolderNames.scripts),
-      translations: join(
-        userYamlAppFolder,
-        ArtifactYamlFolderNames.translations,
-      ),
-    };
-
-    const [themeYaml, screensYaml, scriptYaml, widgetYaml, translationsYaml] =
-      await Promise.all([
-        readYamlFiles(yamlFolders.theme),
-        readYamlFiles(yamlFolders.screens),
-        readYamlFiles(yamlFolders.scripts),
-        readYamlFiles(yamlFolders.widgets),
-        readYamlFiles(yamlFolders.translations),
-      ]);
-
-    const yamlApplicationData: ApplicationDTO = {
-      ...applicationData,
-      screens: applicationData.screens.map((screen) => {
-        return { ...screen, content: screensYaml[screen.id] ?? "" };
-      }),
-      ...applicationData.scripts?.map((script) => {
-        return { ...script, content: scriptYaml[script.id] ?? "" };
-      }),
-      ...applicationData.widgets?.map((widget) => {
-        return { ...widget, content: widgetYaml[widget.id] ?? "" };
-      }),
-      ...(applicationData.theme && {
-        theme: {
-          ...applicationData.theme,
-          content: themeYaml[applicationData.theme.id] ?? "",
-        },
-      }),
-      ...applicationData.translations?.map((translation) => {
-        return {
-          ...translation,
-          content: translationsYaml[translation.id] ?? "",
-        };
-      }),
-    };
-
-    return yamlApplicationData;
-  },
-  put: async (appData: ApplicationDTO): Promise<ApplicationDTO> => {
-    const userYamlAppFolder = await getYamlFolderPath(
-      appData.id,
-      yamlFolder,
-      globalFolder,
-    );
-
-    const userAppFolder = join(userYamlAppFolder, EnsembleHiddenFolder);
-    ensureDir(userAppFolder);
-
-    hideOnWindow(userAppFolder);
-
-    const yamlFolders = {
-      theme: join(userYamlAppFolder, ArtifactYamlFolderNames.theme),
-      screens: join(userYamlAppFolder, ArtifactYamlFolderNames.screens),
-      widgets: join(userYamlAppFolder, ArtifactYamlFolderNames.widgets),
-      scripts: join(userYamlAppFolder, ArtifactYamlFolderNames.scripts),
-      translations: join(
-        userYamlAppFolder,
-        ArtifactYamlFolderNames.translations,
-      ),
-    };
-
-    await writeJsonData(join(userAppFolder, AppManifestDataFile), appData);
-
-    await Promise.all([
-      writeYamlFiles(yamlFolders.screens, appData.screens ?? []),
-      writeYamlFiles(yamlFolders.scripts, appData.scripts ?? []),
-      writeYamlFiles(yamlFolders.widgets, appData.widgets ?? []),
-      appData.theme && writeYamlThemeFile(yamlFolders.theme, appData.theme),
-      writeYamlFiles(yamlFolders.translations, appData.translations ?? []),
-    ]);
-
-    return appData;
-  },
-  saveArtifact: async (
-    appId: string,
-    artifact: EnsembleDocument,
-  ): Promise<void> => {
-    const userAppFolder = await getYamlFolderPath(
-      appId,
-      yamlFolder,
-      globalFolder,
-    );
-
-    const artifactPath = getYamlArtifactPath(artifact.type, userAppFolder);
-    ensureDir(artifactPath);
-
-    const filesMetaData = JSON.parse(
-      await readFile(join(artifactPath, HiddenManifestFile), "utf-8"),
-    ) as Record<string, string>;
-
-    const updatedMetaData: Record<string, string> = {
-      ...filesMetaData,
-      [artifact.id]: artifact.name,
-    };
-
-    await Promise.all([
-      writeJsonData(join(artifactPath, HiddenManifestFile), updatedMetaData),
-      writeFile(join(artifactPath, artifact.name), artifact.content, "utf-8"),
-    ]);
-  },
-});
-
-export const getAppsMetaData = async (
-  globalFolderPath: string,
-): Promise<ApplicationMetaDTO[]> => {
-  try {
-    const filePath = join(globalFolderPath, AppManifestDataFile);
-
-    // Check if the file exists
-    if (!existsSync(filePath)) return [];
-
-    const data = JSON.parse(
-      await readFile(filePath, "utf-8"),
-    ) as ApplicationMetaDTO[];
-
-    const restoredData = data.map((app) => ({
-      ...app,
-      collaborators: new Map(Object.entries(app.collaborators ?? "")),
-    }));
-
-    return restoredData;
-  } catch (error) {
-    return [];
-  }
+const APP_MANIFEST_FILE = ".manifest.json";
+type ApplicationLocalMeta = ApplicationDTO & {
+  // TODO: extend with sync properties, i.e. last sync time
+  projectPath: string;
 };
 
-export const setAppsMetaData = async (
-  globalFolder: string,
-  defaultYamlPath: string,
-  appsMetaData: ApplicationMetaDTO[],
-): Promise<void> => {
-  // Write all apps manifest data in a single file
-  if (appsMetaData.length) {
-    let fileData: ApplicationMetaDTO[] = [];
+let METADATA_DIR = join(homedir(), ".ensemble");
 
-    ensureDir(globalFolder);
-    const filePath = join(globalFolder, AppManifestDataFile);
+export const getLocalApplicationTransporter = (
+  ensembleDir: string = METADATA_DIR,
+): LocalApplicationTransporter => {
+  METADATA_DIR = ensembleDir;
+  return {
+    get: async (appId: string): Promise<ApplicationDTO> => {
+      const appsMetaData = await getGlobalMetadata();
+      const existingAppMetadata = appsMetaData[appId];
+      if (!existingAppMetadata) {
+        throw Error(`App ${appId} not found on local disk`);
+      }
+      const appMetadata = await getAppManifest(existingAppMetadata.projectPath);
 
-    if (existsSync(filePath))
-      fileData = JSON.parse(
-        await readFile(filePath, "utf-8"),
-      ) as ApplicationMetaDTO[];
+      const documentReads = Object.values(appMetadata.manifest ?? {}).map(
+        async (document) => {
+          if (!document.type) {
+            return;
+          }
+          const subDir = join(existingAppMetadata.projectPath, document.type);
+          let filePath;
+          if (document.relativePath) {
+            filePath = join(subDir, document.relativePath);
+          } else if (document.name) {
+            filePath = join(subDir, `${document.name}.yaml`);
+          } else if (document.id) {
+            filePath = join(subDir, `${document.id}.yaml`);
+          } else {
+            return;
+          }
+          const content = await readFile(filePath, { encoding: "utf-8" });
+          return {
+            ...document,
+            content,
+          } as EnsembleDocument;
+        },
+      );
 
-    const localPathMap = new Map(
-      fileData.map((app) => [app.id, app.yamlFolderPath]),
-    );
-
-    // Convert the `collaborators` Map to an object for each app to store
-    const transformedApps = appsMetaData.map((metaData) => {
-      const yamlFolderPath = localPathMap.get(metaData.id);
+      const documents = compact(await Promise.all(documentReads));
+      const docsByType = groupBy(documents, (doc) => doc.type);
       return {
-        ...metaData,
-        yamlFolderPath: yamlFolderPath ?? join(defaultYamlPath, metaData.name), // Add path if there's a match or a default path
-        ...(metaData.collaborators && {
-          collaborators: Object.fromEntries(metaData.collaborators),
-        }),
+        ...existingAppMetadata,
+        screens: docsByType[EnsembleDocumentType.Screen] as ScreenDTO[],
+        widgets: docsByType[EnsembleDocumentType.Widget] as WidgetDTO[],
+        scripts: docsByType[EnsembleDocumentType.Script] as ScriptDTO[],
+        assets: docsByType[EnsembleDocumentType.Asset] as AssetDTO[],
+        translations: docsByType[EnsembleDocumentType.I18n] as TranslationDTO[],
+        env: docsByType[EnsembleDocumentType.Environment][0] as EnvironmentDTO,
+        theme: docsByType[EnsembleDocumentType.Theme][0] as ThemeDTO,
       };
-    });
+    },
 
-    await writeJsonData(filePath, transformedApps);
+    put: async (
+      appData: ApplicationDTO,
+      path?: string,
+    ): Promise<ApplicationDTO> => {
+      ensureDir(ensembleDir);
+      const appsMetaData = await getGlobalMetadata();
+      const existingAppMetadata = appsMetaData[appData.id]
+        ? { projectPath: path, ...appsMetaData[appData.id], appData }
+        : { ...appData, projectPath: path };
+      if (path) {
+        existingAppMetadata.projectPath = path;
+      } else {
+        existingAppMetadata.projectPath = join(ensembleDir, appData.id);
+      }
+
+      const yamlFileWrites = Object.values(appData.manifest ?? {}).map(
+        async (document) => {
+          const { relativePath } = await saveArtifact(
+            document as EnsembleDocument,
+            appData.id,
+            {
+              skipMetadata: true,
+            },
+          );
+          return {
+            ...document,
+            relativePath,
+          };
+        },
+      );
+
+      const documents = await Promise.all(yamlFileWrites);
+      await setAppManifest(
+        {
+          ...existingAppMetadata,
+          manifest: Object.fromEntries(
+            documents.map((doc) => [doc.id, doc]),
+          ) as Pick<HasManifest, "manifest">,
+        },
+        existingAppMetadata.projectPath,
+      );
+
+      await setGlobalMetadata(appsMetaData);
+      return appData;
+    },
+  };
+};
+
+export const saveArtifact = async (
+  artifact: EnsembleDocument,
+  appId: string,
+  options: {
+    relativePath?: string;
+    skipMetadata?: boolean;
+  } = {
+    skipMetadata: false,
+  },
+): Promise<{ relativePath: string }> => {
+  const appsMetaData = await getGlobalMetadata();
+  const existingAppMetadata = appsMetaData[appId];
+
+  if (!existingAppMetadata?.manifest) {
+    throw new Error(`App ${appId} does not exist locally`);
   }
+  const existingPath = existingAppMetadata.manifest[artifact.id].relativePath;
+
+  // TODO: allow custom project structures
+  const artifactSubDir = join(existingAppMetadata.projectPath, artifact.type);
+  ensureDir(artifactSubDir);
+  let pathToWrite = existingPath;
+  if (options.relativePath) {
+    pathToWrite = options.relativePath;
+  }
+  if (!pathToWrite) {
+    pathToWrite = `${artifact.name}.yaml`;
+  }
+
+  await writeFile(join(artifactSubDir, pathToWrite), artifact.content, "utf-8");
+
+  if (!options.skipMetadata) {
+    existingAppMetadata.manifest[artifact.id] = {
+      ...artifact,
+      relativePath: pathToWrite,
+    };
+
+    await setGlobalMetadata(appsMetaData);
+  }
+  return { relativePath: pathToWrite };
+};
+
+const getGlobalMetadata = async (): Promise<EnsembleGlobalMetadata> => {
+  const filePath = join(METADATA_DIR, GLOBAL_MANIFEST_FILE);
+
+  // Check if the file exists
+  if (!existsSync(filePath)) {
+    return {};
+  }
+
+  const metadata = readJsonFile<EnsembleGlobalMetadata>(filePath);
+  return metadata;
+};
+
+const setGlobalMetadata = async (
+  metadata: EnsembleGlobalMetadata,
+): Promise<void> => {
+  ensureDir(METADATA_DIR);
+  const filePath = join(METADATA_DIR, GLOBAL_MANIFEST_FILE);
+
+  await writeJsonData(filePath, metadata);
+};
+
+const getAppManifest = async (projectPath: string): Promise<HasManifest> => {
+  const filePath = join(projectPath, APP_MANIFEST_FILE);
+
+  // Check if the file exists
+  if (!existsSync(filePath)) {
+    return {};
+  }
+
+  const manifest = readJsonFile<ApplicationLocalMeta>(filePath);
+  return manifest;
+};
+
+const setAppManifest = async (
+  manifest: HasManifest,
+  projectPath: string,
+): Promise<void> => {
+  ensureDir(projectPath);
+
+  const filePath = join(METADATA_DIR, APP_MANIFEST_FILE);
+
+  await writeJsonData(filePath, manifest, true);
 };
 
 const readJsonFile = async <T>(filePath: string): Promise<T> => {
   const fileContents = await readFile(filePath, "utf-8");
   return JSON.parse(fileContents) as T;
-};
-
-const writeYamlFiles = async <T extends EnsembleDocument>(
-  folderPath: string,
-  artifact: T[],
-): Promise<void> => {
-  ensureDir(folderPath);
-
-  const artifactMetaData: Record<string, string> = {};
-  const filePromises = artifact.map(async (item) => {
-    const yamlFilePath = join(folderPath, `${item.name}.yaml`);
-    artifactMetaData[item.id] = `${item.name}.yaml`;
-    await writeFile(yamlFilePath, item.content, "utf-8");
-  });
-
-  filePromises.push(
-    writeJsonData(join(folderPath, HiddenManifestFile), artifactMetaData, true),
-  );
-
-  await Promise.all(filePromises);
-};
-
-const readYamlFiles = async (
-  folderPath: string,
-): Promise<Record<string, string>> => {
-  const hiddenFile = join(folderPath, EnsembleHiddenFolder);
-
-  try {
-    const filesMetaData = JSON.parse(
-      await readFile(hiddenFile, "utf-8"),
-    ) as Record<string, string>;
-
-    const fileContentEntries = await Promise.all(
-      Object.entries(filesMetaData).map(async ([key, fileName]) => {
-        try {
-          const content = await readFile(join(folderPath, fileName), "utf-8");
-          return [key, content];
-        } catch {
-          return [key, ""];
-        }
-      }),
-    );
-
-    return Object.fromEntries(fileContentEntries) as Record<string, string>;
-  } catch {
-    return {};
-  }
-};
-
-const writeYamlThemeFile = async <T extends EnsembleDocument>(
-  folderPath: string,
-  artifact: T,
-): Promise<void> => {
-  ensureDir(folderPath);
-  const yamlFilePath = join(folderPath, "Theme.yaml");
-  const artifactMetaData = { [artifact.id]: "Theme.yaml" };
-  if (!existsSync(yamlFilePath))
-    await Promise.all([
-      writeFile(yamlFilePath, artifact.content, "utf-8"),
-      writeJsonData(
-        join(folderPath, HiddenManifestFile),
-        artifactMetaData,
-        true,
-      ),
-    ]);
-};
-
-const getYamlFolderPath = async (
-  appId: string,
-  yamlFolder: string,
-  globalFolder: string,
-): Promise<string> => {
-  const globalMetaData = await getAppsMetaData(globalFolder);
-  const appMetaData = globalMetaData.find((app) => app.id === appId);
-  if (!appMetaData) throw Error("App data not found on user local disk.");
-
-  const userAppFolder =
-    appMetaData.yamlFolderPath ?? join(yamlFolder, appMetaData.name);
-
-  return userAppFolder;
-};
-
-const getYamlArtifactPath = (
-  documentType: string,
-  userAppFolder: string,
-): string => {
-  switch (documentType) {
-    case EnsembleDocumentType.Screen:
-      return join(userAppFolder, ArtifactYamlFolderNames.screens);
-    case EnsembleDocumentType.Widget:
-      return join(userAppFolder, ArtifactYamlFolderNames.widgets);
-    case EnsembleDocumentType.Script:
-      return join(userAppFolder, ArtifactYamlFolderNames.scripts);
-    case EnsembleDocumentType.I18n:
-      return join(userAppFolder, ArtifactYamlFolderNames.translations);
-    case EnsembleDocumentType.Theme:
-      return join(userAppFolder, ArtifactYamlFolderNames.theme);
-  }
-  return "";
 };
 
 // On Windows you need to hide file/folder by attributes
