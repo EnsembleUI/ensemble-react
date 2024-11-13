@@ -493,3 +493,42 @@ test("properly updates widgetState and returns correct values with forceState op
     });
   });
 });
+
+test("check registerBindings stale methods", async () => {
+  const fn1 = jest.fn();
+  const fn2 = jest.fn();
+  const testValues = { count: 1 };
+
+  // Initialize store with initial values
+  store.set(screenAtom, {
+    widgets: {},
+    data: {},
+    storage: {},
+  });
+
+  const { rerender } = renderHook(
+    (props) => useRegisterBindings(props.values, "test_stale", props.methods),
+    {
+      initialProps: {
+        values: testValues,
+        methods: { updateCount: fn1 },
+      },
+    },
+  );
+
+  // Rerender with new methods
+  rerender({
+    values: testValues,
+    methods: { updateCount: fn2 },
+  });
+
+  await waitFor(() => {
+    const finalScreen = store.get(screenAtom);
+    expect(finalScreen.widgets.test_stale?.invokable?.methods).not.toEqual({
+      updateCount: fn1,
+    });
+    expect(finalScreen.widgets.test_stale?.invokable?.methods).toEqual({
+      updateCount: fn2,
+    });
+  });
+});
