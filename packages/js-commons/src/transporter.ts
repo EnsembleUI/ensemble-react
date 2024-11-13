@@ -8,16 +8,11 @@ export interface ApplicationTransporter {
 export interface LocalApplicationTransporter extends ApplicationTransporter {
   get: (appId: string) => Promise<ApplicationDTO>;
   put: (app: ApplicationDTO) => Promise<ApplicationDTO>;
-  getYamlContent: (
-    appId: string,
-    documentId: string,
-    documentType: string,
-  ) => Promise<string>;
   updateYamlContent: (
     appId: string,
-    documentId: string,
-    documentType: string,
+    artifactId: string,
+    artifactName: string,
+    artifactType: string,
     content: string,
   ) => Promise<void>;
-  putAppYaml: (app: ApplicationDTO) => Promise<void>;
 }
