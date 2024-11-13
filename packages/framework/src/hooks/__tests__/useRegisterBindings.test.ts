@@ -1,8 +1,9 @@
 /* eslint import/first: 0 */
-import { renderHook } from "@testing-library/react";
+import { renderHook, waitFor } from "@testing-library/react";
 import { getDefaultStore } from "jotai";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import isEqual from "react-fast-compare";
+import { act } from "react-dom/test-utils";
 import _ from "lodash";
 import { useRegisterBindings } from "../useRegisterBindings";
 import { screenAtom } from "../../state";
@@ -430,4 +431,65 @@ test("compare arrays with lodash isEqual", () => {
   };
 
   expect(_.isEqual(newValues, prevValues.values)).toBe(true);
+});
+
+test("properly updates widgetState and returns correct values with forceState option", async () => {
+  // Render useState hook to manage values
+  const { result: countStat } = renderHook(() => useState(1));
+  const { result: fruitStat } = renderHook(() => useState("apple"));
+
+  const mockMethods = {
+    updateCount: countStat.current[1],
+    updateFruit: fruitStat.current[1],
+  };
+
+  // Initialize store with initial values
+  store.set(screenAtom, {
+    widgets: {},
+    data: {},
+    storage: {},
+  });
+
+  const { result: registerBindingResult, rerender } = renderHook(() =>
+    useRegisterBindings(
+      { count: countStat.current[0], fruit: fruitStat.current[0] },
+      "test",
+      mockMethods,
+    ),
+  );
+
+  // Initial value should be 1
+  expect(registerBindingResult.current.values).toMatchObject({
+    count: 1,
+    fruit: "apple",
+  });
+
+  // Update count using act to properly handle state updates
+  act(() => {
+    mockMethods.updateCount(3);
+    mockMethods.updateFruit("banana");
+  });
+
+  rerender();
+
+  await waitFor(() => {
+    expect(countStat.current[0]).toBe(3);
+    expect(fruitStat.current[0]).toBe("banana");
+    expect(registerBindingResult.current.values).toMatchObject({
+      count: 3,
+      fruit: "banana",
+    });
+
+    const finalScreen = store.get(screenAtom);
+    expect(finalScreen.widgets.test).toMatchObject({
+      values: {
+        count: 3,
+        fruit: "banana",
+      },
+      invokable: {
+        id: "test",
+        methods: mockMethods,
+      },
+    });
+  });
 });
