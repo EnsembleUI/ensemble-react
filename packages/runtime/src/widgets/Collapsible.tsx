@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   type Expression,
   unwrapWidget,
@@ -12,7 +6,6 @@ import {
   type EnsembleAction,
   useTemplateData,
   useEvaluate,
-  type CustomScope,
 } from "@ensembleui/react-framework";
 import type { CollapseProps } from "antd";
 import { Collapse, ConfigProvider } from "antd";
@@ -33,6 +26,12 @@ interface CollapsibleItem {
   key: Expression<string>;
   label: Expression<string> | { [key: string]: unknown };
   children: Expression<string> | { [key: string]: unknown };
+}
+
+interface CollapsibleTemplate {
+  key: Expression<string>;
+  label: React.ReactNode;
+  children: React.ReactNode;
 }
 
 interface CollapsibleHeaderStyles {
@@ -76,75 +75,62 @@ export type CollapsibleProps = {
 } & EnsembleWidgetProps &
   HasItemTemplate;
 
-const Panel = ({
-  scope,
-  setTemplateItems,
-  template,
-}: {
-  scope: CustomScope;
-  template: CollapsibleItem;
-  setTemplateItems: React.Dispatch<React.SetStateAction<CollapsibleItem[]>>;
-}): null => {
-  const evaluated = useEvaluate({ ...template }, { context: scope });
-  const itemAddedRef = useRef(0);
+// Custom hook to evaluate an array of expressions using useEvaluate
+const useEvaluateExpressions = (
+  template: CollapsibleItem,
+  namedData: object[],
+): CollapsibleTemplate[] => {
+  const [evaluatedItems, setEvaluatedItems] = useState<CollapsibleTemplate[]>(
+    [],
+  );
+  const [currentIndex, setCurrentIndex] = useState(-1);
 
-  const evaluatedItem = useMemo(() => {
-    const { key, label, children } = evaluated as {
-      [key: string]: Expression<string>;
-    };
+  const context = namedData[currentIndex];
+  const evaluated = useEvaluate({ ...template }, { context });
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    if (!namedData.length) return;
+    if (currentIndex >= namedData.length) return;
+    if (currentIndex < 0) {
+      timer = setTimeout(() => {
+        setCurrentIndex((prev) => prev + 1);
+      }, 0);
+      return;
+    }
+
+    const { key, label, children } = evaluated;
 
     const header = isString(label)
       ? label
       : EnsembleRuntime.render([unwrapWidget(label)]);
 
-    const content = isString(children)
-      ? children
-      : EnsembleRuntime.render([unwrapWidget(children)]);
+    const content = EnsembleRuntime.render([unwrapWidget(children)]);
 
-    return {
-      key,
-      label: header as Expression<string>,
-      children: content as Expression<string>,
-    };
-  }, [evaluated]) as CollapsibleItem;
+    setEvaluatedItems((prev) => {
+      const prevEvaluated = [...prev];
+      prevEvaluated[currentIndex] = {
+        key,
+        label: header,
+        children: content,
+      };
+      return prevEvaluated;
+    });
 
-  useEffect(() => {
-    itemAddedRef.current += 1;
-    if (itemAddedRef.current === 2) {
-      setTemplateItems((prev) => [...prev, { ...evaluatedItem }]);
-    }
-  }, [evaluatedItem, setTemplateItems]);
+    // Move to next expression
+    timer = setTimeout(() => {
+      setCurrentIndex((prev) => prev + 1);
+    }, 0);
 
-  return null;
-};
+    return () => clearTimeout(timer);
+  }, [currentIndex, evaluated, context, namedData]);
 
-const TemplateItems = ({
-  namedData,
-  template,
-  setTemplateItems,
-}: {
-  namedData: object[];
-  template: CollapsibleItem;
-  setTemplateItems: React.Dispatch<React.SetStateAction<CollapsibleItem[]>>;
-}): React.ReactElement => {
-  return (
-    <>
-      {namedData.map((item, index) => (
-        <Panel
-          key={index}
-          scope={item as CustomScope}
-          setTemplateItems={setTemplateItems}
-          template={template}
-        />
-      ))}
-    </>
-  );
+  return evaluatedItems;
 };
 
 export const Collapsible: React.FC<CollapsibleProps> = (props) => {
   const { "item-template": itemTemplate, ...rest } = props;
   const [activeValue, setActiveValue] = useState<string[]>(props.value);
-  const [templateItems, setTemplateItems] = useState<CollapsibleItem[]>([]);
 
   const { values } = useRegisterBindings(
     { ...rest, activeValue, widgetName },
@@ -169,9 +155,7 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
           label: isString(item.label)
             ? item.label
             : EnsembleRuntime.render([unwrapWidget(item.label)]),
-          children: isString(item.children)
-            ? item.children
-            : EnsembleRuntime.render([unwrapWidget(item.children)]),
+          children: EnsembleRuntime.render([unwrapWidget(item.children)]),
         };
       });
 
@@ -229,6 +213,11 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
     });
   };
 
+  const evaluatedItems = useEvaluateExpressions(
+    itemTemplate?.template.properties as unknown as CollapsibleItem,
+    namedData,
+  );
+
   return (
     <ConfigProvider
       theme={{
@@ -240,26 +229,16 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
         },
       }}
     >
-      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-      <div onClick={(e): void => e.stopPropagation()}>
-        <TemplateItems
-          namedData={namedData}
-          setTemplateItems={setTemplateItems}
-          template={
-            itemTemplate?.template.properties as unknown as CollapsibleItem
-          }
-        />
-        <Collapse
-          accordion={values?.limitExpandedToOne || values?.isAccordion}
-          activeKey={activeValue}
-          expandIcon={expandIcon}
-          expandIconPosition={props.expandIconPosition}
-          items={
-            [...collapsibleItems, ...templateItems] as CollapseProps["items"]
-          }
-          onChange={handleCollapsibleChange}
-        />
-      </div>
+      <Collapse
+        accordion={values?.limitExpandedToOne || values?.isAccordion}
+        activeKey={activeValue}
+        expandIcon={expandIcon}
+        expandIconPosition={props.expandIconPosition}
+        items={
+          [...collapsibleItems, ...evaluatedItems] as CollapseProps["items"]
+        }
+        onChange={handleCollapsibleChange}
+      />
     </ConfigProvider>
   );
 };
