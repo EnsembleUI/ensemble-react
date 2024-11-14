@@ -1,0 +1,233 @@
+View:
+  onLoad:
+    executeCode: |
+      ensemble.storage.set('targetScreen', 'forms');
+      ensemble.storage.set('targetUrl', '/forms');
+      ensemble.storage.set('socketMsg', 'Sagar');
+
+  body:
+    Column:
+      styles:
+        names: ${ensemble.storage.get('yyy')}
+      children:
+        - Button:
+            id: navigateScreen
+            label: navigate screen
+            onTap:
+              navigateScreen:
+                name: ${ensemble.storage.get('targetScreen')}
+        - Button:
+            id: executeCode
+            label: change navigate screen to help screen
+            onTap:
+              executeCode: |
+                ensemble.storage.set('targetScreen', 'help')
+        - Button:
+            id: navigateUrl
+            label: navigate url
+            onTap:
+              navigateUrl:
+                url: ${ensemble.storage.get('targetUrl')}
+        - Button:
+            id: invokeAPI
+            label: invoke api
+            onTap:
+              invokeAPI:
+                name: ERROR500
+                onError:
+                  showToast:
+                    message: ${error.response.data.description}
+                    options:
+                      type: error
+                      position: topRight
+        - Button:
+            id: navigateExternalScreen
+            label: navigate external screen
+            onTap:
+              navigateExternalScreen:
+                url: https://google.com
+        - Button:
+            id: openUrl
+            label: open url
+            onTap:
+              openUrl:
+                url: https://google.com
+        - Button:
+            id: showToast
+            label: show toast
+            onTap:
+              showToast:
+                message: Hello
+                options:
+                  type: success
+                  position: topRight
+        - Button:
+            id: showDialog
+            label: show dialog
+            onTap:
+              showDialog:
+                body:
+                  Button:
+                    label: Close all dialogs
+                    onTap:
+                      closeAllDialogs:
+        - Button:
+            id: pickFiles
+            label: pick files
+            onTap:
+              pickFiles:
+        - Button:
+            id: executeActionGroups
+            label: execute action groups
+            onTap:
+              executeActionGroup:
+                actions:
+                  - invokeAPI:
+                      name: ERROR500
+                      onError:
+                        showToast:
+                          message: ${error.response.data.description}
+                          options:
+                            type: error
+                            position: topRight
+                  - showToast:
+                      message: Hi
+                      options:
+                        type: success
+                        position: topLeft
+        - Button:
+            id: socketConnection
+            label: connect socket
+            onTap:
+              connectSocket:
+                name: echo
+        - Button:
+            id: socketSendMessage
+            label: message socket
+            onTap:
+              messageSocket:
+                name: echo
+                message:
+                  msg: ${ensemble.storage.get('socketMsg')}
+        - Button:
+            id: socketDisconnect
+            label: disconnect socket
+            onTap:
+              disconnectSocket:
+                name: echo
+        - Button:
+            id: conditionalActionCall
+            label: Tap to pick an image
+            onTap:
+              pickFiles:
+                allowMultiple: true
+                onComplete:
+                  executeConditionalAction:
+                    conditions:
+                      - if: ${!verifyFileExtension(files[0].name)}
+                        action:
+                          showDialog:
+                            body:
+                              Text:
+                                text: Invalid file type. Please upload a JPG or PNG file.
+                      - elseif: ${verifyFileExtension(files[0].name)}
+                        action:
+                          showDialog:
+                            body:
+                              Text:
+                                text: File uploaded successfully.
+                onError:
+                  showToast:
+                    message: Sorry
+                    options:
+                      type: error
+                      position: topRight
+        - Button:
+            id: uploadFiles
+            label: Tap to pick an image and upload
+            onTap:
+              pickFiles:
+                id: uploadFilePicker
+                allowedExtensions: ["jpg", "png", "pdf", "docs"]
+                onComplete:
+                  uploadFiles:
+                    uploadApi: UPLOADFILE
+                    id: uploadFileAction
+                    files: ${uploadFilePicker.files}
+                    fieldName: user_files
+                    onComplete:
+                      showToast:
+                        message: Done
+                        options:
+                          type: success
+                          position: topLeft
+                    onError:
+                      showToast:
+                        message: Failed
+                        options:
+                          type: error
+                          position: topRight
+                onError:
+                  showToast:
+                    message: Sorry
+                    options:
+                      type: error
+                      position: topRight
+        - Button:
+            id: navigateModalScreen
+            label: open another modal screen
+            onTap:
+              navigateModalScreen:
+                name: forms
+                height: 200px
+                width: 900px
+        - Button:
+            id: navigateBack
+            label: navigate back
+            onTap:
+              navigateBack:
+        - Button:
+            id: closeAllScreens
+            label: close all screens
+            onTap:
+              closeAllScreens:
+
+Socket:
+  echo:
+    uri: wss://echo.websocket.org/
+
+    onSuccess:
+      showToast:
+        message: Connected
+        options:
+          type: success
+          position: topRight
+
+    onReceive:
+      showToast:
+        message: Received
+        options:
+          type: success
+          position: topRight
+
+    onDisconnect:
+      showToast:
+        message: Disconnected
+        options:
+          type: success
+          position: topRight
+
+API:
+  ERROR500:
+    method: GET
+    uri: https://httpstat.us/500
+
+  UPLOADFILE:
+    method: POST
+    uri: http://192.168.1.7:2000/
+
+Global: |
+  function verifyFileExtension(fileName) {
+    const listOfPossibleExtensions = ['.png', '.jpg', '.jpeg'];
+    return !!listOfPossibleExtensions.find((ext) => fileName.endsWith(ext));
+  }
