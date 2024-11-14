@@ -5,9 +5,10 @@ import userEvent from "@testing-library/user-event";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { BrowserRouter } from "react-router-dom";
-import { Button } from "../Button";
+import { Button, type ButtonProps } from "../Button";
 import { createCustomWidget } from "../../runtime/customWidget";
 import { Column } from "../Column";
+import { useRegisterBindings } from "@ensembleui/react-framework";
 
 test("test button loading using setLoading", async () => {
   // Render the button component
@@ -469,49 +470,60 @@ beforeEach(() => {
   mockOpen.mockClear();
 });
 
-test("should update the action on bindings changes", async () => {
+test("should update the action on bindings changes and track renders", async () => {
+  let renderCount = 0;
+
+  // Wrapper component to track renders that evaluates the binding
+  const NavigateButton: React.FC<ButtonProps> = (props) => {
+    // Evaluate the binding in wrapper to track re-renders
+    const { values } = useRegisterBindings({
+      url: `\${ensemble.storage.get('targetUrl')}`,
+    });
+
+    renderCount++;
+
+    return (
+      <Button
+        {...props}
+        onTap={{
+          navigateExternalScreen: values?.url,
+        }}
+      />
+    );
+  };
+
   render(
-    <Column
-      children={[
-        {
-          name: "Button",
-          properties: {
-            id: "navigateUrl",
-            label: "Navigate URL",
-            onTap: {
-              navigateExternalScreen: `\${ensemble.storage.get('targetUrl')}`,
-            },
-          },
-        },
-        {
-          name: "Button",
-          properties: {
-            label: "Update target url 1",
-            onTap: {
-              executeCode:
-                "ensemble.storage.set('targetUrl', 'http://google.com')",
-            },
-          },
-        },
-        {
-          name: "Button",
-          properties: {
-            label: "Update target url 2",
-            onTap: {
-              executeCode:
-                "ensemble.storage.set('targetUrl', 'http://youtube.com')",
-            },
-          },
-        },
-      ]}
-    />,
+    <>
+      <NavigateButton id="navigateUrl" label="Navigate URL" />
+      <Button
+        label="Update target url 1"
+        onTap={{
+          executeCode: "ensemble.storage.set('targetUrl', 'http://google.com')",
+        }}
+      />
+      <Button
+        label="Update target url 2"
+        onTap={{
+          executeCode:
+            "ensemble.storage.set('targetUrl', 'http://youtube.com')",
+        }}
+      />
+    </>,
     {
       wrapper: BrowserRouter,
     },
   );
 
+  // Initial render
+  expect(renderCount).toBe(2);
+
   const updateUrlbtn1 = screen.getByText("Update target url 1");
   fireEvent.click(updateUrlbtn1);
+
+  // Should re-render after storage update
+  await waitFor(() => {
+    expect(renderCount).toBe(3);
+  });
 
   const navigateUrlbtn = screen.getByText("Navigate URL");
   fireEvent.click(navigateUrlbtn);
@@ -522,6 +534,11 @@ test("should update the action on bindings changes", async () => {
 
   const updateUrlbtn2 = screen.getByText("Update target url 2");
   fireEvent.click(updateUrlbtn2);
+
+  // Should re-render after second storage update
+  await waitFor(() => {
+    expect(renderCount).toBe(4);
+  });
 
   fireEvent.click(navigateUrlbtn);
 
