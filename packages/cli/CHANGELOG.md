@@ -1,5 +1,11 @@
 # @ensembleui/cli
 
+## 0.0.5
+
+### Patch Changes
+
+- 6ce699c: Fix CLI build
+
 ## 0.0.4
 
 ### Patch Changes
