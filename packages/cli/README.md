@@ -16,11 +16,11 @@ Ensemble CLI for managing apps
 # Usage
 <!-- usage -->
 ```sh-session
-$ npm install -g ensemble-cli
+$ npm install -g @ensembleui/cli
 $ ensemble COMMAND
 running command...
 $ ensemble (--version)
-ensemble-cli/0.0.0 darwin-arm64 node-v18.18.2
+@ensembleui/cli/0.0.4 darwin-arm64 node-v18.18.2
 $ ensemble --help [COMMAND]
 USAGE
   $ ensemble COMMAND
@@ -29,11 +29,7 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`ensemble apps list`](#ensemble-apps-list)
-* [`ensemble hello PERSON`](#ensemble-hello-person)
-* [`ensemble hello world`](#ensemble-hello-world)
 * [`ensemble help [COMMAND]`](#ensemble-help-command)
-* [`ensemble login`](#ensemble-login)
 * [`ensemble plugins`](#ensemble-plugins)
 * [`ensemble plugins add PLUGIN`](#ensemble-plugins-add-plugin)
 * [`ensemble plugins:inspect PLUGIN...`](#ensemble-pluginsinspect-plugin)
@@ -44,66 +40,6 @@ USAGE
 * [`ensemble plugins uninstall [PLUGIN]`](#ensemble-plugins-uninstall-plugin)
 * [`ensemble plugins unlink [PLUGIN]`](#ensemble-plugins-unlink-plugin)
 * [`ensemble plugins update`](#ensemble-plugins-update)
-* [`ensemble update-password`](#ensemble-update-password)
-
-## `ensemble apps list`
-
-List all apps you have access to
-
-```
-USAGE
-  $ ensemble apps list
-
-DESCRIPTION
-  List all apps you have access to
-
-EXAMPLES
-  $ ensemble apps list
-```
-
-_See code: [dist/commands/apps/list.js](https://github.com/@ensembleui/ensemble-react/blob/v0.0.0/dist/commands/apps/list.js)_
-
-## `ensemble hello PERSON`
-
-Say hello
-
-```
-USAGE
-  $ ensemble hello PERSON -f <value>
-
-ARGUMENTS
-  PERSON  Person to say hello to
-
-FLAGS
-  -f, --from=<value>  (required) Who is saying hello
-
-DESCRIPTION
-  Say hello
-
-EXAMPLES
-  $ ensemble hello friend --from oclif
-  hello friend from oclif! (./src/commands/hello/index.ts)
-```
-
-_See code: [dist/commands/hello/index.js](https://github.com/@ensembleui/ensemble-react/blob/v0.0.0/dist/commands/hello/index.js)_
-
-## `ensemble hello world`
-
-Say hello world
-
-```
-USAGE
-  $ ensemble hello world
-
-DESCRIPTION
-  Say hello world
-
-EXAMPLES
-  $ ensemble hello world
-  hello world! (./src/commands/hello/world.ts)
-```
-
-_See code: [dist/commands/hello/world.js](https://github.com/@ensembleui/ensemble-react/blob/v0.0.0/dist/commands/hello/world.js)_
 
 ## `ensemble help [COMMAND]`
 
@@ -124,24 +60,6 @@ DESCRIPTION
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.2.16/src/commands/help.ts)_
-
-## `ensemble login`
-
-Sign in to Ensemble with email and password
-
-```
-USAGE
-  $ ensemble login -e <value> -p <value>
-
-FLAGS
-  -e, --email=<value>     (required) User email
-  -p, --password=<value>  (required) User password
-
-DESCRIPTION
-  Sign in to Ensemble with email and password
-```
-
-_See code: [dist/commands/login.js](https://github.com/@ensembleui/ensemble-react/blob/v0.0.0/dist/commands/login.js)_
 
 ## `ensemble plugins`
 
@@ -432,23 +350,4 @@ DESCRIPTION
 ```
 
 _See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v5.4.15/src/commands/plugins/update.ts)_
-
-## `ensemble update-password`
-
-Update a user's password in Ensemble
-
-```
-USAGE
-  $ ensemble update-password -e <value> -n <value> -o <value>
-
-FLAGS
-  -e, --email=<value>        (required) Old password
-  -n, --newPassword=<value>  (required) New password
-  -o, --oldPassword=<value>  (required) Old password
-
-DESCRIPTION
-  Update a user's password in Ensemble
-```
-
-_See code: [dist/commands/update-password.js](https://github.com/@ensembleui/ensemble-react/blob/v0.0.0/dist/commands/update-password.js)_
 <!-- commandsstop -->
