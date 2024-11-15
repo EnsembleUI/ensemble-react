@@ -1,4 +1,0 @@
-{
-  "*.{js,ts,tsx}": ["npm run format", "npm run lint --"],
-  "*.yaml": ["npm run format"]
-}

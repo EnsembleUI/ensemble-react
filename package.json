@@ -11,8 +11,10 @@
     "schema:generate": "ts-node --esm ./scripts/generateSchema.ts"
   },
   "devDependencies": {
-    "lint-staged": "^14.0.1",
     "@changesets/cli": "^2.26.2",
+    "jest": "^27.5.1",
+    "lint-staged": "^14.0.1",
+    "prettier": "^3.0.3",
     "ts-jest": "27.1.5",
     "ts-json-schema-generator": "^1.5.0",
     "ts-node": "^10.9.2",
