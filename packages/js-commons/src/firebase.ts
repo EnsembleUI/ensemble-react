@@ -20,10 +20,10 @@ import type {
   ApplicationDTO,
   ScreenDTO,
   ScriptDTO,
-  ThemeDTO,
   WidgetDTO,
   TranslationDTO,
-  EnvironmentDTO,
+  ThemeDTO,
+  HasManifest,
 } from "./dto";
 import type { ApplicationTransporter } from "./transporter";
 
@@ -38,19 +38,17 @@ export const getFirestoreApplicationTransporter = (
       ...appDoc.data(),
     } as ApplicationDTO;
 
-    const artifacts = await getArtifacts(appDocRef);
+    const artifactsByType = await getArtifactsByType(appDocRef);
 
-    const screens = artifacts[EnsembleDocumentType.Screen] as ScreenDTO[];
-    const widgets = artifacts[EnsembleDocumentType.Widget] as WidgetDTO[];
-    const scripts = artifacts[EnsembleDocumentType.Script] as ScriptDTO[];
-    const theme = head(artifacts[EnsembleDocumentType.Theme]) as ThemeDTO;
-    const assets = artifacts[EnsembleDocumentType.Asset] as AssetDTO[];
-    const translations = artifacts[
+    const screens = artifactsByType[EnsembleDocumentType.Screen] as ScreenDTO[];
+    const widgets = artifactsByType[EnsembleDocumentType.Widget] as WidgetDTO[];
+    const scripts = artifactsByType[EnsembleDocumentType.Script] as ScriptDTO[];
+    const theme = head(artifactsByType[EnsembleDocumentType.Theme]) as ThemeDTO;
+    const assets = artifactsByType[EnsembleDocumentType.Asset] as AssetDTO[];
+    const translations = artifactsByType[
       EnsembleDocumentType.I18n
     ] as TranslationDTO[];
-    const env = head(
-      artifacts[EnsembleDocumentType.Environment],
-    ) as EnvironmentDTO;
+    const env = head(artifactsByType[EnsembleDocumentType.Environment]);
 
     return {
       ...app,
@@ -62,6 +60,11 @@ export const getFirestoreApplicationTransporter = (
       translations,
       assets,
       env,
+      manifest: Object.fromEntries(
+        Object.values(artifactsByType).flatMap((artifacts) =>
+          artifacts.map((artifact) => [artifact.id, artifact]),
+        ),
+      ) as Pick<HasManifest, "manifest">,
     };
   },
 
@@ -158,7 +161,7 @@ export const getFirestoreApplicationTransporter = (
   },
 });
 
-const getArtifacts = async (
+const getArtifactsByType = async (
   appRef: DocumentReference,
 ): Promise<Record<EnsembleDocumentType, DocumentData[]>> => {
   const [artifactsSnapshot, internalArtifactsSnapshot, labelsSnapshot] =

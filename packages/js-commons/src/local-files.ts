@@ -88,30 +88,32 @@ export const getLocalApplicationTransporter = (
     ): Promise<ApplicationDTO> => {
       ensureDir(ensembleDir);
       const appsMetaData = await getGlobalMetadata();
-      const existingAppMetadata = appsMetaData[appData.id]
-        ? { projectPath: path, ...appsMetaData[appData.id], appData }
-        : { ...appData, projectPath: path };
+      const existingAppMetadata = (
+        appsMetaData[appData.id]
+          ? { projectPath: path, ...appsMetaData[appData.id], ...appData }
+          : { ...appData, projectPath: path }
+      ) as ApplicationLocalMeta;
       if (path) {
         existingAppMetadata.projectPath = path;
       } else {
         existingAppMetadata.projectPath = join(ensembleDir, appData.id);
       }
 
-      const yamlFileWrites = Object.values(appData.manifest ?? {}).map(
-        async (document) => {
-          const { relativePath } = await saveArtifact(
-            document as EnsembleDocument,
-            appData.id,
-            {
-              skipMetadata: true,
-            },
-          );
-          return {
-            ...document,
-            relativePath,
-          };
-        },
-      );
+      const yamlFileWrites = Object.values(
+        existingAppMetadata.manifest ?? {},
+      ).map(async (document) => {
+        const { relativePath } = await saveArtifact(
+          document as EnsembleDocument,
+          existingAppMetadata,
+          {
+            skipMetadata: true,
+          },
+        );
+        return {
+          ...document,
+          relativePath,
+        };
+      });
 
       const documents = await Promise.all(yamlFileWrites);
       await setAppManifest(
@@ -124,6 +126,7 @@ export const getLocalApplicationTransporter = (
         existingAppMetadata.projectPath,
       );
 
+      appsMetaData[appData.id] = existingAppMetadata;
       await setGlobalMetadata(appsMetaData);
       return appData;
     },
@@ -132,7 +135,7 @@ export const getLocalApplicationTransporter = (
 
 export const saveArtifact = async (
   artifact: EnsembleDocument,
-  appId: string,
+  app: ApplicationLocalMeta,
   options: {
     relativePath?: string;
     skipMetadata?: boolean;
@@ -140,16 +143,13 @@ export const saveArtifact = async (
     skipMetadata: false,
   },
 ): Promise<{ relativePath: string }> => {
-  const appsMetaData = await getGlobalMetadata();
-  const existingAppMetadata = appsMetaData[appId];
-
-  if (!existingAppMetadata?.manifest) {
-    throw new Error(`App ${appId} does not exist locally`);
+  if (!app.manifest) {
+    app.manifest = {};
   }
-  const existingPath = existingAppMetadata.manifest[artifact.id].relativePath;
+  const existingPath = app.manifest[artifact.id].relativePath;
 
   // TODO: allow custom project structures
-  const artifactSubDir = join(existingAppMetadata.projectPath, artifact.type);
+  const artifactSubDir = join(app.projectPath, artifact.type);
   ensureDir(artifactSubDir);
   let pathToWrite = existingPath;
   if (options.relativePath) {
@@ -162,12 +162,12 @@ export const saveArtifact = async (
   await writeFile(join(artifactSubDir, pathToWrite), artifact.content, "utf-8");
 
   if (!options.skipMetadata) {
-    existingAppMetadata.manifest[artifact.id] = {
+    app.manifest[artifact.id] = {
       ...artifact,
       relativePath: pathToWrite,
     };
 
-    await setGlobalMetadata(appsMetaData);
+    await setAppManifest(app.manifest, app.projectPath);
   }
   return { relativePath: pathToWrite };
 };
@@ -211,7 +211,7 @@ const setAppManifest = async (
 ): Promise<void> => {
   ensureDir(projectPath);
 
-  const filePath = join(METADATA_DIR, APP_MANIFEST_FILE);
+  const filePath = join(projectPath, APP_MANIFEST_FILE);
 
   await writeJsonData(filePath, manifest, true);
 };

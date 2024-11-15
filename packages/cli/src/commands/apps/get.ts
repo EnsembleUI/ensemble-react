@@ -1,6 +1,7 @@
 import { getFirestoreApplicationTransporter, getLocalApplicationTransporter } from '@ensembleui/js-commons'
 import {Args, Command, Flags} from '@oclif/core'
 import { get } from 'lodash-es'
+import { join } from 'node:path'
 
 import { db } from '../../firebase.js'
 import { getStoredToken, signInWithEmailPassword } from '../../utils.js'
@@ -30,15 +31,18 @@ export default class AppsGet extends Command {
     const { email, password } = cachedAuth;
     await signInWithEmailPassword(email, password);
 
+    const appId = args.id;
+    const dir = join(process.cwd(), flags.dir ?? appId);
+
     try {
-    const firestoreAppTransporter = getFirestoreApplicationTransporter(db);
-    const localAppTransporter = getLocalApplicationTransporter(this.config.dataDir);
-    const app = await firestoreAppTransporter.get(args.id);
-    await localAppTransporter.put(app, flags.dir ?? process.cwd());
+      const firestoreAppTransporter = getFirestoreApplicationTransporter(db);
+      const localAppTransporter = getLocalApplicationTransporter(this.config.dataDir);
+      const app = await firestoreAppTransporter.get(appId);
+      await localAppTransporter.put(app, dir);
+
+    this.log(`Wrote app ${app.name} to ${dir}`)
     } catch (error) {
       this.error(get(error, "message") ?? "An error occurred")
     }
-
-    this.log('Done!')
   }
 }
