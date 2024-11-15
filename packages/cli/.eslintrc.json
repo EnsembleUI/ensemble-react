@@ -1,3 +1,4 @@
 {
-  "extends": ["oclif", "oclif-typescript", "prettier"]
+  "extends": ["oclif", "oclif-typescript", "prettier"],
+  "ignorePatterns": ["./dist"]
 }

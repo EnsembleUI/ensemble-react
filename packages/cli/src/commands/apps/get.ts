@@ -1,7 +1,7 @@
 import { getFirestoreApplicationTransporter, getLocalApplicationTransporter } from '@ensembleui/js-commons'
 import {Args, Command, Flags} from '@oclif/core'
 import { get } from 'lodash-es'
-import { join } from 'node:path'
+import * as path from 'node:path'
 
 import { db } from '../../firebase.js'
 import { getStoredToken, signInWithEmailPassword } from '../../utils.js'
@@ -32,7 +32,7 @@ export default class AppsGet extends Command {
     await signInWithEmailPassword(email, password);
 
     const appId = args.id;
-    const dir = join(process.cwd(), flags.dir ?? appId);
+    const dir = path.join(process.cwd(), flags.dir ?? appId);
 
     try {
       const firestoreAppTransporter = getFirestoreApplicationTransporter(db);
