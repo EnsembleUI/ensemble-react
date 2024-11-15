@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.0
+
+### Minor Changes
+
+- becf415: Removed default pointer cursor from Tag widget
+
 ## 0.2.15
 
 ### Patch Changes

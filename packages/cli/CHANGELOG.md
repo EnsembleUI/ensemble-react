@@ -1,5 +1,13 @@
 # @ensembleui/cli
 
+## 0.0.4
+
+### Patch Changes
+
+- 0a37d2b: Add apps:get command for copying yaml to local folder
+- Updated dependencies [0a37d2b]
+  - @ensembleui/js-commons@0.0.5
+
 ## 0.0.3
 
 ### Patch Changes
