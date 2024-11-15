@@ -1,6 +1,5 @@
-import { ApplicationDTO, CollectionsName } from '@ensembleui/js-commons'
+import { getCloudApps } from '@ensembleui/js-commons'
 import {Command} from '@oclif/core'
-import { collection, getDocs, query, where } from 'firebase/firestore/lite';
 import { jwtDecode } from "jwt-decode";
 import { get } from 'lodash-es';
 
@@ -29,23 +28,14 @@ export default class AppsList extends Command {
     if (!userId) {
       this.error('Invalid token. Please try logging in again.')
     }
-
-    const q = query(
-      collection(db, CollectionsName.Apps),
-      where("isArchived", "==", false),
-      where(`collaborators.users_${userId}`, "in", ["read", "write", "owner"]),
-    );
   
-    const result = await getDocs(q);
-    const list = result.docs.map((doc) => {
-      const appData = doc.data() as ApplicationDTO;
-      return {
+    const result = await getCloudApps(db, userId)
+    const list = result.map((appData) => ({
         description: appData.description,
-        id: doc.id,
+        id: appData.id,
         name: appData.name,
         role: appData.collaborators?.[`users_${userId}`]
-      }
-    });
+      }));
 
     // TODO: tabulate results
     this.log(JSON.stringify(list, null, 2))
