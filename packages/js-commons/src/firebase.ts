@@ -20,10 +20,10 @@ import type {
   ApplicationDTO,
   ScreenDTO,
   ScriptDTO,
-  ThemeDTO,
   WidgetDTO,
-  LanguageDTO,
-  EnvironmentDTO,
+  TranslationDTO,
+  ThemeDTO,
+  HasManifest,
 } from "./dto";
 import type { ApplicationTransporter } from "./transporter";
 
@@ -38,17 +38,17 @@ export const getFirestoreApplicationTransporter = (
       ...appDoc.data(),
     } as ApplicationDTO;
 
-    const artifacts = await getArtifacts(appDocRef);
+    const artifactsByType = await getArtifactsByType(appDocRef);
 
-    const screens = artifacts[EnsembleDocumentType.Screen] as ScreenDTO[];
-    const widgets = artifacts[EnsembleDocumentType.Widget] as WidgetDTO[];
-    const scripts = artifacts[EnsembleDocumentType.Script] as ScriptDTO[];
-    const theme = head(artifacts[EnsembleDocumentType.Theme]) as ThemeDTO;
-    const languages = artifacts[EnsembleDocumentType.I18n] as LanguageDTO[];
-    const assets = artifacts[EnsembleDocumentType.Asset] as AssetDTO[];
-    const env = head(
-      artifacts[EnsembleDocumentType.Environment],
-    ) as EnvironmentDTO;
+    const screens = artifactsByType[EnsembleDocumentType.Screen] as ScreenDTO[];
+    const widgets = artifactsByType[EnsembleDocumentType.Widget] as WidgetDTO[];
+    const scripts = artifactsByType[EnsembleDocumentType.Script] as ScriptDTO[];
+    const theme = head(artifactsByType[EnsembleDocumentType.Theme]) as ThemeDTO;
+    const assets = artifactsByType[EnsembleDocumentType.Asset] as AssetDTO[];
+    const translations = artifactsByType[
+      EnsembleDocumentType.I18n
+    ] as TranslationDTO[];
+    const env = head(artifactsByType[EnsembleDocumentType.Environment]);
 
     return {
       ...app,
@@ -57,9 +57,14 @@ export const getFirestoreApplicationTransporter = (
       widgets,
       theme,
       scripts,
-      languages,
+      translations,
       assets,
       env,
+      manifest: Object.fromEntries(
+        Object.values(artifactsByType).flatMap((artifacts) =>
+          artifacts.map((artifact) => [artifact.id, artifact]),
+        ),
+      ) as Pick<HasManifest, "manifest">,
     };
   },
 
@@ -81,7 +86,7 @@ export const getFirestoreApplicationTransporter = (
       CollectionsName.InternalArtifacts,
     );
 
-    const { screens, widgets, scripts, languages, theme, env } = app;
+    const { screens, widgets, scripts, translations, theme, env } = app;
 
     screens.forEach((screen) => {
       const screenRef = doc(artifactsRef, screen.id);
@@ -95,7 +100,7 @@ export const getFirestoreApplicationTransporter = (
       });
     });
 
-    widgets.forEach((widget) =>
+    widgets?.forEach((widget) =>
       batch.set(doc(internalArtifactsRef, widget.id), {
         type: EnsembleDocumentType.Widget,
         name: widget.name,
@@ -116,7 +121,7 @@ export const getFirestoreApplicationTransporter = (
       });
     }
 
-    scripts.forEach((script) =>
+    scripts?.forEach((script) =>
       batch.set(doc(internalArtifactsRef, script.id), {
         type: EnsembleDocumentType.Script,
         name: script.name,
@@ -127,12 +132,12 @@ export const getFirestoreApplicationTransporter = (
       }),
     );
 
-    languages?.forEach((language) =>
-      batch.set(doc(internalArtifactsRef, language.id), {
-        ...language,
+    translations?.forEach((translation) =>
+      batch.set(doc(internalArtifactsRef, translation.id), {
+        ...translation,
         ...updatedByDetails,
         type: EnsembleDocumentType.I18n,
-        defaultLocale: language.defaultLocale ?? false,
+        defaultLocale: translation.defaultLocale,
       }),
     );
 
@@ -156,7 +161,7 @@ export const getFirestoreApplicationTransporter = (
   },
 });
 
-const getArtifacts = async (
+const getArtifactsByType = async (
   appRef: DocumentReference,
 ): Promise<Record<EnsembleDocumentType, DocumentData[]>> => {
   const [artifactsSnapshot, internalArtifactsSnapshot, labelsSnapshot] =
