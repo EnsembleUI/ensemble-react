@@ -70,7 +70,6 @@ export const Tag: React.FC<TagProps> = (props) => {
     fontSize: 12,
     margin: "5px",
     fontWeight: "normal",
-    cursor: "pointer",
   };
   const tagStyles = merge(defaultStyles, values?.styles);
   const truncatedLabels = expanded ? labels : labels.slice(0, 4);
