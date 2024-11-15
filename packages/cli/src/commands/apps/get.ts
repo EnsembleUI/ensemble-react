@@ -1,7 +1,7 @@
 import { getFirestoreApplicationTransporter, getLocalApplicationTransporter } from '@ensembleui/js-commons'
 import {Args, Command, Flags} from '@oclif/core'
 import { get } from 'lodash-es'
-import * as path from 'node:path'
+import path from 'node:path'
 
 import { db } from '../../firebase.js'
 import { getStoredToken, signInWithEmailPassword } from '../../utils.js'

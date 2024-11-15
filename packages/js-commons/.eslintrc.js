@@ -1,4 +1,4 @@
 module.exports = {
   extends: ["custom/library"],
-  ignores: ["tsup.config.ts"],
+  ignorePatterns: ["tsup.config.ts"],
 };
