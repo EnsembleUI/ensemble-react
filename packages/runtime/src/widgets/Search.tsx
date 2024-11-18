@@ -227,6 +227,7 @@ export const Search: React.FC<SearchProps> = ({
           renderLabel(label, labelValue)
         }
         notFoundContent={notFoundContentRenderer}
+        onBlur={handleClear}
         onChange={handleChange}
         onClear={handleClear}
         onSearch={(search): void => setSearchValue(search)}
