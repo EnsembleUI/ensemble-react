@@ -6,6 +6,7 @@ import {
   type EnsembleAction,
   useTemplateData,
   useEvaluate,
+  type EnsembleWidget,
 } from "@ensembleui/react-framework";
 import type { CollapseProps } from "antd";
 import { Collapse, ConfigProvider } from "antd";
@@ -30,8 +31,8 @@ interface CollapsibleItem {
 
 interface CollapsibleTemplate {
   key: Expression<string>;
-  label: React.ReactNode;
-  children: React.ReactNode;
+  label: string | React.ReactNode[];
+  children: React.ReactNode[];
 }
 
 interface CollapsibleHeaderStyles {
@@ -84,7 +85,11 @@ const EvaluateItem = React.memo(
   }: {
     context: object;
     currentIndex: number;
-    template: CollapsibleItem;
+    template: {
+      key: string;
+      label: string | EnsembleWidget;
+      children: EnsembleWidget;
+    };
     setEvaluated: React.Dispatch<React.SetStateAction<CollapsibleTemplate[]>>;
   }): null => {
     const evaluatedData = useEvaluate({ ...template }, { context });
@@ -92,20 +97,15 @@ const EvaluateItem = React.memo(
     useEffect(() => {
       const { key, label, children } = evaluatedData;
 
-      const header = isString(label)
-        ? label
-        : EnsembleRuntime.render([unwrapWidget(label)]);
-
-      const content = EnsembleRuntime.render([
-        unwrapWidget(children as string),
-      ]);
-
       setEvaluated((prev) => {
-        const prevEvaluated = [...prev];
-        prevEvaluated[currentIndex] = { key, label: header, children: content };
-        return prevEvaluated;
+        prev[currentIndex] = {
+          key,
+          label: isString(label) ? label : EnsembleRuntime.render([label]),
+          children: EnsembleRuntime.render([children]),
+        };
+        return [...prev];
       });
-    }, [currentIndex, evaluatedData, setEvaluated]);
+    }, [evaluatedData]);
 
     return null;
   },
@@ -123,8 +123,16 @@ const withValueTemplate = <P extends object>(
       template: CollapsibleItem;
     },
   ): React.ReactElement {
-    const { namedData, template, items = [] } = props;
+    const { namedData, items = [] } = props;
     const [evaluated, setEvaluated] = useState<CollapsibleTemplate[]>([]);
+    const template = useMemo(() => {
+      const { key, label, children } = props.template;
+      return {
+        key,
+        label: isString(label) ? label : unwrapWidget(label),
+        children: unwrapWidget(children),
+      };
+    }, [props.template]);
 
     return (
       <>
