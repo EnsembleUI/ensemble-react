@@ -6,7 +6,8 @@ import {
   type EnsembleAction,
   useTemplateData,
   useEvaluate,
-  type EnsembleWidget,
+  CustomScopeProvider,
+  type CustomScope,
 } from "@ensembleui/react-framework";
 import type { CollapseProps } from "antd";
 import { Collapse, ConfigProvider } from "antd";
@@ -29,10 +30,8 @@ interface CollapsibleItem {
   children: Expression<string> | { [key: string]: unknown };
 }
 
-interface CollapsibleTemplate {
+interface CollapsibleKey {
   key: Expression<string>;
-  label: string | React.ReactNode[];
-  children: React.ReactNode[];
 }
 
 interface CollapsibleHeaderStyles {
@@ -76,7 +75,7 @@ export type CollapsibleProps = {
 } & EnsembleWidgetProps &
   HasItemTemplate;
 
-const EvaluateItem = React.memo(
+const CollapsibleItem = React.memo(
   ({
     context,
     template,
@@ -85,23 +84,17 @@ const EvaluateItem = React.memo(
   }: {
     context: object;
     currentIndex: number;
-    template: {
-      key: string;
-      label: string | EnsembleWidget;
-      children: EnsembleWidget;
-    };
-    setEvaluated: React.Dispatch<React.SetStateAction<CollapsibleTemplate[]>>;
+    template: CollapsibleKey;
+    setEvaluated: React.Dispatch<React.SetStateAction<CollapsibleKey[]>>;
   }): null => {
-    const evaluatedData = useEvaluate({ ...template }, { context });
+    const evaluatedData = useEvaluate({ key: template.key }, { context });
 
     useEffect(() => {
-      const { key, label, children } = evaluatedData;
+      const { key } = evaluatedData;
 
       setEvaluated((prev) => {
         prev[currentIndex] = {
           key,
-          label: isString(label) ? label : EnsembleRuntime.render([label]),
-          children: EnsembleRuntime.render([children]),
         };
         return [...prev];
       });
@@ -111,7 +104,7 @@ const EvaluateItem = React.memo(
   },
 );
 
-EvaluateItem.displayName = "EvaluateItem";
+CollapsibleItem.displayName = "CollapsibleItem";
 
 const withValueTemplate = <P extends object>(
   WrappedComponent: React.ComponentType<P>,
@@ -123,29 +116,45 @@ const withValueTemplate = <P extends object>(
       template: CollapsibleItem;
     },
   ): React.ReactElement {
-    const { namedData, items = [] } = props;
-    const [evaluated, setEvaluated] = useState<CollapsibleTemplate[]>([]);
-    const template = useMemo(() => {
-      const { key, label, children } = props.template;
-      return {
-        key,
-        label: isString(label) ? label : unwrapWidget(label),
-        children: unwrapWidget(children),
-      };
-    }, [props.template]);
+    const { namedData, template, items = [] } = props;
+    const [evaluated, setEvaluated] = useState<CollapsibleKey[]>([]);
+
+    const templateItems = useMemo(() => {
+      const itemList = namedData.map((scopeItem, index) => {
+        return {
+          key: evaluated[index]?.key,
+          label: (
+            <CustomScopeProvider value={{ ...scopeItem, index } as CustomScope}>
+              {EnsembleRuntime.render([
+                isString(template.label)
+                  ? template.label
+                  : unwrapWidget(template.label),
+              ])}
+            </CustomScopeProvider>
+          ),
+          children: (
+            <CustomScopeProvider value={{ ...scopeItem, index } as CustomScope}>
+              {EnsembleRuntime.render([unwrapWidget(template.children)])}
+            </CustomScopeProvider>
+          ),
+        };
+      });
+
+      return itemList;
+    }, [evaluated, template, namedData]);
 
     return (
       <>
         {namedData.map((context, index) => (
-          <EvaluateItem
+          <CollapsibleItem
             context={context}
             currentIndex={index}
             key={index}
             setEvaluated={setEvaluated}
-            template={template}
+            template={{ key: template.key }}
           />
         ))}
-        <WrappedComponent {...props} items={[...items, ...evaluated]} />
+        <WrappedComponent {...props} items={[...items, ...templateItems]} />
       </>
     );
   };
