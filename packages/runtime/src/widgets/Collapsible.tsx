@@ -11,7 +11,7 @@ import {
 } from "@ensembleui/react-framework";
 import type { CollapseProps } from "antd";
 import { Collapse, ConfigProvider } from "antd";
-import { get, isArray, isString, mapKeys } from "lodash-es";
+import { get, isArray, isEmpty, isString, mapKeys } from "lodash-es";
 import type {
   EnsembleWidgetProps,
   HasItemTemplate,
@@ -28,10 +28,6 @@ interface CollapsibleItem {
   key: Expression<string>;
   label: Expression<string> | { [key: string]: unknown };
   children: Expression<string> | { [key: string]: unknown };
-}
-
-interface CollapsibleKey {
-  key: Expression<string>;
 }
 
 interface CollapsibleHeaderStyles {
@@ -75,95 +71,30 @@ export type CollapsibleProps = {
 } & EnsembleWidgetProps &
   HasItemTemplate;
 
-const CollapsibleItem = React.memo(
-  ({
-    context,
-    template,
-    currentIndex,
-    setEvaluated,
-  }: {
-    context: object;
-    currentIndex: number;
-    template: CollapsibleKey;
-    setEvaluated: React.Dispatch<React.SetStateAction<CollapsibleKey[]>>;
-  }): null => {
-    const evaluatedData = useEvaluate({ key: template.key }, { context });
+const CollapseItem = ({
+  context,
+  template,
+  setEvaluated,
+}: {
+  context: object;
+  template: { [key: string]: string };
+  setEvaluated: React.Dispatch<React.SetStateAction<string[]>>;
+}): null => {
+  const { key } = useEvaluate({ ...template }, { context });
 
-    useEffect(() => {
-      const { key } = evaluatedData;
+  useEffect(() => {
+    setEvaluated((prev) => [...prev, key]);
+  }, [key, setEvaluated]);
 
-      setEvaluated((prev) => {
-        prev[currentIndex] = {
-          key,
-        };
-        return [...prev];
-      });
-    }, [evaluatedData]);
-
-    return null;
-  },
-);
-
-CollapsibleItem.displayName = "CollapsibleItem";
-
-const withValueTemplate = <P extends object>(
-  WrappedComponent: React.ComponentType<P>,
-) =>
-  function Component(
-    props: P & {
-      items: CollapseProps["items"];
-      namedData: object[];
-      template: CollapsibleItem;
-    },
-  ): React.ReactElement {
-    const { namedData, template, items = [] } = props;
-    const [evaluated, setEvaluated] = useState<CollapsibleKey[]>([]);
-
-    const templateItems = useMemo(() => {
-      const itemList = namedData.map((scopeItem, index) => {
-        return {
-          key: evaluated[index]?.key,
-          label: (
-            <CustomScopeProvider value={{ ...scopeItem, index } as CustomScope}>
-              {EnsembleRuntime.render([
-                isString(template.label)
-                  ? template.label
-                  : unwrapWidget(template.label),
-              ])}
-            </CustomScopeProvider>
-          ),
-          children: (
-            <CustomScopeProvider value={{ ...scopeItem, index } as CustomScope}>
-              {EnsembleRuntime.render([unwrapWidget(template.children)])}
-            </CustomScopeProvider>
-          ),
-        };
-      });
-
-      return itemList;
-    }, [evaluated, template, namedData]);
-
-    return (
-      <>
-        {namedData.map((context, index) => (
-          <CollapsibleItem
-            context={context}
-            currentIndex={index}
-            key={index}
-            setEvaluated={setEvaluated}
-            template={{ key: template.key }}
-          />
-        ))}
-        <WrappedComponent {...props} items={[...items, ...templateItems]} />
-      </>
-    );
-  };
-
-const CollapsibleComponent = withValueTemplate(Collapse);
+  return null;
+};
 
 export const Collapsible: React.FC<CollapsibleProps> = (props) => {
   const { "item-template": itemTemplate, ...rest } = props;
   const [activeValue, setActiveValue] = useState<string[]>(props.value);
+  const [evaluated, setEvaluated] = useState<string[]>([]);
+  const template = itemTemplate?.template
+    .properties as unknown as CollapsibleItem;
 
   const { values } = useRegisterBindings(
     { ...rest, activeValue, widgetName },
@@ -180,7 +111,6 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
 
   const collapsibleItems = useMemo(() => {
     const items = [];
-
     if (values?.items) {
       const tempItems = values.items.map((item) => {
         return {
@@ -191,12 +121,35 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
           children: EnsembleRuntime.render([unwrapWidget(item.children)]),
         };
       });
-
       items.push(...tempItems);
     }
-
     return (items as CollapseProps["items"]) || [];
   }, [values?.items]);
+
+  const templateItems = useMemo(() => {
+    const items = [];
+    if (!isEmpty(namedData) && evaluated.length === namedData.length) {
+      const tempItems = namedData.map((scope, index) => ({
+        key: evaluated[index],
+        label: (
+          <CustomScopeProvider value={{ ...scope, index } as CustomScope}>
+            {EnsembleRuntime.render([
+              isString(template.label)
+                ? template.label
+                : unwrapWidget(template.label),
+            ])}
+          </CustomScopeProvider>
+        ),
+        children: (
+          <CustomScopeProvider value={{ ...scope, index } as CustomScope}>
+            {EnsembleRuntime.render([unwrapWidget(template.children)])}
+          </CustomScopeProvider>
+        ),
+      }));
+      items.push(...tempItems);
+    }
+    return (items as CollapseProps["items"]) || [];
+  }, [evaluated, namedData, template]);
 
   // tweak the collapsible icons
   const expandIcon = (collapseStat: unknown) => {
@@ -257,17 +210,21 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
         },
       }}
     >
-      <CollapsibleComponent
+      {namedData.map((context, index) => (
+        <CollapseItem
+          context={context}
+          key={index}
+          setEvaluated={setEvaluated}
+          template={{ key: template.key }}
+        />
+      ))}
+      <Collapse
         accordion={values?.limitExpandedToOne || values?.isAccordion}
         activeKey={activeValue}
         expandIcon={expandIcon}
         expandIconPosition={props.expandIconPosition}
-        items={collapsibleItems}
-        namedData={namedData}
+        items={[...collapsibleItems, ...templateItems]}
         onChange={handleCollapsibleChange}
-        template={
-          itemTemplate?.template.properties as unknown as CollapsibleItem
-        }
       />
     </ConfigProvider>
   );
