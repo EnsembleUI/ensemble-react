@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo } from "react";
+import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { useDebounce } from "react-use";
 import {
   useTemplateData,
@@ -74,6 +74,12 @@ export const Search: React.FC<SearchProps> = ({
   const onSelectAction = useEnsembleAction(onSelect);
   const onClearAction = useEnsembleAction(onClear);
 
+  useEffect(() => {
+    if (!searchValue) {
+      setHasCleared(true);
+    }
+  }, [searchValue]);
+
   const extractValue = useCallback(
     (option: unknown): string | number => {
       return get(
@@ -87,7 +93,7 @@ export const Search: React.FC<SearchProps> = ({
   );
 
   const renderOptions = useMemo(() => {
-    if (hasCleared && isNil(searchValue)) return [];
+    if (hasCleared && (isNil(searchValue) || !searchValue)) return [];
 
     let dropdownOptions: JSX.Element[] = [];
 
@@ -123,7 +129,7 @@ export const Search: React.FC<SearchProps> = ({
 
   useDebounce(
     () => {
-      if (onSearchAction?.callback && !isNull(searchValue)) {
+      if (onSearchAction?.callback && !isNull(searchValue) && searchValue) {
         setHasCleared(false);
         onSearchAction.callback({ search: searchValue });
       }
@@ -227,7 +233,6 @@ export const Search: React.FC<SearchProps> = ({
           renderLabel(label, labelValue)
         }
         notFoundContent={notFoundContentRenderer}
-        onBlur={handleClear}
         onChange={handleChange}
         onClear={handleClear}
         onSearch={(search): void => setSearchValue(search)}
