@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo, useEffect } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import { useDebounce } from "react-use";
 import {
   useTemplateData,
@@ -12,7 +12,7 @@ import type {
   Expression,
 } from "@ensembleui/react-framework";
 import { Select as SelectComponent } from "antd";
-import { get, isEmpty, isNil, isNull, isObject, isString } from "lodash-es";
+import { get, isEmpty, isNil, isObject, isString } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type {
   EnsembleWidgetProps,
@@ -74,12 +74,6 @@ export const Search: React.FC<SearchProps> = ({
   const onSelectAction = useEnsembleAction(onSelect);
   const onClearAction = useEnsembleAction(onClear);
 
-  useEffect(() => {
-    if (!searchValue) {
-      setHasCleared(true);
-    }
-  }, [searchValue]);
-
   const extractValue = useCallback(
     (option: unknown): string | number => {
       return get(
@@ -93,7 +87,7 @@ export const Search: React.FC<SearchProps> = ({
   );
 
   const renderOptions = useMemo(() => {
-    if (hasCleared && (isNil(searchValue) || !searchValue)) return [];
+    if (isEmpty(searchValue)) return [];
 
     let dropdownOptions: JSX.Element[] = [];
 
@@ -129,7 +123,7 @@ export const Search: React.FC<SearchProps> = ({
 
   useDebounce(
     () => {
-      if (onSearchAction?.callback && !isNull(searchValue) && searchValue) {
+      if (onSearchAction?.callback && !isEmpty(searchValue)) {
         setHasCleared(false);
         onSearchAction.callback({ search: searchValue });
       }
@@ -149,6 +143,7 @@ export const Search: React.FC<SearchProps> = ({
     (selectedValue: unknown): void => {
       if (isObject(itemTemplate) && !isEmpty(namedData)) {
         setValue(selectedValue);
+        setSearchValue(null);
         const selectedOption = namedData.find(
           (option) => extractValue(option) === selectedValue,
         );
