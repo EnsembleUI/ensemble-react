@@ -53,7 +53,6 @@ export const Search: React.FC<SearchProps> = ({
   ...rest
 }) => {
   const [searchValue, setSearchValue] = useState<string | null>(null);
-  const [hasCleared, setHasCleared] = useState<boolean>(false);
   const [value, setValue] = useState<unknown>();
 
   const { namedData } = useTemplateData({
@@ -112,19 +111,11 @@ export const Search: React.FC<SearchProps> = ({
     }
 
     return dropdownOptions;
-  }, [
-    itemTemplate,
-    namedData,
-    extractValue,
-    values?.id,
-    searchValue,
-    hasCleared,
-  ]);
+  }, [itemTemplate, namedData, extractValue, values?.id, searchValue]);
 
   useDebounce(
     () => {
       if (onSearchAction?.callback && !isEmpty(searchValue)) {
-        setHasCleared(false);
         onSearchAction.callback({ search: searchValue });
       }
     },
@@ -158,7 +149,6 @@ export const Search: React.FC<SearchProps> = ({
 
   const handleClear = useCallback(() => {
     setSearchValue(null);
-    setHasCleared(true);
     onClearAction?.callback();
   }, [onClearAction]);
 
