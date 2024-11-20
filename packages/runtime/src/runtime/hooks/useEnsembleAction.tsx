@@ -127,14 +127,27 @@ export const useExecuteCode: EnsembleActionHook<
   }, [action, isCodeString, appContext?.application?.scripts]);
 
   const execute = useCommandCallback(
-    (evalContext, ...args: unknown[]) => {
+    async (evalContext, ...args: unknown[]) => {
       if (!js) {
         return;
       }
       const context = merge({}, evalContext, ...args, options?.context) as {
         [key: string]: unknown;
       };
-      const retVal = evaluate({ model: screenModel }, js, context);
+
+      let executableJS = js;
+      if (js.includes("await")) {
+        executableJS = `(async () => {
+          ${js}
+        })()`;
+      }
+
+      const retVal = await evaluate(
+        { model: screenModel },
+        executableJS,
+        context,
+      );
+
       onCompleteAction?.callback({
         ...(args[0] as { [key: string]: unknown }),
         result: retVal,
