@@ -73,18 +73,23 @@ export type CollapsibleProps = {
 
 const CollapseItem = ({
   context,
+  currentIndex,
   template,
-  setEvaluated,
+  setEvaluatedKeys,
 }: {
   context: object;
+  currentIndex: number;
   template: { [key: string]: string };
-  setEvaluated: React.Dispatch<React.SetStateAction<string[]>>;
+  setEvaluatedKeys: React.Dispatch<React.SetStateAction<string[]>>;
 }): null => {
   const { key } = useEvaluate({ ...template }, { context });
 
   useEffect(() => {
-    setEvaluated((prev) => [...prev, key]);
-  }, [key, setEvaluated]);
+    setEvaluatedKeys((prev) => {
+      prev[currentIndex] = key;
+      return [...prev];
+    });
+  }, [key, setEvaluatedKeys]);
 
   return null;
 };
@@ -92,7 +97,7 @@ const CollapseItem = ({
 export const Collapsible: React.FC<CollapsibleProps> = (props) => {
   const { "item-template": itemTemplate, ...rest } = props;
   const [activeValue, setActiveValue] = useState<string[]>(props.value);
-  const [evaluated, setEvaluated] = useState<string[]>([]);
+  const [evaluatedKeys, setEvaluatedKeys] = useState<string[]>([]);
   const template = itemTemplate?.template
     .properties as unknown as CollapsibleItem;
 
@@ -128,9 +133,9 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
 
   const templateItems = useMemo(() => {
     const items = [];
-    if (!isEmpty(namedData) && evaluated.length === namedData.length) {
+    if (!isEmpty(namedData) && evaluatedKeys.length === namedData.length) {
       const tempItems = namedData.map((scope, index) => ({
-        key: evaluated[index],
+        key: evaluatedKeys[index],
         label: (
           <CustomScopeProvider value={{ ...scope, index } as CustomScope}>
             {EnsembleRuntime.render([
@@ -149,7 +154,7 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
       items.push(...tempItems);
     }
     return (items as CollapseProps["items"]) || [];
-  }, [evaluated, namedData, template]);
+  }, [evaluatedKeys, namedData, template]);
 
   // tweak the collapsible icons
   const expandIcon = (collapseStat: unknown) => {
@@ -213,8 +218,9 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
       {namedData.map((context, index) => (
         <CollapseItem
           context={context}
+          currentIndex={index}
           key={index}
-          setEvaluated={setEvaluated}
+          setEvaluatedKeys={setEvaluatedKeys}
           template={{ key: template.key }}
         />
       ))}
