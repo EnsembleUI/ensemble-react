@@ -92,19 +92,14 @@ export const Form: React.FC<FormProps> = (props) => {
     [form],
   );
 
-  const { values } = useRegisterBindings(
-    { ...rest, isValid },
-    rest.id,
-    {
-      getValues,
-      reset: handleResetForm,
-      clear: handleClearForm,
-      submit: form.submit,
-      updateValues: form.setFieldsValue,
-      validate,
-    },
-    { forceState: true },
-  );
+  const { values } = useRegisterBindings({ ...rest, isValid }, rest.id, {
+    getValues,
+    reset: handleResetForm,
+    clear: handleClearForm,
+    submit: form.submit,
+    updateValues: form.setFieldsValue,
+    validate,
+  });
 
   return (
     <AntForm

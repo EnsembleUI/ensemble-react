@@ -1,5 +1,17 @@
 # @ensembleui/react-framework
 
+## 0.2.7
+
+### Patch Changes
+
+- 542069e: added useEffect cleanup for unload widget on unmounted
+
+## 0.2.6
+
+### Patch Changes
+
+- db0cb5e: improve performance of navigateUrl action
+
 ## 0.2.5
 
 ### Patch Changes

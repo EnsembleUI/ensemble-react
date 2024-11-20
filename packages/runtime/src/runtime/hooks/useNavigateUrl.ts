@@ -1,45 +1,86 @@
-import { useEffect, useMemo, useState } from "react";
+import type {
+  EnsembleScreenModel,
+  NavigateUrlAction,
+} from "@ensembleui/react-framework";
+import { isNil, isString, merge } from "lodash-es";
 import { useNavigate } from "react-router-dom";
 import {
-  type NavigateUrlAction,
-  useEvaluate,
+  useCommandCallback,
+  evaluate,
+  visitExpressions,
+  replace,
+  useScreenModel,
+  isExpression,
 } from "@ensembleui/react-framework";
-import { isString } from "lodash-es";
+import { useCallback, useMemo } from "react";
+// eslint-disable-next-line import/no-cycle
+import { navigateUrl } from "../navigation";
 import type { EnsembleActionHook } from "./useEnsembleAction";
+
+const evaluateExpression = (
+  expr: string,
+  screenModel?: EnsembleScreenModel,
+  context?: { [key: string]: unknown },
+): string => {
+  if (!isExpression(expr)) return expr;
+  return evaluate<string>({ model: screenModel }, expr, context);
+};
 
 export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
   action,
 ) => {
   const navigate = useNavigate();
-  const [urlNavigated, setUrlNavigated] = useState<boolean>();
-  const [context, setContext] = useState<{ [key: string]: unknown }>();
+  const screenModel = useScreenModel();
 
-  const evaluatedInputs = useEvaluate(
-    isString(action) ? { url: action } : { ...action },
-    { context },
+  // Memoize the URL evaluation function
+  const evaluateUrl = useCallback(
+    (
+      url: string,
+      model?: EnsembleScreenModel,
+      context?: { [key: string]: unknown },
+    ): string => {
+      return evaluateExpression(url, model, context);
+    },
+    [],
   );
 
-  const navigateUrl = useMemo(() => {
-    if (!action) {
-      return;
-    }
+  // Memoize the inputs evaluation function
+  const evaluateInputs = useCallback(
+    (
+      inputs: { [key: string]: unknown },
+      model?: EnsembleScreenModel,
+      context?: { [key: string]: unknown },
+    ): { [key: string]: unknown } => {
+      return visitExpressions(
+        inputs,
+        replace((expr) => evaluate({ model }, expr, context)),
+      ) as { [key: string]: unknown };
+    },
+    [],
+  );
 
-    const callback = (args: unknown): void => {
-      setUrlNavigated(false);
-      setContext(args as { [key: string]: unknown });
-    };
+  const navigateCommand = useCommandCallback(
+    (evalContext, ...args) => {
+      if (!action) return;
 
-    return { callback };
-  }, [action]);
+      const context = merge({}, evalContext, args[0]);
 
-  useEffect(() => {
-    if (!evaluatedInputs.url || urlNavigated !== false) {
-      return;
-    }
+      if (isString(action)) {
+        const resolvedUrl = evaluateUrl(action, screenModel, context);
+        navigateUrl(resolvedUrl, navigate);
+        return;
+      }
 
-    setUrlNavigated(true);
-    return navigate(evaluatedInputs.url, { state: evaluatedInputs.inputs });
-  }, [urlNavigated, evaluatedInputs]);
+      const resolvedUrl = evaluateUrl(action.url, screenModel, context);
+      const resolvedInputs = isNil(action.inputs)
+        ? undefined
+        : evaluateInputs(action.inputs, screenModel, context);
 
-  return navigateUrl;
+      navigateUrl(resolvedUrl, navigate, resolvedInputs);
+    },
+    { navigate },
+    [action, screenModel],
+  );
+
+  return useMemo(() => ({ callback: navigateCommand }), [navigateCommand]);
 };

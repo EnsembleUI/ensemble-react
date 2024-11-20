@@ -1,5 +1,44 @@
 # @ensembleui/react-runtime
 
+## 0.3.0
+
+### Minor Changes
+
+- becf415: Removed default pointer cursor from Tag widget
+
+## 0.2.15
+
+### Patch Changes
+
+- f0d55ec: add selectedLabel prop to Search component to allow custom widget for selected option
+
+## 0.2.14
+
+### Patch Changes
+
+- 31850fe: fix navigateUrl to accept normal string url
+- 89fa790: remove default scrollHeight in Datagrid to get rid of unwanted vertical scrollbar
+
+## 0.2.13
+
+### Patch Changes
+
+- db0cb5e: improve performance of navigateUrl action
+
+## 0.2.12
+
+### Patch Changes
+
+- a71d395: Append file input element in document body for UI automation
+
+## 0.2.11
+
+### Patch Changes
+
+- 6e29dea: fix mask format on text input value paste
+- e2ead08: Added toolTip widget
+- fca1a65: Initialize ToggleButton with binding
+
 ## 0.2.10
 
 ### Patch Changes

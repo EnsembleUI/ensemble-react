@@ -495,7 +495,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
           scroll={
             values?.scroll
               ? {
-                  y: values.scroll.scrollHeight || 150,
+                  y: values.scroll.scrollHeight,
                   x: values.scroll.scrollWidth || "max-content",
                 }
               : undefined

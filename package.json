@@ -6,14 +6,12 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "format": "prettier --write \"**/*.{ts,tsx,md,yaml,json}\"",
     "release": "turbo run build --filter='./packages/*' && changeset publish",
     "schema:generate": "ts-node --esm ./scripts/generateSchema.ts"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.2",
-    "eslint": "^8.49.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
     "jest": "^27.5.1",
     "lint-staged": "^14.0.1",
     "lodash-es": "^4.17.21",

@@ -61,7 +61,7 @@ interface NavigateScreenOptions {
 
 interface NavigateUrlOptions {
   url: string;
-  inputs: { [key: string]: unknown };
+  inputs?: { [key: string]: unknown };
 }
 
 interface NavigateExternalScreenOptions {
@@ -128,7 +128,7 @@ export interface ShowToastAction {
 }
 
 export interface PickFilesAction {
-  id: string;
+  id?: string;
   allowMultiple?: boolean;
   allowedExtensions?: string[];
   allowMaxFileSizeBytes?: number;

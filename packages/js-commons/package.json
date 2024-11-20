@@ -1,0 +1,37 @@
+{
+  "name": "@ensembleui/js-commons",
+  "version": "0.0.5",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "./dist/**"
+  ],
+  "repository": "https://github.com/EnsembleUI/ensemble-react",
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "test": "jest --passWithNoTests",
+    "lint": "eslint ."
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": "eslint --fix"
+  },
+  "peerDependencies": {
+    "firebase": "9.10.0"
+  },
+  "devDependencies": {
+    "@types/lodash-es": "^4.17.8",
+    "dayjs": "^1.11.10",
+    "eslint-config-custom": "workspace:*",
+    "firebase": "9.10.0",
+    "lodash-es": "^4.17.21",
+    "tsconfig": "workspace:*",
+    "tsup": "^7.2.0"
+  }
+}

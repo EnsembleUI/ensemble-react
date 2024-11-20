@@ -46,7 +46,7 @@ export const useCommandCallback = <
   R = unknown,
 >(
   command: (evalContext: EnsembleContext, ...args: T) => R,
-  apis: { navigate: NavigateFunction; location: EnsembleLocation },
+  apis: { navigate: NavigateFunction; location?: EnsembleLocation },
   dependencies: unknown[] = [],
   callbackContext?: CallbackContext,
 ): ReturnType<typeof useAtomCallback<R, T>> => {
@@ -72,6 +72,7 @@ export const useCommandCallback = <
             (acc, widget) => ({ ...acc, [widget.name]: widget }),
             {},
           );
+
         const evalContext = createEvaluationContext({
           applicationContext,
           screenContext,
@@ -168,8 +169,7 @@ export const useCommandCallback = <
 
         return command(evalContext, ...args);
       },
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [command, customScope, i18n, ...dependencies],
+      [customScope, i18n, ...dependencies],
     ),
   );
 };
