@@ -15,7 +15,6 @@ import {
   mockResponse,
   useCommandCallback,
   useScreenModel,
-  CustomThemeContext,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -100,7 +99,6 @@ export const useExecuteCode: EnsembleActionHook<
   const isCodeString = isString(action);
   const screenModel = useScreenModel();
   const modalContext = useContext(ModalContext);
-  const themeContext = useContext(CustomThemeContext);
   const navigate = useNavigate();
   const location = useLocation();
   const appContext = useApplicationContext();
@@ -147,7 +145,6 @@ export const useExecuteCode: EnsembleActionHook<
     [js, onCompleteAction?.callback, screenModel],
     {
       modalContext,
-      themeContext,
       render: EnsembleRuntime.render,
       EnsembleScreen,
     },

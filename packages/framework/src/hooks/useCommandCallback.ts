@@ -31,11 +31,9 @@ import { deviceAtom } from "./useDeviceObserver";
 import { createStorageApi, screenStorageAtom } from "./useEnsembleStorage";
 import { useCustomScope } from "./useCustomScope";
 import { useLanguageScope } from "./useLanguageScope";
-import type { CustomTheme } from "./useThemeContext";
 
 interface CallbackContext {
   modalContext?: ModalContext;
-  themeContext?: CustomTheme;
   render?: (widgets: EnsembleWidget[]) => ReactNode[];
   EnsembleScreen: FC<{
     inputs?: { [key: string]: unknown };
@@ -79,7 +77,7 @@ export const useCommandCallback = <
           applicationContext,
           screenContext,
           ensemble: {
-            ...callbackContext?.themeContext,
+            setTheme: (name: string) => set(themeAtom, name),
             user: {
               ...user,
               setUser: (userUpdate: EnsembleUser) => set(userAtom, userUpdate),
