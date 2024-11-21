@@ -135,9 +135,12 @@ export const useExecuteCode: EnsembleActionHook<
         [key: string]: unknown;
       };
 
-      let executableJS = js;
-      if (js.includes("await")) {
-        executableJS = `(async () => {
+      let executableJS = `return (async () => {
+          return ${js}
+        })()`;
+
+      if (js.includes("\n")) {
+        executableJS = `return (async () => {
           ${js}
         })()`;
       }
