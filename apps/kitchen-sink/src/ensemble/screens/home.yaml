@@ -1,11 +1,11 @@
 View:
   onLoad:
     executeCode: |
+      ensemble.storage.set('btnLoader' , false)
       ensemble.storage.set('yyy' , 'page')
       ensemble.storage.set('zzz' , 'button')
       ensemble.storage.set('aaa' , '1')
       ensemble.storage.set('bbb' , "0xffb91c1c")
-      ensemble.storage.set('loading', true);
       console.log('>>> secret variable >>>', ensemble.secrets.dummyOauthSecret)
 
   header:
@@ -343,30 +343,32 @@ View:
               maxWidth: unset
               width: unset
             children:
+              - Button:
+                  id: testLoaderBtn
+                  loading: ${ensemble.storage.get('btnLoader')}
+                  label: loading binding button
+              - Button:
+                  label: change button loading binding
+                  onTap:
+                    executeCode: |
+                      ensemble.storage.set('btnLoader' , !ensemble.storage.get('btnLoader'))
+
+        - Card:
+            children:
               - Markdown:
                   text: |
-                    ### Show Dialog
-              - Button:
-                  label: show dialog
-                  onTap:
-                    showDialog:
-                      widget:
-                        Column:
-                          children:
-                            - Text:
-                                text: i am a text
-                            - Button:
-                                id: unique
-                                label: Hi I'm Button
-                                onTap:
-                                  executeCode: |-
-                                    unique.setLoading(true)
-                            - Button:
-                                id: unique2
-                                label: Hi I'm Button Close
-                                onTap:
-                                  executeCode: |-
-                                    unique.setLoading(!unique.loading)
+                    ### ToolTip
+              - ToolTip:
+                  widget:
+                    Button:
+                      label: change button loading binding
+                      onTap:
+                        executeCode: |
+                          ensemble.storage.set('btnLoader' , !ensemble.storage.get('btnLoader'))
+                  message: This is tooltip
+                  onTriggered:
+                    executeCode: |
+                      console.log('>>>', {tooltipState})
 
 Global:
   scriptName: test.js
