@@ -72,7 +72,6 @@ export const useCommandCallback = <
             (acc, widget) => ({ ...acc, [widget.name]: widget }),
             {},
           );
-
         const evalContext = createEvaluationContext({
           applicationContext,
           screenContext,
@@ -169,7 +168,8 @@ export const useCommandCallback = <
 
         return command(evalContext, ...args);
       },
-      [customScope, i18n, ...dependencies],
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [command, customScope, i18n, ...dependencies],
     ),
   );
 };
