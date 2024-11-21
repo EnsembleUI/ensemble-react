@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.2.8
+
+### Patch Changes
+
+- 81891cc: Revert "fix: added useEffect cleanup in useRegisterBindings (#862)"
+
 ## 0.2.7
 
 ### Patch Changes
