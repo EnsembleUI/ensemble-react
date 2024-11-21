@@ -1,5 +1,12 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.95
+
+### Patch Changes
+
+- Updated dependencies [cc58c97]
+  - @ensembleui/react-runtime@0.3.1
+
 ## 0.0.94
 
 ### Patch Changes
