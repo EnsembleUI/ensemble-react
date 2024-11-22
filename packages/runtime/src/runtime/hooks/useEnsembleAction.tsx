@@ -50,6 +50,7 @@ import {
 } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { ModalContext } from "../modal";
 import { EnsembleRuntime } from "../runtime";
 import { getShowDialogOptions } from "../showDialog";
@@ -155,6 +156,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const [isComplete, setIsComplete] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>();
   const [context, setContext] = useState<{ [key: string]: unknown }>();
+  const queryClient = useQueryClient();
 
   const evaluatedInputs = useEvaluate(action?.inputs, { context });
   const evaluatedName = useEvaluate({ name: action?.name }, { context });
@@ -208,32 +210,37 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
         isUsingMockResponse(appContext?.application?.id);
       setIsLoading(true);
       try {
-        const res = await DataFetcher.fetch(
-          api,
-          {
-            ...evaluatedInputs,
-            ...context,
-            ensemble: {
-              env: appContext?.env,
-              secrets: appContext?.secrets,
-            },
-          },
-          {
-            mockResponse: mockResponse(
-              mockResponses[api.name],
-              useMockResponse,
+        const response = await queryClient.fetchQuery({
+          queryKey: [api.name],
+          queryFn: () =>
+            DataFetcher.fetch(
+              api,
+              {
+                ...evaluatedInputs,
+                ...context,
+                ensemble: {
+                  env: appContext?.env,
+                  secrets: appContext?.secrets,
+                },
+              },
+              {
+                mockResponse: mockResponse(
+                  mockResponses[api.name],
+                  useMockResponse,
+                ),
+                useMockResponse,
+              },
             ),
-            useMockResponse,
-          },
-        );
-        setData(api.name, res);
+          staleTime: api.cache ? (api?.cacheTime || 60) * 1000 : 0,
+        });
+        setData(api.name, response);
 
         if (action?.id) {
-          setData(action.id, res);
+          setData(action.id, response);
         }
 
-        onAPIResponseAction?.callback({ ...context, response: res });
-        onInvokeAPIResponseAction?.callback({ ...context, response: res });
+        onAPIResponseAction?.callback({ ...context, response });
+        onInvokeAPIResponseAction?.callback({ ...context, response });
       } catch (e) {
         logError(e);
 

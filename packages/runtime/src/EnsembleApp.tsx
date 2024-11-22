@@ -11,6 +11,7 @@ import {
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { injectStyle } from "react-toastify/dist/inject-style";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "./ThemeProvider";
 import { EnsembleEntry } from "./runtime/entry";
 import { EnsembleScreen } from "./runtime/screen";
@@ -31,6 +32,8 @@ export interface EnsembleAppProps {
   screenId?: string;
   environmentOverrides?: { [key: string]: unknown };
 }
+
+const queryClient = new QueryClient();
 
 export const EnsembleApp: React.FC<EnsembleAppProps> = ({
   appId,
@@ -119,10 +122,12 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
       app={app}
       environmentOverrides={environmentOverrides}
     >
-      <ThemeProvider>
-        <RouterProvider router={router} />
-        <ToastContainer />
-      </ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <RouterProvider router={router} />
+          <ToastContainer />
+        </ThemeProvider>
+      </QueryClientProvider>
     </ApplicationContextProvider>
   );
 };
