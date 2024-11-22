@@ -1,6 +1,7 @@
 import { useMemo, useRef } from "react";
 import { type Atom, atom, useAtomValue } from "jotai";
-import { isEqual, isString, map, merge } from "lodash-es";
+import { isString, map, merge } from "lodash-es";
+import isEqual from "react-fast-compare";
 import { createBindingAtom } from "../evaluate";
 import { isExpression, type Expression } from "../shared/common";
 import { useCustomScope } from "./useCustomScope";
