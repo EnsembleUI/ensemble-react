@@ -289,7 +289,6 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     [curPage, onPageChangeActionCallback],
   );
 
-  const namedDataString = JSON.stringify(namedData);
   const handleRowsSelection = useCallback(
     (selectedKeys: React.Key[]) => {
       setRowsKey(selectedKeys);
@@ -299,7 +298,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
         itemTemplate.key?.replace(/^\$\{(.*)\}$/, "$1") || ""; // replace "${...}" or '${...}' with ...
 
       const selectedRows = compact(
-        (JSON.parse(namedDataString) as object[]).map((row) => {
+        namedData.map((row) => {
           const key = get(row, keyField) as React.Key;
           return selectedKeys.includes(key) ? row : null;
         }),
@@ -307,7 +306,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
 
       setRowsSelected(selectedRows);
     },
-    [namedDataString, itemTemplate],
+    [namedData, itemTemplate],
   );
 
   const {
