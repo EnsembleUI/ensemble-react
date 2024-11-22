@@ -1,4 +1,4 @@
-import { useContext, useMemo } from "react";
+import { useContext } from "react";
 import { type EnsembleActionHookResult } from "@ensembleui/react-framework";
 import { ModalContext } from "../modal";
 import type { EnsembleActionHook } from "./useEnsembleAction";
@@ -8,10 +8,7 @@ export const useCloseAllDialogs: EnsembleActionHook<
 > = () => {
   const { closeAllModals } = useContext(ModalContext) || {};
 
-  return useMemo(
-    () => ({
-      callback: () => closeAllModals?.(),
-    }),
-    [],
-  );
+  const closeAllDialogs: () => void = () => closeAllModals?.();
+
+  return { callback: closeAllDialogs };
 };
