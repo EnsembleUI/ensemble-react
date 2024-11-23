@@ -77,6 +77,7 @@ export const useCommandCallback = <
           applicationContext,
           screenContext,
           ensemble: {
+            setTheme: (name: string) => set(themeAtom, name),
             user: {
               ...user,
               setUser: (userUpdate: EnsembleUser) => set(userAtom, userUpdate),
