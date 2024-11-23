@@ -2,6 +2,8 @@ View:
   onLoad:
     executeCode:
       body: |-
+        ensemble.storage.set('iconName', 'home')
+        ensemble.storage.set('btnLoader' , false)
         ensemble.storage.set('yyy' , 'page')
         ensemble.storage.set('zzz' , 'button')
         ensemble.storage.set('aaa' , '1')
@@ -374,6 +376,19 @@ View:
                                 onTap:
                                   executeCode: |-
                                     unique.setLoading(!unique.loading)
+
+        - Collapsible:
+            value: [2]
+            item-template:
+              data: [1, 2, 3]
+              name: p
+              template:
+                CollapsibleItem:
+                  key: ${p}
+                  label: ${'hello' + getDateLabel(p)}
+                  children:
+                    Text:
+                      text: ${'world' + p + ensemble.storage.get('iconName')}
 
 Global:
   scriptName: test.js
