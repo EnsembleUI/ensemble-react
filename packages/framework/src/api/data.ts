@@ -1,5 +1,6 @@
 import { has, set } from "lodash-es";
 import type { Setter } from "jotai";
+import { QueryClient } from "@tanstack/react-query";
 import { DataFetcher, type WebSocketConnection, type Response } from "../data";
 import { error } from "../shared";
 import type {
@@ -10,6 +11,8 @@ import type {
 import { screenDataAtom, type ScreenContextDefinition } from "../state";
 import { isUsingMockResponse } from "../appConfig";
 import { mockResponse } from "../evaluate/mock";
+
+const queryClient = new QueryClient();
 
 export const invokeAPI = async (
   apiName: string,
@@ -22,6 +25,12 @@ export const invokeAPI = async (
   const api = screenContext.model?.apis?.find(
     (model) => model.name === apiName,
   );
+
+  const hash = JSON.stringify({
+    apiName: api?.name,
+    actionInput: apiInputs,
+    screen: screenContext.model?.id,
+  });
 
   if (!api) {
     error(`Unable to find API with name ${apiName}`);
@@ -42,23 +51,29 @@ export const invokeAPI = async (
   // If mock resposne does not exist, fetch the data directly from the API
   const useMockResponse =
     has(api, "mockResponse") && isUsingMockResponse(screenContext.app?.id);
-  const res = await DataFetcher.fetch(
-    api,
-    { ...apiInputs, ...context },
-    {
-      mockResponse: mockResponse(
-        evaluatedMockResponse ?? api.mockResponse,
-        useMockResponse,
+
+  const response = await queryClient.fetchQuery({
+    queryKey: [hash],
+    queryFn: () =>
+      DataFetcher.fetch(
+        api,
+        { ...apiInputs, ...context },
+        {
+          mockResponse: mockResponse(
+            evaluatedMockResponse ?? api.mockResponse,
+            useMockResponse,
+          ),
+          useMockResponse,
+        },
       ),
-      useMockResponse,
-    },
-  );
+    staleTime: api.cacheExpiry ? api.cacheExpiry * 1000 : 0,
+  });
 
   if (setter) {
-    set(update, api.name, res);
+    set(update, api.name, response);
     setter(screenDataAtom, { ...update });
   }
-  return res;
+  return response;
 };
 
 export const handleConnectSocket = (

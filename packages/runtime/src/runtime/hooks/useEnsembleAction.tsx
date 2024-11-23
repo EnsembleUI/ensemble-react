@@ -153,6 +153,7 @@ export const useExecuteCode: EnsembleActionHook<
 export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const { apis, setData, mockResponses } = useScreenData();
   const appContext = useApplicationContext();
+  const screenModel = useScreenModel();
   const [isComplete, setIsComplete] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>();
   const [context, setContext] = useState<{ [key: string]: unknown }>();
@@ -171,6 +172,12 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
 
   const onAPIResponseAction = useEnsembleAction(api?.onResponse);
   const onAPIErrorAction = useEnsembleAction(api?.onError);
+
+  const hash = JSON.stringify({
+    apiName: api?.name,
+    actionInput: evaluatedInputs,
+    screen: screenModel?.id,
+  });
 
   const invokeApi = useMemo(() => {
     if (!api) {
@@ -211,7 +218,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
       setIsLoading(true);
       try {
         const response = await queryClient.fetchQuery({
-          queryKey: [api.name],
+          queryKey: [hash],
           queryFn: () =>
             DataFetcher.fetch(
               api,
@@ -231,7 +238,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
                 useMockResponse,
               },
             ),
-          staleTime: api.cache ? (api?.cacheTime || 60) * 1000 : 0,
+          staleTime: api.cacheExpiry ? api.cacheExpiry * 1000 : 0,
         });
         setData(api.name, response);
 
@@ -281,6 +288,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     context,
     appContext?.env,
     appContext?.secrets,
+    hash,
   ]);
 
   return invokeApi;
