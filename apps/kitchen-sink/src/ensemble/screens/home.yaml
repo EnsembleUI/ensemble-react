@@ -1,14 +1,21 @@
 View:
   onLoad:
-    executeCode: |
-      ensemble.storage.set('iconName', 'home')
-      ensemble.storage.set('btnLoader' , false)
-      ensemble.storage.set('yyy' , 'page')
-      ensemble.storage.set('zzz' , 'button')
-      ensemble.storage.set('aaa' , '1')
-      ensemble.storage.set('bbb' , "0xffb91c1c")
-      ensemble.storage.set('loading', true);
-      console.log('>>> secret variable >>>', ensemble.secrets.dummyOauthSecret)
+    executeCode:
+      body: |-
+        ensemble.storage.set('iconName', 'home')
+        ensemble.storage.set('btnLoader' , false)
+        ensemble.storage.set('yyy' , 'page')
+        ensemble.storage.set('zzz' , 'button')
+        ensemble.storage.set('aaa' , '1')
+        ensemble.storage.set('bbb' , "0xffb91c1c")
+        ensemble.storage.set('loading', true);
+        console.log('>>> secret variable >>>', ensemble.secrets.dummyOauthSecret)
+        const res = await ensemble.invokeAPI('getDummyNumbers')
+        await new Promise((resolve) => setTimeout(resolve, 5000))
+        return res
+      onComplete:
+        executeCode: |
+          console.log('API triggered', result)
 
   header:
     title:
@@ -409,3 +416,9 @@ API:
   ERROR500:
     method: GET
     uri: https://httpstat.us/500
+
+  getDummyNumbers:
+    method: GET
+    uri: https://661e111b98427bbbef034208.mockapi.io/number?limit=10
+    onResponse: |
+      console.log('dummy number fetched')

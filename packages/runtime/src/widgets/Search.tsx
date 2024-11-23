@@ -12,7 +12,7 @@ import type {
   Expression,
 } from "@ensembleui/react-framework";
 import { Select as SelectComponent } from "antd";
-import { get, isEmpty, isNil, isNull, isObject, isString } from "lodash-es";
+import { get, isEmpty, isNil, isObject, isString } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type {
   EnsembleWidgetProps,
@@ -53,7 +53,6 @@ export const Search: React.FC<SearchProps> = ({
   ...rest
 }) => {
   const [searchValue, setSearchValue] = useState<string | null>(null);
-  const [hasCleared, setHasCleared] = useState<boolean>(false);
   const [value, setValue] = useState<unknown>();
 
   const { namedData } = useTemplateData({
@@ -87,7 +86,7 @@ export const Search: React.FC<SearchProps> = ({
   );
 
   const renderOptions = useMemo(() => {
-    if (hasCleared && isNil(searchValue)) return [];
+    if (isEmpty(searchValue)) return [];
 
     let dropdownOptions: JSX.Element[] = [];
 
@@ -112,19 +111,11 @@ export const Search: React.FC<SearchProps> = ({
     }
 
     return dropdownOptions;
-  }, [
-    itemTemplate,
-    namedData,
-    extractValue,
-    values?.id,
-    searchValue,
-    hasCleared,
-  ]);
+  }, [itemTemplate, namedData, extractValue, values?.id, searchValue]);
 
   useDebounce(
     () => {
-      if (onSearchAction?.callback && !isNull(searchValue)) {
-        setHasCleared(false);
+      if (onSearchAction?.callback && !isEmpty(searchValue)) {
         onSearchAction.callback({ search: searchValue });
       }
     },
@@ -143,6 +134,7 @@ export const Search: React.FC<SearchProps> = ({
     (selectedValue: unknown): void => {
       if (isObject(itemTemplate) && !isEmpty(namedData)) {
         setValue(selectedValue);
+        setSearchValue(null);
         const selectedOption = namedData.find(
           (option) => extractValue(option) === selectedValue,
         );
@@ -157,7 +149,6 @@ export const Search: React.FC<SearchProps> = ({
 
   const handleClear = useCallback(() => {
     setSearchValue(null);
-    setHasCleared(true);
     onClearAction?.callback();
   }, [onClearAction]);
 

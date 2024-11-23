@@ -127,14 +127,30 @@ export const useExecuteCode: EnsembleActionHook<
   }, [action, isCodeString, appContext?.application?.scripts]);
 
   const execute = useCommandCallback(
-    (evalContext, ...args: unknown[]) => {
+    async (evalContext, ...args: unknown[]) => {
       if (!js) {
         return;
       }
       const context = merge({}, evalContext, ...args, options?.context) as {
         [key: string]: unknown;
       };
-      const retVal = evaluate({ model: screenModel }, js, context);
+
+      let executableJS = `return (async () => {
+          return ${js}
+        })()`;
+
+      if (js.includes("\n")) {
+        executableJS = `return (async () => {
+          ${js}
+        })()`;
+      }
+
+      const retVal = await evaluate(
+        { model: screenModel },
+        executableJS,
+        context,
+      );
+
       onCompleteAction?.callback({
         ...(args[0] as { [key: string]: unknown }),
         result: retVal,
@@ -143,7 +159,11 @@ export const useExecuteCode: EnsembleActionHook<
     },
     { navigate, location: locationApi(location) },
     [js, onCompleteAction?.callback, screenModel],
-    { modalContext, render: EnsembleRuntime.render, EnsembleScreen },
+    {
+      modalContext,
+      render: EnsembleRuntime.render,
+      EnsembleScreen,
+    },
   );
 
   return useMemo(() => ({ callback: execute }), [execute]);
