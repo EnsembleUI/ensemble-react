@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.1
+
+### Patch Changes
+
+- cc58c97: Clear results for Search widget when focused outside the widget
+
 ## 0.3.0
 
 ### Minor Changes

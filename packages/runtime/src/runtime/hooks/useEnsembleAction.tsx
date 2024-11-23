@@ -159,7 +159,11 @@ export const useExecuteCode: EnsembleActionHook<
     },
     { navigate, location: locationApi(location) },
     [js, onCompleteAction?.callback, screenModel],
-    { modalContext, render: EnsembleRuntime.render, EnsembleScreen },
+    {
+      modalContext,
+      render: EnsembleRuntime.render,
+      EnsembleScreen,
+    },
   );
 
   return useMemo(() => ({ callback: execute }), [execute]);
