@@ -15,6 +15,30 @@ export interface RegisterBindingsResult<T> {
   rootRef: RefCallback<never>;
 }
 
+const areValuesAndMethodsEqual = <T>(
+  newValues: T,
+  prevValues: T | undefined,
+  methods: InvokableMethods | undefined,
+  prevMethods: InvokableMethods | undefined,
+  comparator?: (next: T, prev?: T) => boolean,
+): boolean => {
+  // Check values equality
+  const areValuesEqual = comparator
+    ? comparator(newValues, prevValues)
+    : isEqual(newValues, prevValues);
+
+  if (!areValuesEqual) return false;
+
+  // Check methods equality
+  if (!methods) return true;
+
+  return keys(methods).every((methodKey: string) => {
+    const fromMethods = get(methods, methodKey);
+    const fromWidgets = get(prevMethods, methodKey);
+    return fromMethods === fromWidgets;
+  });
+};
+
 export const useRegisterBindings = <T extends { [key: string]: unknown }>(
   values: T,
   id?: string,
@@ -55,10 +79,13 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
     }
 
     if (
-      (options?.comparator
-        ? options.comparator(newValues, widgetState?.values)
-        : isEqual(newValues, widgetState?.values)) &&
-      isEqual(keys(methods), keys(widgetState?.invokable?.methods))
+      areValuesAndMethodsEqual(
+        newValues,
+        widgetState?.values,
+        methods,
+        widgetState?.invokable?.methods,
+        options?.comparator,
+      )
     ) {
       return;
     }
@@ -70,7 +97,6 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
   }, [
     methods,
     resolvedWidgetId,
-    setWidgetState,
     newValues,
     widgetState?.values,
     widgetState?.invokable?.methods,
@@ -86,7 +112,13 @@ export const useRegisterBindings = <T extends { [key: string]: unknown }>(
         invokable: { id: resolvedWidgetId, methods },
       });
     }
-  }, [options?.forceState]);
+  }, [
+    options?.forceState,
+    newValues,
+    resolvedWidgetId,
+    methods,
+    setWidgetState,
+  ]);
 
   const updatedValues = widgetState?.values ?? newValues;
   const htmlAttributes = get(updatedValues, "htmlAttributes") as {

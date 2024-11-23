@@ -36,6 +36,7 @@ export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
   const onClickCallback = useCallback(
     (e?: MouseEvent) => {
       e?.stopPropagation();
+
       if (!action) {
         return;
       }
