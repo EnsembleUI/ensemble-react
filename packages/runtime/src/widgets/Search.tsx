@@ -26,6 +26,7 @@ import { Icon } from "./Icon";
 const widgetName = "Search";
 
 export type SearchProps = {
+  value?: string;
   placeholder?: string;
   searchKey?: string;
   selectedLabel?: { [key: string]: unknown };
@@ -50,6 +51,7 @@ export const Search: React.FC<SearchProps> = ({
   onChange,
   onSelect,
   onClear,
+  value: initialValue,
   ...rest
 }) => {
   const [searchValue, setSearchValue] = useState<string | null>(null);
@@ -61,7 +63,7 @@ export const Search: React.FC<SearchProps> = ({
   });
 
   const { id, rootRef, values } = useRegisterBindings(
-    { styles, value, ...rest, widgetName },
+    { styles, value, ...rest, widgetName, initialValue },
     rest.id,
     {
       setValue,
@@ -212,6 +214,7 @@ export const Search: React.FC<SearchProps> = ({
       <SelectComponent
         allowClear
         className={`${values?.styles?.names || ""} ${id}_input`}
+        defaultValue={values?.initialValue}
         filterOption={false}
         id={values?.id}
         labelRender={({ label, value: labelValue }): React.ReactNode =>
