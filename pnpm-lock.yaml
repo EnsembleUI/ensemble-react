@@ -289,9 +289,8 @@ importers:
       tsconfig: workspace:*
       tsup: ^7.2.0
       yaml: ^2.3.2
-    dependencies:
-      '@tanstack/react-query': 5.61.0
     devDependencies:
+      '@tanstack/react-query': 5.61.0
       '@testing-library/react': 13.4.0
       '@types/lodash-es': 4.17.12
       '@types/react': 18.2.62
@@ -5870,6 +5869,7 @@ packages:
 
   /@tanstack/query-core/5.60.6:
     resolution: {integrity: sha512-tI+k0KyCo1EBJ54vxK1kY24LWj673ujTydCZmzEZKAew4NqZzTaVQJEuaG1qKj2M03kUHN46rchLRd+TxVq/zQ==}
+    dev: true
 
   /@tanstack/react-query/5.61.0:
     resolution: {integrity: sha512-SBzV27XAeCRBOQ8QcC94w2H1Md0+LI0gTWwc3qRJoaGuewKn5FNW4LSqwPFJZVEItfhMfGT7RpZuSFXjTi12pQ==}
@@ -5877,6 +5877,7 @@ packages:
       react: ^18 || ^19
     dependencies:
       '@tanstack/query-core': 5.60.6
+    dev: true
 
   /@testing-library/dom/8.20.1:
     resolution: {integrity: sha512-/DiOQ5xBxgdYRC8LNk7U+RWat0S3qRLeIw3ZIkMQ9kkVlRmwD/Eg8k8CqIpD6GW7u20JIUOfMKbxtiLutpjQ4g==}
