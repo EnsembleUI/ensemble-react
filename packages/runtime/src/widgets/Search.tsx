@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo } from "react";
+import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { useDebounce } from "react-use";
 import {
   useTemplateData,
@@ -184,6 +184,10 @@ export const Search: React.FC<SearchProps> = ({
     },
     [extractValue, namedData, rest.selectedLabel],
   );
+
+  useEffect(() => {
+    setValue(values?.initialValue);
+  }, [values?.initialValue]);
 
   return (
     <div
