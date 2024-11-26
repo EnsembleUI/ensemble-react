@@ -1,8 +1,7 @@
 import { has, set } from "lodash-es";
 import type { Setter } from "jotai";
-import { QueryClient } from "@tanstack/react-query";
 import { DataFetcher, type WebSocketConnection, type Response } from "../data";
-import { error } from "../shared";
+import { error, generateAPIHash, queryClient } from "../shared";
 import type {
   EnsembleActionHookResult,
   EnsembleMockResponse,
@@ -11,8 +10,6 @@ import type {
 import { screenDataAtom, type ScreenContextDefinition } from "../state";
 import { isUsingMockResponse } from "../appConfig";
 import { mockResponse } from "../evaluate/mock";
-
-const queryClient = new QueryClient();
 
 export const invokeAPI = async (
   apiName: string,
@@ -26,9 +23,9 @@ export const invokeAPI = async (
     (model) => model.name === apiName,
   );
 
-  const hash = JSON.stringify({
-    apiName: api?.name,
-    actionInput: apiInputs,
+  const hash = generateAPIHash({
+    api: api?.name,
+    inputs: apiInputs,
     screen: screenContext.model?.id,
   });
 
@@ -66,7 +63,7 @@ export const invokeAPI = async (
           useMockResponse,
         },
       ),
-    staleTime: api.cacheExpiry ? api.cacheExpiry * 1000 : 0,
+    staleTime: api.cacheExpirySeconds ? api.cacheExpirySeconds * 1000 : 0,
   });
 
   if (setter) {

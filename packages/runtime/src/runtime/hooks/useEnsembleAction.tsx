@@ -15,6 +15,7 @@ import {
   mockResponse,
   useCommandCallback,
   useScreenModel,
+  generateAPIHash,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -193,9 +194,9 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const onAPIResponseAction = useEnsembleAction(api?.onResponse);
   const onAPIErrorAction = useEnsembleAction(api?.onError);
 
-  const hash = JSON.stringify({
-    apiName: api?.name,
-    actionInput: evaluatedInputs,
+  const hash = generateAPIHash({
+    api: api?.name,
+    inputs: evaluatedInputs,
     screen: screenModel?.id,
   });
 
@@ -258,7 +259,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
                 useMockResponse,
               },
             ),
-          staleTime: api.cacheExpiry ? api.cacheExpiry * 1000 : 0,
+          staleTime: api.cacheExpirySeconds ? api.cacheExpirySeconds * 1000 : 0,
         });
         setData(api.name, response);
 

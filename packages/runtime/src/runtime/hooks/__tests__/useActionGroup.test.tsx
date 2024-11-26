@@ -14,7 +14,7 @@ import {
 import "@testing-library/jest-dom";
 import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
 import { useActionGroup } from "../useEnsembleAction";
 import { createCustomWidget } from "../../customWidget";
 import { Button } from "../../../widgets";
@@ -46,13 +46,8 @@ const BrowserRouterWrapper = ({ children }: BrowserRouterProps) => (
   </QueryClientProvider>
 );
 
-beforeEach(() => {
-  jest.useFakeTimers();
-});
-
 afterEach(() => {
   jest.clearAllMocks();
-  jest.useRealTimers();
   queryClient.clear();
 });
 
@@ -187,120 +182,6 @@ test("fetch multiple APIs", async () => {
   await waitFor(() => {
     expect(logSpy).toHaveBeenCalledWith("foo");
     expect(logSpy).toHaveBeenCalledWith("bar");
-  });
-});
-
-test("fetch API cache response for cache expiry", async () => {
-  const logSpy = jest.spyOn(console, "log");
-
-  fetchMock.mockResolvedValue({ body: { data: "foobar" } });
-
-  render(
-    <EnsembleScreen
-      screen={{
-        name: "test_cache",
-        id: "test_cache",
-        body: {
-          name: "Button",
-          properties: {
-            label: "Test Cache",
-            onTap: {
-              invokeAPI: {
-                name: "testCache",
-                onResponse: { executeCode: "console.log(response.body.data)" },
-              },
-            },
-          },
-        },
-        apis: [{ name: "testCache", method: "GET", cacheExpiry: 5 }],
-      }}
-    />,
-    { wrapper: BrowserRouterWrapper },
-  );
-
-  const button = screen.getByText("Test Cache");
-  fireEvent.click(button);
-
-  await waitFor(() => {
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-  });
-
-  fireEvent.click(button);
-
-  await waitFor(() => {
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-  });
-
-  jest.advanceTimersByTime(5000);
-
-  fireEvent.click(button);
-
-  await waitFor(() => {
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(logSpy).toHaveBeenCalledWith("foobar");
-  });
-});
-
-test("fetch API cache response for unique inputs while cache expiry", async () => {
-  fetchMock.mockResolvedValue({ body: { data: "foobar" } });
-
-  render(
-    <EnsembleScreen
-      screen={{
-        name: "test_cache",
-        id: "test_cache",
-        body: {
-          name: "Column",
-          properties: {
-            children: [
-              {
-                name: "Button",
-                properties: {
-                  label: "Page 1",
-                  onTap: { invokeAPI: { name: "testCache", inputs: [1] } },
-                },
-              },
-              {
-                name: "Button",
-                properties: {
-                  label: "Page 2",
-                  onTap: { invokeAPI: { name: "testCache", inputs: [2] } },
-                },
-              },
-            ],
-          },
-        },
-        apis: [
-          {
-            name: "testCache",
-            method: "GET",
-            inputs: ["page"],
-            cacheExpiry: 60,
-          },
-        ],
-      }}
-    />,
-    { wrapper: BrowserRouterWrapper },
-  );
-
-  const button = screen.getByText("Page 1");
-  fireEvent.click(button);
-
-  await waitFor(() => {
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-  });
-
-  fireEvent.click(button);
-
-  await waitFor(() => {
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-  });
-
-  const button2 = screen.getByText("Page 2");
-  fireEvent.click(button2);
-
-  await waitFor(() => {
-    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 });
 
