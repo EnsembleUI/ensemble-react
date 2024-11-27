@@ -1,11 +1,19 @@
-import type { NavigateModalScreenAction } from "@ensembleui/react-framework";
+import type {
+  EnsembleScreenModel,
+  NavigateModalScreenAction,
+} from "@ensembleui/react-framework";
 import {
   unwrapWidget,
   useApplicationContext,
-  useEvaluate,
+  evaluate,
+  visitExpressions,
+  replace,
+  useScreenModel,
+  useCommandCallback,
 } from "@ensembleui/react-framework";
-import { cloneDeep, isString } from "lodash-es";
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { cloneDeep, isNil, isString, merge } from "lodash-es";
+import { useCallback, useContext, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { ModalContext } from "../modal";
 import { EnsembleRuntime } from "../runtime";
 // FIXME: refactor
@@ -18,21 +26,28 @@ import {
 
 export const useNavigateModalScreen: EnsembleActionHook<
   NavigateModalScreenAction
-> = (action?: NavigateModalScreenAction) => {
+> = (action) => {
+  const navigate = useNavigate();
   const applicationContext = useApplicationContext();
   const modalContext = useContext(ModalContext);
+  const screenModel = useScreenModel();
   const ensembleAction = useEnsembleAction(
     !isString(action) && action ? action.onModalDismiss : undefined,
   );
-  const [context, setContext] = useState<unknown>();
-  const [isComplete, setIsComplete] = useState<boolean>();
 
-  const evaluatedInputs = useEvaluate(
-    {
-      inputs:
-        !isString(action) && action?.inputs ? cloneDeep(action.inputs) : {},
+  const evaluateInputs = useCallback(
+    (
+      inputs: { [key: string]: unknown },
+      model?: EnsembleScreenModel,
+      context?: { [key: string]: unknown },
+    ): { [key: string]: unknown } => {
+      const resolvedInputs = visitExpressions(
+        inputs,
+        replace((expr) => evaluate({ model }, expr, context)),
+      );
+      return resolvedInputs as { [key: string]: unknown };
     },
-    { context },
+    [],
   );
 
   const onDismissCallback = useCallback(() => {
@@ -50,40 +65,29 @@ export const useNavigateModalScreen: EnsembleActionHook<
     }
   }, [isStringAction, action]);
 
-  useEffect(() => {
-    if (!action || !modalContext || isComplete !== false) {
-      return;
-    }
+  const navigateCommand = useCommandCallback(
+    (evalContext, ...args) => {
+      if (!action || !modalContext) return;
 
-    navigateModalScreen(
-      action,
-      modalContext,
-      applicationContext?.application,
-      evaluatedInputs.inputs,
-      title,
-      onDismissCallback,
-    );
-    setIsComplete(true);
-  }, [
-    action,
-    applicationContext?.application,
-    evaluatedInputs.inputs,
-    isComplete,
-    modalContext,
-    onDismissCallback,
-    title,
-  ]);
+      const context = merge({}, evalContext, args[0]);
 
-  return useMemo(() => {
-    const callback = (args: unknown): void => {
-      if (!action) {
-        return;
-      }
+      const evaluatedInputs =
+        !isString(action) && !isNil(action.inputs)
+          ? evaluateInputs(cloneDeep(action.inputs), screenModel, context)
+          : {};
 
-      setIsComplete(false);
-      setContext(args);
-    };
+      navigateModalScreen(
+        action,
+        modalContext,
+        applicationContext?.application,
+        evaluatedInputs,
+        title,
+        onDismissCallback,
+      );
+    },
+    { navigate },
+    [action, applicationContext?.application, onDismissCallback, screenModel],
+  );
 
-    return { callback };
-  }, [action]);
+  return useMemo(() => ({ callback: navigateCommand }), [navigateCommand]);
 };
