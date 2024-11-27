@@ -42,13 +42,9 @@ export const Form: React.FC<FormProps> = (props) => {
 
   const onFinishCallback = useCallback(
     (vals: unknown) => {
-      if (!action) {
-        return;
-      }
-
-      return action.callback({ vals });
+      return action?.callback({ vals });
     },
-    [action],
+    [action?.callback],
   );
 
   const onChangeActionCallback = useCallback(
@@ -61,7 +57,7 @@ export const Form: React.FC<FormProps> = (props) => {
 
       onChangeAction?.callback({ fields });
     },
-    [onChangeAction],
+    [onChangeAction?.callback],
   );
 
   // reset form

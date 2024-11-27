@@ -1,7 +1,13 @@
 import { isEmpty, merge, toString } from "lodash-es";
 import type { ScreenContextDefinition } from "../state/screen";
 import type { InvokableMethods, WidgetState } from "../state/widget";
-import { sanitizeJs, debug } from "../shared";
+import {
+  sanitizeJs,
+  debug,
+  visitExpressions,
+  type EnsembleScreenModel,
+  replace,
+} from "../shared";
 
 export const widgetStatesToInvokables = (widgets: {
   [key: string]: WidgetState | undefined;
@@ -55,12 +61,12 @@ const formatJs = (js?: string): string => {
 
   const sanitizedJs = sanitizeJs(toString(js));
 
-  // js object
   if (
     (sanitizedJs.startsWith("{") && sanitizedJs.endsWith("}")) ||
     (sanitizedJs.startsWith("[") && sanitizedJs.endsWith("]"))
-  )
-    return `return ${js}`;
+  ) {
+    return `return ${sanitizedJs}`;
+  }
 
   // multiline js
   if (sanitizedJs.includes("\n")) {
@@ -112,4 +118,16 @@ export const evaluate = <T = unknown>(
     debug(e);
     throw e;
   }
+};
+
+export const evaluateDeep = (
+  inputs: { [key: string]: unknown },
+  model?: EnsembleScreenModel,
+  context?: { [key: string]: unknown },
+): { [key: string]: unknown } => {
+  const resolvedInputs = visitExpressions(
+    inputs,
+    replace((expr) => evaluate({ model }, expr, context)),
+  );
+  return resolvedInputs as { [key: string]: unknown };
 };

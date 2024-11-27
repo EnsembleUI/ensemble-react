@@ -39,3 +39,4 @@ export * from "./Spacer";
 export * from "./Stack";
 export * from "./QrCode";
 export * from "./ToolTip";
+export * from "./Html";

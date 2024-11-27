@@ -5,10 +5,10 @@ import userEvent from "@testing-library/user-event";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { BrowserRouter } from "react-router-dom";
+import { useRegisterBindings } from "@ensembleui/react-framework";
 import { Button, type ButtonProps } from "../Button";
 import { createCustomWidget } from "../../runtime/customWidget";
 import { Column } from "../Column";
-import { useRegisterBindings } from "@ensembleui/react-framework";
 
 test("test button loading using setLoading", async () => {
   // Render the button component
@@ -441,7 +441,7 @@ test("Upload Files Using pick files", async () => {
 
   const files = [new File([imageBlob], "example1.png", { type: "image/png" })];
 
-  const pickFiles = document.querySelector("input") as HTMLInputElement;
+  const pickFiles = document.querySelector("input")!;
 
   userEvent.upload(pickFiles, files);
 

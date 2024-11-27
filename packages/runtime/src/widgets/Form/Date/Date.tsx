@@ -67,10 +67,7 @@ export const Date: React.FC<DateProps> = (props) => {
 
   const onChangeCallback = useCallback(
     (date?: string) => {
-      if (!action) {
-        return;
-      }
-      action.callback({
+      action?.callback({
         [id]: {
           value: date,
           setValue,
@@ -78,7 +75,7 @@ export const Date: React.FC<DateProps> = (props) => {
         },
       });
     },
-    [action, id, props],
+    [action?.callback, id, props],
   );
 
   const onDateChange = (date: Dayjs, dateString: string | string[]): void => {

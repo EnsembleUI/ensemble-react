@@ -7,5 +7,5 @@ export interface ApplicationTransporter {
 
 export interface LocalApplicationTransporter extends ApplicationTransporter {
   get: (appId: string) => Promise<ApplicationDTO>;
-  put: (app: ApplicationDTO, path: string) => Promise<ApplicationDTO>;
+  put: (app: ApplicationDTO, path?: string) => Promise<ApplicationDTO>;
 }

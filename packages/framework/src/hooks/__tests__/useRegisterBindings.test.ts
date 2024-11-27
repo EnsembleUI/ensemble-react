@@ -20,12 +20,12 @@ const mockValues = {
 };
 
 // Define the type for the object with callback functions
-type CallbacksObject = {
+interface CallbacksObject {
   sum: () => number;
   minus: () => number;
   multiply: () => number;
   divide: () => number;
-};
+}
 
 const generateObjectWithCallbacks = (dependency: number): CallbacksObject => ({
   sum: (): number => dependency + 2,

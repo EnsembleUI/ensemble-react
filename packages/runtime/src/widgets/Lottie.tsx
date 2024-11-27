@@ -45,12 +45,12 @@ export const Lottie: React.FC<LottieProps> = (props) => {
         completeAction?.callback();
       }
     },
-    [completeAction],
+    [completeAction?.callback],
   );
 
   const onTapCallback = useCallback(() => {
     tapAction?.callback();
-  }, [tapAction]);
+  }, [tapAction?.callback]);
 
   const forward = useCallback(() => {
     lottieRef.current?.setPlayerDirection(1);

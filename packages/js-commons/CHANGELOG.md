@@ -1,5 +1,41 @@
 # @ensembleui/js-commons
 
+## 0.0.8
+
+### Patch Changes
+
+- 0fe18c4: Handle edge cases in document intake
+
+## 0.0.7
+
+### Patch Changes
+
+- 687a823: Fix document intake for writing apps
+
+## 0.0.6
+
+### Patch Changes
+
+- 7f0a48c: Export local global app metadata
+
+## 0.0.8
+
+### Patch Changes
+
+- 0fe18c4: Handle edge cases in document intake
+
+## 0.0.7
+
+### Patch Changes
+
+- 687a823: Fix document intake for writing apps
+
+## 0.0.6
+
+### Patch Changes
+
+- 7f0a48c: Export local global app metadata
+
 ## 0.0.5
 
 ### Patch Changes

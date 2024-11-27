@@ -25,16 +25,16 @@ export const handleConnectSocket = (
   const ws = new WebSocket(socket.uri);
 
   if (onOpen?.callback) {
-    ws.onopen = () => onOpen?.callback();
+    ws.onopen = () => onOpen.callback();
   }
 
   if (onMessage?.callback) {
     ws.onmessage = (e: MessageEvent) =>
-      onMessage?.callback({ data: e.data as unknown });
+      onMessage.callback({ data: e.data as unknown });
   }
 
   if (onClose?.callback) {
-    ws.onclose = () => onClose?.callback();
+    ws.onclose = () => onClose.callback();
   }
 
   screenDataSetter(socket.name, { socket: ws, isConnected: true });

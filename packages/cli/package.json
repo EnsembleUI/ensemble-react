@@ -1,7 +1,7 @@
 {
   "name": "@ensembleui/cli",
   "description": "Ensemble CLI for managing apps",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "author": "Ensemble",
   "bin": {
     "ensemble": "./bin/run.js"

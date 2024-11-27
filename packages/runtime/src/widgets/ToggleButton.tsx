@@ -76,15 +76,11 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
   const action = useEnsembleAction(onChange);
   const onChangeCallback = useCallback(
     (newValue: string) => {
-      if (!action) {
-        return;
-      }
-
-      action.callback({
+      action?.callback({
         value: newValue,
       });
     },
-    [action],
+    [action?.callback],
   );
 
   // handle toggle button value change

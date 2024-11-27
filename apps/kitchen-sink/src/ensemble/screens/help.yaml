@@ -1,4 +1,7 @@
 View:
+  styles:
+    scrollableView: true
+
   header:
     title:
       Header:
@@ -31,3 +34,44 @@ View:
             text: Help
         - Markdown:
             text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).
+        - Card:
+            styles:
+              maxWidth: unset
+              width: unset
+              gap: 10px
+            children:
+              - Markdown:
+                  text: |
+                    ### Image Cropper
+              - ImageCropper:
+                  id: imageCropper
+                  source: https://img.huffingtonpost.com/asset/5ab4d4ac2000007d06eb2c56.jpeg?cache=sih0jwle4e&ops=1910_1000
+                  styles:
+                    strokeColor: red
+                    strokeWidth: 2px
+                  onCropped:
+                    executeCode: |
+                      console.log('Image Cropped Successfully', file)
+                      croppedImage.setSource(file)
+
+              - Button:
+                  label: Rotate clockwise
+                  onTap:
+                    executeCode: |
+                      imageCropper.setRotate(imageCropper.rotate + 90)
+              - Button:
+                  label: Rotate anti-clockwise
+                  onTap:
+                    executeCode: |
+                      imageCropper.setRotate(imageCropper.rotate - 90)
+              - Button:
+                  label: Crop
+                  onTap:
+                    executeCode: |
+                      imageCropper.crop()
+
+              - Image:
+                  id: croppedImage
+                  styles:
+                    maxWidth: 500px
+                  source: https://img.huffingtonpost.com/asset/5ab4d4ac2000007d06eb2c56.jpeg?cache=sih0jwle4e&ops=1910_1000

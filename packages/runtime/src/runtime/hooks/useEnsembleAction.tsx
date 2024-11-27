@@ -16,6 +16,7 @@ import {
   useCommandCallback,
   useScreenModel,
   generateAPIHash,
+  evaluateDeep,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -129,7 +130,7 @@ export const useExecuteCode: EnsembleActionHook<
   }, [action, isCodeString, appContext?.application?.scripts]);
 
   const execute = useCommandCallback(
-    async (evalContext, ...args: unknown[]) => {
+    (evalContext, ...args: unknown[]) => {
       if (!js) {
         return;
       }
@@ -137,21 +138,7 @@ export const useExecuteCode: EnsembleActionHook<
         [key: string]: unknown;
       };
 
-      let executableJS = `return (async () => {
-          return ${js}
-        })()`;
-
-      if (js.includes("\n")) {
-        executableJS = `return (async () => {
-          ${js}
-        })()`;
-      }
-
-      const retVal = await evaluate(
-        { model: screenModel },
-        executableJS,
-        context,
-      );
+      const retVal = evaluate({ model: screenModel }, js, context);
 
       onCompleteAction?.callback({
         ...(args[0] as { [key: string]: unknown }),
@@ -168,52 +155,53 @@ export const useExecuteCode: EnsembleActionHook<
     },
   );
 
-  return useMemo(() => ({ callback: execute }), [execute]);
+  return { callback: execute };
 };
 
 export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const { apis, setData, mockResponses } = useScreenData();
   const appContext = useApplicationContext();
   const screenModel = useScreenModel();
-  const [isComplete, setIsComplete] = useState<boolean>();
-  const [isLoading, setIsLoading] = useState<boolean>();
-  const [context, setContext] = useState<{ [key: string]: unknown }>();
   const queryClient = useQueryClient();
-
-  const evaluatedInputs = useEvaluate(action?.inputs, { context });
-  const evaluatedName = useEvaluate({ name: action?.name }, { context });
-
-  const api = useMemo(
-    () => apis?.find((model) => model.name === evaluatedName.name),
-    [evaluatedName.name, apis],
-  );
+  const navigate = useNavigate();
 
   const onInvokeAPIResponseAction = useEnsembleAction(action?.onResponse);
   const onInvokeAPIErrorAction = useEnsembleAction(action?.onError);
 
-  const onAPIResponseAction = useEnsembleAction(api?.onResponse);
-  const onAPIErrorAction = useEnsembleAction(api?.onError);
+  const currentApi = useMemo(() => {
+    if (!action?.name) return null;
+    return apis?.find((api) => api.name === action.name);
+  }, [action?.name, apis]);
 
-  const hash = generateAPIHash({
-    api: api?.name,
-    inputs: evaluatedInputs,
-    screen: screenModel?.id,
-  });
+  const onAPIResponseAction = useEnsembleAction(currentApi?.onResponse);
+  const onAPIErrorAction = useEnsembleAction(currentApi?.onError);
 
-  const invokeApi = useMemo(() => {
-    if (!api) {
-      return;
-    }
+  const invokeCommand = useCommandCallback(
+    async (evalContext, ...args) => {
+      if (!action?.name || !currentApi) return;
 
-    const callback = (args: unknown): void => {
-      // We greedily set data loading state in screen context to update bindings
-      setData(api.name, {
+      const context = merge({}, evalContext, args[0]);
+
+      if (action.name !== currentApi.name) return;
+
+      const evaluatedInputs = (
+        action.inputs ? evaluateDeep(action.inputs, screenModel, context) : {}
+      ) as { [key: string]: unknown };
+
+      const hash = generateAPIHash({
+        api: currentApi.name,
+        inputs: evaluatedInputs,
+        screen: screenModel?.id,
+      });
+
+      // Set initial loading state
+      setData(currentApi.name, {
         isLoading: true,
         isSuccess: false,
         isError: false,
       });
 
-      if (action?.id) {
+      if (action.id) {
         setData(action.id, {
           isLoading: true,
           isSuccess: false,
@@ -221,28 +209,16 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
         });
       }
 
-      setIsComplete(false);
-      setContext(args as { [key: string]: unknown });
-    };
-    return { callback };
-  }, [api, setData, action]);
-
-  useEffect(() => {
-    if (!api || isComplete !== false || isLoading) {
-      return;
-    }
-
-    const fireRequest = async (): Promise<void> => {
-      const useMockResponse =
-        has(api, "mockResponse") &&
-        isUsingMockResponse(appContext?.application?.id);
-      setIsLoading(true);
       try {
+        const useMockResponse =
+          has(currentApi, "mockResponse") &&
+          isUsingMockResponse(appContext?.application?.id);
+
         const response = await queryClient.fetchQuery({
           queryKey: [hash],
           queryFn: () =>
             DataFetcher.fetch(
-              api,
+              currentApi,
               {
                 ...evaluatedInputs,
                 ...context,
@@ -253,17 +229,20 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
               },
               {
                 mockResponse: mockResponse(
-                  mockResponses[api.name],
+                  mockResponses[currentApi.name],
                   useMockResponse,
                 ),
                 useMockResponse,
               },
             ),
-          staleTime: api.cacheExpirySeconds ? api.cacheExpirySeconds * 1000 : 0,
+          staleTime: currentApi.cacheExpirySeconds
+            ? currentApi.cacheExpirySeconds * 1000
+            : 0,
         });
-        setData(api.name, response);
 
-        if (action?.id) {
+        setData(currentApi.name, response);
+
+        if (action.id) {
           setData(action.id, response);
         }
 
@@ -272,13 +251,13 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
       } catch (e) {
         logError(e);
 
-        setData(api.name, {
+        setData(currentApi.name, {
           isLoading: false,
           isSuccess: false,
           isError: true,
         });
 
-        if (action?.id) {
+        if (action.id) {
           setData(action.id, {
             isLoading: false,
             isSuccess: false,
@@ -288,31 +267,23 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
 
         onAPIErrorAction?.callback({ ...context, error: e });
         onInvokeAPIErrorAction?.callback({ ...context, error: e });
-      } finally {
-        setIsComplete(true);
-        setIsLoading(false);
       }
-    };
+    },
+    { navigate },
+    [
+      action,
+      currentApi,
+      screenModel,
+      appContext,
+      queryClient,
+      onAPIResponseAction,
+      onAPIErrorAction,
+      onInvokeAPIResponseAction,
+      onInvokeAPIErrorAction,
+    ],
+  );
 
-    void fireRequest();
-  }, [
-    api,
-    action,
-    evaluatedInputs,
-    isComplete,
-    isLoading,
-    onInvokeAPIErrorAction,
-    onInvokeAPIResponseAction,
-    onAPIErrorAction,
-    onAPIResponseAction,
-    setData,
-    context,
-    appContext?.env,
-    appContext?.secrets,
-    hash,
-  ]);
-
-  return invokeApi;
+  return { callback: invokeCommand };
 };
 
 export const useConnectSocket: EnsembleActionHook<ConnectSocketAction> = (
@@ -353,9 +324,9 @@ export const useConnectSocket: EnsembleActionHook<ConnectSocketAction> = (
     screenData,
     screenDataSetter,
     socket,
-    onSocketConnectAction,
-    onMessageReceiveAction,
-    onSocketDisconnectAction,
+    onSocketConnectAction?.callback,
+    onMessageReceiveAction?.callback,
+    onSocketDisconnectAction?.callback,
   ]);
 
   return connectSocket;
@@ -374,14 +345,6 @@ export const useMessageSocket: EnsembleActionHook<SendSocketMessageAction> = (
     [action, screenSockets],
   );
 
-  const sendSocketMessage = useMemo(() => {
-    const callback = (args: unknown): void => {
-      setIsComplete(false);
-      setContext(args as { [key: string]: unknown });
-    };
-    return { callback };
-  }, []);
-
   useEffect(() => {
     if (!socket || isComplete !== false) {
       return;
@@ -392,7 +355,12 @@ export const useMessageSocket: EnsembleActionHook<SendSocketMessageAction> = (
     setIsComplete(true);
   }, [socket, screenData, evaluatedInputs, isComplete]);
 
-  return sendSocketMessage;
+  const callback = useCallback((args: unknown): void => {
+    setIsComplete(false);
+    setContext(args as { [key: string]: unknown });
+  }, []);
+
+  return { callback };
 };
 
 export const useDisconnectSocket: EnsembleActionHook<DisconnectSocketAction> = (
@@ -409,16 +377,13 @@ export const useDisconnectSocket: EnsembleActionHook<DisconnectSocketAction> = (
     [action, screenSockets],
   );
 
-  const disconnectSocket = useMemo(() => {
-    const callback = (): void => {
-      if (socket) {
-        handleDisconnectSocket(screenData, socket, screenDataSetter);
-      }
-    };
-    return { callback };
-  }, [screenData, socket, screenDataSetter]);
+  const callback = useCallback((): void => {
+    if (socket) {
+      handleDisconnectSocket(screenData, socket, screenDataSetter);
+    }
+  }, [socket, screenData, screenDataSetter]);
 
-  return disconnectSocket;
+  return { callback };
 };
 
 export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
@@ -428,25 +393,19 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
   const ensembleAction = useEnsembleAction(action?.onDialogDismiss);
   const customScope = useCustomScope();
 
-  const onDismissCallback = useCallback(() => {
-    if (!ensembleAction) {
-      return;
-    }
-    ensembleAction.callback();
-  }, [ensembleAction]);
-
   if (!action?.widget && !action?.body)
     throw new Error("ShowDialog Action requires a widget to be specified");
+
   const widget = useMemo(
     () => unwrapWidget(cloneDeep(action.widget || action.body || {})),
     [action.widget, action.body],
   );
 
-  return useMemo(() => {
-    const callback = (args: unknown): void => {
+  const callback = useCallback(
+    (args: unknown): void => {
       const modalOptions = getShowDialogOptions(
         action.options,
-        onDismissCallback,
+        ensembleAction?.callback,
       );
       const widgetBackgroundColor = get(
         widget,
@@ -474,10 +433,11 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
           isObject(args) ? (args as CustomScope) : undefined,
         ),
       );
-    };
+    },
+    [action.options, customScope, ensembleAction?.callback, openModal, widget],
+  );
 
-    return { callback };
-  }, [widget, onDismissCallback, action.options, openModal, customScope]);
+  return { callback };
 };
 
 export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
@@ -569,20 +529,24 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
         onCompleteAction?.callback({ files: values?.files });
       }
     }
-  }, [onCompleteAction, isComplete, files, values, onErrorAction]);
+  }, [
+    onCompleteAction?.callback,
+    isComplete,
+    files,
+    values,
+    onErrorAction?.callback,
+  ]);
 
-  return useMemo(() => {
-    const callback = (): void => {
-      try {
-        inputEl.click();
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error(error);
-      }
-    };
-
-    return { callback };
+  const callback = useCallback(() => {
+    try {
+      inputEl.click();
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+    }
   }, [inputEl]);
+
+  return { callback };
 };
 
 export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
@@ -629,8 +593,8 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
 
   const evaluatedInputs = useEvaluate(action?.inputs);
 
-  return useMemo(() => {
-    const callback = async (args: unknown): Promise<void> => {
+  const callback = useCallback(
+    async (args: unknown): Promise<void> => {
       if (!apiModel || !action) return;
 
       const argContext = args as { [key: string]: unknown };
@@ -665,30 +629,29 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
         setStatus("failed");
         onErrorAction?.callback({ error });
       }
-    };
+    },
+    [
+      action,
+      apiModel,
+      evaluatedInputs,
+      progressCallback,
+      screenContext,
+      onCompleteAction?.callback,
+      onErrorAction?.callback,
+    ],
+  );
 
-    return { callback };
-  }, [
-    apiModel,
-    action,
-    screenContext,
-    progressCallback,
-    evaluatedInputs,
-    onCompleteAction,
-    onErrorAction,
-  ]);
+  return { callback };
 };
 
 export const useNavigateBack: EnsembleActionHook<NavigateBackAction> = () => {
   const modalContext = useContext(ModalContext);
 
-  return useMemo(() => {
-    const callback = (): void => {
-      modalContext?.navigateBack();
-    };
+  const callback = useCallback((): void => {
+    modalContext?.navigateBack();
+  }, [modalContext]);
 
-    return { callback };
-  }, []);
+  return { callback };
 };
 
 export const useActionGroup: EnsembleActionHook<ExecuteActionGroupAction> = (
@@ -702,13 +665,14 @@ export const useActionGroup: EnsembleActionHook<ExecuteActionGroupAction> = (
     return useEnsembleAction(act);
   });
 
-  return useMemo(() => {
-    const callback = (args: unknown): void => {
+  const callback = useCallback(
+    (args: unknown): void => {
       execActs.forEach((act) => act?.callback(args));
-    };
+    },
+    [actions],
+  );
 
-    return { callback };
-  }, [actions]);
+  return { callback };
 };
 
 export const useDispatchEvent: EnsembleActionHook<DispatchEventAction> = (
@@ -749,14 +713,12 @@ export const useDispatchEvent: EnsembleActionHook<DispatchEventAction> = (
     setIsComplete(true);
   }, [ensembleActions, evaluatedInputs, isComplete]);
 
-  return useMemo(() => {
-    const callback = (args: unknown): void => {
-      setContext(args);
-      setIsComplete(false);
-    };
-
-    return { callback };
+  const callback = useCallback((args: unknown): void => {
+    setContext(args);
+    setIsComplete(false);
   }, []);
+
+  return { callback };
 };
 
 export const useConditionalAction: EnsembleActionHook<
@@ -826,14 +788,12 @@ export const useConditionalAction: EnsembleActionHook<
     setIsComplete(true);
   }, [action, evaluatedStatements, isComplete, context]);
 
-  return useMemo(() => {
-    const callback = (args: unknown): void => {
-      setContext(args);
-      setIsComplete(false);
-    };
-
-    return { callback };
+  const callback = useCallback((args: unknown): void => {
+    setContext(args);
+    setIsComplete(false);
   }, []);
+
+  return { callback };
 };
 
 /* eslint-disable react-hooks/rules-of-hooks */

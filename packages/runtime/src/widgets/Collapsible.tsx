@@ -177,10 +177,9 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
 
   const onCollapseActionCallback = useCallback(
     (data: string | string[]) => {
-      if (!onCollapseAction) return;
-      onCollapseAction.callback({ data });
+      onCollapseAction?.callback({ data });
     },
-    [onCollapseAction],
+    [onCollapseAction?.callback],
   );
 
   // handle onchange on collapse

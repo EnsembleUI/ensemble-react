@@ -1,5 +1,30 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.98
+
+### Patch Changes
+
+- 135f956: added support for HTML widget
+- Updated dependencies [135f956]
+  - @ensembleui/react-runtime@0.3.5
+
+## 0.0.97
+
+### Patch Changes
+
+- ec9d081: added support for cache in API call
+- f70c0f0: Added support for await in executeCodeBlock
+- 828e7e4: Added context in item-template of collapsible widget
+- cee5d14: Allow default value for the Search widget
+- Updated dependencies [5094d08]
+- Updated dependencies [ec9d081]
+- Updated dependencies [f70c0f0]
+- Updated dependencies [828e7e4]
+- Updated dependencies [80b8558]
+- Updated dependencies [cee5d14]
+  - @ensembleui/react-framework@0.2.9
+  - @ensembleui/react-runtime@0.3.2
+
 ## 0.0.96
 
 ### Patch Changes

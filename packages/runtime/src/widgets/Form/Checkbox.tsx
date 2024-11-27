@@ -48,7 +48,7 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
       setChecked(newValue);
       action?.callback({ value: newValue });
     },
-    [action],
+    [action?.callback],
   );
 
   const formInstance = Form.useFormInstance();
