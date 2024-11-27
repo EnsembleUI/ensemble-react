@@ -179,10 +179,8 @@ test("fetch multiple APIs", async () => {
     fireEvent.click(button);
   });
 
-  await waitFor(() => {
-    expect(logSpy).toHaveBeenCalledWith("foo");
-    expect(logSpy).toHaveBeenCalledWith("bar");
-  });
+  expect(logSpy).toHaveBeenCalledWith("foo");
+  expect(logSpy).toHaveBeenCalledWith("bar");
 });
 
 test("mutate multiple storage variables", () => {

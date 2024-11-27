@@ -35,12 +35,8 @@ export const QRCode: React.FC<QRCodeProps> = (props) => {
 
   // trigger on signin action
   const onRefreshActionCallback = useCallback(() => {
-    if (!onRefreshAction) {
-      return;
-    }
-
-    return onRefreshAction.callback();
-  }, [onRefreshAction]);
+    return onRefreshAction?.callback();
+  }, [onRefreshAction?.callback]);
 
   return (
     <div ref={rootRef}>
