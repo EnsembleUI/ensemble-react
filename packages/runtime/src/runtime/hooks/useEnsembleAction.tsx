@@ -15,6 +15,7 @@ import {
   mockResponse,
   useCommandCallback,
   useScreenModel,
+  generateAPIHash,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -50,6 +51,7 @@ import {
 } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { ModalContext } from "../modal";
 import { EnsembleRuntime } from "../runtime";
 import { getShowDialogOptions } from "../showDialog";
@@ -172,9 +174,11 @@ export const useExecuteCode: EnsembleActionHook<
 export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const { apis, setData, mockResponses } = useScreenData();
   const appContext = useApplicationContext();
+  const screenModel = useScreenModel();
   const [isComplete, setIsComplete] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>();
   const [context, setContext] = useState<{ [key: string]: unknown }>();
+  const queryClient = useQueryClient();
 
   const evaluatedInputs = useEvaluate(action?.inputs, { context });
   const evaluatedName = useEvaluate({ name: action?.name }, { context });
@@ -189,6 +193,12 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
 
   const onAPIResponseAction = useEnsembleAction(api?.onResponse);
   const onAPIErrorAction = useEnsembleAction(api?.onError);
+
+  const hash = generateAPIHash({
+    api: api?.name,
+    inputs: evaluatedInputs,
+    screen: screenModel?.id,
+  });
 
   const invokeApi = useMemo(() => {
     if (!api) {
@@ -228,32 +238,37 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
         isUsingMockResponse(appContext?.application?.id);
       setIsLoading(true);
       try {
-        const res = await DataFetcher.fetch(
-          api,
-          {
-            ...evaluatedInputs,
-            ...context,
-            ensemble: {
-              env: appContext?.env,
-              secrets: appContext?.secrets,
-            },
-          },
-          {
-            mockResponse: mockResponse(
-              mockResponses[api.name],
-              useMockResponse,
+        const response = await queryClient.fetchQuery({
+          queryKey: [hash],
+          queryFn: () =>
+            DataFetcher.fetch(
+              api,
+              {
+                ...evaluatedInputs,
+                ...context,
+                ensemble: {
+                  env: appContext?.env,
+                  secrets: appContext?.secrets,
+                },
+              },
+              {
+                mockResponse: mockResponse(
+                  mockResponses[api.name],
+                  useMockResponse,
+                ),
+                useMockResponse,
+              },
             ),
-            useMockResponse,
-          },
-        );
-        setData(api.name, res);
+          staleTime: api.cacheExpirySeconds ? api.cacheExpirySeconds * 1000 : 0,
+        });
+        setData(api.name, response);
 
         if (action?.id) {
-          setData(action.id, res);
+          setData(action.id, response);
         }
 
-        onAPIResponseAction?.callback({ ...context, response: res });
-        onInvokeAPIResponseAction?.callback({ ...context, response: res });
+        onAPIResponseAction?.callback({ ...context, response });
+        onInvokeAPIResponseAction?.callback({ ...context, response });
       } catch (e) {
         logError(e);
 
@@ -294,6 +309,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     context,
     appContext?.env,
     appContext?.secrets,
+    hash,
   ]);
 
   return invokeApi;

@@ -390,6 +390,28 @@ View:
                     Text:
                       text: ${'world' + p + ensemble.storage.get('iconName')}
 
+        - Text:
+            text: ${ensemble.storage.get('email')}
+        - Button:
+            label: Call Action
+            onTap:
+              invokeAPI:
+                name: getDummyProducts
+                onResponse:
+                  executeCode: |
+                    ensemble.storage.set('email', response.body.results[0].email)
+                    ensemble.storage.set('emails', [...ensemble.storage.get("emails"),response.body.results[0].email])
+                    console.log('getData', response.body.results[0].email, ensemble.storage.get('emails'));
+        - Column:
+            item-template:
+              data: '${ensemble.storage.get("emails")}'
+              name: email
+              template:
+                Column:
+                  children:
+                    - Text:
+                        text: ${email}
+
 Global:
   scriptName: test.js
 
@@ -416,6 +438,12 @@ API:
   ERROR500:
     method: GET
     uri: https://httpstat.us/500
+
+  getDummyProducts:
+    method: GET
+    cache: true
+    cacheTime: 10
+    uri: https://randomuser.me/api/?results=1
 
   getDummyNumbers:
     method: GET
