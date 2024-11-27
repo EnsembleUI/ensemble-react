@@ -1,7 +1,7 @@
 import { has, set } from "lodash-es";
 import type { Setter } from "jotai";
 import { DataFetcher, type WebSocketConnection, type Response } from "../data";
-import { error } from "../shared";
+import { error, generateAPIHash, queryClient } from "../shared";
 import type {
   EnsembleActionHookResult,
   EnsembleMockResponse,
@@ -23,6 +23,12 @@ export const invokeAPI = async (
     (model) => model.name === apiName,
   );
 
+  const hash = generateAPIHash({
+    api: api?.name,
+    inputs: apiInputs,
+    screen: screenContext.model?.id,
+  });
+
   if (!api) {
     error(`Unable to find API with name ${apiName}`);
     return;
@@ -42,23 +48,29 @@ export const invokeAPI = async (
   // If mock resposne does not exist, fetch the data directly from the API
   const useMockResponse =
     has(api, "mockResponse") && isUsingMockResponse(screenContext.app?.id);
-  const res = await DataFetcher.fetch(
-    api,
-    { ...apiInputs, ...context },
-    {
-      mockResponse: mockResponse(
-        evaluatedMockResponse ?? api.mockResponse,
-        useMockResponse,
+
+  const response = await queryClient.fetchQuery({
+    queryKey: [hash],
+    queryFn: () =>
+      DataFetcher.fetch(
+        api,
+        { ...apiInputs, ...context },
+        {
+          mockResponse: mockResponse(
+            evaluatedMockResponse ?? api.mockResponse,
+            useMockResponse,
+          ),
+          useMockResponse,
+        },
       ),
-      useMockResponse,
-    },
-  );
+    staleTime: api.cacheExpirySeconds ? api.cacheExpirySeconds * 1000 : 0,
+  });
 
   if (setter) {
-    set(update, api.name, res);
+    set(update, api.name, response);
     setter(screenDataAtom, { ...update });
   }
-  return res;
+  return response;
 };
 
 export const handleConnectSocket = (

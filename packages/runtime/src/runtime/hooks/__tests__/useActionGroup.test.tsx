@@ -13,6 +13,8 @@ import {
 } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { BrowserRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { type ReactNode } from "react";
 import { useActionGroup } from "../useEnsembleAction";
 import { createCustomWidget } from "../../customWidget";
 import { Button } from "../../../widgets";
@@ -26,8 +28,27 @@ jest.mock("@ensembleui/react-framework", () => ({
   },
 }));
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
+
+interface BrowserRouterProps {
+  children: ReactNode;
+}
+
+const BrowserRouterWrapper = ({ children }: BrowserRouterProps) => (
+  <QueryClientProvider client={queryClient}>
+    <BrowserRouter>{children}</BrowserRouter>
+  </QueryClientProvider>
+);
+
 afterEach(() => {
   jest.clearAllMocks();
+  queryClient.clear();
 });
 
 test("execute multiple actions", () => {
@@ -45,7 +66,7 @@ test("execute multiple actions", () => {
         ],
       }),
     {
-      wrapper: BrowserRouter,
+      wrapper: BrowserRouterWrapper,
     },
   );
 
@@ -142,7 +163,7 @@ test("fetch multiple APIs", async () => {
       }}
     />,
     {
-      wrapper: BrowserRouter,
+      wrapper: BrowserRouterWrapper,
     },
   );
 
@@ -203,7 +224,7 @@ test("mutate multiple storage variables", () => {
       />
     </>,
     {
-      wrapper: BrowserRouter,
+      wrapper: BrowserRouterWrapper,
     },
   );
 
