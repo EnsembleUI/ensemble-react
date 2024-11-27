@@ -1,5 +1,16 @@
 # @ensembleui/react-runtime
 
+## 0.3.2
+
+### Patch Changes
+
+- 5094d08: fix: refactor missing themeContext in useCommandCallback
+- ec9d081: added support for cache in API call
+- f70c0f0: Added support for await in executeCodeBlock
+- 828e7e4: Added context in item-template of collapsible widget
+- 80b8558: Fix datagrid render issue with namedData
+- cee5d14: Allow default value for the Search widget
+
 ## 0.3.1
 
 ### Patch Changes
