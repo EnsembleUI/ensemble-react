@@ -1,57 +1,84 @@
-import { useEffect, useMemo, useState } from "react";
+import type {
+  EnsembleScreenModel,
+  NavigateScreenAction,
+} from "@ensembleui/react-framework";
+import { isNil, isString, merge, cloneDeep } from "lodash-es";
 import { useNavigate } from "react-router-dom";
 import {
-  type NavigateScreenAction,
-  useEvaluate,
+  useCommandCallback,
+  evaluate,
+  visitExpressions,
+  replace,
+  useScreenModel,
   useApplicationContext,
 } from "@ensembleui/react-framework";
-import { cloneDeep, isString } from "lodash-es";
+import { useCallback, useMemo } from "react";
 import type { EnsembleActionHook } from "./useEnsembleAction";
 
 export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
   action,
 ) => {
   const navigate = useNavigate();
-  const hasOptions = !isString(action);
+  const screenModel = useScreenModel();
   const appContext = useApplicationContext();
-  const [context, setContext] = useState<unknown>();
-  const [isComplete, setIsComplete] = useState<boolean>();
 
-  const evaluatedInputs = useEvaluate(
-    {
-      inputs: hasOptions ? cloneDeep(action?.inputs) : null,
-      name: hasOptions ? action?.name : action,
+  const evaluateScreenName = useCallback(
+    (
+      name: string,
+      model?: EnsembleScreenModel,
+      context?: { [key: string]: unknown },
+    ): string => {
+      return evaluate<string>({ model }, name, context);
     },
-    { context },
+    [],
   );
 
-  const { matchingScreen } = useMemo(() => {
-    const screen = appContext?.application?.screens.find(
-      (s) => s.name?.toLowerCase() === evaluatedInputs.name?.toLowerCase(),
-    );
-    return { matchingScreen: screen };
-  }, [appContext, evaluatedInputs.name]);
+  const evaluateInputs = useCallback(
+    (
+      inputs: { [key: string]: unknown },
+      model?: EnsembleScreenModel,
+      context?: { [key: string]: unknown },
+    ): { [key: string]: unknown } => {
+      const resolvedInputs = visitExpressions(
+        inputs,
+        replace((expr) => evaluate({ model }, expr, context)),
+      );
+      return resolvedInputs as { [key: string]: unknown };
+    },
+    [],
+  );
 
-  useEffect(() => {
-    if (!matchingScreen?.name || isComplete !== false) {
-      return;
-    }
-    navigate(`/${matchingScreen.name.toLowerCase()}`, {
-      state: evaluatedInputs.inputs,
-    });
-    setIsComplete(true);
-  }, [evaluatedInputs.inputs, isComplete, matchingScreen, navigate]);
+  const navigateCommand = useCommandCallback(
+    (evalContext, ...args) => {
+      if (!action) return;
 
-  return useMemo(() => {
-    if (!matchingScreen) {
-      return;
-    }
+      const context = merge({}, evalContext, args[0]);
 
-    const callback = (args: unknown): void => {
-      setIsComplete(false);
-      setContext(args);
-    };
+      const screenName = isString(action) ? action : action.name;
+      const evaluatedName = evaluateScreenName(
+        screenName,
+        screenModel,
+        context,
+      );
 
-    return { callback };
-  }, [matchingScreen]);
+      const matchingScreen = appContext?.application?.screens.find(
+        (s) => s.name?.toLowerCase() === evaluatedName.toLowerCase(),
+      );
+
+      if (!matchingScreen?.name) return;
+
+      const evaluatedInputs =
+        !isString(action) && !isNil(action.inputs)
+          ? evaluateInputs(cloneDeep(action.inputs), screenModel, context)
+          : undefined;
+
+      navigate(`/${matchingScreen.name.toLowerCase()}`, {
+        state: evaluatedInputs,
+      });
+    },
+    { navigate },
+    [action, screenModel, appContext],
+  );
+
+  return useMemo(() => ({ callback: navigateCommand }), [navigateCommand]);
 };
