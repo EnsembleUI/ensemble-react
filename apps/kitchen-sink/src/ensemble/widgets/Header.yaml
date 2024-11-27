@@ -17,6 +17,7 @@ Widget:
       children:
         - Search:
             id: mySearch
+            value: Emma Miller
             styles:
               width: 320px
               height: 40px
