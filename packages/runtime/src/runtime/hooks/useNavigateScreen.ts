@@ -7,12 +7,11 @@ import { useNavigate } from "react-router-dom";
 import {
   useCommandCallback,
   evaluate,
-  visitExpressions,
-  replace,
   useScreenModel,
   useApplicationContext,
 } from "@ensembleui/react-framework";
 import { useCallback, useMemo } from "react";
+import { evaluateInputs } from "../../shared/common";
 import type { EnsembleActionHook } from "./useEnsembleAction";
 
 export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
@@ -29,21 +28,6 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
       context?: { [key: string]: unknown },
     ): string => {
       return evaluate<string>({ model }, name, context);
-    },
-    [],
-  );
-
-  const evaluateInputs = useCallback(
-    (
-      inputs: { [key: string]: unknown },
-      model?: EnsembleScreenModel,
-      context?: { [key: string]: unknown },
-    ): { [key: string]: unknown } => {
-      const resolvedInputs = visitExpressions(
-        inputs,
-        replace((expr) => evaluate({ model }, expr, context)),
-      );
-      return resolvedInputs as { [key: string]: unknown };
     },
     [],
   );
@@ -79,6 +63,5 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
     { navigate },
     [action, screenModel, appContext],
   );
-
   return useMemo(() => ({ callback: navigateCommand }), [navigateCommand]);
 };

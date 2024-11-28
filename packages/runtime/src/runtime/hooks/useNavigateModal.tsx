@@ -1,24 +1,19 @@
-import type {
-  EnsembleScreenModel,
-  NavigateModalScreenAction,
-} from "@ensembleui/react-framework";
+import type { NavigateModalScreenAction } from "@ensembleui/react-framework";
 import {
   unwrapWidget,
   useApplicationContext,
-  evaluate,
-  visitExpressions,
-  replace,
   useScreenModel,
   useCommandCallback,
 } from "@ensembleui/react-framework";
 import { cloneDeep, isNil, isString, merge } from "lodash-es";
-import { useCallback, useContext, useMemo } from "react";
+import { useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ModalContext } from "../modal";
 import { EnsembleRuntime } from "../runtime";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { navigateModalScreen } from "../navigation";
+import { evaluateInputs } from "../../shared/common";
 import {
   useEnsembleAction,
   type EnsembleActionHook,
@@ -35,27 +30,9 @@ export const useNavigateModalScreen: EnsembleActionHook<
     !isString(action) && action ? action.onModalDismiss : undefined,
   );
 
-  const evaluateInputs = useCallback(
-    (
-      inputs: { [key: string]: unknown },
-      model?: EnsembleScreenModel,
-      context?: { [key: string]: unknown },
-    ): { [key: string]: unknown } => {
-      const resolvedInputs = visitExpressions(
-        inputs,
-        replace((expr) => evaluate({ model }, expr, context)),
-      );
-      return resolvedInputs as { [key: string]: unknown };
-    },
-    [],
-  );
-
-  const onDismissCallback = useCallback(() => {
-    if (!ensembleAction) {
-      return;
-    }
-    ensembleAction.callback();
-  }, [ensembleAction]);
+  const onClose = (): void => {
+    ensembleAction?.callback();
+  };
 
   const isStringAction = isString(action);
 
@@ -82,12 +59,11 @@ export const useNavigateModalScreen: EnsembleActionHook<
         applicationContext?.application,
         evaluatedInputs,
         title,
-        onDismissCallback,
+        onClose,
       );
     },
     { navigate },
-    [action, applicationContext?.application, onDismissCallback, screenModel],
+    [action, applicationContext?.application, screenModel],
   );
-
   return useMemo(() => ({ callback: navigateCommand }), [navigateCommand]);
 };
