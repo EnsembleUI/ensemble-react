@@ -412,6 +412,26 @@ View:
                     - Text:
                         text: ${email}
 
+        - Carousel:
+            styles:
+              layout: multiple
+              indicatorPosition: bottomLeft
+              indicatorType: circle
+              indicatorColor: red
+              multipleItemWidthRatio: 1
+            item-template:
+              data: ${[1, 2, 3, 4, 5]}
+              name: item
+              template:
+                Card:
+                  styles:
+                    width: auto
+                    maxWidth: 100%
+                    height: 200px
+                  children:
+                    - Text:
+                        text: ${item}
+
 Global:
   scriptName: test.js
 
