@@ -38,7 +38,7 @@ export type SearchProps = {
   onClear?: EnsembleAction;
   iconStyles?: EnsembleWidgetStyles;
   notFoundContent?: Expression<string> | { [key: string]: unknown };
-  preloadResults: boolean;
+  searchIfEmpty: boolean;
 } & EnsembleWidgetProps &
   HasItemTemplate & {
     "item-template"?: { value: Expression<string> };
@@ -53,7 +53,7 @@ export const Search: React.FC<SearchProps> = ({
   onSelect,
   onClear,
   value: initialValue,
-  preloadResults,
+  searchIfEmpty,
   ...rest
 }) => {
   const [searchValue, setSearchValue] = useState<string | null>(null);
@@ -90,7 +90,7 @@ export const Search: React.FC<SearchProps> = ({
   );
 
   const renderOptions = useMemo(() => {
-    if (isEmpty(searchValue) && !preloadResults) return [];
+    if (isEmpty(searchValue) && !searchIfEmpty) return [];
 
     let dropdownOptions: JSX.Element[] = [];
 

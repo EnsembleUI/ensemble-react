@@ -32,7 +32,7 @@ Widget:
               borderStyle: solid
               borderColor: "#B8BED6"
             placeholder: Search
-            preloadResults: true
+            searchIfEmpty: true
             notFoundContent:
               Text:
                 text: No users found 123
