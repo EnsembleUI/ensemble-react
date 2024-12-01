@@ -186,8 +186,8 @@ export const Search: React.FC<SearchProps> = ({
   );
 
   useEffect(() => {
-    if (!value) setValue(initialValue);
-  }, [value, initialValue]);
+    if (!value) setValue(values?.initialValue);
+  }, [value, values?.initialValue]);
 
   return (
     <div
