@@ -1,5 +1,13 @@
 # @ensembleui/react-runtime
 
+## 0.3.3
+
+### Patch Changes
+
+- 4b2c4fd: preload search results
+- c5d0441: register initialValue binding for Search widget instead of setting raw data
+- 39ff994: fix carousel widget
+
 ## 0.3.2
 
 ### Patch Changes
