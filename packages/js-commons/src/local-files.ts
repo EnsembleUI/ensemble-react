@@ -3,7 +3,7 @@ import { exec } from "node:child_process";
 import { homedir } from "node:os";
 import { existsSync, mkdirSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
-import { compact, groupBy } from "lodash-es";
+import { compact, groupBy, head, isArray, pick, values } from "lodash-es";
 import type { LocalApplicationTransporter } from "./transporter";
 import { EnsembleDocumentType } from "./dto";
 import type {
@@ -77,8 +77,10 @@ export const getLocalApplicationTransporter = (
         scripts: docsByType[EnsembleDocumentType.Script] as ScriptDTO[],
         assets: docsByType[EnsembleDocumentType.Asset] as AssetDTO[],
         translations: docsByType[EnsembleDocumentType.I18n] as TranslationDTO[],
-        env: docsByType[EnsembleDocumentType.Environment][0] as EnvironmentDTO,
-        theme: docsByType[EnsembleDocumentType.Theme][0] as ThemeDTO,
+        env: head(
+          docsByType[EnsembleDocumentType.Environment],
+        ) as EnvironmentDTO,
+        theme: head(docsByType[EnsembleDocumentType.Theme]) as ThemeDTO,
       };
     },
 
@@ -99,11 +101,26 @@ export const getLocalApplicationTransporter = (
         existingAppMetadata.projectPath = join(ensembleDir, appData.id);
       }
 
-      const yamlFileWrites = Object.values(
-        existingAppMetadata.manifest ?? {},
-      ).map(async (document) => {
+      const documentsToWrite = values(
+        pick(appData, [
+          "screens",
+          "widgets",
+          "scripts",
+          "assets",
+          "translations",
+          "env",
+          "theme",
+        ]),
+      ).flatMap((docset: unknown) => {
+        if (isArray(docset)) {
+          return docset as EnsembleDocument[];
+        }
+        return [docset as EnsembleDocument];
+      });
+
+      const yamlFileWrites = documentsToWrite.map(async (document) => {
         const { relativePath } = await saveArtifact(
-          document as EnsembleDocument,
+          document,
           existingAppMetadata,
           {
             skipMetadata: true,
