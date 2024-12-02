@@ -1,5 +1,11 @@
 # @ensembleui/js-commons
 
+## 0.0.7
+
+### Patch Changes
+
+- 687a823: Fix document intake for writing apps
+
 ## 0.0.6
 
 ### Patch Changes
