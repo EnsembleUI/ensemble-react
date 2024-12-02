@@ -24,7 +24,7 @@ const GLOBAL_MANIFEST_FILE = "local-apps-manifest.json";
 type EnsembleGlobalMetadata = Record<string, ApplicationLocalMeta | undefined>;
 
 const APP_MANIFEST_FILE = ".manifest.json";
-type ApplicationLocalMeta = ApplicationDTO & {
+export type ApplicationLocalMeta = ApplicationDTO & {
   // TODO: extend with sync properties, i.e. last sync time
   projectPath: string;
 };
@@ -172,7 +172,7 @@ export const saveArtifact = async (
   return { relativePath: pathToWrite };
 };
 
-const getGlobalMetadata = async (): Promise<EnsembleGlobalMetadata> => {
+export const getGlobalMetadata = async (): Promise<EnsembleGlobalMetadata> => {
   const filePath = join(METADATA_DIR, GLOBAL_MANIFEST_FILE);
 
   // Check if the file exists
