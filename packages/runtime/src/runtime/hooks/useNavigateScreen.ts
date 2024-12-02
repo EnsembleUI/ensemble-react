@@ -9,9 +9,9 @@ import {
   evaluate,
   useScreenModel,
   useApplicationContext,
+  evaluateDeep,
 } from "@ensembleui/react-framework";
 import { useCallback, useMemo } from "react";
-import { evaluateInputs } from "../../shared/common";
 import type { EnsembleActionHook } from "./useEnsembleAction";
 
 export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
@@ -53,7 +53,7 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
 
       const evaluatedInputs =
         !isString(action) && !isNil(action.inputs)
-          ? evaluateInputs(cloneDeep(action.inputs), screenModel, context)
+          ? evaluateDeep(cloneDeep(action.inputs), screenModel, context)
           : undefined;
 
       navigate(`/${matchingScreen.name.toLowerCase()}`, {
