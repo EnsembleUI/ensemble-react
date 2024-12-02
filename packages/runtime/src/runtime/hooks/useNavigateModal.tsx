@@ -4,6 +4,7 @@ import {
   useApplicationContext,
   useScreenModel,
   useCommandCallback,
+  evaluateDeep,
 } from "@ensembleui/react-framework";
 import { cloneDeep, isNil, isString, merge } from "lodash-es";
 import { useContext, useMemo } from "react";
@@ -13,7 +14,6 @@ import { EnsembleRuntime } from "../runtime";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
 import { navigateModalScreen } from "../navigation";
-import { evaluateInputs } from "../../shared/common";
 import {
   useEnsembleAction,
   type EnsembleActionHook,
@@ -50,7 +50,7 @@ export const useNavigateModalScreen: EnsembleActionHook<
 
       const evaluatedInputs =
         !isString(action) && !isNil(action.inputs)
-          ? evaluateInputs(cloneDeep(action.inputs), screenModel, context)
+          ? evaluateDeep(cloneDeep(action.inputs), screenModel, context)
           : {};
 
       navigateModalScreen(
@@ -65,5 +65,5 @@ export const useNavigateModalScreen: EnsembleActionHook<
     { navigate },
     [action, applicationContext?.application, screenModel],
   );
-  return useMemo(() => ({ callback: navigateCommand }), [navigateCommand]);
+  return { callback: navigateCommand };
 };
