@@ -68,7 +68,13 @@ export const getLocalApplicationTransporter = (
           } else {
             return;
           }
-          const content = await readFile(filePath, { encoding: "utf-8" });
+
+          let content = "";
+          if (document.type === EnsembleDocumentType.Asset) {
+            const binaryContent = await readFile(filePath);
+            content = binaryContent.toString("base64");
+          } else content = await readFile(filePath, { encoding: "utf-8" });
+
           return {
             ...document,
             content,
@@ -199,6 +205,47 @@ export const saveArtifact = async (
     await setAppManifest(app.manifest, app.projectPath);
   }
   return { relativePath: pathToWrite };
+};
+
+export const storeAsset = async (
+  appId: string,
+  fileName: string,
+  fileData: string,
+  isFont = false,
+  data?: Record<string, unknown>,
+): Promise<void> => {
+  const appsMetadata = await getGlobalMetadata();
+  const appMetadata = appsMetadata[appId];
+
+  if (!appMetadata) {
+    throw new Error(`App ${appId} not found in local metadata`);
+  }
+
+  const assetDir = join(
+    appMetadata.projectPath,
+    isFont ? EnsembleDocumentType.Font : EnsembleDocumentType.Asset,
+  );
+  ensureDir(assetDir);
+
+  const assetPath = join(assetDir, fileName);
+  const binaryData = Buffer.from(fileData, "base64");
+  await writeFile(assetPath, binaryData, "utf-8");
+
+  const appManifest = await getAppManifest(appMetadata.projectPath);
+
+  if (!appManifest.manifest) {
+    appManifest.manifest = {};
+  }
+
+  appManifest.manifest[fileName] = {
+    name: fileName,
+    type: isFont ? EnsembleDocumentType.Font : EnsembleDocumentType.Asset,
+    relativePath: fileName,
+    content: fileData,
+    ...data,
+  };
+
+  await setAppManifest(appManifest, appMetadata.projectPath);
 };
 
 export const getGlobalMetadata = async (): Promise<EnsembleGlobalMetadata> => {
