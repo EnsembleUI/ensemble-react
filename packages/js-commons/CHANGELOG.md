@@ -1,5 +1,11 @@
 # @ensembleui/js-commons
 
+## 0.0.8
+
+### Patch Changes
+
+- 0fe18c4: Handle edge cases in document intake
+
 ## 0.0.7
 
 ### Patch Changes
