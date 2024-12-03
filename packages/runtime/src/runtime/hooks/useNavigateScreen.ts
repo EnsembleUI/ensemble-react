@@ -1,7 +1,4 @@
-import type {
-  EnsembleScreenModel,
-  NavigateScreenAction,
-} from "@ensembleui/react-framework";
+import type { NavigateScreenAction } from "@ensembleui/react-framework";
 import { isNil, isString, merge, cloneDeep } from "lodash-es";
 import { useNavigate } from "react-router-dom";
 import {
@@ -11,7 +8,7 @@ import {
   useApplicationContext,
   evaluateDeep,
 } from "@ensembleui/react-framework";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import type { EnsembleActionHook } from "./useEnsembleAction";
 
 export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
@@ -21,17 +18,6 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
   const screenModel = useScreenModel();
   const appContext = useApplicationContext();
 
-  const evaluateScreenName = useCallback(
-    (
-      name: string,
-      model?: EnsembleScreenModel,
-      context?: { [key: string]: unknown },
-    ): string => {
-      return evaluate<string>({ model }, name, context);
-    },
-    [],
-  );
-
   const navigateCommand = useCommandCallback(
     (evalContext, ...args) => {
       if (!action) return;
@@ -39,9 +25,9 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
       const context = merge({}, evalContext, args[0]);
 
       const screenName = isString(action) ? action : action.name;
-      const evaluatedName = evaluateScreenName(
+      const evaluatedName = evaluate<string>(
+        { model: screenModel },
         screenName,
-        screenModel,
         context,
       );
 

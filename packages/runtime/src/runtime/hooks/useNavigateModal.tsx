@@ -30,10 +30,6 @@ export const useNavigateModalScreen: EnsembleActionHook<
     !isString(action) && action ? action.onModalDismiss : undefined,
   );
 
-  const onClose = (): void => {
-    ensembleAction?.callback();
-  };
-
   const isStringAction = isString(action);
 
   const title = useMemo(() => {
@@ -59,7 +55,7 @@ export const useNavigateModalScreen: EnsembleActionHook<
         applicationContext?.application,
         evaluatedInputs,
         title,
-        onClose,
+        ensembleAction?.callback,
       );
     },
     { navigate },
