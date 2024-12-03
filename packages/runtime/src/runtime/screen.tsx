@@ -1,9 +1,10 @@
 import type {
   EnsembleAction,
+  EnsembleAPIModel,
   EnsembleScreenModel,
 } from "@ensembleui/react-framework";
 import { ScreenContextProvider, error } from "@ensembleui/react-framework";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useLocation, useParams, useOutletContext } from "react-router-dom";
 import { isEmpty, merge } from "lodash-es";
 import { type WidgetComponent, WidgetRegistry } from "../registry";
@@ -34,6 +35,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
   const routeParams = useParams(); // route params
   const params = new URLSearchParams(search); // query params
   const queryParams: { [key: string]: unknown } = Object.fromEntries(params);
+  const [apis, setApis] = useState<EnsembleAPIModel[]>([]);
 
   const outletContext = useOutletContext<EnsembleMenuContext>();
 
@@ -91,32 +93,74 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
     };
   }, [screen.customWidgets]);
 
+  const AppScreen = useCallback(() => {
+    if (screen.apis?.length !== apis.length) {
+      return null;
+    }
+
+    return (
+      <ScreenContextProvider
+        context={{ inputs: mergedInputs }}
+        key={pathname}
+        screen={{ ...screen, apis }}
+      >
+        <ModalWrapper>
+          <OnLoadAction action={screen.onLoad} context={{ ...mergedInputs }}>
+            <EnsembleHeader header={screen.header} />
+            <EnsembleBody body={screen.body} styles={screen.styles} />
+          </OnLoadAction>
+          {screen.menu ? (
+            <EnsembleMenu
+              menu={{ ...screen.menu }}
+              renderOutlet={false}
+              type={screen.menu.type}
+            />
+          ) : null}
+          <EnsembleFooter footer={screen.footer} />
+        </ModalWrapper>
+      </ScreenContextProvider>
+    );
+  }, [apis]);
+
   if (!isInitialized) {
     return null;
   }
 
   return (
-    <ScreenContextProvider
-      context={{ inputs: mergedInputs }}
-      key={pathname}
-      screen={screen}
-    >
-      <ModalWrapper>
-        <OnLoadAction action={screen.onLoad} context={{ ...mergedInputs }}>
-          <EnsembleHeader header={screen.header} />
-          <EnsembleBody body={screen.body} styles={screen.styles} />
-        </OnLoadAction>
-        {screen.menu ? (
-          <EnsembleMenu
-            menu={{ ...screen.menu }}
-            renderOutlet={false}
-            type={screen.menu.type}
-          />
-        ) : null}
-        <EnsembleFooter footer={screen.footer} />
-      </ModalWrapper>
-    </ScreenContextProvider>
+    <>
+      {screen.apis?.map((api, index) => (
+        <OnEvaluateApi
+          api={api}
+          currentIndex={index}
+          key={`${api.name}_${index}`}
+          setApis={setApis}
+        />
+      ))}
+      <AppScreen />
+    </>
   );
+};
+
+const OnEvaluateApi = ({
+  api,
+  currentIndex,
+  setApis,
+}: {
+  api: EnsembleAPIModel;
+  currentIndex: number;
+  setApis: React.Dispatch<React.SetStateAction<EnsembleAPIModel[]>>;
+}): null => {
+  const onResponse = useEnsembleAction(api.onResponse as EnsembleAction);
+  const onError = useEnsembleAction(api.onError as EnsembleAction);
+
+  useEffect(() => {
+    setApis((prev) => {
+      prev[currentIndex] = { ...api, onResponse, onError };
+      return [...prev];
+    });
+  }, [setApis, onResponse, onError]);
+
+  return null;
 };
 
 const OnLoadAction: React.FC<
