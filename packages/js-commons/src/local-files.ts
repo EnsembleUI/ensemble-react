@@ -3,7 +3,15 @@ import { exec } from "node:child_process";
 import { homedir } from "node:os";
 import { existsSync, mkdirSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
-import { compact, groupBy, head, isArray, pick, values } from "lodash-es";
+import {
+  compact,
+  groupBy,
+  head,
+  isArray,
+  isNil,
+  pick,
+  values,
+} from "lodash-es";
 import type { LocalApplicationTransporter } from "./transporter";
 import { EnsembleDocumentType } from "./dto";
 import type {
@@ -115,10 +123,13 @@ export const getLocalApplicationTransporter = (
         if (isArray(docset)) {
           return docset as EnsembleDocument[];
         }
-        return [docset as EnsembleDocument];
+        if (!isNil(docset)) {
+          return [docset as EnsembleDocument];
+        }
+        return [];
       });
 
-      const yamlFileWrites = documentsToWrite.map(async (document) => {
+      const yamlFileWrites = compact(documentsToWrite).map(async (document) => {
         const { relativePath } = await saveArtifact(
           document,
           existingAppMetadata,
@@ -163,7 +174,8 @@ export const saveArtifact = async (
   if (!app.manifest) {
     app.manifest = {};
   }
-  const existingPath = app.manifest[artifact.id].relativePath;
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const existingPath = app.manifest[artifact.id]?.relativePath;
 
   // TODO: allow custom project structures
   const artifactSubDir = join(app.projectPath, artifact.type);
