@@ -25,6 +25,7 @@ import type {
   EnvironmentDTO,
   ThemeDTO,
   HasManifest,
+  FontDTO,
 } from "./dto";
 
 // Lookup where to find each app on the local FS
@@ -69,10 +70,12 @@ export const getLocalApplicationTransporter = (
             return;
           }
 
-          let content = "";
-          if (document.type === EnsembleDocumentType.Asset) {
-            const binaryContent = await readFile(filePath);
-            content = binaryContent.toString("base64");
+          let content: Buffer | string;
+          if (
+            document.type === EnsembleDocumentType.Asset ||
+            document.type === EnsembleDocumentType.Font
+          ) {
+            content = await readFile(filePath);
           } else content = await readFile(filePath, { encoding: "utf-8" });
 
           return {
@@ -210,7 +213,7 @@ export const saveArtifact = async (
 export const storeAsset = async (
   appId: string,
   fileName: string,
-  fileData: string,
+  fileData: Buffer,
   isFont = false,
   data?: Record<string, unknown>,
 ): Promise<void> => {
@@ -228,8 +231,7 @@ export const storeAsset = async (
   ensureDir(assetDir);
 
   const assetPath = join(assetDir, fileName);
-  const binaryData = Buffer.from(fileData, "base64");
-  await writeFile(assetPath, binaryData, "utf-8");
+  await writeFile(assetPath, fileData);
 
   const appManifest = await getAppManifest(appMetadata.projectPath);
 
@@ -241,9 +243,9 @@ export const storeAsset = async (
     name: fileName,
     type: isFont ? EnsembleDocumentType.Font : EnsembleDocumentType.Asset,
     relativePath: fileName,
-    content: fileData,
+    publicUrl: assetPath,
     ...data,
-  };
+  } as Partial<AssetDTO | FontDTO>;
 
   await setAppManifest(appManifest, appMetadata.projectPath);
 };
