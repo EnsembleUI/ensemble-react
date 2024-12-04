@@ -31,13 +31,9 @@ export const Image: React.FC<ImageProps> = ({ onDragStart, ...props }) => {
 
   const onDragStartCallback = useCallback(
     (...args: unknown[]) => {
-      if (!onDragStartAction?.callback) {
-        return;
-      }
-
-      return onDragStartAction.callback(...args);
+      return onDragStartAction?.callback(...args);
     },
-    [onDragStartAction],
+    [onDragStartAction?.callback],
   );
 
   const { values } = useRegisterBindings(

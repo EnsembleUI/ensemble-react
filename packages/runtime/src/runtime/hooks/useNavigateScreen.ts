@@ -8,7 +8,6 @@ import {
   useApplicationContext,
   evaluateDeep,
 } from "@ensembleui/react-framework";
-import { useMemo } from "react";
 import type { EnsembleActionHook } from "./useEnsembleAction";
 
 export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
@@ -17,6 +16,8 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
   const navigate = useNavigate();
   const screenModel = useScreenModel();
   const appContext = useApplicationContext();
+
+  console.log(">>>>>>> useNavigateScreen");
 
   const navigateCommand = useCommandCallback(
     (evalContext, ...args) => {
@@ -49,5 +50,6 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
     { navigate },
     [action, screenModel, appContext],
   );
-  return useMemo(() => ({ callback: navigateCommand }), [navigateCommand]);
+
+  return { callback: navigateCommand };
 };

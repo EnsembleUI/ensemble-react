@@ -38,6 +38,8 @@ export const useNavigateModalScreen: EnsembleActionHook<
     }
   }, [isStringAction, action]);
 
+  console.log(">>>>> useNavigateModalScreen");
+
   const navigateCommand = useCommandCallback(
     (evalContext, ...args) => {
       if (!action || !modalContext) return;
