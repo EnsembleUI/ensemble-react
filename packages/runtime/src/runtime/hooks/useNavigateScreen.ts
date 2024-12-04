@@ -17,8 +17,6 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
   const screenModel = useScreenModel();
   const appContext = useApplicationContext();
 
-  console.log(">>>>>>> useNavigateScreen");
-
   const navigateCommand = useCommandCallback(
     (evalContext, ...args) => {
       if (!action) return;

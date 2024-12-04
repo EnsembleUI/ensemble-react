@@ -16,6 +16,7 @@ import {
   useCommandCallback,
   useScreenModel,
   generateAPIHash,
+  evaluateDeep,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -152,7 +153,6 @@ export const useExecuteCode: EnsembleActionHook<
     },
   );
 
-  console.log(">>>>>>> executeCode");
   return { callback: execute };
 };
 
@@ -160,45 +160,46 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const { apis, setData, mockResponses } = useScreenData();
   const appContext = useApplicationContext();
   const screenModel = useScreenModel();
-  const [isComplete, setIsComplete] = useState<boolean>();
-  const [isLoading, setIsLoading] = useState<boolean>();
-  const [context, setContext] = useState<{ [key: string]: unknown }>();
   const queryClient = useQueryClient();
-
-  const evaluatedInputs = useEvaluate(action?.inputs, { context });
-  const evaluatedName = useEvaluate({ name: action?.name }, { context });
-
-  const api = useMemo(
-    () => apis?.find((model) => model.name === evaluatedName.name),
-    [evaluatedName.name, apis],
-  );
+  const navigate = useNavigate();
 
   const onInvokeAPIResponseAction = useEnsembleAction(action?.onResponse);
   const onInvokeAPIErrorAction = useEnsembleAction(action?.onError);
 
-  const onAPIResponseAction = useEnsembleAction(api?.onResponse);
-  const onAPIErrorAction = useEnsembleAction(api?.onError);
+  const currentApi = useMemo(() => {
+    if (!action?.name) return null;
+    return apis?.find((api) => api.name === action.name);
+  }, [action?.name, apis]);
 
-  const hash = generateAPIHash({
-    api: api?.name,
-    inputs: evaluatedInputs,
-    screen: screenModel?.id,
-  });
+  const onAPIResponseAction = useEnsembleAction(currentApi?.onResponse);
+  const onAPIErrorAction = useEnsembleAction(currentApi?.onError);
 
-  const invokeApi = useMemo(() => {
-    if (!api) {
-      return;
-    }
+  const invokeCommand = useCommandCallback(
+    async (evalContext, ...args) => {
+      if (!action?.name || !currentApi) return;
 
-    const callback = (args: unknown): void => {
-      // We greedily set data loading state in screen context to update bindings
-      setData(api.name, {
+      const context = merge({}, evalContext, args[0]);
+
+      if (action.name !== currentApi.name) return;
+
+      const evaluatedInputs = (
+        action.inputs ? evaluateDeep(action.inputs, screenModel, context) : {}
+      ) as { [key: string]: unknown };
+
+      const hash = generateAPIHash({
+        api: currentApi.name,
+        inputs: evaluatedInputs,
+        screen: screenModel?.id,
+      });
+
+      // Set initial loading state
+      setData(currentApi.name, {
         isLoading: true,
         isSuccess: false,
         isError: false,
       });
 
-      if (action?.id) {
+      if (action.id) {
         setData(action.id, {
           isLoading: true,
           isSuccess: false,
@@ -206,28 +207,16 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
         });
       }
 
-      setIsComplete(false);
-      setContext(args as { [key: string]: unknown });
-    };
-    return { callback };
-  }, [api, setData, action]);
-
-  useEffect(() => {
-    if (!api || isComplete !== false || isLoading) {
-      return;
-    }
-
-    const fireRequest = async (): Promise<void> => {
-      const useMockResponse =
-        has(api, "mockResponse") &&
-        isUsingMockResponse(appContext?.application?.id);
-      setIsLoading(true);
       try {
+        const useMockResponse =
+          has(currentApi, "mockResponse") &&
+          isUsingMockResponse(appContext?.application?.id);
+
         const response = await queryClient.fetchQuery({
           queryKey: [hash],
           queryFn: () =>
             DataFetcher.fetch(
-              api,
+              currentApi,
               {
                 ...evaluatedInputs,
                 ...context,
@@ -238,17 +227,20 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
               },
               {
                 mockResponse: mockResponse(
-                  mockResponses[api.name],
+                  mockResponses[currentApi.name],
                   useMockResponse,
                 ),
                 useMockResponse,
               },
             ),
-          staleTime: api.cacheExpirySeconds ? api.cacheExpirySeconds * 1000 : 0,
+          staleTime: currentApi.cacheExpirySeconds
+            ? currentApi.cacheExpirySeconds * 1000
+            : 0,
         });
-        setData(api.name, response);
 
-        if (action?.id) {
+        setData(currentApi.name, response);
+
+        if (action.id) {
           setData(action.id, response);
         }
 
@@ -257,13 +249,13 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
       } catch (e) {
         logError(e);
 
-        setData(api.name, {
+        setData(currentApi.name, {
           isLoading: false,
           isSuccess: false,
           isError: true,
         });
 
-        if (action?.id) {
+        if (action.id) {
           setData(action.id, {
             isLoading: false,
             isSuccess: false,
@@ -273,31 +265,23 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
 
         onAPIErrorAction?.callback({ ...context, error: e });
         onInvokeAPIErrorAction?.callback({ ...context, error: e });
-      } finally {
-        setIsComplete(true);
-        setIsLoading(false);
       }
-    };
+    },
+    { navigate },
+    [
+      action,
+      currentApi,
+      screenModel,
+      appContext,
+      queryClient,
+      onAPIResponseAction,
+      onAPIErrorAction,
+      onInvokeAPIResponseAction,
+      onInvokeAPIErrorAction,
+    ],
+  );
 
-    void fireRequest();
-  }, [
-    api,
-    action,
-    evaluatedInputs,
-    isComplete,
-    isLoading,
-    onInvokeAPIErrorAction?.callback,
-    onInvokeAPIResponseAction?.callback,
-    onAPIErrorAction?.callback,
-    onAPIResponseAction?.callback,
-    setData,
-    context,
-    appContext?.env,
-    appContext?.secrets,
-    hash,
-  ]);
-
-  return invokeApi;
+  return { callback: invokeCommand };
 };
 
 export const useConnectSocket: EnsembleActionHook<ConnectSocketAction> = (
@@ -374,8 +358,6 @@ export const useMessageSocket: EnsembleActionHook<SendSocketMessageAction> = (
     setContext(args as { [key: string]: unknown });
   }, []);
 
-  console.log(">>>>>>> useMessageSocket");
-
   return { callback };
 };
 
@@ -399,7 +381,6 @@ export const useDisconnectSocket: EnsembleActionHook<DisconnectSocketAction> = (
     }
   }, [socket, screenData, screenDataSetter]);
 
-  console.log(">>>>>>> useDisconnectSocket");
   return { callback };
 };
 
@@ -417,8 +398,6 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
     () => unwrapWidget(cloneDeep(action.widget || action.body || {})),
     [action.widget, action.body],
   );
-
-  console.log(">>>>>>>> useShowDialog");
 
   const callback = useCallback(
     (args: unknown): void => {
@@ -556,8 +535,6 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
     onErrorAction?.callback,
   ]);
 
-  console.log(">>>>>>>>> usePickFiles");
-
   const callback = useCallback(() => {
     try {
       inputEl.click();
@@ -662,8 +639,6 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
     ],
   );
 
-  console.log(">>>>> useUploadFiles");
-
   return { callback };
 };
 
@@ -673,8 +648,6 @@ export const useNavigateBack: EnsembleActionHook<NavigateBackAction> = () => {
   const callback = useCallback((): void => {
     modalContext?.navigateBack();
   }, [modalContext]);
-
-  console.log(">>>>>>> useNavigateBack");
 
   return { callback };
 };
@@ -696,8 +669,6 @@ export const useActionGroup: EnsembleActionHook<ExecuteActionGroupAction> = (
     },
     [actions],
   );
-
-  console.log(">>>>> useActionGroup");
 
   return { callback };
 };
@@ -744,8 +715,6 @@ export const useDispatchEvent: EnsembleActionHook<DispatchEventAction> = (
     setContext(args);
     setIsComplete(false);
   }, []);
-
-  console.log(">>>>>> useDispatchEvent");
 
   return { callback };
 };
@@ -821,8 +790,6 @@ export const useConditionalAction: EnsembleActionHook<
     setContext(args);
     setIsComplete(false);
   }, []);
-
-  console.log(">>>>>>> useConditionalAction");
 
   return { callback };
 };
