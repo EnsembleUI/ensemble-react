@@ -221,9 +221,8 @@ export const EnsembleMenu: React.FC<{
 
   const onCollapseAction = useEnsembleAction(onCollapse);
   const onCollapseCallback = useCallback(() => {
-    if (!onCollapseAction) return;
-    return onCollapseAction.callback();
-  }, [onCollapseAction]);
+    return onCollapseAction?.callback();
+  }, [onCollapseAction?.callback]);
   return (
     <div style={{ display: "flex", flexDirection: "row" }}>
       {type === EnsembleMenuModelType.SideBar ? (

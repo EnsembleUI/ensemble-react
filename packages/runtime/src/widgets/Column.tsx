@@ -38,11 +38,8 @@ export const Column: React.FC<FlexboxProps> = (props) => {
   }, [children]);
   const action = useEnsembleAction(onTap);
   const onClickCallback = useCallback(() => {
-    if (!action) {
-      return;
-    }
-    action.callback();
-  }, [action]);
+    action?.callback();
+  }, [action?.callback]);
   return (
     <Col
       className={values?.styles?.names}
