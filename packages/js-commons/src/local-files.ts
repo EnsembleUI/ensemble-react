@@ -25,6 +25,7 @@ import type {
   EnvironmentDTO,
   ThemeDTO,
   HasManifest,
+  FontDTO,
 } from "./dto";
 
 // Lookup where to find each app on the local FS
@@ -68,7 +69,15 @@ export const getLocalApplicationTransporter = (
           } else {
             return;
           }
-          const content = await readFile(filePath, { encoding: "utf-8" });
+
+          let content: Buffer | string;
+          if (
+            document.type === EnsembleDocumentType.Asset ||
+            document.type === EnsembleDocumentType.Font
+          ) {
+            content = await readFile(filePath);
+          } else content = await readFile(filePath, { encoding: "utf-8" });
+
           return {
             ...document,
             content,
@@ -199,6 +208,46 @@ export const saveArtifact = async (
     await setAppManifest(app.manifest, app.projectPath);
   }
   return { relativePath: pathToWrite };
+};
+
+export const storeAsset = async (
+  appId: string,
+  fileName: string,
+  fileData: Buffer,
+  isFont = false,
+  data?: Record<string, unknown>,
+): Promise<void> => {
+  const appsMetadata = await getGlobalMetadata();
+  const appMetadata = appsMetadata[appId];
+
+  if (!appMetadata) {
+    throw new Error(`App ${appId} not found in local metadata`);
+  }
+
+  const assetDir = join(
+    appMetadata.projectPath,
+    isFont ? EnsembleDocumentType.Font : EnsembleDocumentType.Asset,
+  );
+  ensureDir(assetDir);
+
+  const assetPath = join(assetDir, fileName);
+  await writeFile(assetPath, fileData);
+
+  const appManifest = await getAppManifest(appMetadata.projectPath);
+
+  if (!appManifest.manifest) {
+    appManifest.manifest = {};
+  }
+
+  appManifest.manifest[fileName] = {
+    name: fileName,
+    type: isFont ? EnsembleDocumentType.Font : EnsembleDocumentType.Asset,
+    relativePath: fileName,
+    publicUrl: assetPath,
+    ...data,
+  } as Partial<AssetDTO | FontDTO>;
+
+  await setAppManifest(appManifest, appMetadata.projectPath);
 };
 
 export const getGlobalMetadata = async (): Promise<EnsembleGlobalMetadata> => {
