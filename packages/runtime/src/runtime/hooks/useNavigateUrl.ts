@@ -59,8 +59,6 @@ export const useNavigateUrl: EnsembleActionHook<NavigateUrlAction> = (
     [],
   );
 
-  console.log(">>>>>>> useNavigateUrl");
-
   const navigateCommand = useCommandCallback(
     (evalContext, ...args) => {
       if (!action) return;

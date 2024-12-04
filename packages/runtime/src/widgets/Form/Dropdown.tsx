@@ -97,9 +97,9 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     ...rest
   } = props;
 
-  const handleDropdownClose = (): void => {
+  const handleDropdownClose = useCallback((): void => {
     setIsOpen(false);
-  };
+  }, []);
 
   const { id, rootRef, values } = useRegisterBindings(
     {
