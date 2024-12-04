@@ -72,8 +72,10 @@ export interface EnsembleAPIModel {
   headers?: { [key: string]: string | number | boolean };
   cacheExpirySeconds?: number;
   body?: string | object;
-  onResponse?: EnsembleAction | EnsembleActionHookResult;
-  onError?: EnsembleAction | EnsembleActionHookResult;
+  onResponse?: EnsembleAction;
+  onError?: EnsembleAction;
+  onResponseAction?: EnsembleActionHookResult;
+  onErrorAction?: EnsembleActionHookResult;
   mockResponse?: EnsembleMockResponse | string;
 }
 

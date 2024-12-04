@@ -71,16 +71,10 @@ export const invokeAPI = async (
       set(update, api.name, response);
       setter(screenDataAtom, { ...update });
     }
-    (api.onResponse as EnsembleActionHookResult)?.callback({
-      ...context,
-      response,
-    });
+    api.onResponseAction?.callback({ ...context, response });
     return response;
-  } catch (e) {
-    (api.onError as EnsembleActionHookResult)?.callback({
-      ...context,
-      error: e,
-    });
+  } catch (err) {
+    api.onErrorAction?.callback({ ...context, error: err });
   }
 };
 

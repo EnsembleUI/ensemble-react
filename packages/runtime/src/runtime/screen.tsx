@@ -150,15 +150,15 @@ const OnEvaluateApi = ({
   currentIndex: number;
   setApis: React.Dispatch<React.SetStateAction<EnsembleAPIModel[]>>;
 }): null => {
-  const onResponse = useEnsembleAction(api.onResponse as EnsembleAction);
-  const onError = useEnsembleAction(api.onError as EnsembleAction);
+  const onResponseAction = useEnsembleAction(api.onResponse);
+  const onErrorAction = useEnsembleAction(api.onError);
 
   useEffect(() => {
     setApis((prev) => {
-      prev[currentIndex] = { ...api, onResponse, onError };
+      prev[currentIndex] = { ...api, onResponseAction, onErrorAction };
       return [...prev];
     });
-  }, [setApis, onResponse, onError]);
+  }, [setApis, onResponseAction, onErrorAction]);
 
   return null;
 };

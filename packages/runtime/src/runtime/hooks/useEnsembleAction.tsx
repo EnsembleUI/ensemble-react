@@ -263,11 +263,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
         if (action?.id) {
           setData(action.id, response);
         }
-
-        (api.onResponse as EnsembleActionHookResult)?.callback({
-          ...context,
-          response,
-        });
+        api.onResponseAction?.callback({ ...context, response });
         onInvokeAPIResponseAction?.callback({ ...context, response });
       } catch (e) {
         logError(e);
@@ -285,11 +281,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
             isError: true,
           });
         }
-
-        (api.onError as EnsembleActionHookResult)?.callback({
-          ...context,
-          error: e,
-        });
+        api.onErrorAction?.callback({ ...context, error: e });
         onInvokeAPIErrorAction?.callback({ ...context, error: e });
       } finally {
         setIsComplete(true);
