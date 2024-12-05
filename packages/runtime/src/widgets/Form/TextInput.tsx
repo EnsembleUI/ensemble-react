@@ -68,7 +68,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
       setValue(newValue);
       action?.callback({ value: newValue });
     },
-    [action],
+    [action?.callback],
   );
 
   const handleRef: RefCallback<never> = (node) => {

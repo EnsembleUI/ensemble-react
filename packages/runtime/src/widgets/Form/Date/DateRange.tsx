@@ -48,11 +48,7 @@ export const DateRange: React.FC<DateRangeProps> = (props) => {
 
   const onChangeActionCallback = useCallback(
     (data?: string[]) => {
-      if (!onChangeAction) {
-        return;
-      }
-
-      onChangeAction.callback({
+      onChangeAction?.callback({
         [id]: {
           value: data,
           setFromValue,
@@ -60,7 +56,7 @@ export const DateRange: React.FC<DateRangeProps> = (props) => {
         },
       });
     },
-    [onChangeAction, id],
+    [onChangeAction?.callback, id],
   );
 
   const onDateRangeChange = (_: unknown, datesString: unknown): void => {

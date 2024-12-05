@@ -131,7 +131,7 @@ export const Search: React.FC<SearchProps> = ({
     (newValue: string): void => {
       onChangeAction?.callback({ value: newValue });
     },
-    [onChangeAction],
+    [onChangeAction?.callback],
   );
 
   const handleSelect = useCallback(
@@ -148,13 +148,13 @@ export const Search: React.FC<SearchProps> = ({
         });
       }
     },
-    [itemTemplate, namedData, onSelectAction, extractValue],
+    [itemTemplate, namedData, onSelectAction?.callback, extractValue],
   );
 
   const handleClear = useCallback(() => {
     setSearchValue(null);
     onClearAction?.callback();
-  }, [onClearAction]);
+  }, [onClearAction?.callback]);
 
   // handle not found content renderer
   const notFoundContentRenderer = useMemo(() => {

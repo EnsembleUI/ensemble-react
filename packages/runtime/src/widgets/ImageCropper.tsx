@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Cropper, { type Area } from "react-easy-crop";
 import {
   type EnsembleAction,
@@ -30,7 +30,8 @@ export const ImageCropper: React.FC<ImageCropperProps> = (props) => {
   const [cropPos, setCropPos] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [rotate, setRotate] = useState(0);
-  const [croppedAreaPixels, setcroppedAreaPixels] = useState<Area>({
+  const [sourceImg, setSourceImg] = useState<string | undefined>();
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area>({
     x: 0,
     y: 0,
     width: 0,
@@ -38,18 +39,9 @@ export const ImageCropper: React.FC<ImageCropperProps> = (props) => {
   });
 
   const onCroppedAction = useEnsembleAction(onCropped);
-  const onCroppedActionCallback = useCallback(
-    (file: unknown) => {
-      if (!onCroppedAction) {
-        return;
-      }
-      onCroppedAction.callback({ file });
-    },
-    [onCroppedAction],
-  );
 
   const onCropComplete = (croppedArea: Area, croppedAreaPix: Area): void => {
-    setcroppedAreaPixels(croppedAreaPix);
+    setCroppedAreaPixels(croppedAreaPix);
   };
 
   const createImg = (url: string): Promise<HTMLImageElement> => {
@@ -66,25 +58,28 @@ export const ImageCropper: React.FC<ImageCropperProps> = (props) => {
     return (degreeVal * Math.PI) / 180;
   };
 
-  const rotateSize = (width: number, height: number) => {
-    const rotRad = getRadianAngle(rotate);
+  const rotateSize = useCallback(
+    (width: number, height: number) => {
+      const rotRad = getRadianAngle(rotate);
 
-    return {
-      width:
-        Math.abs(Math.cos(rotRad) * width) +
-        Math.abs(Math.sin(rotRad) * height),
-      height:
-        Math.abs(Math.sin(rotRad) * width) +
-        Math.abs(Math.cos(rotRad) * height),
-    };
-  };
+      return {
+        width:
+          Math.abs(Math.cos(rotRad) * width) +
+          Math.abs(Math.sin(rotRad) * height),
+        height:
+          Math.abs(Math.sin(rotRad) * width) +
+          Math.abs(Math.cos(rotRad) * height),
+      };
+    },
+    [rotate],
+  );
 
-  const getCroppedImg = async () => {
-    if (!values?.source) {
+  const getCroppedImg = useCallback(async () => {
+    if (!sourceImg) {
       return null;
     }
 
-    const image = await createImg(values.source);
+    const image = await createImg(sourceImg);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
@@ -143,22 +138,25 @@ export const ImageCropper: React.FC<ImageCropperProps> = (props) => {
         }
       }, "image/jpeg");
     });
-  };
+  }, [croppedAreaPixels, rotate, rotateSize, sourceImg]);
 
-  const crop = async () => {
+  const crop = useCallback(async () => {
     const croppedImage = await getCroppedImg();
-    onCroppedActionCallback(croppedImage);
-  };
+    onCroppedAction?.callback({ file: croppedImage });
+  }, [getCroppedImg, onCroppedAction?.callback]);
 
   const { values, id } = useRegisterBindings(
     { ...rest, rotate, widgetName },
     props.id,
     {
       setRotate,
-      getCroppedImg,
       crop,
     },
   );
+
+  useEffect(() => {
+    setSourceImg(values?.source);
+  }, [values?.source]);
 
   if (!values?.source) {
     return null;

@@ -188,25 +188,18 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   const onTapAction = useEnsembleAction(itemTemplate.template.properties.onTap);
   const onTapActionCallback = useCallback(
     (data: unknown, index?: number) => {
-      if (!onTapAction) {
-        return;
-      }
-
-      return onTapAction.callback({ data, index });
+      return onTapAction?.callback({ data, index });
     },
-    [onTapAction],
+    [onTapAction?.callback],
   );
 
   // on row selected action
   const onRowsSelected = useEnsembleAction(props.onRowsSelected);
   const onRowsSelectedCallback = useCallback(
     (selectedRowKeys: React.Key[], selectedRows: object[]) => {
-      if (!onRowsSelected) {
-        return;
-      }
-      return onRowsSelected.callback({ selectedRows, selectedRowKeys });
+      return onRowsSelected?.callback({ selectedRows, selectedRowKeys });
     },
-    [onRowsSelected],
+    [onRowsSelected?.callback],
   );
 
   // scroll end action
@@ -215,7 +208,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     if (onScrollEndAction) {
       onScrollEndAction.callback();
     }
-  }, [onScrollEndAction]);
+  }, [onScrollEndAction?.callback]);
 
   // page change action
   const onPageChangeAction = useEnsembleAction(onPageChange);
@@ -229,7 +222,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
         });
       }
     },
-    [onPageChangeAction],
+    [onPageChangeAction?.callback],
   );
 
   // column sort action
@@ -250,7 +243,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
         });
       }
     },
-    [onSortAction, namedData],
+    [onSortAction?.callback, namedData],
   );
 
   // handle scroll event

@@ -40,23 +40,15 @@ export const SignInWithGoogle: React.FC<SignInWithGoogleProps> = (props) => {
   // trigger on signin action
   const onSignInActionCallback = useCallback(
     (data: unknown) => {
-      if (!onSignInAction) {
-        return;
-      }
-
-      return onSignInAction.callback({ data });
+      return onSignInAction?.callback({ data });
     },
-    [onSignInAction],
+    [onSignInAction?.callback],
   );
 
   // trigger on error action
   const onErrorActionCallback = useCallback(() => {
-    if (!onErrorAction) {
-      return;
-    }
-
-    return onErrorAction.callback();
-  }, [onErrorAction]);
+    return onErrorAction?.callback();
+  }, [onErrorAction?.callback]);
 
   // handle google login resposne
   const handleSuccessfullGoogleLoginResponse = (

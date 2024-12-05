@@ -103,12 +103,9 @@ const Stepper: React.FC<StepperProps> = (props) => {
   const onChangeCallback = useCallback(
     (step: number) => () => {
       setActiveStep(step);
-      if (!action) {
-        return;
-      }
       action?.callback({ step });
     },
-    [action],
+    [action?.callback],
   );
 
   if (activeStep === undefined) {

@@ -52,24 +52,16 @@ const SliderWidget: React.FC<SliderProps> = (props) => {
 
   const onChangeActionCallback = useCallback(
     (newValue: number | [number, number]) => {
-      if (!onChangeAction) {
-        return;
-      }
-
-      onChangeAction.callback({ value: newValue });
+      onChangeAction?.callback({ value: newValue });
     },
-    [onChangeAction],
+    [onChangeAction?.callback],
   );
 
   const onCompleteActionCallback = useCallback(
     (newValue: number | [number, number]) => {
-      if (!onCompleteAction) {
-        return;
-      }
-
-      onCompleteAction.callback({ value: newValue });
+      onCompleteAction?.callback({ value: newValue });
     },
-    [onCompleteAction],
+    [onCompleteAction?.callback],
   );
 
   const steps = useMemo(() => {

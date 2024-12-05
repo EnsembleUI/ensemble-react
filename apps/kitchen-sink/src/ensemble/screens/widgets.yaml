@@ -266,6 +266,7 @@ View:
             onTap:
               executeCode: |
                 ensemble.user.set({email: 'uuu'})
+
         - Text:
             styles:
               names: heading-1
@@ -363,7 +364,6 @@ View:
                               widget:
                                 Icon:
                                   name: QuestionMark
-
               - Text:
                   styles:
                     names: heading-3
@@ -420,6 +420,7 @@ View:
                               template:
                                 Text:
                                   text: ${value}
+
         - Button:
             label: get selected rows
             onTap:
@@ -663,7 +664,6 @@ View:
                                   ]
                               }
                           }
-
         - Card:
             styles:
               maxWidth: unset
@@ -811,34 +811,6 @@ View:
                       value: 1
                     - label: Option 2
                       value: 2
-              - Dropdown:
-                  id: myDropdown
-                  label: With Default Value
-                  panel:
-                    Form:
-                      children:
-                        - Date:
-                            label: Start Date
-                            id: testDate
-                            onChange:
-                              executeCode: |
-                                console.log(testDate)
-
-                        - Date:
-                            label: End Date
-                            id: testDate1
-                            onChange:
-                              executeCode: |
-                                console.log(testDate1)
-
-                        - Button:
-                            label: Apply
-                            onTap:
-                              executeCode: |
-                                const x = testDate.value;
-                                const y = testDate1.value;
-                                myDropdown.setValue('hi')
-                                myDropdown.close()
               - Button:
                   label: Open Dropdown
                   onTap:
@@ -896,7 +868,6 @@ View:
                         Text:
                           text: Here is my label 2
                       value: 222
-
         - Card:
             styles:
               maxWidth: unset
@@ -933,32 +904,6 @@ View:
                               onChangeDemo.setText('You selected: ' + onChangeDemoDate.value);
                     - Text:
                         id: onChangeDemo
-        - Dropdown:
-            id: clientSelector
-            value: All Clients
-            hintText: Chose Client
-            onChange:
-              executeCode: |
-                console.log(clientSelector, selectedValue);
-            items:
-              - label: All Clients
-                value: all clients
-              - label: Client Name
-                value: client name
-              - label: Location Group
-                type: group
-                items:
-                  - label: Location Name 1
-                    value: location name 1
-                  - label: Location Name 2
-                    value: location name 2
-                  - label: Location Name 3
-                    value: location name 3
-              - label: Client Name 2
-                value: client name 2
-            styles:
-              width: 300px
-              justifySelf: end
         - DateRange:
             htmlAttributes:
               data-testid: daterange-test
@@ -976,7 +921,6 @@ View:
             onTap:
               executeCode: |
                 onChangeDemoDate.setValue("02/12/2024")
-
         - TabBar:
             items:
               - label: Home
@@ -1004,7 +948,6 @@ View:
               tabContentHolderBorderRadius: 10
               tabContentHolderPadding: 10px 5px
               tabPosition: "stretch"
-
         - DataGrid:
             DataColumns:
               - label:
@@ -1042,7 +985,6 @@ View:
                         onCollapse:
                           executeCode: |
                             console.log('HelloC', data)
-
         - Card:
             styles:
               maxWidth: unset
@@ -1077,7 +1019,6 @@ View:
                   onChange:
                     executeCode: |-
                       console.log('toggle button changed: ' + value);
-
         - Card:
             styles:
               maxWidth: unset
@@ -1108,7 +1049,6 @@ View:
                   onTap:
                     executeCode: |
                       console.log('Slider value: ' + sliderWidget.value);
-
         - Card:
             styles:
               maxWidth: unset
@@ -1123,48 +1063,6 @@ View:
                   size: small
                   value: true
                   leadingText: Set to true and requred
-
-        - Card:
-            styles:
-              maxWidth: unset
-              width: unset
-              gap: 10px
-            children:
-              - Markdown:
-                  text: |
-                    ### Image Cropper
-              - ImageCropper:
-                  id: imageCropper
-                  source: https://img.huffingtonpost.com/asset/5ab4d4ac2000007d06eb2c56.jpeg?cache=sih0jwle4e&ops=1910_1000
-                  styles:
-                    strokeColor: red
-                    strokeWidth: 2px
-                  onCropped:
-                    executeCode: |
-                      console.log('Image Cropped Successfully', file)
-                      croppedImage.setSource(file)
-
-              - Button:
-                  label: Rotate clockwise
-                  onTap:
-                    executeCode: |
-                      imageCropper.setRotate(imageCropper.rotate + 90)
-              - Button:
-                  label: Rotate anti-clockwise
-                  onTap:
-                    executeCode: |
-                      imageCropper.setRotate(imageCropper.rotate - 90)
-              - Button:
-                  label: Crop
-                  onTap:
-                    executeCode: |
-                      imageCropper.crop()
-
-              - Image:
-                  id: croppedImage
-                  styles:
-                    maxWidth: 500px
-                  source: https://img.huffingtonpost.com/asset/5ab4d4ac2000007d06eb2c56.jpeg?cache=sih0jwle4e&ops=1910_1000
         - Card:
             styles:
               width: unset
@@ -1226,7 +1124,6 @@ View:
                   onTap:
                     executeCode: |
                       workflowStepper.handleBack();
-
         - Card:
             styles:
               maxWidth: unset
@@ -1255,7 +1152,6 @@ View:
                     template:
                       Text:
                         text: ${product.title}
-
         - Card:
             styles:
               maxWidth: unset
@@ -1267,7 +1163,6 @@ View:
                     names: heading-3
                   text: Custom widget in screen
               - Button:
-
         - Card:
             styles:
               maxWidth: unset
@@ -1282,7 +1177,6 @@ View:
                   useShimmer: true
                   styles:
                     height: 50px
-
         - Card:
             styles:
               maxWidth: unset
@@ -1297,7 +1191,6 @@ View:
                   useShimmer: true
                   styles:
                     height: 50px
-
         - Card:
             styles:
               maxWidth: unset
@@ -1332,7 +1225,6 @@ View:
                   onRefresh:
                     executeCode: |
                       console.log('refreshed')
-
 API:
   getDummyProducts:
     method: GET

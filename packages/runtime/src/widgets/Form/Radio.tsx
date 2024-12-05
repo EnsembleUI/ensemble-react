@@ -92,7 +92,7 @@ export const RadioWidget: React.FC<RadioWidgetProps> = (props) => {
       setValue(newValue);
       onChangeAction?.callback({ value: newValue });
     },
-    [onChangeAction],
+    [onChangeAction?.callback],
   );
 
   // extract template data

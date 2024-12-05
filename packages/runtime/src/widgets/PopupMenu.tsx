@@ -184,7 +184,7 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
       const item = itemsMap.get(mapKey);
       action?.callback({ value: item });
     },
-    [action, itemsMap],
+    [action?.callback, itemsMap],
   );
 
   return (

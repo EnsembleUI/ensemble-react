@@ -36,11 +36,8 @@ export const Row: React.FC<FlexboxProps> = (props) => {
   const parentScope = useCustomScope();
   const action = useEnsembleAction(onTap);
   const onClickCallback = useCallback(() => {
-    if (!action) {
-      return;
-    }
-    action.callback();
-  }, [action]);
+    action?.callback();
+  }, [action?.callback]);
 
   return (
     <AntRow

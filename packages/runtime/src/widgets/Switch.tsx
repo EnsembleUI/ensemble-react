@@ -47,13 +47,9 @@ export const SwitchWidget: React.FC<SwitchProps> = (props) => {
 
   const onChangeActionCallback = useCallback(
     (newValue: boolean) => {
-      if (!onChangeAction) {
-        return;
-      }
-
-      onChangeAction.callback({ value: newValue });
+      onChangeAction?.callback({ value: newValue });
     },
-    [onChangeAction],
+    [onChangeAction?.callback],
   );
 
   const handleChange = (newValue: boolean): void => {
