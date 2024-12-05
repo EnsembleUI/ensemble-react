@@ -70,7 +70,6 @@ export interface EnsembleAPIModel {
   url?: string;
   method: "GET" | "POST" | "PUT" | "PATCH";
   headers?: { [key: string]: string | number | boolean };
-  cacheExpirySeconds?: number;
   body?: string | object;
   onResponse?: EnsembleAction;
   onError?: EnsembleAction;
