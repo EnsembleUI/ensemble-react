@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo, useEffect } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import { useDebounce } from "react-use";
 import {
   useTemplateData,
@@ -26,7 +26,6 @@ import { Icon } from "./Icon";
 const widgetName = "Search";
 
 export type SearchProps = {
-  value?: string;
   placeholder?: string;
   searchKey?: string;
   selectedLabel?: { [key: string]: unknown };
@@ -38,7 +37,6 @@ export type SearchProps = {
   onClear?: EnsembleAction;
   iconStyles?: EnsembleWidgetStyles;
   notFoundContent?: Expression<string> | { [key: string]: unknown };
-  searchIfEmpty: boolean;
 } & EnsembleWidgetProps &
   HasItemTemplate & {
     "item-template"?: { value: Expression<string> };
@@ -52,8 +50,6 @@ export const Search: React.FC<SearchProps> = ({
   onChange,
   onSelect,
   onClear,
-  value: initialValue,
-  searchIfEmpty,
   ...rest
 }) => {
   const [searchValue, setSearchValue] = useState<string | null>(null);
@@ -65,7 +61,7 @@ export const Search: React.FC<SearchProps> = ({
   });
 
   const { id, rootRef, values } = useRegisterBindings(
-    { styles, value, ...rest, widgetName, initialValue },
+    { styles, value, ...rest, widgetName },
     rest.id,
     {
       setValue,
@@ -90,7 +86,7 @@ export const Search: React.FC<SearchProps> = ({
   );
 
   const renderOptions = useMemo(() => {
-    if (isEmpty(searchValue) && !searchIfEmpty) return [];
+    if (isEmpty(searchValue)) return [];
 
     let dropdownOptions: JSX.Element[] = [];
 
@@ -187,10 +183,6 @@ export const Search: React.FC<SearchProps> = ({
     [extractValue, namedData, rest.selectedLabel],
   );
 
-  useEffect(() => {
-    if (!value) setValue(values?.initialValue);
-  }, [value, values?.initialValue]);
-
   return (
     <div
       ref={rootRef}
@@ -220,7 +212,6 @@ export const Search: React.FC<SearchProps> = ({
       <SelectComponent
         allowClear
         className={`${values?.styles?.names || ""} ${id}_input`}
-        defaultValue={values?.initialValue}
         filterOption={false}
         id={values?.id}
         labelRender={({ label, value: labelValue }): React.ReactNode =>

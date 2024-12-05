@@ -41,19 +41,19 @@ const wrapper: React.FC<React.PropsWithChildren> = ({ children }) => (
   </ScreenContextProvider>
 );
 
-test("populates screen invokables in function context", async () => {
+test("populates screen invokables in function context", () => {
   const { result } = renderHook(() => useExecuteCode("myWidget.value"), {
     wrapper,
   });
 
   let execResult;
-  await act(async () => {
-    execResult = await result.current?.callback();
+  act(() => {
+    execResult = result.current?.callback();
   });
   expect(execResult).toBe(2);
 });
 
-test("populates context passed in", async () => {
+test("populates context passed in", () => {
   const { result } = renderHook(
     () =>
       useExecuteCode("specialScope.value", {
@@ -63,25 +63,25 @@ test("populates context passed in", async () => {
   );
 
   let execResult;
-  await act(async () => {
-    execResult = await result.current?.callback();
+  act(() => {
+    execResult = result.current?.callback();
   });
   expect(execResult).toBe(4);
 });
 
-test("can be invoked multiple times", async () => {
+test("can be invoked multiple times", () => {
   const { result } = renderHook(() => useExecuteCode("myWidget.value"), {
     wrapper,
   });
 
   let execResult;
-  await act(async () => {
-    execResult = await result.current?.callback();
+  act(() => {
+    execResult = result.current?.callback();
   });
   expect(execResult).toBe(2);
   let execResult2;
-  await act(async () => {
-    execResult2 = await result.current?.callback();
+  act(() => {
+    execResult2 = result.current?.callback();
   });
   expect(execResult2).toBe(2);
 });

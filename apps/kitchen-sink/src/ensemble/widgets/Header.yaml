@@ -2,14 +2,8 @@ Widget:
   inputs:
     - message
   onLoad:
-    executeCode: 
-      body: |
-        console.log("hello from header", message);
-      onComplete:
-        invokeAPI:
-          name: findUsers
-          inputs:
-            search: "Emma"
+    executeCode: |
+      console.log("hello from header", message);
   body:
     Row:
       backgroundColor: white
@@ -23,7 +17,6 @@ Widget:
       children:
         - Search:
             id: mySearch
-            value: Emma
             styles:
               width: 320px
               height: 40px
@@ -32,7 +25,6 @@ Widget:
               borderStyle: solid
               borderColor: "#B8BED6"
             placeholder: Search
-            searchIfEmpty: true
             notFoundContent:
               Text:
                 text: No users found 123

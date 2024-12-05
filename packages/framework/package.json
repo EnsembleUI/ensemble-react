@@ -1,6 +1,6 @@
 {
   "name": "@ensembleui/react-framework",
-  "version": "0.2.9",
+  "version": "0.2.8",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
@@ -22,7 +22,6 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@tanstack/react-query": "^5.61.0",
     "@testing-library/react": "^13.4.0",
     "@types/lodash-es": "^4.17.8",
     "@types/react": "^18.2.21",

@@ -72,12 +72,10 @@ export const useCommandCallback = <
             (acc, widget) => ({ ...acc, [widget.name]: widget }),
             {},
           );
-
         const evalContext = createEvaluationContext({
           applicationContext,
           screenContext,
           ensemble: {
-            setTheme: (name: string) => set(themeAtom, name),
             user: {
               ...user,
               setUser: (userUpdate: EnsembleUser) => set(userAtom, userUpdate),
@@ -170,7 +168,8 @@ export const useCommandCallback = <
 
         return command(evalContext, ...args);
       },
-      [customScope, i18n, ...dependencies],
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [command, customScope, i18n, ...dependencies],
     ),
   );
 };

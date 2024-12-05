@@ -1,6 +1,6 @@
 {
   "name": "@ensembleui/js-commons",
-  "version": "0.0.8",
+  "version": "0.0.5",
   "exports": {
     ".": {
       "require": "./dist/index.js",
