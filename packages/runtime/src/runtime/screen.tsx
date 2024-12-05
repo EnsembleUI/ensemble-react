@@ -94,7 +94,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
   }, [screen.customWidgets]);
 
   const AppScreen = useCallback(() => {
-    if (screen.apis?.length !== apis.length) {
+    if ((screen.apis || []).length !== apis.length) {
       return null;
     }
 
@@ -128,7 +128,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
 
   return (
     <>
-      {screen.apis?.map((api, index) => (
+      {(screen.apis || []).map((api, index) => (
         <OnEvaluateApi
           api={api}
           currentIndex={index}
