@@ -67,6 +67,7 @@ const formatJs = (js?: string): string => {
   ) {
     return `return ${sanitizedJs}`;
   }
+
   // multiline js
   if (sanitizedJs.includes("\n")) {
     return `
