@@ -269,6 +269,7 @@ importers:
 
   packages/framework:
     specifiers:
+      '@tanstack/react-query': ^5.61.0
       '@testing-library/react': ^13.4.0
       '@types/lodash-es': ^4.17.8
       '@types/react': ^18.2.21
@@ -289,6 +290,7 @@ importers:
       tsup: ^7.2.0
       yaml: ^2.3.2
     devDependencies:
+      '@tanstack/react-query': 5.62.2
       '@testing-library/react': 13.4.0
       '@types/lodash-es': 4.17.12
       '@types/react': 18.2.62
@@ -338,6 +340,7 @@ importers:
       '@mui/material': ^5.14.9
       '@mui/x-date-pickers': ^6.18.3
       '@react-oauth/google': ^0.12.1
+      '@tanstack/react-query': ^5.61.0
       '@testing-library/react': ^13.4.0
       '@testing-library/user-event': ^13.5.0
       '@turbo/gen': ^1.10.12
@@ -374,6 +377,7 @@ importers:
       '@mui/material': 5.15.11_d729d530559e435818d6dfbb9bc0bc34
       '@mui/x-date-pickers': 6.19.6_1dcf445c77f90e2d41581270c9a3b06f
       '@react-oauth/google': 0.12.1
+      '@tanstack/react-query': 5.62.2
       '@testing-library/react': 13.4.0
       '@testing-library/user-event': 13.5.0
       '@turbo/gen': 1.12.4
@@ -5861,6 +5865,18 @@ packages:
     engines: {node: '>=14.16'}
     dependencies:
       defer-to-connect: 2.0.1
+    dev: true
+
+  /@tanstack/query-core/5.62.2:
+    resolution: {integrity: sha512-LcwVcC5qpsDpHcqlXUUL5o9SaOBwhNkGeV+B06s0GBoyBr8FqXPuXT29XzYXR36lchhnerp6XO+CWc84/vh7Zg==}
+    dev: true
+
+  /@tanstack/react-query/5.62.2:
+    resolution: {integrity: sha512-fkTpKKfwTJtVPKVR+ag7YqFgG/7TRVVPzduPAUF9zRCiiA8Wu305u+KJl8rCrh98Qce77vzIakvtUyzWLtaPGA==}
+    peerDependencies:
+      react: ^18 || ^19
+    dependencies:
+      '@tanstack/query-core': 5.62.2
     dev: true
 
   /@testing-library/dom/8.20.1:
