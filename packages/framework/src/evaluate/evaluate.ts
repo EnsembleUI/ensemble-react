@@ -61,6 +61,12 @@ const formatJs = (js?: string): string => {
 
   const sanitizedJs = sanitizeJs(toString(js));
 
+  if (
+    (sanitizedJs.startsWith("{") && sanitizedJs.endsWith("}")) ||
+    (sanitizedJs.startsWith("[") && sanitizedJs.endsWith("]"))
+  ) {
+    return `return ${sanitizedJs}`;
+  }
   // multiline js
   if (sanitizedJs.includes("\n")) {
     return `
