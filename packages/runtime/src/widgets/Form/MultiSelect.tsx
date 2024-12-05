@@ -14,7 +14,7 @@ import {
 } from "@ensembleui/react-framework";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { Select as SelectComponent, Space, Form } from "antd";
-import { get, isArray, isEqual, isString } from "lodash-es";
+import { get, isArray, isEqual, isObject, isString } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import type {
@@ -52,7 +52,7 @@ export type MultiSelectProps = {
   hintStyle?: EnsembleWidgetStyles;
   allowCreateOptions?: boolean;
 } & EnsembleWidgetProps<MultiSelectStyles> &
-  FormInputProps<string[]>;
+  FormInputProps<object[] | string[]>;
 
 const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   const { data, ...rest } = props;
@@ -74,7 +74,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   );
 
   // used to store previous initial values
-  const prevInitialValue = useRef([] as string[]);
+  const prevInitialValue = useRef([] as object[] | string[]);
 
   // check and load initial values
   useEffect(() => {
@@ -84,7 +84,12 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
       isArray(values?.initialValue)
     ) {
       prevInitialValue.current = values?.initialValue || [];
-      setSelectedValues(values?.initialValue);
+      const initialValue = values?.initialValue.map((item) =>
+        isObject(item)
+          ? (get(item, values.valueKey || "value") as string)
+          : item,
+      );
+      setSelectedValues(initialValue);
     }
   }, [values?.initialValue]);
 
@@ -184,7 +189,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     if (isString(values?.value)) {
       return [values?.value || ""];
     }
-  }, [values?.value]);
+  }, [values?.value]) as string[];
 
   // rendered options
   const renderOptions = useMemo(
