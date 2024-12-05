@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.4
+
+### Patch Changes
+
+- 6cbe562: Revert hook changes
+
 ## 0.3.1
 
 ### Patch Changes

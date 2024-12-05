@@ -1,5 +1,11 @@
 # @ensembleui/js-commons
 
+## 0.0.9
+
+### Patch Changes
+
+- 6cbe562: Revert hook changes
+
 ## 0.0.5
 
 ### Patch Changes
