@@ -1,13 +1,32 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.98
+
+### Patch Changes
+
+- 4b2c4fd: preload search results
+- 39ff994: fix carousel widget
+- Updated dependencies [4b2c4fd]
+- Updated dependencies [c5d0441]
+- Updated dependencies [39ff994]
+  - @ensembleui/react-runtime@0.3.3
+
 ## 0.0.97
 
 ### Patch Changes
 
-- 6cbe562: Revert hook changes
-- Updated dependencies [6cbe562]
-  - @ensembleui/react-framework@0.2.10
-  - @ensembleui/react-runtime@0.3.4
+- ec9d081: added support for cache in API call
+- f70c0f0: Added support for await in executeCodeBlock
+- 828e7e4: Added context in item-template of collapsible widget
+- cee5d14: Allow default value for the Search widget
+- Updated dependencies [5094d08]
+- Updated dependencies [ec9d081]
+- Updated dependencies [f70c0f0]
+- Updated dependencies [828e7e4]
+- Updated dependencies [80b8558]
+- Updated dependencies [cee5d14]
+  - @ensembleui/react-framework@0.2.9
+  - @ensembleui/react-runtime@0.3.2
 
 ## 0.0.96
 

@@ -1,10 +1,11 @@
 # @ensembleui/react-framework
 
-## 0.2.10
+## 0.2.9
 
 ### Patch Changes
 
-- 6cbe562: Revert hook changes
+- 5094d08: fix: refactor missing themeContext in useCommandCallback
+- ec9d081: added support for cache in API call
 
 ## 0.2.8
 
