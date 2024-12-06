@@ -3,7 +3,15 @@ import { exec } from "node:child_process";
 import { homedir } from "node:os";
 import { existsSync, mkdirSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
-import { compact, groupBy } from "lodash-es";
+import {
+  compact,
+  groupBy,
+  head,
+  isArray,
+  isNil,
+  pick,
+  values,
+} from "lodash-es";
 import type { LocalApplicationTransporter } from "./transporter";
 import { EnsembleDocumentType } from "./dto";
 import type {
@@ -24,7 +32,7 @@ const GLOBAL_MANIFEST_FILE = "local-apps-manifest.json";
 type EnsembleGlobalMetadata = Record<string, ApplicationLocalMeta | undefined>;
 
 const APP_MANIFEST_FILE = ".manifest.json";
-type ApplicationLocalMeta = ApplicationDTO & {
+export type ApplicationLocalMeta = ApplicationDTO & {
   // TODO: extend with sync properties, i.e. last sync time
   projectPath: string;
 };
@@ -77,8 +85,10 @@ export const getLocalApplicationTransporter = (
         scripts: docsByType[EnsembleDocumentType.Script] as ScriptDTO[],
         assets: docsByType[EnsembleDocumentType.Asset] as AssetDTO[],
         translations: docsByType[EnsembleDocumentType.I18n] as TranslationDTO[],
-        env: docsByType[EnsembleDocumentType.Environment][0] as EnvironmentDTO,
-        theme: docsByType[EnsembleDocumentType.Theme][0] as ThemeDTO,
+        env: head(
+          docsByType[EnsembleDocumentType.Environment],
+        ) as EnvironmentDTO,
+        theme: head(docsByType[EnsembleDocumentType.Theme]) as ThemeDTO,
       };
     },
 
@@ -99,11 +109,29 @@ export const getLocalApplicationTransporter = (
         existingAppMetadata.projectPath = join(ensembleDir, appData.id);
       }
 
-      const yamlFileWrites = Object.values(
-        existingAppMetadata.manifest ?? {},
-      ).map(async (document) => {
+      const documentsToWrite = values(
+        pick(appData, [
+          "screens",
+          "widgets",
+          "scripts",
+          "assets",
+          "translations",
+          "env",
+          "theme",
+        ]),
+      ).flatMap((docset: unknown) => {
+        if (isArray(docset)) {
+          return docset as EnsembleDocument[];
+        }
+        if (!isNil(docset)) {
+          return [docset as EnsembleDocument];
+        }
+        return [];
+      });
+
+      const yamlFileWrites = compact(documentsToWrite).map(async (document) => {
         const { relativePath } = await saveArtifact(
-          document as EnsembleDocument,
+          document,
           existingAppMetadata,
           {
             skipMetadata: true,
@@ -146,7 +174,8 @@ export const saveArtifact = async (
   if (!app.manifest) {
     app.manifest = {};
   }
-  const existingPath = app.manifest[artifact.id].relativePath;
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const existingPath = app.manifest[artifact.id]?.relativePath;
 
   // TODO: allow custom project structures
   const artifactSubDir = join(app.projectPath, artifact.type);
@@ -172,7 +201,7 @@ export const saveArtifact = async (
   return { relativePath: pathToWrite };
 };
 
-const getGlobalMetadata = async (): Promise<EnsembleGlobalMetadata> => {
+export const getGlobalMetadata = async (): Promise<EnsembleGlobalMetadata> => {
   const filePath = join(METADATA_DIR, GLOBAL_MANIFEST_FILE);
 
   // Check if the file exists

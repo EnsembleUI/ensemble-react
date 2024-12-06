@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { type Atom, atom, useAtomValue } from "jotai";
 import { isString, map, merge } from "lodash-es";
+import isEqual from "react-fast-compare";
 import { createBindingAtom } from "../evaluate";
 import { isExpression, type Expression } from "../shared/common";
 import { useCustomScope } from "./useCustomScope";
@@ -21,6 +22,15 @@ export interface TemplateDataProps {
  * @param name - the name each instance of data should be keyed by
  * @returns
  */
+
+const useDeepCompareMemoize = <T>(value: T) => {
+  const ref = useRef<T>();
+  if (!isEqual(value, ref.current)) {
+    ref.current = value;
+  }
+  return ref.current;
+};
+
 export const useTemplateData = ({
   data,
   name = "data",
@@ -49,10 +59,12 @@ export const useTemplateData = ({
     () => map(rawData, (value: unknown) => ({ [name]: value })),
     [name, rawData],
   );
-  const evaluatedNamedData = useEvaluate({ namedData });
+  const evaluated = useEvaluate({ namedData });
+
+  const evaluatedNamedData = useDeepCompareMemoize(evaluated.namedData);
 
   return {
     rawData,
-    namedData: evaluatedNamedData.namedData,
+    namedData: evaluatedNamedData as object[],
   };
 };

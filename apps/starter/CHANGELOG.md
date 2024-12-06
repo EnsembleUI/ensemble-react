@@ -1,13 +1,26 @@
 # @ensembleui/react-starter
 
+## 0.4.44
+
+### Patch Changes
+
+- Updated dependencies [4b2c4fd]
+- Updated dependencies [c5d0441]
+- Updated dependencies [39ff994]
+  - @ensembleui/react-runtime@0.3.3
+
 ## 0.4.43
 
 ### Patch Changes
 
-- 6cbe562: Revert hook changes
-- Updated dependencies [6cbe562]
-  - @ensembleui/react-framework@0.2.10
-  - @ensembleui/react-runtime@0.3.4
+- Updated dependencies [5094d08]
+- Updated dependencies [ec9d081]
+- Updated dependencies [f70c0f0]
+- Updated dependencies [828e7e4]
+- Updated dependencies [80b8558]
+- Updated dependencies [cee5d14]
+  - @ensembleui/react-framework@0.2.9
+  - @ensembleui/react-runtime@0.3.2
 
 ## 0.4.42
 

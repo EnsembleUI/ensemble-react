@@ -128,7 +128,7 @@ export interface ShowToastAction {
 }
 
 export interface PickFilesAction {
-  id: string;
+  id?: string;
   allowMultiple?: boolean;
   allowedExtensions?: string[];
   allowMaxFileSizeBytes?: number;
