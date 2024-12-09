@@ -4,17 +4,17 @@
   "exports": {
     ".": {
       "import": "./dist/core.mjs",
-      "require": "./dist/core.cjs",
+      "require": "./dist/core.js",
       "types": "./dist/core.d.ts"
     },
     "./core": {
       "import": "./dist/core.mjs",
-      "require": "./dist/core.cjs",
+      "require": "./dist/core.js",
       "types": "./dist/core.d.ts"
     },
     "./browser": {
       "import": "./dist/browser.mjs",
-      "require": "./dist/browser.cjs",
+      "require": "./dist/browser.js",
       "types": "./dist/browser.d.ts"
     }
   },

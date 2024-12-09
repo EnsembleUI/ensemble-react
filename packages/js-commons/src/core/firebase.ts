@@ -2,7 +2,7 @@ import type {
   DocumentData,
   DocumentReference,
   Firestore,
-} from "firebase/firestore/lite";
+} from "firebase/firestore";
 import {
   collection,
   doc,
@@ -12,7 +12,7 @@ import {
   Timestamp,
   where,
   writeBatch,
-} from "firebase/firestore/lite";
+} from "firebase/firestore";
 import { groupBy, head } from "lodash-es";
 import { EnsembleDocumentType } from "./dto";
 import type {
