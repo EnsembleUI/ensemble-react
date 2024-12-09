@@ -1,5 +1,11 @@
 # @ensembleui/js-commons
 
+## 0.0.11
+
+### Patch Changes
+
+- c7575aa: Use regular firebase instead of firebase lite
+
 ## 0.0.10
 
 ### Patch Changes
