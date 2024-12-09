@@ -2,6 +2,11 @@
   "name": "@ensembleui/js-commons",
   "version": "0.0.9",
   "exports": {
+    ".": {
+      "import": "./dist/core.mjs",
+      "require": "./dist/core.cjs",
+      "types": "./dist/core.d.ts"
+    },
     "./core": {
       "import": "./dist/core.mjs",
       "require": "./dist/core.cjs",
