@@ -138,7 +138,21 @@ export const useExecuteCode: EnsembleActionHook<
         [key: string]: unknown;
       };
 
-      const retVal = await evaluate({ model: screenModel }, js, context);
+      let executableJS = `return (async () => {
+          return ${js}
+        })()`;
+
+      if (js.includes("\n")) {
+        executableJS = `return (async () => {
+          ${js}
+        })()`;
+      }
+
+      const retVal = await evaluate(
+        { model: screenModel },
+        executableJS,
+        context,
+      );
 
       onCompleteAction?.callback({
         ...(args[0] as { [key: string]: unknown }),
