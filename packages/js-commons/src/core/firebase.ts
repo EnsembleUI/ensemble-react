@@ -9,12 +9,22 @@ import {
   getDoc,
   getDocs,
   query,
+  setDoc,
   Timestamp,
   where,
   writeBatch,
 } from "firebase/firestore";
-import { groupBy, head } from "lodash-es";
-import { EnsembleDocumentType } from "./dto";
+import {
+  groupBy,
+  head,
+  isArray,
+  isObject,
+  isPlainObject,
+  omit,
+  omitBy,
+  set,
+} from "lodash-es";
+import { ArtifactProps, EnsembleDocumentType } from "./dto";
 import type {
   AssetDTO,
   ApplicationDTO,
@@ -72,14 +82,23 @@ export const getFirestoreApplicationTransporter = (
     const timestamp = Timestamp.now();
     const userRef = doc(db, CollectionsName.Users, userId);
     const appDocRef = doc(db, CollectionsName.Apps, app.id);
-    const batch = writeBatch(db);
     const updatedByDetails = {
       updatedBy: userRef,
       updatedAt: timestamp,
     };
 
-    batch.set(appDocRef, { ...app, ...updatedByDetails });
+    const sanitizedApp = omit<ApplicationDTO>(
+      app,
+      "projectPath",
+      ...ArtifactProps,
+    );
+    if (!sanitizedApp.createdAt) {
+      set(sanitizedApp, "createdAt", timestamp);
+    }
+    // App doc cannot be updated in batch because of firestore rules
+    await setDoc(appDocRef, { ...sanitizedApp, ...updatedByDetails });
 
+    const batch = writeBatch(db);
     const artifactsRef = collection(appDocRef, CollectionsName.Artifacts);
     const internalArtifactsRef = collection(
       appDocRef,
@@ -141,20 +160,22 @@ export const getFirestoreApplicationTransporter = (
       }),
     );
 
-    batch.set(
-      doc(artifactsRef, "appConfig"),
-      {
-        type: EnsembleDocumentType.Environment,
-        envVariables: env,
-        isRoot: true,
-        isArchived: false,
-        createdAt: timestamp,
-        updatedAt: timestamp,
-        createdBy: userRef,
-        updatedBy: userRef,
-      },
-      { merge: true },
-    );
+    if (env) {
+      batch.set(
+        doc(artifactsRef, "appConfig"),
+        {
+          type: EnsembleDocumentType.Environment,
+          envVariables: env,
+          isRoot: true,
+          isArchived: false,
+          createdAt: timestamp,
+          updatedAt: timestamp,
+          createdBy: userRef,
+          updatedBy: userRef,
+        },
+        { merge: true },
+      );
+    }
 
     await batch.commit();
     return app;
@@ -196,7 +217,13 @@ const getArtifactsByType = async (
   >((type) => [
     type,
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    artifactsByType[type]?.map((snapshot) => snapshot.data()) ?? [],
+    artifactsByType[type]?.map((snapshot) => ({
+      id: snapshot.id,
+      ...omitBy(
+        snapshot.data(),
+        (value) => isObject(value) && !isArray(value) && !isPlainObject(value),
+      ),
+    })) ?? [],
   ]);
 
   const labels = labelsSnapshot.docs.map((label) => {
