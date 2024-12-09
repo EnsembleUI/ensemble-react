@@ -1,5 +1,11 @@
 # @ensembleui/js-commons
 
+## 0.0.12
+
+### Patch Changes
+
+- 7894bda: Fix push and pull for studio
+
 ## 0.0.11
 
 ### Patch Changes
