@@ -1,14 +1,51 @@
 /* eslint-disable react/no-children-prop */
+/* eslint import/first: 0 */
+const fetchMock = jest.fn();
+const uploadMock = jest.fn();
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const frameworkActual = jest.requireActual("@ensembleui/react-framework");
+
 import React, { useState } from "react";
 import { act } from "react-dom/test-utils";
 import userEvent from "@testing-library/user-event";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { BrowserRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import type { ReactNode } from "react";
+import { useRegisterBindings } from "@ensembleui/react-framework";
 import { Button, type ButtonProps } from "../Button";
 import { createCustomWidget } from "../../runtime/customWidget";
 import { Column } from "../Column";
-import { useRegisterBindings } from "@ensembleui/react-framework";
+import { EnsembleScreen } from "../../runtime/screen";
+import "../index";
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+jest.mock("@ensembleui/react-framework", () => ({
+  ...frameworkActual,
+  DataFetcher: {
+    fetch: fetchMock,
+    uploadFiles: uploadMock,
+  },
+}));
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
+
+interface BrowserRouterProps {
+  children: ReactNode;
+}
+
+const BrowserRouterWrapper = ({ children }: BrowserRouterProps) => (
+  <QueryClientProvider client={queryClient}>
+    <BrowserRouter>{children}</BrowserRouter>
+  </QueryClientProvider>
+);
 
 test("test button loading using setLoading", async () => {
   // Render the button component
@@ -546,4 +583,107 @@ test("should update the action on bindings changes and track renders", async () 
     expect(mockOpen).toHaveBeenCalledWith("http://youtube.com", "_self");
   });
 });
+
+test("Upload files using pick files and call invoke and upload api", async () => {
+  const logSpy = jest.spyOn(console, "log");
+
+  fetchMock.mockResolvedValue({
+    body: { data: "foo" },
+    isLoading: false,
+    isSuccess: true,
+    isError: false,
+  });
+
+  uploadMock.mockResolvedValue({
+    body: { data: "bar" },
+    isLoading: false,
+    isSuccess: true,
+    isError: false,
+  });
+
+  render(
+    <EnsembleScreen
+      screen={{
+        name: "test",
+        id: "test",
+        body: {
+          name: "Row",
+          properties: {
+            children: [
+              {
+                name: "Button",
+                properties: {
+                  label: "Pick Image",
+                  onTap: {
+                    pickFiles: {
+                      id: "pickImageId",
+                      allowedExtensions: ["jpg", "png"],
+                      onComplete: {
+                        executeCode: {
+                          body: "console.log('first')",
+                          onComplete: {
+                            invokeAPI: {
+                              name: "createMediaByName",
+                              onResponse: {
+                                uploadFiles: {
+                                  files: `\${files}`,
+                                  uploadApi: "uploadFile",
+                                  onComplete: {
+                                    executeCode: "console.log('done')",
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        },
+        apis: [
+          {
+            name: "createMediaByName",
+            method: "POST",
+          },
+          {
+            name: "uploadFile",
+            method: "POST",
+          },
+        ],
+      }}
+    />,
+    {
+      wrapper: BrowserRouterWrapper,
+    },
+  );
+
+  const imageBlob = new Blob(["image binary data"], { type: "image/png" });
+
+  const files = [new File([imageBlob], "example1.png", { type: "image/png" })];
+
+  const pickFiles = document.querySelector("input") as HTMLInputElement;
+
+  act(() => {
+    userEvent.click(pickFiles);
+    userEvent.upload(pickFiles, files);
+  });
+
+  await waitFor(() => {
+    expect(screen.getByText("Pick Image")).toBeInTheDocument();
+    expect(pickFiles.files).toHaveLength(1);
+    expect(pickFiles.files?.[0].name).toBe("example1.png");
+  });
+
+  await waitFor(() => {
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(uploadMock).toHaveBeenCalledTimes(1);
+    expect(logSpy).toHaveBeenCalledWith("first");
+    expect(logSpy).toHaveBeenCalledWith("done");
+  });
+});
+
 /* eslint-enable react/no-children-prop */
