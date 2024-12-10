@@ -1,472 +1,54 @@
 View:
-  onLoad:
-    executeCode:
-      body: |-
-        ensemble.storage.set('iconName', 'home')
-        ensemble.storage.set('btnLoader' , false)
-        ensemble.storage.set('yyy' , 'page')
-        ensemble.storage.set('zzz' , 'button')
-        ensemble.storage.set('aaa' , '1')
-        ensemble.storage.set('bbb' , "0xffb91c1c")
-        ensemble.storage.set('loading', true);
-        console.log('>>> secret variable >>>', ensemble.secrets.dummyOauthSecret)
-        const res = await ensemble.invokeAPI('getDummyNumbers')
-        await new Promise((resolve) => setTimeout(resolve, 5000))
-        return res
-      onComplete:
-        executeCode: |
-          console.log('API triggered', result)
-
-  header:
-    title:
-      Header:
-
-  styles:
-    className: topView
-    scrollableView: true
-    backgroundColor: ${colors.primary['200']}
-
   body:
     Column:
       styles:
-        names: ${ensemble.storage.get('yyy')}
+        names: page
+        crossAxis: stretch
+        gap: 12px
       children:
-        - Text:
-            styles:
-              names: heading-1
-            text: ${device.width}
-        - Text:
-            styles:
-              names: heading-1
-              color: ${colors.primary['900']}
-            text: ${ensemble.secrets.dummyOauthSecret}
-        - Text:
-            styles:
-              names: heading-1
-              color: ${ensemble.storage.get('bbb')}
-            text: r@kitchenSink
-        - Markdown:
-            text: This application is built with Ensemble and serves as a guide for how to implement common UI patterns with Ensemble React.
         - Button:
-            styles:
-              className: page-1 ${ensemble.storage.get('zzz') + '-' + ensemble.storage.get('aaa')}
-            label: ${productTitleName}
+            label: Upload File
             onTap:
-              executeCode: |
-                // Calls a function defined in test.js
-                sayHello();
+              pickFiles:
+                allowedExtensions:
+                  - pdf
+                  - docx
+                  - jpg
+                  - jpeg
+                  - png
+                onComplete:
+                  executeCode:
+                    body: |-
+                      console.log('1st: >>>')
+                      ensemble.storage.set('uploadingFiles', true)
+                    onComplete:
+                      invokeApi:
+                        name: createMediaByName
+                        inputs:
+                          userId: ${userId}
+                        onResponse:
+                          uploadFiles:
+                            files: ${files}
+                            uploadApi: uploadFile
+                            onComplete:
+                              executeCode: |
+                                console.log('2nd: >>>>>>')
 
-        - Button:
-            label: show error
-            onTap:
-              invokeAPI:
-                name: ERROR500
-                onError:
-                  showToast:
-                    message: ${error.response.data.description}
-                    options:
-                      type: error
-                      position: topRight
-                onResponse:
-                  executeCode: console.log('onresponse', response)
-
-        - DispatchButton:
-            events:
-              onFormSubmit:
-                executeCode: |
-                  console.log('onresponse', data)
-                  console.log('onresponse2', response)
-
-        - Dropdown:
-            label: With the label widget
-            hintText: Hint Text
-            item-template:
-              data: ${app.languages}
-              name: language
-              value: ${language.languageCode}
-              template:
-                Text:
-                  text: ${language.name + ` ( `+ language.nativeName +` )`}
-            onChange:
-              executeCode:
-                body: |
-                  ensemble.storage.set('language', value)
-                  ensemble.setLocale({languageCode: value})
-
-        - Text:
-            styles:
-              names: heading-1
-            text: Change theme
-        - PopupMenu:
-            showDivider: true
-            styles:
-              width: 100px
-              backgroundColor: ${colors.primary['500']}
-            item-template:
-              data: ${app.themes}
-              name: theme
-              value: theme
-              template:
-                Text:
-                  text: ${theme}
-            widget:
-              Icon:
-                name: Settings
-            onItemSelect:
-              executeCode: |
-                ensemble.setTheme(value.theme)
-
-        - Text:
-            styles:
-              names: heading-1
-            text: Selected Theme ${app.theme}
-
-        - Button:
-            label: Theme
-            onTap:
-              executeCode: |
-                console.log('>>', app.theme)
-
-        - Divider:
-
-        - Row:
-            styles:
-              gap: 8px
-            children:
-              - Button:
-                  startingIcon:
-                    name: MoreHoriz
-              - Button:
-                  endingIcon:
-                    name: MoreHoriz
-              - Button:
-                  startingIcon:
-                    name: MoreHoriz
-                  label: start
-              - Button:
-                  endingIcon:
-                    name: MoreHoriz
-                  label: end
-
-        - Text:
-            styles:
-              names: heading-1
-            text: Socket Example
-
-        - Row:
-            styles:
-              gap: 8
-              margin: 10px 0px
-            children:
-              - Button:
-                  styles:
-                    borderRadius: 20
-                  label: Connect Socket
-                  onTap:
-                    connectSocket:
-                      name: echo
-              - Button:
-                  styles:
-                    borderRadius: 20
-                  label: Disconnect Socket
-                  onTap:
-                    disconnectSocket:
-                      name: echo
-
-        - Row:
-            styles:
-              gap: 8
-              margin: 10px 0px
-            children:
-              - Button:
-                  styles:
-                    borderRadius: 20
-                  label: Connect Socket JS
-                  onTap:
-                    executeCode:
-                      body: |
-                        ensemble.connectSocket('echo')
-                      onComplete:
-                        executeCode: |
-                          socketStatus.setText('Connected')
-                          echo.onmessage = (e) => {
-                            socketReceivedMessage.setText(e.data)
-                          };
-                          echo.onclose = (e) => {
-                            socketStatus.setText('Disconnected')
-                          };
-              - Button:
-                  styles:
-                    borderRadius: 20
-                  label: Disconnect Socket JS
-                  onTap:
-                    executeCode: |
-                      ensemble.disconnectSocket('echo')
-
-        - Row:
-            styles:
-              gap: 8
-              margin: 10px 0px
-            children:
-              - Text:
-                  fontWeight: 900
-                  text: "Socket Status :"
-
-              - Text:
-                  id: socketStatus
-
-        - Row:
-            styles:
-              gap: 8
-            children:
-              - TextInput:
-                  id: socketMessageBox
-                  hintText: Type message here
-
-              - Button:
-                  label: Send Message
-                  onTap:
-                    messageSocket:
-                      name: echo
-                      message:
-                        msg: ${socketMessageBox.value}
-                        x: ${ensemble.storage.get('yyy')}
-
-              - Button:
-                  label: Send Message JS
-                  onTap:
-                    executeCode: |
-                      ensemble.messageSocket('echo', {msg: socketMessageBox.value, x: ensemble.storage.get('yyy')})
-
-        - Text:
-            styles:
-              fontWeight: 900
-              margin: 10px 0px
-            text: Message from socket
-
-        - Text:
-            styles:
-              margin: 10px 0px
-            id: socketReceivedMessage
-
-        - Text:
-            styles:
-              names: heading-1
-            text: Expression Examples
-
-        - Text:
-            text: ${ensemble.storage.get('yyy').length>13}
-
-        - Row:
-            styles:
-              gap: 8
-              margin: 10px 0px
-            children:
-              - Text:
-                  styles:
-                    fontWeight: 900
-                  text: Simple Expression
-              - Text:
-                  text: ${ensemble.storage.get('yyy')}
-
-        - Row:
-            styles:
-              gap: 8
-              margin: 10px 0px
-            children:
-              - Text:
-                  styles:
-                    fontWeight: 900
-                  text: Multiple Expression
-              - Text:
-                  text: ${ensemble.storage.get('yyy')} ${ensemble.storage.get('zzz')}
-
-        - Row:
-            styles:
-              gap: 8
-              margin: 10px 0px
-            children:
-              - Text:
-                  styles:
-                    fontWeight: 900
-                  text: Expression with Strings
-              - Text:
-                  text: ${ensemble.storage.get('yyy')} style
-
-        - Row:
-            styles:
-              gap: 8
-              margin: 10px 0px
-            children:
-              - Text:
-                  styles:
-                    fontWeight: 900
-                  text: Expression with mix strings
-              - Text:
-                  text: ${ensemble.storage.get('yyy')} style ${ensemble.storage.get('yyy')}
-
-        - Row:
-            styles:
-              gap: 8
-              margin: 10px 0px
-            children:
-              - Text:
-                  styles:
-                    fontWeight: 900
-                  text: Expression with mix strings
-              - Text:
-                  text: ${`interpolate ${ensemble.storage.get('yyy')} multiple times ${ensemble.storage.get('yyy')}`}
-
-        - Card:
-            styles:
-              maxWidth: unset
-              width: unset
-            children:
-              - Markdown:
-                  text: |
-                    ### Slider
-              - Slider:
-                  id: sliderWidget
-                  initialValue: [28, 30]
-                  styles:
-                    maxWidth: unset
-                  dots: true
-                  min: 20
-                  max: 40
-                  value: 20
-                  divisions: 10
-                  onChange:
-                    executeCode: |
-                      console.log('Slider value changed: ' + value);
-                  onComplete:
-                    executeCode: |
-                      console.log('Slider value completed: ' + value);
-              - Button:
-                  label: checkvalue
-                  onTap:
-                    executeCode: |
-                      console.log('Slider value: ' + sliderWidget.value);
-
-        - Card:
-            styles:
-              maxWidth: unset
-              width: unset
-            children:
-              - Markdown:
-                  text: |
-                    ### Show Dialog
-              - Button:
-                  label: show dialog
-                  onTap:
-                    showDialog:
-                      widget:
-                        Column:
-                          children:
-                            - Text:
-                                text: i am a text
-                            - Button:
-                                id: unique
-                                label: Hi I'm Button
-                                onTap:
-                                  executeCode: |-
-                                    unique.setLoading(true)
-                            - Button:
-                                id: unique2
-                                label: Hi I'm Button Close
-                                onTap:
-                                  executeCode: |-
-                                    unique.setLoading(!unique.loading)
-
-        - Collapsible:
-            value: [2]
-            item-template:
-              data: [1, 2, 3]
-              name: p
-              template:
-                CollapsibleItem:
-                  key: ${p}
-                  label: ${'hello' + getDateLabel(p)}
-                  children:
-                    Text:
-                      text: ${'world' + p + ensemble.storage.get('iconName')}
-
-        - Text:
-            text: ${ensemble.storage.get('email')}
-        - Button:
-            label: Call Action
-            onTap:
-              invokeAPI:
-                name: getDummyProducts
-                onResponse:
-                  executeCode: |
-                    ensemble.storage.set('email', response.body.results[0].email)
-                    ensemble.storage.set('emails', [...ensemble.storage.get("emails"),response.body.results[0].email])
-                    console.log('getData', response.body.results[0].email, ensemble.storage.get('emails'));
-        - Column:
-            item-template:
-              data: '${ensemble.storage.get("emails")}'
-              name: email
-              template:
-                Column:
-                  children:
-                    - Text:
-                        text: ${email}
-
-        - Carousel:
-            styles:
-              layout: multiple
-              indicatorPosition: bottomLeft
-              indicatorType: circle
-              indicatorColor: red
-              multipleItemWidthRatio: 1
-            item-template:
-              data: ${[1, 2, 3, 4, 5]}
-              name: item
-              template:
-                Card:
-                  styles:
-                    width: auto
-                    maxWidth: 100%
-                    height: 200px
-                  children:
-                    - Text:
-                        text: ${item}
-
-Global:
-  scriptName: test.js
-
-Import:
-  - common
-
-Socket:
-  echo:
-    uri: wss://echo.websocket.org/
-
-    onSuccess:
-      executeCode: |
-        socketStatus.setText('Connected')
-
-    onReceive:
-      executeCode: |
-        socketReceivedMessage.setText(data)
-
-    onDisconnect:
-      executeCode: |
-        socketStatus.setText('Disconnected')
+Global: |
+  const tenant = 'yash'
+  const userId = 5
+  const requestId = 5
+  const patientId = '123'
+  const doc = {document_type: 'mp4'}
 
 API:
-  ERROR500:
-    method: GET
-    uri: https://httpstat.us/500
-
-  getDummyProducts:
-    method: GET
-    cache: true
-    cacheTime: 10
-    uri: https://randomuser.me/api/?results=1
-
-  getDummyNumbers:
-    method: GET
-    uri: https://661e111b98427bbbef034208.mockapi.io/number?limit=10
-    onResponse: |
-      console.log('dummy number fetched')
+  createMediaByName:
+    method: POST
+    uri: https://dummyjson.com/posts/add
+    inputs:
+      - userId
+    body:
+      userId: ${userId}
+  uploadFile:
+    method: POST
+    uri: https://api.imgbb.com/1/upload?key=49b571061eaed3f27a1a0a225d32d8b4
