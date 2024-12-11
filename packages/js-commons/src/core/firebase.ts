@@ -37,6 +37,20 @@ import type {
 } from "./dto";
 import type { ApplicationTransporter } from "./transporter";
 
+export const getCloudApps = async (
+  db: Firestore,
+  userId: string,
+): Promise<Partial<ApplicationDTO>[]> => {
+  const q = query(
+    collection(db, CollectionsName.Apps),
+    where("isArchived", "==", false),
+    where(`collaborators.users_${userId}`, "in", ["read", "write", "owner"]),
+  );
+
+  const result = await getDocs(q);
+  return result.docs.map((app) => app.data());
+};
+
 export const getFirestoreApplicationTransporter = (
   db: Firestore,
 ): ApplicationTransporter => ({
