@@ -59,6 +59,7 @@ export interface ApplicationDTO
   readonly scripts?: ScriptDTO[];
   readonly theme?: ThemeDTO;
   readonly assets?: AssetDTO[];
+  readonly fonts?: FontDTO[];
   readonly env?: EnvironmentDTO;
   readonly translations?: TranslationDTO[];
 }
