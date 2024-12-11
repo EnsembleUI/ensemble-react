@@ -129,14 +129,28 @@ export const useExecuteCode: EnsembleActionHook<
   }, [action, isCodeString, appContext?.application?.scripts]);
 
   const execute = useCommandCallback(
-    (evalContext, ...args: unknown[]) => {
+    async (evalContext, ...args: unknown[]) => {
       if (!js) {
         return;
       }
       const context = merge({}, evalContext, ...args, options?.context) as {
         [key: string]: unknown;
       };
-      const retVal = evaluate({ model: screenModel }, js, context);
+
+      let executableJS = `return (async () => {
+          return ${js}
+        })()`;
+
+      if (js.includes("\n")) {
+        executableJS = `return (async () => {
+          ${js}
+        })()`;
+      }
+
+      const retVal = executableJS.includes("await ")
+        ? await evaluate({ model: screenModel }, executableJS, context)
+        : evaluate({ model: screenModel }, executableJS, context);
+
       onCompleteAction?.callback({
         ...(args[0] as { [key: string]: unknown }),
         result: retVal,
@@ -645,7 +659,9 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
           onErrorAction?.callback({ response });
         }
       } catch (error: unknown) {
-        setBody(error as { [key: string]: unknown });
+        setBody({ error: (error as Error).message } as {
+          [key: string]: unknown;
+        });
         setStatus("failed");
         onErrorAction?.callback({ error });
       }
