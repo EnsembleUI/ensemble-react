@@ -45,7 +45,7 @@ export const getFirestoreApplicationTransporter = (
     const appDoc = await getDoc(appDocRef);
     const app = {
       id: appDoc.id,
-      ...appDoc.data(),
+      ...omitNonPlainObjects(appDoc.data() ?? {}),
     } as ApplicationDTO;
 
     const artifactsByType = await getArtifactsByType(appDocRef);
@@ -219,10 +219,7 @@ const getArtifactsByType = async (
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     artifactsByType[type]?.map((snapshot) => ({
       id: snapshot.id,
-      ...omitBy(
-        snapshot.data(),
-        (value) => isObject(value) && !isArray(value) && !isPlainObject(value),
-      ),
+      ...omitNonPlainObjects(snapshot.data()),
     })) ?? [],
   ]);
 
@@ -249,3 +246,11 @@ export enum CollectionsName {
   Artifacts = "artifacts",
   InternalArtifacts = "internal_artifacts",
 }
+
+// Firebase docuemnts contain non plain objects that create issues when serializing
+// TODO: convert them to plain objects instead?
+const omitNonPlainObjects = (maybeClass: object): object =>
+  omitBy(
+    maybeClass,
+    (value) => isObject(value) && !isArray(value) && !isPlainObject(value),
+  );
