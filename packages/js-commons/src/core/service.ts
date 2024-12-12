@@ -1,5 +1,6 @@
 import {
   compact,
+  difference,
   get,
   isArray,
   isEqualWith,
@@ -23,19 +24,22 @@ export const diffApplications = (
     const docsB = get(appB, prop) as EnsembleDocument[] | EnsembleDocument;
     if (isArray(docsA) && isArray(docsB)) {
       const sortedDocsA = sortBy(
-        docsA.filter((doc) => Boolean(doc.isArchived)),
+        docsA.filter((doc) => !doc.isArchived),
         "id",
       );
       const sortedDocsB = sortBy(
-        docsB.filter((doc) => Boolean(doc.isArchived)),
+        docsB.filter((doc) => !doc.isArchived),
         "id",
       );
       // This mutates array so they only contain docs with same ids
-      const exclusiveDocsA = pullAllBy(sortedDocsA, sortedDocsB, "id");
-      const exclusiveDocsB = pullAllBy(sortedDocsB, sortedDocsA, "id");
+      const exclusiveDocsA = pullAllBy([...sortedDocsA], sortedDocsB, "id");
+      const exclusiveDocsB = pullAllBy([...sortedDocsB], sortedDocsA, "id");
+
+      const commonDocsA = difference(sortedDocsA, exclusiveDocsA);
+      const commonDocsB = difference(sortedDocsB, exclusiveDocsB);
 
       const docDifferences: [EnsembleDocument?, EnsembleDocument?][] = compact(
-        zip(sortedDocsA, sortedDocsB).map(([a, b]) => {
+        zip(commonDocsA, commonDocsB).map(([a, b]) => {
           if (!areDocumentsEqual(a, b)) {
             return [a, b];
           }
