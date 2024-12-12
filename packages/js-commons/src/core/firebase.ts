@@ -123,56 +123,75 @@ export const getFirestoreApplicationTransporter = (
 
     screens.forEach((screen) => {
       const screenRef = doc(artifactsRef, screen.id);
-      batch.set(screenRef, {
+      const history = doc(collection(screenRef, CollectionsName.History));
+      const updatedScreen = {
         type: EnsembleDocumentType.Screen,
         name: screen.name,
         content: screen.content || "",
         isRoot: screen.isRoot,
         isArchived: screen.isArchived,
         ...updatedByDetails,
-      });
+      };
+      batch.set(screenRef, updatedScreen);
+      batch.set(history, updatedScreen);
     });
 
-    widgets?.forEach((widget) =>
-      batch.set(doc(internalArtifactsRef, widget.id), {
+    widgets?.forEach((widget) => {
+      const widgetRef = doc(internalArtifactsRef, widget.id);
+      const history = doc(collection(widgetRef, CollectionsName.History));
+      const updatedWidget = {
         type: EnsembleDocumentType.Widget,
         name: widget.name,
         content: widget.content ?? "",
         isArchived: widget.isArchived,
         ...updatedByDetails,
-      }),
-    );
+      };
+      batch.set(widgetRef, updatedWidget);
+      batch.set(history, updatedWidget);
+    });
 
     // Add theme
     if (theme) {
-      batch.set(doc(artifactsRef, theme.id), {
+      const themeRef = doc(artifactsRef, theme.id);
+      const updatedTheme = {
         type: EnsembleDocumentType.Theme,
         content: theme.content,
         isRoot: true,
         isArchived: theme.isArchived,
         ...updatedByDetails,
-      });
+      };
+      const history = doc(collection(themeRef, CollectionsName.History));
+      batch.set(themeRef, updatedTheme);
+      batch.set(history, updatedTheme);
     }
 
-    scripts?.forEach((script) =>
-      batch.set(doc(internalArtifactsRef, script.id), {
+    scripts?.forEach((script) => {
+      const scriptRef = doc(internalArtifactsRef, script.id);
+      const history = doc(collection(scriptRef, CollectionsName.History));
+      const updatedScript = {
         type: EnsembleDocumentType.Script,
         name: script.name,
         content: script.content ?? "",
         isArchived: script.isArchived,
         isRoot: true,
         ...updatedByDetails,
-      }),
-    );
+      };
+      batch.set(scriptRef, updatedScript);
+      batch.set(history, updatedScript);
+    });
 
-    translations?.forEach((translation) =>
-      batch.set(doc(internalArtifactsRef, translation.id), {
+    translations?.forEach((translation) => {
+      const translationRef = doc(internalArtifactsRef, translation.id);
+      const history = doc(collection(translationRef, CollectionsName.History));
+      const updatedTranslation = {
         ...translation,
         ...updatedByDetails,
         type: EnsembleDocumentType.I18n,
         defaultLocale: translation.defaultLocale,
-      }),
-    );
+      };
+      batch.set(translationRef, updatedTranslation);
+      batch.set(history, updatedTranslation);
+    });
 
     if (env) {
       batch.set(

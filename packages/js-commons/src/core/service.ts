@@ -4,15 +4,31 @@ import {
   get,
   isArray,
   isEqualWith,
+  merge,
   pullAllBy,
   sortBy,
   zip,
 } from "lodash-es";
 import {
   ArtifactProps,
+  EnsembleDocumentType,
   type ApplicationDTO,
   type EnsembleDocument,
 } from "./dto";
+
+export const bundleApp = (
+  appPartial: Partial<ApplicationDTO>,
+  documents: EnsembleDocument[],
+): Partial<ApplicationDTO> => {
+  return merge(appPartial, {
+    screens: documents.filter((d) => d.type === EnsembleDocumentType.Screen),
+    widgets: documents.filter((d) => d.type === EnsembleDocumentType.Widget),
+    theme: documents.find((d) => d.type === EnsembleDocumentType.Theme),
+    env: documents.find((d) => d.type === EnsembleDocumentType.Environment),
+    translations: documents.filter((d) => d.type === EnsembleDocumentType.I18n),
+    scripts: documents.filter((d) => d.type === EnsembleDocumentType.Script),
+  });
+};
 
 export const diffApplications = (
   appA: ApplicationDTO,
