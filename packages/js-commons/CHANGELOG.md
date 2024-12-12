@@ -1,5 +1,11 @@
 # @ensembleui/js-commons
 
+## 0.0.14
+
+### Patch Changes
+
+- 09b8086: Create history entry when pushing apps
+
 ## 0.0.13
 
 ### Patch Changes
