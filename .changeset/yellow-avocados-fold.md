@@ -2,4 +2,4 @@
 "@ensembleui/react-runtime": patch
 ---
 
-fix: added support for options in values in multiselect
+fix: added support for object in values in multiselect

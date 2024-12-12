@@ -24,7 +24,6 @@ import type {
 import { EnsembleRuntime } from "../../runtime";
 import { getComponentStyles } from "../../shared/styles";
 import type { HasBorder } from "../../shared/hasSchema";
-import type { SelectOption } from "./Dropdown";
 import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
 
@@ -54,11 +53,21 @@ export type MultiSelectProps = {
 } & EnsembleWidgetProps<MultiSelectStyles> &
   FormInputProps<object[] | string[]>;
 
+interface SelectOption {
+  label: Expression<string> | { [key: string]: unknown };
+  value: Expression<string | number>;
+  type?: string;
+  items?: SelectOption[];
+  [key: string]: unknown;
+}
+
+type ValueType = string[] | SelectOption[];
+
 const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   const { data, ...rest } = props;
   const [options, setOptions] = useState<SelectOption[]>([]);
   const [newOption, setNewOption] = useState("");
-  const [selectedValues, setSelectedValues] = useState<string[]>();
+  const [selectedValues, setSelectedValues] = useState<ValueType>();
 
   const action = useEnsembleAction(props.onChange);
   const onItemSelectAction = useEnsembleAction(props.onItemSelect);
@@ -86,10 +95,14 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
       prevInitialValue.current = values?.initialValue || [];
       const initialValue = values?.initialValue.map((item) =>
         isObject(item)
-          ? (get(item, values.valueKey || "value") as string)
+          ? {
+              ...(item as { [key: string]: unknown }),
+              label: get(item, values?.labelKey || "label") as string,
+              value: get(item, values?.valueKey || "value") as string,
+            }
           : item,
       );
-      setSelectedValues(initialValue);
+      setSelectedValues(initialValue as ValueType);
     }
   }, [values?.initialValue]);
 
@@ -100,6 +113,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     if (isArray(rawData)) {
       tempOptions.push(
         ...rawData.map((item) => ({
+          ...(item as { [key: string]: unknown }),
           label: get(item, values?.labelKey || "label") as string,
           value: get(item, values?.valueKey || "value") as string,
         })),
@@ -116,6 +130,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     ) {
       tempOptions.push(
         ...values.items.map((item) => ({
+          ...item,
           label: item.label,
           value: item.value,
         })),
@@ -149,9 +164,12 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   };
 
   // handle option change
-  const handleChange = (value: string[]): void => {
+  const handleChange = (
+    value: ValueType,
+    option: SelectOption | SelectOption[],
+  ): void => {
     setSelectedValues(value);
-    if (action) onChangeCallback(value);
+    if (action) onChangeCallback({ value, option });
     else onItemSelectCallback(value);
 
     if (newOption) {
@@ -168,14 +186,14 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
 
   // on item select callback
   const onChangeCallback = useCallback(
-    (value?: string[]) => {
-      action?.callback({ value });
+    (selected: { value: ValueType; option: SelectOption | SelectOption[] }) => {
+      action?.callback({ ...selected });
     },
     [action],
   );
 
   const onItemSelectCallback = useCallback(
-    (value?: string[]) => {
+    (value?: ValueType) => {
       onItemSelectAction?.callback({ selectedValues: value });
     },
     [onItemSelectAction],
@@ -189,24 +207,17 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     if (isString(values?.value)) {
       return [values?.value || ""];
     }
-  }, [values?.value]) as string[];
+  }, [values?.value]) as ValueType;
 
-  // rendered options
-  const renderOptions = useMemo(
-    () =>
-      options.map((option) => (
-        <SelectComponent.Option
-          className={`${id || ""}_option`}
-          key={option.value}
-          value={option.value}
-        >
-          {isString(option.label)
-            ? option.label
-            : EnsembleRuntime.render([unwrapWidget(option.label)])}
-        </SelectComponent.Option>
-      )),
-    [options, id],
-  );
+  const labelRender = ({
+    label = "",
+  }: {
+    label: React.ReactNode;
+  }): React.ReactNode => {
+    return isString(label)
+      ? label
+      : EnsembleRuntime.render([unwrapWidget(label as SelectOption["label"])]);
+  };
 
   const newOptionRender = (menu: ReactElement): ReactElement => (
     <Dropdown menu={menu} newOption={newOption} />
@@ -288,17 +299,19 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
             dropdownRender={newOptionRender}
             dropdownStyle={values?.styles}
             filterOption={(input, option): boolean =>
-              option?.children
-                ?.toString()
+              option?.label
+                .toString()
                 ?.toLowerCase()
                 ?.startsWith(input.toLowerCase()) || false
             }
             id={values?.id}
+            labelRender={labelRender}
             mode={values?.allowCreateOptions ? "tags" : "multiple"}
             notFoundContent="No Results"
             onChange={handleChange}
             onSearch={handleSearch} // required for display new custom option with Dropdown element
             optionFilterProp="children"
+            options={options}
             placeholder={
               values?.hintText ? (
                 <span style={{ ...values.hintStyle }}>{values.hintText}</span>
@@ -307,9 +320,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
               )
             }
             value={values?.selectedValues}
-          >
-            {renderOptions}
-          </SelectComponent>
+          />
         </EnsembleFormItem>
       </div>
     </>
