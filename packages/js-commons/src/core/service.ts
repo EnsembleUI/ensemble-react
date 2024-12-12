@@ -1,10 +1,10 @@
 import {
+  assign,
   compact,
   difference,
   get,
   isArray,
   isEqualWith,
-  merge,
   pullAllBy,
   sortBy,
   zip,
@@ -20,7 +20,7 @@ export const bundleApp = (
   appPartial: Partial<ApplicationDTO>,
   documents: EnsembleDocument[],
 ): Partial<ApplicationDTO> => {
-  return merge(appPartial, {
+  return assign(appPartial, {
     screens: documents.filter((d) => d.type === EnsembleDocumentType.Screen),
     widgets: documents.filter((d) => d.type === EnsembleDocumentType.Widget),
     theme: documents.find((d) => d.type === EnsembleDocumentType.Theme),
