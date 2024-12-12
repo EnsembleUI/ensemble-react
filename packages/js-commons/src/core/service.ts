@@ -1,5 +1,7 @@
 import {
+  assign,
   compact,
+  difference,
   get,
   isArray,
   isEqualWith,
@@ -9,9 +11,24 @@ import {
 } from "lodash-es";
 import {
   ArtifactProps,
+  EnsembleDocumentType,
   type ApplicationDTO,
   type EnsembleDocument,
 } from "./dto";
+
+export const bundleApp = (
+  appPartial: Partial<ApplicationDTO>,
+  documents: EnsembleDocument[],
+): Partial<ApplicationDTO> => {
+  return assign(appPartial, {
+    screens: documents.filter((d) => d.type === EnsembleDocumentType.Screen),
+    widgets: documents.filter((d) => d.type === EnsembleDocumentType.Widget),
+    theme: documents.find((d) => d.type === EnsembleDocumentType.Theme),
+    env: documents.find((d) => d.type === EnsembleDocumentType.Environment),
+    translations: documents.filter((d) => d.type === EnsembleDocumentType.I18n),
+    scripts: documents.filter((d) => d.type === EnsembleDocumentType.Script),
+  });
+};
 
 export const diffApplications = (
   appA: ApplicationDTO,
@@ -23,19 +40,22 @@ export const diffApplications = (
     const docsB = get(appB, prop) as EnsembleDocument[] | EnsembleDocument;
     if (isArray(docsA) && isArray(docsB)) {
       const sortedDocsA = sortBy(
-        docsA.filter((doc) => Boolean(doc.isArchived)),
+        docsA.filter((doc) => !doc.isArchived),
         "id",
       );
       const sortedDocsB = sortBy(
-        docsB.filter((doc) => Boolean(doc.isArchived)),
+        docsB.filter((doc) => !doc.isArchived),
         "id",
       );
       // This mutates array so they only contain docs with same ids
-      const exclusiveDocsA = pullAllBy(sortedDocsA, sortedDocsB, "id");
-      const exclusiveDocsB = pullAllBy(sortedDocsB, sortedDocsA, "id");
+      const exclusiveDocsA = pullAllBy([...sortedDocsA], sortedDocsB, "id");
+      const exclusiveDocsB = pullAllBy([...sortedDocsB], sortedDocsA, "id");
+
+      const commonDocsA = difference(sortedDocsA, exclusiveDocsA);
+      const commonDocsB = difference(sortedDocsB, exclusiveDocsB);
 
       const docDifferences: [EnsembleDocument?, EnsembleDocument?][] = compact(
-        zip(sortedDocsA, sortedDocsB).map(([a, b]) => {
+        zip(commonDocsA, commonDocsB).map(([a, b]) => {
           if (!areDocumentsEqual(a, b)) {
             return [a, b];
           }
