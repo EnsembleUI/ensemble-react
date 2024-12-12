@@ -22,6 +22,7 @@ import {
   isPlainObject,
   omit,
   omitBy,
+  pick,
   set,
 } from "lodash-es";
 import { ArtifactProps, EnsembleDocumentType } from "./dto";
@@ -96,8 +97,9 @@ export const getFirestoreApplicationTransporter = (
     const timestamp = Timestamp.now();
     const userRef = doc(db, CollectionsName.Users, userId);
     const appDocRef = doc(db, CollectionsName.Apps, app.id);
+    const user = (await getDoc(userRef)).data();
     const updatedByDetails = {
-      updatedBy: userRef,
+      updatedBy: { id: userId, ...pick(user, "email", "name") },
       updatedAt: timestamp,
     };
 
@@ -110,7 +112,11 @@ export const getFirestoreApplicationTransporter = (
       set(sanitizedApp, "createdAt", timestamp);
     }
     // App doc cannot be updated in batch because of firestore rules
-    await setDoc(appDocRef, { ...sanitizedApp, ...updatedByDetails });
+    await setDoc(appDocRef, {
+      ...sanitizedApp,
+      // FIXME: apps use a different data structure from history
+      ...{ updatedBy: userRef, updatedAt: updatedByDetails.updatedAt },
+    });
 
     const batch = writeBatch(db);
     const artifactsRef = collection(appDocRef, CollectionsName.Artifacts);
