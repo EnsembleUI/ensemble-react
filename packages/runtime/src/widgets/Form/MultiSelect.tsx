@@ -26,6 +26,7 @@ import { getComponentStyles } from "../../shared/styles";
 import type { HasBorder } from "../../shared/hasSchema";
 import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
+import type { SelectOption } from "./Dropdown";
 
 const widgetName = "MultiSelect";
 
@@ -40,11 +41,15 @@ export type MultiSelectStyles = {
 } & HasBorder &
   EnsembleWidgetStyles;
 
+export type MultiSelectOption = SelectOption & {
+  value: Expression<string | number | object>;
+};
+
 export type MultiSelectProps = {
-  data: Expression<SelectOption[]>;
+  data: Expression<MultiSelectOption[]>;
   labelKey?: string;
   valueKey?: string;
-  items?: Expression<SelectOption[]>;
+  items?: Expression<MultiSelectOption[]>;
   onChange?: EnsembleAction;
   /** OnItemSelect is deprecated. Please use onChange instead */
   onItemSelect?: EnsembleAction;
@@ -53,19 +58,11 @@ export type MultiSelectProps = {
 } & EnsembleWidgetProps<MultiSelectStyles> &
   FormInputProps<object[] | string[]>;
 
-interface SelectOption {
-  label: Expression<string> | { [key: string]: unknown };
-  value: Expression<string | number>;
-  type?: string;
-  items?: SelectOption[];
-  [key: string]: unknown;
-}
-
-type ValueType = string[] | SelectOption[];
+type ValueType = string[] | MultiSelectOption[];
 
 const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   const { data, ...rest } = props;
-  const [options, setOptions] = useState<SelectOption[]>([]);
+  const [options, setOptions] = useState<MultiSelectOption[]>([]);
   const [newOption, setNewOption] = useState("");
   const [selectedValues, setSelectedValues] = useState<ValueType>();
 
@@ -108,7 +105,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
 
   // load data and items
   useEffect(() => {
-    const tempOptions: SelectOption[] = [];
+    const tempOptions: MultiSelectOption[] = [];
 
     if (isArray(rawData)) {
       tempOptions.push(
@@ -166,7 +163,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   // handle option change
   const handleChange = (
     value: ValueType,
-    option: SelectOption | SelectOption[],
+    option: MultiSelectOption | MultiSelectOption[],
   ): void => {
     setSelectedValues(value);
     if (action) onChangeCallback({ value, option });
@@ -186,7 +183,10 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
 
   // on item select callback
   const onChangeCallback = useCallback(
-    (selected: { value: ValueType; option: SelectOption | SelectOption[] }) => {
+    (selected: {
+      value: ValueType;
+      option: MultiSelectOption | MultiSelectOption[];
+    }) => {
       action?.callback({ ...selected });
     },
     [action],
@@ -216,7 +216,9 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   }): React.ReactNode => {
     return isString(label)
       ? label
-      : EnsembleRuntime.render([unwrapWidget(label as SelectOption["label"])]);
+      : EnsembleRuntime.render([
+          unwrapWidget(label as MultiSelectOption["label"]),
+        ]);
   };
 
   const newOptionRender = (menu: ReactElement): ReactElement => (
