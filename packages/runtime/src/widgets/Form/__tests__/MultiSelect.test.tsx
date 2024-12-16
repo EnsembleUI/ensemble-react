@@ -318,5 +318,129 @@ describe("MultiSelect Widget", () => {
       expect(screen.getByText("Option 3")).toBeVisible();
     });
   });
+
+  test("supports object values in multiselect widget", async () => {
+    render(
+      <Form
+        children={[
+          {
+            name: "MultiSelect",
+            properties: {
+              id: "objectInput",
+              label: "Choose Option",
+              labelKey: "firstName",
+              valueKey: "email",
+              data: [
+                {
+                  firstName: "Emily",
+                  email: "emily.johnson@x.dummyjson.com",
+                  gender: "female",
+                  age: 28,
+                },
+                {
+                  firstName: "Michael",
+                  email: "michael.williams@x.dummyjson.com",
+                  gender: "male",
+                  age: 35,
+                },
+                {
+                  firstName: "Sophia",
+                  email: "sophia.brown@x.dummyjson.com",
+                  gender: "female",
+                  age: 42,
+                },
+                {
+                  firstName: "James",
+                  email: "james.davis@x.dummyjson.com",
+                  gender: "male",
+                  age: 45,
+                },
+                {
+                  firstName: "Emma",
+                  email: "emma.miller@x.dummyjson.com",
+                  gender: "female",
+                  age: 30,
+                },
+              ],
+              value: `\${ensemble.storage.get('input')}`,
+            },
+          },
+          {
+            name: "Button",
+            properties: {
+              label: "Set Values",
+              onTap: {
+                executeCode: `ensemble.storage.set("input", [{
+                  firstName: "Emma",
+                  email: "emma.miller@x.dummyjson.com",
+                  gender: "female",
+                  age: 30,
+            },{
+                  firstName: "Michael",
+                  email: "michael.williams@x.dummyjson.com",
+                  gender: "male",
+                  age: 35,
+            }])`,
+              },
+            },
+          },
+          {
+            name: "Button",
+            properties: {
+              label: "Get Values",
+              onTap: {
+                executeCode: `console.log(objectInput.value)`,
+              },
+            },
+          },
+        ]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
+    );
+
+    const selector = ".ant-select-selection-item-content";
+
+    await waitFor(() => {
+      userEvent.click(screen.getByRole("combobox"));
+      userEvent.click(screen.getByTitle("Emily"));
+      userEvent.click(screen.getByTitle("Sophia"));
+      userEvent.click(screen.getByRole("combobox"));
+    });
+
+    // Wait for the combobox to reflect the selected values
+    await waitFor(() => {
+      expect(screen.getByText("Emily", { selector })).toBeVisible();
+      expect(screen.getByText("Sophia", { selector })).toBeVisible();
+    });
+
+    fireEvent.click(screen.getByText("Set Values"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Emma", { selector })).toBeVisible();
+      expect(screen.getByText("Michael", { selector })).toBeVisible();
+    });
+
+    fireEvent.click(screen.getByText("Get Values"));
+
+    await waitFor(() => {
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.objectContaining([
+          {
+            firstName: "Emma",
+            email: "emma.miller@x.dummyjson.com",
+            gender: "female",
+            age: 30,
+          },
+          {
+            firstName: "Michael",
+            email: "michael.williams@x.dummyjson.com",
+            gender: "male",
+            age: 35,
+          },
+        ]),
+      );
+    });
+  });
 });
 /* eslint-enable react/no-children-prop */
