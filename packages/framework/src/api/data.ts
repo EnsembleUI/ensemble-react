@@ -42,23 +42,34 @@ export const invokeAPI = async (
   // If mock resposne does not exist, fetch the data directly from the API
   const useMockResponse =
     has(api, "mockResponse") && isUsingMockResponse(screenContext.app?.id);
-  const res = await DataFetcher.fetch(
-    api,
-    { ...apiInputs, ...context },
-    {
-      mockResponse: mockResponse(
-        evaluatedMockResponse ?? api.mockResponse,
-        useMockResponse,
-      ),
-      useMockResponse,
-    },
-  );
 
-  if (setter) {
-    set(update, api.name, res);
-    setter(screenDataAtom, { ...update });
+  try {
+    const response = await queryClient.fetchQuery({
+      queryKey: [hash],
+      queryFn: () =>
+        DataFetcher.fetch(
+          api,
+          { ...apiInputs, ...context },
+          {
+            mockResponse: mockResponse(
+              evaluatedMockResponse ?? api.mockResponse,
+              useMockResponse,
+            ),
+            useMockResponse,
+          },
+        ),
+      staleTime: api.cacheExpirySeconds ? api.cacheExpirySeconds * 1000 : 0,
+    });
+
+    if (setter) {
+      set(update, api.name, response);
+      setter(screenDataAtom, { ...update });
+    }
+    api.onResponseAction?.callback({ ...context, response });
+    return response;
+  } catch (err) {
+    api.onErrorAction?.callback({ ...context, error: err });
   }
-  return res;
 };
 
 export const handleConnectSocket = (

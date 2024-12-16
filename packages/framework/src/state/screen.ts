@@ -2,7 +2,11 @@ import { atom } from "jotai";
 import { focusAtom } from "jotai-optics";
 import { assign } from "lodash-es";
 import { type Response, type WebSocketConnection } from "../data";
-import type { EnsembleAppModel, EnsembleScreenModel } from "../shared";
+import type {
+  EnsembleAPIModel,
+  EnsembleAppModel,
+  EnsembleScreenModel,
+} from "../shared";
 import type { WidgetState } from "./widget";
 
 export interface ScreenContextDefinition {
@@ -49,9 +53,16 @@ export const screenModelAtom = focusAtom(screenAtom, (optic) =>
   optic.prop("model"),
 );
 
-export const screenApiAtom = focusAtom(screenAtom, (optic) => {
+export const screenApiFocusAtom = focusAtom(screenAtom, (optic) => {
   return optic.prop("model").optional().prop("apis");
 });
+
+export const screenApiAtom = atom(
+  (get) => get(screenApiFocusAtom),
+  (_, set, update: EnsembleAPIModel[]) => {
+    set(screenApiFocusAtom, update);
+  },
+);
 
 export const screenSocketAtom = focusAtom(screenAtom, (optic) => {
   return optic.prop("model").optional().prop("sockets");
