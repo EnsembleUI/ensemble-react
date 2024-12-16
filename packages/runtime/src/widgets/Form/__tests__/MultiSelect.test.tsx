@@ -326,7 +326,7 @@ describe("MultiSelect Widget", () => {
           {
             name: "MultiSelect",
             properties: {
-              id: "userInput",
+              id: "objectInput",
               label: "Choose Option",
               labelKey: "firstName",
               valueKey: "email",
@@ -384,18 +384,29 @@ describe("MultiSelect Widget", () => {
               },
             },
           },
+          {
+            name: "Button",
+            properties: {
+              label: "Get Values",
+              onTap: {
+                executeCode: `console.log(objectInput.value)`,
+              },
+            },
+          },
         ]}
         id="form"
       />,
       { wrapper: FormTestWrapper },
     );
 
-    userEvent.click(screen.getByRole("combobox"));
-    userEvent.click(screen.getByTitle("Emily"));
-    userEvent.click(screen.getByTitle("Sophia"));
-    userEvent.click(screen.getByRole("combobox"));
-
     const selector = ".ant-select-selection-item-content";
+
+    await waitFor(() => {
+      userEvent.click(screen.getByRole("combobox"));
+      userEvent.click(screen.getByTitle("Emily"));
+      userEvent.click(screen.getByTitle("Sophia"));
+      userEvent.click(screen.getByRole("combobox"));
+    });
 
     // Wait for the combobox to reflect the selected values
     await waitFor(() => {
@@ -408,6 +419,27 @@ describe("MultiSelect Widget", () => {
     await waitFor(() => {
       expect(screen.getByText("Emma", { selector })).toBeVisible();
       expect(screen.getByText("Michael", { selector })).toBeVisible();
+    });
+
+    fireEvent.click(screen.getByText("Get Values"));
+
+    await waitFor(() => {
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.objectContaining([
+          {
+            firstName: "Emma",
+            email: "emma.miller@x.dummyjson.com",
+            gender: "female",
+            age: 30,
+          },
+          {
+            firstName: "Michael",
+            email: "michael.williams@x.dummyjson.com",
+            gender: "male",
+            age: 35,
+          },
+        ]),
+      );
     });
   });
 });

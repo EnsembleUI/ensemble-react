@@ -58,13 +58,11 @@ export type MultiSelectProps = {
 } & EnsembleWidgetProps<MultiSelectStyles> &
   FormInputProps<object[] | string[]>;
 
-type ValueType = string[] | MultiSelectOption[];
-
 const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   const { data, ...rest } = props;
   const [options, setOptions] = useState<MultiSelectOption[]>([]);
   const [newOption, setNewOption] = useState("");
-  const [selectedValues, setSelectedValues] = useState<ValueType>();
+  const [selectedValues, setSelectedValues] = useState<MultiSelectOption[]>();
 
   const action = useEnsembleAction(props.onChange);
   const onItemSelectAction = useEnsembleAction(props.onItemSelect);
@@ -99,7 +97,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
             }
           : item,
       );
-      setSelectedValues(initialValue as ValueType);
+      setSelectedValues(initialValue as MultiSelectOption[]);
     }
   }, [values?.initialValue]);
 
@@ -162,7 +160,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
 
   // handle option change
   const handleChange = (
-    value: ValueType,
+    value: MultiSelectOption[],
     option: MultiSelectOption | MultiSelectOption[],
   ): void => {
     setSelectedValues(value);
@@ -184,7 +182,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   // on item select callback
   const onChangeCallback = useCallback(
     (selected: {
-      value: ValueType;
+      value: MultiSelectOption[];
       option: MultiSelectOption | MultiSelectOption[];
     }) => {
       action?.callback({ ...selected });
@@ -193,7 +191,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   );
 
   const onItemSelectCallback = useCallback(
-    (value?: ValueType) => {
+    (value?: MultiSelectOption[]) => {
       onItemSelectAction?.callback({ selectedValues: value });
     },
     [onItemSelectAction],
@@ -207,7 +205,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     if (isString(values?.value)) {
       return [values?.value || ""];
     }
-  }, [values?.value]) as ValueType;
+  }, [values?.value]) as MultiSelectOption[];
 
   const labelRender = ({
     label = "",
