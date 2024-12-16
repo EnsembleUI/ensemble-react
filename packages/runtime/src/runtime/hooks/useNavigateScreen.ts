@@ -32,6 +32,16 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
     return { matchingScreen: screen };
   }, [appContext, evaluatedInputs.name]);
 
+  const callback = useMemo(() => {
+    if (!matchingScreen) {
+      return;
+    }
+    return (args: unknown) => {
+      setIsComplete(false);
+      setContext(args);
+    };
+  }, [matchingScreen]);
+
   useEffect(() => {
     if (!matchingScreen?.name || isComplete !== false) {
       return;
@@ -41,17 +51,5 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
     });
     setIsComplete(true);
   }, [evaluatedInputs.inputs, isComplete, matchingScreen, navigate]);
-
-  return useMemo(() => {
-    if (!matchingScreen) {
-      return;
-    }
-
-    const callback = (args: unknown): void => {
-      setIsComplete(false);
-      setContext(args);
-    };
-
-    return { callback };
-  }, [matchingScreen]);
+  return callback ? { callback } : undefined;
 };

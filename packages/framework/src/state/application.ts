@@ -33,24 +33,7 @@ export const appAtom = atom<ApplicationContextDefinition>(
   defaultApplicationContext,
 );
 
-// Store the theme model state
-export const themeModelAtom = atom<EnsembleThemeModel>(defaultThemeDefinition);
-
-export const themeAtom = atom(
-  (get) => get(themeModelAtom),
-  (get, set, name: string) => {
-    const appContext = get(appAtom);
-    if (
-      appContext.application?.themes &&
-      name in appContext.application.themes
-    ) {
-      const selectedTheme = appContext.application.themes[name];
-      if (selectedTheme) {
-        set(themeModelAtom, selectedTheme);
-      }
-    }
-  },
-);
+export const themeAtom = atom<EnsembleThemeModel>(defaultThemeDefinition);
 
 export const envAtom = focusAtom(appAtom, (optic) => optic.prop("env"));
 

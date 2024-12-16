@@ -50,6 +50,17 @@ export const useNavigateModalScreen: EnsembleActionHook<
     }
   }, [isStringAction, action]);
 
+  const callback = useCallback(
+    (args: unknown) => {
+      if (!action) {
+        return;
+      }
+      setIsComplete(false);
+      setContext(args);
+    },
+    [action],
+  );
+
   useEffect(() => {
     if (!action || !modalContext || isComplete !== false) {
       return;
@@ -74,16 +85,5 @@ export const useNavigateModalScreen: EnsembleActionHook<
     title,
   ]);
 
-  return useMemo(() => {
-    const callback = (args: unknown): void => {
-      if (!action) {
-        return;
-      }
-
-      setIsComplete(false);
-      setContext(args);
-    };
-
-    return { callback };
-  }, [action]);
+  return { callback };
 };

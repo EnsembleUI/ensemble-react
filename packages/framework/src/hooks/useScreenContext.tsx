@@ -9,7 +9,7 @@ import {
   screenAtom,
   screenDataAtom,
   screenModelAtom,
-  themeModelAtom,
+  themeAtom,
   userAtom,
 } from "../state";
 import type {
@@ -80,7 +80,7 @@ const HydrateAtoms: React.FC<
   useHydrateAtoms(
     [
       [appAtom, appContext],
-      [themeModelAtom, themeScope.theme],
+      [themeAtom, themeScope.theme],
       [userAtom, appContext.user],
     ],
     {

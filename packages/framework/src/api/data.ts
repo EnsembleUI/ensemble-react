@@ -1,7 +1,7 @@
 import { has, set } from "lodash-es";
 import type { Setter } from "jotai";
 import { DataFetcher, type WebSocketConnection, type Response } from "../data";
-import { error, generateAPIHash, queryClient } from "../shared";
+import { error } from "../shared";
 import type {
   EnsembleActionHookResult,
   EnsembleMockResponse,
@@ -22,12 +22,6 @@ export const invokeAPI = async (
   const api = screenContext.model?.apis?.find(
     (model) => model.name === apiName,
   );
-
-  const hash = generateAPIHash({
-    api: api?.name,
-    inputs: apiInputs,
-    screen: screenContext.model?.id,
-  });
 
   if (!api) {
     error(`Unable to find API with name ${apiName}`);

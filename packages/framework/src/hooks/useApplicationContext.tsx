@@ -7,8 +7,8 @@ import {
   type ApplicationContextDefinition,
   defaultApplicationContext,
   defaultThemeDefinition,
+  themeAtom,
   userAtom,
-  themeModelAtom,
 } from "../state";
 import type { EnsembleAppModel } from "../shared/models";
 import { useEnsembleUser } from "./useEnsembleUser";
@@ -80,7 +80,7 @@ const HydrateAtoms: React.FC<
   // initialising on state with prop on render here
   useHydrateAtoms([
     [appAtom, appContext],
-    [themeModelAtom, activeTheme],
+    [themeAtom, activeTheme],
     [userAtom, appContext.user],
   ]);
 

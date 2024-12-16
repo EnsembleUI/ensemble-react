@@ -48,17 +48,16 @@ describe("Test cases for useEnsembleAction Hook", () => {
     expect(result.current).toBeUndefined();
   });
 
-  it("should return useExecuteCode when action is a string", async () => {
+  it("should return useExecuteCode when action is a string", () => {
     const { result } = renderHook(() => useEnsembleAction("myWidget.value"), {
       wrapper,
     });
 
     let execResult;
 
-    await act(async () => {
-      execResult = await result.current?.callback();
+    act(() => {
+      execResult = result.current?.callback();
     });
-
     expect(execResult).toBe(2);
   });
 });

@@ -1,10 +1,13 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["src/index.ts"],
+  entry: {
+    core: "src/core/index.ts",
+    browser: "src/browser/index.ts"
+  },
   format: ["cjs", "esm"],
   external: ["react"],
   bundle: true,
-  splitting: false,
+  clean: true,
   dts: true,
 });

@@ -1,5 +1,13 @@
 # @ensembleui/cli
 
+## 0.0.6
+
+### Patch Changes
+
+- c7575aa: Use regular firebase instead of firebase lite
+- Updated dependencies [c7575aa]
+  - @ensembleui/js-commons@0.0.11
+
 ## 0.0.5
 
 ### Patch Changes

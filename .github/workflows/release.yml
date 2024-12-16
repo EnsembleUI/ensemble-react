@@ -16,11 +16,12 @@ jobs:
       - uses: pnpm/action-setup@v4.0.0
         with:
           version: 6.32.2
-          run_install: true
       - uses: actions/setup-node@v3
         with:
           node-version-file: ".nvmrc"
           cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install          
       # TODO only do this when changesets are empty
       - name: Build Packages
         run: pnpm run build --filter=./packages

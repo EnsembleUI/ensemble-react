@@ -22,6 +22,7 @@ export interface EnsembleDocument {
   readonly isRoot?: boolean;
   readonly isDraft?: boolean;
   readonly isArchived?: boolean;
+  readonly createdAt?: Date;
   readonly updatedAt?: Date;
   readonly updatedBy?: {
     name: string;
@@ -140,3 +141,13 @@ export type EnsembleDocumentHistoryItem = EnsembleDocument & {
   readonly comment: string;
   readonly label: string;
 };
+
+export const ArtifactProps = [
+  "screens",
+  "widgets",
+  "scripts",
+  "assets",
+  "translations",
+  "env",
+  "theme",
+];

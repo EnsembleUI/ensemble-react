@@ -16,7 +16,6 @@ export interface EnsembleInterface {
   user?: EnsembleUser;
   device: EnsembleDeviceInfo;
   location: EnsembleLocation;
-  setTheme: (name: string) => void;
   navigateScreen: (screenName: string, inputs?: unknown[]) => void;
   navigateUrl: (url: string, inputs?: { [key: string]: unknown }) => void;
   navigateModalScreen: (screenName: string, inputs?: unknown[]) => void;

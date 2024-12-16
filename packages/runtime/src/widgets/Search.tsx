@@ -38,6 +38,7 @@ export type SearchProps = {
   onClear?: EnsembleAction;
   iconStyles?: EnsembleWidgetStyles;
   notFoundContent?: Expression<string> | { [key: string]: unknown };
+  searchIfEmpty: boolean;
 } & EnsembleWidgetProps &
   HasItemTemplate & {
     "item-template"?: { value: Expression<string> };
@@ -52,6 +53,7 @@ export const Search: React.FC<SearchProps> = ({
   onSelect,
   onClear,
   value: initialValue,
+  searchIfEmpty,
   ...rest
 }) => {
   const [searchValue, setSearchValue] = useState<string | null>(null);
@@ -88,7 +90,7 @@ export const Search: React.FC<SearchProps> = ({
   );
 
   const renderOptions = useMemo(() => {
-    if (isEmpty(searchValue)) return [];
+    if (isEmpty(searchValue) && !searchIfEmpty) return [];
 
     let dropdownOptions: JSX.Element[] = [];
 
@@ -186,8 +188,8 @@ export const Search: React.FC<SearchProps> = ({
   );
 
   useEffect(() => {
-    if (!value) setValue(initialValue);
-  }, [value, initialValue]);
+    if (!value) setValue(values?.initialValue);
+  }, [value, values?.initialValue]);
 
   return (
     <div
