@@ -22,6 +22,7 @@ import {
   isPlainObject,
   omit,
   omitBy,
+  pick,
   set,
 } from "lodash-es";
 import { ArtifactProps, EnsembleDocumentType } from "./dto";
@@ -37,6 +38,20 @@ import type {
 } from "./dto";
 import type { ApplicationTransporter } from "./transporter";
 
+export const getCloudApps = async (
+  db: Firestore,
+  userId: string,
+): Promise<Partial<ApplicationDTO>[]> => {
+  const q = query(
+    collection(db, CollectionsName.Apps),
+    where("isArchived", "==", false),
+    where(`collaborators.users_${userId}`, "in", ["read", "write", "owner"]),
+  );
+
+  const result = await getDocs(q);
+  return result.docs.map((app) => app.data());
+};
+
 export const getFirestoreApplicationTransporter = (
   db: Firestore,
 ): ApplicationTransporter => ({
@@ -45,7 +60,7 @@ export const getFirestoreApplicationTransporter = (
     const appDoc = await getDoc(appDocRef);
     const app = {
       id: appDoc.id,
-      ...appDoc.data(),
+      ...omitNonPlainObjects(appDoc.data() ?? {}),
     } as ApplicationDTO;
 
     const artifactsByType = await getArtifactsByType(appDocRef);
@@ -82,8 +97,9 @@ export const getFirestoreApplicationTransporter = (
     const timestamp = Timestamp.now();
     const userRef = doc(db, CollectionsName.Users, userId);
     const appDocRef = doc(db, CollectionsName.Apps, app.id);
+    const user = (await getDoc(userRef)).data();
     const updatedByDetails = {
-      updatedBy: userRef,
+      updatedBy: { id: userId, ...pick(user, "email", "name") },
       updatedAt: timestamp,
     };
 
@@ -96,7 +112,11 @@ export const getFirestoreApplicationTransporter = (
       set(sanitizedApp, "createdAt", timestamp);
     }
     // App doc cannot be updated in batch because of firestore rules
-    await setDoc(appDocRef, { ...sanitizedApp, ...updatedByDetails });
+    await setDoc(appDocRef, {
+      ...sanitizedApp,
+      // FIXME: apps use a different data structure from history
+      ...{ updatedBy: userRef, updatedAt: updatedByDetails.updatedAt },
+    });
 
     const batch = writeBatch(db);
     const artifactsRef = collection(appDocRef, CollectionsName.Artifacts);
@@ -109,56 +129,75 @@ export const getFirestoreApplicationTransporter = (
 
     screens.forEach((screen) => {
       const screenRef = doc(artifactsRef, screen.id);
-      batch.set(screenRef, {
+      const history = doc(collection(screenRef, CollectionsName.History));
+      const updatedScreen = {
         type: EnsembleDocumentType.Screen,
         name: screen.name,
         content: screen.content || "",
         isRoot: screen.isRoot,
         isArchived: screen.isArchived,
         ...updatedByDetails,
-      });
+      };
+      batch.set(screenRef, updatedScreen);
+      batch.set(history, updatedScreen);
     });
 
-    widgets?.forEach((widget) =>
-      batch.set(doc(internalArtifactsRef, widget.id), {
+    widgets?.forEach((widget) => {
+      const widgetRef = doc(internalArtifactsRef, widget.id);
+      const history = doc(collection(widgetRef, CollectionsName.History));
+      const updatedWidget = {
         type: EnsembleDocumentType.Widget,
         name: widget.name,
         content: widget.content ?? "",
         isArchived: widget.isArchived,
         ...updatedByDetails,
-      }),
-    );
+      };
+      batch.set(widgetRef, updatedWidget);
+      batch.set(history, updatedWidget);
+    });
 
     // Add theme
     if (theme) {
-      batch.set(doc(artifactsRef, theme.id), {
+      const themeRef = doc(artifactsRef, theme.id);
+      const updatedTheme = {
         type: EnsembleDocumentType.Theme,
         content: theme.content,
         isRoot: true,
         isArchived: theme.isArchived,
         ...updatedByDetails,
-      });
+      };
+      const history = doc(collection(themeRef, CollectionsName.History));
+      batch.set(themeRef, updatedTheme);
+      batch.set(history, updatedTheme);
     }
 
-    scripts?.forEach((script) =>
-      batch.set(doc(internalArtifactsRef, script.id), {
+    scripts?.forEach((script) => {
+      const scriptRef = doc(internalArtifactsRef, script.id);
+      const history = doc(collection(scriptRef, CollectionsName.History));
+      const updatedScript = {
         type: EnsembleDocumentType.Script,
         name: script.name,
         content: script.content ?? "",
         isArchived: script.isArchived,
         isRoot: true,
         ...updatedByDetails,
-      }),
-    );
+      };
+      batch.set(scriptRef, updatedScript);
+      batch.set(history, updatedScript);
+    });
 
-    translations?.forEach((translation) =>
-      batch.set(doc(internalArtifactsRef, translation.id), {
+    translations?.forEach((translation) => {
+      const translationRef = doc(internalArtifactsRef, translation.id);
+      const history = doc(collection(translationRef, CollectionsName.History));
+      const updatedTranslation = {
         ...translation,
         ...updatedByDetails,
         type: EnsembleDocumentType.I18n,
         defaultLocale: translation.defaultLocale,
-      }),
-    );
+      };
+      batch.set(translationRef, updatedTranslation);
+      batch.set(history, updatedTranslation);
+    });
 
     if (env) {
       batch.set(
@@ -219,10 +258,7 @@ const getArtifactsByType = async (
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     artifactsByType[type]?.map((snapshot) => ({
       id: snapshot.id,
-      ...omitBy(
-        snapshot.data(),
-        (value) => isObject(value) && !isArray(value) && !isPlainObject(value),
-      ),
+      ...omitNonPlainObjects(snapshot.data()),
     })) ?? [],
   ]);
 
@@ -249,3 +285,11 @@ export enum CollectionsName {
   Artifacts = "artifacts",
   InternalArtifacts = "internal_artifacts",
 }
+
+// Firebase docuemnts contain non plain objects that create issues when serializing
+// TODO: convert them to plain objects instead?
+const omitNonPlainObjects = (maybeClass: object): object =>
+  omitBy(
+    maybeClass,
+    (value) => isObject(value) && !isArray(value) && !isPlainObject(value),
+  );

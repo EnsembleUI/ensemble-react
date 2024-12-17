@@ -1,5 +1,17 @@
 # @ensembleui/js-commons
 
+## 0.0.14
+
+### Patch Changes
+
+- 09b8086: Create history entry when pushing apps
+
+## 0.0.13
+
+### Patch Changes
+
+- accd105: Fix nonserializable objects in firebase transporter
+
 ## 0.0.12
 
 ### Patch Changes
