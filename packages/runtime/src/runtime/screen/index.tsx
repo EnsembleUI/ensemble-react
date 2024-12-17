@@ -1,27 +1,23 @@
 import type {
   EnsembleAction,
-  EnsembleAPIModel,
   EnsembleScreenModel,
 } from "@ensembleui/react-framework";
-import {
-  ScreenContextProvider,
-  error,
-  useScreenData,
-} from "@ensembleui/react-framework";
+import { ScreenContextProvider, error } from "@ensembleui/react-framework";
 import React, { useEffect, useState } from "react";
 import { useLocation, useParams, useOutletContext } from "react-router-dom";
 import { isEmpty, merge } from "lodash-es";
-import { type WidgetComponent, WidgetRegistry } from "../registry";
+import { type WidgetComponent, WidgetRegistry } from "../../registry";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
-import { useEnsembleAction } from "./hooks/useEnsembleAction";
-import { EnsembleHeader } from "./header";
-import { EnsembleFooter } from "./footer";
-import { EnsembleBody } from "./body";
-import { ModalWrapper } from "./modal";
-import { createCustomWidget } from "./customWidget";
-import type { EnsembleMenuContext } from "./menu";
-import { EnsembleMenu } from "./menu";
+import { useEnsembleAction } from "../hooks/useEnsembleAction";
+import { EnsembleHeader } from "../header";
+import { EnsembleFooter } from "../footer";
+import { EnsembleBody } from "../body";
+import { ModalWrapper } from "../modal";
+import { createCustomWidget } from "../customWidget";
+import type { EnsembleMenuContext } from "../menu";
+import { EnsembleMenu } from "../menu";
+import { ScreenApiWrapper } from "./wrapper";
 
 export interface EnsembleScreenProps {
   screen: EnsembleScreenModel;
@@ -124,45 +120,6 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
       </ModalWrapper>
     </ScreenContextProvider>
   );
-};
-
-const ScreenApiWrapper: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  const { apis = [], setApi } = useScreenData();
-
-  return (
-    <>
-      {apis.map((api, index) => (
-        <OnEvaluateApi
-          api={api}
-          currentIndex={index}
-          key={`${api.name}_${index}`}
-          setApi={setApi}
-        />
-      ))}
-      {children}
-    </>
-  );
-};
-
-const OnEvaluateApi = ({
-  api,
-  currentIndex,
-  setApi,
-}: {
-  api: EnsembleAPIModel;
-  currentIndex: number;
-  setApi: (name: number, apiData: EnsembleAPIModel) => void;
-}): null => {
-  const onResponseAction = useEnsembleAction(api.onResponse);
-  const onErrorAction = useEnsembleAction(api.onError);
-
-  useEffect(() => {
-    setApi(currentIndex, { ...api, onResponseAction, onErrorAction });
-  }, [currentIndex]);
-
-  return null;
 };
 
 const OnLoadAction: React.FC<
