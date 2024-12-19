@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.98
+
+### Patch Changes
+
+- 135f956: added support for HTML widget
+- Updated dependencies [135f956]
+  - @ensembleui/react-runtime@0.3.5
+
 ## 0.0.97
 
 ### Patch Changes
