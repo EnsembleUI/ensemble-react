@@ -3,6 +3,7 @@ import {
   useRegisterBindings,
   type Expression,
 } from "@ensembleui/react-framework";
+import { isEmpty } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from "../shared/types";
 
@@ -45,10 +46,11 @@ export const Html: React.FC<HtmlProps> = (props) => {
 
   return (
     <>
-      <style>{cssStyles}</style>
+      {!isEmpty(cssStyles) && <style>{cssStyles}</style>}
       <div
         dangerouslySetInnerHTML={{ __html: values?.text || "" }}
         ref={rootRef}
+        style={values?.styles}
       />
     </>
   );
