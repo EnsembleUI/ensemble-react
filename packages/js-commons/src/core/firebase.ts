@@ -18,6 +18,7 @@ import {
   groupBy,
   head,
   isArray,
+  isEmpty,
   isObject,
   isPlainObject,
   omit,
@@ -25,6 +26,7 @@ import {
   pick,
   set,
 } from "lodash-es";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import { ArtifactProps, EnsembleDocumentType } from "./dto";
 import type {
   AssetDTO,
@@ -56,6 +58,7 @@ export const getFirestoreApplicationTransporter = (
   db: Firestore,
 ): ApplicationTransporter => ({
   get: async (appId: string): Promise<ApplicationDTO> => {
+    // if (!db) return {} as ApplicationDTO;
     const appDocRef = doc(db, CollectionsName.Apps, appId);
     const appDoc = await getDoc(appDocRef);
     const app = {
@@ -94,6 +97,7 @@ export const getFirestoreApplicationTransporter = (
   },
 
   put: async (app: ApplicationDTO, userId: string): Promise<ApplicationDTO> => {
+    // if (!db) return {} as ApplicationDTO;
     const timestamp = Timestamp.now();
     const userRef = doc(db, CollectionsName.Users, userId);
     const appDocRef = doc(db, CollectionsName.Apps, app.id);
@@ -220,6 +224,42 @@ export const getFirestoreApplicationTransporter = (
     return app;
   },
 });
+
+export const firestoreStoreAsset = async (
+  app: Firestore["app"],
+  appId: string,
+  fileName: string,
+  fileData: string | Buffer,
+  font?: {
+    fontFamily?: string;
+    weight?: number;
+    type?: string;
+    fontType?: string;
+  },
+): Promise<void> => {
+  const cloudFunction = httpsCallable(
+    getFunctions(app),
+    !isEmpty(font) ? "studio-addFont" : "studio-uploadAsset",
+  );
+  await cloudFunction({
+    appId,
+    fileName,
+    fileData,
+    ...font,
+  });
+};
+
+export const firestoreRemoveAsset = async (
+  app: Firestore["app"],
+  appId: string,
+  documentId: string,
+): Promise<void> => {
+  const cloudFunction = httpsCallable(getFunctions(app), "studio-deleteAsset");
+  await cloudFunction({
+    appId,
+    documentId,
+  });
+};
 
 const getArtifactsByType = async (
   appRef: DocumentReference,

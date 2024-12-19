@@ -1,19 +1,21 @@
 import { join } from "node:path";
 import { exec } from "node:child_process";
 import { homedir } from "node:os";
-import { existsSync, mkdirSync } from "node:fs";
+import { existsSync, mkdirSync, unlinkSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import {
   compact,
   groupBy,
   head,
   isArray,
+  isEmpty,
   isNil,
+  omit,
   pick,
   values,
 } from "lodash-es";
 import type { LocalApplicationTransporter } from "./transporter";
-import { EnsembleDocumentType } from "./dto";
+import { ArtifactProps, EnsembleDocumentType } from "./dto";
 import type {
   AssetDTO,
   ScreenDTO,
@@ -25,6 +27,7 @@ import type {
   EnvironmentDTO,
   ThemeDTO,
   HasManifest,
+  FontDTO,
 } from "./dto";
 
 // Lookup where to find each app on the local FS
@@ -68,7 +71,15 @@ export const getLocalApplicationTransporter = (
           } else {
             return;
           }
-          const content = await readFile(filePath, { encoding: "utf-8" });
+
+          let content = "";
+          if (
+            document.type !== EnsembleDocumentType.Asset &&
+            document.type !== EnsembleDocumentType.Font
+          ) {
+            content = await readFile(filePath, { encoding: "utf-8" });
+          }
+
           return {
             ...document,
             content,
@@ -84,6 +95,7 @@ export const getLocalApplicationTransporter = (
         widgets: docsByType[EnsembleDocumentType.Widget] as WidgetDTO[],
         scripts: docsByType[EnsembleDocumentType.Script] as ScriptDTO[],
         assets: docsByType[EnsembleDocumentType.Asset] as AssetDTO[],
+        fonts: docsByType[EnsembleDocumentType.Font] as FontDTO[],
         translations: docsByType[EnsembleDocumentType.I18n] as TranslationDTO[],
         env: head(
           docsByType[EnsembleDocumentType.Environment],
@@ -97,11 +109,16 @@ export const getLocalApplicationTransporter = (
       path?: string,
     ): Promise<ApplicationDTO> => {
       ensureDir(ensembleDir);
+      const updatedAppData = omit(appData, ["assets", "fonts"]);
       const appsMetaData = await getGlobalMetadata();
       const existingAppMetadata = (
         appsMetaData[appData.id]
-          ? { projectPath: path, ...appsMetaData[appData.id], ...appData }
-          : { ...appData, projectPath: path }
+          ? {
+              projectPath: path,
+              ...appsMetaData[appData.id],
+              ...updatedAppData,
+            }
+          : { ...updatedAppData, projectPath: path }
       ) as ApplicationLocalMeta;
       if (path) {
         existingAppMetadata.projectPath = path;
@@ -109,25 +126,17 @@ export const getLocalApplicationTransporter = (
         existingAppMetadata.projectPath = join(ensembleDir, appData.id);
       }
 
-      const documentsToWrite = values(
-        pick(appData, [
-          "screens",
-          "widgets",
-          "scripts",
-          "assets",
-          "translations",
-          "env",
-          "theme",
-        ]),
-      ).flatMap((docset: unknown) => {
-        if (isArray(docset)) {
-          return docset as EnsembleDocument[];
-        }
-        if (!isNil(docset)) {
-          return [docset as EnsembleDocument];
-        }
-        return [];
-      });
+      const documentsToWrite = values(pick(appData, ArtifactProps)).flatMap(
+        (docset: unknown) => {
+          if (isArray(docset)) {
+            return docset as EnsembleDocument[];
+          }
+          if (!isNil(docset)) {
+            return [docset as EnsembleDocument];
+          }
+          return [];
+        },
+      );
 
       const yamlFileWrites = compact(documentsToWrite).map(async (document) => {
         const { relativePath } = await saveArtifact(
@@ -161,6 +170,89 @@ export const getLocalApplicationTransporter = (
   };
 };
 
+export const localStoreAsset = async (
+  appId: string,
+  fileName: string,
+  fileData: string | Buffer,
+  font?: {
+    fontFamily?: string;
+    weight?: number;
+    type?: string;
+    fontType?: string;
+  },
+): Promise<void> => {
+  const appsMetadata = await getGlobalMetadata();
+  const appMetadata = appsMetadata[appId];
+  if (!appMetadata) {
+    throw new Error(`App ${appId} not found in local metadata`);
+  }
+
+  const assetDir = join(
+    appMetadata.projectPath,
+    !isEmpty(font) ? EnsembleDocumentType.Font : EnsembleDocumentType.Asset,
+  );
+  ensureDir(assetDir);
+
+  const assetPath = join(assetDir, fileName);
+  const assetDocument = {
+    id: fileName,
+    name: fileName,
+    fileName,
+    isArchived: false,
+    type: !isEmpty(font)
+      ? EnsembleDocumentType.Font
+      : EnsembleDocumentType.Asset,
+    content: "",
+    publicUrl: assetPath,
+    ...font,
+  } as EnsembleDocument;
+
+  await writeFile(assetPath, fileData); // write the file to disk
+  await writeFile(
+    join(assetDir, `${fileName}.json`),
+    JSON.stringify(assetDocument),
+  ); // write file's metadata separately in json
+
+  await saveArtifact(assetDocument, appMetadata, {
+    relativePath: fileName,
+  });
+};
+
+export const localRemoveAsset = async (
+  appId: string,
+  documentId: string,
+  isFont = false,
+  fileName?: string,
+): Promise<void> => {
+  const appsMetadata = await getGlobalMetadata();
+  const appMetadata = appsMetadata[appId];
+  if (!appMetadata) {
+    throw new Error(`App ${appId} not found in local metadata`);
+  }
+
+  const assetDir = join(
+    appMetadata.projectPath,
+    isFont ? EnsembleDocumentType.Font : EnsembleDocumentType.Asset,
+  );
+  ensureDir(assetDir);
+
+  const assetPath = join(assetDir, fileName || documentId);
+  if (existsSync(assetPath)) {
+    unlinkSync(assetPath);
+  }
+
+  const metadataPath = join(assetDir, `${fileName || documentId}.json`);
+  if (existsSync(metadataPath)) {
+    unlinkSync(metadataPath);
+  }
+
+  const manifest = await getAppManifest(appMetadata.projectPath);
+  if (manifest.manifest) {
+    delete manifest.manifest[fileName || documentId];
+    await setAppManifest(manifest, appMetadata.projectPath);
+  }
+};
+
 export const saveArtifact = async (
   artifact: EnsembleDocument,
   app: ApplicationLocalMeta,
@@ -188,15 +280,31 @@ export const saveArtifact = async (
     pathToWrite = `${artifact.name}.yaml`;
   }
 
-  await writeFile(join(artifactSubDir, pathToWrite), artifact.content, "utf-8");
+  if (
+    artifact.type !== EnsembleDocumentType.Asset &&
+    artifact.type !== EnsembleDocumentType.Font
+  ) {
+    await writeFile(
+      join(artifactSubDir, pathToWrite),
+      artifact.content,
+      "utf-8",
+    );
+  }
 
   if (!options.skipMetadata) {
-    app.manifest[artifact.id] = {
-      ...artifact,
-      relativePath: pathToWrite,
+    const existingManifest = await getAppManifest(app.projectPath);
+    const updatedManifest = {
+      ...existingManifest,
+      manifest: {
+        ...(existingManifest.manifest || {}),
+        [artifact.id]: {
+          ...artifact,
+          relativePath: pathToWrite,
+        },
+      },
     };
 
-    await setAppManifest(app.manifest, app.projectPath);
+    await setAppManifest(updatedManifest, app.projectPath);
   }
   return { relativePath: pathToWrite };
 };
