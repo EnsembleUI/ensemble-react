@@ -148,7 +148,8 @@ export const ArtifactProps = [
   "widgets",
   "scripts",
   "assets",
+  "fonts",
   "translations",
   "env",
   "theme",
-];
+] as const;

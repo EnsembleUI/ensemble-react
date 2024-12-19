@@ -18,6 +18,7 @@ import {
   groupBy,
   head,
   isArray,
+  isEmpty,
   isObject,
   isPlainObject,
   omit,
@@ -222,43 +223,43 @@ export const getFirestoreApplicationTransporter = (
     await batch.commit();
     return app;
   },
-
-  storeAsset: async (
-    appId: string,
-    fileName: string,
-    fileData: string | Buffer,
-    isFont = false,
-    fontFamily?: string,
-    weight?: number,
-    fontStyle?: string,
-    fontType?: string,
-  ): Promise<void> => {
-    const cloudFunction = httpsCallable(
-      getFunctions(db.app),
-      isFont ? "studio-addFont" : "studio-uploadAsset",
-    );
-    await cloudFunction({
-      appId,
-      fileName,
-      fileData,
-      fontFamily,
-      weight,
-      fontStyle,
-      fontType,
-    });
-  },
-
-  removeAsset: async (appId: string, documentId: string): Promise<void> => {
-    const cloudFunction = httpsCallable(
-      getFunctions(db.app),
-      "studio-deleteAsset",
-    );
-    await cloudFunction({
-      appId,
-      documentId,
-    });
-  },
 });
+
+export const firestoreStoreAsset = async (
+  app: Firestore["app"],
+  appId: string,
+  fileName: string,
+  fileData: string | Buffer,
+  font?: {
+    fontFamily?: string;
+    weight?: number;
+    type?: string;
+    fontType?: string;
+  },
+): Promise<void> => {
+  const cloudFunction = httpsCallable(
+    getFunctions(app),
+    !isEmpty(font) ? "studio-addFont" : "studio-uploadAsset",
+  );
+  await cloudFunction({
+    appId,
+    fileName,
+    fileData,
+    ...font,
+  });
+};
+
+export const firestoreRemoveAsset = async (
+  app: Firestore["app"],
+  appId: string,
+  documentId: string,
+): Promise<void> => {
+  const cloudFunction = httpsCallable(getFunctions(app), "studio-deleteAsset");
+  await cloudFunction({
+    appId,
+    documentId,
+  });
+};
 
 const getArtifactsByType = async (
   appRef: DocumentReference,
