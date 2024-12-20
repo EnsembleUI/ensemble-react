@@ -10,6 +10,7 @@ import FormsYAML from "./ensemble/screens/forms.yaml";
 import CustomWidgetsYAML from "./ensemble/screens/customWidgets.yaml";
 import HelpYAML from "./ensemble/screens/help.yaml";
 import ProductYAML from "./ensemble/screens/product.yaml";
+import TestActionsYAML from "./ensemble/screens/testActions.yaml";
 // Widgets
 import HeaderWidgetYAML from "./ensemble/widgets/Header.yaml";
 import StyledTextWidgetYAML from "./ensemble/widgets/StyledText.yaml";
@@ -133,6 +134,12 @@ const testApp: ApplicationDTO = {
       name: "Product",
       path: "/product/:product_name",
       content: String(ProductYAML),
+    },
+    {
+      id: "testActions",
+      name: "Test Actions",
+      path: "/test_actions",
+      content: String(TestActionsYAML),
     },
   ],
   config: EnsembleConfig,

@@ -74,6 +74,9 @@ ViewGroup:
       - label: Hidden Page
         icon: HelpOutlineOutlined
         visible: false
+      - label: Test Actions
+        icon: WidgetsOutlined
+        page: test_actions
       - customItem:
           widget:
             Button:
