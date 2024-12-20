@@ -17,13 +17,14 @@ export const useScreenData = (): {
   sockets?: EnsembleSocketModel[];
   data: ScreenContextData;
   setData: (name: string, response: Response | WebSocketConnection) => void;
+  setApi: (index: number, apiData: EnsembleAPIModel) => void;
   mockResponses: {
     [apiName: string]: EnsembleMockResponse | string | undefined;
   };
 } => {
-  const apis = useAtomValue(screenApiAtom);
   const sockets = useAtomValue(screenSocketAtom);
   const [data, setDataAtom] = useAtom(screenDataAtom);
+  const [apis, setApiAtom] = useAtom(screenApiAtom);
 
   const apiMockResponses = useMemo(() => {
     return apis?.reduce(
@@ -51,11 +52,23 @@ export const useScreenData = (): {
     [data, setDataAtom],
   );
 
+  const setApi = useCallback(
+    (index: number, apiData: EnsembleAPIModel) => {
+      if (isEqual(apis?.[index], apiData) || !apis) {
+        return;
+      }
+      apis[index] = apiData;
+      setApiAtom(clone(apis));
+    },
+    [apis, setApiAtom],
+  );
+
   return {
     apis,
     sockets,
     data,
     setData,
+    setApi,
     mockResponses,
   };
 };

@@ -175,9 +175,6 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const onInvokeAPIResponseAction = useEnsembleAction(action?.onResponse);
   const onInvokeAPIErrorAction = useEnsembleAction(action?.onError);
 
-  const onAPIResponseAction = useEnsembleAction(api?.onResponse);
-  const onAPIErrorAction = useEnsembleAction(api?.onError);
-
   const hash = generateAPIHash({
     api: api?.name,
     inputs: evaluatedInputs,
@@ -250,8 +247,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
         if (action?.id) {
           setData(action.id, response);
         }
-
-        onAPIResponseAction?.callback({ ...context, response });
+        api.onResponseAction?.callback({ ...context, response });
         onInvokeAPIResponseAction?.callback({ ...context, response });
       } catch (e) {
         logError(e);
@@ -269,8 +265,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
             isError: true,
           });
         }
-
-        onAPIErrorAction?.callback({ ...context, error: e });
+        api.onErrorAction?.callback({ ...context, error: e });
         onInvokeAPIErrorAction?.callback({ ...context, error: e });
       } finally {
         setIsComplete(true);
@@ -287,8 +282,6 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     isLoading,
     onInvokeAPIErrorAction,
     onInvokeAPIResponseAction,
-    onAPIErrorAction,
-    onAPIResponseAction,
     setData,
     context,
     appContext?.env,
