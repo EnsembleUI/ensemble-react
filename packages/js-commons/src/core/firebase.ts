@@ -37,6 +37,7 @@ import type {
   TranslationDTO,
   ThemeDTO,
   HasManifest,
+  FontDTO,
 } from "./dto";
 import type { ApplicationTransporter } from "./transporter";
 
@@ -58,7 +59,6 @@ export const getFirestoreApplicationTransporter = (
   db: Firestore,
 ): ApplicationTransporter => ({
   get: async (appId: string): Promise<ApplicationDTO> => {
-    // if (!db) return {} as ApplicationDTO;
     const appDocRef = doc(db, CollectionsName.Apps, appId);
     const appDoc = await getDoc(appDocRef);
     const app = {
@@ -73,6 +73,7 @@ export const getFirestoreApplicationTransporter = (
     const scripts = artifactsByType[EnsembleDocumentType.Script] as ScriptDTO[];
     const theme = head(artifactsByType[EnsembleDocumentType.Theme]) as ThemeDTO;
     const assets = artifactsByType[EnsembleDocumentType.Asset] as AssetDTO[];
+    const fonts = artifactsByType[EnsembleDocumentType.Font] as FontDTO[];
     const translations = artifactsByType[
       EnsembleDocumentType.I18n
     ] as TranslationDTO[];
@@ -88,6 +89,7 @@ export const getFirestoreApplicationTransporter = (
       translations,
       assets,
       env,
+      fonts,
       manifest: Object.fromEntries(
         Object.values(artifactsByType).flatMap((artifacts) =>
           artifacts.map((artifact) => [artifact.id, artifact]),

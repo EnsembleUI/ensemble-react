@@ -72,13 +72,7 @@ export const getLocalApplicationTransporter = (
             return;
           }
 
-          let content = "";
-          if (
-            document.type !== EnsembleDocumentType.Asset &&
-            document.type !== EnsembleDocumentType.Font
-          ) {
-            content = await readFile(filePath, { encoding: "utf-8" });
-          }
+          const content = await readFile(filePath, { encoding: "utf-8" });
 
           return {
             ...document,
@@ -139,31 +133,52 @@ export const getLocalApplicationTransporter = (
       );
 
       const yamlFileWrites = compact(documentsToWrite).map(async (document) => {
-        const { relativePath } = await saveArtifact(
-          document,
-          existingAppMetadata,
-          {
+        let relativePath = "";
+        let docToWrite = document;
+
+        if (isAssetOrFont(document)) {
+          const asset = document as AssetDTO | FontDTO;
+          if (!asset.publicUrl) return;
+
+          const fileData = await fetchFileData(asset.publicUrl);
+          const fontData =
+            document.type === EnsembleDocumentType.Font
+              ? extractFontData(document as FontDTO)
+              : {};
+
+          const result = await localStoreAsset(
+            appData.id,
+            (document as AssetDTO).fileName,
+            fileData,
+            fontData,
+            { existingAppMetadata },
+          );
+          relativePath = result.relativePath;
+          docToWrite = result.assetDocument;
+        } else {
+          const result = await saveArtifact(document, existingAppMetadata, {
             skipMetadata: true,
-          },
-        );
+          });
+          relativePath = result.relativePath;
+        }
+
         return {
-          ...document,
+          ...docToWrite,
           relativePath,
         };
       });
 
       const documents = await Promise.all(yamlFileWrites);
-      await setAppManifest(
-        {
-          ...existingAppMetadata,
-          manifest: Object.fromEntries(
-            documents.map((doc) => [doc.id, doc]),
-          ) as Pick<HasManifest, "manifest">,
-        },
-        existingAppMetadata.projectPath,
-      );
 
-      appsMetaData[appData.id] = existingAppMetadata;
+      const updatedAppMetadata = {
+        ...existingAppMetadata,
+        manifest: Object.fromEntries(
+          compact(documents).map((doc) => [doc.id, doc]),
+        ) as Pick<HasManifest, "manifest">,
+      };
+      await setAppManifest(updatedAppMetadata, existingAppMetadata.projectPath);
+
+      appsMetaData[appData.id] = updatedAppMetadata;
       await setGlobalMetadata(appsMetaData);
       return appData;
     },
@@ -177,12 +192,13 @@ export const localStoreAsset = async (
   font?: {
     fontFamily?: string;
     weight?: number;
-    type?: string;
+    fontStyle?: string;
     fontType?: string;
   },
-): Promise<void> => {
+  options?: { existingAppMetadata?: ApplicationLocalMeta },
+): Promise<{ relativePath: string; assetDocument: EnsembleDocument }> => {
   const appsMetadata = await getGlobalMetadata();
-  const appMetadata = appsMetadata[appId];
+  const appMetadata = appsMetadata[appId] || options?.existingAppMetadata;
   if (!appMetadata) {
     throw new Error(`App ${appId} not found in local metadata`);
   }
@@ -213,9 +229,10 @@ export const localStoreAsset = async (
     JSON.stringify(assetDocument),
   ); // write file's metadata separately in json
 
-  await saveArtifact(assetDocument, appMetadata, {
+  const { relativePath } = await saveArtifact(assetDocument, appMetadata, {
     relativePath: fileName,
   });
+  return { relativePath, assetDocument };
 };
 
 export const localRemoveAsset = async (
@@ -272,21 +289,28 @@ export const saveArtifact = async (
   // TODO: allow custom project structures
   const artifactSubDir = join(app.projectPath, artifact.type);
   ensureDir(artifactSubDir);
+
   let pathToWrite = existingPath;
   if (options.relativePath) {
     pathToWrite = options.relativePath;
+  }
+  if (
+    artifact.type === EnsembleDocumentType.Environment ||
+    artifact.type === EnsembleDocumentType.Secrets
+  ) {
+    pathToWrite = `${artifact.id}.json`; // appConfig.json or secrets.json
   }
   if (!pathToWrite) {
     pathToWrite = `${artifact.name}.yaml`;
   }
 
-  if (
-    artifact.type !== EnsembleDocumentType.Asset &&
-    artifact.type !== EnsembleDocumentType.Font
-  ) {
+  if (!isAssetOrFont(artifact)) {
     await writeFile(
       join(artifactSubDir, pathToWrite),
-      artifact.content,
+      artifact.type === EnsembleDocumentType.Environment ||
+        artifact.type === EnsembleDocumentType.Secrets
+        ? JSON.stringify(artifact)
+        : artifact.content,
       "utf-8",
     );
   }
@@ -376,4 +400,26 @@ const writeJsonData = async (
 
 const ensureDir = (path: string): void => {
   if (!existsSync(path)) mkdirSync(path, { recursive: true });
+};
+
+const isAssetOrFont = (document: EnsembleDocument): boolean => {
+  return (
+    document.type === EnsembleDocumentType.Asset ||
+    document.type === EnsembleDocumentType.Font
+  );
+};
+
+const fetchFileData = async (url: string): Promise<Buffer> => {
+  const response = await fetch(url);
+  const arrayBuffer = await response.arrayBuffer();
+  return Buffer.from(arrayBuffer);
+};
+
+const extractFontData = (fontDoc: FontDTO): object => {
+  return {
+    fontFamily: fontDoc.fontFamily,
+    weight: fontDoc.fontWeight,
+    fontStyle: fontDoc.fontStyle,
+    fontType: fontDoc.fontType,
+  };
 };
