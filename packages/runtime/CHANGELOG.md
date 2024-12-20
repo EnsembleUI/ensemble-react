@@ -1,6 +1,12 @@
 # @ensembleui/react-runtime
 
-## 0.3.3
+## 0.3.5
+
+### Patch Changes
+
+- 135f956: added support for HTML widget
+
+## 0.3.4
 
 ### Patch Changes
 

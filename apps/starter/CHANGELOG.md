@@ -7,7 +7,8 @@
 - Updated dependencies [4b2c4fd]
 - Updated dependencies [c5d0441]
 - Updated dependencies [39ff994]
-  - @ensembleui/react-runtime@0.3.3
+- Updated dependencies [135f956]
+  - @ensembleui/react-runtime@0.3.5
 
 ## 0.4.43
 

@@ -432,6 +432,26 @@ View:
                     - Text:
                         text: ${item}
 
+        - Html:
+            cssStyles: # List of styles similar to CSS
+              - selector: "#hello" # or ".Hello" or "div"
+                properties:
+                  # All the CSS properties, it will be entered as key value pair just as in CSS
+                  # color: red
+                  border: 10px solid red
+                  borderRadius: 10px
+                  padding: 20px
+              - selector: "#tag2"
+                properties:
+                  id: myProperty
+                  color: white
+                  fontWeight: "900"
+                  backgroundColor: red
+            text: |
+              <div id="hello">
+              <p id="tag2">Until recently, the prevailing view assumed lorem ipsum was born as a nonsense text. “It's not Latin, though it looks like it, and it actually says nothing,” Before & After magazine answered a curious reader, “Its ‘words’ loosely approximate the frequency with which letters occur in English, which is why at a glance it looks pretty real.”</p>
+              </div>
+
 Global:
   scriptName: test.js
 
