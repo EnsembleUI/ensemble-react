@@ -54,7 +54,7 @@ export const GridView: React.FC<GridViewProps> = ({
     if (onScrollEndAction) {
       onScrollEndAction.callback();
     }
-  }, [onScrollEndAction]);
+  }, [onScrollEndAction?.callback]);
 
   const rows = useMemo(() => {
     const workingRows = [];
