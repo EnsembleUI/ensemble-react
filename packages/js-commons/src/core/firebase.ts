@@ -235,7 +235,7 @@ export const firestoreStoreAsset = async (
   font?: {
     fontFamily?: string;
     weight?: number;
-    type?: string;
+    fontStyle?: string;
     fontType?: string;
   },
 ): Promise<void> => {
@@ -247,7 +247,14 @@ export const firestoreStoreAsset = async (
     appId,
     fileName,
     fileData,
-    ...font,
+    ...(!isEmpty(font)
+      ? {
+          fontFamily: font.fontFamily,
+          weight: font.weight,
+          type: font.fontStyle,
+          fontType: font.fontType,
+        }
+      : {}),
   });
 };
 
