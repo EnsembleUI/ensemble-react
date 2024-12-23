@@ -140,7 +140,9 @@ export const getLocalApplicationTransporter = (
           const asset = document as AssetDTO | FontDTO;
           if (!asset.publicUrl) return;
 
-          const fileData = await fetchFileData(asset.publicUrl);
+          const fileData = existsSync(asset.publicUrl)
+            ? await readFile(asset.publicUrl) // is local asset
+            : await fetchFileData(asset.publicUrl); // is cloud asset
           const fontData =
             document.type === EnsembleDocumentType.Font
               ? extractFontData(document as FontDTO)
