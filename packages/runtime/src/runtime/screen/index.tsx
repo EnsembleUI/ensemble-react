@@ -140,7 +140,7 @@ const OnLoadAction: React.FC<
     } finally {
       setIsComplete(true);
     }
-  }, [context, isComplete, onLoadAction, onLoadAction?.callback]);
+  }, [context, isComplete, onLoadAction?.callback]);
 
   return <>{children}</>;
 };

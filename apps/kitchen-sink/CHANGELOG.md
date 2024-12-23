@@ -1,5 +1,18 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.98
+
+### Patch Changes
+
+- 4b2c4fd: preload search results
+- 39ff994: fix carousel widget
+- Updated dependencies [4b2c4fd]
+- Updated dependencies [c5d0441]
+- Updated dependencies [39ff994]
+- 135f956: added support for HTML widget
+- Updated dependencies [135f956]
+  - @ensembleui/react-runtime@0.3.5
+
 ## 0.0.97
 
 ### Patch Changes

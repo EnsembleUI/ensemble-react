@@ -97,9 +97,9 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     ...rest
   } = props;
 
-  const handleDropdownClose = (): void => {
+  const handleDropdownClose = useCallback((): void => {
     setIsOpen(false);
-  };
+  }, []);
 
   const { id, rootRef, values } = useRegisterBindings(
     {
@@ -124,7 +124,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
       setSelectedValue(value);
       onChangeAction?.callback({ value });
     },
-    [onChangeAction],
+    [onChangeAction?.callback],
   );
 
   const onItemSelectAction = useEnsembleAction(onItemSelect);
@@ -133,7 +133,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
       setSelectedValue(value);
       onItemSelectAction?.callback({ selectedValue: value });
     },
-    [onItemSelectAction],
+    [onItemSelectAction?.callback],
   );
 
   const { namedData } = useTemplateData({
