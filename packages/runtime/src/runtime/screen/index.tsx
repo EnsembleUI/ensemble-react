@@ -103,20 +103,19 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
       screen={screen}
     >
       <ModalWrapper>
-        <ScreenApiWrapper>
-          <OnLoadAction action={screen.onLoad} context={{ ...mergedInputs }}>
-            <EnsembleHeader header={screen.header} />
-            <EnsembleBody body={screen.body} styles={screen.styles} />
-          </OnLoadAction>
-          {screen.menu ? (
-            <EnsembleMenu
-              menu={{ ...screen.menu }}
-              renderOutlet={false}
-              type={screen.menu.type}
-            />
-          ) : null}
-          <EnsembleFooter footer={screen.footer} />
-        </ScreenApiWrapper>
+        <ScreenApiWrapper />
+        <OnLoadAction action={screen.onLoad} context={{ ...mergedInputs }}>
+          <EnsembleHeader header={screen.header} />
+          <EnsembleBody body={screen.body} styles={screen.styles} />
+        </OnLoadAction>
+        {screen.menu ? (
+          <EnsembleMenu
+            menu={{ ...screen.menu }}
+            renderOutlet={false}
+            type={screen.menu.type}
+          />
+        ) : null}
+        <EnsembleFooter footer={screen.footer} />
       </ModalWrapper>
     </ScreenContextProvider>
   );

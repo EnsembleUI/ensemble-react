@@ -1,11 +1,10 @@
 import type { EnsembleAPIModel } from "@ensembleui/react-framework";
 import { useScreenData } from "@ensembleui/react-framework";
 import { useEffect } from "react";
+// eslint-disable-next-line import/no-cycle
 import { useEnsembleAction } from "../hooks";
 
-export const ScreenApiWrapper: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const ScreenApiWrapper: React.FC = () => {
   const { apis = [], setApi } = useScreenData();
 
   return (
@@ -14,11 +13,10 @@ export const ScreenApiWrapper: React.FC<{ children: React.ReactNode }> = ({
         <EvaluateApi
           api={api}
           currentIndex={index}
-          key={`${api.name}_${index}`}
+          key={api.name}
           setApi={setApi}
         />
       ))}
-      {children}
     </>
   );
 };
