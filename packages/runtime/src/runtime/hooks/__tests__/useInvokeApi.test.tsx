@@ -227,7 +227,7 @@ describe("test ensemble.invokeAPI onResponse and onError", () => {
                   properties: {
                     label: "Trigger Invoke API",
                     onTap: {
-                      executeCode: "await ensemble.invokeAPI('testInvokeAPI')",
+                      executeCode: "ensemble.invokeAPI('testInvokeAPI')",
                     },
                   },
                 },
