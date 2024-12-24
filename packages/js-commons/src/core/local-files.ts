@@ -303,7 +303,7 @@ export const saveArtifact = async (
     pathToWrite = `${artifact.id}.json`; // appConfig.json or secrets.json
   }
   if (!pathToWrite) {
-    pathToWrite = `${artifact.name}.yaml`;
+    pathToWrite = `${artifact.name || artifact.id}.yaml`;
   }
 
   if (!isAssetOrFont(artifact)) {
@@ -318,19 +318,11 @@ export const saveArtifact = async (
   }
 
   if (!options.skipMetadata) {
-    const existingManifest = await getAppManifest(app.projectPath);
-    const updatedManifest = {
-      ...existingManifest,
-      manifest: {
-        ...(existingManifest.manifest || {}),
-        [artifact.id]: {
-          ...artifact,
-          relativePath: pathToWrite,
-        },
-      },
+    app.manifest[artifact.id] = {
+      ...artifact,
+      relativePath: pathToWrite,
     };
-
-    await setAppManifest(updatedManifest, app.projectPath);
+    await setAppManifest(app, app.projectPath);
   }
   return { relativePath: pathToWrite };
 };
