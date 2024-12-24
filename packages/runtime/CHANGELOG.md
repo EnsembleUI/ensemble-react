@@ -1,5 +1,13 @@
 # @ensembleui/react-runtime
 
+## 0.3.6
+
+### Patch Changes
+
+- 3db71a9: Revert reversion of hook changes
+- c63b6ff: fix added useCommandCallback
+- 20c0976: fix: added support for object in values in multiselect
+
 ## 0.3.5
 
 ### Patch Changes

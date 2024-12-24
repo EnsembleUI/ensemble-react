@@ -1,5 +1,12 @@
 # @ensembleui/js-commons
 
+## 0.0.15
+
+### Patch Changes
+
+- 3db71a9: Revert reversion of hook changes
+- b5244ee: add support for assets and fonts in transporter
+
 ## 0.0.14
 
 ### Patch Changes

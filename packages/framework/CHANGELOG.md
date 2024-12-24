@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.2.11
+
+### Patch Changes
+
+- 3db71a9: Revert reversion of hook changes
+
 ## 0.2.9
 
 ### Patch Changes

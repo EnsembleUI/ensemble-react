@@ -1,5 +1,16 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.99
+
+### Patch Changes
+
+- 3db71a9: Revert reversion of hook changes
+- Updated dependencies [3db71a9]
+- Updated dependencies [c63b6ff]
+- Updated dependencies [20c0976]
+  - @ensembleui/react-framework@0.2.11
+  - @ensembleui/react-runtime@0.3.6
+
 ## 0.0.98
 
 ### Patch Changes
