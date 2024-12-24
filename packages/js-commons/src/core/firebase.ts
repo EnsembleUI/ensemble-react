@@ -18,6 +18,7 @@ import {
   groupBy,
   head,
   isArray,
+  isEmpty,
   isObject,
   isPlainObject,
   omit,
@@ -25,6 +26,7 @@ import {
   pick,
   set,
 } from "lodash-es";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import { ArtifactProps, EnsembleDocumentType } from "./dto";
 import type {
   AssetDTO,
@@ -35,6 +37,7 @@ import type {
   TranslationDTO,
   ThemeDTO,
   HasManifest,
+  FontDTO,
 } from "./dto";
 import type { ApplicationTransporter } from "./transporter";
 
@@ -70,6 +73,7 @@ export const getFirestoreApplicationTransporter = (
     const scripts = artifactsByType[EnsembleDocumentType.Script] as ScriptDTO[];
     const theme = head(artifactsByType[EnsembleDocumentType.Theme]) as ThemeDTO;
     const assets = artifactsByType[EnsembleDocumentType.Asset] as AssetDTO[];
+    const fonts = artifactsByType[EnsembleDocumentType.Font] as FontDTO[];
     const translations = artifactsByType[
       EnsembleDocumentType.I18n
     ] as TranslationDTO[];
@@ -85,6 +89,7 @@ export const getFirestoreApplicationTransporter = (
       translations,
       assets,
       env,
+      fonts,
       manifest: Object.fromEntries(
         Object.values(artifactsByType).flatMap((artifacts) =>
           artifacts.map((artifact) => [artifact.id, artifact]),
@@ -94,6 +99,7 @@ export const getFirestoreApplicationTransporter = (
   },
 
   put: async (app: ApplicationDTO, userId: string): Promise<ApplicationDTO> => {
+    // if (!db) return {} as ApplicationDTO;
     const timestamp = Timestamp.now();
     const userRef = doc(db, CollectionsName.Users, userId);
     const appDocRef = doc(db, CollectionsName.Apps, app.id);
@@ -220,6 +226,49 @@ export const getFirestoreApplicationTransporter = (
     return app;
   },
 });
+
+export const firestoreStoreAsset = async (
+  app: Firestore["app"],
+  appId: string,
+  fileName: string,
+  fileData: string | Buffer,
+  font?: {
+    fontFamily?: string;
+    weight?: number;
+    fontStyle?: string;
+    fontType?: string;
+  },
+): Promise<void> => {
+  const cloudFunction = httpsCallable(
+    getFunctions(app),
+    !isEmpty(font) ? "studio-addFont" : "studio-uploadAsset",
+  );
+  await cloudFunction({
+    appId,
+    fileName,
+    fileData,
+    ...(!isEmpty(font)
+      ? {
+          fontFamily: font.fontFamily,
+          weight: font.weight,
+          type: font.fontStyle,
+          fontType: font.fontType,
+        }
+      : {}),
+  });
+};
+
+export const firestoreRemoveAsset = async (
+  app: Firestore["app"],
+  appId: string,
+  documentId: string,
+): Promise<void> => {
+  const cloudFunction = httpsCallable(getFunctions(app), "studio-deleteAsset");
+  await cloudFunction({
+    appId,
+    documentId,
+  });
+};
 
 const getArtifactsByType = async (
   appRef: DocumentReference,
