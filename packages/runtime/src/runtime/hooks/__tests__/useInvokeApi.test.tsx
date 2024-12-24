@@ -3,7 +3,13 @@ const fetchMock = jest.fn();
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const frameworkActual = jest.requireActual("@ensembleui/react-framework");
 
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { type ReactNode } from "react";
 import "../../../widgets";
@@ -213,79 +219,81 @@ describe("test ensemble.invokeAPI onResponse and onError", () => {
   it("test executeCode and ensemble.invokeAPI with onLoad", async () => {
     const logSpy = jest.spyOn(console, "log");
 
-    render(
-      <EnsembleScreen
-        screen={{
-          name: "test_execute_code",
-          id: "test_execute_code",
-          body: {
-            name: "Row",
-            properties: {
-              children: [
-                {
-                  name: "Button",
-                  properties: {
-                    label: "Trigger Invoke API",
-                    onTap: {
-                      executeCode: "ensemble.invokeAPI('testInvokeAPI')",
-                    },
-                  },
-                },
-                {
-                  name: "Button",
-                  properties: {
-                    label: "Trigger API",
-                    onTap: {
-                      invokeAPI: {
-                        name: "testAPI",
-                        onResponse: "console.log('onResponse from inside')",
+    act(() => {
+      render(
+        <EnsembleScreen
+          screen={{
+            name: "test_execute_code",
+            id: "test_execute_code",
+            body: {
+              name: "Row",
+              properties: {
+                children: [
+                  {
+                    name: "Button",
+                    properties: {
+                      label: "Trigger Invoke API",
+                      onTap: {
+                        executeCode: "ensemble.invokeAPI('testInvokeAPI')",
                       },
                     },
                   },
-                },
-                {
-                  name: "Button",
-                  properties: {
-                    label: "Trigger API Error",
-                    onTap: "ensemble.invokeAPI('testOnError')",
+                  {
+                    name: "Button",
+                    properties: {
+                      label: "Trigger API",
+                      onTap: {
+                        invokeAPI: {
+                          name: "testAPI",
+                          onResponse: "console.log('onResponse from inside')",
+                        },
+                      },
+                    },
                   },
-                },
-              ],
+                  {
+                    name: "Button",
+                    properties: {
+                      label: "Trigger API Error",
+                      onTap: "ensemble.invokeAPI('testOnError')",
+                    },
+                  },
+                ],
+              },
             },
-          },
-          apis: [
-            {
-              method: "GET",
-              name: "testInvokeAPI",
-              uri: "https://dummyjson.com/products",
-              onResponse: `
+            apis: [
+              {
+                method: "GET",
+                name: "testInvokeAPI",
+                uri: "https://dummyjson.com/products",
+                onResponse: `
               console.log('onResponse from invokeAPI');
               console.log({ response });
               `,
-            },
-            {
-              method: "GET",
-              name: "testAPI",
-              uri: "https://dummyjson.com/products",
-              onResponse: "console.log('onResponse from API')",
-            },
-            {
-              method: "GET",
-              name: "testOnError",
-              uri: "https://dummyjson.com/products_error",
-              onError: `
+              },
+              {
+                method: "GET",
+                name: "testAPI",
+                uri: "https://dummyjson.com/products",
+                onResponse: "console.log('onResponse from API')",
+              },
+              {
+                method: "GET",
+                name: "testOnError",
+                uri: "https://dummyjson.com/products_error",
+                onError: `
               console.log('onError from API');
               console.log({ error: error.message });
               `,
+              },
+            ],
+            onLoad: {
+              executeCode: "ensemble.invokeAPI('testAPI')",
             },
-          ],
-          onLoad: {
-            executeCode: "ensemble.invokeAPI('testAPI')",
-          },
-        }}
-      />,
-      { wrapper: BrowserRouterWrapper },
-    );
+          }}
+        />,
+        { wrapper: BrowserRouterWrapper },
+      );
+    });
 
     await waitFor(() => {
       expect(logSpy).toHaveBeenCalledWith("onResponse from API");

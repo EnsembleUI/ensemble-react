@@ -17,7 +17,7 @@ export const useScreenData = (): {
   sockets?: EnsembleSocketModel[];
   data: ScreenContextData;
   setData: (name: string, response: Response | WebSocketConnection) => void;
-  setApi: (index: number, apiData: EnsembleAPIModel) => void;
+  setApi: (apiData: EnsembleAPIModel) => void;
   mockResponses: {
     [apiName: string]: EnsembleMockResponse | string | undefined;
   };
@@ -53,8 +53,9 @@ export const useScreenData = (): {
   );
 
   const setApi = useCallback(
-    (index: number, apiData: EnsembleAPIModel) => {
-      if (isEqual(apis?.[index], apiData) || !apis) {
+    (apiData: EnsembleAPIModel) => {
+      const index = apis?.findIndex((api) => api.name === apiData.name);
+      if (index === undefined || isEqual(apis?.[index], apiData) || !apis) {
         return;
       }
       apis[index] = apiData;
