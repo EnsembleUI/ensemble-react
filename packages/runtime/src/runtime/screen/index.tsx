@@ -6,17 +6,18 @@ import { ScreenContextProvider, error } from "@ensembleui/react-framework";
 import React, { useEffect, useState } from "react";
 import { useLocation, useParams, useOutletContext } from "react-router-dom";
 import { isEmpty, merge } from "lodash-es";
-import { type WidgetComponent, WidgetRegistry } from "../registry";
+import { type WidgetComponent, WidgetRegistry } from "../../registry";
 // FIXME: refactor
 // eslint-disable-next-line import/no-cycle
-import { useEnsembleAction } from "./hooks/useEnsembleAction";
-import { EnsembleHeader } from "./header";
-import { EnsembleFooter } from "./footer";
-import { EnsembleBody } from "./body";
-import { ModalWrapper } from "./modal";
-import { createCustomWidget } from "./customWidget";
-import type { EnsembleMenuContext } from "./menu";
-import { EnsembleMenu } from "./menu";
+import { useEnsembleAction } from "../hooks/useEnsembleAction";
+import { EnsembleHeader } from "../header";
+import { EnsembleFooter } from "../footer";
+import { EnsembleBody } from "../body";
+import { ModalWrapper } from "../modal";
+import { createCustomWidget } from "../customWidget";
+import type { EnsembleMenuContext } from "../menu";
+import { EnsembleMenu } from "../menu";
+import { ScreenApiWrapper } from "./wrapper";
 
 export interface EnsembleScreenProps {
   screen: EnsembleScreenModel;
@@ -102,6 +103,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
       screen={screen}
     >
       <ModalWrapper>
+        <ScreenApiWrapper />
         <OnLoadAction action={screen.onLoad} context={{ ...mergedInputs }}>
           <EnsembleHeader header={screen.header} />
           <EnsembleBody body={screen.body} styles={screen.styles} />
