@@ -1019,6 +1019,38 @@ View:
                   onChange:
                     executeCode: |-
                       console.log('toggle button changed: ' + value);
+              - ToggleButton:
+                  allowMultiple: true
+                  styles:
+                    spacing: 6
+                    runSpacing: 4
+                    borderColor: ${colors.gray['200']}
+                    borderRadius: 18
+                    selectedColor: white
+                    selectedBackgroundColor: ${colors.primary['700']}
+                  items:
+                    - label: Sun
+                      value: Sun
+                      icon:
+                        name: CheckCircleOutlined
+                    - label: Mon
+                      value: Mon
+                      enabled: false
+                    - label: Tue
+                      value: Tue
+                      styles:
+                        backgroundColor: yellow
+                    - label: Wed
+                      value: Wed
+                    - label: Thu
+                      value: Thu
+                    - label: Fri
+                      value: Fri
+                    - label: Sat
+                      value: Sat
+                  onChange:
+                    executeCode: |-
+                      console.log('toggle button changed: ' + value);
         - Card:
             styles:
               maxWidth: unset

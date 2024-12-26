@@ -1,4 +1,4 @@
-import { isExpression, useRegisterBindings } from "@ensembleui/react-framework";
+import { useRegisterBindings } from "@ensembleui/react-framework";
 import type { Expression, EnsembleAction } from "@ensembleui/react-framework";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { isString, isEmpty } from "lodash-es";
@@ -34,32 +34,31 @@ interface ToggleButtonPropsStyles {
 }
 
 export type ToggleButtonProps = {
-  value: string;
+  value: Expression<string | string[]>;
   items:
     | string[]
     | {
         value: string;
         label: string;
         icon?: IconProps;
+        enabled?: Expression<boolean>;
+        styles?: EnsembleWidgetStyles;
       }[];
   onChange?: EnsembleAction;
+  allowMultiple?: boolean;
 } & EnsembleWidgetProps<ToggleButtonPropsStyles & EnsembleWidgetStyles>;
 
 export const ToggleButton: React.FC<ToggleButtonProps> = ({
   id,
-  value: valueBinding,
-  items,
   onChange,
-  styles,
+  ...rest
 }) => {
-  const [value, setValue] = useState<string | undefined>(
-    isExpression(valueBinding) ? undefined : valueBinding,
-  );
+  const [value, setValue] = useState<string[] | string | undefined>();
   const { values, rootRef } = useRegisterBindings(
     {
+      ...rest,
       value,
-      valueBinding,
-      styles,
+      initialValue: rest.value,
       widgetName,
     },
     id,
@@ -69,13 +68,13 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
   );
 
   useEffect(() => {
-    setValue(values?.valueBinding);
-  }, [values?.valueBinding]);
+    setValue(values?.initialValue);
+  }, [values?.initialValue]);
 
   // onchange action handler
   const action = useEnsembleAction(onChange);
   const onChangeCallback = useCallback(
-    (newValue: string) => {
+    (newValue: string | string[]) => {
       action?.callback({
         value: newValue,
       });
@@ -86,7 +85,7 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
   // handle toggle button value change
   const handleChange = (
     _event: React.MouseEvent<HTMLElement>,
-    newValue: string,
+    newValue: string | string[] | null,
   ): void => {
     if (!newValue) {
       return;
@@ -97,16 +96,14 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
   };
 
   const structuredItems = useMemo(() => {
-    if (isEmpty(items)) {
+    if (isEmpty(values?.items)) {
       return [];
     }
 
-    return items.map((item) => {
-      return isString(item)
-        ? { label: item, value: item }
-        : { label: item.label, value: item.value, icon: item.icon };
-    });
-  }, [items]);
+    return values?.items.map((item) =>
+      isString(item) ? { label: item, value: item } : { ...item },
+    );
+  }, [values?.items]);
 
   if (isEmpty(structuredItems))
     return <Alert message="ToggleButton: items is required" type="error" />;
@@ -114,14 +111,14 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
   return (
     <MUIToggleButtonGroup
       className={values?.styles?.names}
-      exclusive
+      exclusive={values?.allowMultiple !== true}
       onChange={handleChange}
       ref={rootRef}
       sx={{
         display: "grid",
-        gridTemplateColumns: `repeat(${structuredItems.length},1fr)`,
-        rowGap: `${styles?.runSpacing ?? 0}px`,
-        margin: `${styles?.margin ?? 0}`,
+        gridTemplateColumns: `repeat(${structuredItems?.length ?? 0},1fr)`,
+        rowGap: `${values?.styles?.runSpacing ?? 0}px`,
+        margin: `${values?.styles?.margin ?? 0}`,
         ...(values?.styles?.visible === false
           ? { display: "none" }
           : undefined),
@@ -129,19 +126,22 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
       }}
       value={values?.value}
     >
-      {structuredItems.map((item, index) => (
+      {structuredItems?.map((item, index) => (
         <MUIToggleButton
+          disabled={item.enabled === false}
           key={item.value}
           sx={{
             padding: values?.styles?.padding,
             backgroundColor: values?.styles?.backgroundColor,
             marginRight:
-              index !== items.length - 1 ? `${styles?.spacing ?? 0}px` : 0,
+              index !== structuredItems.length - 1
+                ? `${values?.styles?.spacing ?? 0}px`
+                : 0,
             boxShadow: `1px 2px 5px 1px ${
               values?.styles?.shadowColor ?? "transparent"
             }`,
             textTransform: "none",
-            border: `${styles?.borderWidth ?? 1}px solid ${
+            border: `${values?.styles?.borderWidth ?? 1}px solid ${
               values?.styles?.borderColor ?? "transparent"
             } !important`,
             borderRadius: `${values?.styles?.borderRadius ?? 4}px !important`,
@@ -151,17 +151,18 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
                 values?.styles?.selectedBackgroundColor ??
                 "rgba(0, 0, 0, 0.08)",
               borderColor: values?.styles?.selectedBorderColor,
-              border: `${styles?.selectedBorderWidth ?? 1}px solid ${
+              border: `${values?.styles?.selectedBorderWidth ?? 1}px solid ${
                 values?.styles?.selectedBorderColor ?? "transparent"
               } !important`,
               boxShadow: `1px 2px 5px 1px ${
-                styles?.shadowColor ?? "transparent"
+                values?.styles?.shadowColor ?? "transparent"
               }`,
             },
             "&.Mui-selected:hover": {
               backgroundColor: values?.styles?.selectedBackgroundColor,
               filter: "brightness(92%)",
             },
+            ...item.styles,
           }}
           value={item.value}
         >
