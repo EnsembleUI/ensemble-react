@@ -49,33 +49,28 @@ export const invokeAPI = async (
   const useMockResponse =
     has(api, "mockResponse") && isUsingMockResponse(screenContext.app?.id);
 
-  try {
-    const response = await queryClient.fetchQuery({
-      queryKey: [hash],
-      queryFn: () =>
-        DataFetcher.fetch(
-          api,
-          { ...apiInputs, ...context },
-          {
-            mockResponse: mockResponse(
-              evaluatedMockResponse ?? api.mockResponse,
-              useMockResponse,
-            ),
+  const response = await queryClient.fetchQuery({
+    queryKey: [hash],
+    queryFn: () =>
+      DataFetcher.fetch(
+        api,
+        { ...apiInputs, ...context },
+        {
+          mockResponse: mockResponse(
+            evaluatedMockResponse ?? api.mockResponse,
             useMockResponse,
-          },
-        ),
-      staleTime: api.cacheExpirySeconds ? api.cacheExpirySeconds * 1000 : 0,
-    });
+          ),
+          useMockResponse,
+        },
+      ),
+    staleTime: api.cacheExpirySeconds ? api.cacheExpirySeconds * 1000 : 0,
+  });
 
-    if (setter) {
-      set(update, api.name, response);
-      setter(screenDataAtom, { ...update });
-    }
-    api.onResponseAction?.callback({ ...context, response });
-    return response;
-  } catch (err) {
-    api.onErrorAction?.callback({ ...context, error: err });
+  if (setter) {
+    set(update, api.name, response);
+    setter(screenDataAtom, { ...update });
   }
+  return response;
 };
 
 export const handleConnectSocket = (
