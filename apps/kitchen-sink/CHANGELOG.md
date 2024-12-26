@@ -1,5 +1,14 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.100
+
+### Patch Changes
+
+- 19224c3: add multiple selection support in ToggleButton widget
+- Updated dependencies [19224c3]
+- Updated dependencies [aa5495d]
+  - @ensembleui/react-runtime@0.3.7
+
 ## 0.0.99
 
 ### Patch Changes
