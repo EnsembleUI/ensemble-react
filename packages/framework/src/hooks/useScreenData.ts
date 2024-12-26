@@ -54,12 +54,21 @@ export const useScreenData = (): {
 
   const setApi = useCallback(
     (apiData: EnsembleAPIModel) => {
-      const index = apis?.findIndex((api) => api.name === apiData.name);
-      if (index === undefined || isEqual(apis?.[index], apiData) || !apis) {
+      if (!apis) {
         return;
       }
-      apis[index] = apiData;
-      setApiAtom(clone(apis));
+
+      const apisAtom = [] as EnsembleAPIModel[];
+
+      apis.forEach((api) => {
+        if (api.name === apiData.name) {
+          apisAtom.push(apiData);
+        } else {
+          apisAtom.push(api);
+        }
+      });
+
+      setApiAtom(apisAtom);
     },
     [apis, setApiAtom],
   );
