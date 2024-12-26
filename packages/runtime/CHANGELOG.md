@@ -1,5 +1,12 @@
 # @ensembleui/react-runtime
 
+## 0.3.7
+
+### Patch Changes
+
+- 19224c3: add multiple selection support in ToggleButton widget
+- aa5495d: Added support for qrcode
+
 ## 0.3.6
 
 ### Patch Changes
