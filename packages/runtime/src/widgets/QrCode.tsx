@@ -48,7 +48,7 @@ export const QRCode: React.FC<QRCodeProps> = (props) => {
         onRefresh={onRefreshActionCallback}
         size={values?.size || 160}
         status={values?.status}
-        value={qrValue || ""}
+        value={values?.qrValue || ""}
       />
     </div>
   );
