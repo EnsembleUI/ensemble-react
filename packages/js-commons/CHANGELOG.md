@@ -1,5 +1,11 @@
 # @ensembleui/js-commons
 
+## 0.0.16
+
+### Patch Changes
+
+- 7f25117: add method for deleting ensemble app locally
+
 ## 0.0.15
 
 ### Patch Changes
