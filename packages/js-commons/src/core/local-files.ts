@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import { exec } from "node:child_process";
 import { homedir } from "node:os";
-import { existsSync, mkdirSync, unlinkSync } from "node:fs";
+import { existsSync, mkdirSync, unlinkSync, rmSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import {
   compact,
@@ -184,6 +184,24 @@ export const getLocalApplicationTransporter = (
       await setGlobalMetadata(appsMetaData);
       return appData;
     },
+
+    delete: async (appId: string): Promise<void> => {
+      const appsMetaData = await getGlobalMetadata();
+      const existingAppMetadata = appsMetaData[appId];
+      if (!existingAppMetadata) {
+        throw Error(`App ${appId} not found on local disk`);
+      }
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete appsMetaData[appId];
+      await setGlobalMetadata(appsMetaData);
+
+      if (!existsSync(existingAppMetadata.projectPath)) {
+        throw Error(
+          `App ${existingAppMetadata.name} directory not found on local disk`,
+        );
+      }
+      rmSync(existingAppMetadata.projectPath, { recursive: true });
+    },
   };
 };
 
@@ -267,6 +285,7 @@ export const localRemoveAsset = async (
 
   const manifest = await getAppManifest(appMetadata.projectPath);
   if (manifest.manifest) {
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     delete manifest.manifest[fileName || documentId];
     await setAppManifest(manifest, appMetadata.projectPath);
   }
