@@ -191,9 +191,6 @@ export const getLocalApplicationTransporter = (
       if (!existingAppMetadata) {
         throw Error(`App ${appId} not found on local disk`);
       }
-      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-      delete appsMetaData[appId];
-      await setGlobalMetadata(appsMetaData);
 
       if (!existsSync(existingAppMetadata.projectPath)) {
         throw Error(
@@ -201,6 +198,10 @@ export const getLocalApplicationTransporter = (
         );
       }
       rmSync(existingAppMetadata.projectPath, { recursive: true });
+
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete appsMetaData[appId];
+      await setGlobalMetadata(appsMetaData);
     },
   };
 };
