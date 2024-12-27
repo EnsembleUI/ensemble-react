@@ -163,13 +163,16 @@ export const error = (value: unknown): void => {
 export const replace =
   (replacer: (expr: string) => string) =>
   (val: string): unknown => {
-    const matches = val.match(/\$\{+[^}]+\}+/g);
+    const matches = val.match(/\$\{(?:[^}{]+|\{(?:[^}{]+|\{[^}{]*\})*\})*\}/g);
     if (matches?.length === 1 && matches[0] === val) {
       return replacer(val);
     }
-    return val.replace(/\$\{+[^}]+\}+/g, (expression) => {
-      return replacer(expression);
-    });
+    return val.replace(
+      /\$\{(?:[^}{]+|\{(?:[^}{]+|\{[^}{]*\})*\})*\}/g,
+      (expression) => {
+        return replacer(expression);
+      },
+    );
   };
 
 export const visitExpressions = (
