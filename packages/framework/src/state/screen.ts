@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 import { focusAtom } from "jotai-optics";
-import { assign } from "lodash-es";
+import { merge } from "lodash-es";
 import { type Response, type WebSocketConnection } from "../data";
 import type { EnsembleAppModel, EnsembleScreenModel } from "../shared";
 import type { WidgetState } from "./widget";
@@ -40,7 +40,7 @@ export const screenDataAtom = atom(
   (get) => get(screenDataFocusAtom),
   (get, set, update) => {
     const currentData = get(screenDataFocusAtom);
-    const nextData = assign({}, currentData, update);
+    const nextData = merge({}, currentData, update);
     set(screenDataFocusAtom, nextData);
   },
 );
