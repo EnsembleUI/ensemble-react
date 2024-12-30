@@ -162,10 +162,11 @@ export const error = (value: unknown): void => {
 
 export const validateExpressions = (
   value: string,
-): { isValid: boolean; expression: string } => {
+): { isValid: boolean; expressions: string[] } => {
   let expression = "";
   let stake = 0;
   let status = "pending";
+  const expressions = [];
 
   for (let i = 0; i < value.length; i++) {
     const keyword = value[i];
@@ -180,7 +181,8 @@ export const validateExpressions = (
       expression = expression + keyword;
       if (stake === 0) {
         status = "valid";
-        break;
+        expressions.push(expression);
+        continue;
       }
       stake--;
     } else if (status === "initiate") {
@@ -189,18 +191,22 @@ export const validateExpressions = (
   }
   return {
     isValid: status === "valid",
-    expression,
+    expressions,
   };
 };
 
 export const replace =
   (replacer: (expr: string) => string) =>
   (val: string): unknown => {
-    const { expression, isValid } = validateExpressions(val);
+    const { expressions, isValid } = validateExpressions(val);
     if (isValid) {
-      return val.replace(expression, (value) => {
-        return replacer(value);
+      let replacedValue = val;
+      expressions.forEach((expr) => {
+        replacedValue = replacedValue.replace(expr, (value) => {
+          return replacer(value);
+        });
       });
+      return replacedValue;
     }
     return val;
   };
