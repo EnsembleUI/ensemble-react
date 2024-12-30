@@ -160,17 +160,49 @@ export const error = (value: unknown): void => {
   console.error(value);
 };
 
+export const validateExpressions = (
+  value: string,
+): { isValid: boolean; expression: string } => {
+  let expression = "";
+  let stake = 0;
+  let status = "pending";
+
+  for (let i = 0; i < value.length; i++) {
+    const keyword = value[i];
+    if (keyword === "$" && value[i + 1] === "{") {
+      expression = "${";
+      status = "initiate";
+      i++;
+    } else if (keyword === "{" && status === "initiate") {
+      expression = expression + keyword;
+      stake++;
+    } else if (keyword === "}" && status === "initiate") {
+      expression = expression + keyword;
+      if (stake === 0) {
+        status = "valid";
+        break;
+      }
+      stake--;
+    } else if (status === "initiate") {
+      expression = expression + keyword;
+    }
+  }
+  return {
+    isValid: status === "valid",
+    expression,
+  };
+};
+
 export const replace =
   (replacer: (expr: string) => string) =>
   (val: string): unknown => {
-    const replaceRegex = /\$\{(?:[^}{]+|\{(?:[^}{]+|\{[^}{]*\})*\})*\}/g;
-    const matches = val.match(replaceRegex);
-    if (matches?.length === 1 && matches[0] === val) {
-      return replacer(val);
+    const { expression, isValid } = validateExpressions(val);
+    if (isValid) {
+      return val.replace(expression, (value) => {
+        return replacer(value);
+      });
     }
-    return val.replace(replaceRegex, (expression) => {
-      return replacer(expression);
-    });
+    return val;
   };
 
 export const visitExpressions = (
