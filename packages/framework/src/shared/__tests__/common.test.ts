@@ -1,3 +1,4 @@
+import { evaluateDeep } from "../../evaluate";
 import { findExpressions, isCompoundExpression } from "../common";
 
 test("find deeply nested expressions", () => {
@@ -80,6 +81,117 @@ describe("isCompoundExpression", () => {
         "${[{ value: 'ledger', label: 'Ledger' }, ...getUser.body.data.userById.configurationType === 'BPO' ? [{ value: 'clientProductivity', label: 'Client Productivity' }] : [], { value: 'advocateProductivity', label: 'Advocate Productivity' }]}",
       ),
     ).toBe(false);
+  });
+});
+
+describe("validate expressions", () => {
+  test("Single placeholder with no additional text", () => {
+    expect(
+      evaluateDeep({ name: "${name}" }, undefined, {
+        name: "Ensemble",
+      }),
+    ).toMatchObject({ name: "Ensemble" });
+  });
+
+  test("Single placeholder with additional text", () => {
+    expect(
+      evaluateDeep({ name: "${name} framework" }, undefined, {
+        name: "Ensemble",
+      }),
+    ).toMatchObject({ name: "Ensemble framework" });
+  });
+
+  test("Multiple placeholders", () => {
+    expect(
+      evaluateDeep({ name: "${name} ${platform}" }, undefined, {
+        name: "Ensemble",
+        platform: "Web",
+      }),
+    ).toMatchObject({ name: "Ensemble Web" });
+  });
+
+  test("Single complex placeholder with expression", () => {
+    expect(
+      evaluateDeep({ name: "${name + platform}" }, undefined, {
+        name: "Ensemble",
+        platform: "Web",
+      }),
+    ).toMatchObject({ name: "EnsembleWeb" });
+  });
+
+  test("Nested template literals (complex case)", () => {
+    expect(
+      evaluateDeep(
+        {
+          name: "${`Ensemble ${platform} platform`}",
+        },
+        undefined,
+        {
+          name: "Ensemble",
+          platform: "Web",
+        },
+      ),
+    ).toMatchObject({ name: "Ensemble Web platform" });
+  });
+
+  test("No placeholders", () => {
+    expect(
+      evaluateDeep(
+        {
+          name: "Ensemble Web",
+        },
+        undefined,
+        {
+          name: "Ensemble",
+          platform: "Web",
+        },
+      ),
+    ).toMatchObject({ name: "Ensemble Web" });
+  });
+
+  test("Placeholder at the start and end", () => {
+    expect(
+      evaluateDeep(
+        {
+          name: "${name} Web ${platform}",
+        },
+        undefined,
+        {
+          name: "Ensemble",
+          platform: "Studio",
+        },
+      ),
+    ).toMatchObject({ name: "Ensemble Web Studio" });
+  });
+
+  test("Placeholder within text", () => {
+    expect(
+      evaluateDeep(
+        {
+          name: "Ensemble ${platform} Studio",
+        },
+        undefined,
+        {
+          name: "Ensemble",
+          platform: "Web",
+        },
+      ),
+    ).toMatchObject({ name: "Ensemble Web Studio" });
+  });
+
+  test("Map loop", () => {
+    expect(
+      evaluateDeep(
+        {
+          name: "${['X', 'Y'].map((c) => { return c.toLowerCase() })}",
+        },
+        undefined,
+        {
+          name: "Ensemble",
+          platform: "Web",
+        },
+      ),
+    ).toMatchObject({ name: ["x", "y"] });
   });
 });
 /* eslint-enable no-template-curly-in-string */

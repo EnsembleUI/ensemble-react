@@ -163,34 +163,38 @@ export const error = (value: unknown): void => {
 export const validateExpressions = (
   value: string,
 ): { isValid: boolean; expressions: string[] } => {
-  let expression = "";
-  let stake = 0;
-  let status = "pending";
-  const expressions = [];
+  const expressions: string[] = [];
+  let currentExpr = "";
+  let depth = 0;
+  let i = 0;
 
-  for (let i = 0; i < value.length; i++) {
-    const keyword = value[i];
-    if (keyword === "$" && value[i + 1] === "{") {
-      expression = "${";
-      status = "initiate";
-      i++;
-    } else if (keyword === "{" && status === "initiate") {
-      expression = expression + keyword;
-      stake++;
-    } else if (keyword === "}" && status === "initiate") {
-      expression = expression + keyword;
-      if (stake === 0) {
-        status = "valid";
-        expressions.push(expression);
-        continue;
+  while (i < value.length) {
+    if (value[i] === "$" && value[i + 1] === "{") {
+      if (depth === 0) {
+        currentExpr = "";
       }
-      stake--;
-    } else if (status === "initiate") {
-      expression = expression + keyword;
+      depth++;
+      currentExpr += value.slice(i, i + 2);
+      i += 2;
+      continue;
     }
+
+    if (depth > 0) {
+      currentExpr += value[i];
+      if (value[i] === "{") {
+        depth++;
+      } else if (value[i] === "}") {
+        depth--;
+        if (depth === 0) {
+          expressions.push(currentExpr);
+        }
+      }
+    }
+    i++;
   }
+
   return {
-    isValid: status === "valid",
+    isValid: depth === 0 && expressions.length > 0,
     expressions,
   };
 };
@@ -200,11 +204,13 @@ export const replace =
   (val: string): unknown => {
     const { expressions, isValid } = validateExpressions(val);
     if (isValid) {
+      if (expressions.length === 1 && val === expressions[0]) {
+        return replacer(expressions[0]);
+      }
+
       let replacedValue = val;
       expressions.forEach((expr) => {
-        replacedValue = replacedValue.replace(expr, (value) => {
-          return replacer(value);
-        });
+        replacedValue = replacedValue.replace(expr, replacer(expr));
       });
       return replacedValue;
     }
