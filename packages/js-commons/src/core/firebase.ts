@@ -25,6 +25,7 @@ import {
   omitBy,
   pick,
   set,
+  toNumber,
 } from "lodash-es";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { ArtifactProps, EnsembleDocumentType } from "./dto";
@@ -99,7 +100,6 @@ export const getFirestoreApplicationTransporter = (
   },
 
   put: async (app: ApplicationDTO, userId: string): Promise<ApplicationDTO> => {
-    // if (!db) return {} as ApplicationDTO;
     const timestamp = Timestamp.now();
     const userRef = doc(db, CollectionsName.Users, userId);
     const appDocRef = doc(db, CollectionsName.Apps, app.id);
@@ -131,7 +131,16 @@ export const getFirestoreApplicationTransporter = (
       CollectionsName.InternalArtifacts,
     );
 
-    const { screens, widgets, scripts, translations, theme, env } = app;
+    const {
+      screens,
+      widgets,
+      scripts,
+      translations,
+      theme,
+      env,
+      assets,
+      fonts,
+    } = app;
 
     screens.forEach((screen) => {
       const screenRef = doc(artifactsRef, screen.id);
@@ -223,6 +232,22 @@ export const getFirestoreApplicationTransporter = (
     }
 
     await batch.commit();
+
+    const assetPromises = assets?.map((asset) =>
+      firestoreStoreAsset(db.app, app.id, asset.fileName, asset.content),
+    );
+    if (assetPromises) await Promise.all(assetPromises);
+
+    const fontPromises = fonts?.map((font) =>
+      firestoreStoreAsset(db.app, app.id, font.name, font.content, {
+        fontFamily: font.fontFamily,
+        fontWeight: toNumber(font.fontWeight),
+        fontStyle: font.fontStyle,
+        fontType: font.fontType,
+      }),
+    );
+    if (fontPromises) await Promise.all(fontPromises);
+
     return app;
   },
 });
@@ -234,7 +259,7 @@ export const firestoreStoreAsset = async (
   fileData: string | Buffer,
   font?: {
     fontFamily?: string;
-    weight?: number;
+    fontWeight?: number;
     fontStyle?: string;
     fontType?: string;
   },
@@ -250,7 +275,7 @@ export const firestoreStoreAsset = async (
     ...(!isEmpty(font)
       ? {
           fontFamily: font.fontFamily,
-          weight: font.weight,
+          weight: font.fontWeight,
           type: font.fontStyle,
           fontType: font.fontType,
         }

@@ -27,6 +27,8 @@ export const bundleApp = (
     env: documents.find((d) => d.type === EnsembleDocumentType.Environment),
     translations: documents.filter((d) => d.type === EnsembleDocumentType.I18n),
     scripts: documents.filter((d) => d.type === EnsembleDocumentType.Script),
+    assets: documents.filter((d) => d.type === EnsembleDocumentType.Asset),
+    fonts: documents.filter((d) => d.type === EnsembleDocumentType.Font),
   });
 };
 

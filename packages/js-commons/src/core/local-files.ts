@@ -73,7 +73,9 @@ export const getLocalApplicationTransporter = (
             return;
           }
 
-          const content = await readFile(filePath, { encoding: "utf-8" });
+          const content = await readFile(filePath, {
+            encoding: isAssetOrFont(document) ? "base64" : "utf-8",
+          });
 
           return {
             ...document,
@@ -441,7 +443,7 @@ const fetchFileData = async (url: string): Promise<Buffer> => {
   return Buffer.from(arrayBuffer);
 };
 
-export const extractFontData = (fontDoc: FontDTO): object => {
+const extractFontData = (fontDoc: FontDTO): object => {
   return {
     fontFamily: fontDoc.fontFamily,
     fontWeight: fontDoc.fontWeight,
