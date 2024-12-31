@@ -218,8 +218,8 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
             DataFetcher.fetch(
               currentApi,
               {
-                ...evaluatedInputs,
                 ...context,
+                ...evaluatedInputs,
                 ensemble: {
                   env: appContext?.env,
                   secrets: appContext?.secrets,
