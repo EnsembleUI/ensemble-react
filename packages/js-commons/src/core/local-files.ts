@@ -10,6 +10,7 @@ import {
   isArray,
   isEmpty,
   isNil,
+  merge,
   omit,
   pick,
   values,
@@ -153,7 +154,7 @@ export const getLocalApplicationTransporter = (
             (document as AssetDTO).fileName,
             fileData,
             fontData,
-            { existingAppMetadata },
+            { existingAppMetadata, skipGlobalMetadata: true },
           );
           relativePath = result.relativePath;
           docToWrite = result.assetDocument;
@@ -212,11 +213,14 @@ export const localStoreAsset = async (
   fileData: string | Buffer,
   font?: {
     fontFamily?: string;
-    weight?: number;
+    fontWeight?: number;
     fontStyle?: string;
     fontType?: string;
   },
-  options?: { existingAppMetadata?: ApplicationLocalMeta },
+  options?: {
+    existingAppMetadata?: ApplicationLocalMeta;
+    skipGlobalMetadata?: boolean;
+  },
 ): Promise<{ relativePath: string; assetDocument: EnsembleDocument }> => {
   const appsMetadata = await getGlobalMetadata();
   const appMetadata = appsMetadata[appId] || options?.existingAppMetadata;
@@ -253,6 +257,12 @@ export const localStoreAsset = async (
   const { relativePath } = await saveArtifact(assetDocument, appMetadata, {
     relativePath: fileName,
   });
+
+  if (options?.skipGlobalMetadata !== true) {
+    merge(appMetadata.manifest, { [assetDocument.id]: assetDocument });
+    appsMetadata[appId] = appMetadata;
+    await setGlobalMetadata(appsMetadata);
+  }
   return { relativePath, assetDocument };
 };
 
@@ -368,12 +378,14 @@ const setGlobalMetadata = async (
   await writeJsonData(filePath, metadata);
 };
 
-const getAppManifest = async (projectPath: string): Promise<HasManifest> => {
+const getAppManifest = async (
+  projectPath: string,
+): Promise<ApplicationLocalMeta> => {
   const filePath = join(projectPath, APP_MANIFEST_FILE);
 
   // Check if the file exists
   if (!existsSync(filePath)) {
-    return {};
+    return {} as ApplicationLocalMeta;
   }
 
   const manifest = readJsonFile<ApplicationLocalMeta>(filePath);
@@ -381,14 +393,14 @@ const getAppManifest = async (projectPath: string): Promise<HasManifest> => {
 };
 
 const setAppManifest = async (
-  manifest: HasManifest,
+  appMetadata: ApplicationLocalMeta,
   projectPath: string,
 ): Promise<void> => {
   ensureDir(projectPath);
 
   const filePath = join(projectPath, APP_MANIFEST_FILE);
 
-  await writeJsonData(filePath, manifest, true);
+  await writeJsonData(filePath, appMetadata, true);
 };
 
 const readJsonFile = async <T>(filePath: string): Promise<T> => {
@@ -416,7 +428,7 @@ const ensureDir = (path: string): void => {
   if (!existsSync(path)) mkdirSync(path, { recursive: true });
 };
 
-const isAssetOrFont = (document: EnsembleDocument): boolean => {
+const isAssetOrFont = (document: Partial<EnsembleDocument>): boolean => {
   return (
     document.type === EnsembleDocumentType.Asset ||
     document.type === EnsembleDocumentType.Font
@@ -429,10 +441,10 @@ const fetchFileData = async (url: string): Promise<Buffer> => {
   return Buffer.from(arrayBuffer);
 };
 
-const extractFontData = (fontDoc: FontDTO): object => {
+export const extractFontData = (fontDoc: FontDTO): object => {
   return {
     fontFamily: fontDoc.fontFamily,
-    weight: fontDoc.fontWeight,
+    fontWeight: fontDoc.fontWeight,
     fontStyle: fontDoc.fontStyle,
     fontType: fontDoc.fontType,
   };
