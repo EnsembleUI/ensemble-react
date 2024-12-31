@@ -134,7 +134,7 @@ export const useExecuteCode: EnsembleActionHook<
       if (!js) {
         return;
       }
-      const context = merge({}, evalContext, ...args, options?.context) as {
+      const context = merge({}, ...args, options?.context, evalContext) as {
         [key: string]: unknown;
       };
       const retVal = evaluate({ model: screenModel }, js, context);
