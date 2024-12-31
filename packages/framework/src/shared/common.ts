@@ -165,36 +165,34 @@ export const validateExpressions = (
 ): { isValid: boolean; expressions: string[] } => {
   const expressions: string[] = [];
   let currentExpr = "";
-  let depth = 0;
-  let i = 0;
+  let nestCount = 0;
 
-  while (i < value.length) {
+  for (let i = 0; i < value.length; i++) {
     if (value[i] === "$" && value[i + 1] === "{") {
-      if (depth === 0) {
+      if (nestCount === 0) {
         currentExpr = "";
       }
-      depth++;
+      nestCount++;
       currentExpr += value.slice(i, i + 2);
-      i += 2;
+      i++;
       continue;
     }
 
-    if (depth > 0) {
+    if (nestCount > 0) {
       currentExpr += value[i];
       if (value[i] === "{") {
-        depth++;
+        nestCount++;
       } else if (value[i] === "}") {
-        depth--;
-        if (depth === 0) {
+        nestCount--;
+        if (nestCount === 0) {
           expressions.push(currentExpr);
         }
       }
     }
-    i++;
   }
 
   return {
-    isValid: depth === 0 && expressions.length > 0,
+    isValid: nestCount === 0 && expressions.length > 0,
     expressions,
   };
 };
