@@ -8,8 +8,8 @@ export interface Response {
   headers?: fetcher.Headers;
   reasonPhrase?: string;
   isLoading: boolean;
-  isSuccess: boolean;
-  isError: boolean;
+  isSuccess?: boolean;
+  isError?: boolean;
 }
 
 export interface WebSocketConnection {

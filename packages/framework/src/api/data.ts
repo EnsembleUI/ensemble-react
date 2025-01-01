@@ -39,8 +39,7 @@ export const invokeAPI = async (
     // Now, because the API exists, set its state to loading
     set(update, api.name, {
       isLoading: true,
-      isError: false,
-      isSuccess: false,
+      statusCode: undefined,
     });
     setter(screenDataAtom, update);
   }
