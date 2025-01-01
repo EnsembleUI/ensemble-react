@@ -5,6 +5,7 @@ const frameworkActual = jest.requireActual("@ensembleui/react-framework");
 
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import "@testing-library/jest-dom";
 import { type ReactNode } from "react";
 import "../../../widgets";
 import { BrowserRouter } from "react-router-dom";
@@ -200,5 +201,72 @@ test("fetch API without cache", async () => {
 
   await waitFor(() => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+});
+
+test("after API response modal should close", async () => {
+  fetchMock.mockResolvedValue({ body: { data: "foobar" } });
+
+  render(
+    <EnsembleScreen
+      screen={{
+        name: "test_cache",
+        id: "test_cache",
+        body: {
+          name: "Button",
+          properties: {
+            label: "Show Dialog",
+            onTap: {
+              showDialog: {
+                widget: {
+                  Column: {
+                    children: [
+                      {
+                        Text: {
+                          text: "This is modal",
+                        },
+                      },
+                      {
+                        Button: {
+                          label: "Trigger API",
+                          onTap: {
+                            invokeAPI: {
+                              name: "testCache",
+                              onResponse: {
+                                executeCode: "ensemble.closeAllDialogs()",
+                              },
+                            },
+                          },
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+        },
+        apis: [{ name: "testCache", method: "GET" }],
+      }}
+    />,
+    { wrapper: BrowserRouterWrapper },
+  );
+
+  const showDialogButton = screen.getByText("Show Dialog");
+  fireEvent.click(showDialogButton);
+
+  const modalTitle = screen.getByText("This is modal");
+  const triggerAPIButton = screen.getByText("Trigger API");
+
+  await waitFor(() => {
+    expect(modalTitle).toBeInTheDocument();
+    expect(triggerAPIButton).toBeInTheDocument();
+  });
+
+  fireEvent.click(triggerAPIButton);
+
+  await waitFor(() => {
+    expect(modalTitle).not.toBeInTheDocument();
+    expect(triggerAPIButton).not.toBeInTheDocument();
   });
 });
