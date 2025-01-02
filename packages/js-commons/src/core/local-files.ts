@@ -10,7 +10,6 @@ import {
   isArray,
   isEmpty,
   isNil,
-  merge,
   omit,
   pick,
   values,
@@ -156,7 +155,7 @@ export const getLocalApplicationTransporter = (
             (document as AssetDTO).fileName,
             fileData,
             fontData,
-            { existingAppMetadata, skipGlobalMetadata: true },
+            { existingAppMetadata },
           );
           relativePath = result.relativePath;
           docToWrite = result.assetDocument;
@@ -221,11 +220,14 @@ export const localStoreAsset = async (
   },
   options?: {
     existingAppMetadata?: ApplicationLocalMeta;
-    skipGlobalMetadata?: boolean;
   },
 ): Promise<{ relativePath: string; assetDocument: EnsembleDocument }> => {
   const appsMetadata = await getGlobalMetadata();
-  const appMetadata = appsMetadata[appId] || options?.existingAppMetadata;
+  const existingAppMetadata = appsMetadata[appId];
+  const appMetadata =
+    options?.existingAppMetadata ||
+    (existingAppMetadata &&
+      (await getAppManifest(existingAppMetadata.projectPath)));
   if (!appMetadata) {
     throw new Error(`App ${appId} not found in local metadata`);
   }
@@ -260,11 +262,6 @@ export const localStoreAsset = async (
     relativePath: fileName,
   });
 
-  if (options?.skipGlobalMetadata !== true) {
-    merge(appMetadata.manifest, { [assetDocument.id]: assetDocument });
-    appsMetadata[appId] = appMetadata;
-    await setGlobalMetadata(appsMetadata);
-  }
   return { relativePath, assetDocument };
 };
 
