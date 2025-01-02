@@ -359,6 +359,7 @@ importers:
       lodash-es: ^4.17.21
       react-chartjs-2: ^5.2.0
       react-easy-crop: ^5.0.5
+      react-fast-compare: ^3.2.2
       react-markdown: ^8.0.7
       react-resizable: ^3.0.5
       react-router-dom: ^6.16.0
@@ -396,6 +397,7 @@ importers:
       lodash-es: 4.17.21
       react-chartjs-2: 5.2.0_chart.js@4.4.2
       react-easy-crop: 5.0.5
+      react-fast-compare: 3.2.2
       react-markdown: 8.0.7_@types+react@18.2.62
       react-resizable: 3.0.5
       react-router-dom: 6.22.2

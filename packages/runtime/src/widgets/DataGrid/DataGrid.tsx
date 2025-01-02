@@ -1,5 +1,6 @@
 import { Table, type TableProps } from "antd";
 import type { SorterResult } from "antd/es/table/interface";
+import isEqual from "react-fast-compare";
 import {
   Resizable,
   type ResizableProps,
@@ -547,6 +548,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
                     />
                   );
                 }}
+                shouldCellUpdate={(record, prev) => !isEqual(record, prev)}
                 sorter={
                   col.sort?.compareFn
                     ? (a, b): number =>
