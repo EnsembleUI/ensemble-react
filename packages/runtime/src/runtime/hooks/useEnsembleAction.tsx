@@ -171,9 +171,6 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     return apis?.find((api) => api.name === action.name);
   }, [action?.name, apis]);
 
-  const onAPIResponseAction = useEnsembleAction(currentApi?.onResponse);
-  const onAPIErrorAction = useEnsembleAction(currentApi?.onError);
-
   const invokeCommand = useCommandCallback(
     async (evalContext, ...args) => {
       if (!action?.name || !currentApi) return;
@@ -243,8 +240,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
         if (action.id) {
           setData(action.id, response);
         }
-
-        onAPIResponseAction?.callback({ ...context, response });
+        currentApi.onResponseAction?.callback({ ...context, response });
         onInvokeAPIResponseAction?.callback({ ...context, response });
       } catch (e) {
         logError(e);
@@ -262,8 +258,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
             isError: true,
           });
         }
-
-        onAPIErrorAction?.callback({ ...context, error: e });
+        currentApi.onErrorAction?.callback({ ...context, error: e });
         onInvokeAPIErrorAction?.callback({ ...context, error: e });
       }
     },
@@ -274,8 +269,6 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
       screenModel,
       appContext,
       queryClient,
-      onAPIResponseAction,
-      onAPIErrorAction,
       onInvokeAPIResponseAction,
       onInvokeAPIErrorAction,
     ],
