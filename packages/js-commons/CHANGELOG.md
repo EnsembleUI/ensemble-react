@@ -1,5 +1,11 @@
 # @ensembleui/js-commons
 
+## 0.0.17
+
+### Patch Changes
+
+- 774063f: Enhance application transporters to handle assets and fonts
+
 ## 0.0.16
 
 ### Patch Changes
