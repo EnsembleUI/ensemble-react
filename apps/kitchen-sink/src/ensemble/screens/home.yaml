@@ -10,12 +10,7 @@ View:
         ensemble.storage.set('bbb' , "0xffb91c1c")
         ensemble.storage.set('loading', true);
         console.log('>>> secret variable >>>', ensemble.secrets.dummyOauthSecret)
-        const res = await ensemble.invokeAPI('getDummyNumbers')
-        await new Promise((resolve) => setTimeout(resolve, 5000))
-        return res
-      onComplete:
-        executeCode: |
-          console.log('API triggered', result)
+        ensemble.invokeAPI('getDummyNumbers')
 
   header:
     title:
@@ -400,7 +395,7 @@ View:
                 onResponse:
                   executeCode: |
                     ensemble.storage.set('email', response.body.results[0].email)
-                    ensemble.storage.set('emails', [...ensemble.storage.get("emails"),response.body.results[0].email])
+                    ensemble.storage.set('emails', [...(ensemble.storage.get("emails") || []),response.body.results[0].email])
                     console.log('getData', response.body.results[0].email, ensemble.storage.get('emails'));
         - Column:
             item-template:
@@ -484,6 +479,8 @@ API:
     cache: true
     cacheTime: 10
     uri: https://randomuser.me/api/?results=1
+    onResponse: |
+      console.log('dummy product fetched')
 
   getDummyNumbers:
     method: GET
