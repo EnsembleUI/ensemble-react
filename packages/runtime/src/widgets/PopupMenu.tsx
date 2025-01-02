@@ -199,7 +199,8 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
         }}
         trigger={[values?.trigger || DEFAULT_POPUPMENU_TRIGGER]}
       >
-        <div>{widgetToRender}</div>
+        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+        <div onClick={(e) => e.stopPropagation()}>{widgetToRender}</div>
       </AntdDropdown>
     </div>
   );
