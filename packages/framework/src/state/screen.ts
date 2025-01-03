@@ -15,12 +15,15 @@ export interface ScreenContextDefinition {
 }
 
 export interface ScreenContextData {
-  [key: string]: Response | WebSocketConnection;
+  [key: string]: Partial<Response> | WebSocketConnection;
 }
 
 export interface ScreenContextActions {
   setWidget: (id: string, state: WidgetState) => void;
-  setData: (name: string, response: Response | WebSocketConnection) => void;
+  setData: (
+    name: string,
+    response: Partial<Response> | WebSocketConnection,
+  ) => void;
   setCustom: (id: string, data: unknown) => void;
 }
 

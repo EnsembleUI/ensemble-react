@@ -16,7 +16,10 @@ export const useScreenData = (): {
   apis?: EnsembleAPIModel[];
   sockets?: EnsembleSocketModel[];
   data: ScreenContextData;
-  setData: (name: string, response: Response | WebSocketConnection) => void;
+  setData: (
+    name: string,
+    response: Partial<Response> | WebSocketConnection,
+  ) => void;
   mockResponses: {
     [apiName: string]: EnsembleMockResponse | string | undefined;
   };
@@ -41,7 +44,7 @@ export const useScreenData = (): {
   const mockResponses = useEvaluate(apiMockResponses);
 
   const setData = useCallback(
-    (name: string, response: Response | WebSocketConnection) => {
+    (name: string, response: Partial<Response> | WebSocketConnection) => {
       if (isEqual(data[name], response)) {
         return;
       }

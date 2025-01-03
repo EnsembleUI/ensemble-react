@@ -195,15 +195,13 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
       // Set initial loading state
       setData(currentApi.name, {
         isLoading: true,
-        isSuccess: false,
-        isError: false,
+        statusCode: undefined,
       });
 
       if (action.id) {
         setData(action.id, {
           isLoading: true,
-          isSuccess: false,
-          isError: false,
+          statusCode: undefined,
         });
       }
 
