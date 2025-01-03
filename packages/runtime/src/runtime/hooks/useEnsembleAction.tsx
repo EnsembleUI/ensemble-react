@@ -178,7 +178,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     async (evalContext, ...args: unknown[]) => {
       if (!action?.name || !currentApi) return;
 
-      const context = merge({}, evalContext, ...args) as {
+      const context = merge({}, evalContext, args[0]) as {
         [key: string]: unknown;
       };
 
