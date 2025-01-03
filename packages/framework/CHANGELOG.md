@@ -1,5 +1,12 @@
 # @ensembleui/react-framework
 
+## 0.2.12
+
+### Patch Changes
+
+- 63302e9: fixed the regression related invokeAPI inputs evaluation
+- ed2f3a0: fix ensemble api response mapping with screendata
+
 ## 0.2.11
 
 ### Patch Changes
