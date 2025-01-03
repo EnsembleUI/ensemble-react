@@ -160,16 +160,59 @@ export const error = (value: unknown): void => {
   console.error(value);
 };
 
+export const validateExpressions = (
+  value: string,
+): { isValid: boolean; expressions: string[] } => {
+  const expressions: string[] = [];
+  let currentExpr = "";
+  let nestCount = 0;
+
+  for (let i = 0; i < value.length; i++) {
+    if (value[i] === "$" && value[i + 1] === "{") {
+      if (nestCount === 0) {
+        currentExpr = "";
+      }
+      nestCount++;
+      currentExpr += value.slice(i, i + 2);
+      i++;
+      continue;
+    }
+
+    if (nestCount > 0) {
+      currentExpr += value[i];
+      if (value[i] === "{") {
+        nestCount++;
+      } else if (value[i] === "}") {
+        nestCount--;
+        if (nestCount === 0) {
+          expressions.push(currentExpr);
+        }
+      }
+    }
+  }
+
+  return {
+    isValid: nestCount === 0 && expressions.length > 0,
+    expressions,
+  };
+};
+
 export const replace =
   (replacer: (expr: string) => string) =>
   (val: string): unknown => {
-    const matches = val.match(/\$\{+[^}]+\}+/g);
-    if (matches?.length === 1 && matches[0] === val) {
-      return replacer(val);
+    const { expressions, isValid } = validateExpressions(val);
+    if (isValid) {
+      if (expressions.length === 1 && val === expressions[0]) {
+        return replacer(expressions[0]);
+      }
+
+      let replacedValue = val;
+      expressions.forEach((expr) => {
+        replacedValue = replacedValue.replace(expr, replacer(expr));
+      });
+      return replacedValue;
     }
-    return val.replace(/\$\{+[^}]+\}+/g, (expression) => {
-      return replacer(expression);
-    });
+    return val;
   };
 
 export const visitExpressions = (
