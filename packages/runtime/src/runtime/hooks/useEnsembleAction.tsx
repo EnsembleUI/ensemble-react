@@ -175,10 +175,12 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const onAPIErrorAction = useEnsembleAction(currentApi?.onError);
 
   const invokeCommand = useCommandCallback(
-    async (evalContext, ...args) => {
+    async (evalContext, ...args: unknown[]) => {
       if (!action?.name || !currentApi) return;
 
-      const context = merge({}, evalContext, args[0]);
+      const context = merge({}, evalContext, args[0]) as {
+        [key: string]: unknown;
+      };
 
       if (action.name !== currentApi.name) return;
 
@@ -242,8 +244,14 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
           setData(action.id, response);
         }
 
-        onAPIResponseAction?.callback({ ...context, response });
-        onInvokeAPIResponseAction?.callback({ ...context, response });
+        onAPIResponseAction?.callback({
+          ...(args[0] as { [key: string]: unknown }),
+          response,
+        });
+        onInvokeAPIResponseAction?.callback({
+          ...(args[0] as { [key: string]: unknown }),
+          response,
+        });
       } catch (e) {
         logError(e);
 
@@ -261,22 +269,18 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
           });
         }
 
-        onAPIErrorAction?.callback({ ...context, error: e });
-        onInvokeAPIErrorAction?.callback({ ...context, error: e });
+        onAPIErrorAction?.callback({
+          ...(args[0] as { [key: string]: unknown }),
+          error: e,
+        });
+        onInvokeAPIErrorAction?.callback({
+          ...(args[0] as { [key: string]: unknown }),
+          error: e,
+        });
       }
     },
     { navigate },
-    [
-      action,
-      currentApi,
-      screenModel,
-      appContext,
-      queryClient,
-      onAPIResponseAction,
-      onAPIErrorAction,
-      onInvokeAPIResponseAction,
-      onInvokeAPIErrorAction,
-    ],
+    [action, currentApi, screenModel, appContext, queryClient],
   );
 
   return { callback: invokeCommand };
