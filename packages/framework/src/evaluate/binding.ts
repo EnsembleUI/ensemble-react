@@ -1,7 +1,7 @@
 import { parseExpressionAt, tokTypes } from "acorn";
 import type { Atom } from "jotai";
 import { atom } from "jotai";
-import { isNil, merge, omitBy } from "lodash-es";
+import { groupBy, has, isNil, merge, omitBy } from "lodash-es";
 import type { Expression } from "../shared";
 import { isExpression, sanitizeJs, debug, error } from "../shared";
 import {
@@ -13,7 +13,6 @@ import {
   themeAtom,
   envAtom,
   defaultScreenContext,
-  screenDataAtom,
   screenInputAtom,
   widgetFamilyAtom,
   screenGlobalScriptAtom,
@@ -21,6 +20,7 @@ import {
   userAtom,
   appAtom,
   secretAtom,
+  screenDataFamilyAtom,
 } from "../state";
 import { deviceAtom } from "../hooks/useDeviceObserver";
 import { evaluate } from "./evaluate";
@@ -62,22 +62,37 @@ export const createBindingAtom = <T = unknown>(
 
   const dependencyEntries = identifiers.map((identifier) => {
     debug(`found dependency for ${String(widgetId)}: ${identifier}`);
-    // TODO: Account for data bindings also
-    const dependencyAtom = widgetFamilyAtom(identifier);
-    return { name: identifier, dependencyAtom };
+    const widgetDepAtom = widgetFamilyAtom(identifier);
+    const dataDepAtom = screenDataFamilyAtom(identifier);
+    // TODO: find a better way to distinguish data and widget identifiers
+    return { name: identifier, dependencies: [dataDepAtom, widgetDepAtom] };
   });
 
   const bindingAtom = atom((get) => {
-    const data = get(screenDataAtom);
     const appData = get(appAtom);
-    const valueEntries = dependencyEntries.map(({ name, dependencyAtom }) => {
-      const value = get(dependencyAtom);
+    const valueEntries = dependencyEntries.map(({ name, dependencies }) => {
+      let value;
+      for (const depAtom of dependencies) {
+        const depValue = get<unknown>(depAtom);
+        if (depValue) {
+          value = depValue;
+          break;
+        }
+      }
       debug(
         `value for dependency ${name} at ${String(widgetId)}: ${JSON.stringify(
           value,
         )}`,
       );
       return [name, value];
+    });
+
+    const values = groupBy(valueEntries, ([, value]) => {
+      // is widget state
+      if (has(value, "values") || has(value, "invokables")) {
+        return "widgets";
+      }
+      return "data";
     });
 
     const evaluationContext = createEvaluationContext({
@@ -92,8 +107,8 @@ export const createBindingAtom = <T = unknown>(
       },
       screenContext: {
         inputs: get(screenInputAtom),
-        widgets: omitBy(Object.fromEntries(valueEntries), isNil),
-        data,
+        widgets: omitBy(Object.fromEntries(values.widgets ?? []), isNil),
+        data: omitBy(Object.fromEntries(values.data ?? []), isNil),
       },
       ensemble: {
         storage: createStorageApi(
