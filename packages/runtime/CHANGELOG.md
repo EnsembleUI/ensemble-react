@@ -1,5 +1,13 @@
 # @ensembleui/react-runtime
 
+## 0.3.8
+
+### Patch Changes
+
+- ae9c774: Grid performance improvements
+- 69d915e: Fix prevent modalContext override in API response handler
+- ed2f3a0: fix ensemble api response mapping with screendata
+
 ## 0.3.7
 
 ### Patch Changes
