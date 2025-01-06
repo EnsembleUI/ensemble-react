@@ -150,7 +150,7 @@ test("parse multiple theme in a single file", () => {
   });
 });
 
-test("parses application with no custom widgets", () => {
+test("throws error when widget API name conflicts with screen API name", () => {
   const appConfig = {
     widgets: [
       {
