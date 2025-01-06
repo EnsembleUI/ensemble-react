@@ -101,6 +101,20 @@ export const EnsembleParser = {
       throw Error("Application must have at least one screen");
     }
 
+    screens.forEach((screen) => {
+      if (!("apis" in screen)) return;
+
+      const apiNames = new Set<string>();
+      screen.apis.forEach((api) => {
+        if (apiNames.has(api.name)) {
+          throw new Error(
+            `Application has multiple apis with the same name (${api.name}) on this screen.`,
+          );
+        }
+        apiNames.add(api.name);
+      });
+    });
+
     const menu = screens.find(
       (screen) => "items" in screen,
     ) as EnsembleMenuModel;
