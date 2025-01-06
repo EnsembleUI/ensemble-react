@@ -7,3 +7,8 @@ Widget:
   body:
     Text:
       text: "bar"
+
+API:
+  getDummyProducts:
+    method: GET
+    uri: https://dummyjson.com/products

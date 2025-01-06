@@ -6,3 +6,10 @@ View:
       children:
         - Text:
             text: Peter Parker
+
+API:
+  getDummyProducts:
+    method: GET
+    cache: true
+    cacheTime: 10
+    uri: https://randomuser.me/api/?results=1

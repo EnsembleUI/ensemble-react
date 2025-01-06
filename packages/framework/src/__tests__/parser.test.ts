@@ -149,3 +149,34 @@ test("parse multiple theme in a single file", () => {
     },
   });
 });
+
+test("parses application with no custom widgets", () => {
+  const appConfig = {
+    widgets: [
+      {
+        id: "DispatchButton",
+        name: "DispatchButton",
+        content: fs
+          .readFileSync(`${__dirname}/__resources__/mycustomwidget.yaml`)
+          .toString(),
+      },
+    ],
+    screens: [
+      {
+        name: "home",
+        content: fs
+          .readFileSync(`${__dirname}/__resources__/helloworld.yaml`)
+          .toString(),
+      },
+    ],
+    scripts: [],
+    name: "test",
+    id: "test",
+  } as unknown as ApplicationDTO;
+
+  expect(() => {
+    EnsembleParser.parseApplication(appConfig);
+  }).toThrow(
+    "Application has multiple apis with the same name (getDummyProducts) on this screen.",
+  );
+});
