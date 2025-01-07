@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.9
+
+### Patch Changes
+
+- ead4915: fix navigateScreen action screen name and inputs evaluation
+
 ## 0.3.8
 
 ### Patch Changes
