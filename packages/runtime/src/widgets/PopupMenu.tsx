@@ -179,7 +179,8 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
   }, [namedData, values?.items]);
 
   const handleMenuItemClick = useCallback<NonNullable<MenuProps["onClick"]>>(
-    ({ key }) => {
+    ({ key, domEvent }) => {
+      domEvent.stopPropagation();
       const mapKey = join(tail(key.split("_")), "_");
       const item = itemsMap.get(mapKey);
       action?.callback({ value: item });
