@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.10
+
+### Patch Changes
+
+- 84ce505: Prevent propagation of popupmenu items
+
 ## 0.3.9
 
 ### Patch Changes
