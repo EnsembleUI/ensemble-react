@@ -177,6 +177,6 @@ test("throws error when widget API name conflicts with screen API name", () => {
   expect(() => {
     EnsembleParser.parseApplication(appConfig);
   }).toThrow(
-    "Application has multiple apis with the same name (getDummyProducts) on this screen.",
+    "Application has multiple apis with the same name (getDummyProducts) on (home) screen.",
   );
 });
