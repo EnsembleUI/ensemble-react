@@ -108,7 +108,7 @@ export const EnsembleParser = {
       screen.apis.forEach((api) => {
         if (apiNames.has(api.name)) {
           throw new Error(
-            `Application has multiple apis with the same name (${api.name}) on this screen.`,
+            `Application has multiple apis with the same name (${api.name}) on (${screen.name || screen.id}) screen.`,
           );
         }
         apiNames.add(api.name);
