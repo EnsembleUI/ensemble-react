@@ -8,7 +8,7 @@ export const defaultThemeDefinition = { name: "default" };
 export interface ApplicationContextDefinition {
   application: EnsembleAppModel | null;
   storage: unknown;
-  secrets: unknown;
+  secrets: { [key: string]: unknown };
   env: { [key: string]: unknown };
   auth: unknown;
   user: EnsembleUser | null;

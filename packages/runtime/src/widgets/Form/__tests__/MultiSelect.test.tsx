@@ -314,8 +314,16 @@ describe("MultiSelect Widget", () => {
 
     // Wait for the combobox to reflect the selected values
     await waitFor(() => {
-      expect(screen.getByText("Option 1")).toBeVisible();
-      expect(screen.getByText("Option 3")).toBeVisible();
+      expect(
+        screen.getByText("Option 1", {
+          selector: ".ant-select-selection-item-content",
+        }),
+      ).toBeVisible();
+      expect(
+        screen.getByText("Option 3", {
+          selector: ".ant-select-selection-item-content",
+        }),
+      ).toBeVisible();
     });
   });
 
