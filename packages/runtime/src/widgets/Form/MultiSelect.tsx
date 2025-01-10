@@ -53,6 +53,7 @@ export type MultiSelectProps = {
   onChange?: EnsembleAction;
   /** OnItemSelect is deprecated. Please use onChange instead */
   onItemSelect?: EnsembleAction;
+  onSearch?: EnsembleAction;
   hintStyle?: EnsembleWidgetStyles;
   allowCreateOptions?: boolean;
 } & EnsembleWidgetProps<MultiSelectStyles> &
@@ -66,6 +67,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
 
   const action = useEnsembleAction(props.onChange);
   const onItemSelectAction = useEnsembleAction(props.onItemSelect);
+  const onSearchAction = useEnsembleAction(props.onSearch);
 
   const { rawData } = useTemplateData({ data });
   const { id, rootRef, values } = useRegisterBindings(
@@ -146,6 +148,10 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   }, [selectedValues, formInstance]);
 
   const handleSearch = (value: string): void => {
+    if (props.onSearch) {
+      onSearchAction?.callback({ value });
+      return;
+    }
     const isOptionExist = options.find(
       (option) =>
         option.label.toString().toLowerCase().search(value.toLowerCase()) > -1,
@@ -156,6 +162,21 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     } else {
       setNewOption("");
     }
+  };
+
+  const handleFilterOption = (
+    input: string,
+    option?: MultiSelectOption,
+  ): boolean => {
+    if (props.onSearch) {
+      return false;
+    }
+    return (
+      option?.label
+        .toString()
+        ?.toLowerCase()
+        ?.startsWith(input.toLowerCase()) || false
+    );
   };
 
   // handle option change
@@ -298,17 +319,15 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
             disabled={values?.enabled === false}
             dropdownRender={newOptionRender}
             dropdownStyle={values?.styles}
-            filterOption={(input, option): boolean =>
-              option?.label
-                .toString()
-                ?.toLowerCase()
-                ?.startsWith(input.toLowerCase()) || false
-            }
+            filterOption={props.onSearch ? false : handleFilterOption}
             id={values?.id}
             labelRender={labelRender}
             mode={values?.allowCreateOptions ? "tags" : "multiple"}
             notFoundContent="No Results"
             onChange={handleChange}
+            onDropdownVisibleChange={(visible): void => {
+              if (!visible) onSearchAction?.callback({ value: "" });
+            }}
             onSearch={handleSearch} // required for display new custom option with Dropdown element
             optionFilterProp="children"
             options={options}
