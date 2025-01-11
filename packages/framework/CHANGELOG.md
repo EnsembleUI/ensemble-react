@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.2.13
+
+### Patch Changes
+
+- 1ec1e32: Improve grid rendering at large volumes
+
 ## 0.2.12
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.11
+
+### Patch Changes
+
+- 1ec1e32: Improve grid rendering at large volumes
+
 ## 0.3.10
 
 ### Patch Changes
