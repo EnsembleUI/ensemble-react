@@ -84,7 +84,7 @@ export interface DataGridRowTemplate {
 }
 
 export interface DataGridScrollable {
-  scrollHeight?: string;
+  scrollHeight?: string | number;
   scrollWidth?: string;
 }
 
@@ -109,6 +109,7 @@ export type GridProps = {
   pageSize?: number;
   totalRows?: number;
   curPage?: number;
+  virtual?: boolean;
 } & EnsembleWidgetProps<DataGridStyles>;
 
 function djb2Hash(str: string): number {
@@ -501,6 +502,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
               ? { display: "none" }
               : undefined),
           }}
+          virtual={values?.virtual}
         >
           {dataColumns.map((col, colIndex) => {
             return (
