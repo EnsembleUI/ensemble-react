@@ -6,7 +6,7 @@ import { findExpressions, findHexCodes, findTranslationKeys } from "../shared";
 import { createBindingAtom } from "../evaluate";
 import { useCustomScope } from "./useCustomScope";
 
-export const useEvaluate = <T extends Record<string, unknown>>(
+export const useEvaluate = <T extends { [key: string]: unknown }>(
   values?: T,
   options?: {
     context?: unknown;
@@ -31,7 +31,10 @@ export const useEvaluate = <T extends Record<string, unknown>>(
       expressions.map(([name, expr]) => {
         const valueAtom = createBindingAtom(
           expr,
-          merge({}, customScope, options?.context),
+          {
+            ...customScope,
+            ...(options?.context as { [key: string]: unknown }),
+          },
           options?.debugId,
         );
         return { name, valueAtom };
