@@ -473,5 +473,70 @@ describe("MultiSelect Widget", () => {
       expect(screen.queryByText("Option 3")).not.toBeInTheDocument();
     });
   });
+
+  test("supports search in multiselect widget 2", async () => {
+    render(
+      <Form
+        children={[
+          {
+            name: "MultiSelect",
+            properties: {
+              id: "searchInput",
+              label: "Choose Option",
+              data: `\${ensemble.storage.get('options')}`,
+              onSearch: {
+                executeCode: `
+                      const list = ensemble.storage.get('list') || [];
+                      const filtered = list.filter((option) => option?.label
+                        ?.toString()
+                        ?.toLowerCase()
+                        ?.startsWith(value.toLowerCase()));
+                      ensemble.storage.set('options', filtered)
+                      `,
+              },
+            },
+          },
+          {
+            name: "Button",
+            properties: {
+              label: "Set value",
+              onTap: {
+                executeCode: `
+                  const options = [
+                      { label: "Option 1", value: "option1" },
+                      { label: "Option 2", value: "option2" },
+                      { label: "Option 3", value: "option3" },
+                      { label: "Option 4", value: "option4" },
+                      { label: "Option 44", value: "option44" },
+                    ];
+                  ensemble.storage.set("options", options);
+                  ensemble.storage.set("list", options);
+              `,
+              },
+            },
+          },
+        ]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
+    );
+
+    const selector = ".ant-select-item-option-content";
+
+    const setValueButton = screen.getByText("Set value");
+    fireEvent.click(setValueButton);
+
+    userEvent.click(screen.getByRole("combobox"));
+    userEvent.type(document.querySelector("input") as HTMLElement, "Option 4");
+
+    // Wait for the combobox to reflect the selected values
+    await waitFor(() => {
+      expect(screen.getByText("Option 4", { selector })).toBeVisible();
+      expect(screen.queryByText("Option 1")).not.toBeInTheDocument();
+      expect(screen.queryByText("Option 2")).not.toBeInTheDocument();
+      expect(screen.queryByText("Option 3")).not.toBeInTheDocument();
+      expect(screen.queryByText("Option 44", { selector })).toBeVisible();
+    });
+  });
 });
 /* eslint-enable react/no-children-prop */

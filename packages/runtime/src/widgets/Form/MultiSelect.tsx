@@ -168,9 +168,6 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     input: string,
     option?: MultiSelectOption,
   ): boolean => {
-    if (props.onSearch) {
-      return false;
-    }
     return (
       option?.label
         .toString()
@@ -325,9 +322,6 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
             mode={values?.allowCreateOptions ? "tags" : "multiple"}
             notFoundContent="No Results"
             onChange={handleChange}
-            onDropdownVisibleChange={(visible): void => {
-              if (!visible) onSearchAction?.callback({ value: "" });
-            }}
             onSearch={handleSearch} // required for display new custom option with Dropdown element
             optionFilterProp="children"
             options={options}
