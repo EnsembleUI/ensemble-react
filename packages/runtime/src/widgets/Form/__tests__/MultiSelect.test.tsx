@@ -474,7 +474,7 @@ describe("MultiSelect Widget", () => {
     });
   });
 
-  test("supports search in multiselect widget 2", async () => {
+  test("supports on search action callback in multiselect widget", async () => {
     render(
       <Form
         children={[
