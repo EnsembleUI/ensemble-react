@@ -14,7 +14,8 @@ import {
 } from "@ensembleui/react-framework";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { Select as SelectComponent, Space, Form } from "antd";
-import { get, isArray, isEqual, isObject, isString } from "lodash-es";
+import { get, isArray, isEmpty, isEqual, isObject, isString } from "lodash-es";
+import { useDebounce } from "react-use";
 import { WidgetRegistry } from "../../registry";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import type {
@@ -53,7 +54,9 @@ export type MultiSelectProps = {
   onChange?: EnsembleAction;
   /** OnItemSelect is deprecated. Please use onChange instead */
   onItemSelect?: EnsembleAction;
-  onSearch?: EnsembleAction;
+  onSearch?: {
+    debounceMs: number;
+  } & EnsembleAction;
   hintStyle?: EnsembleWidgetStyles;
   allowCreateOptions?: boolean;
 } & EnsembleWidgetProps<MultiSelectStyles> &
@@ -64,6 +67,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   const [options, setOptions] = useState<MultiSelectOption[]>([]);
   const [newOption, setNewOption] = useState("");
   const [selectedValues, setSelectedValues] = useState<MultiSelectOption[]>();
+  const [searchValue, setSearchValue] = useState<string | null>(null);
 
   const action = useEnsembleAction(props.onChange);
   const onItemSelectAction = useEnsembleAction(props.onItemSelect);
@@ -149,7 +153,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
 
   const handleSearch = (value: string): void => {
     if (props.onSearch) {
-      onSearchAction?.callback({ value });
+      setSearchValue(value);
       return;
     }
     const isOptionExist = options.find(
@@ -163,6 +167,16 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
       setNewOption("");
     }
   };
+
+  useDebounce(
+    () => {
+      if (onSearchAction?.callback && !isEmpty(searchValue)) {
+        onSearchAction.callback({ search: searchValue });
+      }
+    },
+    props?.onSearch?.debounceMs || 0,
+    [searchValue],
+  );
 
   const handleFilterOption = (
     input: string,

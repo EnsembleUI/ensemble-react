@@ -490,7 +490,7 @@ describe("MultiSelect Widget", () => {
                       const filtered = list.filter((option) => option?.label
                         ?.toString()
                         ?.toLowerCase()
-                        ?.startsWith(value.toLowerCase()));
+                        ?.startsWith(search.toLowerCase()));
                       ensemble.storage.set('options', filtered)
                       `,
               },
