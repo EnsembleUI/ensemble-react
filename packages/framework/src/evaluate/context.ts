@@ -1,4 +1,4 @@
-import { mapKeys, merge, keys } from "lodash-es";
+import { mapKeys, keys } from "lodash-es";
 import type { EnsembleContext, EnsembleInterface } from "../shared/ensemble";
 import type {
   ApplicationContextDefinition,
@@ -29,22 +29,20 @@ export const createEvaluationContext = ({
   context,
 }: EvaluationContextProps): EnsembleContext => {
   const theme = applicationContext.selectedTheme;
-  const appInputs = merge(
-    {},
-    applicationContext.env,
-    applicationContext.secrets,
-    mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
-    { styles: theme?.Styles },
-  );
+  const appInputs = {
+    ...applicationContext.env,
+    ...applicationContext.secrets,
+    ...mapKeys(theme?.Tokens ?? {}, (_, key) => key.toLowerCase()),
+    ...{ styles: theme?.Styles },
+  } as Partial<ApplicationContextDefinition>;
 
-  const screenInputs = merge(
-    {},
-    screenContext.inputs,
-    screenContext.widgets
+  const screenInputs = {
+    ...screenContext.inputs,
+    ...(screenContext.widgets
       ? Object.fromEntries(widgetStatesToInvokables(screenContext.widgets))
-      : {},
-    screenContext.data,
-  );
+      : {}),
+    ...screenContext.data,
+  };
 
   const app = {
     languages: applicationContext.application?.languages,
@@ -58,11 +56,12 @@ export const createEvaluationContext = ({
   const env = applicationContext.env;
 
   // FIXME: this requires ensemble interface to be built outside of this function
-  return merge(
-    {},
-    { app, ensemble, env },
-    appInputs,
-    screenInputs,
-    context,
-  ) as EnsembleContext;
+  return {
+    app,
+    ensemble,
+    env,
+    ...appInputs,
+    ...screenInputs,
+    ...context,
+  } as EnsembleContext;
 };
