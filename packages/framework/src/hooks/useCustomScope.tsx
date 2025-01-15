@@ -1,6 +1,8 @@
 import { createContext, useContext } from "react";
 
-export type CustomScope = Record<string, unknown>;
+export interface CustomScope {
+  [key: string]: unknown;
+}
 type CustomScopeProps = {
   value?: CustomScope;
 } & React.PropsWithChildren<CustomScope>;
