@@ -463,17 +463,17 @@ View:
             data: ${ensemble.storage.get('products')}
             onSearch:
               executeCode: |
-                ensemble.invokeAPI('getProducts', { search: value }).then((res) => {
+                ensemble.invokeAPI('getProducts', { search: search }).then((res) => {
                   const users = res?.body?.users || [];
                   console.log(users , "users");
                   const newUsers = users.map((i) => ({ ...i, label: i.firstName + ' ' + i.lastName, name: i.firstName + ' ' + i.lastName, value: i.email }));
                   console.log(newUsers , "newUsers");
                   ensemble.storage.set('products', newUsers);
                 });
-                console.log("onSearch values: ", value);
+                console.log("onSearch values: ", search);
             onChange:
               executeCode: |
-                console.log("onChange values: ", value);
+                console.log("onChange values: ", search);
 
 Global:
   scriptName: test.js
