@@ -10,6 +10,8 @@ View:
         ensemble.storage.set('bbb' , "0xffb91c1c")
         ensemble.storage.set('loading', true);
         console.log('>>> secret variable >>>', ensemble.secrets.dummyOauthSecret)
+        ensemble.storage.set('products', []);
+        ensemble.invokeAPI('getDummyProducts').then((res) => ensemble.storage.set('products', (res?.body?.users || []).map((i) => ({ ...i, name: i.firstName + ' ' + i.lastName }))));
         const res = await ensemble.invokeAPI('getDummyNumbers')
         await new Promise((resolve) => setTimeout(resolve, 5000))
         return res
@@ -452,6 +454,27 @@ View:
               <p id="tag2">Until recently, the prevailing view assumed lorem ipsum was born as a nonsense text. “It's not Latin, though it looks like it, and it actually says nothing,” Before & After magazine answered a curious reader, “Its ‘words’ loosely approximate the frequency with which letters occur in English, which is why at a glance it looks pretty real.”</p>
               </div>
 
+        - MultiSelect:
+            id: multiSelect
+            label: Search multiple from API or Storage
+            placeholder: "Search or Select From Groups"
+            labelKey: name
+            valueKey: email
+            data: ${ensemble.storage.get('products')}
+            onSearch:
+              executeCode: |
+                ensemble.invokeAPI('getProducts', { search: search }).then((res) => {
+                  const users = res?.body?.users || [];
+                  console.log(users , "users");
+                  const newUsers = users.map((i) => ({ ...i, label: i.firstName + ' ' + i.lastName, name: i.firstName + ' ' + i.lastName, value: i.email }));
+                  console.log(newUsers , "newUsers");
+                  ensemble.storage.set('products', newUsers);
+                });
+                console.log("onSearch values: ", search);
+            onChange:
+              executeCode: |
+                console.log("onChange values: ", search);
+
 Global:
   scriptName: test.js
 
@@ -490,3 +513,9 @@ API:
     uri: https://661e111b98427bbbef034208.mockapi.io/number?limit=10
     onResponse: |
       console.log('dummy number fetched')
+
+  getProducts:
+    method: GET
+    inputs:
+      - search
+    uri: "https://dummyjson.com/users/search?q=${search}"
