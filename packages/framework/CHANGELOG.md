@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.2.14
+
+### Patch Changes
+
+- d5c5ef3: Copy custom scope objects when propagating to bindings
+
 ## 0.2.13
 
 ### Patch Changes
