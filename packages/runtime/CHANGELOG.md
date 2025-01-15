@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.12
+
+### Patch Changes
+
+- 376f97f: Added onSearch support in multiselect
+
 ## 0.3.11
 
 ### Patch Changes
