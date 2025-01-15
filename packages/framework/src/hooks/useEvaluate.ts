@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { atom, useAtom } from "jotai";
+import { atom, useAtomValue } from "jotai";
 import { compact, get, merge, set } from "lodash-es";
 import { useTranslation } from "react-i18next";
 import { findExpressions, findHexCodes, findTranslationKeys } from "../shared";
@@ -27,16 +27,17 @@ export const useEvaluate = <T extends { [key: string]: unknown }>(
   );
 
   const bindingsAtom = useMemo(() => {
+    const context = {
+      ...(customScope
+        ? (JSON.parse(JSON.stringify(customScope)) as {
+            [key: string]: unknown;
+          })
+        : customScope),
+      ...(options?.context as { [key: string]: unknown }),
+    };
     const bindingsEntries = compact(
       expressions.map(([name, expr]) => {
-        const valueAtom = createBindingAtom(
-          expr,
-          {
-            ...customScope,
-            ...(options?.context as { [key: string]: unknown }),
-          },
-          options?.debugId,
-        );
+        const valueAtom = createBindingAtom(expr, context, options?.debugId);
         return { name, valueAtom };
       }),
     );
@@ -52,7 +53,7 @@ export const useEvaluate = <T extends { [key: string]: unknown }>(
     });
   }, [expressions, customScope, options?.context, options?.debugId]);
 
-  const [bindings] = useAtom(bindingsAtom);
+  const bindings = useAtomValue(bindingsAtom);
 
   // evaluate language translations
   const translatedkeys = useMemo(() => {
