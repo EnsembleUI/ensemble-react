@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.105
+
+### Patch Changes
+
+- 376f97f: Added onSearch support in multiselect
+- Updated dependencies [376f97f]
+  - @ensembleui/react-runtime@0.3.12
+
 ## 0.0.104
 
 ### Patch Changes
