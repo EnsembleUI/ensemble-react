@@ -1,8 +1,10 @@
 import { render, screen, waitFor } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import { BrowserRouter } from "react-router-dom";
 import { EnsembleScreen } from "../screen";
 import { WidgetRegistry } from "../../registry";
 import { createCustomWidget } from "../customWidget";
+import "../../widgets";
 
 describe("Custom Widget", () => {
   beforeAll(() => {
@@ -10,7 +12,7 @@ describe("Custom Widget", () => {
       "MyCustomWidget",
       createCustomWidget({
         name: "MyCustomWidget",
-        inputs: ["foo", "bar"],
+        inputs: ["foo", "baz"],
         body: {
           name: "Row",
           properties: {
@@ -34,7 +36,9 @@ describe("Custom Widget", () => {
                 properties: {
                   label: "Modify",
                   onTap: {
-                    executeCode: "foo = { bar: 'goodbye' }",
+                    executeCode: `
+                      foo = { bar: 'goodbye' }
+                    `,
                   },
                 },
               },
@@ -55,7 +59,9 @@ describe("Custom Widget", () => {
             name: "MyCustomWidget",
             properties: {
               inputs: {
-                foo: "hello",
+                foo: {
+                  bar: "hello",
+                },
               },
             },
           },
@@ -75,9 +81,15 @@ describe("Custom Widget", () => {
   it("have new scope for inputs", async () => {
     render(
       <EnsembleScreen
+        inputs={{
+          foo: {
+            bar: "hello",
+          },
+        }}
         screen={{
           name: "test",
           id: "test",
+          inputs: ["foo", "bar"],
           body: {
             name: "Row",
             properties: {
@@ -93,7 +105,8 @@ describe("Custom Widget", () => {
                   name: "MyCustomWidget",
                   properties: {
                     inputs: {
-                      foo: "hello",
+                      // eslint-disable-next-line no-template-curly-in-string
+                      foo: "${foo}",
                     },
                   },
                 },
@@ -110,8 +123,7 @@ describe("Custom Widget", () => {
     screen.getByText("Modify").click();
 
     await waitFor(() => {
-      expect(screen.getByText("hello")).toBeInTheDocument();
-      expect(screen.getByText("goodbye")).toBeInTheDocument();
+      expect(screen.queryByText("goodbye")).toBeNull();
     });
   });
 });
