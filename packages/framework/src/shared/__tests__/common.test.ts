@@ -1,5 +1,9 @@
 import { evaluateDeep } from "../../evaluate";
-import { findExpressions, isCompoundExpression } from "../common";
+import {
+  deepCloneAsJSON,
+  findExpressions,
+  isCompoundExpression,
+} from "../common";
 
 test("find deeply nested expressions", () => {
   /* eslint-disable no-template-curly-in-string */
@@ -192,6 +196,63 @@ describe("validate expressions", () => {
         },
       ),
     ).toMatchObject({ name: ["x", "y"] });
+  });
+});
+
+describe("deepCloneAsJSON", () => {
+  it("should replace undefined values with null and deep clone the object", () => {
+    const original = {
+      a: 1,
+      b: undefined,
+      c: {
+        d: "test",
+        e: undefined,
+      },
+    };
+
+    const expected = {
+      a: 1,
+      b: null,
+      c: {
+        d: "test",
+        e: null,
+      },
+    };
+
+    const result = deepCloneAsJSON(original);
+    expect(result).toEqual(expected);
+  });
+
+  it("should handle arrays with undefined values correctly", () => {
+    const original = [1, undefined, { a: undefined }];
+    const expected = [1, null, { a: null }];
+
+    const result = deepCloneAsJSON(original);
+    expect(result).toEqual(expected);
+  });
+
+  it("should return an identical object when there are no undefined values", () => {
+    const original = { a: 1, b: "test", c: [1, 2, 3] };
+
+    const result = deepCloneAsJSON(original);
+    expect(result).toEqual(original);
+  });
+
+  it("should handle null values correctly without altering them", () => {
+    const original = { a: null, b: { c: null } };
+
+    const result = deepCloneAsJSON(original);
+    expect(result).toEqual(original);
+  });
+
+  it("should return null when the input is undefined", () => {
+    const result = deepCloneAsJSON(undefined);
+    expect(result).toBeNull();
+  });
+
+  it("should return null when the input is explicitly null", () => {
+    const result = deepCloneAsJSON(null);
+    expect(result).toBeNull();
   });
 });
 /* eslint-enable no-template-curly-in-string */
