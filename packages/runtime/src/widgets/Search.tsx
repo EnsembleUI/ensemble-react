@@ -119,7 +119,7 @@ export const Search: React.FC<SearchProps> = ({
 
   useDebounce(
     () => {
-      if (onSearchAction?.callback && !isEmpty(searchValue)) {
+      if (onSearchAction?.callback) {
         onSearchAction.callback({ search: searchValue });
       }
     },
