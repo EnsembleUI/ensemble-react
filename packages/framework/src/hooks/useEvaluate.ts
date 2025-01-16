@@ -2,7 +2,12 @@ import { useMemo } from "react";
 import { atom, useAtomValue } from "jotai";
 import { compact, get, merge, set } from "lodash-es";
 import { useTranslation } from "react-i18next";
-import { findExpressions, findHexCodes, findTranslationKeys } from "../shared";
+import {
+  deepCloneAsJSON,
+  findExpressions,
+  findHexCodes,
+  findTranslationKeys,
+} from "../shared";
 import { createBindingAtom } from "../evaluate";
 import { useCustomScope } from "./useCustomScope";
 
@@ -28,11 +33,7 @@ export const useEvaluate = <T extends { [key: string]: unknown }>(
 
   const bindingsAtom = useMemo(() => {
     const context = {
-      ...(customScope
-        ? (JSON.parse(JSON.stringify(customScope)) as {
-            [key: string]: unknown;
-          })
-        : customScope),
+      ...deepCloneAsJSON(customScope),
       ...(options?.context as { [key: string]: unknown }),
     };
     const bindingsEntries = compact(

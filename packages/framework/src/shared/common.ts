@@ -239,3 +239,12 @@ export const visitExpressions = (
 
   return clonedObj;
 };
+
+export const deepCloneAsJSON = <T>(obj?: T): T | null =>
+  obj === undefined
+    ? null
+    : (JSON.parse(
+        JSON.stringify(obj, (key, value: unknown) =>
+          value === undefined ? null : value,
+        ),
+      ) as T);
