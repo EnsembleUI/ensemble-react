@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.13
+
+### Patch Changes
+
+- c43f94d: Fix custom widget scope regression for undeclared inputs"
+
 ## 0.3.12
 
 ### Patch Changes
