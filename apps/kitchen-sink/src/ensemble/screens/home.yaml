@@ -504,8 +504,7 @@ API:
 
   getDummyProducts:
     method: GET
-    cache: true
-    cacheTime: 10
+    cacheExpirySeconds: 10
     uri: https://randomuser.me/api/?results=1
 
   getDummyNumbers:

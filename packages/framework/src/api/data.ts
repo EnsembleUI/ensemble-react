@@ -18,6 +18,7 @@ export const invokeAPI = async (
   context?: { [key: string]: unknown },
   evaluatedMockResponse?: string | EnsembleMockResponse,
   setter?: Setter,
+  forceRefresh?: boolean,
 ): Promise<Response | undefined> => {
   const api = screenContext.model?.apis?.find(
     (model) => model.name === apiName,
@@ -62,7 +63,10 @@ export const invokeAPI = async (
           useMockResponse,
         },
       ),
-    staleTime: api.cacheExpirySeconds ? api.cacheExpirySeconds * 1000 : 0,
+    staleTime:
+      api.cacheExpirySeconds && !forceRefresh
+        ? api.cacheExpirySeconds * 1000
+        : 0,
   });
 
   if (setter) {
