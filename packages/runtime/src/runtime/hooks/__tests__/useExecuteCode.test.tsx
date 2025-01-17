@@ -117,7 +117,7 @@ test("call ensemble.invokeAPI", async () => {
   expect(execResult).toBe(apiConfig.limit);
 });
 
-test("call ensemble.invokeAPI with forceRefresh", async () => {
+test("call ensemble.invokeAPI with bypassCache", async () => {
   const { result: withoutForce } = renderHook(
     () =>
       useExecuteCode(
@@ -129,7 +129,7 @@ test("call ensemble.invokeAPI with forceRefresh", async () => {
   const { result: withForce } = renderHook(
     () =>
       useExecuteCode(
-        "ensemble.invokeAPI('getDummyUser', null, { forceRefresh: true }).then((res) => res.body.results[0].email)",
+        "ensemble.invokeAPI('getDummyUser', null, { bypassCache: true }).then((res) => res.body.results[0].email)",
       ),
     { wrapper },
   );

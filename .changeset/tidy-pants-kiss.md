@@ -4,4 +4,4 @@
 "@ensembleui/react-runtime": patch
 ---
 
-Added support for forceRefresh cache in invokeAPI
+Added support for bypassCache cache in invokeAPI

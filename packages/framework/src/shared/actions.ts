@@ -26,7 +26,7 @@ export interface InvokeAPIAction {
   /** Specify the key/value pairs to pass into the API */
   inputs?: { [key: string]: Expression<unknown> };
   /** Forcefully clears the cache for this API invocation */
-  forceRefresh?: boolean;
+  bypassCache?: boolean;
   /** execute an Action upon successful completion of the API */
   onResponse?: EnsembleAction;
   /** execute an Action upon error */
@@ -223,5 +223,5 @@ export type EnsembleAction =
   | { dispatchEvent?: DispatchEventAction };
 
 export interface InvokeAPIOptions {
-  forceRefresh?: boolean;
+  bypassCache?: boolean;
 }

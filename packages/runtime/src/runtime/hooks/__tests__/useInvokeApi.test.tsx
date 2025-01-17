@@ -297,7 +297,7 @@ test("fetch API with force cache clear", async () => {
                   onTap: {
                     invokeAPI: {
                       name: "testForceCache",
-                      forceRefresh: true,
+                      bypassCache: true,
                     },
                   },
                 },

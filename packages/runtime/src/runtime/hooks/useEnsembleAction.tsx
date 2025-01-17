@@ -234,7 +234,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
               },
             ),
           staleTime:
-            currentApi.cacheExpirySeconds && !action.forceRefresh
+            currentApi.cacheExpirySeconds && !action.bypassCache
               ? currentApi.cacheExpirySeconds * 1000
               : 0,
         });

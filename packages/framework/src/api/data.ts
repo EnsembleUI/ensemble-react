@@ -65,7 +65,7 @@ export const invokeAPI = async (
         },
       ),
     staleTime:
-      api.cacheExpirySeconds && !options?.forceRefresh
+      api.cacheExpirySeconds && !options?.bypassCache
         ? api.cacheExpirySeconds * 1000
         : 0,
   });
