@@ -6,6 +6,7 @@ import type {
   EnsembleActionHookResult,
   EnsembleMockResponse,
   EnsembleSocketModel,
+  InvokeAPIOptions,
 } from "../shared";
 import { screenDataAtom, type ScreenContextDefinition } from "../state";
 import { isUsingMockResponse } from "../appConfig";
@@ -18,7 +19,7 @@ export const invokeAPI = async (
   context?: { [key: string]: unknown },
   evaluatedMockResponse?: string | EnsembleMockResponse,
   setter?: Setter,
-  forceRefresh?: boolean,
+  options?: InvokeAPIOptions,
 ): Promise<Response | undefined> => {
   const api = screenContext.model?.apis?.find(
     (model) => model.name === apiName,
@@ -45,7 +46,7 @@ export const invokeAPI = async (
     setter(screenDataAtom, update);
   }
 
-  // If mock resposne does not exist, fetch the data directly from the API
+  // If mock response does not exist, fetch the data directly from the API
   const useMockResponse =
     has(api, "mockResponse") && isUsingMockResponse(screenContext.app?.id);
 
@@ -64,7 +65,7 @@ export const invokeAPI = async (
         },
       ),
     staleTime:
-      api.cacheExpirySeconds && !forceRefresh
+      api.cacheExpirySeconds && !options?.forceRefresh
         ? api.cacheExpirySeconds * 1000
         : 0,
   });

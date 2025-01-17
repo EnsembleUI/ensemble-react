@@ -271,7 +271,7 @@ test("after API response modal should close", async () => {
   });
 });
 
-test.only("fetch API with force cache clear", async () => {
+test("fetch API with force cache clear", async () => {
   fetchMock.mockResolvedValue({ body: { data: "foobar" } });
 
   render(

@@ -221,3 +221,7 @@ export type EnsembleAction =
   | { messageSocket?: SendSocketMessageAction }
   | { disconnectSocket?: DisconnectSocketAction }
   | { dispatchEvent?: DispatchEventAction };
+
+export interface InvokeAPIOptions {
+  forceRefresh?: boolean;
+}

@@ -34,6 +34,12 @@ const wrapper: React.FC<React.PropsWithChildren> = ({ children }) => (
           uri: "https://dummyjson.com/products?skip=${skip}&limit=${limit}",
           inputs: ["skip", "limit"],
         },
+        {
+          name: "getDummyUser",
+          method: "GET",
+          uri: "https://randomuser.me/api/?results=1",
+          cacheExpirySeconds: 120,
+        },
       ],
     }}
   >
@@ -109,6 +115,37 @@ test("call ensemble.invokeAPI", async () => {
   });
 
   expect(execResult).toBe(apiConfig.limit);
+});
+
+test("call ensemble.invokeAPI with forceRefresh", async () => {
+  const { result: withoutForce } = renderHook(
+    () =>
+      useExecuteCode(
+        "ensemble.invokeAPI('getDummyUser', null).then((res) => res.body.results[0].email)",
+      ),
+    { wrapper },
+  );
+
+  const { result: withForce } = renderHook(
+    () =>
+      useExecuteCode(
+        "ensemble.invokeAPI('getDummyUser', null, { forceRefresh: true }).then((res) => res.body.results[0].email)",
+      ),
+    { wrapper },
+  );
+
+  let withoutForceInitialResult;
+  let withoutForceResult;
+  let withForceResult;
+
+  await act(async () => {
+    withoutForceInitialResult = await withoutForce.current?.callback();
+    withoutForceResult = await withoutForce.current?.callback();
+    withForceResult = await withForce.current?.callback();
+  });
+
+  expect(withoutForceInitialResult).toBe(withoutForceResult);
+  expect(withForceResult).not.toBe(withoutForceResult);
 });
 
 test.todo("populates application invokables");
