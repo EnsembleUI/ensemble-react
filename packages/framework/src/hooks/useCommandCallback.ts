@@ -22,6 +22,7 @@ import {
 import type {
   EnsembleScreenModel,
   EnsembleWidget,
+  InvokeAPIOptions,
   NavigateExternalScreen,
   NavigateModalScreenAction,
   NavigateScreenAction,
@@ -98,6 +99,7 @@ export const useCommandCallback = <
             invokeAPI: async (
               apiName: string,
               apiInputs?: { [key: string]: unknown },
+              options?: InvokeAPIOptions,
             ) =>
               invokeAPI(
                 apiName,
@@ -113,6 +115,7 @@ export const useCommandCallback = <
                 },
                 undefined,
                 set,
+                options,
               ),
             navigateExternalScreen: (url: NavigateExternalScreen) =>
               navigateExternalScreen(url),

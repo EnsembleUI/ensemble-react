@@ -233,9 +233,10 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
                 useMockResponse,
               },
             ),
-          staleTime: currentApi.cacheExpirySeconds
-            ? currentApi.cacheExpirySeconds * 1000
-            : 0,
+          staleTime:
+            currentApi.cacheExpirySeconds && !action.bypassCache
+              ? currentApi.cacheExpirySeconds * 1000
+              : 0,
         });
 
         setData(currentApi.name, response);

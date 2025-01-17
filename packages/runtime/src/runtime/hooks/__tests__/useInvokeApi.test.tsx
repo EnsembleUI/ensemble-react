@@ -270,3 +270,70 @@ test("after API response modal should close", async () => {
     expect(triggerAPIButton).not.toBeInTheDocument();
   });
 });
+
+test("fetch API with force cache clear", async () => {
+  fetchMock.mockResolvedValue({ body: { data: "foobar" } });
+
+  render(
+    <EnsembleScreen
+      screen={{
+        name: "test_force_cache_clear",
+        id: "test_force_cache_clear",
+        body: {
+          name: "Column",
+          properties: {
+            children: [
+              {
+                name: "Button",
+                properties: {
+                  label: "Without Force",
+                  onTap: { invokeAPI: { name: "testForceCache" } },
+                },
+              },
+              {
+                name: "Button",
+                properties: {
+                  label: "With Force",
+                  onTap: {
+                    invokeAPI: {
+                      name: "testForceCache",
+                      bypassCache: true,
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        },
+        apis: [
+          {
+            name: "testForceCache",
+            method: "GET",
+            cacheExpirySeconds: 60,
+          },
+        ],
+      }}
+    />,
+    { wrapper: BrowserRouterWrapper },
+  );
+
+  const withoutForce = screen.getByText("Without Force");
+  fireEvent.click(withoutForce);
+
+  await waitFor(() => {
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  fireEvent.click(withoutForce);
+
+  await waitFor(() => {
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  const withForce = screen.getByText("With Force");
+  fireEvent.click(withForce);
+
+  await waitFor(() => {
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+});
