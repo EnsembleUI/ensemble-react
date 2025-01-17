@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.2.16
+
+### Patch Changes
+
+- c7b0386: Added support for bypassCache cache in invokeAPI
+
 ## 0.2.15
 
 ### Patch Changes
