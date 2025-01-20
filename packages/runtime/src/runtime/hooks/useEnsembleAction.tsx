@@ -450,6 +450,12 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
   const onCompleteAction = useEnsembleAction(onComplete);
   const onErrorAction = useEnsembleAction(onError);
 
+  const reset = useCallback(() => {
+    if (inputEl) {
+      inputEl.value = "";
+    }
+  }, []);
+
   const { values } = useRegisterBindings(
     {
       files,
@@ -458,6 +464,7 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
     action?.id,
     {
       setFiles,
+      reset,
     },
     {
       comparator: isEqual,
