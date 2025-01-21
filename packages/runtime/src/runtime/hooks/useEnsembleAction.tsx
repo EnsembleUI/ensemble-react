@@ -453,6 +453,7 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
   const reset = useCallback(() => {
     if (inputEl) {
       inputEl.value = "";
+      inputEl.files = null;
     }
   }, []);
 
