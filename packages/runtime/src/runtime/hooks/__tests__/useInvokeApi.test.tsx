@@ -38,7 +38,7 @@ const BrowserRouterWrapper = ({ children }: BrowserRouterProps) => (
 );
 
 const logSpy = jest.spyOn(console, "log").mockImplementation(jest.fn());
-jest.spyOn(console, "error").mockImplementation(jest.fn());
+const errorSpy = jest.spyOn(console, "error").mockImplementation(jest.fn());
 
 beforeEach(() => {
   jest.useFakeTimers();
@@ -46,6 +46,7 @@ beforeEach(() => {
 
 afterEach(() => {
   logSpy.mockClear();
+  errorSpy.mockClear();
   jest.clearAllMocks();
   jest.useRealTimers();
   queryClient.clear();
@@ -438,8 +439,9 @@ test("after API fetching using toggle check states", async () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
+  fireEvent.click(screen.getByText("Verify States"));
+
   await waitFor(() => {
-    fireEvent.click(screen.getByText("Verify States"));
     expect(logSpy).toHaveBeenCalledWith(false);
   });
 });
