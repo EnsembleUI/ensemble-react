@@ -21,7 +21,7 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "pnpm"
       - name: Install dependencies
-        run: pnpm install          
+        run: pnpm install
       # TODO only do this when changesets are empty
       - name: Build Packages
         run: pnpm run build --filter=./packages
@@ -59,3 +59,33 @@ jobs:
           destination: "ensemble-react-starter"
           parent: false
           glob: "*.zip"
+
+  publish-to-npm:
+    name: Publish to npm Registry
+    runs-on: ubuntu-latest
+    needs: release
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build packages
+        run: pnpm run build
+
+      - name: Create .npmrc for npm Registry
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          echo "registry=https://registry.npmjs.org/" >> ~/.npmrc
+
+      - name: Publish to npm Registry
+        run: |
+          pnpm publish --workspace packages/framework
+          pnpm publish --workspace packages/runtime

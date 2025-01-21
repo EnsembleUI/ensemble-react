@@ -4,8 +4,13 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "./dist/**"
+    "./dist/**",
+    "README.md"
   ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "repository": "https://github.com/EnsembleUI/ensemble-react",
   "scripts": {
     "dev": "tsup src/index.tsx --format cjs --watch --dts --external react --sourcemap",
