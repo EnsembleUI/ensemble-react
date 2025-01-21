@@ -8,8 +8,7 @@
     "README.md"
   ],
   "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
+    "access": "public"
   },
   "repository": "https://github.com/EnsembleUI/ensemble-react",
   "scripts": {
