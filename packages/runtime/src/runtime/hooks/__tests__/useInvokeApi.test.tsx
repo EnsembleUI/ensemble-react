@@ -429,18 +429,17 @@ test("after API fetching using toggle check states", async () => {
     expect(screen.getByText("Bar")).toBeInTheDocument();
   });
 
+  fireEvent.click(screen.getByText("Bar"));
   await waitFor(() => {
-    fireEvent.click(screen.getByText("Bar"));
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
+  fireEvent.click(screen.getByText("Foo"));
   await waitFor(() => {
-    fireEvent.click(screen.getByText("Foo"));
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
   fireEvent.click(screen.getByText("Verify States"));
-
   await waitFor(() => {
     expect(logSpy).toHaveBeenCalledWith(false);
   });
