@@ -156,6 +156,7 @@ importers:
       '@craco/craco': ^7.1.0
       '@ensembleui/react-framework': workspace:*
       '@ensembleui/react-runtime': workspace:*
+      '@mui/icons-material': ^6.4.1
       '@testing-library/jest-dom': ^5.17.0
       '@testing-library/react': ^13.4.0
       '@testing-library/user-event': ^13.5.0
@@ -181,6 +182,7 @@ importers:
     dependencies:
       '@ensembleui/react-framework': link:../../packages/framework
       '@ensembleui/react-runtime': link:../../packages/runtime
+      '@mui/icons-material': 6.4.1_fb28c32afc3535fd55e20f7883f1b980
       firebase: 9.10.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -5892,7 +5894,7 @@ packages:
     engines: {node: '>=12'}
     dependencies:
       '@babel/code-frame': 7.23.5
-      '@babel/runtime': 7.25.0
+      '@babel/runtime': 7.26.0
       '@types/aria-query': 5.0.4
       aria-query: 5.1.3
       chalk: 4.1.2
