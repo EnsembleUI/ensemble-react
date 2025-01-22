@@ -11,9 +11,11 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
-import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
-import { CloseOutlined } from "@ant-design/icons";
+import {
+  CloseOutlined,
+  FullscreenOutlined,
+  FullscreenExitOutlined,
+} from "@ant-design/icons";
 import { generateRandomString, useEvaluate } from "@ensembleui/react-framework";
 import { isString, omit, pick } from "lodash-es";
 import { useNavigate } from "react-router-dom";
@@ -253,7 +255,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
 
   const getFullScreenIcon = (index: number): React.ReactNode =>
     isFullScreen[index] ? (
-      <CloseFullscreenIcon
+      <FullscreenExitOutlined
         onClick={(): void =>
           setIsFullScreen((oldIsFullScreen) => {
             const newIsFullScreen = [...oldIsFullScreen];
@@ -264,7 +266,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
         style={iconStyles}
       />
     ) : (
-      <OpenInFullIcon
+      <FullscreenOutlined
         onClick={(): void =>
           setIsFullScreen((oldIsFullScreen) => {
             const newIsFullScreen = [...oldIsFullScreen];

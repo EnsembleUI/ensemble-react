@@ -1,8 +1,7 @@
-import * as Icons from "@mui/icons-material";
-import type { SvgIconComponent } from "@mui/icons-material";
 import { get, isInteger } from "lodash-es";
-import React from "react";
-import { TextAlignment } from "./styleSchema";
+import type React from "react";
+import { IconRegistry } from "../registry";
+import type { TextAlignment } from "./styleSchema";
 
 type Color = number | string;
 
@@ -97,8 +96,10 @@ export const getCrossAxis = (crossAxis: string): string | undefined => {
   }
 };
 
-export const getIcon = (name: string): SvgIconComponent | undefined => {
-  return get(Icons, name) as SvgIconComponent;
+export const getIcon = <T = React.ComponentType<any>>(
+  name: string,
+): T | undefined => {
+  return IconRegistry.find(name) as T | undefined;
 };
 
 export const getComponentStyles = (

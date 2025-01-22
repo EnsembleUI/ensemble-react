@@ -34,6 +34,7 @@ importers:
       '@craco/craco': ^7.1.0
       '@ensembleui/react-framework': workspace:*
       '@ensembleui/react-runtime': workspace:*
+      '@mui/icons-material': ^6.4.1
       '@testing-library/jest-dom': ^5.17.0
       '@testing-library/react': ^13.4.0
       '@testing-library/user-event': ^13.5.0
@@ -58,6 +59,7 @@ importers:
     dependencies:
       '@ensembleui/react-framework': link:../../packages/framework
       '@ensembleui/react-runtime': link:../../packages/runtime
+      '@mui/icons-material': 6.4.1_fb28c32afc3535fd55e20f7883f1b980
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       web-vitals: 2.1.4
@@ -336,7 +338,6 @@ importers:
       '@emotion/styled': ^11.11.0
       '@ensembleui/react-framework': workspace:*
       '@lottiefiles/react-lottie-player': ^3.5.3
-      '@mui/icons-material': ^5.14.9
       '@mui/material': ^5.14.9
       '@mui/x-date-pickers': ^6.18.3
       '@react-oauth/google': ^0.12.1
@@ -374,7 +375,6 @@ importers:
       '@emotion/styled': 11.11.0_dd4092d1e0c7dc2863a676e563fa1e79
       '@ensembleui/react-framework': link:../framework
       '@lottiefiles/react-lottie-player': 3.5.3
-      '@mui/icons-material': 5.15.11_da55fe8c6e6066fef4b7dc0994910613
       '@mui/material': 5.15.11_d729d530559e435818d6dfbb9bc0bc34
       '@mui/x-date-pickers': 6.19.6_1dcf445c77f90e2d41581270c9a3b06f
       '@react-oauth/google': 0.12.1
@@ -2647,6 +2647,12 @@ packages:
     dependencies:
       regenerator-runtime: 0.14.1
 
+  /@babel/runtime/7.26.0:
+    resolution: {integrity: sha512-FDSOghenHTiToteC/QRlv2q3DhPZ/oOXTBoirfWNx1Cx3TMVcGWQtMMmQcSvb/JjpNeGzx8Pq/b4fKEJuWm1sw==}
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      regenerator-runtime: 0.14.1
+
   /@babel/template/7.24.0:
     resolution: {integrity: sha512-Bkf2q8lMB0AFpX0NFEqSbx1OkTHf0f+0j82mkw+ZpzBnkk7e9Ql0891vlfgi+kHwOk8tQjiQHpqh4LaSa0fKEA==}
     engines: {node: '>=6.9.0'}
@@ -4533,21 +4539,21 @@ packages:
     resolution: {integrity: sha512-JVrJ9Jo4gyU707ujnRzmE8ABBWpXd6FwL9GYULmwZRtfPg89ggXs/S3MStQkpJ1JRWfdLL6S5syXmgQGq5EDAw==}
     dev: true
 
-  /@mui/icons-material/5.15.11_da55fe8c6e6066fef4b7dc0994910613:
-    resolution: {integrity: sha512-R5ZoQqnKpd+5Ew7mBygTFLxgYsQHPhgR3TDXSgIHYIjGzYuyPLmGLSdcPUoMdi6kxiYqHlpPj4NJxlbaFD0UHA==}
-    engines: {node: '>=12.0.0'}
+  /@mui/icons-material/6.4.1_fb28c32afc3535fd55e20f7883f1b980:
+    resolution: {integrity: sha512-wsxFcUTQxt4s+7Bg4GgobqRjyaHLmZGNOs+HJpbwrwmLbT6mhIJxhpqsKzzWq9aDY8xIe7HCjhpH7XI5UD6teA==}
+    engines: {node: '>=14.0.0'}
     peerDependencies:
-      '@mui/material': ^5.0.0
-      '@types/react': ^17.0.0 || ^18.0.0
-      react: ^17.0.0 || ^18.0.0
+      '@mui/material': ^6.4.1
+      '@types/react': ^17.0.0 || ^18.0.0 || ^19.0.0
+      react: ^17.0.0 || ^18.0.0 || ^19.0.0
     peerDependenciesMeta:
       '@types/react':
         optional: true
     dependencies:
-      '@babel/runtime': 7.25.0
-      '@mui/material': 5.15.11_d729d530559e435818d6dfbb9bc0bc34
+      '@babel/runtime': 7.26.0
       '@types/react': 18.2.62
-    dev: true
+      react: 18.2.0
+    dev: false
 
   /@mui/material/5.15.11_d729d530559e435818d6dfbb9bc0bc34:
     resolution: {integrity: sha512-FA3eEuEZaDaxgN3CgfXezMWbCZ4VCeU/sv0F0/PK5n42qIgsPVD6q+j71qS7/62sp6wRFMHtDMpXRlN+tT/7NA==}
@@ -7708,7 +7714,7 @@ packages:
     resolution: {integrity: sha512-Cg7TFGpIr01vOQNODXOOaGz2NpCU5gl8x1qJFbb6hbZxR7XrcE2vtbAsTAbJ7/xwJtUuJEw8K8Zr/AE0LHlesg==}
     engines: {node: '>=10', npm: '>=6'}
     dependencies:
-      '@babel/runtime': 7.25.0
+      '@babel/runtime': 7.26.0
       cosmiconfig: 7.1.0
       resolve: 1.22.8
     dev: true
@@ -7808,7 +7814,7 @@ packages:
       '@babel/preset-env': 7.24.0_@babel+core@7.24.0
       '@babel/preset-react': 7.23.3_@babel+core@7.24.0
       '@babel/preset-typescript': 7.23.3_@babel+core@7.24.0
-      '@babel/runtime': 7.25.0
+      '@babel/runtime': 7.26.0
       babel-plugin-macros: 3.1.0
       babel-plugin-transform-react-remove-prop-types: 0.4.24
     transitivePeerDependencies:
@@ -10252,7 +10258,7 @@ packages:
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
     dependencies:
-      '@babel/runtime': 7.25.0
+      '@babel/runtime': 7.26.0
       aria-query: 5.3.0
       array-includes: 3.1.8
       array.prototype.flatmap: 1.3.2
@@ -17491,7 +17497,7 @@ packages:
   /regenerator-transform/0.15.2:
     resolution: {integrity: sha512-hfMp2BoF0qOk3uc5V20ALGDS2ddjQaLrdl7xrGXvAIow7qeWRM2VA2HuCHkUKk9slq3VwEwLNK3DFBqDfPGYtg==}
     dependencies:
-      '@babel/runtime': 7.25.0
+      '@babel/runtime': 7.26.0
     dev: true
 
   /regex-parser/2.3.0:
@@ -20195,7 +20201,7 @@ packages:
       '@apideck/better-ajv-errors': 0.3.6_ajv@8.12.0
       '@babel/core': 7.24.0
       '@babel/preset-env': 7.24.0_@babel+core@7.24.0
-      '@babel/runtime': 7.25.0
+      '@babel/runtime': 7.26.0
       '@rollup/plugin-babel': 5.3.1_@babel+core@7.24.0+rollup@2.79.1
       '@rollup/plugin-node-resolve': 11.2.1_rollup@2.79.1
       '@rollup/plugin-replace': 2.4.2_rollup@2.79.1

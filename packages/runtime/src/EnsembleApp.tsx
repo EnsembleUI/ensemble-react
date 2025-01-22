@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import type {
   ApplicationDTO,
   EnsembleAppModel,
   ApplicationLoader,
+  IconSet,
 } from "@ensembleui/react-framework";
 import {
   ApplicationContextProvider,
@@ -19,7 +20,7 @@ import { EnsembleScreen } from "./runtime/screen";
 import { ErrorPage } from "./runtime/error";
 // Register built in widgets;
 import "./widgets";
-import { WidgetRegistry } from "./registry";
+import { IconRegistry, WidgetRegistry } from "./registry";
 import { createCustomWidget } from "./runtime/customWidget";
 import { ModalWrapper } from "./runtime/modal";
 
@@ -49,6 +50,16 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
       return;
     }
 
+    const registerIcons = (iconSet?: IconSet): void => {
+      const { prefix = "", icons = {} } = (iconSet || {}) as {
+        prefix?: string;
+        icons?: { [key: string]: React.ComponentType<unknown> };
+      };
+      Object.entries(icons).forEach(([name, icon]) => {
+        IconRegistry.register(`${prefix}${name}`, icon);
+      });
+    };
+
     const parseApp = (appDto: ApplicationDTO): void => {
       const parsedApp = EnsembleParser.parseApplication(appDto);
       parsedApp.customWidgets.forEach((customWidget) => {
@@ -57,6 +68,13 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
           createCustomWidget(customWidget),
         );
       });
+
+      if (!appDto.icons?.mui) {
+        throw new Error("An mui icons must be provided");
+      }
+
+      registerIcons(appDto.icons.mui);
+      registerIcons(appDto.icons?.custom);
 
       setApp(parsedApp);
     };

@@ -27,7 +27,6 @@
     "@emotion/styled": "^11.11.0",
     "@ensembleui/react-framework": "workspace:*",
     "@lottiefiles/react-lottie-player": "^3.5.3",
-    "@mui/icons-material": "^5.14.9",
     "@mui/material": "^5.14.9",
     "@mui/x-date-pickers": "^6.18.3",
     "@react-oauth/google": "^0.12.1",
