@@ -65,7 +65,7 @@ export const Search: React.FC<SearchProps> = ({
   });
 
   const { id, rootRef, values } = useRegisterBindings(
-    { styles, value, ...rest, widgetName, initialValue },
+    { styles, value, ...rest, widgetName, initialValue, searchKey },
     rest.id,
     {
       setValue,
@@ -81,12 +81,12 @@ export const Search: React.FC<SearchProps> = ({
     (option: unknown): string | number => {
       return get(
         option,
-        searchKey
-          ? [itemTemplate?.name ?? "", searchKey]
+        values?.searchKey
+          ? [itemTemplate?.name ?? "", values.searchKey]
           : [(itemTemplate?.value || itemTemplate?.name) ?? ""],
       ) as string | number;
     },
-    [itemTemplate?.name, itemTemplate?.value, searchKey],
+    [itemTemplate?.name, itemTemplate?.value, values?.searchKey],
   );
 
   const renderOptions = useMemo(() => {
