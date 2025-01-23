@@ -93,7 +93,26 @@ jobs:
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
           echo "registry=https://registry.npmjs.org/" >> ~/.npmrc
 
-      - name: Publish to npm Registry
+      - name: Publish Framework Package
         run: |
-          pnpm publish --filter ./packages/framework --no-git-checks
-          pnpm publish --filter ./packages/runtime --no-git-checks
+          current_version=$(jq -r '.version' packages/framework/package.json)
+          latest_version=$(npm show @ensembleui/react-framework version || echo "none")
+          
+          if [ "$current_version" != "$latest_version" ]; then
+            echo "Publishing @ensembleui/react-framework version $current_version"
+            pnpm publish --filter ./packages/framework --no-git-checks
+          else
+            echo "No version change detected for @ensembleui/react-framework. Skipping publish."
+          fi
+
+      - name: Publish Runtime Package
+        run: |
+          current_version=$(jq -r '.version' packages/runtime/package.json)
+          latest_version=$(npm show @ensembleui/react-runtime version || echo "none")
+          
+          if [ "$current_version" != "$latest_version" ]; then
+            echo "Publishing @ensembleui/react-runtime version $current_version"
+            pnpm publish --filter ./packages/runtime --no-git-checks
+          else
+            echo "No version change detected for @ensembleui/react-runtime. Skipping publish."
+          fi
