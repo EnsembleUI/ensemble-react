@@ -1,0 +1,36 @@
+name: Publish to npm
+
+on:
+  push:
+    branches:
+      - publish-to-npm
+
+jobs:
+  publish:
+    name: Publish Packages to npm
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v4.0.0
+        with:
+          version: 6.32.2
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build packages
+        run: pnpm run build --filter=./packages
+
+      - name: Create .npmrc for npm Registry
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          echo "registry=https://registry.npmjs.org/" >> ~/.npmrc
+
+      - name: Publish to npm Registry
+        run: |
+          pnpm publish --filter ./packages/framework
+          pnpm publish --filter ./packages/runtime
