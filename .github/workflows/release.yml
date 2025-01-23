@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - test-workflow
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -88,5 +87,5 @@ jobs:
 
       - name: Publish to npm Registry
         run: |
-          pnpm publish --workspace packages/framework
-          pnpm publish --workspace packages/runtime
+          pnpm publish --filter ./packages/framework
+          pnpm publish --filter ./packages/runtime
