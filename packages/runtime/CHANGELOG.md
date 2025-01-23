@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.15
+
+### Patch Changes
+
+- c6213b2: Added support for reset pickFile
+
 ## 0.3.14
 
 ### Patch Changes

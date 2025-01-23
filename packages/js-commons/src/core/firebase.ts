@@ -79,6 +79,7 @@ export const getFirestoreApplicationTransporter = (
       EnsembleDocumentType.I18n
     ] as TranslationDTO[];
     const env = head(artifactsByType[EnsembleDocumentType.Environment]);
+    const secrets = head(artifactsByType[EnsembleDocumentType.Secrets]);
 
     return {
       ...app,
@@ -90,6 +91,7 @@ export const getFirestoreApplicationTransporter = (
       translations,
       assets,
       env,
+      secrets,
       fonts,
       manifest: Object.fromEntries(
         Object.values(artifactsByType).flatMap((artifacts) =>

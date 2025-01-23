@@ -379,6 +379,11 @@ View:
                         executeCode: |
                           console.log(error, files)
               - Button:
+                  label: clear files
+                  onTap:
+                    executeCode: |
+                      fileUploader1.reset();
+              - Button:
                   label: upload
                   onTap:
                     pickFiles:
