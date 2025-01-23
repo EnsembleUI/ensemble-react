@@ -29,7 +29,10 @@ jobs:
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
           echo "registry=https://registry.npmjs.org/" >> ~/.npmrc
-
+      
+      - name: Allow Publishing from publish-to-npm Branch
+        run: pnpm config set publish-branch publish-to-npm
+      
       - name: Publish to npm Registry
         run: |
           pnpm publish --filter ./packages/framework
