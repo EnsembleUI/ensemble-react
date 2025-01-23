@@ -80,6 +80,14 @@ jobs:
       - name: Build packages
         run: pnpm run build --filter=./packages
 
+      # Delete existing .npmrc file if it exists
+      - name: Delete existing .npmrc
+        run: |
+          if [ -f .npmrc ]; then
+            echo "Deleting existing .npmrc file"
+            rm .npmrc
+          fi
+
       - name: Create .npmrc for npm Registry
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
@@ -87,5 +95,5 @@ jobs:
 
       - name: Publish to npm Registry
         run: |
-          pnpm publish --filter ./packages/framework
-          pnpm publish --filter ./packages/runtime
+          pnpm publish --filter ./packages/framework --no-git-checks
+          pnpm publish --filter ./packages/runtime --no-git-checks
