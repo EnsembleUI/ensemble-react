@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - test-workflow
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -78,7 +79,7 @@ jobs:
         run: pnpm install
 
       - name: Build packages
-        run: pnpm run build
+        run: pnpm run build --filter=./packages
 
       - name: Create .npmrc for npm Registry
         run: |
