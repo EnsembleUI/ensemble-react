@@ -537,6 +537,18 @@ describe("MultiSelect Widget", () => {
       expect(screen.queryByText("Option 3")).not.toBeInTheDocument();
       expect(screen.queryByText("Option 44", { selector })).toBeVisible();
     });
+
+    // clear search value to show all options
+    userEvent.clear(document.querySelector("input") as HTMLElement);
+
+    // Wait for the combobox to reflect the selected values
+    await waitFor(() => {
+      expect(screen.getByText("Option 4", { selector })).toBeVisible();
+      expect(screen.queryByText("Option 1", { selector })).toBeVisible();
+      expect(screen.queryByText("Option 2", { selector })).toBeVisible();
+      expect(screen.queryByText("Option 3", { selector })).toBeVisible();
+      expect(screen.queryByText("Option 44", { selector })).toBeVisible();
+    });
   });
 });
 /* eslint-enable react/no-children-prop */

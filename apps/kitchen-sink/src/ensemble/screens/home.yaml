@@ -460,17 +460,12 @@ View:
             placeholder: "Search or Select From Groups"
             labelKey: name
             valueKey: email
-            data: ${ensemble.storage.get('products')}
+            data: "${getProducts.body.users?.map((i) => ({ ...i, name: i.firstName + ' ' + i.lastName })) || []}"
             onSearch:
-              executeCode: |
-                ensemble.invokeAPI('getProducts', { search: search }).then((res) => {
-                  const users = res?.body?.users || [];
-                  console.log(users , "users");
-                  const newUsers = users.map((i) => ({ ...i, label: i.firstName + ' ' + i.lastName, name: i.firstName + ' ' + i.lastName, value: i.email }));
-                  console.log(newUsers , "newUsers");
-                  ensemble.storage.set('products', newUsers);
-                });
-                console.log("onSearch values: ", search);
+              invokeAPI:
+                name: getProducts
+                inputs:
+                  search: ${search}
             onChange:
               executeCode: |
                 console.log("onChange values: ", search);
