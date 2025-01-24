@@ -83,7 +83,7 @@ export const Search: React.FC<SearchProps> = ({
         option,
         values?.searchKey
           ? [itemTemplate?.name ?? "", values.searchKey]
-          : [(itemTemplate?.value || itemTemplate?.name) ?? ""],
+          : itemTemplate?.value || itemTemplate?.name || "",
       ) as string | number;
     },
     [itemTemplate?.name, itemTemplate?.value, values?.searchKey],
@@ -95,21 +95,25 @@ export const Search: React.FC<SearchProps> = ({
     let dropdownOptions: JSX.Element[] = [];
 
     if (isObject(itemTemplate) && !isEmpty(namedData)) {
-      const tempOptions = namedData.map((item: unknown, index: number) => {
-        const optionValue = extractValue(item);
+      const tempOptions = namedData
+        .map((item: unknown, index: number) => {
+          const optionValue = extractValue(item);
 
-        return (
-          <SelectComponent.Option
-            className={`${values?.id || ""}_option`}
-            key={`${optionValue}_${index}`}
-            value={optionValue}
-          >
-            <CustomScopeProvider value={item as CustomScope}>
-              {EnsembleRuntime.render([itemTemplate.template])}
-            </CustomScopeProvider>
-          </SelectComponent.Option>
-        );
-      });
+          if (!optionValue) return null;
+
+          return (
+            <SelectComponent.Option
+              className={`${values?.id || ""}_option`}
+              key={`${optionValue}_${index}`}
+              value={optionValue}
+            >
+              <CustomScopeProvider value={item as CustomScope}>
+                {EnsembleRuntime.render([itemTemplate.template])}
+              </CustomScopeProvider>
+            </SelectComponent.Option>
+          );
+        })
+        .filter((option) => option !== null) as JSX.Element[];
 
       dropdownOptions = [...dropdownOptions, ...tempOptions];
     }
