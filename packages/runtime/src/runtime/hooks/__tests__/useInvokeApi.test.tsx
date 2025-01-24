@@ -37,19 +37,22 @@ const BrowserRouterWrapper = ({ children }: BrowserRouterProps) => (
   </QueryClientProvider>
 );
 
+const logSpy = jest.spyOn(console, "log").mockImplementation(jest.fn());
+const errorSpy = jest.spyOn(console, "error").mockImplementation(jest.fn());
+
 beforeEach(() => {
   jest.useFakeTimers();
 });
 
 afterEach(() => {
+  logSpy.mockClear();
+  errorSpy.mockClear();
   jest.clearAllMocks();
   jest.useRealTimers();
   queryClient.clear();
 });
 
 test("fetch API cache response for cache expiry", async () => {
-  const logSpy = jest.spyOn(console, "log");
-
   fetchMock.mockResolvedValue({ body: { data: "foobar" } });
 
   render(
@@ -162,8 +165,6 @@ test("fetch API cache response for unique inputs while cache expiry", async () =
 });
 
 test("fetch API without cache", async () => {
-  const logSpy = jest.spyOn(console, "log");
-
   fetchMock.mockResolvedValue({ body: { data: "foobar" } });
 
   render(
@@ -335,5 +336,111 @@ test("fetch API with force cache clear", async () => {
 
   await waitFor(() => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+});
+
+test("after API fetching using toggle check states", async () => {
+  fetchMock.mockResolvedValueOnce({ body: { data: "foo" }, isLoading: false });
+  fetchMock.mockResolvedValueOnce({ body: { data: "bar" }, isLoading: false });
+
+  render(
+    <EnsembleScreen
+      screen={{
+        name: "test",
+        id: "test",
+        body: {
+          name: "Column",
+          properties: {
+            children: [
+              {
+                name: "ToggleButton",
+                properties: {
+                  id: "toggleButton",
+                  value: "foo",
+                  items: [
+                    { label: "Foo", value: "foo" },
+                    { label: "Bar", value: "bar" },
+                  ],
+                  onChange: {
+                    executeConditionalAction: {
+                      conditions: [
+                        {
+                          if: `\${value === 'bar'}`,
+                          action: { invokeAPI: { name: "fetchBar" } },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+              {
+                name: "Conditional",
+                properties: {
+                  conditions: [
+                    {
+                      if: `\${toggleButton.value === "foo"}`,
+                      Column: {
+                        children: [
+                          {
+                            LoadingContainer: {
+                              isLoading: `\${fetchFoo.isLoading !== false}`,
+                              widget: {
+                                Text: { text: `\${fetchFoo.body.data}` },
+                              },
+                            },
+                          },
+                        ],
+                      },
+                    },
+                    {
+                      elseif: `\${toggleButton.value === "bar"}`,
+                      Column: {
+                        children: [{ Text: { text: `\${fetchFoo.data}` } }],
+                      },
+                    },
+                  ],
+                },
+              },
+              {
+                name: "Button",
+                properties: {
+                  label: "Verify States",
+                  onTap: { executeCode: "console.log(fetchFoo.isLoading)" },
+                },
+              },
+            ],
+          },
+        },
+        apis: [
+          { name: "fetchFoo", method: "GET" },
+          { name: "fetchBar", method: "GET" },
+        ],
+        onLoad: { invokeAPI: { name: "fetchFoo" } },
+      }}
+    />,
+    {
+      wrapper: BrowserRouterWrapper,
+    },
+  );
+
+  await waitFor(() => {
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(screen.getByText("Foo")).toBeInTheDocument();
+    expect(screen.getByText("Bar")).toBeInTheDocument();
+  });
+
+  fireEvent.click(screen.getByText("Bar"));
+  await waitFor(() => {
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  fireEvent.click(screen.getByText("Foo"));
+  await waitFor(() => {
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  fireEvent.click(screen.getByText("Verify States"));
+  await waitFor(() => {
+    expect(logSpy).toHaveBeenCalledWith(false);
   });
 });

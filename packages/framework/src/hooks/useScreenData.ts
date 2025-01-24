@@ -1,5 +1,4 @@
 import { useAtom, useAtomValue } from "jotai";
-import { clone } from "lodash-es";
 import { useCallback, useMemo } from "react";
 import isEqual from "react-fast-compare";
 import type { Response, WebSocketConnection } from "../data";
@@ -49,7 +48,7 @@ export const useScreenData = (): {
         return;
       }
       data[name] = response;
-      setDataAtom(clone(data));
+      setDataAtom({ [name]: response });
     },
     [data, setDataAtom],
   );
