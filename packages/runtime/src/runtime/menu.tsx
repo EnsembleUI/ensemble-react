@@ -1,4 +1,4 @@
-import type { PropsWithChildren, ReactNode } from "react";
+import type { PropsWithChildren } from "react";
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
   Menu as AntMenu,
@@ -6,7 +6,6 @@ import {
   Drawer as AntDrawer,
   ConfigProvider,
 } from "antd";
-import * as MuiIcons from "@mui/icons-material";
 import {
   unwrapWidget,
   useRegisterBindings,
@@ -15,8 +14,9 @@ import {
   EnsembleMenuModelType,
 } from "@ensembleui/react-framework";
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { cloneDeep, omit } from "lodash-es";
+import { cloneDeep, isString, omit } from "lodash-es";
 import { getColor } from "../shared/styles";
+import type { IconProps } from "../shared/types";
 import { EnsembleRuntime } from "./runtime";
 // eslint-disable-next-line import/no-cycle
 import { useEnsembleAction } from "./hooks";
@@ -48,8 +48,8 @@ export interface EnsembleMenuContext {
 interface MenuItemProps {
   id?: string;
   testId?: string;
-  icon?: string | { [key: string]: unknown };
-  activeIcon?: string | { [key: string]: unknown };
+  icon?: string | IconProps;
+  activeIcon?: string | IconProps;
   iconLibrary?: "default" | "fontAwesome";
   label?: string;
   url?: string;
@@ -97,29 +97,6 @@ interface DrawerMenuStyles extends MenuStyles {
   height?: string;
   position?: "left" | "right" | "top" | "bottom";
 }
-
-const renderMuiIcon = (
-  iconName?: string,
-  width = "15px",
-  height = "15px",
-): ReactNode => {
-  if (!iconName) {
-    return null;
-  }
-
-  const MuiIconComponent = MuiIcons[iconName as keyof typeof MuiIcons];
-  if (MuiIconComponent) {
-    return (
-      <MuiIconComponent
-        style={{
-          width,
-          height,
-        }}
-      />
-    );
-  }
-  return null;
-};
 
 const CustomLink: React.FC<PropsWithChildren & { item: MenuItemProps }> = ({
   item,
@@ -358,27 +335,26 @@ const MenuItems: React.FC<{
   setSelectedItem,
   isCollapsed = false,
 }) => {
-  const getIcon = useCallback(
+  const getCustomIcon = useCallback(
     (item: MenuItemProps) => {
       const key = selectedItem === item.page ? "activeIcon" : "icon";
-      const icon =
+      const iconProps =
         selectedItem === item.page && item.activeIcon
           ? item.activeIcon
           : item.icon;
 
-      if (!icon) {
+      if (!iconProps) {
         return null;
       }
 
-      if (typeof icon === "string") {
-        return renderMuiIcon(icon, styles.iconWidth, styles.iconHeight);
-      }
-      return EnsembleRuntime.render([
-        {
-          ...unwrapWidget({ Icon: icon }),
-          key,
-        },
-      ]);
+      const icon = isString(iconProps)
+        ? {
+            name: iconProps,
+            styles: { width: styles.iconWidth, height: styles.iconHeight },
+          }
+        : iconProps;
+
+      return EnsembleRuntime.render([{ ...unwrapWidget({ Icon: icon }), key }]);
     },
     [styles.iconHeight, styles.iconWidth, selectedItem],
   );
@@ -425,7 +401,7 @@ const MenuItems: React.FC<{
         {items.map((item, itemIndex) => (
           <AntMenu.Item
             data-testid={item.id ?? item.testId}
-            icon={getIcon(item)}
+            icon={getCustomIcon(item)}
             key={item.page || item.url || `customItem${itemIndex}`}
             onClick={(): void => {
               if (!item.openNewTab && item.page) {

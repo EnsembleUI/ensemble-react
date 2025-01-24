@@ -1,4 +1,5 @@
 import { type ApplicationDTO } from "@ensembleui/react-framework";
+import * as Icons from "@mui/icons-material";
 // Screens
 import MenuYAML from "./screens/menu.yaml";
 import HomeYAML from "./screens/home.yaml";
@@ -55,4 +56,11 @@ export const starterApp: ApplicationDTO = {
       content: String(HelpYAML),
     },
   ],
+  icons: {
+    mui: { icons: Icons as { [key: string]: React.ComponentType } },
+    custom: {
+      prefix: "Mui",
+      icons: Icons as { [key: string]: React.ComponentType },
+    },
+  },
 };
