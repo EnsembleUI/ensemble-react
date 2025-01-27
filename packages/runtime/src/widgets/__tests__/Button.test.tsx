@@ -1,3 +1,8 @@
+/* eslint import/first: 0 */
+const fetchMock = jest.fn();
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const frameworkActual = jest.requireActual("@ensembleui/react-framework");
+
 /* eslint-disable react/no-children-prop */
 import React, { useState } from "react";
 import { act } from "react-dom/test-utils";
@@ -9,6 +14,15 @@ import { useRegisterBindings } from "@ensembleui/react-framework";
 import { Button, type ButtonProps } from "../Button";
 import { createCustomWidget } from "../../runtime/customWidget";
 import { Column } from "../Column";
+import { EnsembleScreen } from "../../runtime/screen";
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+jest.mock("@ensembleui/react-framework", () => ({
+  ...frameworkActual,
+  DataFetcher: {
+    uploadFiles: fetchMock,
+  },
+}));
 
 describe("Button Widget Bindings Tests", () => {
   const logSpy = jest.spyOn(console, "log").mockImplementation(jest.fn());
@@ -442,11 +456,16 @@ describe("Button Component Render Tests", () => {
 });
 
 describe("Button Widget File Upload Tests", () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
   const logSpy = jest.spyOn(console, "log").mockImplementation(jest.fn());
   jest.spyOn(console, "error").mockImplementation(jest.fn());
 
   afterEach(() => {
     logSpy.mockClear();
+    jest.useRealTimers();
     jest.clearAllMocks();
   });
 
@@ -535,6 +554,72 @@ describe("Button Widget File Upload Tests", () => {
       fireEvent.click(screen.getByText("Clear Input"));
       fireEvent.click(screen.getByText("Verify Input"));
       expect(logSpy).toHaveBeenCalledWith({ input: null });
+    });
+  });
+
+  test("upload files using uploadFiles", async () => {
+    fetchMock.mockResolvedValue({ body: { data: "foobar" }, isSuccess: true });
+
+    render(
+      <EnsembleScreen
+        screen={{
+          name: "test_cache",
+          id: "test_cache",
+          body: {
+            name: "Button",
+            properties: {
+              label: "Test Cache",
+              onTap: {
+                pickFiles: {
+                  id: "imageInput",
+                  allowedExtensions: ["jpg", "png"],
+                  onComplete: {
+                    uploadFiles: {
+                      uploadApi: "https://randomuser.me/api",
+                      files: "Test Files",
+                      onComplete: {
+                        executeCode: "console.log('Success')",
+                      },
+                      onError: {
+                        executeCode: "console.log('Error uploading files')",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          apis: [
+            {
+              name: "https://randomuser.me/api",
+              method: "POST",
+            },
+          ],
+        }}
+      />,
+      { wrapper: BrowserRouter },
+    );
+
+    const imageBlob = new Blob(["image binary data"], { type: "image/png" });
+    const files = [new File([imageBlob], "example.png", { type: "image/png" })];
+
+    const pickFiles = document.querySelector("input") as HTMLInputElement;
+
+    // Upload file
+    await waitFor(() => {
+      userEvent.upload(pickFiles, files);
+    });
+
+    // First verify file is uploaded
+    await waitFor(() => {
+      expect(pickFiles.files).toHaveLength(1);
+      expect(pickFiles.files?.[0].name).toBe("example.png");
+    });
+
+    jest.advanceTimersByTime(5000);
+
+    await waitFor(() => {
+      expect(logSpy).toHaveBeenCalledWith("Success");
     });
   });
 });
