@@ -86,10 +86,13 @@ const CollapseItem = ({
 
   useEffect(() => {
     setEvaluatedKeys((prev) => {
+      if (currentIndex === 0) {
+        return [key];
+      }
       prev[currentIndex] = key;
       return [...prev];
     });
-  }, [key, setEvaluatedKeys]);
+  }, [key, currentIndex, setEvaluatedKeys]);
 
   return null;
 };
