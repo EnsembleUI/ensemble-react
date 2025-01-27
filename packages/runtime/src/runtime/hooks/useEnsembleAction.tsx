@@ -48,6 +48,7 @@ import {
   keys,
   last,
   toNumber,
+  noop,
 } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -562,7 +563,6 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
 ) => {
   const screenModel = useScreenModel();
   const appContext = useApplicationContext();
-  const navigate = useNavigate();
   const [body, setBody] = useState<{ [key: string]: unknown }>();
   const [headers, setHeaders] = useState<{ [key: string]: unknown }>();
   const [status, setStatus] = useState<UploadStatus>("pending");
@@ -654,7 +654,7 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
         onErrorAction?.callback({ error });
       }
     },
-    { navigate },
+    { navigate: noop },
     [action, apiModel, screenModel, appContext],
   );
 
