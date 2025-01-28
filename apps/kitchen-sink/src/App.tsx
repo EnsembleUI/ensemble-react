@@ -1,6 +1,6 @@
 import type { ApplicationDTO } from "@ensembleui/react-framework";
 import { EnsembleApp } from "@ensembleui/react-runtime";
-import * as Icons from "@mui/icons-material";
+import * as Icons from "react-feather";
 // Screens
 import React from "react";
 import MenuYAML from "./ensemble/screens/menu.yaml";
@@ -144,14 +144,13 @@ const testApp: ApplicationDTO = {
       content: String(TestActionsYAML),
     },
   ],
-  icons: {
-    mui: { icons: Icons as { [key: string]: React.ComponentType } },
-    custom: {
-      prefix: "Mui",
-      icons: Icons as { [key: string]: React.ComponentType },
-    },
-  },
   config: EnsembleConfig,
+  icons: [
+    {
+      icons: Icons,
+      prefix: "Fe",
+    },
+  ],
 };
 
 const App: React.FC = () => {

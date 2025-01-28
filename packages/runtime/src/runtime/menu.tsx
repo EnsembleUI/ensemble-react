@@ -401,7 +401,7 @@ const MenuItems: React.FC<{
         {items.map((item, itemIndex) => (
           <AntMenu.Item
             data-testid={item.id ?? item.testId}
-            icon={getCustomIcon(item)}
+            icon={<span>{getCustomIcon(item)}</span>}
             key={item.page || item.url || `customItem${itemIndex}`}
             onClick={(): void => {
               if (!item.openNewTab && item.page) {

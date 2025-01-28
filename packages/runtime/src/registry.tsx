@@ -35,7 +35,7 @@ export const IconRegistry = {
   find: (name: string): WidgetComponent<any> | ReactElement => {
     const Icon = iconRegistry[name];
     if (!Icon) {
-      return UnknownIcon;
+      return <UnknownIcon missingName={name} />;
     }
     return Icon;
   },
@@ -51,6 +51,6 @@ const UnknownWidget: React.FC<{ missingName: string }> = ({ missingName }) => {
   return <Alert message={`Unknown widget: ${missingName}`} type="error" />;
 };
 
-const UnknownIcon: React.FC<{ name: string }> = ({ name }) => {
-  return <Alert message={`Unknown icon: ${name}`} type="error" />;
+const UnknownIcon: React.FC<{ missingName: string }> = ({ missingName }) => {
+  return <Alert message={`Unknown icon: ${missingName}`} type="error" />;
 };

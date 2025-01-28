@@ -3,7 +3,6 @@ import type {
   ApplicationLoader,
   EnsembleDocument,
 } from "@ensembleui/react-framework";
-import * as Icons from "@mui/icons-material";
 import { getFirestoreApplicationLoader } from "@ensembleui/react-framework";
 import { EnsembleApp } from "@ensembleui/react-runtime";
 import { Alert } from "antd";
@@ -33,13 +32,6 @@ const customPreviewWidgetApp: ApplicationDTO = {
   scripts: [],
   id: "customWidgetPreview",
   name: "customWidgetPreview",
-  icons: {
-    mui: { icons: Icons as { [key: string]: React.ComponentType } },
-    custom: {
-      prefix: "Mui",
-      icons: Icons as { [key: string]: React.ComponentType },
-    },
-  },
 };
 
 const createCustomWidgetPreviewApp = (

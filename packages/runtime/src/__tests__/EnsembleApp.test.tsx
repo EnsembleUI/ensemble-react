@@ -57,12 +57,7 @@ test("Renders error page", () => {
     themes: {},
   });
   try {
-    render(
-      <EnsembleApp
-        appId="test"
-        application={{ icons: { mui: {} } } as ApplicationDTO}
-      />,
-    );
+    render(<EnsembleApp appId="test" application={{} as ApplicationDTO} />);
   } catch (e) {
     // no-op
   }
@@ -103,7 +98,6 @@ test("Renders view widget of home screen", () => {
       application={
         {
           screens: [{ content: "" }],
-          icons: { mui: {} },
         } as ApplicationDTO
       }
     />,
@@ -149,7 +143,6 @@ test("Bind data from other widgets", async () => {
       application={
         {
           screens: [{ content: "" }],
-          icons: { mui: {} },
         } as ApplicationDTO
       }
     />,
@@ -199,7 +192,6 @@ test("Updates values through Ensemble state", async () => {
       application={
         {
           screens: [{ content: "" }],
-          icons: { mui: {} },
         } as ApplicationDTO
       }
     />,
@@ -213,24 +205,4 @@ test("Updates values through Ensemble state", async () => {
 
   const updatedText = await screen.findByText("Spiderman");
   expect(updatedText).not.toBeNull();
-});
-
-test("Renders mui icon error", () => {
-  const logSpy = jest.spyOn(console, "error").mockImplementation(jest.fn());
-
-  parseApplicationMock.mockReturnValue({
-    home: {},
-    screens: [],
-    customWidgets: [],
-    themes: {},
-  });
-  try {
-    render(<EnsembleApp appId="test" application={{} as ApplicationDTO} />);
-  } catch (e) {
-    // no-op
-  }
-
-  expect(logSpy.mock.calls.toString()).toContain(
-    "An mui icons must be provided",
-  );
 });
