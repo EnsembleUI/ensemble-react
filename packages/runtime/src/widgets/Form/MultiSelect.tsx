@@ -14,7 +14,15 @@ import {
 } from "@ensembleui/react-framework";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { Select as SelectComponent, Space, Form } from "antd";
-import { get, isArray, isEmpty, isEqual, isObject, isString } from "lodash-es";
+import {
+  get,
+  isArray,
+  isEmpty,
+  isEqual,
+  isObject,
+  isString,
+  toNumber,
+} from "lodash-es";
 import { useDebounce } from "react-use";
 import { WidgetRegistry } from "../../registry";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
@@ -59,6 +67,12 @@ export type MultiSelectProps = {
   } & EnsembleAction;
   hintStyle?: EnsembleWidgetStyles;
   allowCreateOptions?: boolean;
+  /**	The max number of items can be selected */
+  maxCount: Expression<number>;
+  /** Max tag count to show */
+  maxTagCount: Expression<number | "responsive">;
+  /** Max tag text length to show */
+  maxTagTextLength: Expression<number>;
 } & EnsembleWidgetProps<MultiSelectStyles> &
   FormInputProps<object[] | string[]>;
 
@@ -98,8 +112,8 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
         isObject(item)
           ? {
               ...(item as { [key: string]: unknown }),
-              label: get(item, values?.labelKey || "label") as string,
-              value: get(item, values?.valueKey || "value") as string,
+              label: get(item, values.labelKey || "label") as string,
+              value: get(item, values.valueKey || "value") as string,
             }
           : item,
       );
@@ -174,7 +188,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
         onSearchAction.callback({ search: searchValue });
       }
     },
-    props?.onSearch?.debounceMs || 0,
+    props.onSearch?.debounceMs || 0,
     [searchValue],
   );
 
@@ -333,6 +347,15 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
             filterOption={props.onSearch ? false : handleFilterOption}
             id={values?.id}
             labelRender={labelRender}
+            maxCount={values?.maxCount ? toNumber(values.maxCount) : undefined}
+            maxTagCount={
+              values?.maxTagCount as number | "responsive" | undefined
+            }
+            maxTagTextLength={
+              values?.maxTagTextLength
+                ? toNumber(values.maxTagTextLength)
+                : undefined
+            }
             mode={values?.allowCreateOptions ? "tags" : "multiple"}
             notFoundContent="No Results"
             onChange={handleChange}

@@ -201,6 +201,9 @@ View:
                         placeholder: "Select From Groups"
                         value: ["hbingley1@plala.or.jp", "val 2"]
                         data: getData.body.users
+                        maxCount: 5
+                        maxTagCount: 3
+                        maxTagTextLength: 5
                         labelKey: firstName
                         valueKey: email
                         items: ${ensemble.storage.get('dummyData')}
