@@ -61,6 +61,7 @@ export interface ApplicationDTO
   readonly assets?: AssetDTO[];
   readonly fonts?: FontDTO[];
   readonly env?: EnvironmentDTO;
+  readonly secrets?: SecretDTO;
   readonly translations?: TranslationDTO[];
 }
 
@@ -111,6 +112,10 @@ export interface EnvironmentDTO {
   readonly secretVariables?: Record<string, unknown>;
 }
 
+export interface SecretDTO {
+  readonly secrets?: Record<string, unknown>;
+}
+
 export type AssetDTO = EnsembleDocument & {
   readonly type: EnsembleDocumentType.Asset;
   readonly fileName: string;
@@ -151,5 +156,6 @@ export const ArtifactProps = [
   "fonts",
   "translations",
   "env",
+  "secrets",
   "theme",
 ] as const;

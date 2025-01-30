@@ -21,7 +21,7 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "pnpm"
       - name: Install dependencies
-        run: pnpm install          
+        run: pnpm install
       # TODO only do this when changesets are empty
       - name: Build Packages
         run: pnpm run build --filter=./packages

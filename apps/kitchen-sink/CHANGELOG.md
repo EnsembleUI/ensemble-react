@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.109
+
+### Patch Changes
+
+- c6213b2: Added support for reset pickFile
+- Updated dependencies [c6213b2]
+  - @ensembleui/react-runtime@0.3.15
+
 ## 0.0.108
 
 ### Patch Changes
