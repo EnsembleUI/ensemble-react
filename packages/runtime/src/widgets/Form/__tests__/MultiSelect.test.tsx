@@ -538,5 +538,112 @@ describe("MultiSelect Widget", () => {
       expect(screen.queryByText("Option 44", { selector })).toBeVisible();
     });
   });
+
+  test("respects maxCount limit when selecting options", async () => {
+    render(
+      <Form
+        children={[
+          {
+            name: "MultiSelect",
+            properties: {
+              id: "multiSelect",
+              label: "Choose Option",
+              maxCount: 2,
+              data: [
+                { label: "Option 1", value: "option1" },
+                { label: "Option 2", value: "option2" },
+                { label: "Option 3", value: "option3" },
+                { label: "Option 4", value: "option4" },
+              ],
+            },
+          },
+          ...defaultFormButton,
+        ]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
+    );
+
+    const getValueButton = screen.getByText("Get Value");
+
+    userEvent.click(screen.getByRole("combobox"));
+    userEvent.click(screen.getByTitle("Option 1"));
+    userEvent.click(screen.getByTitle("Option 2"));
+
+    // should not be selectable
+    userEvent.click(screen.getByTitle("Option 3"));
+
+    fireEvent.click(getValueButton);
+
+    await waitFor(() => {
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ multiSelect: ["option1", "option2"] }),
+      );
+    });
+  });
+
+  test("displays correct number of tags based on maxTagCount", async () => {
+    render(
+      <Form
+        children={[
+          {
+            name: "MultiSelect",
+            properties: {
+              id: "multiSelect",
+              label: "Choose Option",
+              maxTagCount: 1,
+              data: [
+                { label: "Option 1", value: "option1" },
+                { label: "Option 2", value: "option2" },
+                { label: "Option 3", value: "option3" },
+                { label: "Option 4", value: "option4" },
+              ],
+              value: `\${["option1", "option2", "option3", "option4"]}`,
+            },
+          },
+        ]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Option 1")).toBeInTheDocument();
+      expect(screen.getByText("+ 3 ...")).toBeInTheDocument();
+
+      expect(screen.queryByText("Option 2")).toBeNull();
+      expect(screen.queryByText("Option 3")).toBeNull();
+      expect(screen.queryByText("Option 4")).toBeNull();
+    });
+  });
+
+  test("truncates tag text according to maxTagTextLength", async () => {
+    render(
+      <Form
+        children={[
+          {
+            name: "MultiSelect",
+            properties: {
+              id: "multiSelect",
+              label: "Choose Option",
+              maxTagTextLength: 6,
+              data: [
+                { label: "Very Long Option One", value: "option1" },
+                { label: "Another Long Option", value: "option2" },
+              ],
+              value: `\${["option1", "option2"]}`,
+            },
+          },
+        ]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Very L...")).toBeInTheDocument();
+      expect(screen.getByText("Anothe...")).toBeInTheDocument();
+    });
+  });
 });
 /* eslint-enable react/no-children-prop */
