@@ -14,7 +14,7 @@ import {
 } from "@ensembleui/react-framework";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { Select as SelectComponent, Space, Form } from "antd";
-import { get, isArray, isEmpty, isEqual, isObject, isString } from "lodash-es";
+import { get, isArray, isEqual, isObject, isString } from "lodash-es";
 import { useDebounce } from "react-use";
 import { WidgetRegistry } from "../../registry";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
@@ -170,7 +170,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
 
   useDebounce(
     () => {
-      if (onSearchAction?.callback && !isEmpty(searchValue)) {
+      if (onSearchAction?.callback) {
         onSearchAction.callback({ search: searchValue });
       }
     },
