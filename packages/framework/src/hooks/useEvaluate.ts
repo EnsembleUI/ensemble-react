@@ -1,12 +1,17 @@
 import { useMemo } from "react";
-import { atom, useAtom } from "jotai";
+import { atom, useAtomValue } from "jotai";
 import { compact, get, merge, set } from "lodash-es";
 import { useTranslation } from "react-i18next";
-import { findExpressions, findHexCodes, findTranslationKeys } from "../shared";
+import {
+  deepCloneAsJSON,
+  findExpressions,
+  findHexCodes,
+  findTranslationKeys,
+} from "../shared";
 import { createBindingAtom } from "../evaluate";
 import { useCustomScope } from "./useCustomScope";
 
-export const useEvaluate = <T extends Record<string, unknown>>(
+export const useEvaluate = <T extends { [key: string]: unknown }>(
   values?: T,
   options?: {
     context?: unknown;
@@ -27,13 +32,13 @@ export const useEvaluate = <T extends Record<string, unknown>>(
   );
 
   const bindingsAtom = useMemo(() => {
+    const context = {
+      ...deepCloneAsJSON(customScope),
+      ...(options?.context as { [key: string]: unknown }),
+    };
     const bindingsEntries = compact(
       expressions.map(([name, expr]) => {
-        const valueAtom = createBindingAtom(
-          expr,
-          merge({}, customScope, options?.context),
-          options?.debugId,
-        );
+        const valueAtom = createBindingAtom(expr, context, options?.debugId);
         return { name, valueAtom };
       }),
     );
@@ -49,7 +54,7 @@ export const useEvaluate = <T extends Record<string, unknown>>(
     });
   }, [expressions, customScope, options?.context, options?.debugId]);
 
-  const [bindings] = useAtom(bindingsAtom);
+  const bindings = useAtomValue(bindingsAtom);
 
   // evaluate language translations
   const translatedkeys = useMemo(() => {

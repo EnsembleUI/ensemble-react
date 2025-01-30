@@ -24,7 +24,6 @@ import type {
   EnsembleAction,
   PickFilesAction,
   UploadFilesAction,
-  ScreenContextDefinition,
   ShowDialogAction,
   CustomScope,
   NavigateBackAction,
@@ -49,6 +48,7 @@ import {
   keys,
   last,
   toNumber,
+  noop,
 } from "lodash-es";
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -233,9 +233,10 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
                 useMockResponse,
               },
             ),
-          staleTime: currentApi.cacheExpirySeconds
-            ? currentApi.cacheExpirySeconds * 1000
-            : 0,
+          staleTime:
+            currentApi.cacheExpirySeconds && !action.bypassCache
+              ? currentApi.cacheExpirySeconds * 1000
+              : 0,
         });
 
         setData(currentApi.name, response);
@@ -449,6 +450,13 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
   const onCompleteAction = useEnsembleAction(onComplete);
   const onErrorAction = useEnsembleAction(onError);
 
+  const reset = useCallback(() => {
+    if (inputEl) {
+      inputEl.value = "";
+      inputEl.files = null;
+    }
+  }, []);
+
   const { values } = useRegisterBindings(
     {
       files,
@@ -457,6 +465,7 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
     action?.id,
     {
       setFiles,
+      reset,
     },
     {
       comparator: isEqual,
@@ -552,6 +561,8 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
 export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
   action?: UploadFilesAction,
 ) => {
+  const screenModel = useScreenModel();
+  const appContext = useApplicationContext();
   const [body, setBody] = useState<{ [key: string]: unknown }>();
   const [headers, setHeaders] = useState<{ [key: string]: unknown }>();
   const [status, setStatus] = useState<UploadStatus>("pending");
@@ -591,32 +602,45 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
     setProgress(percentCompleted);
   }, []);
 
-  const evaluatedInputs = useEvaluate(action?.inputs);
+  const callback = useCommandCallback(
+    async (evalContext, ...args) => {
+      if (!action) return;
 
-  const callback = useCallback(
-    async (args: unknown): Promise<void> => {
-      if (!apiModel || !action) return;
+      if (!action.uploadApi || !apiModel) return;
 
-      const argContext = args as { [key: string]: unknown };
-      const files = evaluate<FileList>(
-        screenContext as ScreenContextDefinition,
-        action.files,
-        argContext,
-      );
+      const context = merge({}, evalContext, args[0]);
+
+      const evaluatedInputs = evaluateDeep(
+        { files: action.files },
+        screenModel,
+        context,
+      ) as { files: FileList };
+
+      const files = evaluatedInputs.files;
+
       if (isEmpty(files)) throw Error("Files not found");
 
       try {
         setStatus("running");
+
         const response = await DataFetcher.uploadFiles(
           apiModel,
           action,
           files,
           progressCallback,
-          { ...evaluatedInputs, ...argContext },
+          {
+            ...evaluatedInputs,
+            ...context,
+            ensemble: {
+              env: appContext?.env,
+              secrets: appContext?.secrets,
+            },
+          },
         );
 
         setBody(response.body as { [key: string]: unknown });
         setHeaders(response.headers as { [key: string]: unknown });
+
         if (response.isSuccess) {
           setStatus("completed");
           onCompleteAction?.callback({ response });
@@ -624,21 +648,14 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
           setStatus("failed");
           onErrorAction?.callback({ response });
         }
-      } catch (error: unknown) {
+      } catch (error) {
         setBody(error as { [key: string]: unknown });
         setStatus("failed");
         onErrorAction?.callback({ error });
       }
     },
-    [
-      action,
-      apiModel,
-      evaluatedInputs,
-      progressCallback,
-      screenContext,
-      onCompleteAction?.callback,
-      onErrorAction?.callback,
-    ],
+    { navigate: noop },
+    [action, apiModel, screenModel, appContext],
   );
 
   return { callback };

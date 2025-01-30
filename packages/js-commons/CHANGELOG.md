@@ -1,5 +1,11 @@
 # @ensembleui/js-commons
 
+## 0.0.18
+
+### Patch Changes
+
+- baa4363: feat: add secrets support in firestore app transporter
+
 ## 0.0.17
 
 ### Patch Changes

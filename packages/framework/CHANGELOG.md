@@ -1,5 +1,29 @@
 # @ensembleui/react-framework
 
+## 0.2.16
+
+### Patch Changes
+
+- c7b0386: Added support for bypassCache cache in invokeAPI
+
+## 0.2.15
+
+### Patch Changes
+
+- c43f94d: Fix custom widget scope regression for undeclared inputs"
+
+## 0.2.14
+
+### Patch Changes
+
+- d5c5ef3: Copy custom scope objects when propagating to bindings
+
+## 0.2.13
+
+### Patch Changes
+
+- 1ec1e32: Improve grid rendering at large volumes
+
 ## 0.2.12
 
 ### Patch Changes

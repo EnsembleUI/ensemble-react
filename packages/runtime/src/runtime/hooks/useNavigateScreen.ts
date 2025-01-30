@@ -3,12 +3,16 @@ import { isNil, isString, merge, cloneDeep } from "lodash-es";
 import { useNavigate } from "react-router-dom";
 import {
   useCommandCallback,
-  evaluate,
   useScreenModel,
   useApplicationContext,
   evaluateDeep,
 } from "@ensembleui/react-framework";
 import type { EnsembleActionHook } from "./useEnsembleAction";
+
+type EvaluatedData = {
+  screenName: string;
+  inputs?: { [key: string]: unknown };
+};
 
 export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
   action,
@@ -23,26 +27,26 @@ export const useNavigateScreen: EnsembleActionHook<NavigateScreenAction> = (
 
       const context = merge({}, evalContext, args[0]);
 
-      const screenName = isString(action) ? action : action.name;
-      const evaluatedName = evaluate<string>(
-        { model: screenModel },
-        screenName,
+      const { screenName, inputs } = evaluateDeep(
+        {
+          screenName: isString(action) ? action : action.name,
+          inputs:
+            !isString(action) && !isNil(action.inputs)
+              ? cloneDeep(action.inputs)
+              : undefined,
+        },
+        screenModel,
         context,
-      );
+      ) as EvaluatedData;
 
       const matchingScreen = appContext?.application?.screens.find(
-        (s) => s.name?.toLowerCase() === evaluatedName.toLowerCase(),
+        (s) => s.name?.toLowerCase() === screenName.toLowerCase(),
       );
 
       if (!matchingScreen?.name) return;
 
-      const evaluatedInputs =
-        !isString(action) && !isNil(action.inputs)
-          ? evaluateDeep(cloneDeep(action.inputs), screenModel, context)
-          : undefined;
-
       navigate(`/${matchingScreen.name.toLowerCase()}`, {
-        state: evaluatedInputs,
+        state: inputs,
       });
     },
     { navigate },

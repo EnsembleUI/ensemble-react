@@ -10,225 +10,243 @@ import { Button, type ButtonProps } from "../Button";
 import { createCustomWidget } from "../../runtime/customWidget";
 import { Column } from "../Column";
 
-test("test button loading using setLoading", async () => {
-  // Render the button component
-  const { container } = render(
-    <>
-      <Button id="checkLoader" label="Check Loader" />
-      <Button
-        label="Start Loader"
-        onTap={{
-          executeCode: "checkLoader.setLoading(true)",
-        }}
-      />
-      <Button
-        label="Stop Loader"
-        onTap={{
-          executeCode: "checkLoader.setLoading(false)",
-        }}
-      />
-    </>,
-    { wrapper: BrowserRouter },
-  );
+describe("Button Widget Bindings Tests", () => {
+  const logSpy = jest.spyOn(console, "log").mockImplementation(jest.fn());
+  jest.spyOn(console, "error").mockImplementation(jest.fn());
 
-  const loaderBtn = screen.getByText("Check Loader");
-
-  await waitFor(() => {
-    expect(loaderBtn).toBeInTheDocument();
-    expect(loaderBtn).not.toHaveAttribute("disabled");
+  afterEach(() => {
+    logSpy.mockClear();
+    jest.clearAllMocks();
   });
 
-  const startButton = screen.getByText("Start Loader");
-  fireEvent.click(startButton);
+  test("test button loading using setLoading", async () => {
+    // Render the button component
+    const { container } = render(
+      <>
+        <Button id="checkLoader" label="Check Loader" />
+        <Button
+          label="Start Loader"
+          onTap={{
+            executeCode: "checkLoader.setLoading(true)",
+          }}
+        />
+        <Button
+          label="Stop Loader"
+          onTap={{
+            executeCode: "checkLoader.setLoading(false)",
+          }}
+        />
+      </>,
+      { wrapper: BrowserRouter },
+    );
 
-  await waitFor(() => {
-    expect(screen.queryByText("Check Loader")).not.toBeInTheDocument();
-    expect(container.querySelector(".anticon-loading")).toBeInTheDocument();
+    const loaderBtn = screen.getByText("Check Loader");
+
+    await waitFor(() => {
+      expect(loaderBtn).toBeInTheDocument();
+      expect(loaderBtn).not.toHaveAttribute("disabled");
+    });
+
+    const startButton = screen.getByText("Start Loader");
+    fireEvent.click(startButton);
+
+    await waitFor(() => {
+      expect(screen.queryByText("Check Loader")).not.toBeInTheDocument();
+      expect(container.querySelector(".anticon-loading")).toBeInTheDocument();
+    });
+
+    const stopButton = screen.getByText("Stop Loader");
+    fireEvent.click(stopButton);
+
+    await waitFor(() => {
+      expect(screen.queryByText("Check Loader")).toBeInTheDocument();
+      expect(
+        container.querySelector(".anticon-loading"),
+      ).not.toBeInTheDocument();
+    });
   });
 
-  const stopButton = screen.getByText("Stop Loader");
-  fireEvent.click(stopButton);
+  test("test button loading using bindings and update through setLoading", async () => {
+    const Test = createCustomWidget({
+      onLoad: {
+        executeCode: "ensemble.storage.set('loaderStat', true)",
+      },
+      name: "",
+      inputs: [],
+      body: {
+        name: "Row",
+        properties: {},
+      },
+    });
 
-  await waitFor(() => {
-    expect(screen.queryByText("Check Loader")).toBeInTheDocument();
-    expect(container.querySelector(".anticon-loading")).not.toBeInTheDocument();
-  });
-});
-
-test("test button loading using bindings and update through setLoading", async () => {
-  const Test = createCustomWidget({
-    onLoad: {
-      executeCode: "ensemble.storage.set('loaderStat', true)",
-    },
-    name: "",
-    inputs: [],
-    body: {
-      name: "Row",
-      properties: {},
-    },
-  });
-
-  // Render the button component
-  const { container } = render(
-    <>
-      <Test events={{}} inputs={{}} />
-      <Column
-        children={[
-          {
-            name: "Button",
-            properties: {
-              id: "checkLoader",
-              label: "Check Loader",
-              loading: `\${ensemble.storage.get('loaderStat')}`,
-            },
-          },
-          {
-            name: "Button",
-            properties: {
-              id: "stopLoader",
-              label: "Stop Loader",
-              onTap: {
-                executeCode: "checkLoader.setLoading(!checkLoader.loading)",
+    // Render the button component
+    const { container } = render(
+      <>
+        <Test events={{}} inputs={{}} />
+        <Column
+          children={[
+            {
+              name: "Button",
+              properties: {
+                id: "checkLoader",
+                label: "Check Loader",
+                loading: `\${ensemble.storage.get('loaderStat')}`,
               },
             },
-          },
-        ]}
-      />
-    </>,
-    {
-      wrapper: BrowserRouter,
-    },
-  );
-
-  await waitFor(() => {
-    expect(screen.queryByText("Check Loader")).not.toBeInTheDocument();
-    expect(container.querySelector(".anticon-loading")).toBeInTheDocument();
-  });
-
-  const stopButton = screen.getByText("Stop Loader");
-  fireEvent.click(stopButton);
-
-  await waitFor(() => {
-    expect(screen.queryByText("Check Loader")).toBeInTheDocument();
-    expect(container.querySelector(".anticon-loading")).not.toBeInTheDocument();
-  });
-});
-
-test("test button loading using bindings and update through setLoading 2", async () => {
-  const Test = createCustomWidget({
-    onLoad: {
-      executeCode: "ensemble.storage.set('loaderStat', false)",
-    },
-    name: "",
-    inputs: [],
-    body: {
-      name: "Row",
-      properties: {},
-    },
-  });
-
-  // Render the button component
-  const { container } = render(
-    <>
-      <Test events={{}} inputs={{}} />
-      <Column
-        children={[
-          {
-            name: "Button",
-            properties: {
-              id: "checkLoader",
-              label: "Check Loader",
-              loading: `\${ensemble.storage.get('loaderStat')}`,
-            },
-          },
-          {
-            name: "Button",
-            properties: {
-              id: "startLoader",
-              label: "Start Loader",
-              onTap: {
-                executeCode: "checkLoader.setLoading(!checkLoader.loading)",
+            {
+              name: "Button",
+              properties: {
+                id: "stopLoader",
+                label: "Stop Loader",
+                onTap: {
+                  executeCode: "checkLoader.setLoading(!checkLoader.loading)",
+                },
               },
             },
-          },
-        ]}
-      />
-    </>,
-    {
-      wrapper: BrowserRouter,
-    },
-  );
+          ]}
+        />
+      </>,
+      {
+        wrapper: BrowserRouter,
+      },
+    );
 
-  await waitFor(() => {
-    expect(screen.queryByText("Check Loader")).toBeInTheDocument();
-    expect(container.querySelector(".anticon-loading")).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByText("Check Loader")).not.toBeInTheDocument();
+      expect(container.querySelector(".anticon-loading")).toBeInTheDocument();
+    });
+
+    const stopButton = screen.getByText("Stop Loader");
+    fireEvent.click(stopButton);
+
+    await waitFor(() => {
+      expect(screen.queryByText("Check Loader")).toBeInTheDocument();
+      expect(
+        container.querySelector(".anticon-loading"),
+      ).not.toBeInTheDocument();
+    });
   });
 
-  const startButton = screen.getByText("Start Loader");
-  fireEvent.click(startButton);
+  test("test button loading using bindings and update through setLoading 2", async () => {
+    const Test = createCustomWidget({
+      onLoad: {
+        executeCode: "ensemble.storage.set('loaderStat', false)",
+      },
+      name: "",
+      inputs: [],
+      body: {
+        name: "Row",
+        properties: {},
+      },
+    });
 
-  await waitFor(() => {
-    expect(screen.queryByText("Check Loader")).not.toBeInTheDocument();
-    expect(container.querySelector(".anticon-loading")).toBeInTheDocument();
-  });
-});
-
-test("test button loading using bindings", async () => {
-  const Test = createCustomWidget({
-    onLoad: {
-      executeCode: "ensemble.storage.set('loaderStat', true)",
-    },
-    name: "",
-    inputs: [],
-    body: {
-      name: "Row",
-      properties: {},
-    },
-  });
-
-  // Render the button component
-  const { container } = render(
-    <>
-      <Test events={{}} inputs={{}} />
-      <Column
-        children={[
-          {
-            name: "Button",
-            properties: {
-              id: "checkLoader",
-              label: "Check Loader",
-              loading: `\${ensemble.storage.get('loaderStat')}`,
-            },
-          },
-          {
-            name: "Button",
-            properties: {
-              id: "stopLoader",
-              label: "Stop Loader",
-              onTap: {
-                executeCode: "ensemble.storage.set('loaderStat', false)",
+    // Render the button component
+    const { container } = render(
+      <>
+        <Test events={{}} inputs={{}} />
+        <Column
+          children={[
+            {
+              name: "Button",
+              properties: {
+                id: "checkLoader",
+                label: "Check Loader",
+                loading: `\${ensemble.storage.get('loaderStat')}`,
               },
             },
-          },
-        ]}
-      />
-    </>,
-    {
-      wrapper: BrowserRouter,
-    },
-  );
+            {
+              name: "Button",
+              properties: {
+                id: "startLoader",
+                label: "Start Loader",
+                onTap: {
+                  executeCode: "checkLoader.setLoading(!checkLoader.loading)",
+                },
+              },
+            },
+          ]}
+        />
+      </>,
+      {
+        wrapper: BrowserRouter,
+      },
+    );
 
-  await waitFor(() => {
-    expect(screen.queryByText("Check Loader")).not.toBeInTheDocument();
-    expect(container.querySelector(".anticon-loading")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByText("Check Loader")).toBeInTheDocument();
+      expect(
+        container.querySelector(".anticon-loading"),
+      ).not.toBeInTheDocument();
+    });
+
+    const startButton = screen.getByText("Start Loader");
+    fireEvent.click(startButton);
+
+    await waitFor(() => {
+      expect(screen.queryByText("Check Loader")).not.toBeInTheDocument();
+      expect(container.querySelector(".anticon-loading")).toBeInTheDocument();
+    });
   });
 
-  const stopButton = screen.getByText("Stop Loader");
-  fireEvent.click(stopButton);
+  test("test button loading using bindings", async () => {
+    const Test = createCustomWidget({
+      onLoad: {
+        executeCode: "ensemble.storage.set('loaderStat', true)",
+      },
+      name: "",
+      inputs: [],
+      body: {
+        name: "Row",
+        properties: {},
+      },
+    });
 
-  await waitFor(() => {
-    expect(screen.queryByText("Check Loader")).toBeInTheDocument();
-    expect(container.querySelector(".anticon-loading")).not.toBeInTheDocument();
+    // Render the button component
+    const { container } = render(
+      <>
+        <Test events={{}} inputs={{}} />
+        <Column
+          children={[
+            {
+              name: "Button",
+              properties: {
+                id: "checkLoader",
+                label: "Check Loader",
+                loading: `\${ensemble.storage.get('loaderStat')}`,
+              },
+            },
+            {
+              name: "Button",
+              properties: {
+                id: "stopLoader",
+                label: "Stop Loader",
+                onTap: {
+                  executeCode: "ensemble.storage.set('loaderStat', false)",
+                },
+              },
+            },
+          ]}
+        />
+      </>,
+      {
+        wrapper: BrowserRouter,
+      },
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByText("Check Loader")).not.toBeInTheDocument();
+      expect(container.querySelector(".anticon-loading")).toBeInTheDocument();
+    });
+
+    const stopButton = screen.getByText("Stop Loader");
+    fireEvent.click(stopButton);
+
+    await waitFor(() => {
+      expect(screen.queryByText("Check Loader")).toBeInTheDocument();
+      expect(
+        container.querySelector(".anticon-loading"),
+      ).not.toBeInTheDocument();
+    });
   });
 });
 
@@ -423,32 +441,101 @@ describe("Button Component Render Tests", () => {
   });
 });
 
-test("Upload Files Using pick files", async () => {
-  render(
-    <Button
-      id="pickImageButton"
-      label="Pick Image"
-      onTap={{
-        pickFiles: {
-          allowedExtensions: ["jpg", "png"],
-        },
-      }}
-    />,
-    { wrapper: BrowserRouter },
-  );
+describe("Button Widget File Upload Tests", () => {
+  const logSpy = jest.spyOn(console, "log").mockImplementation(jest.fn());
+  jest.spyOn(console, "error").mockImplementation(jest.fn());
 
-  const imageBlob = new Blob(["image binary data"], { type: "image/png" });
+  afterEach(() => {
+    logSpy.mockClear();
+    jest.clearAllMocks();
+  });
 
-  const files = [new File([imageBlob], "example1.png", { type: "image/png" })];
+  test("upload files using pickFiles", async () => {
+    render(
+      <Button
+        id="pickImageButton"
+        label="Pick Image"
+        onTap={{
+          pickFiles: {
+            allowedExtensions: ["jpg", "png"],
+          },
+        }}
+      />,
+      { wrapper: BrowserRouter },
+    );
 
-  const pickFiles = document.querySelector("input")!;
+    const imageBlob = new Blob(["image binary data"], { type: "image/png" });
 
-  userEvent.upload(pickFiles, files);
+    const files = [
+      new File([imageBlob], "example1.png", { type: "image/png" }),
+    ];
 
-  await waitFor(() => {
-    expect(screen.getByText("Pick Image")).toBeInTheDocument();
-    expect(pickFiles.files).toHaveLength(1);
-    expect(pickFiles.files?.[0].name).toBe("example1.png");
+    const pickFiles = document.querySelector("input")!;
+
+    userEvent.upload(pickFiles, files);
+
+    await waitFor(() => {
+      expect(screen.getByText("Pick Image")).toBeInTheDocument();
+      expect(pickFiles.files).toHaveLength(1);
+      expect(pickFiles.files?.[0].name).toBe("example1.png");
+    });
+  });
+
+  test("upload files using pickFiles and test reset", async () => {
+    render(
+      <>
+        <Button
+          id="pickImageButton"
+          label="Pick Image"
+          onTap={{
+            pickFiles: {
+              id: "imageInput",
+              allowedExtensions: ["jpg", "png"],
+              onComplete: {
+                executeCode: "console.log('Image Uploaded')",
+              },
+            },
+          }}
+        />
+        <Button
+          label="Clear Input"
+          onTap={{
+            executeCode: "imageInput.reset()",
+          }}
+        />
+        <Button
+          label="Verify Input"
+          onTap={{
+            executeCode:
+              "console.log({ input: document.querySelector('input').files})",
+          }}
+        />
+      </>,
+      { wrapper: BrowserRouter },
+    );
+
+    const imageBlob = new Blob(["image binary data"], { type: "image/png" });
+    const files = [new File([imageBlob], "example.png", { type: "image/png" })];
+
+    const pickFiles = document.querySelector("input") as HTMLInputElement;
+
+    // Upload file
+    await waitFor(() => {
+      userEvent.upload(pickFiles, files);
+    });
+
+    // First verify file is uploaded
+    await waitFor(() => {
+      expect(pickFiles.files).toHaveLength(1);
+      expect(pickFiles.files?.[0].name).toBe("example.png");
+      expect(logSpy).toHaveBeenCalledWith("Image Uploaded");
+    });
+
+    await waitFor(() => {
+      fireEvent.click(screen.getByText("Clear Input"));
+      fireEvent.click(screen.getByText("Verify Input"));
+      expect(logSpy).toHaveBeenCalledWith({ input: null });
+    });
   });
 });
 

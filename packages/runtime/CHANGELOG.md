@@ -1,5 +1,47 @@
 # @ensembleui/react-runtime
 
+## 0.3.15
+
+### Patch Changes
+
+- c6213b2: Added support for reset pickFile
+
+## 0.3.14
+
+### Patch Changes
+
+- c7b0386: Added support for bypassCache cache in invokeAPI
+
+## 0.3.13
+
+### Patch Changes
+
+- c43f94d: Fix custom widget scope regression for undeclared inputs"
+
+## 0.3.12
+
+### Patch Changes
+
+- 376f97f: Added onSearch support in multiselect
+
+## 0.3.11
+
+### Patch Changes
+
+- 1ec1e32: Improve grid rendering at large volumes
+
+## 0.3.10
+
+### Patch Changes
+
+- 84ce505: Prevent propagation of popupmenu items
+
+## 0.3.9
+
+### Patch Changes
+
+- ead4915: fix navigateScreen action screen name and inputs evaluation
+
 ## 0.3.8
 
 ### Patch Changes
