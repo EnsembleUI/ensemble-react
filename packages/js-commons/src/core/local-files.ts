@@ -72,9 +72,11 @@ export const getLocalApplicationTransporter = (
             return;
           }
 
-          const content = await readFile(filePath, {
-            encoding: isAssetOrFont(document) ? "base64" : "utf-8",
-          });
+          const content = isConfigOrSecret(document)
+            ? undefined
+            : await readFile(filePath, {
+                encoding: isAssetOrFont(document) ? "base64" : "utf-8",
+              });
 
           return {
             ...document,
@@ -325,10 +327,7 @@ export const saveArtifact = async (
   if (options.relativePath) {
     pathToWrite = options.relativePath;
   }
-  if (
-    artifact.type === EnsembleDocumentType.Environment ||
-    artifact.type === EnsembleDocumentType.Secrets
-  ) {
+  if (isConfigOrSecret(artifact)) {
     pathToWrite = `${artifact.id}.json`; // appConfig.json or secrets.json
   }
   if (!pathToWrite) {
@@ -338,10 +337,7 @@ export const saveArtifact = async (
   if (!isAssetOrFont(artifact)) {
     await writeFile(
       join(artifactSubDir, pathToWrite),
-      artifact.type === EnsembleDocumentType.Environment ||
-        artifact.type === EnsembleDocumentType.Secrets
-        ? JSON.stringify(artifact)
-        : artifact.content,
+      isConfigOrSecret(artifact) ? JSON.stringify(artifact) : artifact.content,
       "utf-8",
     );
   }
@@ -431,6 +427,13 @@ const isAssetOrFont = (document: Partial<EnsembleDocument>): boolean => {
   return (
     document.type === EnsembleDocumentType.Asset ||
     document.type === EnsembleDocumentType.Font
+  );
+};
+
+const isConfigOrSecret = (document: Partial<EnsembleDocument>): boolean => {
+  return (
+    document.type === EnsembleDocumentType.Environment ||
+    document.type === EnsembleDocumentType.Secrets
   );
 };
 
