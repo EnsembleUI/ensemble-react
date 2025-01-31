@@ -401,7 +401,7 @@ const MenuItems: React.FC<{
         {items.map((item, itemIndex) => (
           <AntMenu.Item
             data-testid={item.id ?? item.testId}
-            icon={<span>{getCustomIcon(item)}</span>}
+            icon={getCustomIcon(item)}
             key={item.page || item.url || `customItem${itemIndex}`}
             onClick={(): void => {
               if (!item.openNewTab && item.page) {
@@ -409,6 +409,7 @@ const MenuItems: React.FC<{
               }
             }}
             style={{
+              gap: "10px",
               color:
                 selectedItem === item.page
                   ? (styles.selectedColor as string) ?? "white"
