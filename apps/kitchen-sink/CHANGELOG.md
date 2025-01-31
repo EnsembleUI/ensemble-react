@@ -1,5 +1,17 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.110
+
+### Patch Changes
+
+- 361f64a: enhance MultiSelect component with maxCount, maxTagCount, and maxTagTextLength props
+- Updated dependencies [3da1d1e]
+- Updated dependencies [361f64a]
+- Updated dependencies [ec03041]
+- Updated dependencies [9b3d92b]
+  - @ensembleui/react-framework@0.2.17
+  - @ensembleui/react-runtime@0.3.16
+
 ## 0.0.109
 
 ### Patch Changes

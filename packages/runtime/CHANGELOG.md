@@ -1,5 +1,13 @@
 # @ensembleui/react-runtime
 
+## 0.3.16
+
+### Patch Changes
+
+- 361f64a: enhance MultiSelect component with maxCount, maxTagCount, and maxTagTextLength props
+- ec03041: Fix template data re-render issue in collapsible
+- 9b3d92b: Added useCommandCallback in uploadFiles
+
 ## 0.3.15
 
 ### Patch Changes
