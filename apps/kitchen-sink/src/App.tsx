@@ -1,6 +1,8 @@
 import type { ApplicationDTO } from "@ensembleui/react-framework";
 import { EnsembleApp } from "@ensembleui/react-runtime";
+import * as Icons from "react-feather";
 // Screens
+import React from "react";
 import MenuYAML from "./ensemble/screens/menu.yaml";
 import HomeYAML from "./ensemble/screens/home.yaml";
 import WidgetsYAML from "./ensemble/screens/widgets.yaml";
@@ -143,6 +145,12 @@ const testApp: ApplicationDTO = {
     },
   ],
   config: EnsembleConfig,
+  icons: [
+    {
+      icons: Icons,
+      prefix: "Fe",
+    },
+  ],
 };
 
 const App: React.FC = () => {

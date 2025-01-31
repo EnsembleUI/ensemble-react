@@ -7,8 +7,10 @@ import {
   MenuItem,
   ListItemIcon,
 } from "@mui/material";
+import { isString } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetStyles, IconProps } from "../../shared/types";
+// eslint-disable-next-line import/no-cycle
 import { Icon } from "../Icon";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import { generateInitials } from "./utils/generateInitials";
@@ -108,20 +110,24 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
           onClose={handleMenuClose}
           open={isMenuOpen}
         >
-          {values?.menu.map((menuItem, idx) => (
-            <MenuItem key={idx} onClick={(): void => handleMenuClick(menuItem)}>
-              {menuItem.icon ? (
-                <ListItemIcon>
-                  <Icon
-                    color={menuItem.icon.color}
-                    name={menuItem.icon.name}
-                    size={menuItem.icon.size}
-                  />
-                </ListItemIcon>
-              ) : null}
-              {menuItem.label}
-            </MenuItem>
-          ))}
+          {values?.menu.map((menuItem, idx) => {
+            const icon = isString(menuItem.icon)
+              ? { name: menuItem.icon }
+              : menuItem.icon;
+            return (
+              <MenuItem
+                key={idx}
+                onClick={(): void => handleMenuClick(menuItem)}
+              >
+                {icon ? (
+                  <ListItemIcon>
+                    <Icon {...icon} />
+                  </ListItemIcon>
+                ) : null}
+                {menuItem.label}
+              </MenuItem>
+            );
+          })}
         </Menu>
       ) : null}
     </div>

@@ -30,7 +30,7 @@ ViewGroup:
               source: /logo.svg
     items:
       - label: Home
-        icon: HomeOutlined
+        icon: FeHome
         page: home
         selected: true
       - label: Widgets
