@@ -1,5 +1,8 @@
 /* eslint import/first: 0 */
-const fetchMock = jest.fn();
+const fetchMock = jest.fn<
+  Promise<{ body: { data: string }; isSuccess: boolean }>,
+  any[]
+>();
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const frameworkActual = jest.requireActual("@ensembleui/react-framework");
 
@@ -35,6 +38,9 @@ describe("file upload with pick files", () => {
         screen={{
           name: "test_cache",
           id: "test_cache",
+          onLoad: {
+            executeCode: "ensemble.storage.set('token', 'Testtoken123')",
+          },
           body: {
             name: "Button",
             properties: {
@@ -47,6 +53,10 @@ describe("file upload with pick files", () => {
                     uploadFiles: {
                       uploadApi: "https://randomuser.me/api",
                       files: "Test Files",
+                      inputs: {
+                        // eslint-disable-next-line no-template-curly-in-string
+                        headerToken: "${ensemble.storage.get('token')}",
+                      },
                       onComplete: {
                         executeCode: "console.log('Success')",
                       },
@@ -85,6 +95,14 @@ describe("file upload with pick files", () => {
       expect(pickFiles.files).toHaveLength(1);
       expect(pickFiles.files?.[0].name).toBe("example.png");
       expect(logSpy).toHaveBeenCalledWith("Success");
+    });
+
+    await waitFor(() => {
+      expect(fetchMock.mock.calls[0][4]).toEqual(
+        expect.objectContaining({
+          headerToken: "Testtoken123",
+        }),
+      );
     });
   });
 });
