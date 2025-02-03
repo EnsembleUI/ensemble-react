@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.17
+
+### Patch Changes
+
+- 60b7851: evaluate uploadFiles inputs
+
 ## 0.3.16
 
 ### Patch Changes
