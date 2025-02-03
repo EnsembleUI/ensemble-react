@@ -1,5 +1,8 @@
 /* eslint import/first: 0 */
-const fetchMock = jest.fn();
+const fetchMock = jest.fn<
+  Promise<{ body: { data: string }; isSuccess: boolean }>,
+  any[]
+>();
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const frameworkActual = jest.requireActual("@ensembleui/react-framework");
 
@@ -39,39 +42,31 @@ describe("file upload with pick files", () => {
             executeCode: "ensemble.storage.set('token', 'Testtoken123')",
           },
           body: {
-            name: "Row",
+            name: "Button",
             properties: {
-              children: [
-                {
-                  name: "Button",
-                  properties: {
-                    label: "Test Cache",
-                    onTap: {
-                      pickFiles: {
-                        id: "imageInput",
-                        allowedExtensions: ["jpg", "png"],
-                        onComplete: {
-                          uploadFiles: {
-                            uploadApi: "https://randomuser.me/api",
-                            files: "Test Files",
-                            inputs: {
-                              // eslint-disable-next-line no-template-curly-in-string
-                              headerToken: "${ensemble.storage.get('token')}",
-                            },
-                            onComplete: {
-                              executeCode: "console.log('Success')",
-                            },
-                            onError: {
-                              executeCode:
-                                "console.log('Error uploading files')",
-                            },
-                          },
-                        },
+              label: "Test Cache",
+              onTap: {
+                pickFiles: {
+                  id: "imageInput",
+                  allowedExtensions: ["jpg", "png"],
+                  onComplete: {
+                    uploadFiles: {
+                      uploadApi: "https://randomuser.me/api",
+                      files: "Test Files",
+                      inputs: {
+                        // eslint-disable-next-line no-template-curly-in-string
+                        headerToken: "${ensemble.storage.get('token')}",
+                      },
+                      onComplete: {
+                        executeCode: "console.log('Success')",
+                      },
+                      onError: {
+                        executeCode: "console.log('Error uploading files')",
                       },
                     },
                   },
                 },
-              ],
+              },
             },
           },
           apis: [
