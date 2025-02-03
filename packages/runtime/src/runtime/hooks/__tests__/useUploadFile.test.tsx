@@ -35,28 +35,43 @@ describe("file upload with pick files", () => {
         screen={{
           name: "test_cache",
           id: "test_cache",
+          onLoad: {
+            executeCode: "ensemble.storage.set('token', 'Testtoken123')",
+          },
           body: {
-            name: "Button",
+            name: "Row",
             properties: {
-              label: "Test Cache",
-              onTap: {
-                pickFiles: {
-                  id: "imageInput",
-                  allowedExtensions: ["jpg", "png"],
-                  onComplete: {
-                    uploadFiles: {
-                      uploadApi: "https://randomuser.me/api",
-                      files: "Test Files",
-                      onComplete: {
-                        executeCode: "console.log('Success')",
-                      },
-                      onError: {
-                        executeCode: "console.log('Error uploading files')",
+              children: [
+                {
+                  name: "Button",
+                  properties: {
+                    label: "Test Cache",
+                    onTap: {
+                      pickFiles: {
+                        id: "imageInput",
+                        allowedExtensions: ["jpg", "png"],
+                        onComplete: {
+                          uploadFiles: {
+                            uploadApi: "https://randomuser.me/api",
+                            files: "Test Files",
+                            inputs: {
+                              // eslint-disable-next-line no-template-curly-in-string
+                              headerToken: "${ensemble.storage.get('token')}",
+                            },
+                            onComplete: {
+                              executeCode: "console.log('Success')",
+                            },
+                            onError: {
+                              executeCode:
+                                "console.log('Error uploading files')",
+                            },
+                          },
+                        },
                       },
                     },
                   },
                 },
-              },
+              ],
             },
           },
           apis: [
@@ -85,6 +100,14 @@ describe("file upload with pick files", () => {
       expect(pickFiles.files).toHaveLength(1);
       expect(pickFiles.files?.[0].name).toBe("example.png");
       expect(logSpy).toHaveBeenCalledWith("Success");
+    });
+
+    await waitFor(() => {
+      expect(fetchMock.mock.calls[0][4]).toEqual(
+        expect.objectContaining({
+          headerToken: "Testtoken123",
+        }),
+      );
     });
   });
 });
