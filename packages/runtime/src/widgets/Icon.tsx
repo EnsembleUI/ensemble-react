@@ -36,9 +36,6 @@ export const Icon: React.FC<IconProps> = ({
   if (!IconComponent) {
     return null;
   }
-  if (isValidElement(IconComponent)) {
-    return IconComponent;
-  }
   const handleMouseOver = (event: React.MouseEvent<SVGSVGElement>): void => {
     const { clientX, clientY } = event;
     if (!isMouseOver) {
@@ -53,36 +50,39 @@ export const Icon: React.FC<IconProps> = ({
     onMouseLeaveAction?.callback();
     setIsMouseOver(false);
   };
-  return (
-    <IconComponent
-      className={values?.styles?.names}
-      onClick={(): unknown => onTapActionCallback?.callback()}
-      onMouseEnter={handleMouseOver}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        cursor: onTap ? "pointer" : "auto",
-        ...values?.styles,
-        color: values?.color && getColor(String(values.color)),
-        fontSize: props.size,
-        backgroundColor: `${
-          values?.styles?.backgroundColor
-            ? values.styles.backgroundColor
-            : "transparent"
-        }`,
-        padding: evaluateStyleValue(values?.styles?.padding),
-        margin: evaluateStyleValue(values?.styles?.margin),
-        borderRadius: evaluateStyleValue(values?.styles?.borderRadius),
-        borderWidth: evaluateStyleValue(values?.styles?.borderWidth),
-        borderColor: values?.styles?.borderColor
-          ? getColor(String(values.styles.borderColor))
-          : undefined,
-        borderStyle: values?.styles?.borderWidth ? "solid" : undefined,
-        ...(values?.styles?.visible === false
-          ? { display: "none" }
-          : undefined),
-      }}
-    />
-  );
+
+  const iconProps = {
+    className: values?.styles?.names,
+    onClick: (): unknown => onTapActionCallback?.callback(),
+    onMouseEnter: handleMouseOver,
+    onMouseLeave: handleMouseLeave,
+    style: {
+      cursor: onTap ? "pointer" : "auto",
+      ...values?.styles,
+      color: values?.color && getColor(String(values.color)),
+      fontSize: props.size,
+      backgroundColor: `${
+        values?.styles?.backgroundColor
+          ? values.styles.backgroundColor
+          : "transparent"
+      }`,
+      padding: evaluateStyleValue(values?.styles?.padding),
+      margin: evaluateStyleValue(values?.styles?.margin),
+      borderRadius: evaluateStyleValue(values?.styles?.borderRadius),
+      borderWidth: evaluateStyleValue(values?.styles?.borderWidth),
+      borderColor: values?.styles?.borderColor
+        ? getColor(String(values.styles.borderColor))
+        : undefined,
+      borderStyle: values?.styles?.borderWidth ? "solid" : undefined,
+      ...(values?.styles?.visible === false ? { display: "none" } : undefined),
+    },
+  };
+
+  if (isValidElement(IconComponent)) {
+    return React.cloneElement(IconComponent, { ...iconProps });
+  }
+
+  return <IconComponent {...iconProps} />;
 };
 
 WidgetRegistry.register(widgetName, Icon);
