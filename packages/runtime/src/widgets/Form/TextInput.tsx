@@ -196,7 +196,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     if (regex) {
       rulesArray.push({
         validator: (_, inputValue?: string) => {
-          if (new RegExp(regex).test(inputValue || "")) {
+          if (!inputValue || new RegExp(regex).test(inputValue || "")) {
             return Promise.resolve();
           }
           return Promise.reject(
