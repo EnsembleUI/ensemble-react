@@ -1,4 +1,10 @@
-import { render, screen } from "@testing-library/react";
+/* eslint import/first: 0 */
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const framework = jest.requireActual("@ensembleui/react-framework");
+// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
+const unwrapWidgetSpy = jest.fn().mockImplementation(framework.unwrapWidget);
+import { fireEvent, render, screen } from "@testing-library/react";
+import { BrowserRouter } from "react-router-dom";
 import type { ConditionalProps, ConditionalElement } from "../Conditional";
 import {
   Conditional,
@@ -7,8 +13,19 @@ import {
   extractCondition,
 } from "../Conditional";
 import "../index";
+import { EnsembleScreen } from "../../runtime/screen";
 
 jest.mock("react-markdown", jest.fn());
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+jest.mock("@ensembleui/react-framework", () => ({
+  ...framework,
+  unwrapWidget: unwrapWidgetSpy,
+}));
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
 
 describe("Conditional Component", () => {
   test('renders the widget when "if" condition is met', () => {
@@ -231,5 +248,93 @@ describe("extractCondition Function", () => {
 
     const extractedCondition = extractCondition(condition);
     expect(extractedCondition).toBe("1 === 1");
+  });
+});
+
+describe("conditional widget memoization", () => {
+  it("should memoize branch widgets and prevent unnecessary re-renders", () => {
+    render(
+      <EnsembleScreen
+        screen={{
+          name: "test_conditional",
+          id: "test_conditional",
+          body: {
+            name: "Column",
+            properties: {
+              children: [
+                {
+                  name: "Conditional",
+                  properties: {
+                    conditions: [
+                      {
+                        if: `\${ensemble.storage.get('number') < 0}`,
+                        Text: {
+                          text: "Less than 0",
+                        },
+                      },
+                      {
+                        if: `\${ensemble.storage.get('number') === 0}`,
+                        Text: {
+                          text: "Equals to 0",
+                        },
+                      },
+                      {
+                        if: `\${ensemble.storage.get('number') > 0}`,
+                        Text: {
+                          text: "Greater than 0",
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  name: "Button",
+                  properties: {
+                    label: "Increase",
+                    onTap: {
+                      executeCode:
+                        "ensemble.storage.set('number', ensemble.storage.get('number') + 1)",
+                    },
+                  },
+                },
+                {
+                  name: "Button",
+                  properties: {
+                    label: "Decrease",
+                    onTap: {
+                      executeCode:
+                        "ensemble.storage.set('number', ensemble.storage.get('number') - 1)",
+                    },
+                  },
+                },
+              ],
+            },
+          },
+          onLoad: { executeCode: 'ensemble.storage.set("number", -1)' },
+        }}
+      />,
+      {
+        wrapper: BrowserRouter,
+      },
+    );
+
+    expect(unwrapWidgetSpy).toHaveBeenCalledTimes(1);
+    expect(screen.getByText("Less than 0")).not.toBeNull();
+
+    fireEvent.click(screen.getByText("Increase"));
+    expect(unwrapWidgetSpy).toHaveBeenCalledTimes(2);
+    expect(screen.getByText("Equals to 0")).not.toBeNull();
+
+    fireEvent.click(screen.getByText("Increase"));
+    expect(unwrapWidgetSpy).toHaveBeenCalledTimes(3);
+    expect(screen.getByText("Greater than 0")).not.toBeNull();
+
+    fireEvent.click(screen.getByText("Decrease"));
+    expect(unwrapWidgetSpy).toHaveBeenCalledTimes(3);
+    expect(screen.getByText("Equals to 0")).not.toBeNull();
+
+    fireEvent.click(screen.getByText("Decrease"));
+    expect(unwrapWidgetSpy).toHaveBeenCalledTimes(3);
+    expect(screen.getByText("Less than 0")).not.toBeNull();
   });
 });
