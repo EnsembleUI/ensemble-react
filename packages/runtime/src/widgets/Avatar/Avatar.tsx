@@ -7,9 +7,9 @@ import {
   MenuItem,
   ListItemIcon,
 } from "@mui/material";
-import { isString } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetStyles, IconProps } from "../../shared/types";
+import { normalizeIconProps } from "../../shared/utils";
 // eslint-disable-next-line import/no-cycle
 import { Icon } from "../Icon";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
@@ -111,9 +111,8 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
           open={isMenuOpen}
         >
           {values?.menu.map((menuItem, idx) => {
-            const icon = isString(menuItem.icon)
-              ? { name: menuItem.icon }
-              : menuItem.icon;
+            const icon = normalizeIconProps(menuItem.icon);
+
             return (
               <MenuItem
                 key={idx}

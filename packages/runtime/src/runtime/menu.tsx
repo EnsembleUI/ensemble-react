@@ -14,9 +14,10 @@ import {
   EnsembleMenuModelType,
 } from "@ensembleui/react-framework";
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { cloneDeep, isString, omit } from "lodash-es";
+import { cloneDeep, omit } from "lodash-es";
 import { getColor } from "../shared/styles";
 import type { IconProps } from "../shared/types";
+import { normalizeIconProps } from "../shared/utils";
 import { EnsembleRuntime } from "./runtime";
 // eslint-disable-next-line import/no-cycle
 import { useEnsembleAction } from "./hooks";
@@ -347,12 +348,9 @@ const MenuItems: React.FC<{
         return null;
       }
 
-      const icon = isString(iconProps)
-        ? {
-            name: iconProps,
-            styles: { width: styles.iconWidth, height: styles.iconHeight },
-          }
-        : iconProps;
+      const icon = normalizeIconProps(iconProps, {
+        styles: { width: styles.iconWidth, height: styles.iconHeight },
+      });
 
       return EnsembleRuntime.render([{ ...unwrapWidget({ Icon: icon }), key }]);
     },
