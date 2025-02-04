@@ -290,5 +290,63 @@ describe("Form", () => {
       expect(screen.getByText("Please enter a value")).toBeInTheDocument();
     });
   });
+
+  test("validate only if field is not empty", async () => {
+    render(
+      <Form
+        children={[
+          {
+            name: "TextInput",
+            properties: {
+              label: "Regex test",
+              validator: {
+                regex: /^\d{5}$/,
+                regexError: "Please enter a valid 5-digit zip code",
+              },
+            },
+          },
+          {
+            name: "Button",
+            properties: {
+              label: "Submit",
+              submitForm: true,
+            },
+          },
+        ]}
+        id="form"
+      />,
+      {
+        wrapper: FormTestWrapper,
+      },
+    );
+
+    const validateBtn = screen.getByText("Submit");
+    fireEvent.click(validateBtn);
+
+    await waitFor(() => {
+      expect(
+        screen.queryByText("Please enter a valid 5-digit zip code"),
+      ).not.toBeInTheDocument();
+    });
+
+    const input = screen.getByLabelText("Regex test");
+    fireEvent.change(input, { target: { value: "12" } });
+    fireEvent.click(validateBtn);
+
+    await waitFor(() => {
+      expect(
+        screen.queryByText("Please enter a valid 5-digit zip code"),
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.change(input, { target: { value: "" } });
+    fireEvent.click(validateBtn);
+
+    await waitFor(() => {
+      expect(
+        screen.queryByText("Please enter a valid 5-digit zip code"),
+      ).not.toBeInTheDocument();
+    });
+  });
 });
 /* eslint-enable react/no-children-prop */
