@@ -75,9 +75,11 @@ export const getLocalApplicationTransporter = (
             return;
           }
 
-          const content = await readFile(filePath, {
-            encoding: isAssetOrFont(document) ? "base64" : "utf-8",
-          });
+          const content = isConfigOrSecret(document)
+            ? undefined
+            : await readFile(filePath, {
+                encoding: isAssetOrFont(document) ? "base64" : "utf-8",
+              });
 
           return {
             ...document,
