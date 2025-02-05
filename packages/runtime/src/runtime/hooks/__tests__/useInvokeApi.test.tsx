@@ -444,3 +444,43 @@ test("after API fetching using toggle check states", async () => {
     expect(logSpy).toHaveBeenCalledWith(false);
   });
 });
+
+test("fetch API with bindings", () => {
+  fetchMock.mockResolvedValue({ body: { data: "foobar" } });
+
+  render(
+    <EnsembleScreen
+      screen={{
+        name: "test_bindings",
+        id: "test_bindings",
+        body: {
+          name: "Column",
+          properties: {
+            children: [
+              {
+                name: "Button",
+                properties: {
+                  label: "Call API",
+                  onTap: {
+                    invokeAPI: {
+                      name: `\${ensemble.storage.get('apiName')}`,
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        },
+        apis: [{ name: "fetchFoobar", method: "GET" }],
+        onLoad: {
+          executeCode: "ensemble.storage.set('apiName', 'fetchFoobar')",
+        },
+      }}
+    />,
+    { wrapper: BrowserRouterWrapper },
+  );
+
+  fireEvent.click(screen.getByText("Call API"));
+
+  expect(fetchMock).toHaveBeenCalledTimes(1);
+});
