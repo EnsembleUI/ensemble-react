@@ -2,7 +2,7 @@ import type { Expression } from "@ensembleui/react-framework";
 import { unwrapWidget, useRegisterBindings } from "@ensembleui/react-framework";
 import { cloneDeep, head, isEmpty, last } from "lodash-es";
 import type { ReactNode } from "react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef } from "react";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import type { EnsembleWidgetProps } from "../shared/types";
@@ -27,7 +27,7 @@ export const Conditional: React.FC<ConditionalProps> = ({
   conditions,
   ...props
 }) => {
-  const [matched, setMatched] = useState<{ [key: string]: ReactNode[] }>({});
+  const matched = useRef<{ [key: string]: ReactNode[] }>({});
   const [isValid, errorMessage] = hasProperStructure(conditions);
   if (!isValid) throw Error(errorMessage);
 
@@ -59,16 +59,16 @@ export const Conditional: React.FC<ConditionalProps> = ({
     }
     const key = conditionStatements[trueIndex]?.toString();
 
-    if (key && matched[key]) {
-      return matched[key];
+    if (key && matched.current[key]) {
+      return matched.current[key];
     }
 
     const extractedWidget = extractWidget(conditions[trueIndex]);
 
     const renderWidget = EnsembleRuntime.render([{ ...extractedWidget, key }]);
 
-    if (key && !matched[key]) {
-      setMatched((prev) => ({ ...prev, [key]: renderWidget }));
+    if (key && !matched.current[key]) {
+      matched.current = { ...matched.current, [key]: renderWidget };
     }
     return renderWidget;
   }, [conditionStatements, conditions, trueIndex]);
