@@ -129,4 +129,3 @@ export const extractCondition = (condition: ConditionalElement) => {
 
   throw Error("Improper structure, make sure every condition has a condition");
 };
-
