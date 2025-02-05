@@ -27,7 +27,7 @@ export const Conditional: React.FC<ConditionalProps> = ({
   conditions,
   ...props
 }) => {
-  const [matched, setMatched] = useState<{ [key: string]: unknown }>({});
+  const [matched, setMatched] = useState<{ [key: string]: ReactNode[] }>({});
   const [isValid, errorMessage] = hasProperStructure(conditions);
   if (!isValid) throw Error(errorMessage);
 
@@ -60,7 +60,7 @@ export const Conditional: React.FC<ConditionalProps> = ({
     const key = conditionStatements[trueIndex]?.toString();
 
     if (key && matched[key]) {
-      return matched[key] as ReactNode[];
+      return matched[key];
     }
 
     const extractedWidget = extractWidget(conditions[trueIndex]);
