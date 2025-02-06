@@ -10,6 +10,7 @@ import {
   isArray,
   isEmpty,
   isNil,
+  map,
   omit,
   pick,
   values,
@@ -60,7 +61,10 @@ export const getLocalApplicationTransporter = (
           if (!document.type) {
             return;
           }
-          const subDir = join(existingAppMetadata.projectPath, document.type);
+          const subDir = getSubDir(
+            existingAppMetadata.projectPath,
+            document.type,
+          );
           let filePath;
           if (document.relativePath) {
             filePath = join(subDir, document.relativePath);
@@ -72,9 +76,11 @@ export const getLocalApplicationTransporter = (
             return;
           }
 
-          const content = await readFile(filePath, {
-            encoding: isAssetOrFont(document) ? "base64" : "utf-8",
-          });
+          const content = isConfigOrSecret(document)
+            ? undefined
+            : await readFile(filePath, {
+                encoding: isAssetOrFont(document) ? "base64" : "utf-8",
+              });
 
           return {
             ...document,
@@ -105,7 +111,9 @@ export const getLocalApplicationTransporter = (
       path?: string,
     ): Promise<ApplicationDTO> => {
       ensureDir(ensembleDir);
-      const updatedAppData = omit(appData, ["assets", "fonts"]);
+      const updatedAppData = excludeContentField(
+        omit(appData, ["assets", "fonts"]),
+      );
       const appsMetaData = await getGlobalMetadata();
       const existingAppMetadata = (
         appsMetaData[appData.id]
@@ -167,7 +175,7 @@ export const getLocalApplicationTransporter = (
         }
 
         return {
-          ...docToWrite,
+          ...omitContent(docToWrite),
           relativePath,
         };
       });
@@ -232,7 +240,7 @@ export const localStoreAsset = async (
     throw new Error(`App ${appId} not found in local metadata`);
   }
 
-  const assetDir = join(
+  const assetDir = getSubDir(
     appMetadata.projectPath,
     !isEmpty(font) ? EnsembleDocumentType.Font : EnsembleDocumentType.Asset,
   );
@@ -277,7 +285,7 @@ export const localRemoveAsset = async (
     throw new Error(`App ${appId} not found in local metadata`);
   }
 
-  const assetDir = join(
+  const assetDir = getSubDir(
     appMetadata.projectPath,
     isFont ? EnsembleDocumentType.Font : EnsembleDocumentType.Asset,
   );
@@ -318,18 +326,18 @@ export const saveArtifact = async (
   const existingPath = app.manifest[artifact.id]?.relativePath;
 
   // TODO: allow custom project structures
-  const artifactSubDir = join(app.projectPath, artifact.type);
+  const artifactSubDir = getSubDir(app.projectPath, artifact.type);
   ensureDir(artifactSubDir);
 
   let pathToWrite = existingPath;
   if (options.relativePath) {
     pathToWrite = options.relativePath;
   }
-  if (
-    artifact.type === EnsembleDocumentType.Environment ||
-    artifact.type === EnsembleDocumentType.Secrets
-  ) {
+  if (isConfigOrSecret(artifact)) {
     pathToWrite = `${artifact.id}.json`; // appConfig.json or secrets.json
+  }
+  if (artifact.type === EnsembleDocumentType.Theme) {
+    pathToWrite = `${EnsembleDocumentType.Theme}.yaml`;
   }
   if (!pathToWrite) {
     pathToWrite = `${artifact.name || artifact.id}.yaml`;
@@ -338,17 +346,14 @@ export const saveArtifact = async (
   if (!isAssetOrFont(artifact)) {
     await writeFile(
       join(artifactSubDir, pathToWrite),
-      artifact.type === EnsembleDocumentType.Environment ||
-        artifact.type === EnsembleDocumentType.Secrets
-        ? JSON.stringify(artifact)
-        : artifact.content,
+      isConfigOrSecret(artifact) ? JSON.stringify(artifact) : artifact.content,
       "utf-8",
     );
   }
 
   if (!options.skipMetadata) {
     app.manifest[artifact.id] = {
-      ...artifact,
+      ...omitContent(artifact),
       relativePath: pathToWrite,
     };
     await setAppManifest(app, app.projectPath);
@@ -434,6 +439,13 @@ const isAssetOrFont = (document: Partial<EnsembleDocument>): boolean => {
   );
 };
 
+const isConfigOrSecret = (document: Partial<EnsembleDocument>): boolean => {
+  return (
+    document.type === EnsembleDocumentType.Environment ||
+    document.type === EnsembleDocumentType.Secrets
+  );
+};
+
 const fetchFileData = async (url: string): Promise<Buffer> => {
   const response = await fetch(url);
   const arrayBuffer = await response.arrayBuffer();
@@ -448,3 +460,35 @@ const extractFontData = (fontDoc: FontDTO): object => {
     fontType: fontDoc.fontType,
   };
 };
+
+const getSubDir = (
+  projectPath: string,
+  docType: EnsembleDocumentType,
+): string => join(projectPath, FOLDER_MAP[docType]);
+
+const FOLDER_MAP = {
+  [EnsembleDocumentType.Screen]: "screens",
+  [EnsembleDocumentType.Widget]: "widgets",
+  [EnsembleDocumentType.Script]: "scripts",
+  [EnsembleDocumentType.Asset]: "assets",
+  [EnsembleDocumentType.Font]: "fonts",
+  [EnsembleDocumentType.I18n]: "translations",
+  [EnsembleDocumentType.Label]: "labels",
+  [EnsembleDocumentType.Environment]: "config",
+  [EnsembleDocumentType.Secrets]: "config",
+  [EnsembleDocumentType.Theme]: "",
+} as const;
+
+const omitContent = (
+  doc: EnsembleDocument,
+): Omit<EnsembleDocument, "content"> => omit(doc, "content");
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const excludeContentField = (appData: ApplicationDTO) => ({
+  ...appData,
+  screens: map(appData.screens, omitContent),
+  widgets: map(appData.widgets, omitContent),
+  scripts: map(appData.scripts, omitContent),
+  translations: map(appData.translations, omitContent),
+  theme: appData.theme ? omitContent(appData.theme) : undefined,
+});
