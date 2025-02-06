@@ -1,5 +1,11 @@
 # @ensembleui/js-commons
 
+## 0.0.20
+
+### Patch Changes
+
+- 3ad8540: update filename extension for script artifacts
+
 ## 0.0.19
 
 ### Patch Changes
