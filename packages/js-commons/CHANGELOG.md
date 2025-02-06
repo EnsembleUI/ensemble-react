@@ -1,5 +1,11 @@
 # @ensembleui/js-commons
 
+## 0.0.19
+
+### Patch Changes
+
+- 030d9b9: update folder structure when an app is pulled
+
 ## 0.0.18
 
 ### Patch Changes

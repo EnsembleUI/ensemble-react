@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.18
+
+### Patch Changes
+
+- 9e9ef24: Fix: avoid empty field to validate
+
 ## 0.3.17
 
 ### Patch Changes
