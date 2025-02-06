@@ -68,7 +68,7 @@ export const Conditional: React.FC<ConditionalProps> = ({
     const renderWidget = EnsembleRuntime.render([{ ...extractedWidget, key }]);
 
     if (key && !matched.current[key]) {
-      matched.current = { ...matched.current, [key]: renderWidget };
+      matched.current[key] = renderWidget;
     }
     return renderWidget;
   }, [conditionStatements, conditions, trueIndex]);
