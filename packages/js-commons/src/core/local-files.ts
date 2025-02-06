@@ -461,19 +461,17 @@ const extractFontData = (fontDoc: FontDTO): object => {
 const getSubDir = (
   projectPath: string,
   docType: EnsembleDocumentType,
-): string => {
-  const folderMap: { [key in EnsembleDocumentType]: string } = {
-    [EnsembleDocumentType.Screen]: "screens",
-    [EnsembleDocumentType.Widget]: "widgets",
-    [EnsembleDocumentType.Script]: "scripts",
-    [EnsembleDocumentType.Asset]: "assets",
-    [EnsembleDocumentType.Font]: "fonts",
-    [EnsembleDocumentType.I18n]: "translations",
-    [EnsembleDocumentType.Label]: "labels",
-    [EnsembleDocumentType.Environment]: "config",
-    [EnsembleDocumentType.Secrets]: "config",
-    [EnsembleDocumentType.Theme]: "",
-  };
+): string => join(projectPath, FOLDER_MAP[docType]);
 
-  return join(projectPath, folderMap[docType]);
-};
+const FOLDER_MAP = {
+  [EnsembleDocumentType.Screen]: "screens",
+  [EnsembleDocumentType.Widget]: "widgets",
+  [EnsembleDocumentType.Script]: "scripts",
+  [EnsembleDocumentType.Asset]: "assets",
+  [EnsembleDocumentType.Font]: "fonts",
+  [EnsembleDocumentType.I18n]: "translations",
+  [EnsembleDocumentType.Label]: "labels",
+  [EnsembleDocumentType.Environment]: "config",
+  [EnsembleDocumentType.Secrets]: "config",
+  [EnsembleDocumentType.Theme]: "",
+} as const;
