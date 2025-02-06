@@ -10,6 +10,7 @@ import {
   isArray,
   isEmpty,
   isNil,
+  map,
   omit,
   pick,
   values,
@@ -110,7 +111,9 @@ export const getLocalApplicationTransporter = (
       path?: string,
     ): Promise<ApplicationDTO> => {
       ensureDir(ensembleDir);
-      const updatedAppData = omit(appData, ["assets", "fonts"]);
+      const updatedAppData = excludeContentField(
+        omit(appData, ["assets", "fonts"]),
+      );
       const appsMetaData = await getGlobalMetadata();
       const existingAppMetadata = (
         appsMetaData[appData.id]
@@ -172,7 +175,7 @@ export const getLocalApplicationTransporter = (
         }
 
         return {
-          ...docToWrite,
+          ...omitContent(docToWrite),
           relativePath,
         };
       });
@@ -350,7 +353,7 @@ export const saveArtifact = async (
 
   if (!options.skipMetadata) {
     app.manifest[artifact.id] = {
-      ...artifact,
+      ...omitContent(artifact),
       relativePath: pathToWrite,
     };
     await setAppManifest(app, app.projectPath);
@@ -475,3 +478,17 @@ const FOLDER_MAP = {
   [EnsembleDocumentType.Secrets]: "config",
   [EnsembleDocumentType.Theme]: "",
 } as const;
+
+const omitContent = (
+  doc: EnsembleDocument,
+): Omit<EnsembleDocument, "content"> => omit(doc, "content");
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const excludeContentField = (appData: ApplicationDTO) => ({
+  ...appData,
+  screens: map(appData.screens, omitContent),
+  widgets: map(appData.widgets, omitContent),
+  scripts: map(appData.scripts, omitContent),
+  translations: map(appData.translations, omitContent),
+  theme: appData.theme ? omitContent(appData.theme) : undefined,
+});

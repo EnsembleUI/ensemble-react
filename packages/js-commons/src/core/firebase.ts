@@ -204,7 +204,7 @@ export const getFirestoreApplicationTransporter = (
     });
 
     translations?.forEach((translation) => {
-      const translationRef = doc(internalArtifactsRef, translation.id);
+      const translationRef = doc(artifactsRef, translation.id);
       const history = doc(collection(translationRef, CollectionsName.History));
       const updatedTranslation = {
         ...translation,
