@@ -7,6 +7,7 @@ import {
   compact,
   groupBy,
   head,
+  initial,
   isArray,
   isEmpty,
   isNil,
@@ -333,6 +334,10 @@ export const saveArtifact = async (
   }
   if (!pathToWrite) {
     pathToWrite = `${artifact.name || artifact.id}.yaml`;
+  }
+
+  if (artifact.type === EnsembleDocumentType.Script) {
+    pathToWrite = `${initial(pathToWrite.split(".")).join("")}.js`;
   }
 
   if (!isAssetOrFont(artifact)) {
