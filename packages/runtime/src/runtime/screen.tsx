@@ -91,6 +91,33 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
     };
   }, [screen.customWidgets]);
 
+  useEffect(() => {
+    const globalBlock = screen.global;
+    const importedScripts = screen.importedScripts;
+
+    if (!globalBlock && !importedScripts) {
+      return;
+    }
+
+    const jsString = `
+      ${importedScripts || ""}
+      ${globalBlock || ""}
+  `;
+
+    const script = document.createElement("script");
+    script.id = screen.id;
+    script.type = "text/javascript";
+    script.textContent = jsString;
+
+    document.body.appendChild(script);
+
+    console.log("<<<<<", window.global);
+
+    return () => {
+      document.getElementById(screen.id)?.remove();
+    };
+  }, [screen.global, screen.importedScripts]);
+
   if (!isInitialized) {
     return null;
   }

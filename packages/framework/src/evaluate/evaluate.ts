@@ -38,14 +38,9 @@ export const buildEvaluateFn = (
       // Need to filter out invalid JS identifiers
     ].filter(([key, _]) => !key.includes(".")),
   );
-  const globalBlock = screen.model?.global;
-  const importedScriptBlock = screen.model?.importedScripts;
 
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
-  const jsFunc = new Function(
-    ...Object.keys(invokableObj),
-    addScriptBlock(formatJs(js), globalBlock, importedScriptBlock),
-  );
+  const jsFunc = new Function(...Object.keys(invokableObj), formatJs(js));
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return () => jsFunc(...Object.values(invokableObj));
@@ -78,24 +73,6 @@ const formatJs = (js?: string): string => {
   }
 
   return `return ${sanitizedJs}`;
-};
-
-const addScriptBlock = (
-  js: string,
-  globalBlock?: string,
-  importedScriptBlock?: string,
-): string => {
-  let jsString = ``;
-
-  if (importedScriptBlock) {
-    jsString += `${importedScriptBlock}\n\n`;
-  }
-
-  if (globalBlock) {
-    jsString += `${globalBlock}\n\n`;
-  }
-
-  return (jsString += `${js}`);
 };
 
 /**
