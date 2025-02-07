@@ -502,6 +502,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
               ? { display: "none" }
               : undefined),
           }}
+          tableLayout="auto"
           virtual={values?.virtual}
         >
           {dataColumns.map((col, colIndex) => {
@@ -514,6 +515,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
                 }))}
                 hidden={col.visible === false}
                 key={colIndex}
+                minWidth={col.width}
                 onFilter={
                   col.filter?.onFilter
                     ? (value, record): boolean =>
