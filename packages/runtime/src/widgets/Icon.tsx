@@ -51,38 +51,40 @@ export const Icon: React.FC<IconProps> = ({
     setIsMouseOver(false);
   };
 
-  const iconProps = {
-    className: values?.styles?.names,
-    onClick: (): unknown => onTapActionCallback?.callback(),
-    onMouseEnter: handleMouseOver,
-    onMouseLeave: handleMouseLeave,
-    style: {
-      cursor: onTap ? "pointer" : "auto",
-      ...values?.styles,
-      color: values?.color && getColor(String(values.color)),
-      fontSize: props.size,
-      backgroundColor: `${
-        values?.styles?.backgroundColor
-          ? values.styles.backgroundColor
-          : "transparent"
-      }`,
-      padding: evaluateStyleValue(values?.styles?.padding),
-      margin: evaluateStyleValue(values?.styles?.margin),
-      borderRadius: evaluateStyleValue(values?.styles?.borderRadius),
-      borderWidth: evaluateStyleValue(values?.styles?.borderWidth),
-      borderColor: values?.styles?.borderColor
-        ? getColor(String(values.styles.borderColor))
-        : undefined,
-      borderStyle: values?.styles?.borderWidth ? "solid" : undefined,
-      ...(values?.styles?.visible === false ? { display: "none" } : undefined),
-    },
-  };
-
   if (isValidElement(IconComponent)) {
-    return React.cloneElement(IconComponent, { ...iconProps });
+    return IconComponent;
   }
 
-  return <IconComponent {...iconProps} />;
+  return (
+    <IconComponent
+      className={values?.styles?.names}
+      onClick={(): unknown => onTapActionCallback?.callback()}
+      onMouseEnter={handleMouseOver}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        cursor: onTap ? "pointer" : "auto",
+        ...values?.styles,
+        color: values?.color && getColor(String(values.color)),
+        fontSize: props.size,
+        backgroundColor: `${
+          values?.styles?.backgroundColor
+            ? values.styles.backgroundColor
+            : "transparent"
+        }`,
+        padding: evaluateStyleValue(values?.styles?.padding),
+        margin: evaluateStyleValue(values?.styles?.margin),
+        borderRadius: evaluateStyleValue(values?.styles?.borderRadius),
+        borderWidth: evaluateStyleValue(values?.styles?.borderWidth),
+        borderColor: values?.styles?.borderColor
+          ? getColor(String(values.styles.borderColor))
+          : undefined,
+        borderStyle: values?.styles?.borderWidth ? "solid" : undefined,
+        ...(values?.styles?.visible === false
+          ? { display: "none" }
+          : undefined),
+      }}
+    />
+  );
 };
 
 WidgetRegistry.register(widgetName, Icon);
