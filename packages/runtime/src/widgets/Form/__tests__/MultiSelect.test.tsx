@@ -2,8 +2,30 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import userEvent from "@testing-library/user-event";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { type ReactNode } from "react";
+import { BrowserRouter } from "react-router-dom";
 import { Form } from "../../index";
 import { FormTestWrapper } from "./__shared__/fixtures";
+import { EnsembleScreen } from "../../../runtime/screen";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
+
+interface BrowserRouterProps {
+  children: ReactNode;
+}
+
+const BrowserRouterWrapper = ({ children }: BrowserRouterProps) => (
+  <QueryClientProvider client={queryClient}>
+    <BrowserRouter>{children}</BrowserRouter>
+  </QueryClientProvider>
+);
 
 const defaultFormButton = [
   {
@@ -644,6 +666,133 @@ describe("MultiSelect Widget", () => {
       expect(screen.getByText("Very L...")).toBeInTheDocument();
       expect(screen.getByText("Anothe...")).toBeInTheDocument();
     });
+  });
+
+  test.only("multiselect with search action", async () => {
+    render(
+      <EnsembleScreen
+        screen={{
+          name: "test_cache",
+          id: "test_cache",
+          onLoad: {
+            executeCode: {
+              body: `
+                ensemble.storage.set('testlistoptions', [
+                  { label: 'William Smith', value: 'william_smith' },
+                  { label: 'Evelyn Johnson', value: 'evelyn_johnson' },
+                  { label: 'Liam Brown', value: 'liam_brown' },
+                  { label: 'Bella Davis', value: 'bella_davis' },
+                  { label: 'James Wilson', value: 'james_wilson' },
+                  { label: 'Zachary Taylor', value: 'zachary_taylor' },
+                  { label: 'Nolan Martinez', value: 'nolan_martinez' },
+                  { label: 'Emma Thompson', value: 'emma_thompson' },
+                  { label: 'Oliver White', value: 'oliver_white' },
+                  { label: 'Sophia Lee', value: 'sophia_lee' },
+                ])
+                ensemble.storage.set('testoptions', [])
+              `,
+            },
+          },
+          body: {
+            name: "Button",
+            properties: {
+              label: "Show Dialog",
+              onTap: {
+                showDialog: {
+                  widget: {
+                    Column: {
+                      children: [
+                        {
+                          Text: {
+                            text: "This is modal",
+                          },
+                        },
+                        {
+                          MultiSelect: {
+                            data: "${ensemble.storage.get('testoptions')}",
+                            labelKey: "label",
+                            valueKey: "value",
+                            value:
+                              "${ensemble.storage.get('testselect') || []}",
+                            onSearch: {
+                              executeCode: `
+                                const tempOptions = ensemble.storage.get('testlistoptions')
+                                const filteredResult = tempOptions.filter(option => 
+                                  option.label.toLowerCase().startsWith(search.toLowerCase())
+                                )
+                                ensemble.storage.set('testoptions', filteredResult)
+                              `,
+                            },
+                          },
+                        },
+                        {
+                          Button: {
+                            label: "Close modal",
+                            onTap: {
+                              executeCode: "ensemble.closeAllDialogs()",
+                            },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+          apis: [{ name: "testCache", method: "GET" }],
+        }}
+      />,
+      { wrapper: BrowserRouterWrapper },
+    );
+
+    const showDialogButton = screen.getByText("Show Dialog");
+    fireEvent.click(showDialogButton);
+
+    // verify the modal
+    const modalTitle = screen.getByText("This is modal");
+    await waitFor(() => {
+      expect(modalTitle).toBeInTheDocument();
+    });
+
+    // search by type
+    await userEvent.click(screen.getByRole("combobox"));
+    await userEvent.type(document.querySelector("input") as HTMLElement, "B");
+
+    // check for updated option list
+    await waitFor(() => {
+      expect(
+        screen.getByText("Bella Davis", {
+          selector: ".ant-select-item-option-content",
+        }),
+      ).toBeInTheDocument();
+    });
+
+    // click the option
+    await userEvent.click(
+      screen.getByText("Bella Davis", {
+        selector: ".ant-select-item-option-content",
+      }),
+    );
+
+    // Wait for the combobox to reflect the selected values
+    await waitFor(() => {
+      expect(
+        screen.getByText("Bella Davis", {
+          selector: ".ant-select-selection-item-content",
+        }),
+      ).toBeVisible();
+    });
+
+    // close the modal
+    const closeDialogButton = screen.getByText("Close modal");
+    fireEvent.click(closeDialogButton);
+
+    await waitFor(() => {
+      expect(modalTitle).not.toBeInTheDocument();
+    });
+
+    //TODO: again open the modal and repeat same process with different option
   });
 });
 /* eslint-enable react/no-children-prop */
