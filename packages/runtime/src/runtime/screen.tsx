@@ -99,22 +99,19 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
       return;
     }
 
-    const jsString = `
+    const script = document.createElement("script");
+    script.type = "text/javascript";
+    script.textContent = `(function () {
       ${importedScripts || ""}
       ${globalBlock || ""}
-  `;
-
-    const script = document.createElement("script");
-    script.id = screen.id;
-    script.type = "text/javascript";
-    script.textContent = jsString;
+    }).call(this)`;
 
     document.body.appendChild(script);
 
-    console.log("<<<<<", window.global);
-
     return () => {
-      document.getElementById(screen.id)?.remove();
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
     };
   }, [screen.global, screen.importedScripts]);
 
