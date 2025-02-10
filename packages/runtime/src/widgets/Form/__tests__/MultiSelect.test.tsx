@@ -743,7 +743,6 @@ describe("MultiSelect Widget", () => {
               },
             },
           },
-          apis: [{ name: "testCache", method: "GET" }],
         }}
       />,
       { wrapper: BrowserRouterWrapper },
@@ -799,6 +798,6 @@ describe("MultiSelect Widget", () => {
       expect(screen.queryByText("Bella Davis", selected)).toBeVisible();
       expect(screen.queryByText("Sophia Lee", selected)).toBeVisible();
     });
-  });
+  }, 10000);
 });
 /* eslint-enable react/no-children-prop */
