@@ -611,10 +611,10 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
       const context = merge({}, evalContext, args[0]);
 
       const evaluatedInputs = evaluateDeep(
-        { files: action.files },
+        { files: action.files, inputs: action.inputs },
         screenModel,
         context,
-      ) as { files: FileList };
+      ) as { files: FileList; inputs: { [key: string]: unknown } };
 
       const files = evaluatedInputs.files;
 
@@ -629,8 +629,9 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
           files,
           progressCallback,
           {
-            ...evaluatedInputs,
+            ...evaluatedInputs.inputs,
             ...context,
+            files: evaluatedInputs.files,
             ensemble: {
               env: appContext?.env,
               secrets: appContext?.secrets,

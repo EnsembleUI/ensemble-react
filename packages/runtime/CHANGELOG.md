@@ -1,5 +1,25 @@
 # @ensembleui/react-runtime
 
+## 0.3.18
+
+### Patch Changes
+
+- 9e9ef24: Fix: avoid empty field to validate
+
+## 0.3.17
+
+### Patch Changes
+
+- 60b7851: evaluate uploadFiles inputs
+
+## 0.3.16
+
+### Patch Changes
+
+- 361f64a: enhance MultiSelect component with maxCount, maxTagCount, and maxTagTextLength props
+- ec03041: Fix template data re-render issue in collapsible
+- 9b3d92b: Added useCommandCallback in uploadFiles
+
 ## 0.3.15
 
 ### Patch Changes

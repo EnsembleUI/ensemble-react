@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.2.17
+
+### Patch Changes
+
+- 3da1d1e: fix api state reflact issue
+
 ## 0.2.16
 
 ### Patch Changes
