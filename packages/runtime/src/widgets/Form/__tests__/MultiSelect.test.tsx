@@ -668,7 +668,7 @@ describe("MultiSelect Widget", () => {
     });
   });
 
-  test.only("multiselect with search action", async () => {
+  test("multiselect with search action", async () => {
     render(
       <EnsembleScreen
         screen={{
@@ -677,7 +677,7 @@ describe("MultiSelect Widget", () => {
           onLoad: {
             executeCode: {
               body: `
-                ensemble.storage.set('testlistoptions', [
+                ensemble.storage.set('test_list_options', [
                   { label: 'William Smith', value: 'william_smith' },
                   { label: 'Evelyn Johnson', value: 'evelyn_johnson' },
                   { label: 'Liam Brown', value: 'liam_brown' },
@@ -689,7 +689,7 @@ describe("MultiSelect Widget", () => {
                   { label: 'Oliver White', value: 'oliver_white' },
                   { label: 'Sophia Lee', value: 'sophia_lee' },
                 ])
-                ensemble.storage.set('testoptions', [])
+                ensemble.storage.set('test_options', [])
               `,
             },
           },
@@ -703,24 +703,27 @@ describe("MultiSelect Widget", () => {
                     Column: {
                       children: [
                         {
-                          Text: {
-                            text: "This is modal",
-                          },
+                          Text: { text: "This is modal" },
                         },
                         {
                           MultiSelect: {
-                            data: "${ensemble.storage.get('testoptions')}",
+                            data: `\${ensemble.storage.get('test_options')}`,
                             labelKey: "label",
                             valueKey: "value",
-                            value:
-                              "${ensemble.storage.get('testselect') || []}",
+                            value: `\${ensemble.storage.get('test_select') || []}`,
+                            onChange: {
+                              executeCode: `
+                              ensemble.storage.set('test_select', option)
+                              console.log('test_select', ensemble.storage.get('test_select'))
+                              `,
+                            },
                             onSearch: {
                               executeCode: `
-                                const tempOptions = ensemble.storage.get('testlistoptions')
+                                const tempOptions = ensemble.storage.get('test_list_options')
                                 const filteredResult = tempOptions.filter(option => 
                                   option.label.toLowerCase().startsWith(search.toLowerCase())
                                 )
-                                ensemble.storage.set('testoptions', filteredResult)
+                                ensemble.storage.set('test_options', filteredResult)
                               `,
                             },
                           },
@@ -746,53 +749,56 @@ describe("MultiSelect Widget", () => {
       { wrapper: BrowserRouterWrapper },
     );
 
-    const showDialogButton = screen.getByText("Show Dialog");
-    fireEvent.click(showDialogButton);
+    const option = { selector: ".ant-select-item-option-content" };
+    const selected = { selector: ".ant-select-selection-item-content" };
 
-    // verify the modal
-    const modalTitle = screen.getByText("This is modal");
-    await waitFor(() => {
-      expect(modalTitle).toBeInTheDocument();
-    });
-
-    // search by type
-    await userEvent.click(screen.getByRole("combobox"));
-    await userEvent.type(document.querySelector("input") as HTMLElement, "B");
-
-    // check for updated option list
-    await waitFor(() => {
-      expect(
-        screen.getByText("Bella Davis", {
-          selector: ".ant-select-item-option-content",
-        }),
-      ).toBeInTheDocument();
-    });
-
-    // click the option
-    await userEvent.click(
-      screen.getByText("Bella Davis", {
-        selector: ".ant-select-item-option-content",
-      }),
-    );
-
-    // Wait for the combobox to reflect the selected values
-    await waitFor(() => {
-      expect(
-        screen.getByText("Bella Davis", {
-          selector: ".ant-select-selection-item-content",
-        }),
-      ).toBeVisible();
-    });
-
-    // close the modal
-    const closeDialogButton = screen.getByText("Close modal");
-    fireEvent.click(closeDialogButton);
+    userEvent.click(screen.getByText("Show Dialog"));
 
     await waitFor(() => {
-      expect(modalTitle).not.toBeInTheDocument();
+      expect(screen.getByText("This is modal")).toBeInTheDocument();
     });
 
-    //TODO: again open the modal and repeat same process with different option
+    userEvent.type(screen.getByRole("combobox"), "Bella");
+
+    await waitFor(() => {
+      expect(screen.getByText("Bella Davis", option)).toBeInTheDocument();
+    });
+
+    userEvent.click(screen.getByText("Bella Davis", option));
+
+    await waitFor(() => {
+      expect(screen.getByText("Bella Davis", selected)).toBeVisible();
+    });
+
+    userEvent.click(screen.getByText("Close modal"));
+
+    // Open 2nd time to check if the selected values are retained
+
+    userEvent.click(screen.getByText("Show Dialog"));
+
+    userEvent.type(screen.getByRole("combobox"), "Sophia");
+
+    await waitFor(() => {
+      expect(screen.getByText("Sophia Lee", option)).toBeInTheDocument();
+    });
+
+    userEvent.click(screen.getByText("Sophia Lee", option));
+
+    await waitFor(() => {
+      expect(screen.queryByText("Bella Davis", selected)).toBeVisible();
+      expect(screen.queryByText("Sophia Lee", selected)).toBeVisible();
+    });
+
+    userEvent.click(screen.getByText("Close modal"));
+
+    // Open 3rd time to check if the selected values are retained
+
+    userEvent.click(screen.getByText("Show Dialog"));
+
+    await waitFor(() => {
+      expect(screen.queryByText("Bella Davis", selected)).toBeVisible();
+      expect(screen.queryByText("Sophia Lee", selected)).toBeVisible();
+    });
   });
 });
 /* eslint-enable react/no-children-prop */
