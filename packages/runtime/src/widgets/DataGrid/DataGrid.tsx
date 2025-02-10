@@ -91,6 +91,7 @@ export interface DataGridScrollable {
 export type GridProps = {
   allowSelection?: boolean;
   selectionType?: "checkbox" | "radio";
+  selectionColWidth?: number;
   allowResizableColumns?: boolean;
   onRowsSelected?: EnsembleAction;
   defaultSelectedRowKeys?: string[];
@@ -178,6 +179,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   const [selectionType, setSelectionType] = useState<"checkbox" | "radio">(
     props.selectionType ? props.selectionType : "checkbox",
   );
+  const selectionColWidth = props.selectionColWidth || 50;
   const containerRef = useRef<HTMLDivElement>(null);
   const { namedData } = useTemplateData({ ...itemTemplate });
   const components = {
@@ -314,6 +316,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
       rowsSelected,
       selectionType,
       allowSelection,
+      selectionColWidth,
       pageSize,
       curPage,
       widgetName,
@@ -474,6 +477,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
           rowSelection={
             allowSelection
               ? {
+                  columnWidth: values?.selectionColWidth,
                   type: selectionType,
                   onChange: (selectedRowKeys, selectedRows): void => {
                     setRowsKey(selectedRowKeys);

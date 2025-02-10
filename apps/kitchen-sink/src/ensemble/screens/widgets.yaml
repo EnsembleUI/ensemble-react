@@ -290,6 +290,7 @@ View:
                     executeCode: |
                       console.log("data", selectedRows, selectedRowKeys);
                   allowSelection: ${1===1}
+                  selectionColWidth: ${20+30}
                   selectionType: '${1===10 ? "checkbox" : "radio"}'
                   allowResizableColumns: true
                   defaultSelectedRowKeys: ["2"]
