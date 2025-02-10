@@ -515,7 +515,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
                 }))}
                 hidden={col.visible === false}
                 key={colIndex}
-                minWidth={col.width}
+                minWidth={col.width ?? 100}
                 onFilter={
                   col.filter?.onFilter
                     ? (value, record): boolean =>
@@ -588,7 +588,6 @@ export const DataGrid: React.FC<GridProps> = (props) => {
           }
 
           #${resolvedWidgetId} .ant-table-thead > tr > th {
-            word-break: normal !important;
             ${
               headerStyle?.backgroundColor
                 ? `background-color : ${headerStyle.backgroundColor} !important;`
@@ -618,10 +617,6 @@ export const DataGrid: React.FC<GridProps> = (props) => {
 
           #${resolvedWidgetId} .ant-table-thead > tr > th::before{
             ${!headerStyle?.hasDivider ? `position : unset !important;` : ""}
-          }
-
-          #${resolvedWidgetId} .ant-table-header > table {
-            table-layout: auto !important;
           }
 
           #${resolvedWidgetId} .ant-table-thead > tr > th {
