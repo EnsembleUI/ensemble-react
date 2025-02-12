@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import type {
   ApplicationDTO,
   EnsembleAppModel,
   ApplicationLoader,
+  IconDTO,
 } from "@ensembleui/react-framework";
 import {
   ApplicationContextProvider,
@@ -13,13 +14,15 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { injectStyle } from "react-toastify/dist/inject-style";
 import { QueryClientProvider } from "@tanstack/react-query";
+import * as Icons from "@mui/icons-material";
 import { ThemeProvider } from "./ThemeProvider";
 import { EnsembleEntry } from "./runtime/entry";
 import { EnsembleScreen } from "./runtime/screen";
 import { ErrorPage } from "./runtime/error";
 // Register built in widgets;
 import "./widgets";
-import { WidgetRegistry } from "./registry";
+import type { WidgetComponent } from "./registry";
+import { IconRegistry, WidgetRegistry } from "./registry";
 import { createCustomWidget } from "./runtime/customWidget";
 import { ModalWrapper } from "./runtime/modal";
 
@@ -56,6 +59,20 @@ export const EnsembleApp: React.FC<EnsembleAppProps> = ({
           customWidget.name,
           createCustomWidget(customWidget),
         );
+      });
+
+      Object.entries(Icons).forEach(([name, icon]) => {
+        IconRegistry.register(name, icon as WidgetComponent<unknown>);
+      });
+
+      appDto?.icons?.forEach((iconSet: IconDTO) => {
+        const { prefix = "", icons = {} } = iconSet;
+        Object.entries(icons).forEach(([name, icon]) => {
+          IconRegistry.register(
+            `${prefix}${name}`,
+            icon as WidgetComponent<unknown>,
+          );
+        });
       });
 
       setApp(parsedApp);

@@ -5,6 +5,7 @@
   "dependencies": {
     "@ensembleui/react-framework": "workspace:*",
     "@ensembleui/react-runtime": "workspace:*",
+    "@mui/icons-material": "^6.4.1",
     "antd": "^5.9.0",
     "firebase": "9.10.0",
     "lodash-es": "^4.17.21",

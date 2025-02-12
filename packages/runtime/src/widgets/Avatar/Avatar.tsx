@@ -9,6 +9,8 @@ import {
 } from "@mui/material";
 import { WidgetRegistry } from "../../registry";
 import type { EnsembleWidgetStyles, IconProps } from "../../shared/types";
+import { normalizeIconProps } from "../../shared/utils";
+// eslint-disable-next-line import/no-cycle
 import { Icon } from "../Icon";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import { generateInitials } from "./utils/generateInitials";
@@ -108,20 +110,23 @@ export const Avatar: React.FC<AvatarProps> = (props) => {
           onClose={handleMenuClose}
           open={isMenuOpen}
         >
-          {values?.menu.map((menuItem, idx) => (
-            <MenuItem key={idx} onClick={(): void => handleMenuClick(menuItem)}>
-              {menuItem.icon ? (
-                <ListItemIcon>
-                  <Icon
-                    color={menuItem.icon.color}
-                    name={menuItem.icon.name}
-                    size={menuItem.icon.size}
-                  />
-                </ListItemIcon>
-              ) : null}
-              {menuItem.label}
-            </MenuItem>
-          ))}
+          {values?.menu.map((menuItem, idx) => {
+            const icon = normalizeIconProps(menuItem.icon);
+
+            return (
+              <MenuItem
+                key={idx}
+                onClick={(): void => handleMenuClick(menuItem)}
+              >
+                {icon ? (
+                  <ListItemIcon>
+                    <Icon {...icon} />
+                  </ListItemIcon>
+                ) : null}
+                {menuItem.label}
+              </MenuItem>
+            );
+          })}
         </Menu>
       ) : null}
     </div>

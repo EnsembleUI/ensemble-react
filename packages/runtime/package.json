@@ -22,6 +22,7 @@
   },
   "peerDependencies": {
     "@ensembleui/react-framework": "*",
+    "@mui/icons-material": "^6.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -31,7 +32,7 @@
     "@emotion/styled": "^11.11.0",
     "@ensembleui/react-framework": "workspace:*",
     "@lottiefiles/react-lottie-player": "^3.5.3",
-    "@mui/icons-material": "^5.14.9",
+    "@mui/icons-material": "^6.4.1",
     "@mui/material": "^5.14.9",
     "@mui/x-date-pickers": "^6.18.3",
     "@react-oauth/google": "^0.12.1",

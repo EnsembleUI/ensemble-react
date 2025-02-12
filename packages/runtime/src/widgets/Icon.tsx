@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { isValidElement, useState } from "react";
 import { useRegisterBindings } from "@ensembleui/react-framework";
 import { WidgetRegistry } from "../registry";
 import type { IconProps } from "../shared/types";
@@ -50,6 +50,11 @@ export const Icon: React.FC<IconProps> = ({
     onMouseLeaveAction?.callback();
     setIsMouseOver(false);
   };
+
+  if (isValidElement(IconComponent)) {
+    return IconComponent;
+  }
+
   return (
     <IconComponent
       className={values?.styles?.names}
@@ -59,7 +64,7 @@ export const Icon: React.FC<IconProps> = ({
       }}
       onMouseEnter={handleMouseOver}
       onMouseLeave={handleMouseLeave}
-      sx={{
+      style={{
         cursor: onTap ? "pointer" : "auto",
         ...values?.styles,
         color: values?.color && getColor(String(values.color)),
