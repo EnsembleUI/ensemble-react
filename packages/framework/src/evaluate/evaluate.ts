@@ -9,6 +9,48 @@ import {
   replace,
 } from "../shared";
 
+interface ScriptOptions extends Partial<HTMLScriptElement> {
+  id?: string;
+}
+
+export const DOMManager = (function DOMManagerFactory(): {
+  addScript: (
+    src: string,
+    options?: ScriptOptions,
+  ) => Promise<HTMLScriptElement>;
+  clearAllScripts: () => void;
+} {
+  const allScripts = new Set<HTMLScriptElement>();
+
+  return {
+    /**
+     * Adds a script element to the document
+     * @param src - Source URL of the script
+     * @param options - Optional configuration for the script element
+     * @returns Promise that resolves with the script element
+     */
+    addScript: function addScript(js: string): Promise<HTMLScriptElement> {
+      const script = document.createElement("script");
+
+      script.type = "text/javascript";
+      script.textContent = js;
+
+      allScripts.add(script);
+
+      return new Promise((resolve, reject) => {
+        script.onload = (): void => resolve(script);
+        script.onerror = (): void => reject(new Error(`Failed to load script`));
+        document.body.appendChild(script);
+      });
+    },
+
+    // Clear all managed scripts
+    clearAllScripts: function clearAllScripts(): void {
+      allScripts.forEach((script) => script.remove());
+    },
+  };
+})();
+
 export const widgetStatesToInvokables = (widgets: {
   [key: string]: WidgetState | undefined;
 }): [string, InvokableMethods | undefined][] => {
@@ -39,8 +81,21 @@ export const buildEvaluateFn = (
     ].filter(([key, _]) => !key.includes(".")),
   );
 
+  const combinedJs = `
+    return myScreenScope(
+      () => {
+        return (${Object.keys(invokableObj).join(",")}) => {
+          ${formatJs(js)}
+        };
+      },
+      ...Object.keys(invokableObj) // Pass the entire context object
+    )(${Object.keys(invokableObj)
+      .map((key) => key)
+      .join(",")});
+  `;
+
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
-  const jsFunc = new Function(...Object.keys(invokableObj), formatJs(js));
+  const jsFunc = new Function(...Object.keys(invokableObj), combinedJs);
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return () => jsFunc(...Object.values(invokableObj));

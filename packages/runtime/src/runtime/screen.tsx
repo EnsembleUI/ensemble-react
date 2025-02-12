@@ -95,24 +95,28 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
     const globalBlock = screen.global;
     const importedScripts = screen.importedScripts;
 
-    if (!globalBlock && !importedScripts) {
-      return;
-    }
+    const isScriptExist = document.getElementById("custom-scope-script");
 
-    const script = document.createElement("script");
-    script.type = "text/javascript";
-    script.textContent = `(function () {
-      ${importedScripts || ""}
-      ${globalBlock || ""}
-    }).call(this)`;
+    const jsString = `
+      const myScreenScope = function(scriptToExecute, context) {
+        console.log('>>>><<<<<', context);
 
-    document.body.appendChild(script);
-
-    return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
+        ${importedScripts || ""}
+        ${globalBlock || ""}
+        return eval('(' + scriptToExecute.toString() + ')()');
       }
-    };
+    `;
+
+    if (isScriptExist) {
+      isScriptExist.textContent = jsString;
+    } else {
+      const script = document.createElement("script");
+      script.id = "custom-scope-script";
+      script.type = "text/javascript";
+      script.textContent = jsString;
+
+      document.body.appendChild(script);
+    }
   }, [screen.global, screen.importedScripts]);
 
   if (!isInitialized) {
