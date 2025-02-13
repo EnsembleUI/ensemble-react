@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.20
+
+### Patch Changes
+
+- b931829: Add option to allow clear input for dropdown
+
 ## 0.3.19
 
 ### Patch Changes

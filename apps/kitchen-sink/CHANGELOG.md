@@ -1,5 +1,16 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.114
+
+### Patch Changes
+
+- b931829: Add option to allow clear input for dropdown
+- f398622: Added validation for unique API name across screen and widgets
+- Updated dependencies [b931829]
+- Updated dependencies [f398622]
+  - @ensembleui/react-runtime@0.3.20
+  - @ensembleui/react-framework@0.2.18
+
 ## 0.0.113
 
 ### Patch Changes

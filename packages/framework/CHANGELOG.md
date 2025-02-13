@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.2.18
+
+### Patch Changes
+
+- f398622: Added validation for unique API name across screen and widgets
+
 ## 0.2.17
 
 ### Patch Changes
