@@ -870,9 +870,9 @@ View:
                           text: Here is my label 2
                       value: 222
               - Dropdown:
-                  label: Ability to clear selection
+                  label: Ability to stop clearing selection
                   hintText: Hint Text
-                  allowClear: ${true}
+                  allowClear: ${false}
                   styles:
                     dropdownBorderWidth: 3px
                   items:
