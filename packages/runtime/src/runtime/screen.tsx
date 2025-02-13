@@ -99,11 +99,12 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
 
     const jsString = `
       const myScreenScope = function(scriptToExecute, context) {
-        console.log('>>>><<<<<', context);
+        with (context) {
+          ${importedScripts || ""}
+          ${globalBlock || ""}
 
-        ${importedScripts || ""}
-        ${globalBlock || ""}
-        return eval('(' + scriptToExecute.toString() + ')()');
+          return eval('(' + scriptToExecute.toString() + ')()');
+        }    
       }
     `;
 

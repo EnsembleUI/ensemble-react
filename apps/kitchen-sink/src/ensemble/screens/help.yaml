@@ -32,14 +32,6 @@ View:
             styles:
               names: heading-1
             text: Help
-        - Button:
-            styles:
-              className: page-1 ${ensemble.storage.get('zzz') + '-' + ensemble.storage.get('aaa')}
-            label: ${productTitleName}
-            onTap:
-              executeCode: |
-                // Calls a function defined in test.js
-                sayHello();
         - Markdown:
             text: More to come! In the meantime, checkout the Ensemble [documentation](https://docs.ensembleui.com/).
         - Card:

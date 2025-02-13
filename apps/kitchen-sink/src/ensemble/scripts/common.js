@@ -1,8 +1,5 @@
-const productTitleName = () => {
-  try {
-    console.log(">>><<<<");
-    console.log(">>>>", ensemble);
-  } catch (error) {
-    console.log(error);
-  }
+const productTitleName = "SgrDvr";
+
+getDateLabel = (val) => {
+  return `i am a date label ${val}`;
 };
