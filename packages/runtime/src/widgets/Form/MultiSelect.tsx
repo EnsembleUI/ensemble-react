@@ -123,7 +123,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
 
   // load data and items
   useEffect(() => {
-    const tempOptions: MultiSelectOption[] = [];
+    const tempOptions: MultiSelectOption[] = values?.selectedValues || [];
 
     if (isArray(rawData)) {
       tempOptions.push(
@@ -152,7 +152,15 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
       );
     }
 
-    setOptions(tempOptions);
+    const uniqueOptions = tempOptions.reduce((acc, current) => {
+      const x = acc.find((item) => item.value === current.value);
+      if (!x) {
+        return acc.concat([current]);
+      }
+      return acc;
+    }, [] as MultiSelectOption[]);
+
+    setOptions(uniqueOptions);
   }, [rawData, values?.labelKey, values?.valueKey, values?.items]);
 
   // handle form instance
