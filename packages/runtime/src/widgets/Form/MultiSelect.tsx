@@ -207,10 +207,10 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   // handle option change
   const handleChange = (
     value: MultiSelectOption[],
-    option: MultiSelectOption | MultiSelectOption[],
+    option?: MultiSelectOption | MultiSelectOption[],
   ): void => {
     setSelectedValues(value);
-    if (action) onChangeCallback({ value, option });
+    if (action) onChangeCallback({ value, option: option ?? [] });
     else onItemSelectCallback(value);
 
     if (newOption) {
