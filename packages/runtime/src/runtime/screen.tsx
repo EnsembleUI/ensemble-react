@@ -91,6 +91,35 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
     };
   }, [screen.customWidgets]);
 
+  useEffect(() => {
+    const globalBlock = screen.global;
+    const importedScripts = screen.importedScripts;
+
+    const isScriptExist = document.getElementById("custom-scope-script");
+
+    const jsString = `
+      const myScreenScope = function(scriptToExecute, context) {
+        with (context) {
+          ${importedScripts || ""}
+          ${globalBlock || ""}
+
+          return eval('(' + scriptToExecute.toString() + ')()');
+        }    
+      }
+    `;
+
+    if (isScriptExist) {
+      isScriptExist.textContent = jsString;
+    } else {
+      const script = document.createElement("script");
+      script.id = "custom-scope-script";
+      script.type = "text/javascript";
+      script.textContent = jsString;
+
+      document.body.appendChild(script);
+    }
+  }, [screen.global, screen.importedScripts]);
+
   if (!isInitialized) {
     return null;
   }
