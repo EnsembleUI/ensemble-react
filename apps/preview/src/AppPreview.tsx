@@ -125,7 +125,7 @@ export const AppPreview: React.FC<{ db: Firestore }> = ({ db }) => {
           bypassCache: boolean;
           screen?: {
             id: string;
-            content: string;
+            editorContent: string;
           };
         };
         if (msg.type === "reload") {
@@ -134,7 +134,7 @@ export const AppPreview: React.FC<{ db: Firestore }> = ({ db }) => {
           if (msg.screen) {
             localStorage.setItem(
               `flutter.${msg.screen.id}`,
-              msg.screen.content,
+              JSON.stringify(msg.screen.editorContent),
             );
           }
         }
