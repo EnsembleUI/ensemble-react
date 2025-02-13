@@ -1,5 +1,13 @@
 # @ensembleui/react-runtime
 
+## 0.3.19
+
+### Patch Changes
+
+- 0aaa92c: fix column header by adding minWidth
+- b1a3d81: feat: add selection column width property to DataGrid
+- 94b90eb: prevent event propagation on icon click
+
 ## 0.3.18
 
 ### Patch Changes
