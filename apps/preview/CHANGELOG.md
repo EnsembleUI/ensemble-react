@@ -1,5 +1,11 @@
 # @ensembleui/react-preview
 
+## 0.0.112
+
+### Patch Changes
+
+- fd7ab93: Fix ensemble preview
+
 ## 0.0.111
 
 ### Patch Changes
