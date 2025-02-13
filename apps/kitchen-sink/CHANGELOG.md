@@ -1,5 +1,15 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.113
+
+### Patch Changes
+
+- b1a3d81: feat: add selection column width property to DataGrid
+- Updated dependencies [0aaa92c]
+- Updated dependencies [b1a3d81]
+- Updated dependencies [94b90eb]
+  - @ensembleui/react-runtime@0.3.19
+
 ## 0.0.112
 
 ### Patch Changes
