@@ -74,7 +74,8 @@ export const EnsembleParser = {
 
     const widgetApis: EnsembleAPIModel[] = flatMap(
       customWidgets,
-      (widget) => widget.apis ?? [],
+      (widget) =>
+        widget.apis?.map((api) => ({ ...api, widgetName: widget.name })) ?? [],
     );
 
     const widgetCustomEvents: EnsembleCustomEventModel[] = flatMap(
@@ -92,7 +93,13 @@ export const EnsembleParser = {
       const pageScreen = EnsembleParser.parseScreen(id, name, screen, app);
       return {
         ...pageScreen,
-        apis: concat(pageScreen.apis ?? [], widgetApis),
+        apis: concat(
+          pageScreen.apis?.map((api) => ({
+            ...api,
+            widgetName: pageScreen.name,
+          })) ?? [],
+          widgetApis,
+        ),
         events: widgetCustomEvents,
         ...rest,
       };
@@ -108,7 +115,10 @@ export const EnsembleParser = {
       screen.apis.forEach((api) => {
         if (apiNames.has(api.name)) {
           throw new Error(
-            `Application has multiple apis with the same name (${api.name}) on (${screen.name || screen.id}) screen.`,
+            `Application has multiple apis with the same name (${api.name}) on (${screen.name || screen.id}) screen in (${screen.apis
+              .filter((screenApi) => screenApi.name === api.name)
+              .map((screenApi) => get(screenApi, "widgetName"))
+              .join(", ")}) widgets.`,
           );
         }
         apiNames.add(api.name);
