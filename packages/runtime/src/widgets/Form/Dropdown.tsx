@@ -48,6 +48,7 @@ export interface SelectOption {
 }
 
 export type DropdownProps = {
+  allowClear?: boolean;
   items?: SelectOption[];
   /* deprecated, use onChange */
   onItemSelect: EnsembleAction;
@@ -302,6 +303,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
       <div ref={rootRef} style={{ flex: 1, ...formItemStyles }}>
         <EnsembleFormItem values={values}>
           <Select
+            allowClear={values?.allowClear ?? true}
             className={`${values?.styles?.names || ""} ${id}_input`}
             defaultValue={values?.value}
             disabled={values?.enabled === false}

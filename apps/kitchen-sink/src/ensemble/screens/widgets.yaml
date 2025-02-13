@@ -869,6 +869,17 @@ View:
                         Text:
                           text: Here is my label 2
                       value: 222
+              - Dropdown:
+                  label: Ability to stop clearing selection
+                  hintText: Hint Text
+                  allowClear: ${false}
+                  styles:
+                    dropdownBorderWidth: 3px
+                  items:
+                    - label: Option 1
+                      value: 1
+                    - label: Option 2
+                      value: 2
         - Card:
             styles:
               maxWidth: unset
