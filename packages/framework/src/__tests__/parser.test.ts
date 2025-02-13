@@ -149,3 +149,34 @@ test("parse multiple theme in a single file", () => {
     },
   });
 });
+
+test("throws error when widget API name conflicts with screen API name", () => {
+  const appConfig = {
+    widgets: [
+      {
+        id: "DispatchButton",
+        name: "DispatchButton",
+        content: fs
+          .readFileSync(`${__dirname}/__resources__/mycustomwidget.yaml`)
+          .toString(),
+      },
+    ],
+    screens: [
+      {
+        name: "home",
+        content: fs
+          .readFileSync(`${__dirname}/__resources__/helloworld.yaml`)
+          .toString(),
+      },
+    ],
+    scripts: [],
+    name: "test",
+    id: "test",
+  } as unknown as ApplicationDTO;
+
+  expect(() => {
+    EnsembleParser.parseApplication(appConfig);
+  }).toThrow(
+    "Application has multiple apis with the same name (getDummyProducts) on (home) screen in (home, DispatchButton) widgets.",
+  );
+});
