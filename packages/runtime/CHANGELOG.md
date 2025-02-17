@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.21
+
+### Patch Changes
+
+- 0533507: revert: prevent event propagation on icon click
+
 ## 0.3.20
 
 ### Patch Changes
