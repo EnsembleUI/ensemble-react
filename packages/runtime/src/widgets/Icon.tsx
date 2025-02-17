@@ -53,10 +53,7 @@ export const Icon: React.FC<IconProps> = ({
   return (
     <IconComponent
       className={values?.styles?.names}
-      onClick={(e): void => {
-        e.stopPropagation();
-        onTapActionCallback?.callback();
-      }}
+      onClick={(): unknown => onTapActionCallback?.callback()}
       onMouseEnter={handleMouseOver}
       onMouseLeave={handleMouseLeave}
       sx={{
