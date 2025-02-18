@@ -19,6 +19,10 @@ export const widgetStatesToInvokables = (widgets: {
   });
 };
 
+interface InvokableWindow extends Window {
+  [key: string]: unknown;
+}
+
 export const buildEvaluateFn = (
   screen: Partial<ScreenContextDefinition>,
   js?: string,
@@ -46,6 +50,10 @@ export const buildEvaluateFn = (
         ${formatJs(js)};
       }, {${args}});
   `;
+
+  Object.entries(invokableObj).forEach(([key, value]) => {
+    (window as unknown as InvokableWindow)[key] = value;
+  });
 
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
   const jsFunc = new Function(...Object.keys(invokableObj), combinedJs);

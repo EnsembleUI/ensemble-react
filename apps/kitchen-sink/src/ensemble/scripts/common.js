@@ -1,5 +1,5 @@
 const productTitleName = "SgrDvr";
 
-getDateLabel = (val) => {
+const getDateLabel = (val) => {
   return `i am a date label ${val}`;
 };

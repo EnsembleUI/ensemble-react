@@ -98,11 +98,11 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
     const isScriptExist = document.getElementById("custom-scope-script");
 
     const jsString = `
+      ${importedScripts || ""}
+      ${globalBlock || ""}
+      
       const myScreenScope = function(scriptToExecute, context) {
         with (context) {
-          ${importedScripts || ""}
-          ${globalBlock || ""}
-
           return eval('(' + scriptToExecute.toString() + ')()');
         }    
       }
