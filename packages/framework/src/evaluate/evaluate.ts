@@ -44,16 +44,15 @@ export const buildEvaluateFn = (
   );
 
   const args = Object.keys(invokableObj).join(",");
+  Object.keys(invokableObj).forEach((key) => {
+    (window as unknown as InvokableWindow)[key] = invokableObj[key];
+  });
 
   const combinedJs = `
-      return myScreenScope(() => {
-        ${formatJs(js)};
-      }, {${args}});
+    return evalInClosure(() => {
+      ${formatJs(js)}
+    }, {${args}})
   `;
-
-  Object.entries(invokableObj).forEach(([key, value]) => {
-    (window as unknown as InvokableWindow)[key] = value;
-  });
 
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
   const jsFunc = new Function(...Object.keys(invokableObj), combinedJs);
