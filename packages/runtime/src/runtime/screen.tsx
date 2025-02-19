@@ -98,6 +98,19 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
     const isScriptExist = document.getElementById("custom-scope-script");
 
     const jsString = `
+      // Create a base object and pin its reference
+      const ensembleObj = {};
+      Object.defineProperty(window, 'ensemble', {
+        get: () => ensembleObj,
+        set: (value) => {
+          // Copy properties instead of replacing reference
+          Object.assign(ensembleObj, value);
+          return true;
+        },
+        configurable: true,
+        enumerable: true
+      });
+
       const createEvalClosure = () => {
         ${importedScripts || ""}
         ${globalBlock || ""}
