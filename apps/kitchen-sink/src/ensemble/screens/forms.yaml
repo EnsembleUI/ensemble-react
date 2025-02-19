@@ -362,6 +362,19 @@ View:
                         label:
                           Text:
                             text: Text input with max length enforcement
+                    - TextInput:
+                        label: Multiline text 1
+                        hintText: Press enter to submit
+                        multiLine: true
+                        maxLines: 2
+                        submitOnEnter: true
+                        onChange: console.log("TextArea 1", value)
+                    - TextInput:
+                        label: Multiline text 2
+                        hintText: Type freely
+                        multiline: true
+                        maxLines: 2
+                        onChange: console.log("TextArea 2", value)
                     - MultiSelect:
                         id: initial_multiselectoptions1
                         label: Choose multiple from API or storage
