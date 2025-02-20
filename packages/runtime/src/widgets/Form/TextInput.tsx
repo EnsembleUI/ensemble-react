@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import type { RefCallback, FormEvent } from "react";
 import { runes } from "runes2";
 import type { Rule } from "antd/es/form";
-import { forEach } from "lodash-es";
+import { forEach, isObject, omitBy } from "lodash-es";
 import IMask, { type InputMask } from "imask";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { WidgetRegistry } from "../../registry";
@@ -38,8 +38,7 @@ export type TextInputProps = {
     regexError?: string;
     maskError?: string;
   };
-  /** Submit the form when 'Enter' is clicked - works only when {@link TextInputProps.multiline} is true */
-  submitOnEnter?: boolean;
+  onKeyDown: EnsembleAction;
 } & EnsembleWidgetProps<TextStyles> &
   FormInputProps<string>;
 
@@ -60,6 +59,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
   );
   const formInstance = Form.useFormInstance();
   const action = useEnsembleAction(props.onChange);
+  const onKeyDownAction = useEnsembleAction(props.onKeyDown);
 
   const handleChange = useCallback(
     (newValue: string) => {
@@ -74,7 +74,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     rootRef(node);
   };
 
-  const handleKeyDown = useCallback((e: FormEvent<HTMLInputElement>) => {
+  const sanitizeNumberInput = useCallback((e: FormEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
     target.value = target.value.replace(/[^0-9.]/g, "");
   }, []);
@@ -88,6 +88,17 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
       }
     },
     [handleChange, mask],
+  );
+
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) =>
+      onKeyDownAction?.callback({
+        event: {
+          ...omitBy(event, isObject),
+          preventDefault: event.preventDefault.bind(event),
+        },
+      }),
+    [onKeyDownAction],
   );
 
   useEffect(() => {
@@ -256,12 +267,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
             defaultValue={values.value}
             disabled={values.enabled === false}
             onChange={(event): void => handleChange(event.target.value)}
-            {...(values.submitOnEnter && {
-              onKeyDown: (event): void => {
-                if (event.key === "Enter" && !event.shiftKey)
-                  formInstance.submit();
-              },
-            })}
+            onKeyDown={handleKeyDown}
             placeholder={values.hintText ?? ""}
             ref={rootRef}
             rows={values.maxLines ? Number(values.maxLines) : 4} // Adjust the number of rows as needed
@@ -280,8 +286,9 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
             disabled={values?.enabled === false}
             onChange={(event): void => handleChange(event.target.value)}
             {...(values?.inputType === "number" && {
-              onInput: (event): void => handleKeyDown(event),
+              onInput: (event): void => sanitizeNumberInput(event),
             })}
+            onKeyDown={handleKeyDown}
             onPaste={handleInputPaste}
             placeholder={values?.hintText ?? ""}
             ref={handleRef}

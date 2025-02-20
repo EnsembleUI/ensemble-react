@@ -362,19 +362,34 @@ View:
                         label:
                           Text:
                             text: Text input with max length enforcement
+                        onKeyDown:
+                          executeCode: |
+                            console.log("initial_formTextInput onKeyDown", event)
                     - TextInput:
                         label: Multiline text 1
                         hintText: Press enter to submit
                         multiLine: true
                         maxLines: 2
-                        submitOnEnter: true
+                        submitOnEnter: ${initial_formTextInput?.value?.length > 4}
                         onChange: console.log("TextArea 1", value)
+                        onKeyDown: |
+                          if (event.key === 'Enter' && !event.shiftKey) {
+                            event.preventDefault();
+                            myForm2.submit();
+                          }
                     - TextInput:
+                        id: textArea2
                         label: Multiline text 2
                         hintText: Type freely
                         multiline: true
                         maxLines: 2
-                        onChange: console.log("TextArea 2", value)
+                        onChange: console.log("TextArea 2 onChange", value)
+                        onKeyDown:
+                          executeCode: |
+                            console.log("TextArea 2 onKeyDown", event)
+                    - Button:
+                        label: toggle 'Multiline text 2' to submit on Enter
+                        onChange: textArea2.setSubmitOnEnter(textArea2?.submitOnEnter ?? true)
                     - MultiSelect:
                         id: initial_multiselectoptions1
                         label: Choose multiple from API or storage
