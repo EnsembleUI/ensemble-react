@@ -116,7 +116,8 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
         ${globalBlock || ""}
         
         return (scriptToExecute, context) => {
-          return eval('(' + scriptToExecute.toString() + ')()');
+          const args = Object.keys(context).join(",");
+          return eval('(' + scriptToExecute.toString() + ')('+ args +')');
         }
       }
       

@@ -49,7 +49,7 @@ export const buildEvaluateFn = (
   });
 
   const combinedJs = `
-    return evalInClosure(() => {
+    return evalInClosure((${args}) => {
       ${formatJs(js)}
     }, {${args}})
   `;
