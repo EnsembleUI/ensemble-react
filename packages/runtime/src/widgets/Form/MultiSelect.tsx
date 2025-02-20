@@ -73,6 +73,7 @@ export type MultiSelectProps = {
   maxTagCount: Expression<number | "responsive">;
   /** Max tag text length to show */
   maxTagTextLength: Expression<number>;
+  notFoundContent?: Expression<string> | { [key: string]: unknown };
 } & EnsembleWidgetProps<MultiSelectStyles> &
   FormInputProps<object[] | string[]>;
 
@@ -269,6 +270,18 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     <Dropdown menu={menu} newOption={newOption} />
   );
 
+  const notFoundContentRenderer = useMemo(() => {
+    const notFoundContent = values?.notFoundContent;
+
+    if (!notFoundContent) {
+      return "No Results";
+    }
+
+    return isString(notFoundContent)
+      ? notFoundContent
+      : EnsembleRuntime.render([unwrapWidget(notFoundContent)]);
+  }, [values?.notFoundContent]);
+
   return (
     <>
       <style>{`
@@ -357,7 +370,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
                 : undefined
             }
             mode={values?.allowCreateOptions ? "tags" : "multiple"}
-            notFoundContent="No Results"
+            notFoundContent={notFoundContentRenderer}
             onChange={handleChange}
             onSearch={handleSearch} // required for display new custom option with Dropdown element
             optionFilterProp="children"
