@@ -394,6 +394,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
       pageSize,
       total: totalRows,
       current: curPage,
+      showSizeChanger: true, // always show pagination options (otherwise it defaults to total > 50)
     };
   }, [values, pageSize, curPage, resolvedWidgetId]);
 
