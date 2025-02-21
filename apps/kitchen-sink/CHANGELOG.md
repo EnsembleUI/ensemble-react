@@ -1,5 +1,15 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.116
+
+### Patch Changes
+
+- aa01532: add onKeyDown action in TextInput widget
+- Updated dependencies [aa01532]
+- Updated dependencies [43ede4b]
+- Updated dependencies [013ae91]
+  - @ensembleui/react-runtime@0.3.22
+
 ## 0.0.115
 
 ### Patch Changes
