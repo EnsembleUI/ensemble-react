@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.117
+
+### Patch Changes
+
+- dffd977: support onTriggered action in PopupMenu widget
+- Updated dependencies [dffd977]
+  - @ensembleui/react-runtime@0.3.23
+
 ## 0.0.116
 
 ### Patch Changes

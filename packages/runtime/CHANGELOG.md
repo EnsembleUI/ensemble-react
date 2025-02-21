@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.23
+
+### Patch Changes
+
+- dffd977: support onTriggered action in PopupMenu widget
+
 ## 0.3.22
 
 ### Patch Changes
