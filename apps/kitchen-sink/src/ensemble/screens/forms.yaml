@@ -177,6 +177,8 @@ View:
                         label:
                           Text:
                             text: Text mask input
+                        onChange: console.log("formTextInput onChange", value)
+                        onKeyDown: console.log("formTextInput onKeyDown", event)
                     - TextInput:
                         id: minMaxTextInput
                         inputType: number
@@ -188,6 +190,8 @@ View:
                           required: true
                           maxLength: 3
                         label: Text input with min and max length
+                        onChange: console.log("minMaxTextInput onChange", value)
+                        onKeyDown: console.log("minMaxTextInput onKeyDown", event)
                     - TextInput:
                         id: regexTextInput
                         required: true
@@ -371,7 +375,7 @@ View:
                         multiLine: true
                         maxLines: 2
                         submitOnEnter: ${initial_formTextInput?.value?.length > 4}
-                        onChange: console.log("TextArea 1", value)
+                        onChange: console.log("TextArea 1 onChange", value)
                         onKeyDown: |
                           if (event.key === 'Enter' && !event.shiftKey) {
                             event.preventDefault();
