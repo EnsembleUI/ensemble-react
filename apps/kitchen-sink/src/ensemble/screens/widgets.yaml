@@ -51,6 +51,7 @@ View:
                   trigger: hover
                   styles:
                     height: 200px
+                  onTriggered: console.log("onTriggered called", open)
                   onItemSelect:
                     showToast:
                       message: Your selected brand's ${value?.product ? "rating" :"price"} is ${value?.product?.rating || value?.value}
@@ -172,6 +173,7 @@ View:
                   trigger: contextMenu
                   styles:
                     backgroundColor: ${colors.gray['50']}
+                  onTriggered: console.log("onTriggered called", open)
                   onItemSelect:
                     showToast:
                       message: navigated to ${value.str}
