@@ -1,5 +1,12 @@
 # @ensembleui/react-runtime
 
+## 0.3.22
+
+### Patch Changes
+
+- aa01532: add onKeyDown action in TextInput widget
+- 013ae91: expose notFoundContent property for MultiSelect widget
+
 ## 0.3.21
 
 ### Patch Changes
