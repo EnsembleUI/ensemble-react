@@ -1,19 +1,12 @@
 import { Input, Form, ConfigProvider } from "antd";
 import type { Expression, EnsembleAction } from "@ensembleui/react-framework";
 import { useRegisterBindings } from "@ensembleui/react-framework";
-import {
-  useEffect,
-  useMemo,
-  useState,
-  useCallback,
-  useRef,
-  type FormEvent,
-  RefCallback,
-} from "react";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
+import type { RefCallback, FormEvent } from "react";
 import { runes } from "runes2";
 import type { Rule } from "antd/es/form";
-import { forEach } from "lodash-es";
-import IMask, { InputMask } from "imask";
+import { forEach, isObject, omitBy } from "lodash-es";
+import IMask, { type InputMask } from "imask";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { WidgetRegistry } from "../../registry";
 import type { TextStyles } from "../Text";
@@ -26,7 +19,10 @@ const widgetName = "TextInput";
 export type TextInputProps = {
   hintStyle?: TextStyles;
   labelStyle?: TextStyles;
+  /** @deprecated see {@link TextInputProps.multiline} */
   multiLine?: Expression<boolean>;
+  /** Specify whether this Text Input should span multiple lines */
+  multiline?: Expression<boolean>;
   maxLines?: number;
   maxLength?: Expression<number>;
   maxLengthEnforcement?: Expression<
@@ -42,6 +38,7 @@ export type TextInputProps = {
     regexError?: string;
     maskError?: string;
   };
+  onKeyDown: EnsembleAction;
 } & EnsembleWidgetProps<TextStyles> &
   FormInputProps<string>;
 
@@ -62,6 +59,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
   );
   const formInstance = Form.useFormInstance();
   const action = useEnsembleAction(props.onChange);
+  const onKeyDownAction = useEnsembleAction(props.onKeyDown);
 
   const handleChange = useCallback(
     (newValue: string) => {
@@ -76,7 +74,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     rootRef(node);
   };
 
-  const handleKeyDown = useCallback((e: FormEvent<HTMLInputElement>) => {
+  const sanitizeNumberInput = useCallback((e: FormEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
     target.value = target.value.replace(/[^0-9.]/g, "");
   }, []);
@@ -90,6 +88,17 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
       }
     },
     [handleChange, mask],
+  );
+
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) =>
+      onKeyDownAction?.callback({
+        event: {
+          ...omitBy(event, isObject),
+          preventDefault: event.preventDefault.bind(event),
+        },
+      }),
+    [onKeyDownAction],
   );
 
   useEffect(() => {
@@ -252,12 +261,13 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
       theme={{ token: { colorTextPlaceholder: values?.hintStyle?.color } }}
     >
       <EnsembleFormItem rules={rules} valuePropName="value" values={values}>
-        {values?.multiLine ? (
+        {values?.multiLine || values?.multiline ? (
           <Input.TextArea
             count={maxLengthConfig}
             defaultValue={values.value}
             disabled={values.enabled === false}
-            onChange={(event): void => setValue(event.target.value)}
+            onChange={(event): void => handleChange(event.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder={values.hintText ?? ""}
             ref={rootRef}
             rows={values.maxLines ? Number(values.maxLines) : 4} // Adjust the number of rows as needed
@@ -276,8 +286,9 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
             disabled={values?.enabled === false}
             onChange={(event): void => handleChange(event.target.value)}
             {...(values?.inputType === "number" && {
-              onInput: (event): void => handleKeyDown(event),
+              onInput: (event): void => sanitizeNumberInput(event),
             })}
+            onKeyDown={handleKeyDown}
             onPaste={handleInputPaste}
             placeholder={values?.hintText ?? ""}
             ref={handleRef}

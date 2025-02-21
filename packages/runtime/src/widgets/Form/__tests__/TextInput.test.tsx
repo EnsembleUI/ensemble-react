@@ -326,5 +326,36 @@ describe("TextInput", () => {
       );
     });
   });
+
+  test("logs event object onKeyDown for numeric TextInput", async () => {
+    render(
+      <Form
+        children={[
+          {
+            name: "TextInput",
+            properties: {
+              label: "Number input",
+              id: "numberInput",
+              type: "number",
+              onKeyDown: {
+                executeCode: "console.log(event)",
+              },
+            },
+          },
+          ...defaultFormButton,
+        ]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
+    );
+    const input = screen.getByLabelText("Number input");
+    userEvent.type(input, "2");
+
+    await waitFor(() => {
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ key: "2" }),
+      );
+    });
+  });
 });
 /* eslint-enable react/no-children-prop */
