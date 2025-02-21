@@ -56,11 +56,13 @@ export type PopupMenuProps = {
   onItemSelect?: EnsembleAction;
   showDivider?: boolean | Expression<string>;
   trigger?: "click" | "hover" | "contextMenu";
+  onTriggered?: EnsembleAction;
   enabled?: boolean;
 } & EnsembleWidgetProps<PopupMenuStyles & EnsembleWidgetStyles> &
   HasItemTemplate & { "item-template"?: { value: Expression<string> } };
 
 export const PopupMenu: React.FC<PopupMenuProps> = ({
+  onTriggered,
   onItemSelect,
   "item-template": itemTemplate,
   ...rest
@@ -70,6 +72,7 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
     rest.id,
   );
   const action = useEnsembleAction(onItemSelect);
+  const onTriggerAction = useEnsembleAction(onTriggered);
 
   const { namedData } = useTemplateData({
     data: itemTemplate?.data,
@@ -188,6 +191,15 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
     [action?.callback, itemsMap],
   );
 
+  const handleOnOpenChange = useCallback(
+    (open: boolean) => {
+      if (open) {
+        onTriggerAction?.callback({ open });
+      }
+    },
+    [onTriggerAction],
+  );
+
   return (
     <div ref={rootRef}>
       <AntdDropdown
@@ -198,6 +210,7 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
           onClick: handleMenuItemClick,
           style: { overflow: "auto", ...values?.styles },
         }}
+        onOpenChange={handleOnOpenChange}
         trigger={[values?.trigger || DEFAULT_POPUPMENU_TRIGGER]}
       >
         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
