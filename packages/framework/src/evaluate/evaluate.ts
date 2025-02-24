@@ -1,4 +1,12 @@
-import { isEmpty, merge, toString } from "lodash-es";
+import {
+  get,
+  has,
+  isEmpty,
+  isUndefined,
+  merge,
+  omitBy,
+  toString,
+} from "lodash-es";
 import type { ScreenContextDefinition } from "../state/screen";
 import type { InvokableMethods, WidgetState } from "../state/widget";
 import {
@@ -43,13 +51,20 @@ export const buildEvaluateFn = (
     ].filter(([key, _]) => !key.includes(".")),
   );
 
+  if (has(invokableObj, "ensemble")) {
+    const tempEnsemble = get(invokableObj, "ensemble") as {
+      [key: string]: unknown;
+    };
+    (window as unknown as InvokableWindow).ensemble = omitBy(
+      tempEnsemble,
+      isUndefined,
+    );
+  }
+
   const args = Object.keys(invokableObj).join(",");
-  Object.keys(invokableObj).forEach((key) => {
-    (window as unknown as InvokableWindow)[key] = invokableObj[key];
-  });
 
   const combinedJs = `
-    return evalInClosure((${args}) => {
+    return evalInClosure(() => {
       ${formatJs(js)}
     }, {${args}})
   `;
