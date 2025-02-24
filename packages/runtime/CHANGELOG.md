@@ -1,5 +1,14 @@
 # @ensembleui/react-runtime
 
+## 0.3.22
+
+### Patch Changes
+
+- aa01532: add onKeyDown action in TextInput widget
+- 43ede4b: always show pagination options in Datagrid widget
+- 013ae91: expose notFoundContent property for MultiSelect widget
+- dffd977: support onTriggered action in PopupMenu widget
+
 ## 0.3.21
 
 ### Patch Changes
