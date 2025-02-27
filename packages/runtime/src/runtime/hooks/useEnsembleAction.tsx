@@ -171,9 +171,6 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
     return apis?.find((api) => api.name === action.name);
   }, [action?.name, apis]);
 
-  const onAPIResponseAction = useEnsembleAction(currentApi?.onResponse);
-  const onAPIErrorAction = useEnsembleAction(currentApi?.onError);
-
   const invokeCommand = useCommandCallback(
     async (evalContext, ...args: unknown[]) => {
       if (!action?.name || !currentApi) return;
@@ -245,10 +242,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
           setData(action.id, response);
         }
 
-        onAPIResponseAction?.callback({
-          ...(args[0] as { [key: string]: unknown }),
-          response,
-        });
+        currentApi.onResponseAction?.callback({ ...context, response });
         onInvokeAPIResponseAction?.callback({
           ...(args[0] as { [key: string]: unknown }),
           response,
@@ -270,10 +264,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
           });
         }
 
-        onAPIErrorAction?.callback({
-          ...(args[0] as { [key: string]: unknown }),
-          error: e,
-        });
+        currentApi.onErrorAction?.callback({ ...context, error: e });
         onInvokeAPIErrorAction?.callback({
           ...(args[0] as { [key: string]: unknown }),
           error: e,
