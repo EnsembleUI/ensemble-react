@@ -224,7 +224,7 @@ API:
 
   UPLOADFILE:
     method: POST
-    uri: http://192.168.1.7:2000/
+    uri: https://example.com/
 
 Global: |
   function verifyFileExtension(fileName) {
