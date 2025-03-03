@@ -78,7 +78,7 @@ export interface DataGridStyles extends Partial<EnsembleWidgetStyles> {
 export interface DataGridRowTemplate {
   name: "DataRow";
   properties: {
-    selectable?: Expression<boolean>;
+    disableSelection?: Expression<boolean>;
     onTap?: EnsembleAction;
     children?: EnsembleWidget[];
   } & HasItemTemplate;
@@ -452,18 +452,14 @@ export const DataGrid: React.FC<GridProps> = (props) => {
 
   const handleRowSelectableOrNot = useCallback(
     (record: unknown): boolean => {
-      const { selectable } = itemTemplate.template.properties;
+      const { disableSelection } = itemTemplate.template.properties;
 
-      // If selectable is not defined or false, return false immediately
-      if (!selectable) return false;
+      if (!disableSelection) return false;
+      if (disableSelection === true) return true;
 
-      // If selectable is true (boolean), return true
-      if (selectable === true) return true;
-
-      // Otherwise, assume it's an expression and evaluate it
       return evaluate(
         defaultScreenContext,
-        selectable,
+        disableSelection,
         record as { [key: string]: unknown },
       );
     },
