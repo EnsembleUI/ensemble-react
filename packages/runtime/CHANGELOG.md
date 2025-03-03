@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.23
+
+### Patch Changes
+
+- 91e8770: Added support for disable row selection based on needed per row
+
 ## 0.3.22
 
 ### Patch Changes
