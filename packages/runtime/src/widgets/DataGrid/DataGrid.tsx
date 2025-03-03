@@ -78,6 +78,7 @@ export interface DataGridStyles extends Partial<EnsembleWidgetStyles> {
 export interface DataGridRowTemplate {
   name: "DataRow";
   properties: {
+    selectable?: Expression<boolean>;
     onTap?: EnsembleAction;
     children?: EnsembleWidget[];
   } & HasItemTemplate;
@@ -449,6 +450,26 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     return [];
   }, [values?.DataColumns, values?.allowResizableColumns, colWidth]);
 
+  const handleRowSelectableOrNot = useCallback(
+    (record: unknown): boolean => {
+      const { selectable } = itemTemplate.template.properties;
+
+      // If selectable is not defined or false, return false immediately
+      if (!selectable) return false;
+
+      // If selectable is true (boolean), return true
+      if (selectable === true) return true;
+
+      // Otherwise, assume it's an expression and evaluate it
+      return evaluate(
+        defaultScreenContext,
+        selectable,
+        record as { [key: string]: unknown },
+      );
+    },
+    [itemTemplate.template],
+  );
+
   return (
     <div id={resolvedWidgetId} ref={containerRef}>
       <div ref={rootRef}>
@@ -486,6 +507,11 @@ export const DataGrid: React.FC<GridProps> = (props) => {
                     if (rest.onRowsSelected) {
                       onRowsSelectedCallback(selectedRowKeys, selectedRows);
                     }
+                  },
+                  getCheckboxProps: (record) => {
+                    return {
+                      disabled: handleRowSelectableOrNot(record),
+                    };
                   },
                   defaultSelectedRowKeys: values?.defaultSelectedRowKeys,
                   selectedRowKeys: rowsKey.length ? rowsKey : undefined,

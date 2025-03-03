@@ -15,6 +15,7 @@ export interface DataCellProps {
   columnIndex: number;
   rowIndex: number;
 }
+
 export const DataCell: React.FC<DataCellProps> = memo(
   ({ template, columnIndex, rowIndex, data }) => {
     const { "item-template": itemTemplate, children } = template.properties;
