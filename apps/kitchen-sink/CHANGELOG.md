@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.117
+
+### Patch Changes
+
+- 91e8770: Added support for disable row selection based on needed per row
+- Updated dependencies [91e8770]
+  - @ensembleui/react-runtime@0.3.23
+
 ## 0.0.116
 
 ### Patch Changes
