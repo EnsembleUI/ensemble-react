@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.24
+
+### Patch Changes
+
+- f36876b: fix error message handle in uploadFile action
+
 ## 0.3.23
 
 ### Patch Changes
