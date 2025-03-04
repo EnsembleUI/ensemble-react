@@ -17,7 +17,7 @@ import { ModalWrapper } from "../modal";
 import { createCustomWidget } from "../customWidget";
 import type { EnsembleMenuContext } from "../menu";
 import { EnsembleMenu } from "../menu";
-import { ScreenApiWrapper } from "./wrapper";
+import { processApiDefinitions } from "./wrapper";
 
 export interface EnsembleScreenProps {
   screen: EnsembleScreenModel;
@@ -32,6 +32,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { state, search, pathname } = useLocation();
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
+  const [isAPIProcessed, setIsAPIProcessed] = useState<boolean>(false);
   const routeParams = useParams(); // route params
   const params = new URLSearchParams(search); // query params
   const queryParams: { [key: string]: unknown } = Object.fromEntries(params);
@@ -50,8 +51,23 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
     inputs,
   ) as { [key: string]: unknown };
 
+  const processedAPIs = processApiDefinitions(screen.apis);
+
   useEffect(() => {
-    if (!screen.customWidgets || isEmpty(screen.customWidgets)) {
+    if (isEmpty(screen.apis)) {
+      setIsAPIProcessed(true);
+      return;
+    }
+
+    screen.apis = processedAPIs;
+    setIsAPIProcessed(true);
+  }, [processedAPIs]);
+
+  useEffect(() => {
+    // Ensure customWidgets is defined before using it
+    const customWidgets = screen?.customWidgets || [];
+
+    if (isEmpty(customWidgets)) {
       setIsInitialized(true);
       return;
     }
@@ -62,7 +78,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
     } = {};
 
     // load screen custom widgets
-    screen.customWidgets.forEach((customWidget) => {
+    customWidgets.forEach((customWidget) => {
       const originalImplementation = WidgetRegistry.findOrNull(
         customWidget.name,
       );
@@ -80,7 +96,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
 
     return () => {
       // unMount screen custom widgets
-      screen.customWidgets?.forEach((customWidget) => {
+      customWidgets.forEach((customWidget) => {
         WidgetRegistry.unregister(customWidget.name);
         if (customWidget.name in initialWidgetValues) {
           WidgetRegistry.register(
@@ -90,9 +106,9 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
         }
       });
     };
-  }, [screen.customWidgets]);
+  }, [screen?.customWidgets]);
 
-  if (!isInitialized) {
+  if (!isInitialized || !isAPIProcessed) {
     return null;
   }
 
@@ -103,7 +119,6 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
       screen={screen}
     >
       <ModalWrapper>
-        <ScreenApiWrapper />
         <OnLoadAction action={screen.onLoad} context={{ ...mergedInputs }}>
           <EnsembleHeader header={screen.header} />
           <EnsembleBody body={screen.body} styles={screen.styles} />
