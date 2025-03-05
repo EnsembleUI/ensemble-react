@@ -652,7 +652,9 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
           onErrorAction?.callback({ response });
         }
       } catch (error) {
-        setBody(error as { [key: string]: unknown });
+        setBody({
+          error: (error as Error).message || "Something went wrong",
+        });
         setStatus("failed");
         onErrorAction?.callback({ error });
       }
