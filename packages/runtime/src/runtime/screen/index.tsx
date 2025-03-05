@@ -1,22 +1,19 @@
-import type {
-  EnsembleAction,
-  EnsembleScreenModel,
-} from "@ensembleui/react-framework";
-import { ScreenContextProvider, error } from "@ensembleui/react-framework";
+import type { EnsembleScreenModel } from "@ensembleui/react-framework";
+import { ScreenContextProvider } from "@ensembleui/react-framework";
 import React, { useEffect, useState } from "react";
 import { useLocation, useParams, useOutletContext } from "react-router-dom";
 import { isEmpty, merge } from "lodash-es";
-import { type WidgetComponent, WidgetRegistry } from "../registry";
-// FIXME: refactor
+import { type WidgetComponent, WidgetRegistry } from "../../registry";
 // eslint-disable-next-line import/no-cycle
-import { useEnsembleAction } from "./hooks/useEnsembleAction";
-import { EnsembleHeader } from "./header";
-import { EnsembleFooter } from "./footer";
-import { EnsembleBody } from "./body";
-import { ModalWrapper } from "./modal";
-import { createCustomWidget } from "./customWidget";
-import type { EnsembleMenuContext } from "./menu";
-import { EnsembleMenu } from "./menu";
+import { EnsembleHeader } from "../header";
+import { EnsembleFooter } from "../footer";
+import { EnsembleBody } from "../body";
+import { ModalWrapper } from "../modal";
+import { createCustomWidget } from "../customWidget";
+import type { EnsembleMenuContext } from "../menu";
+import { EnsembleMenu } from "../menu";
+import { useProcessApiDefinitions } from "../hooks/useProcessApiDefinitions";
+import { OnLoadAction } from "./onLoadAction";
 
 export interface EnsembleScreenProps {
   screen: EnsembleScreenModel;
@@ -31,6 +28,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { state, search, pathname } = useLocation();
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
+  const [isAPIProcessed, setIsAPIProcessed] = useState<boolean>(false);
   const routeParams = useParams(); // route params
   const params = new URLSearchParams(search); // query params
   const queryParams: { [key: string]: unknown } = Object.fromEntries(params);
@@ -49,8 +47,23 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
     inputs,
   ) as { [key: string]: unknown };
 
+  const processedAPIs = useProcessApiDefinitions(screen.apis);
+
   useEffect(() => {
-    if (!screen.customWidgets || isEmpty(screen.customWidgets)) {
+    if (isEmpty(screen.apis)) {
+      setIsAPIProcessed(true);
+      return;
+    }
+
+    screen.apis = processedAPIs;
+    setIsAPIProcessed(true);
+  }, [processedAPIs, screen]);
+
+  useEffect(() => {
+    // Ensure customWidgets is defined before using it
+    const customWidgets = screen.customWidgets || [];
+
+    if (isEmpty(customWidgets)) {
       setIsInitialized(true);
       return;
     }
@@ -61,7 +74,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
     } = {};
 
     // load screen custom widgets
-    screen.customWidgets.forEach((customWidget) => {
+    customWidgets.forEach((customWidget) => {
       const originalImplementation = WidgetRegistry.findOrNull(
         customWidget.name,
       );
@@ -79,7 +92,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
 
     return () => {
       // unMount screen custom widgets
-      screen.customWidgets?.forEach((customWidget) => {
+      customWidgets.forEach((customWidget) => {
         WidgetRegistry.unregister(customWidget.name);
         if (customWidget.name in initialWidgetValues) {
           WidgetRegistry.register(
@@ -91,7 +104,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
     };
   }, [screen.customWidgets]);
 
-  if (!isInitialized) {
+  if (!isInitialized || !isAPIProcessed) {
     return null;
   }
 
@@ -117,28 +130,4 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
       </ModalWrapper>
     </ScreenContextProvider>
   );
-};
-
-const OnLoadAction: React.FC<
-  React.PropsWithChildren<{
-    action?: EnsembleAction;
-    context: { [key: string]: unknown };
-  }>
-> = ({ action, children, context }) => {
-  const onLoadAction = useEnsembleAction(action);
-  const [isComplete, setIsComplete] = useState(false);
-  useEffect(() => {
-    if (!onLoadAction?.callback || isComplete) {
-      return;
-    }
-    try {
-      onLoadAction.callback(context);
-    } catch (e) {
-      error(e);
-    } finally {
-      setIsComplete(true);
-    }
-  }, [context, isComplete, onLoadAction?.callback]);
-
-  return <>{children}</>;
 };
