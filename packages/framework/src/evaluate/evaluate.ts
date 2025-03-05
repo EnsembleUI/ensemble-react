@@ -70,11 +70,27 @@ const formatJs = (js?: string): string => {
 
   // multiline js
   if (sanitizedJs.includes("\n")) {
+    if (sanitizedJs.includes("await ")) {
+      return `
+        return (async function() {
+          ${sanitizedJs}
+        }())
+      `;
+    }
+
     return `
-      return (function() {
-         ${sanitizedJs}
-      }())
-    `;
+        return (function() {
+          ${sanitizedJs}
+        }())
+      `;
+  }
+
+  if (sanitizedJs.includes("await ")) {
+    return `
+        return (async function() {
+          return ${sanitizedJs}
+        }())
+      `;
   }
 
   return `return ${sanitizedJs}`;
