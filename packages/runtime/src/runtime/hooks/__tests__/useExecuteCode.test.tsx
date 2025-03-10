@@ -101,7 +101,8 @@ test("call ensemble.invokeAPI", async () => {
   const { result } = renderHook(
     () =>
       useExecuteCode(
-        "await ensemble.invokeAPI('getDummyProductsByPaginate', apiConfig)",
+        `const res = await ensemble.invokeAPI('getDummyProductsByPaginate', apiConfig);
+        return res.body.limit`,
         { context: { apiConfig } },
       ),
     {
@@ -114,13 +115,7 @@ test("call ensemble.invokeAPI", async () => {
     execResult = await result.current?.callback();
   });
 
-  expect(execResult).toEqual(
-    expect.objectContaining({
-      body: expect.objectContaining({
-        limit: apiConfig.limit,
-      }),
-    }),
-  );
+  expect(execResult).toBe(apiConfig.limit);
 });
 
 test("call ensemble.invokeAPI with bypassCache", async () => {
