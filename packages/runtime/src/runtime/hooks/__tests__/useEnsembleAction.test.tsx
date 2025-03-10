@@ -69,6 +69,7 @@ describe("Test cases for useEnsembleAction Hook", () => {
     await act(async () => {
       execResult = await result.current?.callback();
     });
+
     expect(execResult).toBe(2);
   });
 });
