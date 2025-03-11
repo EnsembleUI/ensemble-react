@@ -28,7 +28,6 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { state, search, pathname } = useLocation();
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
-  const [isAPIProcessed, setIsAPIProcessed] = useState<boolean>(false);
   const routeParams = useParams(); // route params
   const params = new URLSearchParams(search); // query params
   const queryParams: { [key: string]: unknown } = Object.fromEntries(params);
@@ -47,17 +46,7 @@ export const EnsembleScreen: React.FC<EnsembleScreenProps> = ({
     inputs,
   ) as { [key: string]: unknown };
 
-  const processedAPIs = useProcessApiDefinitions(screen.apis);
-
-  useEffect(() => {
-    if (isEmpty(screen.apis)) {
-      setIsAPIProcessed(true);
-      return;
-    }
-
-    screen.apis = processedAPIs;
-    setIsAPIProcessed(true);
-  }, [processedAPIs, screen]);
+  const isAPIProcessed = useProcessApiDefinitions(screen);
 
   useEffect(() => {
     // Ensure customWidgets is defined before using it
