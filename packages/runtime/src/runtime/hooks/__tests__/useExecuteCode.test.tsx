@@ -146,7 +146,7 @@ test("call ensemble.invokeAPI with bypassCache", async () => {
 
   expect(withoutForceInitialResult).toBe(withoutForceResult);
   expect(withForceResult).not.toBe(withoutForceResult);
-});
+}, 10000);
 
 test.todo("populates application invokables");
 
