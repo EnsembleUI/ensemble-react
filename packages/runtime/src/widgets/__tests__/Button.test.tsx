@@ -6,6 +6,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { BrowserRouter } from "react-router-dom";
 import { useRegisterBindings } from "@ensembleui/react-framework";
+import { ToastContainer } from "react-toastify";
 import { Button, type ButtonProps } from "../Button";
 import { createCustomWidget } from "../../runtime/customWidget";
 import { Column } from "../Column";
@@ -631,6 +632,99 @@ test("should update the action on bindings changes and track renders", async () 
 
   await waitFor(() => {
     expect(mockOpen).toHaveBeenCalledWith("http://youtube.com", "_self");
+  });
+});
+
+describe("check for pass result of executeCode into nested actions", () => {
+  test("should pass result of executeCode into nested action", async () => {
+    render(
+      <>
+        <ToastContainer />
+        <Button
+          id="checkLoader"
+          label="Set Storage"
+          onTap={{
+            executeCode:
+              "ensemble.storage.set('toast_message', 'This is toast')",
+          }}
+        />
+        <Button
+          label="Check Toast"
+          onTap={{
+            executeCode: {
+              body: "ensemble.storage.get('toast_message')",
+              onComplete: {
+                showToast: {
+                  message: `\${result}`,
+                  options: {
+                    position: "topRight",
+                    type: "success",
+                  },
+                },
+              },
+            },
+          }}
+        />
+      </>,
+      { wrapper: BrowserRouter },
+    );
+
+    const setStorageBtn = screen.getByText("Set Storage");
+    fireEvent.click(setStorageBtn);
+
+    const checkToastBtn = screen.getByText("Check Toast");
+    userEvent.click(checkToastBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText("This is toast")).toBeInTheDocument();
+    });
+  });
+
+  test("should pass result of async/await executeCode into nested action", async () => {
+    render(
+      <>
+        <ToastContainer />
+        <Button
+          id="checkLoader"
+          label="Set Storage"
+          onTap={{
+            executeCode:
+              "ensemble.storage.set('toast_message', 'This is async toast')",
+          }}
+        />
+        <Button
+          label="Check Toast"
+          onTap={{
+            executeCode: {
+              body: "await new Promise((resolve) => setTimeout(() => resolve(ensemble.storage.get('toast_message')), 1000))",
+              onComplete: {
+                showToast: {
+                  message: `\${result}`,
+                  options: {
+                    position: "topRight",
+                    type: "success",
+                  },
+                },
+              },
+            },
+          }}
+        />
+      </>,
+      { wrapper: BrowserRouter },
+    );
+
+    const setStorageBtn = screen.getByText("Set Storage");
+    fireEvent.click(setStorageBtn);
+
+    const checkToastBtn = screen.getByText("Check Toast");
+    userEvent.click(checkToastBtn);
+
+    await waitFor(
+      () => {
+        expect(screen.getByText("This is async toast")).toBeInTheDocument();
+      },
+      { timeout: 2000 },
+    );
   });
 });
 /* eslint-enable react/no-children-prop */
