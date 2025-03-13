@@ -1,5 +1,12 @@
 # @ensembleui/react-runtime
 
+## 0.3.24
+
+### Patch Changes
+
+- 1de1670: improve file extension validation in usePickFiles action by normalizing case
+- f36876b: fix error message handle in uploadFile action
+
 ## 0.3.23
 
 ### Patch Changes
