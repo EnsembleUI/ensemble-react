@@ -517,7 +517,9 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
       if (
         !isEmpty(values?.allowedExtensions) &&
         !values?.files?.every((file) =>
-          values.allowedExtensions?.some((ext) => file.name.endsWith(ext)),
+          values.allowedExtensions?.some((ext) =>
+            file.name.toLowerCase().endsWith(ext.toLowerCase()),
+          ),
         )
       ) {
         onErrorAction?.callback({

@@ -35,9 +35,9 @@ const wrapper: React.FC<React.PropsWithChildren> = ({ children }) => (
           inputs: ["skip", "limit"],
         },
         {
-          name: "getDummyUser",
+          name: "getMeowFact",
           method: "GET",
-          uri: "https://randomuser.me/api/?results=1",
+          uri: "https://meowfacts.herokuapp.com/",
           cacheExpirySeconds: 120,
         },
       ],
@@ -121,7 +121,7 @@ test("call ensemble.invokeAPI with bypassCache", async () => {
   const { result: withoutForce } = renderHook(
     () =>
       useExecuteCode(
-        "ensemble.invokeAPI('getDummyUser', null).then((res) => res.body.results[0].email)",
+        "ensemble.invokeAPI('getMeowFact', null).then((res) => res.body.data[0])",
       ),
     { wrapper },
   );
@@ -129,7 +129,7 @@ test("call ensemble.invokeAPI with bypassCache", async () => {
   const { result: withForce } = renderHook(
     () =>
       useExecuteCode(
-        "ensemble.invokeAPI('getDummyUser', null, { bypassCache: true }).then((res) => res.body.results[0].email)",
+        "ensemble.invokeAPI('getMeowFact', null, { bypassCache: true }).then((res) => res.body.data[0])",
       ),
     { wrapper },
   );
