@@ -59,6 +59,7 @@ interface MenuItemProps {
   hasNotifications?: boolean;
   openNewTab?: boolean;
   visible?: boolean;
+  expanded?: boolean;
   childrens?: MenuItemProps[];
   customItem?: {
     widget?: { [key: string]: unknown };
@@ -166,7 +167,8 @@ export const EnsembleMenu: React.FC<{
   const [isCollapsed, setIsCollapsed] = useState<boolean>(
     type === EnsembleMenuModelType.Drawer,
   );
-  const [defaultOpenKeys, setDefaultOpenKeys] = useState<string>();
+  const [defaultOpenKeys, setDefaultOpenKeys] = useState<string[]>([]);
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const outletContext = {
     isMenuCollapsed: isCollapsed,
     setMenuCollapsed: setIsCollapsed,
@@ -206,8 +208,9 @@ export const EnsembleMenu: React.FC<{
   }, [items]);
 
   useEffect(() => {
-    let itemCount = 0;
-    for (const item of items || []) {
+    const openItems: string[] = [];
+
+    items?.forEach((item, index) => {
       if (
         item.page &&
         `/${item.page.toLowerCase()}` === location.pathname.toLowerCase()
@@ -216,20 +219,28 @@ export const EnsembleMenu: React.FC<{
       }
 
       if (item.childrens && item.childrens.length > 0) {
-        for (const childItem of item.childrens) {
-          if (
+        const hasActiveChild = item.childrens.some((childItem) => {
+          const isActive =
             childItem.page &&
             `/${childItem.page.toLowerCase()}` ===
-              location.pathname.toLowerCase()
-          ) {
+              location.pathname.toLowerCase();
+
+          if (isActive) {
             setSelectedItem(childItem.page);
-            setDefaultOpenKeys(`submenu-${itemCount}`);
+            return true;
           }
+
+          return false;
+        });
+
+        if (hasActiveChild || item.expanded) {
+          openItems.push(`submenu-${index}`);
         }
       }
+    });
 
-      itemCount++;
-    }
+    setDefaultOpenKeys(openItems);
+    setIsInitialized(true);
   }, [location.pathname, items]);
 
   const handleClose = (): void => {
@@ -241,6 +252,10 @@ export const EnsembleMenu: React.FC<{
   const onCollapseCallback = useCallback(() => {
     return onCollapseAction?.callback();
   }, [onCollapseAction?.callback]);
+
+  if (!isInitialized) {
+    return null;
+  }
 
   return (
     <div style={{ display: "flex", flexDirection: "row" }}>
@@ -282,7 +297,7 @@ export const SideBarMenu: React.FC<{
   values?: MenuBaseProps<SideBarMenuStyles>;
   isCollapsed: boolean;
   selectedItem: string | undefined;
-  defaultOpenKeys: string | undefined;
+  defaultOpenKeys: string[] | undefined;
   setSelectedItem: (s: string) => void;
   width?: string;
 }> = ({
@@ -324,7 +339,7 @@ export const SideBarMenu: React.FC<{
 };
 
 export const DrawerMenu: React.FC<{
-  defaultOpenKeys: string | undefined;
+  defaultOpenKeys: string[] | undefined;
   values?: MenuBaseProps<DrawerMenuStyles>;
   handleClose: () => void;
   isOpen: boolean;
@@ -387,7 +402,7 @@ const MenuItems: React.FC<{
   items: MenuItemProps[];
   styles: MenuStyles;
   selectedItem: string | undefined;
-  defaultOpenKeys: string | undefined;
+  defaultOpenKeys: string[] | undefined;
   setSelectedItem: (s: string) => void;
   isCollapsed?: boolean;
 }> = ({
@@ -449,8 +464,8 @@ const MenuItems: React.FC<{
       }}
     >
       <AntMenu
+        defaultOpenKeys={defaultOpenKeys?.length ? defaultOpenKeys : undefined}
         mode="inline"
-        openKeys={[defaultOpenKeys || ""]}
         /* FIXME This is a hack so we can control our own selected styling. Ideally, this should use design tokens */
         selectedKeys={[]}
         style={{

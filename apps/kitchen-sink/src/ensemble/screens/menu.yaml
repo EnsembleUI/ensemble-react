@@ -80,6 +80,16 @@ ViewGroup:
       - label: Hidden Page
         icon: HelpOutlineOutlined
         visible: false
+      - label: Actions
+        icon: CodeOutlined
+        expanded: true
+        childrens:
+          - label: Actions example
+            icon: CodeOutlined
+            page: actions1
+          - label: Test Actions
+            icon: WidgetsOutlined
+            page: test_actions1
       - customItem:
           widget:
             Button:
