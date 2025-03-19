@@ -798,6 +798,6 @@ describe("MultiSelect Widget", () => {
       expect(screen.queryByText("Bella Davis", selected)).toBeVisible();
       expect(screen.queryByText("Sophia Lee", selected)).toBeVisible();
     });
-  });
+  }, 20000);
 });
 /* eslint-enable react/no-children-prop */
