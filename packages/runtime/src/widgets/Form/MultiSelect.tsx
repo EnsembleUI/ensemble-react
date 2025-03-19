@@ -22,6 +22,7 @@ import {
   isObject,
   isString,
   toNumber,
+  uniqBy,
 } from "lodash-es";
 import { useDebounce } from "react-use";
 import { WidgetRegistry } from "../../registry";
@@ -152,13 +153,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
       );
     }
 
-    const uniqueOptions = tempOptions.reduce((acc, current) => {
-      const x = acc.find((item) => item.value === current.value);
-      if (!x) {
-        return acc.concat([current]);
-      }
-      return acc;
-    }, [] as MultiSelectOption[]);
+    const uniqueOptions = uniqBy(tempOptions, "value");
 
     setOptions(uniqueOptions);
   }, [rawData, values?.labelKey, values?.valueKey, values?.items]);
