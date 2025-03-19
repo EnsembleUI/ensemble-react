@@ -41,7 +41,7 @@ ViewGroup:
         page: layouts
       - label: Actions
         icon: CodeOutlined
-        childrens:
+        children:
           - label: Actions example
             icon: CodeOutlined
             page: actions
@@ -83,7 +83,7 @@ ViewGroup:
       - label: Actions
         icon: CodeOutlined
         expanded: true
-        childrens:
+        children:
           - label: Actions example
             icon: CodeOutlined
             page: actions1

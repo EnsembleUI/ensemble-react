@@ -60,7 +60,7 @@ interface MenuItemProps {
   openNewTab?: boolean;
   visible?: boolean;
   expanded?: boolean;
-  childrens?: MenuItemProps[];
+  children?: MenuItemProps[];
   customItem?: {
     widget?: { [key: string]: unknown };
     selectedWidget?: { [key: string]: unknown };
@@ -218,8 +218,8 @@ export const EnsembleMenu: React.FC<{
         setSelectedItem(item.page);
       }
 
-      if (item.childrens && item.childrens.length > 0) {
-        const hasActiveChild = item.childrens.some((childItem) => {
+      if (item.children && item.children.length > 0) {
+        const hasActiveChild = item.children.some((childItem) => {
           const isActive =
             childItem.page &&
             `/${childItem.page.toLowerCase()}` ===
@@ -463,6 +463,14 @@ const MenuItems: React.FC<{
         },
       }}
     >
+      <style>
+        {`
+          .ant-menu-submenu-title{
+            color: inherit !important
+          }
+          `}
+      </style>
+
       <AntMenu
         defaultOpenKeys={defaultOpenKeys?.length ? defaultOpenKeys : undefined}
         mode="inline"
@@ -479,13 +487,18 @@ const MenuItems: React.FC<{
         }}
       >
         {items.map((item, itemIndex) =>
-          item.childrens ? (
+          item.children ? (
             <AntMenu.SubMenu
               icon={getIcon(item)}
               key={`submenu-${itemIndex}`}
+              style={{
+                color: styles.labelColor ?? "grey",
+                fontSize: "1rem",
+                height: "auto",
+              }}
               title={getLabel(item)}
             >
-              {item.childrens.map((childItem, childIndex) => (
+              {item.children.map((childItem, childIndex) => (
                 <AntMenu.Item
                   data-testid={childItem.id ?? childItem.testId}
                   icon={getIcon(childItem)}
