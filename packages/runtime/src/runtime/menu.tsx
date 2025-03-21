@@ -398,6 +398,59 @@ export const DrawerMenu: React.FC<{
   );
 };
 
+const RenderMenuItem: React.FC<{
+  menuItem: MenuItemProps;
+  styles: MenuStyles;
+  selectedItem: string | undefined;
+  setSelectedItem: (s: string) => void;
+  itemIndex: number;
+  icon: ReactNode;
+  label: ReactNode;
+}> = ({
+  menuItem,
+  styles,
+  selectedItem,
+  setSelectedItem,
+  itemIndex,
+  icon,
+  label,
+}) => {
+  return (
+    <AntMenu.Item
+      data-testid={menuItem.id ?? menuItem.testId}
+      icon={icon}
+      key={menuItem.page || menuItem.url || `customItem${itemIndex}`}
+      onClick={(): void => {
+        if (!menuItem.openNewTab && menuItem.page) {
+          setSelectedItem(menuItem.page);
+        }
+      }}
+      style={{
+        color:
+          selectedItem === menuItem.page
+            ? (styles.selectedColor as string) ?? "white"
+            : (styles.labelColor as string) ?? "grey",
+        display: menuItem.visible === false ? "none" : "flex",
+        justifyContent: "center",
+        borderRadius: 0,
+        alignItems: "center",
+        fontSize:
+          selectedItem === menuItem.page
+            ? `${
+                parseInt(
+                  `${styles.labelFontSize ? styles.labelFontSize : 1}` || "1",
+                ) + 0.2
+              }rem`
+            : `${styles.labelFontSize ? styles.labelFontSize : 1}rem`,
+        height: "auto",
+        ...(selectedItem === menuItem.page ? styles.onSelectStyles ?? {} : {}),
+      }}
+    >
+      <CustomLink item={menuItem}>{label}</CustomLink>
+    </AntMenu.Item>
+  );
+};
+
 const MenuItems: React.FC<{
   items: MenuItemProps[];
   styles: MenuStyles;
@@ -468,6 +521,14 @@ const MenuItems: React.FC<{
           .ant-menu-submenu-title{
             color: inherit !important
           }
+
+          .ant-menu-item {
+            padding-left: 24px !important;
+          }
+
+          .ant-menu-sub {
+            padding-left: 24px !important;
+          }
           `}
       </style>
 
@@ -499,85 +560,31 @@ const MenuItems: React.FC<{
               title={getLabel(item)}
             >
               {item.children.map((childItem, childIndex) => (
-                <AntMenu.Item
-                  data-testid={childItem.id ?? childItem.testId}
+                <RenderMenuItem
                   icon={getIcon(childItem)}
+                  itemIndex={childIndex}
                   key={
-                    childItem.page ||
-                    childItem.url ||
-                    `childItem-${itemIndex}-${childIndex}`
+                    childItem.page || childItem.url || `customItem${childIndex}`
                   }
-                  onClick={(): void => {
-                    if (!childItem.openNewTab && childItem.page) {
-                      setSelectedItem(childItem.page);
-                    }
-                  }}
-                  style={{
-                    color:
-                      selectedItem === childItem.page
-                        ? (styles.selectedColor as string) ?? "white"
-                        : (styles.labelColor as string) ?? "grey",
-                    display: childItem.visible === false ? "none" : "flex",
-                    justifyContent: "center",
-                    borderRadius: 0,
-                    alignItems: "center",
-                    fontSize:
-                      selectedItem === childItem.page
-                        ? `${
-                            parseInt(
-                              `${styles.labelFontSize ? styles.labelFontSize : 1}` ||
-                                "1",
-                            ) + 0.2
-                          }rem`
-                        : `${styles.labelFontSize ? styles.labelFontSize : 1}rem`,
-                    height: "auto",
-                    ...(selectedItem === childItem.page
-                      ? styles.onSelectStyles ?? {}
-                      : {}),
-                  }}
-                >
-                  <CustomLink item={childItem}>
-                    {getLabel(childItem)}
-                  </CustomLink>
-                </AntMenu.Item>
+                  label={getLabel(childItem)}
+                  menuItem={childItem}
+                  selectedItem={selectedItem}
+                  setSelectedItem={setSelectedItem}
+                  styles={styles}
+                />
               ))}
             </AntMenu.SubMenu>
           ) : (
-            <AntMenu.Item
-              data-testid={item.id ?? item.testId}
+            <RenderMenuItem
               icon={getIcon(item)}
+              itemIndex={itemIndex}
               key={item.page || item.url || `customItem${itemIndex}`}
-              onClick={(): void => {
-                if (!item.openNewTab && item.page) {
-                  setSelectedItem(item.page);
-                }
-              }}
-              style={{
-                color:
-                  selectedItem === item.page
-                    ? (styles.selectedColor as string) ?? "white"
-                    : (styles.labelColor as string) ?? "grey",
-                display: item.visible === false ? "none" : "flex",
-                justifyContent: "center",
-                borderRadius: 0,
-                alignItems: "center",
-                fontSize:
-                  selectedItem === item.page
-                    ? `${
-                        parseInt(
-                          `${styles.labelFontSize ? styles.labelFontSize : 1}` ||
-                            "1",
-                        ) + 0.2
-                      }rem`
-                    : `${styles.labelFontSize ? styles.labelFontSize : 1}rem`,
-                height: "auto",
-                ...(selectedItem === item.page
-                  ? styles.onSelectStyles ?? {}
-                  : {}),
-              }}
-            >
-              <CustomLink item={item}>{getLabel(item)}</CustomLink>
-            </AntMenu.Item>
+              label={getLabel(item)}
+              menuItem={item}
+              selectedItem={selectedItem}
+              setSelectedItem={setSelectedItem}
+              styles={styles}
+            />
           ),
         )}
       </AntMenu>
