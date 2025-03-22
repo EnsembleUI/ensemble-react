@@ -794,14 +794,17 @@ describe("MultiSelect Widget", () => {
 
     userEvent.click(screen.getByText("Show Dialog"));
 
-    const element = screen.getByText("Bella Davis", {
-      selector: ".ant-select-selection-item-content",
-    });
-
-    expect(element).toBeInTheDocument();
-
     await waitFor(() => {
-      expect(element).toBeInTheDocument();
+      expect(
+        screen.getByText("Bella Davis", {
+          selector: ".ant-select-selection-item-content",
+        }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText("Sophia Lee", {
+          selector: ".ant-select-selection-item-content",
+        }),
+      ).toBeInTheDocument();
     });
   }, 10000);
 });
