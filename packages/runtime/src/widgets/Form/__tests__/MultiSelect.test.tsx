@@ -795,8 +795,20 @@ describe("MultiSelect Widget", () => {
     userEvent.click(screen.getByText("Show Dialog"));
 
     await waitFor(() => {
-      expect(screen.queryByText("Bella Davis", selected)).toBeVisible();
-      expect(screen.queryByText("Sophia Lee", selected)).toBeVisible();
+      expect(screen.getByText("This is modal")).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("Bella Davis", {
+          selector: ".ant-select-selection-item-content",
+        }),
+      ).toBeVisible();
+      expect(
+        screen.getByText("Sophia Lee", {
+          selector: ".ant-select-selection-item-content",
+        }),
+      ).toBeVisible();
     });
   }, 20000);
 });
