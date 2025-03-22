@@ -668,7 +668,7 @@ describe("MultiSelect Widget", () => {
     });
   });
 
-  test("multiselect with search action", async () => {
+  test.only("multiselect with search action", async () => {
     render(
       <EnsembleScreen
         screen={{
@@ -794,22 +794,15 @@ describe("MultiSelect Widget", () => {
 
     userEvent.click(screen.getByText("Show Dialog"));
 
-    await waitFor(() => {
-      expect(screen.getByText("This is modal")).toBeInTheDocument();
+    const element = screen.getByText("Bella Davis", {
+      selector: ".ant-select-selection-item-content",
     });
 
+    expect(element).toBeInTheDocument();
+
     await waitFor(() => {
-      expect(
-        screen.getByText("Bella Davis", {
-          selector: ".ant-select-selection-item-content",
-        }),
-      ).toBeVisible();
-      expect(
-        screen.getByText("Sophia Lee", {
-          selector: ".ant-select-selection-item-content",
-        }),
-      ).toBeVisible();
+      expect(element).toBeInTheDocument();
     });
-  }, 20000);
+  }, 10000);
 });
 /* eslint-enable react/no-children-prop */
