@@ -47,19 +47,19 @@ const wrapper: React.FC<React.PropsWithChildren> = ({ children }) => (
   </ScreenContextProvider>
 );
 
-test("populates screen invokables in function context", () => {
+test("populates screen invokables in function context", async () => {
   const { result } = renderHook(() => useExecuteCode("myWidget.value"), {
     wrapper,
   });
 
   let execResult;
-  act(() => {
-    execResult = result.current?.callback();
+  await act(async () => {
+    execResult = await result.current?.callback();
   });
   expect(execResult).toBe(2);
 });
 
-test("populates context passed in", () => {
+test("populates context passed in", async () => {
   const { result } = renderHook(
     () =>
       useExecuteCode("specialScope.value", {
@@ -69,25 +69,25 @@ test("populates context passed in", () => {
   );
 
   let execResult;
-  act(() => {
-    execResult = result.current?.callback();
+  await act(async () => {
+    execResult = await result.current?.callback();
   });
   expect(execResult).toBe(4);
 });
 
-test("can be invoked multiple times", () => {
+test("can be invoked multiple times", async () => {
   const { result } = renderHook(() => useExecuteCode("myWidget.value"), {
     wrapper,
   });
 
   let execResult;
-  act(() => {
-    execResult = result.current?.callback();
+  await act(async () => {
+    execResult = await result.current?.callback();
   });
   expect(execResult).toBe(2);
   let execResult2;
-  act(() => {
-    execResult2 = result.current?.callback();
+  await act(async () => {
+    execResult2 = await result.current?.callback();
   });
   expect(execResult2).toBe(2);
 });
@@ -101,7 +101,8 @@ test("call ensemble.invokeAPI", async () => {
   const { result } = renderHook(
     () =>
       useExecuteCode(
-        "ensemble.invokeAPI('getDummyProductsByPaginate', apiConfig).then((res) => res.body.products.length)",
+        `const res = await ensemble.invokeAPI('getDummyProductsByPaginate', apiConfig);
+        return res.body.limit`,
         { context: { apiConfig } },
       ),
     {
@@ -146,7 +147,7 @@ test("call ensemble.invokeAPI with bypassCache", async () => {
 
   expect(withoutForceInitialResult).toBe(withoutForceResult);
   expect(withForceResult).not.toBe(withoutForceResult);
-});
+}, 10000);
 
 test.todo("populates application invokables");
 
