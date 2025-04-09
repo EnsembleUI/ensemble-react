@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.25
+
+### Patch Changes
+
+- d3b9c91: Added support for await in executeCode
+
 ## 0.3.24
 
 ### Patch Changes
