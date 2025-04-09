@@ -151,8 +151,12 @@ export const getLocalApplicationTransporter = (
           const asset = document as AssetDTO | FontDTO;
           if (!asset.publicUrl) return;
 
-          const fileData = existsSync(asset.publicUrl)
-            ? await readFile(asset.publicUrl) // is local asset
+          const assetPath = join(
+            existingAppMetadata.projectPath,
+            asset.publicUrl,
+          );
+          const fileData = existsSync(assetPath)
+            ? await readFile(assetPath) // is local asset
             : await fetchFileData(asset.publicUrl); // is cloud asset
           const fontData =
             document.type === EnsembleDocumentType.Font
@@ -233,11 +237,15 @@ export const localStoreAsset = async (
 ): Promise<{ relativePath: string; assetDocument: EnsembleDocument }> => {
   const appsMetadata = await getGlobalMetadata();
   const existingAppMetadata = appsMetadata[appId];
-  const appMetadata =
-    options?.existingAppMetadata ||
-    (existingAppMetadata &&
-      (await getAppManifest(existingAppMetadata.projectPath)));
-  if (!appMetadata) {
+  let appMetadata: ApplicationLocalMeta;
+  if (options?.existingAppMetadata) {
+    appMetadata = options.existingAppMetadata;
+  } else if (existingAppMetadata) {
+    appMetadata = {
+      ...(await getAppManifest(existingAppMetadata.projectPath)),
+      projectPath: existingAppMetadata.projectPath,
+    };
+  } else {
     throw new Error(`App ${appId} not found in local metadata`);
   }
 
@@ -257,7 +265,7 @@ export const localStoreAsset = async (
       ? EnsembleDocumentType.Font
       : EnsembleDocumentType.Asset,
     content: "",
-    publicUrl: assetPath,
+    publicUrl: `/${!isEmpty(font) ? FOLDER_MAP[EnsembleDocumentType.Font] : FOLDER_MAP[EnsembleDocumentType.Asset]}/${fileName}`,
     ...font,
   } as EnsembleDocument;
 
@@ -409,7 +417,8 @@ const setAppManifest = async (
 
   const filePath = join(projectPath, APP_MANIFEST_FILE);
 
-  await writeJsonData(filePath, appMetadata, true);
+  const omitProjectPath = omit(appMetadata, "projectPath");
+  await writeJsonData(filePath, omitProjectPath, true);
 };
 
 const readJsonFile = async <T>(filePath: string): Promise<T> => {
@@ -428,7 +437,7 @@ const writeJsonData = async (
   data: unknown,
   hideFile = false,
 ): Promise<void> => {
-  await writeFile(filePath, JSON.stringify(data), "utf-8");
+  await writeFile(filePath, JSON.stringify(data, null, 2), "utf-8");
 
   if (hideFile) hideOnWindow(filePath);
 };
