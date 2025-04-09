@@ -42,6 +42,7 @@ jobs:
           channelId: live
           projectId: ensemble-web-studio
           entryPoint: ./apps/preview
+          firebaseToolsVersion: 13.35.1
       - name: Package Starter
         working-directory: ./apps/starter
         run: |

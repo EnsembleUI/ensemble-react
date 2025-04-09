@@ -30,3 +30,4 @@ jobs:
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_ENSEMBLE_WEB_STUDIO_DEV }}"
           projectId: ensemble-web-studio-dev
           entryPoint: ./apps/kitchen-sink
+          firebaseToolsVersion: 13.35.1
