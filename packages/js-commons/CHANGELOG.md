@@ -1,5 +1,11 @@
 # @ensembleui/js-commons
 
+## 0.0.21
+
+### Patch Changes
+
+- d39a018: use relative paths in app's manifest file
+
 ## 0.0.20
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.119
+
+### Patch Changes
+
+- d3b9c91: Added support for await in executeCode
+- Updated dependencies [d3b9c91]
+  - @ensembleui/react-runtime@0.3.25
+
 ## 0.0.118
 
 ### Patch Changes
