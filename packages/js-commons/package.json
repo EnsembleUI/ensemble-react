@@ -42,6 +42,7 @@
     "dayjs": "^1.11.10",
     "eslint-config-custom": "workspace:*",
     "firebase": "9.10.0",
+    "json-stable-stringify": "^1.2.1",
     "lodash-es": "^4.17.21",
     "tsconfig": "workspace:*",
     "tsup": "^7.2.0"
