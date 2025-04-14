@@ -1,4 +1,12 @@
-import { isEmpty, merge, toString } from "lodash-es";
+import {
+  get,
+  has,
+  isEmpty,
+  isUndefined,
+  merge,
+  omitBy,
+  toString,
+} from "lodash-es";
 import type { ScreenContextDefinition } from "../state/screen";
 import type { InvokableMethods, WidgetState } from "../state/widget";
 import {
@@ -19,6 +27,10 @@ export const widgetStatesToInvokables = (widgets: {
   });
 };
 
+interface InvokableWindow extends Window {
+  [key: string]: unknown;
+}
+
 export const buildEvaluateFn = (
   screen: Partial<ScreenContextDefinition>,
   js?: string,
@@ -38,14 +50,27 @@ export const buildEvaluateFn = (
       // Need to filter out invalid JS identifiers
     ].filter(([key, _]) => !key.includes(".")),
   );
-  const globalBlock = screen.model?.global;
-  const importedScriptBlock = screen.model?.importedScripts;
+
+  if (has(invokableObj, "ensemble")) {
+    const tempEnsemble = get(invokableObj, "ensemble") as {
+      [key: string]: unknown;
+    };
+    (window as unknown as InvokableWindow).ensemble = omitBy(
+      tempEnsemble,
+      isUndefined,
+    );
+  }
+
+  const args = Object.keys(invokableObj).join(",");
+
+  const combinedJs = `
+    return evalInClosure(() => {
+      ${formatJs(js)}
+    }, {${args}})
+  `;
 
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
-  const jsFunc = new Function(
-    ...Object.keys(invokableObj),
-    addScriptBlock(formatJs(js), globalBlock, importedScriptBlock),
-  );
+  const jsFunc = new Function(...Object.keys(invokableObj), combinedJs);
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return () => jsFunc(...Object.values(invokableObj));
@@ -94,24 +119,6 @@ const formatJs = (js?: string): string => {
   }
 
   return `return ${sanitizedJs}`;
-};
-
-const addScriptBlock = (
-  js: string,
-  globalBlock?: string,
-  importedScriptBlock?: string,
-): string => {
-  let jsString = ``;
-
-  if (importedScriptBlock) {
-    jsString += `${importedScriptBlock}\n\n`;
-  }
-
-  if (globalBlock) {
-    jsString += `${globalBlock}\n\n`;
-  }
-
-  return (jsString += `${js}`);
 };
 
 /**
