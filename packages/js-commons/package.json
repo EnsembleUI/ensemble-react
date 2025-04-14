@@ -1,6 +1,6 @@
 {
   "name": "@ensembleui/js-commons",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "exports": {
     ".": {
       "import": "./dist/core.mjs",
