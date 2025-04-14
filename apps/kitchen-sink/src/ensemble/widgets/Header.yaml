@@ -1,8 +1,9 @@
 Widget:
   inputs:
     - message
+    - searchKey
   onLoad:
-    executeCode: 
+    executeCode:
       body: |
         console.log("hello from header", message);
       onComplete:
@@ -42,7 +43,7 @@ Widget:
               template:
                 Text:
                   text: ${user.firstName + ' ' + user.lastName}
-            searchKey: id
+            searchKey: ${searchKey}
             onSearch:
               invokeAPI:
                 name: findUsers
