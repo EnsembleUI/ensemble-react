@@ -16,6 +16,7 @@ import {
   pick,
   values,
 } from "lodash-es";
+import stableStringify from "json-stable-stringify";
 import type { LocalApplicationTransporter } from "./transporter";
 import { ArtifactProps, EnsembleDocumentType } from "./dto";
 import type {
@@ -272,7 +273,7 @@ export const localStoreAsset = async (
   await writeFile(assetPath, fileData); // write the file to disk
   await writeFile(
     join(assetDir, `${fileName}.json`),
-    JSON.stringify(assetDocument),
+    stableStringify(assetDocument, { space: 2 }) || "",
   ); // write file's metadata separately in json
 
   const { relativePath } = await saveArtifact(assetDocument, appMetadata, {
@@ -359,7 +360,9 @@ export const saveArtifact = async (
   if (!isAssetOrFont(artifact)) {
     await writeFile(
       join(artifactSubDir, pathToWrite),
-      isConfigOrSecret(artifact) ? JSON.stringify(artifact) : artifact.content,
+      isConfigOrSecret(artifact)
+        ? stableStringify(artifact, { space: 2 }) || ""
+        : artifact.content,
       "utf-8",
     );
   }
@@ -437,7 +440,7 @@ const writeJsonData = async (
   data: unknown,
   hideFile = false,
 ): Promise<void> => {
-  await writeFile(filePath, JSON.stringify(data, null, 2), "utf-8");
+  await writeFile(filePath, stableStringify(data, { space: 2 }) || "", "utf-8");
 
   if (hideFile) hideOnWindow(filePath);
 };
