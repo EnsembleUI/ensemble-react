@@ -1,5 +1,11 @@
 # @ensembleui/js-commons
 
+## 0.0.22
+
+### Patch Changes
+
+- 5099891: get deterministic serialization using stableStringify
+
 ## 0.0.21
 
 ### Patch Changes
