@@ -395,6 +395,8 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
   const { openModal } = useContext(ModalContext) || {};
   const ensembleAction = useEnsembleAction(action?.onDialogDismiss);
   const customScope = useCustomScope();
+  const navigate = useNavigate();
+  const screenModel = useScreenModel();
 
   if (!action?.widget && !action?.body)
     throw new Error("ShowDialog Action requires a widget to be specified");
@@ -404,8 +406,10 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
     [action.widget, action.body],
   );
 
-  const callback = useCallback(
-    (args: unknown): void => {
+  const callback = useCommandCallback(
+    (evalContext, ...args) => {
+      const context = merge({}, evalContext, args[0]);
+
       const modalOptions = getShowDialogOptions(
         action.options,
         ensembleAction?.callback,
@@ -423,7 +427,8 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
           value={merge(
             {},
             customScope,
-            isObject(args) ? (args as CustomScope) : undefined,
+            // isObject(args[0]) ? (args[0] as CustomScope) : undefined,
+            context,
           )}
         >
           {EnsembleRuntime.render([widget])}
@@ -433,11 +438,20 @@ export const useShowDialog: EnsembleActionHook<ShowDialogAction> = (
         merge(
           {},
           customScope,
-          isObject(args) ? (args as CustomScope) : undefined,
+          // isObject(args[0]) ? (args[0] as CustomScope) : undefined,
+          context,
         ),
       );
     },
-    [action.options, customScope, ensembleAction?.callback, openModal, widget],
+    { navigate },
+    [
+      action.options,
+      customScope,
+      ensembleAction?.callback,
+      openModal,
+      widget,
+      screenModel,
+    ],
   );
 
   return { callback };
