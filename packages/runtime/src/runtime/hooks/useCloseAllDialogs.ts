@@ -1,17 +1,25 @@
-import { useContext, useMemo } from "react";
-import { type EnsembleActionHookResult } from "@ensembleui/react-framework";
+import { useContext } from "react";
+import {
+  type EnsembleActionHookResult,
+  useCommandCallback,
+} from "@ensembleui/react-framework";
+import { useNavigate } from "react-router-dom";
 import { ModalContext } from "../modal";
 import type { EnsembleActionHook } from "./useEnsembleAction";
 
 export const useCloseAllDialogs: EnsembleActionHook<
   EnsembleActionHookResult
 > = () => {
-  const { closeAllModals } = useContext(ModalContext) || {};
+  const modalContext = useContext(ModalContext);
+  const navigate = useNavigate();
 
-  return useMemo(
-    () => ({
-      callback: () => closeAllModals?.(),
-    }),
-    [],
+  const callback = useCommandCallback(
+    () => {
+      modalContext?.closeAllModals();
+    },
+    { navigate },
+    [modalContext],
   );
+
+  return { callback };
 };
