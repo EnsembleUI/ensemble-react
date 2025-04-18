@@ -1,17 +1,25 @@
-import { useContext, useMemo } from "react";
-import { type EnsembleActionHookResult } from "@ensembleui/react-framework";
+import { useContext } from "react";
+import {
+  type EnsembleActionHookResult,
+  useCommandCallback,
+} from "@ensembleui/react-framework";
+import { useNavigate } from "react-router-dom";
 import { ModalContext } from "../modal";
 import type { EnsembleActionHook } from "./useEnsembleAction";
 
 export const useCloseAllScreens: EnsembleActionHook<
   EnsembleActionHookResult
 > = () => {
-  const { closeAllScreens } = useContext(ModalContext) || {};
+  const modalContext = useContext(ModalContext);
+  const navigate = useNavigate();
 
-  return useMemo(
-    () => ({
-      callback: () => closeAllScreens?.(),
-    }),
-    [],
+  const callback = useCommandCallback(
+    () => {
+      modalContext?.closeAllScreens();
+    },
+    { navigate },
+    [modalContext],
   );
+
+  return { callback };
 };

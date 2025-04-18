@@ -459,6 +459,7 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
   const [isComplete, setIsComplete] = useState<boolean>();
   const onCompleteAction = useEnsembleAction(onComplete);
   const onErrorAction = useEnsembleAction(onError);
+  const navigate = useNavigate();
 
   const reset = useCallback(() => {
     if (inputEl) {
@@ -558,14 +559,18 @@ export const usePickFiles: EnsembleActionHook<PickFilesAction> = (
     onErrorAction?.callback,
   ]);
 
-  const callback = useCallback(() => {
-    try {
-      inputEl.click();
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
-    }
-  }, [inputEl]);
+  const callback = useCommandCallback(
+    () => {
+      try {
+        inputEl.click();
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error);
+      }
+    },
+    { navigate },
+    [inputEl],
+  );
 
   return { callback };
 };
@@ -678,10 +683,15 @@ export const useUploadFiles: EnsembleActionHook<UploadFilesAction> = (
 
 export const useNavigateBack: EnsembleActionHook<NavigateBackAction> = () => {
   const modalContext = useContext(ModalContext);
+  const navigate = useNavigate();
 
-  const callback = useCallback((): void => {
-    modalContext?.navigateBack();
-  }, [modalContext]);
+  const callback = useCommandCallback(
+    () => {
+      modalContext?.navigateBack();
+    },
+    { navigate },
+    [modalContext],
+  );
 
   return { callback };
 };
@@ -691,17 +701,20 @@ export const useActionGroup: EnsembleActionHook<ExecuteActionGroupAction> = (
 ) => {
   // This ensures hooks are fired in consistent order
   const actions = useMemo(() => action?.actions ?? [], [action]);
+  const navigate = useNavigate();
 
   const execActs = actions.map((act: EnsembleAction) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     return useEnsembleAction(act);
   });
 
-  const callback = useCallback(
-    (args: unknown): void => {
-      execActs.forEach((act) => act?.callback(args));
+  const callback = useCommandCallback(
+    (evalContext, ...args) => {
+      const context = merge({}, evalContext, args[0]);
+      execActs.forEach((act) => act?.callback(context));
     },
-    [actions],
+    { navigate },
+    [execActs],
   );
 
   return { callback };
@@ -711,44 +724,38 @@ export const useDispatchEvent: EnsembleActionHook<DispatchEventAction> = (
   action,
 ) => {
   const eventName = keys(action)[0];
-  const [isComplete, setIsComplete] = useState<boolean>();
-  const [context, setContext] = useState<unknown>();
   const eventData = (action ? action[eventName] : {}) as {
     [key: string]: unknown;
   };
   const eventScope = useCustomEventScope();
+  const navigate = useNavigate();
+  const screenModel = useScreenModel();
 
-  const evaluatedInputs = useEvaluate(eventData, { context });
-
+  // Use a separate hook call for each event action
   const events = get(eventScope, eventName) as {
     [key: string]: unknown;
   };
 
-  // Use a separate hook call for each event action
-  const ensembleActions = Object.keys(events || {}).map((customAction) =>
+  const ensembleActions = Object.keys(events).map((customAction) =>
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useEnsembleAction({ [customAction]: events[customAction] }),
   );
 
-  useEffect(() => {
-    if (isComplete !== false) {
-      return;
-    }
+  const callback = useCommandCallback(
+    (evalContext, ...args) => {
+      const context = merge({}, evalContext, args[0]);
+      const evaluatedData = evaluateDeep(eventData, screenModel, context);
 
-    ensembleActions.forEach((act) =>
-      act?.callback({
-        ...evaluatedInputs,
-        ...(context as { [key: string]: unknown }),
-      }),
-    );
-
-    setIsComplete(true);
-  }, [ensembleActions, evaluatedInputs, isComplete]);
-
-  const callback = useCallback((args: unknown): void => {
-    setContext(args);
-    setIsComplete(false);
-  }, []);
+      ensembleActions.forEach((act) =>
+        act?.callback({
+          ...evaluatedData,
+          ...context,
+        }),
+      );
+    },
+    { navigate },
+    [ensembleActions, eventData, screenModel],
+  );
 
   return { callback };
 };
@@ -770,60 +777,45 @@ export const useConditionalAction: EnsembleActionHook<
     // eslint-disable-next-line react-hooks/rules-of-hooks
     return useEnsembleAction(condition.action);
   });
-  const [isComplete, setIsComplete] = useState<boolean>();
-  const [context, setContext] = useState<unknown>();
-  const [trueActionIndex, setTrueActionIndex] = useState<number>();
-  const evaluatedStatements = useEvaluate(
-    conditionStatements as unknown as { [key: string]: unknown },
-    {
-      context,
+  const navigate = useNavigate();
+  const screenModel = useScreenModel();
+
+  const callback = useCommandCallback(
+    (evalContext, ...args) => {
+      const context = merge({}, evalContext, args[0]);
+
+      // Evaluate conditions
+      const evaluatedStatements = evaluateDeep(
+        conditionStatements as unknown as { [key: string]: unknown },
+        screenModel,
+        context,
+      );
+
+      const index = Object.keys(evaluatedStatements).find(
+        (key) => evaluatedStatements[key] === true,
+      );
+
+      let trueIndex: number | undefined;
+      if (index !== undefined) {
+        trueIndex = toNumber(index);
+      }
+
+      if (trueIndex === undefined || trueIndex < 0) {
+        // check if last condition is 'else'
+        const lastCondition = last(action.conditions);
+        if (lastCondition && "else" in lastCondition) {
+          trueIndex = action.conditions.length - 1;
+        } else {
+          // if no condition is true, return
+          return;
+        }
+      }
+
+      execActs[trueIndex]?.callback(context);
     },
+    { navigate },
+    [action.conditions, conditionStatements, execActs, screenModel],
   );
-
-  useEffect(() => {
-    if (trueActionIndex === undefined) {
-      return;
-    }
-
-    execActs[trueActionIndex]?.callback(context);
-    setTrueActionIndex(undefined);
-  }, [context, execActs, trueActionIndex]);
-
-  useEffect(() => {
-    if (!action || isComplete !== false) {
-      return;
-    }
-
-    const index = Object.keys(evaluatedStatements).find(
-      (key) => evaluatedStatements[key] === true,
-    );
-
-    let trueIndex: number | undefined;
-    if (index !== undefined) {
-      trueIndex = toNumber(index);
-    }
-
-    if (trueIndex === undefined || trueIndex < 0) {
-      // check if last condition is 'else'
-      const lastCondition = last(action.conditions);
-      if (lastCondition && "else" in lastCondition) {
-        trueIndex = action.conditions.length - 1;
-      }
-      // if no condition is true, return
-      else {
-        setIsComplete(true);
-        return;
-      }
-    }
-
-    setTrueActionIndex(trueIndex);
-    setIsComplete(true);
-  }, [action, evaluatedStatements, isComplete, context]);
-
-  const callback = useCallback((args: unknown): void => {
-    setContext(args);
-    setIsComplete(false);
-  }, []);
 
   return { callback };
 };
