@@ -29,12 +29,8 @@ export const useWidgetId = (
 
   const resolvedWidgetId = useMemo<string>(() => {
     const workingId = resolvedId;
-    if (
-      workingId &&
-      typeof workingId === "string" &&
-      JS_ID_REGEX.test(String(workingId))
-    ) {
-      return String(workingId);
+    if (typeof workingId === "string" && JS_ID_REGEX.test(workingId)) {
+      return workingId;
     }
     if (workingId) {
       error(
