@@ -1,8 +1,8 @@
 import { useMemo } from "react";
+import { atom, useAtomValue } from "jotai";
 import type { Expression } from "../shared";
-import { error, isExpression } from "../shared";
-import { evaluate } from "../evaluate/evaluate";
-import { defaultScreenContext } from "../state";
+import { deepCloneAsJSON, error, isExpression } from "../shared";
+import { createBindingAtom } from "../evaluate";
 import { useCustomScope } from "./useCustomScope";
 
 export const useWidgetId = (
@@ -13,30 +13,45 @@ export const useWidgetId = (
   resolvedTestId: string | undefined;
 } => {
   const customScope = useCustomScope();
-  const resolvedWidgetId = useMemo<string>(() => {
-    let workingId = id;
-    if (isExpression(workingId)) {
-      workingId = String(
-        evaluate(defaultScreenContext, workingId, customScope),
+
+  const idBindingAtom = useMemo(() => {
+    if (isExpression(id)) {
+      return createBindingAtom(
+        id,
+        deepCloneAsJSON(customScope) || {},
+        "widgetId",
       );
     }
-    if (workingId && JS_ID_REGEX.test(workingId)) {
+    return atom<string | undefined>(id);
+  }, [customScope, id]);
+
+  const resolvedId = useAtomValue(idBindingAtom);
+
+  const resolvedWidgetId = useMemo<string>(() => {
+    const workingId = resolvedId;
+    if (typeof workingId === "string" && JS_ID_REGEX.test(workingId)) {
       return workingId;
     }
     if (workingId) {
       error(
-        `${workingId} is not a valid javascript identifier. generating a random one`,
+        `${String(workingId)} is not a valid javascript identifier. generating a random one`,
       );
     }
     return generateRandomString(6);
-  }, [customScope, id]);
+  }, [resolvedId]);
 
-  const resolvedTestId = useMemo(() => {
+  const testIdBindingAtom = useMemo(() => {
     if (isExpression(testId)) {
-      return String(evaluate(defaultScreenContext, testId, customScope));
+      return createBindingAtom(
+        testId,
+        deepCloneAsJSON(customScope) || {},
+        "widgetTestId",
+      );
     }
-    return testId;
+    return atom<string | undefined>(testId);
   }, [customScope, testId]);
+
+  const resolvedTestId = useAtomValue(testIdBindingAtom) as string | undefined;
 
   return { resolvedWidgetId, resolvedTestId };
 };
