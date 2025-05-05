@@ -64,8 +64,10 @@ export const useCommandCallback = <
         const theme = get(themeAtom);
         const user = get(userAtom);
 
-        const storageApi = createStorageApi(storage, (next) =>
-          set(screenStorageAtom, next),
+        const storageApi = createStorageApi(
+          storage,
+          (next) => set(screenStorageAtom, next),
+          get,
         );
 
         const customWidgets =
