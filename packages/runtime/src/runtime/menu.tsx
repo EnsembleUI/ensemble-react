@@ -13,6 +13,7 @@ import {
   type EnsembleWidget,
   type EnsembleAction,
   EnsembleMenuModelType,
+  MenuContextProvider,
 } from "@ensembleui/react-framework";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { cloneDeep, omit } from "lodash-es";
@@ -72,6 +73,7 @@ interface MenuBaseProps<T> {
   header?: EnsembleWidget;
   footer?: EnsembleWidget;
   onCollapse?: EnsembleAction;
+  importedScripts?: string;
 }
 
 interface MenuStyles {
@@ -224,36 +226,38 @@ export const EnsembleMenu: React.FC<{
     return onCollapseAction?.callback();
   }, [onCollapseAction?.callback]);
   return (
-    <div style={{ display: "flex", flexDirection: "row" }}>
-      {type === EnsembleMenuModelType.SideBar ? (
-        <SideBarMenu
-          isCollapsed={isCollapsed}
-          selectedItem={selectedItem}
-          setSelectedItem={setSelectedItem}
-          values={{ ...values, items }}
-        />
-      ) : (
-        <DrawerMenu
-          handleClose={handleClose}
-          isOpen={!isCollapsed}
-          selectedItem={selectedItem}
-          setSelectedItem={setSelectedItem}
-          values={{ ...values, items }}
-        />
-      )}
-      {renderOutlet ? (
-        <div
-          style={{
-            flexGrow: 1,
-            height: "100vh",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <Outlet context={outletContext} />
-        </div>
-      ) : null}
-    </div>
+    <MenuContextProvider menuImportedScripts={menu.importedScripts}>
+      <div style={{ display: "flex", flexDirection: "row" }}>
+        {type === EnsembleMenuModelType.SideBar ? (
+          <SideBarMenu
+            isCollapsed={isCollapsed}
+            selectedItem={selectedItem}
+            setSelectedItem={setSelectedItem}
+            values={{ ...values, items }}
+          />
+        ) : (
+          <DrawerMenu
+            handleClose={handleClose}
+            isOpen={!isCollapsed}
+            selectedItem={selectedItem}
+            setSelectedItem={setSelectedItem}
+            values={{ ...values, items }}
+          />
+        )}
+        {renderOutlet ? (
+          <div
+            style={{
+              flexGrow: 1,
+              height: "100vh",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <Outlet context={outletContext} />
+          </div>
+        ) : null}
+      </div>
+    </MenuContextProvider>
   );
 };
 

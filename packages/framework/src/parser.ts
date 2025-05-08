@@ -87,7 +87,7 @@ export const EnsembleParser = {
       const screen = parse(yaml) as EnsembleScreenYAML;
       const viewGroup = get(screen, "ViewGroup");
       if (viewGroup) {
-        return EnsembleParser.parseMenu(viewGroup);
+        return EnsembleParser.parseMenu(viewGroup, app);
       }
 
       const pageScreen = EnsembleParser.parseScreen(id, name, screen, app);
@@ -255,7 +255,7 @@ export const EnsembleParser = {
       global,
       header: unwrapHeader(header),
       footer: unwrapFooter(footer),
-      menu: menu ? EnsembleParser.parseMenu(menu) : undefined,
+      menu: menu ? EnsembleParser.parseMenu(menu, app) : undefined,
       body: viewWidget,
       apis,
       styles: get(view, "styles"),
@@ -293,7 +293,7 @@ export const EnsembleParser = {
     };
   },
 
-  parseMenu: (menu: object): EnsembleMenuModel => {
+  parseMenu: (menu: object, app: ApplicationDTO): EnsembleMenuModel => {
     const menuType = head(Object.keys(menu));
     if (!menuType || !includes(["SideBar", "Drawer"], String(menuType))) {
       throw Error("Invalid ViewGroup definition: invalid menu type");
@@ -305,6 +305,24 @@ export const EnsembleParser = {
     const footerDef = get(menu, [menuType, "footer"]) as
       | { [key: string]: unknown }
       | undefined;
+
+    // handle import block
+    const importBlock = get(menu, [menuType, "Import"]) as
+      | unknown[]
+      | undefined;
+    let importedScripts: string | undefined;
+    if (isArray(importBlock)) {
+      const matchingScripts = filter(app.scripts, (script) =>
+        includes(importBlock, script.name),
+      );
+      if (!isEmpty(matchingScripts)) {
+        importedScripts = matchingScripts.reduce(
+          (acc, script) => acc.concat(script.content, "\n\n"),
+          "",
+        );
+      }
+    }
+
     return {
       id: get(menu, [menuType, "id"]) as string | undefined,
       type: menuType as EnsembleMenuModelType,
@@ -312,6 +330,7 @@ export const EnsembleParser = {
       header: headerDef ? unwrapWidget(headerDef) : undefined,
       footer: footerDef ? unwrapWidget(footerDef) : undefined,
       styles: get(menu, [menuType, "styles"]) as { [key: string]: unknown },
+      importedScripts,
     };
   },
 };
