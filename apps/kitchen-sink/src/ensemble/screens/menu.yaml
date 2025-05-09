@@ -1,8 +1,8 @@
+Import:
+  - common
 ViewGroup:
   SideBar:
     id: sidebar
-    Import:
-      - common
     styles:
       width: 240px
       iconWidth: 20px

@@ -87,6 +87,8 @@ export const EnsembleParser = {
       const screen = parse(yaml) as EnsembleScreenYAML;
       const viewGroup = get(screen, "ViewGroup");
       if (viewGroup) {
+        // add Import block to the viewGroup
+        set(viewGroup, "Import", get(screen, "Import"));
         return EnsembleParser.parseMenu(viewGroup, app);
       }
 
@@ -307,9 +309,7 @@ export const EnsembleParser = {
       | undefined;
 
     // handle import block
-    const importBlock = get(menu, [menuType, "Import"]) as
-      | unknown[]
-      | undefined;
+    const importBlock = get(menu, "Import") as unknown[] | undefined;
     let importedScripts: string | undefined;
     if (isArray(importBlock)) {
       const matchingScripts = filter(app.scripts, (script) =>
