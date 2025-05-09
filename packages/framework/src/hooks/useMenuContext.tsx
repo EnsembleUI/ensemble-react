@@ -1,6 +1,7 @@
 import type { PropsWithChildren } from "react";
 import React from "react";
 import { useHydrateAtoms } from "jotai/utils";
+import { useAtomValue } from "jotai";
 import { menuImportScriptAtom } from "../state";
 
 interface MenuContextProps {
@@ -26,4 +27,10 @@ export const MenuContextProvider: React.FC<MenuContextProviderProps> = ({
       {children}
     </HydrateMenuAtoms>
   );
+};
+
+export const useMenuScripts = (): string | undefined => {
+  const menuImportedScripts = useAtomValue(menuImportScriptAtom);
+
+  return menuImportedScripts;
 };
