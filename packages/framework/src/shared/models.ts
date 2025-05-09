@@ -56,6 +56,7 @@ export interface EnsembleMenuModel {
   header?: EnsembleWidget;
   footer?: EnsembleWidget;
   styles: { [key: string]: unknown };
+  importedScripts?: string;
 }
 
 export enum EnsembleMenuModelType {
