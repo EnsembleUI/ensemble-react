@@ -1,4 +1,5 @@
 import {
+  ScreenContextProvider,
   type EnsembleEntryPoint,
   type EnsembleScreenModel,
 } from "@ensembleui/react-framework";
@@ -50,7 +51,16 @@ export const EnsembleEntry: React.FC<EnsembleEntryProps> = ({
 
   if (hasMenu) {
     const { type: menuType, ...menu } = entry;
-    return <EnsembleMenu type={menuType} menu={menu} />;
+    const screen = {
+      id: entry.id,
+      name: entry.id,
+      importedScripts: menu.importedScripts,
+    };
+    return (
+      <ScreenContextProvider screen={screen}>
+        <EnsembleMenu menu={menu} type={menuType} />
+      </ScreenContextProvider>
+    );
   }
 
   if (location.pathname !== "/") {

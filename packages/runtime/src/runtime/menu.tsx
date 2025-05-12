@@ -72,6 +72,7 @@ interface MenuBaseProps<T> {
   header?: EnsembleWidget;
   footer?: EnsembleWidget;
   onCollapse?: EnsembleAction;
+  importedScripts?: string;
 }
 
 interface MenuStyles {

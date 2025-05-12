@@ -24,7 +24,7 @@ import { CustomThemeContext } from "./useThemeContext";
 import { useDeviceObserver } from "./useDeviceObserver";
 
 interface ScreenContextProps {
-  screen: EnsembleScreenModel;
+  screen: Partial<EnsembleScreenModel>;
   context?: Partial<ScreenContextDefinition>;
 }
 

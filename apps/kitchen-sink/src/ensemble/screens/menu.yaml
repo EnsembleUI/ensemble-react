@@ -1,3 +1,5 @@
+Import:
+  - common
 ViewGroup:
   SideBar:
     id: sidebar
@@ -29,7 +31,7 @@ ViewGroup:
               padding: 20px 0
               source: /logo.svg
     items:
-      - label: Home
+      - label: ${getHomeWidgetLabel()}
         icon: HomeOutlined
         page: home
         selected: true
