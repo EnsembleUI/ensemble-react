@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.26
+
+### Patch Changes
+
+- fcb76ca: feat: allow scripts import into ViewGroup
+
 ## 0.3.25
 
 ### Patch Changes

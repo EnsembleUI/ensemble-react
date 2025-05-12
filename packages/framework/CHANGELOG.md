@@ -1,5 +1,12 @@
 # @ensembleui/react-framework
 
+## 0.2.19
+
+### Patch Changes
+
+- 565028b: optimize useWidgetId hook by utilizing latest and greatest createBindingAtom
+- fcb76ca: feat: allow scripts import into ViewGroup
+
 ## 0.2.18
 
 ### Patch Changes
