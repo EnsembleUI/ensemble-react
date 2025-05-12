@@ -1,5 +1,15 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.120
+
+### Patch Changes
+
+- fcb76ca: feat: allow scripts import into ViewGroup
+- Updated dependencies [565028b]
+- Updated dependencies [fcb76ca]
+  - @ensembleui/react-framework@0.2.19
+  - @ensembleui/react-runtime@0.3.26
+
 ## 0.0.119
 
 ### Patch Changes
