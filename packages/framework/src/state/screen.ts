@@ -76,5 +76,3 @@ export const screenGlobalScriptAtom = focusAtom(screenAtom, (optic) =>
 export const screenImportScriptAtom = focusAtom(screenAtom, (optic) =>
   optic.prop("model").optional().prop("importedScripts"),
 );
-
-export const menuImportScriptAtom = atom<string | undefined>(undefined);

@@ -21,7 +21,6 @@ import {
   appAtom,
   secretAtom,
   screenDataFamilyAtom,
-  menuImportScriptAtom,
 } from "../state";
 import { deviceAtom } from "../hooks/useDeviceObserver";
 import { evaluate } from "./evaluate";
@@ -137,16 +136,11 @@ export const createBindingAtom = <T = unknown>(
     });
 
     try {
-      const screenImportedScripts = get(screenImportScriptAtom);
-      const menuImportedScripts = get(menuImportScriptAtom);
-      // Prioritize menu scripts if available, otherwise use screen scripts.
-      const effectiveImportedScripts =
-        menuImportedScripts ?? screenImportedScripts;
       const result = evaluate<T>(
         merge({}, defaultScreenContext, {
           model: {
             global: get(screenGlobalScriptAtom),
-            importedScripts: effectiveImportedScripts,
+            importedScripts: get(screenImportScriptAtom),
           },
         }),
         rawJsExpression,

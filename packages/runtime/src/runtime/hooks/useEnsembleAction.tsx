@@ -17,7 +17,6 @@ import {
   useScreenModel,
   generateAPIHash,
   evaluateDeep,
-  useMenuScripts,
 } from "@ensembleui/react-framework";
 import type {
   InvokeAPIAction,
@@ -102,7 +101,6 @@ export const useExecuteCode: EnsembleActionHook<
 > = (action, options) => {
   const isCodeString = isString(action);
   const screenModel = useScreenModel();
-  const menuImportedScripts = useMenuScripts();
   const modalContext = useContext(ModalContext);
   const navigate = useNavigate();
   const location = useLocation();
@@ -140,11 +138,7 @@ export const useExecuteCode: EnsembleActionHook<
         [key: string]: unknown;
       };
 
-      // Construct modelForEvaluation using screenModel as base and overriding with MenuScriptContext
-      const modelForEvaluation = merge({}, screenModel, {
-        importedScripts: menuImportedScripts,
-      });
-      const retVal = await evaluate({ model: modelForEvaluation }, js, context);
+      const retVal = await evaluate({ model: screenModel }, js, context);
 
       onCompleteAction?.callback({
         ...(args[0] as { [key: string]: unknown }),
@@ -153,7 +147,7 @@ export const useExecuteCode: EnsembleActionHook<
       return retVal;
     },
     { navigate, location: locationApi(location) },
-    [js, onCompleteAction?.callback, screenModel, menuImportedScripts],
+    [js, onCompleteAction?.callback, screenModel],
     {
       modalContext,
       render: EnsembleRuntime.render,

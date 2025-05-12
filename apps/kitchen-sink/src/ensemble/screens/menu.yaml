@@ -98,13 +98,9 @@ ViewGroup:
                         - Button:
                             label: Lets go!
                             onTap:
-                              executeCode:
-                                body: |
-                                  console.log(getHomeWidgetLabel());
-                                onComplete:
-                                  navigateExternalScreen:
-                                    url: https://docs.ensembleui.com/
-                                    openNewTab: true
+                              navigateExternalScreen:
+                                url: https://docs.ensembleui.com/
+                                openNewTab: true
     footer:
       Row:
         styles:

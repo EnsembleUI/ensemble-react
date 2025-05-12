@@ -13,7 +13,6 @@ import {
   type EnsembleWidget,
   type EnsembleAction,
   EnsembleMenuModelType,
-  MenuContextProvider,
 } from "@ensembleui/react-framework";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { cloneDeep, omit } from "lodash-es";
@@ -226,38 +225,36 @@ export const EnsembleMenu: React.FC<{
     return onCollapseAction?.callback();
   }, [onCollapseAction?.callback]);
   return (
-    <MenuContextProvider menuImportedScripts={menu.importedScripts}>
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        {type === EnsembleMenuModelType.SideBar ? (
-          <SideBarMenu
-            isCollapsed={isCollapsed}
-            selectedItem={selectedItem}
-            setSelectedItem={setSelectedItem}
-            values={{ ...values, items }}
-          />
-        ) : (
-          <DrawerMenu
-            handleClose={handleClose}
-            isOpen={!isCollapsed}
-            selectedItem={selectedItem}
-            setSelectedItem={setSelectedItem}
-            values={{ ...values, items }}
-          />
-        )}
-        {renderOutlet ? (
-          <div
-            style={{
-              flexGrow: 1,
-              height: "100vh",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <Outlet context={outletContext} />
-          </div>
-        ) : null}
-      </div>
-    </MenuContextProvider>
+    <div style={{ display: "flex", flexDirection: "row" }}>
+      {type === EnsembleMenuModelType.SideBar ? (
+        <SideBarMenu
+          isCollapsed={isCollapsed}
+          selectedItem={selectedItem}
+          setSelectedItem={setSelectedItem}
+          values={{ ...values, items }}
+        />
+      ) : (
+        <DrawerMenu
+          handleClose={handleClose}
+          isOpen={!isCollapsed}
+          selectedItem={selectedItem}
+          setSelectedItem={setSelectedItem}
+          values={{ ...values, items }}
+        />
+      )}
+      {renderOutlet ? (
+        <div
+          style={{
+            flexGrow: 1,
+            height: "100vh",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Outlet context={outletContext} />
+        </div>
+      ) : null}
+    </div>
   );
 };
 
