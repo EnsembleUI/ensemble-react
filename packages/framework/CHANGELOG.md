@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.2.20
+
+### Patch Changes
+
+- 4c2dcb9: support showToast via code
+
 ## 0.2.19
 
 ### Patch Changes
