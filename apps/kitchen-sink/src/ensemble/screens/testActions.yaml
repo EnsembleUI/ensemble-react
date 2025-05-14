@@ -11,6 +11,17 @@ View:
         names: ${ensemble.storage.get('yyy')}
       children:
         - Button:
+            label: show Toast
+            onTap:
+              showToast:
+                message: Hello 1
+                options:
+                  type: warning
+        - Button:
+            label: show Toast via code
+            onTap: |-
+              ensemble.showToast({ message: 'Hello 2', options: { type: 'info', position: 'topLeft' } })
+        - Button:
             id: navigateScreen
             label: navigate screen
             onTap:

@@ -1,5 +1,5 @@
 import type { Response } from "../data";
-import type { ShowDialogAction } from "./actions";
+import type { ShowDialogAction, ShowToastAction } from "./actions";
 
 export interface EnsembleContext {
   app: EnsembleAppConfig;
@@ -31,7 +31,7 @@ export interface EnsembleInterface {
   stopTimer: (timerId: string) => void;
   openCamera: () => void;
   navigateBack: () => void;
-  showToast: (inputs: unknown) => void;
+  showToast: (action: ShowToastAction) => void;
   debug: (value: unknown) => void;
   copyToClipboard: (value: unknown) => void;
   connectSocket: (name: string) => void;
