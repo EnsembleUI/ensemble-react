@@ -18,6 +18,7 @@ import {
   navigateModalScreen,
   navigateUrl,
   showDialog,
+  showToast,
 } from "../api";
 import type {
   EnsembleScreenModel,
@@ -27,6 +28,7 @@ import type {
   NavigateModalScreenAction,
   NavigateScreenAction,
   ShowDialogAction,
+  ShowToastAction,
 } from "../shared";
 import { deviceAtom } from "./useDeviceObserver";
 import { createStorageApi, screenStorageAtom } from "./useEnsembleStorage";
@@ -40,6 +42,7 @@ interface CallbackContext {
     inputs?: { [key: string]: unknown };
     screen: EnsembleScreenModel;
   }>;
+  toaster?: (...args: unknown[]) => void;
 }
 
 export const useCommandCallback = <
@@ -158,6 +161,8 @@ export const useCommandCallback = <
                 applicationContext.application ?? screenContext.app,
               );
             },
+            showToast: (action: ShowToastAction): void =>
+              showToast(action, callbackContext?.toaster),
           },
           context: {
             ...customWidgets,

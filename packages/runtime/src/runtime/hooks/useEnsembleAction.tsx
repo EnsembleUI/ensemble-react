@@ -53,6 +53,7 @@ import {
 import { useState, useEffect, useMemo, useCallback, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 import { ModalContext } from "../modal";
 import { EnsembleRuntime } from "../runtime";
 import { getShowDialogOptions } from "../showDialog";
@@ -152,6 +153,7 @@ export const useExecuteCode: EnsembleActionHook<
       modalContext,
       render: EnsembleRuntime.render,
       EnsembleScreen,
+      toaster: toast as (...args: unknown[]) => void,
     },
   );
 
