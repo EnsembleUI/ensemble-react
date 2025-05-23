@@ -1,6 +1,12 @@
 /* eslint-disable react/no-children-prop */
 import "@testing-library/jest-dom";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  act,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Form } from "../../index";
 import { FormTestWrapper } from "./__shared__/fixtures";
@@ -356,6 +362,47 @@ describe("TextInput", () => {
         expect.objectContaining({ key: "2" }),
       );
     });
+  });
+
+  test("debounces onChange events according to debounceMs", () => {
+    jest.useFakeTimers();
+
+    render(
+      <Form
+        children={[
+          {
+            name: "TextInput",
+            properties: {
+              label: "Debounced input",
+              id: "debouncedInput",
+              debounceMs: 500,
+              onChange: {
+                executeCode: "console.log('changed:', value)",
+              },
+            },
+          },
+        ]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
+    );
+
+    const input = screen.getByLabelText("Debounced input");
+
+    fireEvent.change(input, { target: { value: "test value" } });
+    expect(logSpy).not.toHaveBeenCalledWith("changed:", "test value");
+
+    act(() => {
+      jest.advanceTimersByTime(300);
+    });
+    expect(logSpy).not.toHaveBeenCalledWith("changed:", "test value");
+
+    act(() => {
+      jest.advanceTimersByTime(210);
+    });
+    expect(logSpy).toHaveBeenCalledWith("changed:", "test value");
+
+    jest.useRealTimers();
   });
 });
 /* eslint-enable react/no-children-prop */
