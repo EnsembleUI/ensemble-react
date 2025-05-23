@@ -178,6 +178,7 @@ View:
                           Text:
                             text: Text mask input
                         onChange: console.log("formTextInput onChange", value)
+                        debounceMs: 500
                         onKeyDown: console.log("formTextInput onKeyDown", event)
                     - TextInput:
                         id: minMaxTextInput
@@ -186,6 +187,7 @@ View:
                         hintStyle:
                           color: red
                         maxLength: 3
+                        debounceMs: 1000
                         validator:
                           required: true
                           maxLength: 3

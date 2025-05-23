@@ -5,8 +5,9 @@ import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import type { RefCallback, FormEvent } from "react";
 import { runes } from "runes2";
 import type { Rule } from "antd/es/form";
-import { forEach, isObject, omitBy } from "lodash-es";
+import { forEach, isEmpty, isObject, omitBy } from "lodash-es";
 import IMask, { type InputMask } from "imask";
+import { useDebounce } from "react-use";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { WidgetRegistry } from "../../registry";
 import type { TextStyles } from "../Text";
@@ -30,6 +31,7 @@ export type TextInputProps = {
   >;
   inputType?: "email" | "phone" | "number" | "text" | "url"; //| "ipAddress";
   onChange?: EnsembleAction;
+  debounceMs?: number;
   mask?: string;
   validator?: {
     minLength?: number;
@@ -62,11 +64,18 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
   const onKeyDownAction = useEnsembleAction(props.onKeyDown);
 
   const handleChange = useCallback(
-    (newValue: string) => {
-      setValue(newValue);
-      action?.callback({ value: newValue });
+    (newValue: string) => setValue(newValue),
+    [],
+  );
+
+  useDebounce(
+    () => {
+      if (action?.callback && !isEmpty(value)) {
+        action.callback({ value });
+      }
     },
-    [action?.callback],
+    values?.debounceMs || 0,
+    [value],
   );
 
   const handleRef: RefCallback<never> = (node) => {
