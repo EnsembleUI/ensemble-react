@@ -178,7 +178,7 @@ View:
                           Text:
                             text: Text mask input
                         onChange: console.log("formTextInput onChange", value)
-                        debounceMs: 500
+                        debounceMs: ${ensemble.storage.get('mockApiStatusCode')}
                         onKeyDown: console.log("formTextInput onKeyDown", event)
                     - TextInput:
                         id: minMaxTextInput
