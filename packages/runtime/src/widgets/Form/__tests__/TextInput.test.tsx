@@ -375,8 +375,8 @@ describe("TextInput", () => {
             properties: {
               label: "Debounced input",
               id: "debouncedInput",
-              debounceMs: 500,
               onChange: {
+                debounceMs: 500,
                 executeCode: "console.log('changed:', value)",
               },
             },

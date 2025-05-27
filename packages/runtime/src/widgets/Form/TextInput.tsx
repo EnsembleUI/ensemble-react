@@ -32,7 +32,6 @@ export type TextInputProps = {
   onChange?: {
     debounceMs?: number;
   } & EnsembleAction;
-  debounceMs?: number;
   mask?: string;
   validator?: {
     minLength?: number;
@@ -68,8 +67,8 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
     () =>
       debounce((inputValue: string) => {
         action?.callback({ value: inputValue });
-      }, values?.debounceMs ?? 0),
-    [action?.callback, values?.debounceMs],
+      }, values?.onChange?.debounceMs ?? 0),
+    [action?.callback, values?.onChange?.debounceMs],
   );
 
   const handleChange = useCallback(
