@@ -5,9 +5,8 @@ import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import type { RefCallback, FormEvent } from "react";
 import { runes } from "runes2";
 import type { Rule } from "antd/es/form";
-import { forEach, isEmpty, isObject, omitBy } from "lodash-es";
+import { forEach, isObject, omitBy, debounce } from "lodash-es";
 import IMask, { type InputMask } from "imask";
-import { useDebounce } from "react-use";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { WidgetRegistry } from "../../registry";
 import type { TextStyles } from "../Text";
@@ -30,7 +29,9 @@ export type TextInputProps = {
     "none" | "enforced" | "truncateAfterCompositionEnds"
   >;
   inputType?: "email" | "phone" | "number" | "text" | "url"; //| "ipAddress";
-  onChange?: EnsembleAction;
+  onChange?: {
+    debounceMs?: number;
+  } & EnsembleAction;
   debounceMs?: number;
   mask?: string;
   validator?: {
@@ -63,19 +64,20 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
   const action = useEnsembleAction(props.onChange);
   const onKeyDownAction = useEnsembleAction(props.onKeyDown);
 
-  const handleChange = useCallback(
-    (newValue: string) => setValue(newValue),
-    [],
+  const debouncedOnChange = useMemo(
+    () =>
+      debounce((inputValue: string) => {
+        action?.callback({ value: inputValue });
+      }, values?.debounceMs ?? 0),
+    [action?.callback, values?.debounceMs],
   );
 
-  useDebounce(
-    () => {
-      if (action?.callback && !isEmpty(value)) {
-        action.callback({ value });
-      }
+  const handleChange = useCallback(
+    (newValue: string) => {
+      setValue(newValue);
+      debouncedOnChange(newValue);
     },
-    values?.debounceMs || 0,
-    [value],
+    [debouncedOnChange],
   );
 
   const handleRef: RefCallback<never> = (node) => {
@@ -131,6 +133,19 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
       setMask(iMask);
     }
   }, [values?.mask]);
+
+  // cleanup debounced function when component unmounts or changes
+  useEffect(() => {
+    return () => {
+      if (
+        debouncedOnChange &&
+        typeof debouncedOnChange === "function" &&
+        "cancel" in debouncedOnChange
+      ) {
+        (debouncedOnChange as ReturnType<typeof debounce>).cancel();
+      }
+    };
+  }, [debouncedOnChange]);
 
   const inputType = useMemo(() => {
     switch (values?.inputType) {
