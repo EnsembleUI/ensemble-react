@@ -404,5 +404,49 @@ describe("TextInput", () => {
 
     jest.useRealTimers();
   });
+
+  test("cancels debounced onChange when component unmounts", () => {
+    jest.useFakeTimers();
+
+    const { unmount } = render(
+      <Form
+        children={[
+          {
+            name: "TextInput",
+            properties: {
+              label: "Debounced input",
+              id: "debouncedInput",
+              onChange: {
+                debounceMs: 500,
+                executeCode: "console.log('unmount test:', value)",
+              },
+            },
+          },
+        ]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
+    );
+
+    const input = screen.getByLabelText("Debounced input");
+
+    fireEvent.change(input, { target: { value: "should be canceled" } });
+    expect(logSpy).not.toHaveBeenCalledWith(
+      "unmount test:",
+      "should be canceled",
+    );
+
+    unmount(); // unmount the component before debounce completes
+
+    act(() => {
+      jest.advanceTimersByTime(600);
+    });
+    expect(logSpy).not.toHaveBeenCalledWith(
+      "unmount test:",
+      "should be canceled",
+    );
+
+    jest.useRealTimers();
+  });
 });
 /* eslint-enable react/no-children-prop */
