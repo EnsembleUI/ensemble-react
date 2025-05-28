@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import type { RefCallback, FormEvent } from "react";
 import { runes } from "runes2";
 import type { Rule } from "antd/es/form";
-import { forEach, isObject, omitBy } from "lodash-es";
+import { forEach, isObject, omitBy, debounce } from "lodash-es";
 import IMask, { type InputMask } from "imask";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { WidgetRegistry } from "../../registry";
@@ -29,7 +29,9 @@ export type TextInputProps = {
     "none" | "enforced" | "truncateAfterCompositionEnds"
   >;
   inputType?: "email" | "phone" | "number" | "text" | "url"; //| "ipAddress";
-  onChange?: EnsembleAction;
+  onChange?: {
+    debounceMs?: number;
+  } & EnsembleAction;
   mask?: string;
   validator?: {
     minLength?: number;
@@ -61,12 +63,20 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
   const action = useEnsembleAction(props.onChange);
   const onKeyDownAction = useEnsembleAction(props.onKeyDown);
 
+  const debouncedOnChange = useMemo(
+    () =>
+      debounce((inputValue: string) => {
+        action?.callback({ value: inputValue });
+      }, values?.onChange?.debounceMs ?? 0),
+    [action?.callback, values?.onChange?.debounceMs],
+  );
+
   const handleChange = useCallback(
     (newValue: string) => {
       setValue(newValue);
-      action?.callback({ value: newValue });
+      debouncedOnChange(newValue);
     },
-    [action?.callback],
+    [debouncedOnChange],
   );
 
   const handleRef: RefCallback<never> = (node) => {
@@ -122,6 +132,19 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
       setMask(iMask);
     }
   }, [values?.mask]);
+
+  // cleanup debounced function when component unmounts or changes
+  useEffect(() => {
+    return () => {
+      if (
+        debouncedOnChange &&
+        typeof debouncedOnChange === "function" &&
+        "cancel" in debouncedOnChange
+      ) {
+        (debouncedOnChange as ReturnType<typeof debounce>).cancel();
+      }
+    };
+  }, [debouncedOnChange]);
 
   const inputType = useMemo(() => {
     switch (values?.inputType) {

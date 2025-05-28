@@ -177,7 +177,9 @@ View:
                         label:
                           Text:
                             text: Text mask input
-                        onChange: console.log("formTextInput onChange", value)
+                        onChange:
+                          debounceMs: ${ensemble.storage.get('mockApiStatusCode')}
+                          executeCode: console.log("formTextInput onChange", value)
                         onKeyDown: console.log("formTextInput onKeyDown", event)
                     - TextInput:
                         id: minMaxTextInput
@@ -190,7 +192,9 @@ View:
                           required: true
                           maxLength: 3
                         label: Text input with min and max length
-                        onChange: console.log("minMaxTextInput onChange", value)
+                        onChange:
+                          debounceMs: 1000
+                          executeCode: console.log("minMaxTextInput onChange", value)
                         onKeyDown: console.log("minMaxTextInput onKeyDown", event)
                     - TextInput:
                         id: regexTextInput
