@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.28
+
+### Patch Changes
+
+- d36b0b0: add debounce functionality to TextInput widget
+
 ## 0.3.27
 
 ### Patch Changes

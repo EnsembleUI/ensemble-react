@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.122
+
+### Patch Changes
+
+- d36b0b0: add debounce functionality to TextInput widget
+- Updated dependencies [d36b0b0]
+  - @ensembleui/react-runtime@0.3.28
+
 ## 0.0.121
 
 ### Patch Changes
