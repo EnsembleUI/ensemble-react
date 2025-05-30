@@ -775,9 +775,9 @@ View:
                   label: Choose multiple
                   id: multiSelect1
                   styles:
-                    multiSelectBackgroundColor: "aqua"
-                    multiSelectBorderWidth: 1
-                    multiSelectBorderColor: "lime"
+                    multiSelectBackgroundColor: "khaki"
+                    multiSelectBorderWidth: 4px
+                    multiSelectBorderColor: "red"
                     multiSelectPadding: 10px
                     multiSelectMaxWidth: 200px
                     backgroundColor: "yellow"
@@ -802,6 +802,7 @@ View:
                     - label: Option 3
                       value: option3
               - Dropdown:
+                  id: myDropdown123
                   label: Simple
                   hintText: Hint Text
                   styles:
@@ -810,6 +811,8 @@ View:
                     dropdownPadding: 10px
                     dropdownMaxWidth: 200px
                     dropdownMinHeight: 50px
+                    dropdownBackgroundColor: "red"
+                    backgroundColor: "yellow"
                   items:
                     - label: Option 1
                       value: 1
@@ -835,6 +838,9 @@ View:
               - Dropdown:
                   value: 11
                   label: With item template
+                  styles:
+                    dropdownBackgroundColor: aqua
+                    backgroundColor: purple
                   labelStyle:
                     color: green
                     fontSize: 20

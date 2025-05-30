@@ -1,8 +1,8 @@
 import * as Icons from "@mui/icons-material";
 import type { SvgIconComponent } from "@mui/icons-material";
 import { get, isInteger } from "lodash-es";
-import React from "react";
-import { TextAlignment } from "./styleSchema";
+import type React from "react";
+import type { TextAlignment } from "./styleSchema";
 
 type Color = number | string;
 
@@ -105,6 +105,7 @@ export const getComponentStyles = (
   name: string,
   styles?: React.CSSProperties,
   returnAsString = true,
+  addImportant = false,
 ): string | React.CSSProperties => {
   const styleNames = Object.keys(styles || {}).filter((key) =>
     key.startsWith(name),
@@ -120,8 +121,11 @@ export const getComponentStyles = (
         // eslint-disable-next-line prefer-named-capture-group
         .replace(/([a-z])([A-Z])/g, "$1-$2")
         .toLowerCase(); // convert camelCase to kebab-case
-      result += `${cssProperty}: ${styleValue};`;
-      res = { ...res, [cssProperty]: styleValue };
+      result += `${cssProperty}: ${styleValue}${addImportant ? " !important" : ""};`;
+      res = {
+        ...res,
+        [cssProperty]: `${styleValue}${addImportant ? " !important" : ""}`,
+      };
     }
   });
 

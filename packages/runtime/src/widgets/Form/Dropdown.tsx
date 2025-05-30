@@ -72,7 +72,7 @@ const DropdownRenderer = (
   return (
     <>
       {menu}
-      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+      {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
       <div
         onMouseDown={(e) => {
           e.preventDefault();
@@ -236,7 +236,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
           height: unset !important;
         }
         .${id}_input .ant-select-selector {
-          ${getComponentStyles("dropdown", values?.styles) as string}
+          ${getComponentStyles("dropdown", values?.styles, true, true) as string}
         }
         .ant-select-item.ant-select-item-option.${id}_option[aria-selected="true"] {
           ${
