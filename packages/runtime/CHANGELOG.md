@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.29
+
+### Patch Changes
+
+- 71ef7fe: fix applying Dropdown and MultiSelect selector styles
+
 ## 0.3.28
 
 ### Patch Changes

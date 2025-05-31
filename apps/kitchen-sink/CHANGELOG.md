@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.123
+
+### Patch Changes
+
+- 71ef7fe: fix applying Dropdown and MultiSelect selector styles
+- Updated dependencies [71ef7fe]
+  - @ensembleui/react-runtime@0.3.29
+
 ## 0.0.122
 
 ### Patch Changes
