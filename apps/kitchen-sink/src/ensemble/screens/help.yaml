@@ -28,6 +28,37 @@ View:
                       inputs:
                         input1: "hello"
                         input2: "world"
+
+        - Button:
+            label: toggle modal
+            onTap:
+              showDialog:
+                options:
+                  minWidth: 500px
+                body:
+                  MultiSelect:
+                    label: test
+                    data: ${ensemble.storage.get('testoptions')}
+                    labelKey: label
+                    valueKey: value
+                    value: ${ensemble.storage.get('testselect') || []}
+                    onChange:
+                      executeCode: |
+                        ensemble.storage.set('testselect', option)
+                    onSearch:
+                      executeCode: |
+                        const tempOptions = ensemble.storage.get('testlistoptions')
+                        const filteredResult = tempOptions.filter(option => 
+                          option.label.toLowerCase().startsWith(search.toLowerCase())
+                        )
+                        ensemble.storage.set('testoptions', filteredResult)
+
+        - Button:
+            label: set storage variable
+            onTap:
+              executeCode: |
+                ensemble.storage.set('isTestAvailable', 'yes !!!')
+
         - Text:
             styles:
               names: heading-1
