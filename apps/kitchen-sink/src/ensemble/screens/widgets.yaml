@@ -417,6 +417,9 @@ View:
                         key: ${dummyData.id}
                         template:
                           DataRow:
+                            styles:
+                              backgroundColor: ${index % 2 === 0 ? "beige" :"lightgreen"}
+                              border: 4px double blue
                             disableSelection: ${dummyData.id === 2}
                             item-template:
                               data: ${Object.values(dummyData)}

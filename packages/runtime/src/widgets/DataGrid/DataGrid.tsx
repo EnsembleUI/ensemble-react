@@ -15,6 +15,7 @@ import {
   useRegisterBindings,
   type EnsembleAction,
   unwrapWidget,
+  evaluateDeep,
 } from "@ensembleui/react-framework";
 import React, {
   useCallback,
@@ -81,6 +82,7 @@ export interface DataGridRowTemplate {
     disableSelection?: Expression<boolean>;
     onTap?: EnsembleAction;
     children?: EnsembleWidget[];
+    styles?: EnsembleWidgetStyles;
   } & HasItemTemplate;
 }
 
@@ -475,7 +477,20 @@ export const DataGrid: React.FC<GridProps> = (props) => {
           key={resolvedWidgetId}
           onChange={onChange}
           onRow={(record, recordIndex) => {
-            return { onClick: () => onTapActionCallback(record, recordIndex) };
+            const rowStyles = itemTemplate.template.properties.styles;
+            const recordStyles = rowStyles
+              ? evaluateDeep(
+                  rowStyles as {
+                    [key: string]: unknown;
+                  },
+                  defaultScreenContext.model,
+                  { ...record, index: recordIndex },
+                )
+              : {};
+            return {
+              onClick: () => onTapActionCallback(record, recordIndex),
+              style: recordStyles,
+            };
           }}
           pagination={paginationObject}
           rowKey={(data: unknown) => {
@@ -612,6 +627,9 @@ export const DataGrid: React.FC<GridProps> = (props) => {
             width: 10px;
             height: 100%;
             cursor: col-resize;
+          }
+          #${resolvedWidgetId} table {
+              border-collapse: collapse;
           }
 
           #${resolvedWidgetId} .ant-table-thead > tr > th {
