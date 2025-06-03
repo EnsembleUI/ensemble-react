@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.30
+
+### Patch Changes
+
+- f411a87: support styles under DataRow of DataGrid widget
+
 ## 0.3.29
 
 ### Patch Changes

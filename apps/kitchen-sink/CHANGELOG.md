@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.124
+
+### Patch Changes
+
+- f411a87: support styles under DataRow of DataGrid widget
+- Updated dependencies [f411a87]
+  - @ensembleui/react-runtime@0.3.30
+
 ## 0.0.123
 
 ### Patch Changes
