@@ -22,6 +22,7 @@ import {
   isObject,
   isString,
   toNumber,
+  uniqBy,
 } from "lodash-es";
 import { useDebounce } from "react-use";
 import { WidgetRegistry } from "../../registry";
@@ -124,7 +125,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
 
   // load data and items
   useEffect(() => {
-    const tempOptions: MultiSelectOption[] = [];
+    const tempOptions: MultiSelectOption[] = values?.selectedValues || [];
 
     if (isArray(rawData)) {
       tempOptions.push(
@@ -153,7 +154,9 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
       );
     }
 
-    setOptions(tempOptions);
+    const uniqueOptions = uniqBy(tempOptions, "value");
+
+    setOptions(uniqueOptions);
   }, [rawData, values?.labelKey, values?.valueKey, values?.items]);
 
   // handle form instance

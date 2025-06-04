@@ -2,8 +2,30 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import userEvent from "@testing-library/user-event";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { type ReactNode } from "react";
+import { BrowserRouter } from "react-router-dom";
 import { Form } from "../../index";
 import { FormTestWrapper } from "./__shared__/fixtures";
+import { EnsembleScreen } from "../../../runtime/screen";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
+
+interface BrowserRouterProps {
+  children: ReactNode;
+}
+
+const BrowserRouterWrapper = ({ children }: BrowserRouterProps) => (
+  <QueryClientProvider client={queryClient}>
+    <BrowserRouter>{children}</BrowserRouter>
+  </QueryClientProvider>
+);
 
 const defaultFormButton = [
   {
@@ -645,5 +667,145 @@ describe("MultiSelect Widget", () => {
       expect(screen.getByText("Anothe...")).toBeInTheDocument();
     });
   });
+
+  test.only("multiselect with search action", async () => {
+    render(
+      <EnsembleScreen
+        screen={{
+          name: "test_cache",
+          id: "test_cache",
+          onLoad: {
+            executeCode: {
+              body: `
+                ensemble.storage.set('test_list_options', [
+                  { label: 'William Smith', value: 'william_smith' },
+                  { label: 'Evelyn Johnson', value: 'evelyn_johnson' },
+                  { label: 'Liam Brown', value: 'liam_brown' },
+                  { label: 'Bella Davis', value: 'bella_davis' },
+                  { label: 'James Wilson', value: 'james_wilson' },
+                  { label: 'Zachary Taylor', value: 'zachary_taylor' },
+                  { label: 'Nolan Martinez', value: 'nolan_martinez' },
+                  { label: 'Emma Thompson', value: 'emma_thompson' },
+                  { label: 'Oliver White', value: 'oliver_white' },
+                  { label: 'Sophia Lee', value: 'sophia_lee' },
+                ])
+                ensemble.storage.set('test_options', [])
+              `,
+            },
+          },
+          body: {
+            name: "Button",
+            properties: {
+              label: "Show Dialog",
+              onTap: {
+                showDialog: {
+                  widget: {
+                    Column: {
+                      children: [
+                        {
+                          Text: { text: "This is modal" },
+                        },
+                        {
+                          MultiSelect: {
+                            data: `\${ensemble.storage.get('test_options')}`,
+                            labelKey: "label",
+                            valueKey: "value",
+                            value: `\${ensemble.storage.get('test_select') || []}`,
+                            onChange: {
+                              executeCode: `
+                              ensemble.storage.set('test_select', option)
+                              console.log('test_select', ensemble.storage.get('test_select'))
+                              `,
+                            },
+                            onSearch: {
+                              executeCode: `
+                                const tempOptions = ensemble.storage.get('test_list_options')
+                                const filteredResult = tempOptions.filter(option => 
+                                  option.label.toLowerCase().startsWith(search.toLowerCase())
+                                )
+                                ensemble.storage.set('test_options', filteredResult)
+                              `,
+                            },
+                          },
+                        },
+                        {
+                          Button: {
+                            label: "Close modal",
+                            onTap: {
+                              executeCode: "ensemble.closeAllDialogs()",
+                            },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        }}
+      />,
+      { wrapper: BrowserRouterWrapper },
+    );
+
+    const option = { selector: ".ant-select-item-option-content" };
+    const selected = { selector: ".ant-select-selection-item-content" };
+
+    userEvent.click(screen.getByText("Show Dialog"));
+
+    await waitFor(() => {
+      expect(screen.getByText("This is modal")).toBeInTheDocument();
+    });
+
+    userEvent.type(screen.getByRole("combobox"), "Bella");
+
+    await waitFor(() => {
+      expect(screen.getByText("Bella Davis", option)).toBeInTheDocument();
+    });
+
+    userEvent.click(screen.getByText("Bella Davis", option));
+
+    await waitFor(() => {
+      expect(screen.getByText("Bella Davis", selected)).toBeVisible();
+    });
+
+    userEvent.click(screen.getByText("Close modal"));
+
+    // Open 2nd time to check if the selected values are retained
+
+    userEvent.click(screen.getByText("Show Dialog"));
+
+    userEvent.type(screen.getByRole("combobox"), "Sophia");
+
+    await waitFor(() => {
+      expect(screen.getByText("Sophia Lee", option)).toBeInTheDocument();
+    });
+
+    userEvent.click(screen.getByText("Sophia Lee", option));
+
+    await waitFor(() => {
+      expect(screen.queryByText("Bella Davis", selected)).toBeVisible();
+      expect(screen.queryByText("Sophia Lee", selected)).toBeVisible();
+    });
+
+    userEvent.click(screen.getByText("Close modal"));
+
+    // Open 3rd time to check if the selected values are retained
+
+    userEvent.click(screen.getByText("Show Dialog"));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("Bella Davis", {
+          selector: ".ant-select-selection-item-content",
+        }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText("Sophia Lee", {
+          selector: ".ant-select-selection-item-content",
+        }),
+      ).toBeInTheDocument();
+    });
+  }, 10000);
 });
 /* eslint-enable react/no-children-prop */
