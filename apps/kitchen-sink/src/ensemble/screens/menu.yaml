@@ -43,7 +43,13 @@ ViewGroup:
         page: layouts
       - label: Actions
         icon: CodeOutlined
-        page: actions
+        children:
+          - label: Actions example
+            icon: CodeOutlined
+            page: actions
+          - label: Test Actions
+            icon: WidgetsOutlined
+            page: test_actions
       - label: Forms
         icon: CodeOutlined
         page: forms
@@ -76,9 +82,16 @@ ViewGroup:
       - label: Hidden Page
         icon: HelpOutlineOutlined
         visible: false
-      - label: Test Actions
-        icon: WidgetsOutlined
-        page: test_actions
+      - label: Actions
+        icon: CodeOutlined
+        expanded: true
+        children:
+          - label: Actions example
+            icon: CodeOutlined
+            page: actions1
+          - label: Test Actions
+            icon: WidgetsOutlined
+            page: test_actions1
       - customItem:
           widget:
             Button:
