@@ -317,6 +317,11 @@ View:
                     key: ${dummyData.id}
                     template:
                       DataRow:
+                        styles:
+                          backgroundColor: ${colors.teal['300']}
+                          border: 2px double ${index % 2 === 0 ? colors.primary['100'] :"lightgreen"}
+                          borderRadius: ${ensemble.storage.get("skip")}px
+                          padding: ${getDummyProductsByPaginate.body.products.length * 2}px
                         children:
                           - Text:
                               id: ${dummyData.patient+"Name"}
@@ -417,9 +422,14 @@ View:
                         key: ${dummyData.id}
                         template:
                           DataRow:
+                            onTap:
+                              showToast:
+                                message: heha ${data.dummyData.id} ${index}
                             styles:
                               backgroundColor: ${index % 2 === 0 ? "beige" :"lightgreen"}
-                              border: 4px double blue
+                              border: 4px double ${dummyData.id % 2 === 0 ? colors.primary['100'] :colors.primary['500']}
+                              textAlign: ${ensemble.storage.get("skip") === 10 ? "right" :"left"}
+                              lineHeight: ${getDummyProductsByPaginate.body.products.length}px
                             disableSelection: ${dummyData.id === 2}
                             item-template:
                               data: ${Object.values(dummyData)}
