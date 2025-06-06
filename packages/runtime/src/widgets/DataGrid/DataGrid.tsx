@@ -15,7 +15,7 @@ import {
   useRegisterBindings,
   type EnsembleAction,
   unwrapWidget,
-  evaluateDeep,
+  useEvaluate,
 } from "@ensembleui/react-framework";
 import React, {
   useCallback,
@@ -156,6 +156,41 @@ const ResizableTitle: React.FC<ResizableProps & ResizableState> = (props) => {
   );
 };
 
+const CustomRowWithStyles: React.FC<
+  React.PropsWithChildren<{
+    "data-index"?: number;
+    "data-styles"?: EnsembleWidgetStyles;
+    "data-record"?: object;
+    [key: string]: unknown;
+  }>
+> = ({
+  "data-index": index,
+  "data-styles": rowStyles,
+  "data-record": record,
+  children,
+  ...props
+}) => {
+  const memoizedContext = useMemo(
+    () => ({ ...record, index }),
+    [record, index],
+  );
+
+  const memoizedStyles = useMemo(
+    () => (rowStyles ? (rowStyles as { [key: string]: unknown }) : undefined),
+    [rowStyles],
+  );
+
+  const evaluatedRowStyles = useEvaluate(memoizedStyles, {
+    context: memoizedContext,
+  });
+
+  return (
+    <tr {...props} style={{ ...evaluatedRowStyles }}>
+      {children}
+    </tr>
+  );
+};
+
 const defaultGridMutatorOptions = {
   suppressCallbacks: false,
 };
@@ -185,11 +220,6 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   const selectionColWidth = props.selectionColWidth || 50;
   const containerRef = useRef<HTMLDivElement>(null);
   const { namedData } = useTemplateData({ ...itemTemplate });
-  const components = {
-    header: {
-      cell: ResizableTitle,
-    },
-  };
 
   // on row tap action
   const onTapAction = useEnsembleAction(itemTemplate.template.properties.onTap);
@@ -199,6 +229,15 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     },
     [onTapAction?.callback],
   );
+
+  const components = {
+    header: {
+      cell: ResizableTitle,
+    },
+    body: {
+      row: CustomRowWithStyles,
+    },
+  };
 
   // on row selected action
   const onRowsSelected = useEnsembleAction(props.onRowsSelected);
@@ -476,22 +515,14 @@ export const DataGrid: React.FC<GridProps> = (props) => {
           dataSource={namedData}
           key={resolvedWidgetId}
           onChange={onChange}
-          onRow={(record, recordIndex) => {
-            const rowStyles = itemTemplate.template.properties.styles;
-            const recordStyles = rowStyles
-              ? evaluateDeep(
-                  rowStyles as {
-                    [key: string]: unknown;
-                  },
-                  defaultScreenContext.model,
-                  { ...record, index: recordIndex },
-                )
-              : {};
-            return {
-              onClick: () => onTapActionCallback(record, recordIndex),
-              style: recordStyles,
-            };
-          }}
+          onRow={(record, recordIndex) => ({
+            "data-index": recordIndex,
+            "data-record": record,
+            "data-styles": itemTemplate.template.properties.styles,
+            onClick: itemTemplate.template.properties.onTap
+              ? (): unknown => onTapActionCallback(record, recordIndex)
+              : undefined,
+          })}
           pagination={paginationObject}
           rowKey={(data: unknown) => {
             const identifier: string = evaluate(
