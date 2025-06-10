@@ -23,6 +23,7 @@ import React, {
   useMemo,
   useRef,
   useEffect,
+  memo,
 } from "react";
 import type { ReactEventHandler, ReactElement } from "react";
 import {
@@ -163,33 +164,36 @@ const CustomRowWithStyles: React.FC<
     "data-record"?: object;
     [key: string]: unknown;
   }>
-> = ({
-  "data-index": index,
-  "data-styles": rowStyles,
-  "data-record": record,
-  children,
-  ...props
-}) => {
-  const memoizedContext = useMemo(
-    () => ({ ...record, index }),
-    [record, index],
-  );
+> = memo(
+  ({
+    "data-index": index,
+    "data-styles": rowStyles,
+    "data-record": record,
+    children,
+    ...props
+  }) => {
+    const memoizedContext = useMemo(
+      () => ({ ...record, index }),
+      [record, index],
+    );
 
-  const memoizedStyles = useMemo(
-    () => (rowStyles ? (rowStyles as { [key: string]: unknown }) : undefined),
-    [rowStyles],
-  );
+    const memoizedStyles = useMemo(
+      () => (rowStyles ? (rowStyles as { [key: string]: unknown }) : undefined),
+      [rowStyles],
+    );
 
-  const evaluatedRowStyles = useEvaluate(memoizedStyles, {
-    context: memoizedContext,
-  });
+    const evaluatedRowStyles = useEvaluate(memoizedStyles, {
+      context: memoizedContext,
+    });
 
-  return (
-    <tr {...props} style={{ ...evaluatedRowStyles }}>
-      {children}
-    </tr>
-  );
-};
+    return (
+      <tr {...props} style={{ ...evaluatedRowStyles }}>
+        {children}
+      </tr>
+    );
+  },
+);
+CustomRowWithStyles.displayName = "CustomRowWithStyles";
 
 const defaultGridMutatorOptions = {
   suppressCallbacks: false,
