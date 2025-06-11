@@ -177,14 +177,12 @@ const CustomRowWithStyles: React.FC<
       [record, index],
     );
 
-    const memoizedStyles = useMemo(
-      () => (rowStyles ? (rowStyles as { [key: string]: unknown }) : undefined),
-      [rowStyles],
+    const evaluatedRowStyles = useEvaluate(
+      rowStyles ? (rowStyles as { [key: string]: unknown }) : undefined,
+      {
+        context: memoizedContext,
+      },
     );
-
-    const evaluatedRowStyles = useEvaluate(memoizedStyles, {
-      context: memoizedContext,
-    });
 
     return (
       <tr {...props} style={{ ...evaluatedRowStyles }}>
