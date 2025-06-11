@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.125
+
+### Patch Changes
+
+- 252b869: expose context in DataRow styles
+- Updated dependencies [252b869]
+  - @ensembleui/react-runtime@0.3.31
+
 ## 0.0.124
 
 ### Patch Changes
