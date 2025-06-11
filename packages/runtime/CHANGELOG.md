@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.31
+
+### Patch Changes
+
+- 252b869: expose context in DataRow styles
+
 ## 0.3.30
 
 ### Patch Changes
