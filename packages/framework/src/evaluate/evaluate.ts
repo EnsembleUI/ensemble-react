@@ -1,4 +1,5 @@
 import { isEmpty, merge, toString } from "lodash-es";
+import { parse as acornParse } from "acorn";
 import type { ScreenContextDefinition } from "../state/screen";
 import type { InvokableMethods, WidgetState } from "../state/widget";
 import {
@@ -8,6 +9,73 @@ import {
   type EnsembleScreenModel,
   replace,
 } from "../shared";
+
+/**
+ * Cache of compiled global / imported scripts keyed by the full script string.
+ * Each entry stores the symbol names and their corresponding values so that we
+ * can inject them as parameters when evaluating bindings, removing the need to
+ * re-parse the same script for every binding.
+ */
+interface CachedScriptEntry {
+  symbols: string[];
+  // compiled function that, given a context, returns an object of exports
+  fn: (ctx: { [key: string]: unknown }) => { [key: string]: unknown };
+}
+
+const globalScriptCache = new Map<string, CachedScriptEntry>();
+
+const parseScriptSymbols = (script: string): string[] => {
+  const symbols = new Set<string>();
+  try {
+    const ast: any = acornParse(script, {
+      ecmaVersion: 2020,
+      sourceType: "script",
+    });
+
+    ast.body?.forEach((node: any) => {
+      if (node.type === "FunctionDeclaration" && node.id) {
+        symbols.add(node.id.name);
+      }
+      if (node.type === "VariableDeclaration") {
+        node.declarations.forEach((decl: any) => {
+          if (decl.id?.type === "Identifier") {
+            symbols.add(decl.id.name);
+          }
+        });
+      }
+    });
+  } catch (e) {
+    debug(e);
+  }
+  return Array.from(symbols);
+};
+
+const getCachedGlobals = (
+  script: string,
+  ctx: { [key: string]: unknown },
+): { symbols: string[]; values: unknown[] } => {
+  if (isEmpty(script.trim())) return { symbols: [], values: [] };
+
+  let entry = globalScriptCache.get(script);
+  if (!entry) {
+    const symbols = parseScriptSymbols(script);
+
+    // build a function that executes the script within the provided context using `with`
+    // and returns an object containing the exported symbols
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
+    const compiled = new Function(
+      "ctx",
+      `with (ctx) {\n${script}\nreturn { ${symbols.join(", ")} };\n}`,
+    ) as CachedScriptEntry["fn"];
+
+    entry = { symbols, fn: compiled };
+    globalScriptCache.set(script, entry);
+  }
+
+  const exportsObj = entry.fn(ctx);
+  const values = entry.symbols.map((name) => exportsObj[name]);
+  return { symbols: entry.symbols, values };
+};
 
 export const widgetStatesToInvokables = (widgets: {
   [key: string]: WidgetState | undefined;
@@ -38,17 +106,23 @@ export const buildEvaluateFn = (
       // Need to filter out invalid JS identifiers
     ].filter(([key, _]) => !key.includes(".")),
   );
-  const globalBlock = screen.model?.global;
-  const importedScriptBlock = screen.model?.importedScripts;
+  const globalBlock = screen.model?.global ?? "";
+  const importedScriptBlock = screen.model?.importedScripts ?? "";
+  const combinedScript = `${importedScriptBlock}\n${globalBlock}`;
+
+  const { symbols: globalSymbols, values: globalValues } = getCachedGlobals(
+    combinedScript,
+    merge({}, context, invokableObj),
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
   const jsFunc = new Function(
     ...Object.keys(invokableObj),
-    addScriptBlock(formatJs(js), globalBlock, importedScriptBlock),
+    ...globalSymbols,
+    formatJs(js),
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return () => jsFunc(...Object.values(invokableObj));
+  return () => jsFunc(...Object.values(invokableObj), ...globalValues);
 };
 
 const formatJs = (js?: string): string => {
@@ -94,24 +168,6 @@ const formatJs = (js?: string): string => {
   }
 
   return `return ${sanitizedJs}`;
-};
-
-const addScriptBlock = (
-  js: string,
-  globalBlock?: string,
-  importedScriptBlock?: string,
-): string => {
-  let jsString = ``;
-
-  if (importedScriptBlock) {
-    jsString += `${importedScriptBlock}\n\n`;
-  }
-
-  if (globalBlock) {
-    jsString += `${globalBlock}\n\n`;
-  }
-
-  return (jsString += `${js}`);
 };
 
 /**
