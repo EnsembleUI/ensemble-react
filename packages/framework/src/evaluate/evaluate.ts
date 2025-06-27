@@ -24,6 +24,7 @@ interface CachedScriptEntry {
 
 const globalScriptCache = new Map<string, CachedScriptEntry>();
 
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument */
 const parseScriptSymbols = (script: string): string[] => {
   const symbols = new Set<string>();
   try {
@@ -49,6 +50,7 @@ const parseScriptSymbols = (script: string): string[] => {
   }
   return Array.from(symbols);
 };
+/* eslint-enable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument */
 
 const getCachedGlobals = (
   script: string,
@@ -57,7 +59,13 @@ const getCachedGlobals = (
   if (isEmpty(script.trim())) return { symbols: [], values: [] };
 
   let entry = globalScriptCache.get(script);
-  if (!entry) {
+  const stats = getDevStats();
+
+  if (entry) {
+    if (stats) stats.cacheHits += 1;
+  } else {
+    if (stats) stats.cacheMisses += 1;
+
     const symbols = parseScriptSymbols(script);
 
     // build a function that executes the script within the provided context using `with`
@@ -145,7 +153,11 @@ export const buildEvaluateFn = (
     formatJs(js),
   );
 
-  return () => jsFunc(...Object.values(invokableObj), ...allValues) as unknown;
+  return () => {
+    const stats = getDevStats();
+    if (stats) stats.bindingsEvaluated += 1;
+    return jsFunc(...Object.values(invokableObj), ...allValues) as unknown;
+  };
 };
 
 const formatJs = (js?: string): string => {
@@ -228,3 +240,36 @@ export const evaluateDeep = (
 };
 
 export const testGetScriptCacheSize = (): number => globalScriptCache.size;
+
+// -----------------------------------------------------------------------------
+// Development-time instrumentation (optional)
+// -----------------------------------------------------------------------------
+
+interface EnsembleStats {
+  cacheHits: number;
+  cacheMisses: number;
+  bindingsEvaluated: number;
+}
+
+/**
+ * Access a singleton stats object that lives on globalThis so tests and the
+ * dev console can inspect cache behaviour.
+ * Only initialised when not in production mode to avoid polluting the global
+ * scope in production bundles.
+ */
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const getDevStats = () => {
+  if (process.env.NODE_ENV === "production") return undefined;
+
+  const g = globalThis as typeof globalThis & {
+    __ensembleStats?: EnsembleStats;
+  };
+  if (!g.__ensembleStats) {
+    g.__ensembleStats = {
+      cacheHits: 0,
+      cacheMisses: 0,
+      bindingsEvaluated: 0,
+    };
+  }
+  return g.__ensembleStats;
+};
