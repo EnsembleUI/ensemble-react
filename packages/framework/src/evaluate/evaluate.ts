@@ -108,21 +108,44 @@ export const buildEvaluateFn = (
   );
   const globalBlock = screen.model?.global ?? "";
   const importedScriptBlock = screen.model?.importedScripts ?? "";
-  const combinedScript = `${importedScriptBlock}\n${globalBlock}`;
 
-  const { symbols: globalSymbols, values: globalValues } = getCachedGlobals(
-    combinedScript,
+  // 1️⃣ cache/compile the IMPORT block (shared across screens)
+  const importResult = getCachedGlobals(
+    importedScriptBlock,
     merge({}, context, invokableObj),
   );
+
+  // build an object of import exports so the global block can access them
+  const importExportsObj = Object.fromEntries(
+    importResult.symbols.map((s, i) => [s, importResult.values[i]]),
+  );
+
+  // 2️⃣ cache/compile the GLOBAL block (per screen) with import exports in scope
+  const globalResult = getCachedGlobals(
+    globalBlock,
+    merge({}, context, invokableObj, importExportsObj),
+  );
+
+  // 3️⃣ merge symbols and values (global overrides import if duplicate)
+  const symbolValueMap = new Map<string, unknown>();
+  importResult.symbols.forEach((sym, idx) => {
+    symbolValueMap.set(sym, importResult.values[idx]);
+  });
+  globalResult.symbols.forEach((sym, idx) => {
+    symbolValueMap.set(sym, globalResult.values[idx]);
+  });
+
+  const allSymbols = Array.from(symbolValueMap.keys());
+  const allValues = Array.from(symbolValueMap.values());
 
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
   const jsFunc = new Function(
     ...Object.keys(invokableObj),
-    ...globalSymbols,
+    ...allSymbols,
     formatJs(js),
   );
 
-  return () => jsFunc(...Object.values(invokableObj), ...globalValues);
+  return () => jsFunc(...Object.values(invokableObj), ...allValues) as unknown;
 };
 
 const formatJs = (js?: string): string => {
@@ -203,3 +226,5 @@ export const evaluateDeep = (
   );
   return resolvedInputs as { [key: string]: unknown };
 };
+
+export const testGetScriptCacheSize = (): number => globalScriptCache.size;
