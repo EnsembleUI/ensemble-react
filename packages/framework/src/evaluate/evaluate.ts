@@ -59,26 +59,18 @@ const getCachedGlobals = (
   if (isEmpty(script.trim())) return { symbols: [], values: [] };
 
   let entry = globalScriptCache.get(script);
-  const stats = getDevStats();
+  const symbols = parseScriptSymbols(script);
 
-  if (entry) {
-    if (stats) stats.cacheHits += 1;
-  } else {
-    if (stats) stats.cacheMisses += 1;
+  // build a function that executes the script within the provided context using `with`
+  // and returns an object containing the exported symbols
+  // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
+  const compiled = new Function(
+    "ctx",
+    `with (ctx) {\n${script}\nreturn { ${symbols.join(", ")} };\n}`,
+  ) as CachedScriptEntry["fn"];
 
-    const symbols = parseScriptSymbols(script);
-
-    // build a function that executes the script within the provided context using `with`
-    // and returns an object containing the exported symbols
-    // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
-    const compiled = new Function(
-      "ctx",
-      `with (ctx) {\n${script}\nreturn { ${symbols.join(", ")} };\n}`,
-    ) as CachedScriptEntry["fn"];
-
-    entry = { symbols, fn: compiled };
-    globalScriptCache.set(script, entry);
-  }
+  entry = { symbols, fn: compiled };
+  globalScriptCache.set(script, entry);
 
   const exportsObj = entry.fn(ctx);
   const values = entry.symbols.map((name) => exportsObj[name]);
@@ -117,47 +109,46 @@ export const buildEvaluateFn = (
   const globalBlock = screen.model?.global ?? "";
   const importedScriptBlock = screen.model?.importedScripts ?? "";
 
-  // 1️⃣ cache/compile the IMPORT block (shared across screens)
-  const importResult = getCachedGlobals(
-    importedScriptBlock,
-    merge({}, context, invokableObj),
-  );
+  // // 1️⃣ cache/compile the IMPORT block (shared across screens)
+  // const importResult = getCachedGlobals(
+  //   importedScriptBlock,
+  //   merge({}, context, invokableObj),
+  // );
 
-  // build an object of import exports so the global block can access them
-  const importExportsObj = Object.fromEntries(
-    importResult.symbols.map((s, i) => [s, importResult.values[i]]),
-  );
+  // // build an object of import exports so the global block can access them
+  // const importExportsObj = Object.fromEntries(
+  //   importResult.symbols.map((s, i) => [s, importResult.values[i]]),
+  // );
 
-  // 2️⃣ cache/compile the GLOBAL block (per screen) with import exports in scope
-  const globalResult = getCachedGlobals(
-    globalBlock,
-    merge({}, context, invokableObj, importExportsObj),
-  );
+  // // 2️⃣ cache/compile the GLOBAL block (per screen) with import exports in scope
+  // const globalResult = getCachedGlobals(
+  //   globalBlock,
+  //   merge({}, context, invokableObj, importExportsObj),
+  // );
 
-  // 3️⃣ merge symbols and values (global overrides import if duplicate)
-  const symbolValueMap = new Map<string, unknown>();
-  importResult.symbols.forEach((sym, idx) => {
-    symbolValueMap.set(sym, importResult.values[idx]);
-  });
-  globalResult.symbols.forEach((sym, idx) => {
-    symbolValueMap.set(sym, globalResult.values[idx]);
-  });
+  // // 3️⃣ merge symbols and values (global overrides import if duplicate)
+  // const symbolValueMap = new Map<string, unknown>();
+  // importResult.symbols.forEach((sym, idx) => {
+  //   symbolValueMap.set(sym, importResult.values[idx]);
+  // });
+  // globalResult.symbols.forEach((sym, idx) => {
+  //   symbolValueMap.set(sym, globalResult.values[idx]);
+  // });
 
-  const allSymbols = Array.from(symbolValueMap.keys());
-  const allValues = Array.from(symbolValueMap.values());
+  // const allSymbols = Array.from(symbolValueMap.keys());
+  // const allValues = Array.from(symbolValueMap.values());
 
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
   const jsFunc = new Function(
     ...Object.keys(invokableObj),
-    ...allSymbols,
-    formatJs(js),
+    addScriptBlock(formatJs(js), globalBlock, importedScriptBlock),
+
+    // ...allSymbols,
+    // formatJs(js),
   );
 
-  return () => {
-    const stats = getDevStats();
-    if (stats) stats.bindingsEvaluated += 1;
-    return jsFunc(...Object.values(invokableObj), ...allValues) as unknown;
-  };
+  return () => jsFunc(...Object.values(invokableObj)) as unknown;
+  // return () => jsFunc(...Object.values(invokableObj), ...allValues) as unknown;
 };
 
 const formatJs = (js?: string): string => {
@@ -205,6 +196,73 @@ const formatJs = (js?: string): string => {
   return `return ${sanitizedJs}`;
 };
 
+const addScriptBlock = (
+  js: string,
+  globalBlock?: string,
+  importedScriptBlock?: string,
+): string => {
+  let jsString = ``;
+
+  if (importedScriptBlock) {
+    jsString += `${importedScriptBlock}\n\n`;
+  }
+
+  if (globalBlock) {
+    jsString += `${globalBlock}\n\n`;
+  }
+
+  return (jsString += `${js}`);
+};
+
+// map to store binding evaluation statistics keyed by sanitized expression label
+interface BindingStats {
+  count: number;
+  total: number;
+  max: number;
+  min: number;
+}
+
+// in-memory cache for quick inspection in dev builds (not used in production)
+const bindingEvaluationStats = new Map<string, BindingStats>();
+
+const timestamp = (): number => {
+  // use high-resolution timer when available
+  if (
+    typeof performance !== "undefined" &&
+    typeof performance.now === "function"
+  ) {
+    return performance.now();
+  }
+  // Date.now fallback – millisecond precision
+  return Date.now();
+};
+
+const recordBindingEvaluation = (
+  expr: string | undefined,
+  duration: number,
+): void => {
+  if (!expr) return;
+
+  // keep label concise for easy reading; remove surrounding `${}` if present
+  const label = sanitizeJs(toString(expr)).slice(0, 100);
+  const existing = bindingEvaluationStats.get(label) ?? {
+    count: 0,
+    total: 0,
+    max: 0,
+    min: Number.POSITIVE_INFINITY,
+  };
+
+  existing.count += 1;
+  existing.total += duration;
+  existing.max = Math.max(existing.max, duration);
+  existing.min = Math.min(existing.min, duration);
+
+  bindingEvaluationStats.set(label, existing);
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+(globalThis as any).__bindingEvaluationStats = bindingEvaluationStats;
+
 /**
  * @deprecated Consider using useEvaluate or createBinding which will
  * optimize creating the evaluation context
@@ -220,7 +278,11 @@ export const evaluate = <T = unknown>(
   context?: { [key: string]: unknown },
 ): T => {
   try {
-    return buildEvaluateFn(screen, js, context)() as T;
+    const start = timestamp();
+    const result = buildEvaluateFn(screen, js, context)() as T;
+    const duration = timestamp() - start;
+    recordBindingEvaluation(js, duration);
+    return result;
   } catch (e) {
     debug(e);
     throw e;
@@ -240,36 +302,3 @@ export const evaluateDeep = (
 };
 
 export const testGetScriptCacheSize = (): number => globalScriptCache.size;
-
-// -----------------------------------------------------------------------------
-// Development-time instrumentation (optional)
-// -----------------------------------------------------------------------------
-
-interface EnsembleStats {
-  cacheHits: number;
-  cacheMisses: number;
-  bindingsEvaluated: number;
-}
-
-/**
- * Access a singleton stats object that lives on globalThis so tests and the
- * dev console can inspect cache behaviour.
- * Only initialised when not in production mode to avoid polluting the global
- * scope in production bundles.
- */
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-const getDevStats = () => {
-  if (process.env.NODE_ENV === "production") return undefined;
-
-  const g = globalThis as typeof globalThis & {
-    __ensembleStats?: EnsembleStats;
-  };
-  if (!g.__ensembleStats) {
-    g.__ensembleStats = {
-      cacheHits: 0,
-      cacheMisses: 0,
-      bindingsEvaluated: 0,
-    };
-  }
-  return g.__ensembleStats;
-};
