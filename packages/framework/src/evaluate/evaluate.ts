@@ -109,46 +109,46 @@ export const buildEvaluateFn = (
   const globalBlock = screen.model?.global ?? "";
   const importedScriptBlock = screen.model?.importedScripts ?? "";
 
-  // // 1️⃣ cache/compile the IMPORT block (shared across screens)
-  // const importResult = getCachedGlobals(
-  //   importedScriptBlock,
-  //   merge({}, context, invokableObj),
-  // );
+  // 1️⃣ cache/compile the IMPORT block (shared across screens)
+  const importResult = getCachedGlobals(
+    importedScriptBlock,
+    merge({}, context, invokableObj),
+  );
 
-  // // build an object of import exports so the global block can access them
-  // const importExportsObj = Object.fromEntries(
-  //   importResult.symbols.map((s, i) => [s, importResult.values[i]]),
-  // );
+  // build an object of import exports so the global block can access them
+  const importExportsObj = Object.fromEntries(
+    importResult.symbols.map((s, i) => [s, importResult.values[i]]),
+  );
 
-  // // 2️⃣ cache/compile the GLOBAL block (per screen) with import exports in scope
-  // const globalResult = getCachedGlobals(
-  //   globalBlock,
-  //   merge({}, context, invokableObj, importExportsObj),
-  // );
+  // 2️⃣ cache/compile the GLOBAL block (per screen) with import exports in scope
+  const globalResult = getCachedGlobals(
+    globalBlock,
+    merge({}, context, invokableObj, importExportsObj),
+  );
 
-  // // 3️⃣ merge symbols and values (global overrides import if duplicate)
-  // const symbolValueMap = new Map<string, unknown>();
-  // importResult.symbols.forEach((sym, idx) => {
-  //   symbolValueMap.set(sym, importResult.values[idx]);
-  // });
-  // globalResult.symbols.forEach((sym, idx) => {
-  //   symbolValueMap.set(sym, globalResult.values[idx]);
-  // });
+  // 3️⃣ merge symbols and values (global overrides import if duplicate)
+  const symbolValueMap = new Map<string, unknown>();
+  importResult.symbols.forEach((sym, idx) => {
+    symbolValueMap.set(sym, importResult.values[idx]);
+  });
+  globalResult.symbols.forEach((sym, idx) => {
+    symbolValueMap.set(sym, globalResult.values[idx]);
+  });
 
-  // const allSymbols = Array.from(symbolValueMap.keys());
-  // const allValues = Array.from(symbolValueMap.values());
+  const allSymbols = Array.from(symbolValueMap.keys());
+  const allValues = Array.from(symbolValueMap.values());
 
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
   const jsFunc = new Function(
     ...Object.keys(invokableObj),
-    addScriptBlock(formatJs(js), globalBlock, importedScriptBlock),
+    // addScriptBlock(formatJs(js), globalBlock, importedScriptBlock),
 
-    // ...allSymbols,
-    // formatJs(js),
+    ...allSymbols,
+    formatJs(js),
   );
 
-  return () => jsFunc(...Object.values(invokableObj)) as unknown;
-  // return () => jsFunc(...Object.values(invokableObj), ...allValues) as unknown;
+  // return () => jsFunc(...Object.values(invokableObj)) as unknown;
+  return () => jsFunc(...Object.values(invokableObj), ...allValues) as unknown;
 };
 
 const formatJs = (js?: string): string => {
