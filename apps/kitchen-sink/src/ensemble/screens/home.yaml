@@ -56,6 +56,7 @@ View:
             onTap:
               executeCode: |
                 // Calls a function defined in test.js
+                debugger;
                 sayHello();
 
         - Button:
@@ -402,7 +403,7 @@ View:
                 onResponse:
                   executeCode: |
                     ensemble.storage.set('email', response.body.results[0].email)
-                    ensemble.storage.set('emails', [...ensemble.storage.get("emails"),response.body.results[0].email])
+                    ensemble.storage.set('emails', [...(ensemble.storage.get("emails") || []),response.body.results[0].email])
                     console.log('getData', response.body.results[0].email, ensemble.storage.get('emails'));
         - Column:
             item-template:
@@ -463,7 +464,7 @@ View:
             data: ${ensemble.storage.get('products')}
             onSearch:
               executeCode: |
-                ensemble.invokeAPI('getProducts', { search: search }).then((res) => {
+                ensemble.invokeAPI('getProducts', { search }).then((res) => {
                   const users = res?.body?.users || [];
                   console.log(users , "users");
                   const newUsers = users.map((i) => ({ ...i, label: i.firstName + ' ' + i.lastName, name: i.firstName + ' ' + i.lastName, value: i.email }));
@@ -473,7 +474,7 @@ View:
                 console.log("onSearch values: ", search);
             onChange:
               executeCode: |
-                console.log("onChange values: ", search);
+                console.log("onChange values: ", value);
 
 Global:
   scriptName: test.js
