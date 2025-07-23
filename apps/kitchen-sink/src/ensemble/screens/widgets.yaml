@@ -1178,8 +1178,12 @@ View:
                         iconName: ThumbUpAltOutlined
                     name: step
                     template:
-                      Icon:
-                        name: Search
+                      Row:
+                        children:
+                          - Icon:
+                              name: ${step.iconName}
+                          - Text:
+                              text: ${step.name}
               - Button:
                   label: Next
                   onTap:
