@@ -27,9 +27,9 @@ import Alert from "@mui/material/Alert";
 import type { EnsembleWidgetProps, HasItemTemplate } from "../../shared/types";
 import { EnsembleRuntime } from "../../runtime";
 import { WidgetRegistry } from "../../registry";
+import { useEnsembleAction } from "../../runtime/hooks";
 import { StepType } from "./StepType";
 import type { StepTypeProps } from "./StepType";
-import { useEnsembleAction } from "../../runtime/hooks";
 
 const widgetName = "Stepper";
 
@@ -61,6 +61,7 @@ interface CustomConnectorProps {
 
 const Stepper: React.FC<StepperProps> = (props) => {
   const [activeStep, setActiveStep] = useState<number | undefined>(undefined);
+  const [maxReachedStep, setMaxReachedStep] = useState<number>(0);
 
   const itemTemplate = props["item-template"];
   const { namedData } = useTemplateData({ ...itemTemplate });
@@ -70,9 +71,15 @@ const Stepper: React.FC<StepperProps> = (props) => {
 
   const handleNext = useCallback(() => {
     if (activeStep !== undefined && activeStep < namedData.length - 1) {
-      setActiveStep(activeStep + 1);
+      const nextStep = activeStep + 1;
+      setActiveStep(nextStep);
+
+      // update max reached if the next step is greater than the current max
+      if (nextStep > maxReachedStep) {
+        setMaxReachedStep(nextStep);
+      }
     }
-  }, [activeStep, namedData.length]);
+  }, [activeStep, namedData.length, maxReachedStep]);
 
   const handleBack = useCallback(() => {
     if (activeStep) {
@@ -94,7 +101,14 @@ const Stepper: React.FC<StepperProps> = (props) => {
       isExpression(props.activeStepIndex) &&
       isNumber(values?.activeStepIndex)
     ) {
-      setActiveStep(values?.activeStepIndex ?? 0);
+      const newActiveStep = values?.activeStepIndex ?? 0;
+      setActiveStep(newActiveStep);
+
+      // for the initial setup, if we're on step N, it means steps 0 to N-1 are completed
+      // and we should be able to navigate between all of them + the current step
+      setMaxReachedStep((prev) => {
+        return Math.max(prev, newActiveStep);
+      });
     }
   }, [props.activeStepIndex, values?.activeStepIndex]);
 
@@ -157,8 +171,11 @@ const Stepper: React.FC<StepperProps> = (props) => {
           }}
         >
           {namedData.map((data, index) => (
-            <Step key={index}>
-              <StepButton onClick={onChangeCallback(index)}>
+            <Step completed={index <= maxReachedStep} key={index}>
+              <StepButton
+                disabled={index > maxReachedStep}
+                onClick={onChangeCallback(index)}
+              >
                 <StepLabel
                   StepIconComponent={(iconProps: StepOwnProps) => {
                     const newProps = {
