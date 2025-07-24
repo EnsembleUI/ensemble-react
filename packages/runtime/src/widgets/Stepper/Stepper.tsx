@@ -61,7 +61,6 @@ interface CustomConnectorProps {
 
 const Stepper: React.FC<StepperProps> = (props) => {
   const [activeStep, setActiveStep] = useState<number | undefined>(undefined);
-  const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
   const [maxReachedStep, setMaxReachedStep] = useState<number>(0);
 
   const itemTemplate = props["item-template"];
@@ -75,17 +74,10 @@ const Stepper: React.FC<StepperProps> = (props) => {
       const nextStep = activeStep + 1;
       setActiveStep(nextStep);
 
-      // update max reached and mark all steps up to it as completed
-      const newMaxReached = Math.max(maxReachedStep, nextStep);
-      setMaxReachedStep(newMaxReached);
-
-      setCompletedSteps((prev) => {
-        const newCompleted = new Set(prev);
-        for (let i = 0; i <= newMaxReached; i++) {
-          newCompleted.add(i);
-        }
-        return newCompleted;
-      });
+      // update max reached if the next step is greater than the current max
+      if (nextStep > maxReachedStep) {
+        setMaxReachedStep(nextStep);
+      }
     }
   }, [activeStep, namedData.length, maxReachedStep]);
 
@@ -114,39 +106,20 @@ const Stepper: React.FC<StepperProps> = (props) => {
 
       // for the initial setup, if we're on step N, it means steps 0 to N-1 are completed
       // and we should be able to navigate between all of them + the current step
-      const newMaxReached = Math.max(maxReachedStep, newActiveStep);
-      setMaxReachedStep(newMaxReached);
-
-      // mark all steps up to current as completed for full navigation
-      const newCompletedSteps = new Set<number>();
-      for (let i = 0; i <= newMaxReached; i++) {
-        newCompletedSteps.add(i);
-      }
-      setCompletedSteps(newCompletedSteps);
+      setMaxReachedStep((prev) => {
+        return Math.max(prev, newActiveStep);
+      });
     }
-  }, [props.activeStepIndex, values?.activeStepIndex, maxReachedStep]);
+  }, [props.activeStepIndex, values?.activeStepIndex]);
 
   const steps = unwrapContent(props.steps);
 
   const onChangeCallback = useCallback(
     (step: number) => () => {
-      // update max reached step to include the clicked step
-      const newMaxReached = Math.max(maxReachedStep, step);
-      setMaxReachedStep(newMaxReached);
-
-      // mark all steps up to and including the max reached as completed
-      setCompletedSteps((prev) => {
-        const newCompleted = new Set(prev);
-        for (let i = 0; i <= newMaxReached; i++) {
-          newCompleted.add(i);
-        }
-        return newCompleted;
-      });
-
       setActiveStep(step);
       action?.callback({ step });
     },
-    [action?.callback, maxReachedStep],
+    [action?.callback],
   );
 
   if (activeStep === undefined) {
@@ -198,9 +171,9 @@ const Stepper: React.FC<StepperProps> = (props) => {
           }}
         >
           {namedData.map((data, index) => (
-            <Step completed={completedSteps.has(index)} key={index}>
+            <Step completed={index <= maxReachedStep} key={index}>
               <StepButton
-                disabled={!completedSteps.has(index)}
+                disabled={index > maxReachedStep}
                 onClick={onChangeCallback(index)}
               >
                 <StepLabel
