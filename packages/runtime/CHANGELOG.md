@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.32
+
+### Patch Changes
+
+- c18392b: feat: allow jumping forward and back between completed steps of stepper
+
 ## 0.3.31
 
 ### Patch Changes

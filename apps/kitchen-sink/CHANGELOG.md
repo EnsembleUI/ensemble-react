@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.126
+
+### Patch Changes
+
+- c18392b: feat: allow jumping forward and back between completed steps of stepper
+- Updated dependencies [c18392b]
+  - @ensembleui/react-runtime@0.3.32
+
 ## 0.0.125
 
 ### Patch Changes
