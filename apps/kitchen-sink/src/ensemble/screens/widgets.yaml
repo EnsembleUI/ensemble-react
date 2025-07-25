@@ -1291,6 +1291,60 @@ View:
                   onRefresh:
                     executeCode: |
                       console.log('refreshed')
+        - Row:
+            children:
+              - Search:
+                  id: searchDefaultObject
+                  value: # assuming this data is coming from server
+                    id: 105
+                    firstName: Emma
+                    lastName: Wilson
+                  styles:
+                    width: 320px
+                    height: 40px
+                    borderRadius: 12
+                    borderWidth: 2
+                    borderStyle: solid
+                    borderColor: "#B8BED6"
+                  placeholder: Search
+                  item-template:
+                    data: |-
+                      ${findUsers.body.users.map(user => ({id: user.id, firstName: user.firstName, lastName: user.lastName}))}
+                    name: user
+                    template:
+                      SearchText:
+                        inputs:
+                          user: ${user}
+                  selectedLabel:
+                    SearchText:
+                      inputs:
+                        user: ${value.user}
+                  searchKey: id
+                  onSearch:
+                    invokeAPI:
+                      name: findUsers
+                      inputs:
+                        search: ${search}
+                  onSelect:
+                    executeCode: |
+                      console.log(value)
+                  onClear:
+                    executeCode: |
+                      console.log("Search cleared")
+              - Text:
+                  text: ${JSON.stringify(searchDefaultObject.value)}
+              - Text:
+                  text: ${JSON.stringify(findUsers.body.users.map((user) => user.id))}
+
+SearchText:
+  inputs:
+    - user
+  body:
+    Text:
+      text: ${user.firstName} ${user.lastName}
+      styles:
+        color: red
+
 API:
   getDummyProducts:
     method: GET
