@@ -20,7 +20,7 @@ View:
   header:
     title:
       Header:
-  
+
   menu:
     Drawer:
       id: testDrawer
@@ -36,25 +36,25 @@ View:
                 label: Navigate Home
                 onTap:
                   executeCode: |
-                    testDrawer.setCollapsed(true);
+                    testDrawer.setIsCollapsed(true);
                     ensemble.navigateScreen("Home");
             - Button:
                 label: Navigate to Widgets
                 onTap:
                   executeCode: |
-                    testDrawer.setCollapsed(true);
+                    testDrawer.setIsCollapsed(true);
                     ensemble.navigateScreen("Widgets");
             - Button:
                 label: Navigate to Layouts
                 onTap:
                   executeCode: |
-                    testDrawer.setCollapsed(true);
+                    testDrawer.setIsCollapsed(true);
                     ensemble.navigateScreen("Layouts");
             - Button:
                 label: Close Drawer
                 onTap:
                   executeCode: |
-                    testDrawer.setCollapsed(true);
+                    testDrawer.setIsCollapsed(true);
 
   body:
     Column:
@@ -151,18 +151,18 @@ View:
                   label: 2
               - Button:
                   label: FittedColumn
-        
+
         - Markdown:
             text: |
               ## Drawer
 
-              Click the button below to open the drawer in the current view. You can place any widgets you would like in the drawer. The drawer can be opened and closed dynamically using the `setCollapsed` method.
+              Click the button below to open the drawer in the current view. You can place any widgets you would like in the drawer. The drawer can be opened and closed dynamically using the `setIsCollapsed` method.
 
         - Button:
             label: open drawer
             onTap:
               executeCode: |
-                testDrawer.setCollapsed(false);
+                testDrawer.setIsCollapsed(false);
 
         - Text:
             styles:
