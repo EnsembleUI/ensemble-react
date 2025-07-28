@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.127
+
+### Patch Changes
+
+- 25088a1: enhance Search widget to accept an object as default value
+- Updated dependencies [25088a1]
+  - @ensembleui/react-runtime@0.3.33
+
 ## 0.0.126
 
 ### Patch Changes

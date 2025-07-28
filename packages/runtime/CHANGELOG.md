@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.33
+
+### Patch Changes
+
+- 25088a1: enhance Search widget to accept an object as default value
+
 ## 0.3.32
 
 ### Patch Changes
