@@ -114,4 +114,4 @@ ViewGroup:
               name: ArrowBack
               onTap:
                 executeCode: |
-                  sidebar.setCollapsed(!sidebar.isCollapsed)
+                  sidebar.setIsCollapsed(!sidebar.isCollapsed)

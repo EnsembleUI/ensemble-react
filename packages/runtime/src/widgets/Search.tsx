@@ -26,7 +26,7 @@ import { Icon } from "./Icon";
 const widgetName = "Search";
 
 export type SearchProps = {
-  value?: string;
+  value?: string | { [key: string]: unknown };
   placeholder?: string;
   searchKey?: string;
   selectedLabel?: { [key: string]: unknown };
@@ -58,6 +58,7 @@ export const Search: React.FC<SearchProps> = ({
 }) => {
   const [searchValue, setSearchValue] = useState<string | null>(null);
   const [value, setValue] = useState<unknown>();
+  const [selectedObject, setSelectedObject] = useState<unknown>(null);
 
   const { namedData } = useTemplateData({
     data: itemTemplate?.data,
@@ -143,8 +144,14 @@ export const Search: React.FC<SearchProps> = ({
           (option) => extractValue(option) === selectedValue,
         );
 
+        const fullSelectedObject = get(selectedOption, [
+          itemTemplate.name,
+        ]) as unknown;
+        // store full object separately only for selectedLabel rendering
+        setSelectedObject(fullSelectedObject);
+
         onSelectAction?.callback({
-          value: get(selectedOption, [itemTemplate.name]) as unknown,
+          value: fullSelectedObject,
         });
       }
     },
@@ -153,6 +160,8 @@ export const Search: React.FC<SearchProps> = ({
 
   const handleClear = useCallback(() => {
     setSearchValue(null);
+    setValue(null);
+    setSelectedObject(null);
     onClearAction?.callback();
   }, [onClearAction?.callback]);
 
@@ -169,27 +178,72 @@ export const Search: React.FC<SearchProps> = ({
       : EnsembleRuntime.render([unwrapWidget(notFoundContent)]);
   }, [values?.notFoundContent]);
 
+  const selectDefaultValue = useMemo(() => {
+    if (!values?.initialValue) return undefined;
+
+    if (isObject(values.initialValue)) {
+      const extractedValue = extractValue({
+        [itemTemplate?.name ?? ""]: values.initialValue,
+      });
+      return String(extractedValue);
+    }
+
+    return String(values.initialValue);
+  }, [values?.initialValue, extractValue, itemTemplate?.name]);
+
   const renderLabel = useCallback(
     (label: React.ReactNode, labelValue: string | number): React.ReactNode => {
-      if (isNil(rest.selectedLabel) || isEmpty(namedData)) {
-        return label;
+      // if we have selectedLabel and a selected object (from selection or initial object value)
+      if (!isNil(rest.selectedLabel) && selectedObject) {
+        return (
+          <CustomScopeProvider
+            value={{ value: { [itemTemplate?.name ?? ""]: selectedObject } }}
+          >
+            {EnsembleRuntime.render([unwrapWidget(rest.selectedLabel)])}
+          </CustomScopeProvider>
+        );
       }
 
-      const option = namedData.find(
-        (item) => extractValue(item) === labelValue,
-      );
-      return (
-        <CustomScopeProvider value={{ value: option }}>
-          {EnsembleRuntime.render([unwrapWidget(rest.selectedLabel)])}
-        </CustomScopeProvider>
-      );
+      // if we have selectedLabel but no selectedObject, try to find from namedData
+      if (!isNil(rest.selectedLabel) && !isEmpty(namedData)) {
+        const option = namedData.find(
+          (item) => extractValue(item) === labelValue,
+        );
+        if (option) {
+          return (
+            <CustomScopeProvider value={{ value: option }}>
+              {EnsembleRuntime.render([unwrapWidget(rest.selectedLabel)])}
+            </CustomScopeProvider>
+          );
+        }
+      }
+
+      return label;
     },
-    [extractValue, namedData, rest.selectedLabel],
+    [
+      extractValue,
+      itemTemplate?.name,
+      namedData,
+      rest.selectedLabel,
+      selectedObject,
+    ],
   );
 
   useEffect(() => {
-    if (!value) setValue(values?.initialValue);
-  }, [value, values?.initialValue]);
+    if (!value && values?.initialValue) {
+      if (isObject(values.initialValue)) {
+        // if initial value is an object, extract the key for widget value and store full object
+        const extractedValue = extractValue({
+          [itemTemplate?.name ?? ""]: values.initialValue,
+        });
+        setValue(extractedValue);
+        setSelectedObject(values.initialValue);
+      } else {
+        // if initial value is primitive, use it directly
+        setValue(values.initialValue);
+      }
+    }
+  }, [value, values?.initialValue, extractValue, itemTemplate?.name]);
 
   return (
     <div
@@ -220,7 +274,7 @@ export const Search: React.FC<SearchProps> = ({
       <SelectComponent
         allowClear
         className={`${values?.styles?.names || ""} ${id}_input`}
-        defaultValue={values?.initialValue}
+        defaultValue={selectDefaultValue}
         filterOption={false}
         id={values?.id}
         labelRender={({ label, value: labelValue }): React.ReactNode =>
