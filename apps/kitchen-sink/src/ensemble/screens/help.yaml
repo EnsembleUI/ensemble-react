@@ -1,4 +1,20 @@
 View:
+  onLoad:
+    executeCode: |
+      ensemble.storage.set('testlistoptions', [
+        { label: 'William Smith', value: 'william_smith' },
+        { label: 'Evelyn Johnson', value: 'evelyn_johnson' },
+        { label: 'Liam Brown', value: 'liam_brown' },
+        { label: 'Bella Davis', value: 'bella_davis' },
+        { label: 'James Wilson', value: 'james_wilson' },
+        { label: 'Zachary Taylor', value: 'zachary_taylor' },
+        { label: 'Nolan Martinez', value: 'nolan_martinez' },
+        { label: 'Emma Thompson', value: 'emma_thompson' },
+        { label: 'Oliver White', value: 'oliver_white' },
+        { label: 'Sophia Lee', value: 'sophia_lee' },
+      ])
+      ensemble.storage.set('testoptions', [])
+
   styles:
     scrollableView: true
 
@@ -28,6 +44,31 @@ View:
                       inputs:
                         input1: "hello"
                         input2: "world"
+
+        - Button:
+            label: toggle modal
+            onTap:
+              showDialog:
+                options:
+                  minWidth: 500px
+                body:
+                  MultiSelect:
+                    label: test
+                    data: ${ensemble.storage.get('testoptions')}
+                    labelKey: label
+                    valueKey: value
+                    value: ${ensemble.storage.get('testselect') || []}
+                    onChange:
+                      executeCode: |
+                        ensemble.storage.set('testselect', option)
+                    onSearch:
+                      executeCode: |
+                        const tempOptions = ensemble.storage.get('testlistoptions')
+                        const filteredResult = tempOptions.filter(option => 
+                          option.label.toLowerCase().startsWith(search.toLowerCase())
+                        )
+                        ensemble.storage.set('testoptions', filteredResult)
+
         - Text:
             styles:
               names: heading-1
@@ -75,3 +116,10 @@ View:
                   styles:
                     maxWidth: 500px
                   source: https://img.huffingtonpost.com/asset/5ab4d4ac2000007d06eb2c56.jpeg?cache=sih0jwle4e&ops=1910_1000
+
+API:
+  getProducts:
+    method: GET
+    inputs:
+      - search
+    uri: "https://dummyjson.com/users/search?q=${search}&limit=10"
