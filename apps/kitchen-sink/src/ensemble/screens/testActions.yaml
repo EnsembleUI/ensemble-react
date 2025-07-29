@@ -202,6 +202,19 @@ View:
             label: close all screens
             onTap:
               closeAllScreens:
+        - Button:
+            label: navigate screen modal for test storage
+            onTap:
+              navigateModalScreen:
+                name: help
+                height: 200px
+                width: 900px
+        - Button:
+            label: check storage variable
+            onTap:
+              executeCode: |
+                ensemble.storage.set('storageTested', 'okay')
+                console.log(ensemble.storage.get('isTestAvailable'))
 
 Socket:
   echo:
