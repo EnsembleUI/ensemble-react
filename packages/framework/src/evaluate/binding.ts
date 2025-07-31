@@ -25,6 +25,7 @@ import {
 import { deviceAtom } from "../hooks/useDeviceObserver";
 import { evaluate } from "./evaluate";
 import { createEvaluationContext } from "./context";
+import { screenEvaluatorAtom } from "./precomputedEvaluate";
 
 export const createBindingAtom = <T = unknown>(
   expression?: Expression<unknown>,
@@ -136,16 +137,20 @@ export const createBindingAtom = <T = unknown>(
     });
 
     try {
-      const result = evaluate<T>(
-        merge({}, defaultScreenContext, {
-          model: {
-            global: get(screenGlobalScriptAtom),
-            importedScripts: get(screenImportScriptAtom),
-          },
-        }),
-        rawJsExpression,
-        evaluationContext,
-      );
+      // const result = evaluate<T>(
+      //   merge({}, defaultScreenContext, {
+      //     model: {
+      //       global: get(screenGlobalScriptAtom),
+      //       importedScripts: get(screenImportScriptAtom),
+      //     },
+      //   }),
+      //   rawJsExpression,
+      //   evaluationContext,
+      // );
+
+      const screenEvaluator = get(screenEvaluatorAtom);
+      const result = screenEvaluator(rawJsExpression, evaluationContext) as T;
+
       debug(
         `result for ${rawJsExpression} at ${String(widgetId)}: ${JSON.stringify(
           result,

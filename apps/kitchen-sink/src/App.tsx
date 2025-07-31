@@ -11,6 +11,7 @@ import CustomWidgetsYAML from "./ensemble/screens/customWidgets.yaml";
 import HelpYAML from "./ensemble/screens/help.yaml";
 import ProductYAML from "./ensemble/screens/product.yaml";
 import TestActionsYAML from "./ensemble/screens/testActions.yaml";
+import DataGridPerformanceTestYAML from "./ensemble/screens/DataGridPerformanceTest.yaml";
 // Widgets
 import HeaderWidgetYAML from "./ensemble/widgets/Header.yaml";
 import StyledTextWidgetYAML from "./ensemble/widgets/StyledText.yaml";
@@ -22,6 +23,9 @@ import FirstScript from "./ensemble/scripts/test.js?raw";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import CommonScript from "./ensemble/scripts/common.js?raw";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+import PerformanceTestScript from "./ensemble/scripts/performance-test.js?raw";
 // ensemble-config
 import EnsembleConfig from "./ensemble/config.yaml";
 // Theme
@@ -64,6 +68,11 @@ const testApp: ApplicationDTO = {
       id: "common",
       name: "common",
       content: String(CommonScript),
+    },
+    {
+      id: "performance-test",
+      name: "performance-test",
+      content: String(PerformanceTestScript),
     },
   ],
   widgets: [
@@ -140,6 +149,12 @@ const testApp: ApplicationDTO = {
       name: "Test Actions",
       path: "/test_actions",
       content: String(TestActionsYAML),
+    },
+    {
+      id: "DataGridPerformanceTest",
+      name: "DataGridPerformanceTestL",
+      path: "/dataGridPerformanceTest",
+      content: String(DataGridPerformanceTestYAML),
     },
   ],
   config: EnsembleConfig,
