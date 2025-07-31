@@ -15,8 +15,6 @@ import {
   defaultScreenContext,
   screenInputAtom,
   widgetFamilyAtom,
-  screenGlobalScriptAtom,
-  screenImportScriptAtom,
   userAtom,
   appAtom,
   secretAtom,
@@ -25,7 +23,7 @@ import {
 import { deviceAtom } from "../hooks/useDeviceObserver";
 import { evaluate } from "./evaluate";
 import { createEvaluationContext } from "./context";
-import { screenEvaluatorAtom } from "./precomputedEvaluate";
+import { screenScopeAtom } from "./precomputed-scope";
 
 export const createBindingAtom = <T = unknown>(
   expression?: Expression<unknown>,
@@ -96,6 +94,9 @@ export const createBindingAtom = <T = unknown>(
       return "data";
     });
 
+    // Get the pre-computed scope which contains all global functions
+    const precomputedScope = get(screenScopeAtom);
+
     const evaluationContext = createEvaluationContext({
       applicationContext: {
         application: {
@@ -133,24 +134,19 @@ export const createBindingAtom = <T = unknown>(
           ? { device: get(deviceAtom) }
           : {}),
         ...context,
+        // Inject the pre-computed functions into the context
+        ...precomputedScope,
       },
     });
 
     try {
-      // const result = evaluate<T>(
-      //   merge({}, defaultScreenContext, {
-      //     model: {
-      //       global: get(screenGlobalScriptAtom),
-      //       importedScripts: get(screenImportScriptAtom),
-      //     },
-      //   }),
-      //   rawJsExpression,
-      //   evaluationContext,
-      // );
-
-      const screenEvaluator = get(screenEvaluatorAtom);
-      const result = screenEvaluator(rawJsExpression, evaluationContext) as T;
-
+      // The `evaluate` function no longer needs the global scripts passed to it,
+      // as their functions are already in the evaluationContext.
+      const result = evaluate<T>(
+        defaultScreenContext,
+        rawJsExpression,
+        evaluationContext,
+      );
       debug(
         `result for ${rawJsExpression} at ${String(widgetId)}: ${JSON.stringify(
           result,
