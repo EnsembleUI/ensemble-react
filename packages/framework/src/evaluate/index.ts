@@ -2,4 +2,4 @@ export * from "./evaluate";
 export * from "./binding";
 export * from "./context";
 export * from "./mock";
-export * from "./precomputedEvaluate";
+export * from "./precomputed-scope";

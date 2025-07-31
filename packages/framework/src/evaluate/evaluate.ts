@@ -38,13 +38,14 @@ export const buildEvaluateFn = (
       // Need to filter out invalid JS identifiers
     ].filter(([key, _]) => !key.includes(".")),
   );
-  const globalBlock = screen.model?.global;
-  const importedScriptBlock = screen.model?.importedScripts;
+
+  // The global/imported scripts are no longer needed here as they are pre-computed
+  // and injected directly into the context. This makes this function much lighter.
 
   // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
   const jsFunc = new Function(
     ...Object.keys(invokableObj),
-    addScriptBlock(formatJs(js), globalBlock, importedScriptBlock),
+    formatJs(js), // We only need to format the expression itself.
   );
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -69,7 +70,8 @@ const formatJs = (js?: string): string => {
   }
 
   // multiline js
-  if (sanitizedJs.includes("\n")) {
+  if (sanitizedJs.includes("
+")) {
     if (sanitizedJs.includes("await ")) {
       return `
         return (async function() {
@@ -96,23 +98,7 @@ const formatJs = (js?: string): string => {
   return `return ${sanitizedJs}`;
 };
 
-const addScriptBlock = (
-  js: string,
-  globalBlock?: string,
-  importedScriptBlock?: string,
-): string => {
-  let jsString = ``;
-
-  if (importedScriptBlock) {
-    jsString += `${importedScriptBlock}\n\n`;
-  }
-
-  if (globalBlock) {
-    jsString += `${globalBlock}\n\n`;
-  }
-
-  return (jsString += `${js}`);
-};
+// The addScriptBlock function is no longer needed.
 
 /**
  * @deprecated Consider using useEvaluate or createBinding which will
@@ -145,5 +131,5 @@ export const evaluateDeep = (
     inputs,
     replace((expr) => evaluate({ model }, expr, context)),
   );
-  return resolvedInputs as { [key: string]: unknown };
+  return resolvedInputs as { [key:string]: unknown };
 };
