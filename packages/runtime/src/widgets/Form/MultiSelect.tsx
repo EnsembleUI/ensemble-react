@@ -6,14 +6,21 @@ import React, {
   useRef,
   useState,
 } from "react";
-import type { Expression, EnsembleAction } from "@ensembleui/react-framework";
+import type {
+  Expression,
+  EnsembleAction,
+  CustomScope,
+} from "@ensembleui/react-framework";
 import {
+  CustomScopeProvider,
+  defaultScreenContext,
+  evaluate,
   unwrapWidget,
   useRegisterBindings,
   useTemplateData,
 } from "@ensembleui/react-framework";
 import { PlusCircleOutlined } from "@ant-design/icons";
-import { Select as SelectComponent, Space, Form } from "antd";
+import { Select as SelectComponent, Space, Form, Select } from "antd";
 import {
   get,
   isArray,
@@ -29,6 +36,7 @@ import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import type {
   EnsembleWidgetProps,
   EnsembleWidgetStyles,
+  HasItemTemplate,
 } from "../../shared/types";
 import { EnsembleRuntime } from "../../runtime";
 import { getComponentStyles } from "../../shared/styles";
@@ -75,10 +83,12 @@ export type MultiSelectProps = {
   maxTagTextLength: Expression<number>;
   notFoundContent?: Expression<string> | { [key: string]: unknown };
 } & EnsembleWidgetProps<MultiSelectStyles> &
-  FormInputProps<object[] | string[]>;
+  HasItemTemplate & {
+    "item-template"?: { value: Expression<string> };
+  } & FormInputProps<object[] | string[]>;
 
 const MultiSelect: React.FC<MultiSelectProps> = (props) => {
-  const { data, ...rest } = props;
+  const { data, "item-template": itemTemplate, ...rest } = props;
   const [options, setOptions] = useState<MultiSelectOption[]>([]);
   const [newOption, setNewOption] = useState("");
   const [selectedValues, setSelectedValues] = useState<MultiSelectOption[]>();
@@ -89,6 +99,10 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   const onSearchAction = useEnsembleAction(props.onSearch);
 
   const { rawData } = useTemplateData({ data });
+  const { namedData } = useTemplateData({
+    data: itemTemplate?.data,
+    name: itemTemplate?.name,
+  });
   const { id, rootRef, values } = useRegisterBindings(
     { ...rest, initialValue: props.value, selectedValues, options, widgetName },
     props.id,
@@ -155,6 +169,35 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
 
     setOptions(tempOptions);
   }, [rawData, values?.labelKey, values?.valueKey, values?.items]);
+
+  const renderOptions = useMemo(() => {
+    if (isObject(itemTemplate) && !isEmpty(namedData)) {
+      const tempOptions = namedData.map((item: unknown) => {
+        const value = evaluate<string | number>(
+          defaultScreenContext,
+          itemTemplate.value,
+          {
+            [itemTemplate.name]: get(item, itemTemplate.name) as unknown,
+          },
+        );
+        console.log("value", value);
+        return (
+          <Select.Option
+            className={`${values?.id || ""}_option`}
+            key={value}
+            value={value}
+          >
+            <CustomScopeProvider value={item as CustomScope}>
+              {EnsembleRuntime.render([itemTemplate.template])}
+            </CustomScopeProvider>
+          </Select.Option>
+        );
+      });
+      return tempOptions;
+    }
+
+    return [];
+  }, [itemTemplate, namedData, values?.id]);
 
   // handle form instance
   const formInstance = Form.useFormInstance();
@@ -288,6 +331,9 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
         .${id}_input .ant-select-selector {
           ${getComponentStyles("multiSelect", values?.styles, true, true) as string}
         }
+        .${id}_input .ant-select-selector .ant-select-selection-item {
+          height: auto !important;
+        }
         .ant-select-item.ant-select-item-option.${id}_option[aria-selected="true"]
         {
           ${
@@ -359,7 +405,6 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
             dropdownStyle={values?.styles}
             filterOption={props.onSearch ? false : handleFilterOption}
             id={values?.id}
-            labelRender={labelRender}
             maxCount={values?.maxCount ? toNumber(values.maxCount) : undefined}
             maxTagCount={
               values?.maxTagCount as number | "responsive" | undefined
@@ -374,7 +419,7 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
             onChange={handleChange}
             onSearch={handleSearch} // required for display new custom option with Dropdown element
             optionFilterProp="children"
-            options={options}
+            {...(options.length > 0 ? { options, labelRender } : {})}
             placeholder={
               values?.hintText ? (
                 <span style={{ ...values.hintStyle }}>{values.hintText}</span>
@@ -383,7 +428,9 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
               )
             }
             value={values?.selectedValues}
-          />
+          >
+            {renderOptions}
+          </SelectComponent>
         </EnsembleFormItem>
       </div>
     </>

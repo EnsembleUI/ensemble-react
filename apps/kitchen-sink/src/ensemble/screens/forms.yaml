@@ -225,11 +225,17 @@ View:
                     - MultiSelect:
                         id: multiselectoptions2
                         label: Choose multiple
-                        data:
-                          - label: Option 1
-                            value: option1
-                          - label: Option 2
-                            value: option2
+                        item-template:
+                          data: ${getData.body.users}
+                          name: user
+                          value: ${user.email}
+                          template:
+                            Column:
+                              children:
+                                - Text:
+                                    text: ${user.firstName} ${user.lastName}
+                                - Text:
+                                    text: ${user.email}
                     - Date:
                         htmlAttributes:
                           data-testid: date0-test
@@ -414,12 +420,18 @@ View:
                     - MultiSelect:
                         id: initial_multiselectoptions2
                         label: Choose multiple
-                        value: option2
-                        data:
-                          - label: Option 1
-                            value: option1
-                          - label: Option 2
-                            value: option2
+                        value: ${[getData.body.users[0].email, getData.body.users[1].email]}
+                        item-template:
+                          data: ${getData.body.users}
+                          name: user
+                          value: ${user.email}
+                          template:
+                            Column:
+                              children:
+                                - Text:
+                                    text: ${user.firstName} ${user.lastName}
+                                - Text:
+                                    text: ${user.email}
                     # - Date:
                     #     id: initail_date
                     #     label: Date
