@@ -180,7 +180,6 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
             [itemTemplate.name]: get(item, itemTemplate.name) as unknown,
           },
         );
-        console.log("value", value);
         return (
           <Select.Option
             className={`${values?.id || ""}_option`}
