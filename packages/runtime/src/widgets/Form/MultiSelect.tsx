@@ -28,6 +28,7 @@ import {
   isEqual,
   isObject,
   isString,
+  omit,
   toNumber,
 } from "lodash-es";
 import { useDebounce } from "react-use";
@@ -117,24 +118,35 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
 
   // check and load initial values
   useEffect(() => {
-    // compare previous initial value with current render initial value
+    // deep compare the value of the binding to tell when it has changed because it's an array
     if (
       !isEqual(prevInitialValue.current, values?.initialValue) &&
       isArray(values?.initialValue)
     ) {
       prevInitialValue.current = values?.initialValue || [];
-      const initialValue = values?.initialValue.map((item) =>
-        isObject(item)
-          ? {
-              ...(item as { [key: string]: unknown }),
-              label: get(item, values.labelKey || "label") as string,
-              value: get(item, values.valueKey || "value") as string,
-            }
-          : item,
-      );
+      const initialValue = values?.initialValue.map((item) => {
+        if (!isObject(item)) return item;
+
+        const label: unknown = get(item, values.labelKey || "label");
+        return {
+          ...item,
+          // When item-template is used, we explicitly convert `null` label to `undefined`.
+          // This is crucial for rendering template of item-template.
+          // If no item-template is used, we allow `null` to pass through, as React will correctly render it as nothing.
+          label: itemTemplate?.name
+            ? ((label ?? undefined) as string | undefined)
+            : (label as string | null),
+          value: get(item, values.valueKey || "value") as string,
+        };
+      });
       setSelectedValues(initialValue as MultiSelectOption[]);
     }
-  }, [values?.initialValue]);
+  }, [
+    itemTemplate?.name,
+    values?.initialValue,
+    values?.labelKey,
+    values?.valueKey,
+  ]);
 
   // load data and items
   useEffect(() => {
@@ -253,8 +265,13 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     option?: MultiSelectOption | MultiSelectOption[],
   ): void => {
     setSelectedValues(value);
-    if (action) onChangeCallback({ value, option: option ?? [] });
-    else onItemSelectCallback(value);
+
+    if (action) {
+      const plainOption = isArray(option)
+        ? option.map((op) => omit(op, "children"))
+        : omit(option, "children");
+      onChangeCallback({ value, option: plainOption });
+    } else onItemSelectCallback(value);
 
     if (newOption) {
       setOptions([

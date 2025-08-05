@@ -461,6 +461,7 @@ View:
             labelKey: name
             valueKey: email
             data: ${ensemble.storage.get('products')}
+            value: ${ensemble.storage.get('selectedProducts') ?? null}
             onSearch:
               executeCode: |
                 ensemble.invokeAPI('getProducts', { search: search }).then((res) => {
@@ -473,7 +474,8 @@ View:
                 console.log("onSearch values: ", search);
             onChange:
               executeCode: |
-                console.log("onChange values: ", search);
+                console.log("onChange values: ", value, option);
+                ensemble.storage.set('selectedProducts', option);
 
 Global:
   scriptName: test.js
