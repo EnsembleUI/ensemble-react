@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.34
+
+### Patch Changes
+
+- a268232: support item-template in MultiSelect widget
+
 ## 0.3.33
 
 ### Patch Changes
