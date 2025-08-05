@@ -645,5 +645,178 @@ describe("MultiSelect Widget", () => {
       expect(screen.getByText("Anothe...")).toBeInTheDocument();
     });
   });
+
+  test("supports item-template for custom option rendering", async () => {
+    render(
+      <Form
+        children={[
+          {
+            name: "MultiSelect",
+            properties: {
+              id: "templateMultiSelect",
+              label: "Choose User",
+              "item-template": {
+                data: [
+                  {
+                    id: 1,
+                    name: "John Doe",
+                    email: "john@example.com",
+                    role: "admin",
+                  },
+                  {
+                    id: 2,
+                    name: "Jane Smith",
+                    email: "jane@example.com",
+                    role: "user",
+                  },
+                  {
+                    id: 3,
+                    name: "Bob Johnson",
+                    email: "bob@example.com",
+                    role: "moderator",
+                  },
+                ],
+                name: "user",
+                value: `\${user.id}`,
+                template: {
+                  name: "Column",
+                  properties: {
+                    children: [
+                      {
+                        name: "Text",
+                        properties: {
+                          text: `\${user.name}`,
+                          styles: {
+                            fontWeight: "bold",
+                          },
+                        },
+                      },
+                      {
+                        name: "Text",
+                        properties: {
+                          text: `\${user.email}`,
+                          styles: {
+                            fontSize: 12,
+                            color: "gray",
+                          },
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+          ...defaultFormButton,
+        ]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
+    );
+
+    userEvent.click(screen.getByRole("combobox"));
+
+    await waitFor(() => {
+      expect(screen.getByText("John Doe")).toBeInTheDocument();
+      expect(screen.getByText("john@example.com")).toBeInTheDocument();
+      expect(screen.getByText("Jane Smith")).toBeInTheDocument();
+      expect(screen.getByText("jane@example.com")).toBeInTheDocument();
+      expect(screen.getByText("Bob Johnson")).toBeInTheDocument();
+      expect(screen.getByText("bob@example.com")).toBeInTheDocument();
+    });
+
+    userEvent.click(screen.getByText("John Doe"));
+    userEvent.click(screen.getByText("Jane Smith"));
+
+    userEvent.click(screen.getByRole("combobox"));
+
+    const getValueButton = screen.getByText("Get Value");
+    fireEvent.click(getValueButton);
+
+    await waitFor(() => {
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ templateMultiSelect: [1, 2] }),
+      );
+    });
+  });
+
+  test("supports item-template with initial selected values", async () => {
+    render(
+      <Form
+        children={[
+          {
+            name: "MultiSelect",
+            properties: {
+              id: "templateMultiSelectWithInitial",
+              label: "Choose User",
+              value: `\${[2, 3]}`, // pre-select Jane and Bob
+              "item-template": {
+                data: [
+                  {
+                    id: 1,
+                    name: "John Doe",
+                    email: "john@example.com",
+                    role: "admin",
+                  },
+                  {
+                    id: 2,
+                    name: "Jane Smith",
+                    email: "jane@example.com",
+                    role: "user",
+                  },
+                  {
+                    id: 3,
+                    name: "Bob Johnson",
+                    email: "bob@example.com",
+                    role: "moderator",
+                  },
+                ],
+                name: "user",
+                value: `\${user.id}`,
+                template: {
+                  name: "Column",
+                  properties: {
+                    children: [
+                      {
+                        name: "Text",
+                        properties: {
+                          text: `\${user.name} (\${user.role})`,
+                        },
+                      },
+                      { name: "Text", properties: { text: `\${user.email}` } },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+          ...defaultFormButton,
+        ]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
+    );
+
+    const getValueButton = screen.getByText("Get Value");
+    fireEvent.click(getValueButton);
+
+    await waitFor(() => {
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ templateMultiSelectWithInitial: [2, 3] }),
+      );
+    });
+
+    userEvent.click(screen.getByRole("combobox"));
+
+    await waitFor(() => {
+      const johnDoeOptions = screen.getAllByText("john@example.com");
+      const janeSmithOptions = screen.getAllByText("Jane Smith (user)");
+      const bobJohnsonOptions = screen.getAllByText("Bob Johnson (moderator)");
+
+      expect(johnDoeOptions.length).toBeGreaterThan(0);
+      expect(janeSmithOptions.length).toBeGreaterThan(0);
+      expect(bobJohnsonOptions.length).toBeGreaterThan(0);
+    });
+  });
 });
 /* eslint-enable react/no-children-prop */
