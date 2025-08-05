@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.128
+
+### Patch Changes
+
+- a268232: support item-template in MultiSelect widget
+- Updated dependencies [a268232]
+  - @ensembleui/react-runtime@0.3.34
+
 ## 0.0.127
 
 ### Patch Changes
