@@ -81,11 +81,7 @@ const HydrateAtoms: React.FC<
     [
       [appAtom, appContext],
       [themeModelAtom, themeScope.theme],
-      [userAtom, appContext.user],
     ],
-    {
-      dangerouslyForceHydrate: true,
-    },
   );
 
   // initiate device resizer observer
