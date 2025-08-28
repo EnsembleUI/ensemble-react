@@ -1,7 +1,7 @@
 import { useAtomCallback } from "jotai/utils";
 import type { FC, ReactNode } from "react";
 import { useCallback } from "react";
-import { mapKeys } from "lodash-es";
+import { mapKeys, assign } from "lodash-es";
 import { createEvaluationContext } from "../evaluate";
 import type { EnsembleUser } from "../state";
 import { appAtom, screenAtom, themeAtom, userAtom } from "../state";
@@ -84,6 +84,8 @@ export const useCommandCallback = <
             setTheme: (name: string) => set(themeAtom, name),
             user: {
               ...user,
+              set: (userUpdate: EnsembleUser) =>
+                set(userAtom, assign({}, user, userUpdate)),
               setUser: (userUpdate: EnsembleUser) => set(userAtom, userUpdate),
             },
             storage: storageApi,
