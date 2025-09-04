@@ -1,5 +1,5 @@
 import { useAtom } from "jotai";
-import { assign } from "lodash-es";
+import { assign, isEmpty } from "lodash-es";
 import { useMemo } from "react";
 import { userAtom, type EnsembleUser } from "../state";
 
@@ -26,5 +26,18 @@ export const useEnsembleUser = (): EnsembleUser & EnsembleUserBuffer => {
     [setUser, user],
   );
 
-  return { ...storageBuffer, ...user };
+  // ensure first render on direct loads sees latest value from sessionStorage
+  const sessionSnapshot = useMemo<EnsembleUser>(() => {
+    try {
+      const raw = sessionStorage.getItem("ensemble.user");
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
+  }, []);
+
+  const effectiveUser = isEmpty(user) ? sessionSnapshot : user;
+
+  return { ...storageBuffer, ...effectiveUser };
 };

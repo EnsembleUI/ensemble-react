@@ -7,6 +7,11 @@ import { useEnsembleUser } from "../useEnsembleUser";
 const store = getDefaultStore();
 
 describe("useEnsembleUser", () => {
+  beforeEach(() => {
+    sessionStorage.removeItem("ensemble.user");
+    store.set(userAtom, {} as unknown as { [key: string]: unknown });
+  });
+
   test("fetches variable from ensemble.user", () => {
     store.set(userAtom, {
       accessToken: "eyJabcd",
@@ -57,5 +62,31 @@ describe("useEnsembleUser", () => {
         dead: "world",
       },
     });
+  });
+
+  test("returns sessionStorage snapshot on first render when atom empty", () => {
+    sessionStorage.setItem(
+      "ensemble.user",
+      JSON.stringify({ accessToken: "seed", userDetails: { foo: "bar" } }),
+    );
+
+    const { result } = renderHook(() => useEnsembleUser());
+    const user = result.current;
+
+    expect(get(user, "accessToken")).toBe("seed");
+    expect(get(user, "userDetails.foo")).toBe("bar");
+  });
+
+  test("prefers atom value over sessionStorage when atom populated", () => {
+    sessionStorage.setItem(
+      "ensemble.user",
+      JSON.stringify({ accessToken: "seed" }),
+    );
+    store.set(userAtom, { accessToken: "live" });
+
+    const { result } = renderHook(() => useEnsembleUser());
+    const user = result.current;
+
+    expect(get(user, "accessToken")).toBe("live");
   });
 });

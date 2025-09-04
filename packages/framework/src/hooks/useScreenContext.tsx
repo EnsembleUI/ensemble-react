@@ -10,7 +10,6 @@ import {
   screenDataAtom,
   screenModelAtom,
   themeModelAtom,
-  userAtom,
 } from "../state";
 import type {
   ApplicationContextDefinition,
@@ -77,16 +76,10 @@ const HydrateAtoms: React.FC<
 
   // initialising on state with prop on render here
   useHydrateAtoms([[screenAtom, screenContext]]);
-  useHydrateAtoms(
-    [
-      [appAtom, appContext],
-      [themeModelAtom, themeScope.theme],
-      [userAtom, appContext.user],
-    ],
-    {
-      dangerouslyForceHydrate: true,
-    },
-  );
+  useHydrateAtoms([
+    [appAtom, appContext],
+    [themeModelAtom, themeScope.theme],
+  ]);
 
   // initiate device resizer observer
   useDeviceObserver();
