@@ -30,6 +30,7 @@ export const useEnsembleUser = (): EnsembleUser & EnsembleUserBuffer => {
   const sessionSnapshot = useMemo<EnsembleUser>(() => {
     try {
       const raw = sessionStorage.getItem("ensemble.user");
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return raw ? JSON.parse(raw) : {};
     } catch {
       return {};

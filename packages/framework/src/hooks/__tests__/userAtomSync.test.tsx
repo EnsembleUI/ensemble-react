@@ -1,14 +1,16 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
 import React, { useEffect } from "react";
 import { Provider } from "jotai";
-import { useEnsembleUser } from "../../hooks/useEnsembleUser";
+import { useEnsembleUser } from "../useEnsembleUser";
 
 type Api = {
   setToken: (token?: string) => void;
 };
 
-const UserTokenProbe: React.FC<{ id: string; onReady?: (api: Api) => void }>
-  = ({ id, onReady }) => {
+const UserTokenProbe: React.FC<{
+  id: string;
+  onReady?: (api: Api) => void;
+}> = ({ id, onReady }) => {
   const user = useEnsembleUser();
 
   useEffect(() => {
@@ -28,7 +30,10 @@ describe("userAtom cross-store sync", () => {
   });
 
   test("initializes from sessionStorage on first mount", async () => {
-    sessionStorage.setItem("ensemble.user", JSON.stringify({ accessToken: "seed" }));
+    sessionStorage.setItem(
+      "ensemble.user",
+      JSON.stringify({ accessToken: "seed" }),
+    );
 
     render(
       <Provider>
@@ -47,9 +52,19 @@ describe("userAtom cross-store sync", () => {
 
     render(
       <Provider>
-        <UserTokenProbe id="a" onReady={(api) => { apiA = api; }} />
+        <UserTokenProbe
+          id="a"
+          onReady={(api) => {
+            apiA = api;
+          }}
+        />
         <Provider>
-          <UserTokenProbe id="b" onReady={(api) => { apiB = api; }} />
+          <UserTokenProbe
+            id="b"
+            onReady={(api) => {
+              apiB = api;
+            }}
+          />
         </Provider>
       </Provider>,
     );
@@ -75,5 +90,3 @@ describe("userAtom cross-store sync", () => {
     });
   });
 });
-
-

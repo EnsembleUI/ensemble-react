@@ -1,16 +1,14 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { Provider } from "jotai";
-import { ApplicationContextProvider } from "../../hooks/useApplicationContext";
-import { ScreenContextProvider } from "../../hooks/useScreenContext";
+import { ApplicationContextProvider } from "../useApplicationContext";
+import { ScreenContextProvider } from "../useScreenContext";
 import type { EnsembleAppModel } from "../../shared";
-import { useEnsembleUser } from "../../hooks/useEnsembleUser";
+import { useEnsembleUser } from "../useEnsembleUser";
 
 const Probe: React.FC<{ id: string }> = ({ id }) => {
   const user = useEnsembleUser();
-  return (
-    <div data-testid={`u-${id}`}>{String(user.accessToken ?? "")}</div>
-  );
+  return <div data-testid={`u-${id}`}>{String(user.accessToken ?? "")}</div>;
 };
 
 const BootstrapUser: React.FC = () => {
@@ -27,7 +25,11 @@ const app: EnsembleAppModel = {
   screens: [],
   customWidgets: [],
   scripts: [],
-  home: { id: "home", name: "home", body: { name: "Text", properties: { text: "home" } } },
+  home: {
+    id: "home",
+    name: "home",
+    body: { name: "Text", properties: { text: "home" } },
+  },
   themes: { default: { name: "default" } },
 };
 
@@ -51,5 +53,3 @@ describe("ScreenContextProvider does not clobber user atom", () => {
     });
   });
 });
-
-

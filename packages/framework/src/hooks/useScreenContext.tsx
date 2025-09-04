@@ -10,7 +10,6 @@ import {
   screenDataAtom,
   screenModelAtom,
   themeModelAtom,
-  userAtom,
 } from "../state";
 import type {
   ApplicationContextDefinition,
