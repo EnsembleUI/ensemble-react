@@ -12,9 +12,6 @@ View:
         console.log('>>> secret variable >>>', ensemble.secrets.dummyOauthSecret)
         ensemble.storage.set('products', []);
         ensemble.invokeAPI('getDummyProducts').then((res) => ensemble.storage.set('products', (res?.body?.users || []).map((i) => ({ ...i, name: i.firstName + ' ' + i.lastName }))));
-        const res = await ensemble.invokeAPI('getDummyNumbers')
-        await new Promise((resolve) => setTimeout(resolve, 5000))
-        return res
       onComplete:
         executeCode: |
           console.log('API triggered', result)
