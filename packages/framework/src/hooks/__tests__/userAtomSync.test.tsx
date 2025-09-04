@@ -70,7 +70,7 @@ describe("userAtom cross-store sync", () => {
     );
 
     // outer updates, inner should reflect
-    await act(async () => {
+    act(() => {
       apiA?.setToken("t1");
     });
 
@@ -80,7 +80,7 @@ describe("userAtom cross-store sync", () => {
     });
 
     // inner updates, outer should reflect
-    await act(async () => {
+    act(() => {
       apiB?.setToken("t2");
     });
 
