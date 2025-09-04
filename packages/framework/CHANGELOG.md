@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.2.21
+
+### Patch Changes
+
+- 2e44753: fix stale values in ensemble.user
+
 ## 0.2.20
 
 ### Patch Changes
