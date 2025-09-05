@@ -31,7 +31,7 @@ import type {
   ShowToastAction,
 } from "../shared";
 import { deviceAtom } from "./useDeviceObserver";
-import { createStorageApi, screenStorageAtom } from "./useEnsembleStorage";
+import { useEnsembleStorage } from "./useEnsembleStorage";
 import { useCustomScope } from "./useCustomScope";
 import { useLanguageScope } from "./useLanguageScope";
 
@@ -56,20 +56,16 @@ export const useCommandCallback = <
 ): ReturnType<typeof useAtomCallback<R, T>> => {
   const customScope = useCustomScope();
   const { i18n } = useLanguageScope();
+  const storage = useEnsembleStorage();
 
   return useAtomCallback(
     useCallback(
       (get, set, ...args: T) => {
         const applicationContext = get(appAtom);
         const screenContext = get(screenAtom);
-        const storage = get(screenStorageAtom);
         const device = get(deviceAtom);
         const theme = get(themeAtom);
         const user = get(userAtom);
-
-        const storageApi = createStorageApi(storage, (next) =>
-          set(screenStorageAtom, next),
-        );
 
         const customWidgets =
           applicationContext.application?.customWidgets.reduce(
@@ -88,7 +84,7 @@ export const useCommandCallback = <
                 set(userAtom, assign({}, user, userUpdate)),
               setUser: (userUpdate: EnsembleUser) => set(userAtom, userUpdate),
             },
-            storage: storageApi,
+            storage,
             formatter: DateFormatter(),
             env: applicationContext.env,
             secrets: applicationContext.secrets,
@@ -115,7 +111,7 @@ export const useCommandCallback = <
                   ensemble: {
                     env: applicationContext.env,
                     secrets: applicationContext.secrets,
-                    storage: storageApi,
+                    storage,
                   },
                 },
                 undefined,

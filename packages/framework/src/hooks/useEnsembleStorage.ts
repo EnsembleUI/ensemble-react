@@ -39,6 +39,7 @@ export const screenStorageAtom = atom(
 
 export const useEnsembleStorage = (): EnsembleStorage => {
   const [storage, setStorage] = useAtom(screenStorageAtom);
+
   // Use a buffer so we can perform imperative changes without forcing re-render
   const storageBuffer = useMemo<{ [key: string]: unknown }>(() => ({}), []);
 
@@ -46,10 +47,7 @@ export const useEnsembleStorage = (): EnsembleStorage => {
     merge(storageBuffer, storage);
   }, [storageBuffer, storage]);
 
-  const storageApi = useMemo(
-    () => createStorageApi(storageBuffer, setStorage),
-    [setStorage, storageBuffer],
-  );
+  const storageApi = createStorageApi(storage, setStorage);
 
   return storageApi;
 };
@@ -64,8 +62,8 @@ export const createStorageApi = (
       update[key] = value;
       if (storage) {
         assign(storage, update);
+        setStorage?.(storage);
       }
-      setStorage?.(update);
     },
     get: (key: string): unknown => {
       return storage?.[key];
