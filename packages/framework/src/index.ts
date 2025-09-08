@@ -10,3 +10,4 @@ export * from "./date";
 export * from "./state";
 export * from "./evaluate";
 export * from "./appConfig";
+export * from "./utils/userStorage";

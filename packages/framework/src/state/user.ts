@@ -1,5 +1,6 @@
 import type { WritableAtom } from "jotai";
 import { atom } from "jotai";
+import { setUserInStorage } from "../utils/userStorage";
 
 export type EnsembleUser = { accessToken?: string } & {
   [key: string]: unknown;
@@ -60,7 +61,11 @@ const atomWithSessionStorage = <T = unknown>(
         typeof update === "function" ? update(get(baseAtom)) : update
       ) as T;
       set(baseAtom, nextValue);
-      sessionStorage.setItem(key, JSON.stringify(nextValue));
+      if (key === "ensemble.user") {
+        setUserInStorage(nextValue);
+      } else {
+        sessionStorage.setItem(key, JSON.stringify(nextValue));
+      }
       // notify other stores in this tab to update immediately
       if (typeof window !== "undefined") {
         window.dispatchEvent(new StorageEvent("storage", { key }));

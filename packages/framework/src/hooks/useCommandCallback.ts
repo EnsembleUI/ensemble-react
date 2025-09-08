@@ -1,9 +1,8 @@
 import { useAtomCallback } from "jotai/utils";
 import type { FC, ReactNode } from "react";
 import { useCallback } from "react";
-import { mapKeys, assign } from "lodash-es";
+import { mapKeys } from "lodash-es";
 import { createEvaluationContext } from "../evaluate";
-import type { EnsembleUser } from "../state";
 import { appAtom, screenAtom, themeAtom, userAtom } from "../state";
 import type { EnsembleContext, EnsembleLocation } from "../shared/ensemble";
 import { DateFormatter } from "../date";
@@ -32,6 +31,7 @@ import type {
 } from "../shared";
 import { deviceAtom } from "./useDeviceObserver";
 import { createStorageApi, screenStorageAtom } from "./useEnsembleStorage";
+import { createUserApi } from "./useEnsembleUser";
 import { useCustomScope } from "./useCustomScope";
 import { useLanguageScope } from "./useLanguageScope";
 
@@ -65,10 +65,14 @@ export const useCommandCallback = <
         const storage = get(screenStorageAtom);
         const device = get(deviceAtom);
         const theme = get(themeAtom);
-        const user = get(userAtom);
 
         const storageApi = createStorageApi(storage, (next) =>
           set(screenStorageAtom, next),
+        );
+
+        const userApi = createUserApi(
+          () => get(userAtom),
+          (nextUser) => set(userAtom, nextUser),
         );
 
         const customWidgets =
@@ -82,12 +86,7 @@ export const useCommandCallback = <
           screenContext,
           ensemble: {
             setTheme: (name: string) => set(themeAtom, name),
-            user: {
-              ...user,
-              set: (userUpdate: EnsembleUser) =>
-                set(userAtom, assign({}, user, userUpdate)),
-              setUser: (userUpdate: EnsembleUser) => set(userAtom, userUpdate),
-            },
+            user: userApi,
             storage: storageApi,
             formatter: DateFormatter(),
             env: applicationContext.env,
