@@ -2,6 +2,7 @@ import { useAtom } from "jotai";
 import { assign, isEmpty } from "lodash-es";
 import { useMemo } from "react";
 import { userAtom, type EnsembleUser } from "../state";
+import { getUserFromStorage } from "../utils/userStorage";
 
 interface EnsembleUserBuffer {
   set: (items: { [key: string]: unknown }) => void;
@@ -28,16 +29,31 @@ export const useEnsembleUser = (): EnsembleUser & EnsembleUserBuffer => {
 
   // ensure first render on direct loads sees latest value from sessionStorage
   const sessionSnapshot = useMemo<EnsembleUser>(() => {
-    try {
-      const raw = sessionStorage.getItem("ensemble.user");
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return raw ? JSON.parse(raw) : {};
-    } catch {
-      return {};
-    }
+    return getUserFromStorage();
   }, []);
 
   const effectiveUser = isEmpty(user) ? sessionSnapshot : user;
 
   return { ...storageBuffer, ...effectiveUser };
+};
+
+export const createUserApi = (
+  getUser: () => EnsembleUser,
+  setUser?: (user: EnsembleUser) => void,
+) => {
+  const currentUser = getUser();
+  return {
+    ...currentUser,
+    set: (userUpdate: EnsembleUser): void => {
+      const user = getUser();
+      const updatedUser = assign({}, user, userUpdate);
+      setUser?.(updatedUser);
+    },
+    setUser: (userUpdate: EnsembleUser): void => {
+      setUser?.(userUpdate);
+    },
+    get: (key: string): unknown => {
+      return getUser()[key];
+    },
+  };
 };

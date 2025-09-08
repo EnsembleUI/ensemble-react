@@ -1,5 +1,5 @@
 import { Provider, useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useCallback, useContext } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import { clone, merge } from "lodash-es";
 import { useHydrateAtoms } from "jotai/utils";
 import {
@@ -10,7 +10,9 @@ import {
   screenDataAtom,
   screenModelAtom,
   themeModelAtom,
+  userAtom,
 } from "../state";
+import { getUserFromStorage } from "../utils/userStorage";
 import type {
   ApplicationContextDefinition,
   ScreenContextActions,
@@ -74,17 +76,35 @@ const HydrateAtoms: React.FC<
 > = ({ appContext, screenContext, children }) => {
   const themeScope = useContext(CustomThemeContext);
 
+  const latestUserData = getUserFromStorage();
+
   // initialising on state with prop on render here
   useHydrateAtoms([[screenAtom, screenContext]]);
   useHydrateAtoms([
     [appAtom, appContext],
     [themeModelAtom, themeScope.theme],
+    [userAtom, latestUserData],
   ]);
 
   // initiate device resizer observer
   useDeviceObserver();
 
-  return <>{children}</>;
+  return (
+    <>
+      <UserAtomMount />
+      {children}
+    </>
+  );
+};
+
+const UserAtomMount: React.FC = () => {
+  const [user] = useAtom(userAtom);
+
+  useEffect(() => {
+    // ensure userAtom is mounted in the modal's store
+  }, [user]);
+
+  return null;
 };
 
 /**
