@@ -1,5 +1,11 @@
 # @ensembleui/react-framework
 
+## 0.2.22
+
+### Patch Changes
+
+- 86babb2: fix stale ensemble.user in modal
+
 ## 0.2.21
 
 ### Patch Changes
