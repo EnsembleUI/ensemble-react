@@ -1,15 +1,7 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, memo, useState } from "react";
 import type { MenuProps } from "antd";
 import { Dropdown as AntdDropdown } from "antd";
-import {
-  cloneDeep,
-  isEmpty,
-  isObject,
-  isString,
-  compact,
-  join,
-  tail,
-} from "lodash-es";
+import { isEmpty, isObject, isString, compact, join, tail } from "lodash-es";
 import {
   CustomScopeProvider,
   unwrapWidget,
@@ -61,6 +53,26 @@ export type PopupMenuProps = {
 } & EnsembleWidgetProps<PopupMenuStyles & EnsembleWidgetStyles> &
   HasItemTemplate & { "item-template"?: { value: Expression<string> } };
 
+// memoized component for rendering menu item labels to prevent expensive re-renders
+const MenuItemLabel = memo<{
+  label: Expression<string> | { [key: string]: unknown };
+  hasBeenOpened: boolean;
+  isContextMenu: boolean;
+}>(({ label, hasBeenOpened, isContextMenu }) => {
+  if (isString(label)) {
+    return <span>{label}</span>;
+  }
+
+  // for context menus, render immediately
+  // for other triggers, only render complex widgets after menu has been opened
+  if (!hasBeenOpened && !isContextMenu) {
+    return <span style={{ opacity: 0.6 }}>...</span>;
+  }
+
+  return <>{EnsembleRuntime.render([unwrapWidget(label)])}</>;
+});
+MenuItemLabel.displayName = "MenuItemLabel";
+
 export const PopupMenu: React.FC<PopupMenuProps> = ({
   onTriggered,
   onItemSelect,
@@ -73,6 +85,12 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
   );
   const action = useEnsembleAction(onItemSelect);
   const onTriggerAction = useEnsembleAction(onTriggered);
+
+  // track if menu has been opened to enable lazy rendering
+  const [hasBeenOpened, setHasBeenOpened] = useState(false);
+
+  // for context menus, we need to detect when they're opened differently
+  const isContextMenu = values?.trigger === "contextMenu";
 
   const { namedData } = useTemplateData({
     data: itemTemplate?.data,
@@ -87,9 +105,13 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
 
       const menuItem: ItemType = {
         key: `popupmenu_item_${index}`,
-        label: isString(rawItem.label)
-          ? rawItem.label
-          : EnsembleRuntime.render([unwrapWidget(rawItem.label)]),
+        label: (
+          <MenuItemLabel
+            label={rawItem.label}
+            hasBeenOpened={hasBeenOpened}
+            isContextMenu={isContextMenu}
+          />
+        ),
         disabled: rawItem.enabled === false,
         ...(rawItem.items && {
           children: rawItem.items.map((itm, childIndex) =>
@@ -100,69 +122,69 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
       };
       return menuItem;
     },
-    [],
+    [hasBeenOpened, isContextMenu],
   );
 
-  const popupMenuItems = useMemo(() => {
-    const popupItems: MenuProps["items"] = [];
-
-    const items = values?.items;
-    if (items) {
-      const tempItems = compact(
-        items.map((rawItem, index) => getMenuItem(rawItem, index)),
-      );
-
-      popupItems.push(...tempItems);
+  const templateItems = useMemo(() => {
+    if (!isObject(itemTemplate) || isEmpty(namedData)) {
+      return [];
     }
 
-    if (isObject(itemTemplate) && !isEmpty(namedData)) {
-      const tempItems = namedData.map((item, index) => {
-        const itm: ItemType = {
-          key: `popupmenu_itemTemplate_${index}`,
-          label: (
+    return namedData.map((item, index) => {
+      const itm: ItemType = {
+        key: `popupmenu_itemTemplate_${index}`,
+        label:
+          hasBeenOpened || isContextMenu ? (
             <CustomScopeProvider value={item as CustomScope}>
               {EnsembleRuntime.render([itemTemplate.template])}
             </CustomScopeProvider>
+          ) : (
+            <span style={{ opacity: 0.6 }}>...</span>
           ),
-        };
-        return itm;
-      });
+      };
+      return itm;
+    });
+  }, [itemTemplate, namedData, hasBeenOpened, isContextMenu]);
 
-      popupItems.push(...tempItems);
+  const regularItems = useMemo(() => {
+    const items = values?.items;
+    if (!items || items.length === 0) {
+      return [];
     }
 
-    if (values?.showDivider) {
+    return compact(items.map((rawItem, index) => getMenuItem(rawItem, index)));
+  }, [values?.items, getMenuItem]);
+
+  const popupMenuItems = useMemo(() => {
+    const popupItems: MenuProps["items"] = [...regularItems, ...templateItems];
+
+    if (values?.showDivider && popupItems.length > 1) {
       for (let i = 1; i < popupItems.length; i += 2) {
         popupItems.splice(i, 0, { type: "divider" });
       }
     }
 
     return popupItems;
-  }, [
-    values?.items,
-    values?.showDivider,
-    itemTemplate,
-    namedData,
-    getMenuItem,
-  ]);
+  }, [regularItems, templateItems, values?.showDivider]);
 
   const widgetToRender = useMemo(() => {
     if (!values?.widget) {
       throw Error("PopupMenu requires a widget to render the anchor.");
     }
-    const widget = cloneDeep(values.widget);
-    const actualWidget = unwrapWidget(widget);
+    const actualWidget = unwrapWidget(values.widget);
     return EnsembleRuntime.render([actualWidget]);
   }, [values?.widget]);
 
   const itemsMap = useMemo(() => {
     const map = new Map<string, PopupMenuItem>();
 
-    namedData.forEach((item, index) => {
-      map.set(`itemTemplate_${index}`, item as PopupMenuItem);
-    });
+    if (namedData.length > 0) {
+      namedData.forEach((item, index) => {
+        map.set(`itemTemplate_${index}`, item as PopupMenuItem);
+      });
+    }
 
-    if (values?.items) {
+    if (values?.items && values.items.length > 0) {
       const traverseItems = (
         items: PopupMenuItem[],
         path: number[] = [],
@@ -170,7 +192,7 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
         items.forEach((item, index) => {
           const newPath = [...path, index];
           map.set(`item_${newPath.join("_")}`, item);
-          if (item.items) {
+          if (item.items && item.items.length > 0) {
             // handle nested items
             traverseItems(item.items, newPath);
           }
@@ -194,10 +216,13 @@ export const PopupMenu: React.FC<PopupMenuProps> = ({
   const handleOnOpenChange = useCallback(
     (open: boolean) => {
       if (open) {
-        onTriggerAction?.callback({ open });
+        setHasBeenOpened(true);
+        if (onTriggerAction?.callback) {
+          onTriggerAction.callback({ open });
+        }
       }
     },
-    [onTriggerAction],
+    [onTriggerAction?.callback],
   );
 
   return (
