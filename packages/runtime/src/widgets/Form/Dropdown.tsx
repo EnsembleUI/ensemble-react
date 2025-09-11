@@ -1,5 +1,12 @@
-import { Select, Form } from "antd";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Select, Form, Space } from "antd";
+import { PlusCircleOutlined } from "@ant-design/icons";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   CustomScopeProvider,
   evaluate,
@@ -26,6 +33,7 @@ import { getComponentStyles } from "../../shared/styles";
 import type { HasBorder } from "../../shared/hasSchema";
 import type { FormInputProps } from "./types";
 import { EnsembleFormItem } from "./FormItem";
+import { updateFieldValue } from "./Form";
 
 const widgetName = "Dropdown";
 
@@ -56,6 +64,7 @@ export type DropdownProps = {
   autoComplete: Expression<boolean>;
   hintStyle?: EnsembleWidgetStyles;
   panel?: { [key: string]: unknown };
+  allowCreateOptions?: boolean;
 } & EnsembleWidgetProps<DropdownStyles> &
   HasItemTemplate & {
     "item-template"?: { value: Expression<string> };
@@ -64,10 +73,48 @@ export type DropdownProps = {
 const DropdownRenderer = (
   menu: React.ReactElement,
   panel?: { [key: string]: unknown },
+  newOption?: string,
+  onAddNewOption?: (value: string) => void,
 ): React.ReactElement => {
   const panelOption = useMemo(() => {
     return panel ? EnsembleRuntime.render([unwrapWidget(panel)]) : null;
   }, []);
+
+  // if we have a new option to add, show custom content along with the menu
+  if (newOption) {
+    return (
+      <>
+        <div style={{ padding: "10px 15px" }}>
+          <span>There are no matches</span>
+        </div>
+        <Space
+          style={{
+            padding: "10px 15px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+            width: "100%",
+            cursor: "pointer",
+          }}
+          onClick={() => onAddNewOption?.(newOption)}
+        >
+          <Space>
+            <PlusCircleOutlined />
+            <span>{`Add "${newOption}"`}</span>
+          </Space>
+        </Space>
+        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+        <div
+          onMouseDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+        >
+          {panelOption}
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -89,8 +136,10 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   const [selectedValue, setSelectedValue] = useState<
     string | number | undefined
   >();
-
+  const [newOption, setNewOption] = useState("");
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [items, setItems] = useState<SelectOption[]>([]);
+  const initializedRef = useRef(false);
   const {
     "item-template": itemTemplate,
     onChange,
@@ -124,8 +173,21 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     (value?: number | string) => {
       setSelectedValue(value);
       onChangeAction?.callback({ value });
+
+      // if the selected value is a new option that doesn't exist in items, add it
+      if (value && values?.allowCreateOptions) {
+        const optionExists = items.find((item) => item.value === value);
+        if (!optionExists) {
+          const newItem: SelectOption = {
+            label: value.toString(),
+            value: value,
+          };
+          setItems((prevItems) => [...prevItems, newItem]);
+        }
+      }
+      setNewOption("");
     },
-    [onChangeAction?.callback],
+    [onChangeAction?.callback, values?.allowCreateOptions, items],
   );
 
   const onItemSelectAction = useEnsembleAction(onItemSelect);
@@ -137,16 +199,60 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     [onItemSelectAction?.callback],
   );
 
+  const handleSearch = (value: string): void => {
+    if (!values?.allowCreateOptions) {
+      return;
+    }
+
+    const isOptionExist = items.find((option) =>
+      option.label.toString().toLowerCase().includes(value.toLowerCase()),
+    );
+
+    if (!isOptionExist && value.trim()) {
+      setNewOption(value);
+    } else {
+      setNewOption("");
+    }
+  };
+
+  const handleAddNewOption = useCallback(
+    (value: string) => {
+      const newItem: SelectOption = {
+        label: value,
+        value: value,
+      };
+      setItems((prevItems) => [...prevItems, newItem]);
+
+      setSelectedValue(value);
+      onChangeAction?.callback({ value });
+
+      // trigger form's onChange action
+      updateFieldValue(formInstance, values?.id ?? values?.label ?? "", value);
+
+      setNewOption("");
+      setIsOpen(false);
+    },
+    [onChangeAction?.callback],
+  );
+
   const { namedData } = useTemplateData({
     data: itemTemplate?.data,
     name: itemTemplate?.name,
   });
 
+  // initialize items from props only once
+  useEffect(() => {
+    if (values?.items && !initializedRef.current) {
+      setItems(values.items);
+      initializedRef.current = true;
+    }
+  }, [values?.items]);
+
   const options = useMemo(() => {
     let dropdownOptions: React.ReactNode[] | null = null;
 
-    if (values?.items) {
-      const tempOptions = values.items.map((item) => {
+    if (items.length > 0) {
+      const tempOptions = items.map((item) => {
         if (item.type === "group") {
           // Render a group item with sub-items
           return (
@@ -166,7 +272,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
         }
         return (
           <Select.Option
-            className={`${values.id || ""}_option`}
+            className={`${values?.id || ""}_option`}
             key={item.value}
             value={item.value}
           >
@@ -206,7 +312,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
     }
 
     return dropdownOptions;
-  }, [values?.items, namedData, itemTemplate]);
+  }, [items, namedData, itemTemplate]);
 
   const { backgroundColor: _, ...formItemStyles } = values?.styles ?? {};
 
@@ -303,17 +409,24 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
       <div ref={rootRef} style={{ flex: 1, ...formItemStyles }}>
         <EnsembleFormItem values={values}>
           <Select
+            key={`${id}-${items.length}`}
             allowClear={values?.allowClear ?? true}
             className={`${values?.styles?.names || ""} ${id}_input`}
             defaultValue={values?.value}
             disabled={values?.enabled === false}
             dropdownRender={(menu): React.ReactElement =>
-              DropdownRenderer(menu, values?.panel)
+              DropdownRenderer(
+                menu,
+                values?.panel,
+                newOption,
+                handleAddNewOption,
+              )
             }
             dropdownStyle={values?.styles}
             id={values?.id}
             onChange={handleChange}
             onDropdownVisibleChange={(state): void => setIsOpen(state)}
+            onSearch={values?.allowCreateOptions ? handleSearch : undefined}
             onSelect={onItemSelectCallback}
             open={isOpen}
             placeholder={
@@ -323,7 +436,10 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
                 ""
               )
             }
-            showSearch={Boolean(values?.autoComplete)}
+            showSearch={
+              Boolean(values?.autoComplete) ||
+              Boolean(values?.allowCreateOptions)
+            }
             value={values?.selectedValue}
           >
             {options}
