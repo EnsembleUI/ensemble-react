@@ -40,7 +40,7 @@ export type TextInputProps = {
     regexError?: string;
     maskError?: string;
   };
-  onKeyDown: EnsembleAction;
+  onKeyDown?: EnsembleAction;
 } & EnsembleWidgetProps<TextStyles> &
   FormInputProps<string>;
 

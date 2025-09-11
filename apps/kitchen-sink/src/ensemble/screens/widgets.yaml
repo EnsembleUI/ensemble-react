@@ -1,4 +1,6 @@
 View:
+  inputs:
+    - userId
   styles:
     scrollableView: true
   onLoad:
@@ -1295,6 +1297,182 @@ View:
                   onRefresh:
                     executeCode: |
                       console.log('refreshed')
+        - Column:
+            styles:
+              padding: 20
+            children:
+              - Text:
+                  text: Link Widget Examples
+                  styles:
+                    fontSize: 24
+                    fontWeight: bold
+                    marginBottom: 20
+
+              - Card:
+                  styles:
+                    marginBottom: 20
+                  children:
+                    - Text:
+                        text: Basic Internal Links
+                        styles:
+                          fontSize: 18
+                          fontWeight: 600
+                          marginBottom: 10
+                    - Link:
+                        url: /widgets
+                        widget:
+                          Text:
+                            text: Go to Widgets Page
+                    - Text:
+                        text: " | "
+                    - Link:
+                        url: /forms
+                        styles:
+                          color: blue
+                          hoverColor: red
+                        widget:
+                          Text:
+                            text: Forms Page (with hover effect)
+
+              - Card:
+                  styles:
+                    marginBottom: 20
+                  children:
+                    - Text:
+                        text: External Links
+                        styles:
+                          fontSize: 18
+                          fontWeight: 600
+                          marginBottom: 10
+                    - Link:
+                        url: https://google.com
+                        openNewTab: true
+                        widget:
+                          Text:
+                            text: Google (opens in new tab)
+                    - Text:
+                        text: " | "
+                    - Link:
+                        url: mailto:test@example.com
+                        widget:
+                          Text:
+                            text: Send Email
+
+              - Card:
+                  styles:
+                    marginBottom: 20
+                  children:
+                    - Text:
+                        text: Links with Custom Content
+                        styles:
+                          fontSize: 18
+                          fontWeight: 600
+                          marginBottom: 10
+                    - Link:
+                        url: /home
+                        styles:
+                          textDecoration: none
+                          color: darkblue
+                        widget:
+                          Row:
+                            children:
+                              - Icon:
+                                  name: home
+                                  styles:
+                                    marginRight: 8
+                              - Text:
+                                  text: Home Page
+                                  styles:
+                                    fontWeight: 500
+
+              - Card:
+                  styles:
+                    marginBottom: 20
+                  children:
+                    - Text:
+                        text: Link with Action
+                        styles:
+                          fontSize: 18
+                          fontWeight: 600
+                          marginBottom: 10
+                    - Link:
+                        url: /actions
+                        onTap:
+                          executeCode: |
+                            console.log('Link clicked!');
+                            ensemble.storage.set('lastClicked', 'Link to Actions');
+                        widget:
+                          Column:
+                            children:
+                              - Text:
+                                  text: Actions Page (with console log)
+
+              - Card:
+                  styles:
+                    marginBottom: 20
+                  children:
+                    - Text:
+                        text: Dynamic Link with Inputs
+                        styles:
+                          fontSize: 18
+                          fontWeight: 600
+                          marginBottom: 10
+                    - Button:
+                        label: Set User ID
+                        onTap:
+                          executeCode: ensemble.storage.set('userId', 123)
+                    - Text:
+                        text: Refresh to see the Current User ID:${userId || 'not set'}
+                    - Link:
+                        url: /widgets
+                        inputs: ${{"userId":ensemble.storage.get('userId')}}
+                        widget:
+                          Text:
+                            text: Go to Widgets (with inputs)
+
+              - Card:
+                  children:
+                    - Text:
+                        text: Styled Links
+                        styles:
+                          fontSize: 18
+                          fontWeight: 600
+                          marginBottom: 10
+                    - Row:
+                        children:
+                          - Link:
+                              url: /test1
+                              styles:
+                                color: green
+                                textDecoration: none
+                                fontSize: 16
+                              widget:
+                                Text:
+                                  text: Green Link
+                          - Text:
+                              text: " | "
+                          - Link:
+                              url: /test2
+                              styles:
+                                color: orange
+                                textDecoration: underline
+                                fontWeight: bold
+                              widget:
+                                Text:
+                                  text: Orange Bold Link
+                          - Text:
+                              text: " | "
+                          - Link:
+                              url: /test3
+                              styles:
+                                color: purple
+                                hoverColor: magenta
+                                textDecoration: none
+                                hoverTextDecoration: underline
+                              widget:
+                                Text:
+                                  text: Purple Link (hover effects)
+
         - Row:
             children:
               - Search:
