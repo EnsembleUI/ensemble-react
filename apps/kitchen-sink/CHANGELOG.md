@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.132
+
+### Patch Changes
+
+- 2a8ca11: Add Link widget and corresponding tests and Update types to use Expression for various properties in widgets
+- Updated dependencies [2a8ca11]
+  - @ensembleui/react-runtime@0.3.36
+
 ## 0.0.131
 
 ### Patch Changes
