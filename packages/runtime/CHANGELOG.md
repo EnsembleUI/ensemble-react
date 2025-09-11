@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.37
+
+### Patch Changes
+
+- 646d154: add support in Dropdown for creating new options using allowCreateOptions prop
+
 ## 0.3.36
 
 ### Patch Changes
