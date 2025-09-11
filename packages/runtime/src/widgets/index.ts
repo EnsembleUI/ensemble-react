@@ -40,3 +40,4 @@ export * from "./Stack";
 export * from "./QrCode";
 export * from "./ToolTip";
 export * from "./Html";
+export * from "./Link";

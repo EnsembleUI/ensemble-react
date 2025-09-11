@@ -24,6 +24,7 @@ import type {
   CardProps,
   FittedColumnProps,
   FittedRowProps,
+  LinkProps,
 } from "../widgets";
 import type { Menu, View } from "./screenSchema";
 import type { FlexboxProps, IconProps } from "./types";
@@ -194,6 +195,7 @@ export type Widget =
   // | { ConnectWithGoogle?: ConnectWithProvider }
   // | { ConnectWithMicrosoft?: ConnectWithProvider }
   | { Button?: ButtonProps }
+  | { Link?: LinkProps }
   // | { IconButton?: IconButton }
   // | { Address?: Address }
   | { Card?: ReplaceChildrenTemplate<CardProps> }
