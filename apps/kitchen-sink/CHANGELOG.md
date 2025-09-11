@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.133
+
+### Patch Changes
+
+- 646d154: add support in Dropdown for creating new options using allowCreateOptions prop
+- Updated dependencies [646d154]
+  - @ensembleui/react-runtime@0.3.37
+
 ## 0.0.132
 
 ### Patch Changes
