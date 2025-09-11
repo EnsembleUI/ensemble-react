@@ -48,7 +48,7 @@ const widgetName = "DataGrid";
 
 interface DataColumn {
   label?: Expression<{ [key: string]: unknown }>;
-  type: string;
+  type?: string;
   tooltip?: string;
   sort?: {
     compareFn: string;
@@ -66,13 +66,13 @@ interface DataColumn {
 
 export interface DataGridStyles extends Partial<EnsembleWidgetStyles> {
   headerStyle?: {
-    backgroundColor: Expression<string>;
-    fontSize: Expression<string>;
-    fontFamily: Expression<string>;
-    fontWeight: Expression<string>;
-    textColor: Expression<string>;
-    hasDivider: boolean;
-    borderBottom: string;
+    backgroundColor?: Expression<string>;
+    fontSize?: Expression<string>;
+    fontFamily?: Expression<string>;
+    fontWeight?: Expression<string>;
+    textColor?: Expression<string>;
+    hasDivider?: boolean;
+    borderBottom?: string;
   };
   styles?: EnsembleWidgetStyles;
 }

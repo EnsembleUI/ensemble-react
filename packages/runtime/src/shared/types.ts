@@ -12,7 +12,7 @@ export type EnsembleWidgetStyles = Omit<React.CSSProperties, "direction"> & {
    */
   names?: Expression<string>;
   className?: Expression<string>;
-  visible?: boolean;
+  visible?: Expression<boolean>;
 };
 
 export interface EnsembleWidgetProps<
@@ -38,12 +38,12 @@ export type BaseTextProps = {
 export interface FlexboxStyles {
   mainAxis?: string;
   crossAxis?: string;
-  gap?: number;
-  margin?: number | string;
-  padding?: number | string;
-  maxWidth?: string;
-  minWidth?: string;
-  visible?: boolean;
+  gap?: Expression<number>;
+  margin?: Expression<number | string>;
+  padding?: Expression<number | string>;
+  maxWidth?: Expression<string>;
+  minWidth?: Expression<string>;
+  visible?: Expression<boolean>;
 }
 
 export type FlexboxProps = {

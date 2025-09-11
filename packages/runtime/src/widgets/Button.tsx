@@ -27,11 +27,13 @@ export type ButtonProps = {
     textColor?: string;
     gap?: string | number;
   };
-  loading?: boolean;
+  loading?: Expression<boolean>;
 } & EnsembleWidgetProps;
 
 export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
-  const [loading, setLoading] = useState<boolean>(rest.loading || false);
+  const [loading, setLoading] = useState<Expression<boolean>>(
+    rest.loading || false,
+  );
   const action = useEnsembleAction(onTap);
   const onClickCallback = useCallback(
     (e?: MouseEvent) => {
@@ -61,7 +63,7 @@ export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
       <AntButton
         disabled={values?.disabled ?? false}
         htmlType={values?.submitForm === true ? "submit" : "button"}
-        loading={loading}
+        loading={Boolean(loading)}
         onClick={onClickCallback}
         ref={rootRef}
         style={{

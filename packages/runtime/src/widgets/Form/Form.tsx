@@ -24,8 +24,8 @@ export type FormProps = {
   onSubmit?: EnsembleAction;
   onChange?: EnsembleAction;
   styles?: {
-    labelPosition: "top" | "start" | "none";
-    labelOverflow: "wrap" | "visible" | "clip" | "ellipsis";
+    labelPosition?: "top" | "start" | "none";
+    labelOverflow?: "wrap" | "visible" | "clip" | "ellipsis";
   } & EnsembleWidgetStyles;
 } & EnsembleWidgetProps;
 
