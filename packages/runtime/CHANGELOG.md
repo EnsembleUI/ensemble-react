@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.36
+
+### Patch Changes
+
+- 2a8ca11: Add Link widget and corresponding tests and Update types to use Expression for various properties in widgets
+
 ## 0.3.35
 
 ### Patch Changes
