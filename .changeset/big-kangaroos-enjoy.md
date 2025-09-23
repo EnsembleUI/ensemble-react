@@ -2,4 +2,4 @@
 "@ensembleui/react-runtime": patch
 ---
 
-enhance DataGrid with rowHoverStyle and hideSelectAll props for improved styling and functionality
+enhance DataGrid with rowHoverBg and rowSelectedHoverBg styles

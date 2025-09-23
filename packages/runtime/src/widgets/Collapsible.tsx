@@ -233,6 +233,12 @@ export const Collapsible: React.FC<CollapsibleProps> = (props) => {
         expandIconPosition={props.expandIconPosition}
         items={[...collapsibleItems, ...templateItems]}
         onChange={handleCollapsibleChange}
+        style={{
+          ...values?.styles,
+          ...(values?.styles?.visible === false
+            ? { display: "none" }
+            : undefined),
+        }}
       />
     </ConfigProvider>
   );
