@@ -540,6 +540,9 @@ View:
                     name: dummyData
                     template:
                       DataRow:
+                        styles:
+                          backgroundColor: lime
+                        rowHoverBg: yellow
                         children:
                           - Text:
                               id: ${'x_'+index}
@@ -1131,6 +1134,8 @@ View:
                   size: small
                   value: true
                   leadingText: Set to true and requred
+                  htmlAttributes:
+                    title: tooltip text
         - Card:
             styles:
               width: unset

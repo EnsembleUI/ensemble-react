@@ -36,7 +36,7 @@ export type SwitchProps = {
 
 export const SwitchWidget: React.FC<SwitchProps> = (props) => {
   const [value, setValue] = useState(props.value);
-  const { values } = useRegisterBindings(
+  const { values, rootRef } = useRegisterBindings(
     { ...props, value, widgetName },
     props.id,
     {
@@ -110,6 +110,7 @@ export const SwitchWidget: React.FC<SwitchProps> = (props) => {
         loading={values?.loading}
         onChange={handleChange}
         size={values?.size}
+        ref={rootRef}
       />
       {trailingContent}
     </EnsembleFormItem>

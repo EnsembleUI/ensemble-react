@@ -1,4 +1,4 @@
-import { Table, type TableProps } from "antd";
+import { Table, type TableProps, ConfigProvider } from "antd";
 import type { SorterResult } from "antd/es/table/interface";
 import isEqual from "react-fast-compare";
 import {
@@ -65,7 +65,13 @@ interface DataColumn {
   visible?: boolean;
 }
 
-export interface DataGridStyles extends Partial<EnsembleWidgetStyles> {
+export interface DataGridStyles
+  extends Partial<
+    EnsembleWidgetStyles & {
+      rowHoverBg?: Expression<string>;
+      rowSelectedHoverBg?: Expression<string>;
+    }
+  > {
   headerStyle?: {
     backgroundColor?: Expression<string>;
     fontSize?: Expression<string>;
@@ -85,7 +91,6 @@ export interface DataGridRowTemplate {
     onTap?: EnsembleAction;
     children?: EnsembleWidget[];
     styles?: EnsembleWidgetStyles;
-    rowHoverStyle?: EnsembleWidgetStyles;
   } & HasItemTemplate;
 }
 
@@ -117,7 +122,6 @@ export type GridProps = {
   totalRows?: number;
   curPage?: number;
   virtual?: boolean;
-  hideSelectAll?: boolean;
 } & EnsembleWidgetProps<DataGridStyles>;
 
 function djb2Hash(str: string): number {
@@ -367,7 +371,6 @@ export const DataGrid: React.FC<GridProps> = (props) => {
       pageSize,
       curPage,
       widgetName,
-      rowHoverStyle: itemTemplate.template.properties.rowHoverStyle,
     },
     props.id,
     {
@@ -379,7 +382,6 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     },
   );
   const headerStyle = values?.styles?.headerStyle;
-  const rowHoverStyle = values?.rowHoverStyle;
 
   useEffect(() => {
     setPageSize(values?.pageSize || 10);
@@ -517,140 +519,158 @@ export const DataGrid: React.FC<GridProps> = (props) => {
   return (
     <div id={resolvedWidgetId} ref={containerRef}>
       <div ref={rootRef}>
-        <Table
-          components={components}
-          dataSource={namedData}
-          key={resolvedWidgetId}
-          onChange={onChange}
-          onRow={(record, recordIndex) => ({
-            "data-index": recordIndex,
-            "data-record": record,
-            "data-styles": itemTemplate.template.properties.styles,
-            onClick: itemTemplate.template.properties.onTap
-              ? (): unknown => onTapActionCallback(record, recordIndex)
-              : undefined,
-          })}
-          pagination={paginationObject}
-          rowKey={(data: unknown) => {
-            const identifier: string = evaluate(
-              defaultScreenContext,
-              itemTemplate.key,
-              {
-                [itemTemplate.name]: get(data, itemTemplate.name) as unknown,
+        <ConfigProvider
+          theme={{
+            components: {
+              Table: {
+                rowHoverBg: values?.styles?.rowHoverBg,
+                rowSelectedHoverBg: values?.styles?.rowSelectedHoverBg,
               },
-            );
-            if (identifier) {
-              return identifier;
-            }
-            const res = djb2Hash(JSON.stringify(data));
-            return String(res);
+            },
           }}
-          rowSelection={
-            allowSelection
-              ? {
-                  columnWidth: values?.selectionColWidth,
-                  type: selectionType,
-                  onChange: (selectedRowKeys, selectedRows): void => {
-                    setRowsKey(selectedRowKeys);
-                    setRowsSelected(selectedRows);
-                    if (rest.onRowsSelected) {
-                      onRowsSelectedCallback(selectedRowKeys, selectedRows);
-                    }
-                  },
-                  getCheckboxProps: (record) => {
-                    return {
-                      disabled: handleRowSelectableOrNot(record),
-                    };
-                  },
-                  defaultSelectedRowKeys: values?.defaultSelectedRowKeys,
-                  selectedRowKeys: rowsKey.length ? rowsKey : undefined,
-                  hideSelectAll: values?.hideSelectAll,
-                }
-              : undefined
-          }
-          scroll={
-            values?.scroll
-              ? {
-                  y: values.scroll.scrollHeight,
-                  x: values.scroll.scrollWidth || "max-content",
-                }
-              : undefined
-          }
-          style={{
-            width: "100%",
-            ...values?.styles,
-            ...(values?.styles?.visible === false
-              ? { display: "none" }
-              : undefined),
-          }}
-          tableLayout="auto"
-          virtual={values?.virtual}
         >
-          {dataColumns.map((col, colIndex) => {
-            return (
-              <Table.Column
-                dataIndex={itemTemplate.name}
-                filters={col.filter?.values.map(({ label, value }) => ({
-                  text: label,
-                  value,
-                }))}
-                hidden={col.visible === false}
-                key={colIndex}
-                minWidth={col.width ?? 100}
-                onFilter={
-                  col.filter?.onFilter
-                    ? (value, record): boolean =>
-                        Boolean(
-                          evaluate(defaultScreenContext, col.filter?.onFilter, {
-                            value,
-                            record,
-                            [itemTemplate.name]: get(
-                              record,
-                              itemTemplate.name,
-                            ) as unknown,
-                          }),
-                        )
-                    : undefined
-                }
-                onHeaderCell={
-                  values?.allowResizableColumns
-                    ? () => ({
-                        width: col.width,
-                        onResize: handleResize(
-                          colIndex,
-                        ) as ReactEventHandler<any>,
-                      })
-                    : undefined
-                }
-                render={(_, record, rowIndex): ReactElement => {
-                  return (
-                    <DataCell
-                      columnIndex={colIndex}
-                      data={record}
-                      rowIndex={rowIndex}
-                      scopeName={itemTemplate.name}
-                      template={itemTemplate.template}
-                    />
-                  );
-                }}
-                shouldCellUpdate={(record, prev) => !isEqual(record, prev)}
-                sorter={
-                  col.sort?.compareFn
-                    ? (a, b): number =>
-                        Number(
-                          evaluate(defaultScreenContext, col.sort?.compareFn, {
-                            a,
-                            b,
-                          }),
-                        )
-                    : undefined
-                }
-                title={col.label as string | React.ReactNode}
-                width={col.width}
-              />
-            );
-          })}
-        </Table>
+          <Table
+            components={components}
+            dataSource={namedData}
+            key={resolvedWidgetId}
+            onChange={onChange}
+            onRow={(record, recordIndex) => ({
+              "data-index": recordIndex,
+              "data-record": record,
+              "data-styles": itemTemplate.template.properties.styles,
+              onClick: itemTemplate.template.properties.onTap
+                ? (): unknown => onTapActionCallback(record, recordIndex)
+                : undefined,
+            })}
+            pagination={paginationObject}
+            rowKey={(data: unknown) => {
+              const identifier: string = evaluate(
+                defaultScreenContext,
+                itemTemplate.key,
+                {
+                  [itemTemplate.name]: get(data, itemTemplate.name) as unknown,
+                },
+              );
+              if (identifier) {
+                return identifier;
+              }
+              const res = djb2Hash(JSON.stringify(data));
+              return String(res);
+            }}
+            rowSelection={
+              allowSelection
+                ? {
+                    columnWidth: values?.selectionColWidth,
+                    type: selectionType,
+                    onChange: (selectedRowKeys, selectedRows): void => {
+                      setRowsKey(selectedRowKeys);
+                      setRowsSelected(selectedRows);
+                      if (rest.onRowsSelected) {
+                        onRowsSelectedCallback(selectedRowKeys, selectedRows);
+                      }
+                    },
+                    getCheckboxProps: (record) => {
+                      return {
+                        disabled: handleRowSelectableOrNot(record),
+                      };
+                    },
+                    defaultSelectedRowKeys: values?.defaultSelectedRowKeys,
+                    selectedRowKeys: rowsKey.length ? rowsKey : undefined,
+                  }
+                : undefined
+            }
+            scroll={
+              values?.scroll
+                ? {
+                    y: values.scroll.scrollHeight,
+                    x: values.scroll.scrollWidth || "max-content",
+                  }
+                : undefined
+            }
+            style={{
+              width: "100%",
+              ...values?.styles,
+              ...(values?.styles?.visible === false
+                ? { display: "none" }
+                : undefined),
+            }}
+            tableLayout="auto"
+            virtual={values?.virtual}
+          >
+            {dataColumns.map((col, colIndex) => {
+              return (
+                <Table.Column
+                  dataIndex={itemTemplate.name}
+                  filters={col.filter?.values.map(({ label, value }) => ({
+                    text: label,
+                    value,
+                  }))}
+                  hidden={col.visible === false}
+                  key={colIndex}
+                  minWidth={col.width ?? 100}
+                  onFilter={
+                    col.filter?.onFilter
+                      ? (value, record): boolean =>
+                          Boolean(
+                            evaluate(
+                              defaultScreenContext,
+                              col.filter?.onFilter,
+                              {
+                                value,
+                                record,
+                                [itemTemplate.name]: get(
+                                  record,
+                                  itemTemplate.name,
+                                ) as unknown,
+                              },
+                            ),
+                          )
+                      : undefined
+                  }
+                  onHeaderCell={
+                    values?.allowResizableColumns
+                      ? () => ({
+                          width: col.width,
+                          onResize: handleResize(
+                            colIndex,
+                          ) as ReactEventHandler<any>,
+                        })
+                      : undefined
+                  }
+                  render={(_, record, rowIndex): ReactElement => {
+                    return (
+                      <DataCell
+                        columnIndex={colIndex}
+                        data={record}
+                        rowIndex={rowIndex}
+                        scopeName={itemTemplate.name}
+                        template={itemTemplate.template}
+                      />
+                    );
+                  }}
+                  shouldCellUpdate={(record, prev) => !isEqual(record, prev)}
+                  sorter={
+                    col.sort?.compareFn
+                      ? (a, b): number =>
+                          Number(
+                            evaluate(
+                              defaultScreenContext,
+                              col.sort?.compareFn,
+                              {
+                                a,
+                                b,
+                              },
+                            ),
+                          )
+                      : undefined
+                  }
+                  title={col.label as string | React.ReactNode}
+                  width={col.width}
+                />
+              );
+            })}
+          </Table>
+        </ConfigProvider>
         <style>
           {`
           .react-resizable {
@@ -707,20 +727,6 @@ export const DataGrid: React.FC<GridProps> = (props) => {
             ${
               !headerStyle?.borderBottom ? "border-bottom: none !important" : ""
             }
-          }
-
-          ${
-            rowHoverStyle
-              ? `#${resolvedWidgetId} .ant-table-tbody > tr > td {
-                  transition: all 0.2s ease-in-out;
-                }
-                #${resolvedWidgetId} .ant-table-tbody > tr:hover > td {
-                  ${getComponentStyles("", rowHoverStyle, true, true)}
-                }
-                #${resolvedWidgetId} .ant-table-tbody > tr.ant-table-row:hover > td {
-                  ${getComponentStyles("", rowHoverStyle, true, true)}
-                }`
-              : ""
           }
 		    `}
         </style>
