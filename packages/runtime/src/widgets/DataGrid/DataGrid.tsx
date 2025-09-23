@@ -40,6 +40,7 @@ import type {
   EnsembleWidgetStyles,
   HasItemTemplate,
 } from "../../shared/types";
+import { getComponentStyles } from "../../shared/styles";
 import { useEnsembleAction } from "../../runtime/hooks/useEnsembleAction";
 import { EnsembleRuntime } from "../../runtime";
 import { DataCell } from "./DataCell";
@@ -84,6 +85,7 @@ export interface DataGridRowTemplate {
     onTap?: EnsembleAction;
     children?: EnsembleWidget[];
     styles?: EnsembleWidgetStyles;
+    rowHoverStyle?: EnsembleWidgetStyles;
   } & HasItemTemplate;
 }
 
@@ -115,6 +117,7 @@ export type GridProps = {
   totalRows?: number;
   curPage?: number;
   virtual?: boolean;
+  hideSelectAll?: boolean;
 } & EnsembleWidgetProps<DataGridStyles>;
 
 function djb2Hash(str: string): number {
@@ -364,6 +367,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
       pageSize,
       curPage,
       widgetName,
+      rowHoverStyle: itemTemplate.template.properties.rowHoverStyle,
     },
     props.id,
     {
@@ -375,6 +379,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
     },
   );
   const headerStyle = values?.styles?.headerStyle;
+  const rowHoverStyle = values?.rowHoverStyle;
 
   useEffect(() => {
     setPageSize(values?.pageSize || 10);
@@ -559,6 +564,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
                   },
                   defaultSelectedRowKeys: values?.defaultSelectedRowKeys,
                   selectedRowKeys: rowsKey.length ? rowsKey : undefined,
+                  hideSelectAll: values?.hideSelectAll,
                 }
               : undefined
           }
@@ -701,6 +707,20 @@ export const DataGrid: React.FC<GridProps> = (props) => {
             ${
               !headerStyle?.borderBottom ? "border-bottom: none !important" : ""
             }
+          }
+
+          ${
+            rowHoverStyle
+              ? `#${resolvedWidgetId} .ant-table-tbody > tr > td {
+                  transition: all 0.2s ease-in-out;
+                }
+                #${resolvedWidgetId} .ant-table-tbody > tr:hover > td {
+                  ${getComponentStyles("", rowHoverStyle, true, true)}
+                }
+                #${resolvedWidgetId} .ant-table-tbody > tr.ant-table-row:hover > td {
+                  ${getComponentStyles("", rowHoverStyle, true, true)}
+                }`
+              : ""
           }
 		    `}
         </style>
