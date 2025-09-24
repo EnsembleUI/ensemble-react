@@ -59,6 +59,9 @@ export const navigateModalScreen = (
   inputs?: { [key: string]: unknown },
   title?: React.ReactNode[],
   onClose?: () => void,
+  context?: {
+    [key: string]: unknown;
+  },
 ): void => {
   const hasOptions = !isString(action);
   const screenName = hasOptions ? action.name : action;
@@ -84,6 +87,8 @@ export const navigateModalScreen = (
       screen={matchingScreen}
     />,
     modalOptions,
+    false,
+    context,
   );
 };
 
