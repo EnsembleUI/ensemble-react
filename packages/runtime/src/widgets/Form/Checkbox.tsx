@@ -5,7 +5,7 @@ import {
   unwrapWidget,
   useRegisterBindings,
 } from "@ensembleui/react-framework";
-import { isString } from "lodash-es";
+import { cloneDeep, isString } from "lodash-es";
 import type { EnsembleWidgetProps } from "../../shared/types";
 import { EnsembleRuntime } from "../../runtime";
 import { WidgetRegistry } from "../../registry";
@@ -39,7 +39,9 @@ export const CheckboxWidget: React.FC<CheckBoxProps> = (props) => {
         return values.trailingText;
       }
 
-      return EnsembleRuntime.render([unwrapWidget(values.trailingText)]);
+      return EnsembleRuntime.render([
+        unwrapWidget(cloneDeep(values.trailingText)),
+      ]);
     }
   }, [values?.trailingText]);
 

@@ -436,6 +436,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
                 ""
               )
             }
+            optionFilterProp="children"
             showSearch={
               Boolean(values?.autoComplete) ||
               Boolean(values?.allowCreateOptions)
