@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.134
+
+### Patch Changes
+
+- 0760e27: fix search in Dropdown when autoComplete is used
+- Updated dependencies [0760e27]
+  - @ensembleui/react-runtime@0.3.38
+
 ## 0.0.133
 
 ### Patch Changes
