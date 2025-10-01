@@ -42,6 +42,16 @@ View:
                 inputs:
                   storVar: ${ensemble.storage.get('inputVal')}
                   userVar: ${ensemble.user}
+                title:
+                  Column:
+                    children:
+                      - Text:
+                          text: Modal title
+                      - Text:
+                          text: Modal subtitle
+                          styles:
+                            fontSize: ${typography.fontSize['14']}
+                            fontWeight: ${typography.fontWeight.light}
         - Button:
             label: show dialog
             onTap:
