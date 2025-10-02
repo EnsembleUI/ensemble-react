@@ -83,6 +83,7 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     isDialog: boolean;
     key: string;
     context?: { [key: string]: unknown };
+    title?: React.ReactNode;
   }>();
   const evaluatedOptions = useEvaluate(
     nextModal
@@ -125,7 +126,10 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
       const nextModalState = {
         visible: true,
         content: nextModal.content,
-        options: evaluatedOptions.options,
+        options: {
+          ...evaluatedOptions.options,
+          ...(nextModal.title ? { title: nextModal.title } : {}),
+        },
         key: nextModal.key,
         isDialog: Boolean(nextModal.isDialog),
       };
@@ -154,12 +158,14 @@ export const ModalWrapper: React.FC<PropsWithChildren> = ({ children }) => {
       isDialog = false,
       modalContext?: { [key: string]: unknown },
     ): void => {
+      const hasStringTitle = isString(options.title);
       setNextModal({
         content,
-        options: omit(options, [!isString(options.title) ? "title" : ""]),
+        options: hasStringTitle ? options : omit(options, "title"),
         isDialog,
         context: modalContext,
         key: generateRandomString(10),
+        title: hasStringTitle ? undefined : options.title,
       });
     },
     [],
