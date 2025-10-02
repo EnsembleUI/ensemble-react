@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.39
+
+### Patch Changes
+
+- 79c3efb: ensure navigateModalScreen supports custom widget title
+
 ## 0.3.38
 
 ### Patch Changes

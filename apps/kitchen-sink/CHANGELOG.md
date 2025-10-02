@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.135
+
+### Patch Changes
+
+- 79c3efb: ensure navigateModalScreen supports custom widget title
+- Updated dependencies [79c3efb]
+  - @ensembleui/react-runtime@0.3.39
+
 ## 0.0.134
 
 ### Patch Changes
