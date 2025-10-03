@@ -34,7 +34,12 @@ View:
                     names: heading-3
                   text: Execute Conditional Action
               - Button:
-                  label: Tap to pick an image
+                  body:
+                    Text:
+                      text: Tap to pick an image
+                      styles:
+                        fontFamily: fantasy
+                        color: green
                   onTap:
                     pickFiles:
                       allowedExtensions: ["jpg", "png", "pdf", "docs"]
