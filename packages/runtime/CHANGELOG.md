@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.40
+
+### Patch Changes
+
+- a0949f1: support custom widget in label of Button widget
+
 ## 0.3.39
 
 ### Patch Changes
