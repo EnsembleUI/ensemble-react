@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.137
+
+### Patch Changes
+
+- efd20d0: enhance Button's label check before unwrapping it
+- Updated dependencies [efd20d0]
+  - @ensembleui/react-runtime@0.3.41
+
 ## 0.0.136
 
 ### Patch Changes
