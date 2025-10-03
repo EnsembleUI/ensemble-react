@@ -13,7 +13,7 @@ import type { EnsembleWidgetProps, IconProps } from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { Icon } from "./Icon";
 import { EnsembleRuntime } from "../runtime";
-import { isString } from "lodash-es";
+import { isObject } from "lodash-es";
 
 const widgetName = "Button";
 
@@ -63,7 +63,7 @@ export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
   const label = useMemo(() => {
     const rawLabel = values?.label;
     if (!rawLabel) return null;
-    if (isString(rawLabel)) return rawLabel;
+    if (!isObject(rawLabel)) return rawLabel;
     return EnsembleRuntime.render([unwrapWidget(rawLabel)]);
   }, [values?.label]);
 
