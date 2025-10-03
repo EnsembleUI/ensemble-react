@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.41
+
+### Patch Changes
+
+- efd20d0: enhance Button's label check before unwrapping it
+
 ## 0.3.40
 
 ### Patch Changes
