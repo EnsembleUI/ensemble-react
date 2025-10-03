@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.136
+
+### Patch Changes
+
+- a0949f1: support custom widget in label of Button widget
+- Updated dependencies [a0949f1]
+  - @ensembleui/react-runtime@0.3.40
+
 ## 0.0.135
 
 ### Patch Changes
