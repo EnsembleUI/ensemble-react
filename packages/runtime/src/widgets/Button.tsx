@@ -1,5 +1,5 @@
 import type { EnsembleAction, Expression } from "@ensembleui/react-framework";
-import { useRegisterBindings } from "@ensembleui/react-framework";
+import { unwrapWidget, useRegisterBindings } from "@ensembleui/react-framework";
 import { Button as AntButton, Form as AntForm } from "antd";
 import {
   type MouseEvent,
@@ -12,11 +12,13 @@ import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps, IconProps } from "../shared/types";
 import { useEnsembleAction } from "../runtime/hooks/useEnsembleAction";
 import { Icon } from "./Icon";
+import { EnsembleRuntime } from "../runtime";
+import { isString } from "lodash-es";
 
 const widgetName = "Button";
 
 export type ButtonProps = {
-  label: Expression<string>;
+  label: Expression<string> | { [key: string]: unknown };
   onTap?: EnsembleAction;
   submitForm?: boolean;
   startingIcon?: IconProps;
@@ -58,10 +60,18 @@ export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
     }
   }, [values?.loading]);
 
+  const label = useMemo(() => {
+    const rawLabel = values?.label;
+    if (!rawLabel) return null;
+    if (isString(rawLabel)) return rawLabel;
+    return EnsembleRuntime.render([unwrapWidget(rawLabel)]);
+  }, [values?.label]);
+
   const ButtonComponent = useMemo(() => {
     return (
       <AntButton
         disabled={values?.disabled ?? false}
+        className={values?.styles?.names}
         htmlType={values?.submitForm === true ? "submit" : "button"}
         loading={Boolean(loading)}
         onClick={onClickCallback}
@@ -82,7 +92,7 @@ export const Button: React.FC<ButtonProps> = ({ id, onTap, ...rest }) => {
           <Icon {...values.startingIcon} />
         ) : null}
 
-        {!loading && <>{values?.label}</>}
+        {!loading && <>{label}</>}
 
         {!loading && values?.endingIcon ? (
           <Icon {...values.endingIcon} />
