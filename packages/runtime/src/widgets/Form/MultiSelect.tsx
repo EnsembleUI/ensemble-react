@@ -75,7 +75,10 @@ export type MultiSelectProps = {
     debounceMs: number;
   } & EnsembleAction;
   hintStyle?: EnsembleWidgetStyles;
+  /** Whether to allow creating new options */
   allowCreateOptions?: boolean;
+  /** Whether to hide the "No matches" block */
+  hideNoMatchesBlock?: Expression<boolean>;
   /**	The max number of items can be selected */
   maxCount: Expression<number>;
   /** Max tag count to show */
@@ -252,10 +255,8 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
     option?: MultiSelectOption,
   ): boolean => {
     return (
-      option?.label
-        .toString()
-        ?.toLowerCase()
-        ?.startsWith(input.toLowerCase()) || false
+      option?.label.toString()?.toLowerCase()?.includes(input.toLowerCase()) ||
+      false
     );
   };
 
@@ -326,7 +327,11 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
   };
 
   const newOptionRender = (menu: ReactElement): ReactElement => (
-    <Dropdown menu={menu} newOption={newOption} />
+    <Dropdown
+      menu={menu}
+      newOption={newOption}
+      hideNoMatchesBlock={Boolean(values?.hideNoMatchesBlock)}
+    />
   );
 
   const notFoundContentRenderer = useMemo(() => {
@@ -456,13 +461,18 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
 interface DropdownProps {
   menu: ReactElement;
   newOption: string;
+  hideNoMatchesBlock: boolean;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ menu, newOption }) => {
+const Dropdown: React.FC<DropdownProps> = ({
+  menu,
+  newOption,
+  hideNoMatchesBlock,
+}) => {
   return (
     <>
       {menu}
-      {newOption ? (
+      {newOption && !hideNoMatchesBlock ? (
         <Space
           style={{
             padding: "10px 15px",
