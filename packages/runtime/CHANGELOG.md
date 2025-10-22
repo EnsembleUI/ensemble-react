@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.42
+
+### Patch Changes
+
+- b0f877c: enhance MultiSelect with visibility control of new option via 'hideNoMatchesBlock' prop
+
 ## 0.3.41
 
 ### Patch Changes

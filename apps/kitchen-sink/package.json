@@ -1,6 +1,6 @@
 {
   "name": "@ensembleui/react-kitchen-sink",
-  "version": "0.0.137",
+  "version": "0.0.138",
   "private": true,
   "dependencies": {
     "@ensembleui/react-framework": "workspace:*",
