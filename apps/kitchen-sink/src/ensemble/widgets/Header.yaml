@@ -2,7 +2,7 @@ Widget:
   inputs:
     - message
   onLoad:
-    executeCode: 
+    executeCode:
       body: |
         console.log("hello from header", message);
       onComplete:
@@ -58,6 +58,8 @@ Widget:
             styles:
               gap: 10
             children:
+              - Text:
+                  text: Selected Page ${selectedPage}
               - Avatar:
                   styles:
                     backgroundColor: "#171B2A"

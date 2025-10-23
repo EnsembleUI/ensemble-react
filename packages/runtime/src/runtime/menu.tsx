@@ -166,10 +166,12 @@ export const EnsembleMenu: React.FC<{
   const [isCollapsed, setIsCollapsed] = useState<boolean>(
     type === EnsembleMenuModelType.Drawer,
   );
+  const [selectedItem, setSelectedItem] = useState<string | undefined>();
 
   const outletContext = {
     isMenuCollapsed: isCollapsed,
     setMenuCollapsed: setIsCollapsed,
+    selectedPage: selectedItem,
   };
   const { id, items: rawItems, styles, header, footer, onCollapse } = menu;
   // custom items may contain their own bindings to be evaluated in dynamic context
@@ -178,7 +180,14 @@ export const EnsembleMenu: React.FC<{
   );
 
   const { values } = useRegisterBindings(
-    { itemInputs, styles, header, footer, isCollapsed },
+    {
+      itemInputs,
+      styles,
+      header,
+      footer,
+      isCollapsed,
+      selectedPage: selectedItem,
+    },
     id,
     {
       setIsCollapsed,
@@ -186,7 +195,6 @@ export const EnsembleMenu: React.FC<{
   );
 
   const location = useLocation();
-  const [selectedItem, setSelectedItem] = useState<string | undefined>();
 
   const items = useMemo(
     () =>
