@@ -1,7 +1,7 @@
 import type { Expression, EnsembleAction } from "@ensembleui/react-framework";
 import { useRegisterBindings, unwrapWidget } from "@ensembleui/react-framework";
 import { useMemo, useCallback } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { cloneDeep } from "lodash-es";
 import { WidgetRegistry } from "../registry";
 import type { EnsembleWidgetProps } from "../shared/types";
@@ -41,6 +41,7 @@ export type LinkProps = {
 
 export const Link: React.FC<LinkProps> = ({ id, onTap, widget, ...rest }) => {
   const action = useEnsembleAction(onTap);
+  const navigate = useNavigate();
 
   const { values, rootRef } = useRegisterBindings({ ...rest, widgetName }, id);
 
@@ -92,6 +93,25 @@ export const Link: React.FC<LinkProps> = ({ id, onTap, widget, ...rest }) => {
     );
   }, [values?.url]);
 
+  // Intercept normal left-clicks (no modifiers) during capture phase
+  // This ensures navigation is handled client-side even if the child (e.g., Button)
+  // calls stopPropagation in its onClick. Right/middle clicks remain native.
+  const onClickCapture = useCallback(
+    (e: React.MouseEvent) => {
+      if (!values?.url || isExternalUrl) return;
+      // only handle left click without modifiers
+      if (e.button !== 0) return;
+      if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
+
+      e.preventDefault();
+      navigate(values.url, {
+        replace: Boolean(values.replace),
+        state: values.inputs,
+      });
+    },
+    [navigate, values?.url, values?.replace, values?.inputs, isExternalUrl],
+  );
+
   if (!values?.url) {
     return (
       <span ref={rootRef} style={linkStyles}>
@@ -130,6 +150,7 @@ export const Link: React.FC<LinkProps> = ({ id, onTap, widget, ...rest }) => {
   // For internal navigation, use React Router Link
   return (
     <RouterLink
+      onClickCapture={onClickCapture}
       onClick={handleClick}
       onMouseEnter={(e): void => {
         if (hoverStyles.color) e.currentTarget.style.color = hoverStyles.color;
