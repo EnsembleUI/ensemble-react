@@ -1,5 +1,15 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.139
+
+### Patch Changes
+
+- 6809ae3: include selectedPage of EnsembleMenu in js context and bindings
+- ea2a317: prevent full app reload when using Button under Link widget
+- Updated dependencies [6809ae3]
+- Updated dependencies [ea2a317]
+  - @ensembleui/react-runtime@0.3.43
+
 ## 0.0.138
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @ensembleui/react-runtime
 
+## 0.3.43
+
+### Patch Changes
+
+- 6809ae3: include selectedPage of EnsembleMenu in js context and bindings
+- ea2a317: prevent full app reload when using Button under Link widget
+
 ## 0.3.42
 
 ### Patch Changes
