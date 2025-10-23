@@ -443,6 +443,35 @@ describe("Link Widget", () => {
 
     consoleSpy.mockRestore();
   });
+
+  test("navigates on left-click when Link wraps Button (capture-phase)", async () => {
+    let currentLocation: ReturnType<typeof useLocation>;
+
+    const LocationTracker = (): null => {
+      const location = useLocation();
+      currentLocation = location;
+      return null;
+    };
+
+    render(
+      <MemoryRouter initialEntries={["/one/foo"]}>
+        <LocationTracker />
+        <Link
+          url="/two/abc"
+          widget={{
+            Button: { label: "Open Link" },
+          }}
+        />
+      </MemoryRouter>,
+    );
+
+    const buttonText = screen.getByText("Open Link");
+    fireEvent.click(buttonText, { button: 0 });
+
+    await waitFor(() => {
+      expect(currentLocation.pathname).toBe("/two/abc");
+    });
+  });
 });
 
 describe("Link Widget Integration Tests", () => {

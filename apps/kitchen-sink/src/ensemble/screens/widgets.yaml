@@ -1331,8 +1331,8 @@ View:
                           color: blue
                           hoverColor: red
                         widget:
-                          Text:
-                            text: Forms Page (with hover effect)
+                          Button:
+                            label: Forms Page (with hover effect)
 
               - Card:
                   styles:
