@@ -59,6 +59,8 @@ interface MenuItemProps {
   hasNotifications?: boolean;
   openNewTab?: boolean;
   visible?: boolean;
+  expanded?: boolean;
+  children?: MenuItemProps[];
   customItem?: {
     widget?: { [key: string]: unknown };
     selectedWidget?: { [key: string]: unknown };
@@ -166,12 +168,14 @@ export const EnsembleMenu: React.FC<{
   const [isCollapsed, setIsCollapsed] = useState<boolean>(
     type === EnsembleMenuModelType.Drawer,
   );
-
+  const [defaultOpenKeys, setDefaultOpenKeys] = useState<string[]>([]);
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const outletContext = {
     isMenuCollapsed: isCollapsed,
     setMenuCollapsed: setIsCollapsed,
   };
   const { id, items: rawItems, styles, header, footer, onCollapse } = menu;
+
   // custom items may contain their own bindings to be evaluated in dynamic context
   const itemInputs = rawItems?.map<MenuItemProps>((item) =>
     omit(item, "customItem"),
@@ -205,14 +209,39 @@ export const EnsembleMenu: React.FC<{
   }, [items]);
 
   useEffect(() => {
-    const locationMatch = items?.find(
-      (item) =>
+    const openItems: string[] = [];
+
+    items?.forEach((item, index) => {
+      if (
         item.page &&
-        `/${item.page.toLowerCase()}` === location.pathname.toLowerCase(),
-    );
-    if (locationMatch) {
-      setSelectedItem(locationMatch.page);
-    }
+        `/${item.page.toLowerCase()}` === location.pathname.toLowerCase()
+      ) {
+        setSelectedItem(item.page);
+      }
+
+      if (item.children && item.children.length > 0) {
+        const hasActiveChild = item.children.some((childItem) => {
+          const isActive =
+            childItem.page &&
+            `/${childItem.page.toLowerCase()}` ===
+              location.pathname.toLowerCase();
+
+          if (isActive) {
+            setSelectedItem(childItem.page);
+            return true;
+          }
+
+          return false;
+        });
+
+        if (hasActiveChild || item.expanded) {
+          openItems.push(`submenu-${index}`);
+        }
+      }
+    });
+
+    setDefaultOpenKeys(openItems);
+    setIsInitialized(true);
   }, [location.pathname, items]);
 
   const handleClose = (): void => {
@@ -224,10 +253,16 @@ export const EnsembleMenu: React.FC<{
   const onCollapseCallback = useCallback(() => {
     return onCollapseAction?.callback();
   }, [onCollapseAction?.callback]);
+
+  if (!isInitialized) {
+    return null;
+  }
+
   return (
     <div style={{ display: "flex", flexDirection: "row" }}>
       {type === EnsembleMenuModelType.SideBar ? (
         <SideBarMenu
+          defaultOpenKeys={defaultOpenKeys}
           isCollapsed={isCollapsed}
           selectedItem={selectedItem}
           setSelectedItem={setSelectedItem}
@@ -235,6 +270,7 @@ export const EnsembleMenu: React.FC<{
         />
       ) : (
         <DrawerMenu
+          defaultOpenKeys={defaultOpenKeys}
           handleClose={handleClose}
           isOpen={!isCollapsed}
           selectedItem={selectedItem}
@@ -262,9 +298,16 @@ export const SideBarMenu: React.FC<{
   values?: MenuBaseProps<SideBarMenuStyles>;
   isCollapsed: boolean;
   selectedItem: string | undefined;
+  defaultOpenKeys: string[] | undefined;
   setSelectedItem: (s: string) => void;
   width?: string;
-}> = ({ values, isCollapsed, selectedItem, setSelectedItem }) => {
+}> = ({
+  values,
+  isCollapsed,
+  selectedItem,
+  defaultOpenKeys,
+  setSelectedItem,
+}) => {
   return (
     <Col
       id="ensemble-sidebar"
@@ -284,6 +327,7 @@ export const SideBarMenu: React.FC<{
     >
       {values?.header ? EnsembleRuntime.render([values.header]) : null}
       <MenuItems
+        defaultOpenKeys={defaultOpenKeys}
         isCollapsed={isCollapsed}
         items={values?.items || []}
         selectedItem={selectedItem}
@@ -296,12 +340,20 @@ export const SideBarMenu: React.FC<{
 };
 
 export const DrawerMenu: React.FC<{
+  defaultOpenKeys: string[] | undefined;
   values?: MenuBaseProps<DrawerMenuStyles>;
   handleClose: () => void;
   isOpen: boolean;
   selectedItem: string | undefined;
   setSelectedItem: (s: string) => void;
-}> = ({ values, handleClose, isOpen, selectedItem, setSelectedItem }) => {
+}> = ({
+  defaultOpenKeys,
+  values,
+  handleClose,
+  isOpen,
+  selectedItem,
+  setSelectedItem,
+}) => {
   const validPosition = ["left", "right", "top", "bottom"];
 
   return (
@@ -336,6 +388,7 @@ export const DrawerMenu: React.FC<{
     >
       {values?.header ? EnsembleRuntime.render([values.header]) : null}
       <MenuItems
+        defaultOpenKeys={defaultOpenKeys}
         items={values?.items || []}
         selectedItem={selectedItem}
         setSelectedItem={setSelectedItem}
@@ -346,16 +399,71 @@ export const DrawerMenu: React.FC<{
   );
 };
 
+const RenderMenuItem: React.FC<{
+  menuItem: MenuItemProps;
+  styles: MenuStyles;
+  selectedItem: string | undefined;
+  setSelectedItem: (s: string) => void;
+  itemIndex: number;
+  icon: ReactNode;
+  label: ReactNode;
+}> = ({
+  menuItem,
+  styles,
+  selectedItem,
+  setSelectedItem,
+  itemIndex,
+  icon,
+  label,
+}) => {
+  return (
+    <AntMenu.Item
+      data-testid={menuItem.id ?? menuItem.testId}
+      icon={icon}
+      key={menuItem.page || menuItem.url || `customItem${itemIndex}`}
+      onClick={(): void => {
+        if (!menuItem.openNewTab && menuItem.page) {
+          setSelectedItem(menuItem.page);
+        }
+      }}
+      style={{
+        color:
+          selectedItem === menuItem.page
+            ? (styles.selectedColor as string) ?? "white"
+            : (styles.labelColor as string) ?? "grey",
+        display: menuItem.visible === false ? "none" : "flex",
+        justifyContent: "center",
+        borderRadius: 0,
+        alignItems: "center",
+        fontSize:
+          selectedItem === menuItem.page
+            ? `${
+                parseInt(
+                  `${styles.labelFontSize ? styles.labelFontSize : 1}` || "1",
+                ) + 0.2
+              }rem`
+            : `${styles.labelFontSize ? styles.labelFontSize : 1}rem`,
+        height: "auto",
+        ...(selectedItem === menuItem.page ? styles.onSelectStyles ?? {} : {}),
+      }}
+    >
+      <CustomLink item={menuItem}>{label}</CustomLink>
+    </AntMenu.Item>
+  );
+};
+
 const MenuItems: React.FC<{
   items: MenuItemProps[];
   styles: MenuStyles;
   selectedItem: string | undefined;
+  defaultOpenKeys: string[] | undefined;
   setSelectedItem: (s: string) => void;
   isCollapsed?: boolean;
 }> = ({
   items,
   styles,
   selectedItem,
+  defaultOpenKeys,
   setSelectedItem,
   isCollapsed = false,
 }) => {
@@ -409,7 +517,24 @@ const MenuItems: React.FC<{
         },
       }}
     >
+      <style>
+        {`
+          .ant-menu-submenu-title{
+            color: inherit !important
+          }
+
+          .ant-menu-item {
+            padding-left: 24px !important;
+          }
+
+          .ant-menu-sub {
+            padding-left: 24px !important;
+          }
+          `}
+      </style>
+
       <AntMenu
+        defaultOpenKeys={defaultOpenKeys?.length ? defaultOpenKeys : undefined}
         mode="inline"
         /* FIXME This is a hack so we can control our own selected styling. Ideally, this should use design tokens */
         selectedKeys={[]}
@@ -423,43 +548,46 @@ const MenuItems: React.FC<{
           borderRight: "none",
         }}
       >
-        {items.map((item, itemIndex) => (
-          <AntMenu.Item
-            data-testid={item.id ?? item.testId}
-            icon={getIcon(item)}
-            key={item.page || item.url || `customItem${itemIndex}`}
-            onClick={(): void => {
-              if (!item.openNewTab && item.page) {
-                setSelectedItem(item.page);
-              }
-            }}
-            style={{
-              color:
-                selectedItem === item.page
-                  ? (styles.selectedColor as string) ?? "white"
-                  : (styles.labelColor as string) ?? "grey",
-              display: item.visible === false ? "none" : "flex",
-              justifyContent: "center",
-              borderRadius: 0,
-              alignItems: "center",
-              fontSize:
-                selectedItem === item.page
-                  ? `${
-                      parseInt(
-                        `${styles.labelFontSize ? styles.labelFontSize : 1}` ||
-                          "1",
-                      ) + 0.2
-                    }rem`
-                  : `${styles.labelFontSize ? styles.labelFontSize : 1}rem`,
-              height: "auto",
-              ...(selectedItem === item.page
-                ? styles.onSelectStyles ?? {}
-                : {}),
-            }}
-          >
-            <CustomLink item={item}>{getLabel(item)}</CustomLink>
-          </AntMenu.Item>
-        ))}
+        {items.map((item, itemIndex) =>
+          item.children ? (
+            <AntMenu.SubMenu
+              icon={getIcon(item)}
+              key={`submenu-${itemIndex}`}
+              style={{
+                color: styles.labelColor ?? "grey",
+                fontSize: "1rem",
+                height: "auto",
+              }}
+              title={getLabel(item)}
+            >
+              {item.children.map((childItem, childIndex) => (
+                <RenderMenuItem
+                  icon={getIcon(childItem)}
+                  itemIndex={childIndex}
+                  key={
+                    childItem.page || childItem.url || `customItem${childIndex}`
+                  }
+                  label={getLabel(childItem)}
+                  menuItem={childItem}
+                  selectedItem={selectedItem}
+                  setSelectedItem={setSelectedItem}
+                  styles={styles}
+                />
+              ))}
+            </AntMenu.SubMenu>
+          ) : (
+            <RenderMenuItem
+              icon={getIcon(item)}
+              itemIndex={itemIndex}
+              key={item.page || item.url || `customItem${itemIndex}`}
+              label={getLabel(item)}
+              menuItem={item}
+              selectedItem={selectedItem}
+              setSelectedItem={setSelectedItem}
+              styles={styles}
+            />
+          ),
+        )}
       </AntMenu>
     </ConfigProvider>
   );
