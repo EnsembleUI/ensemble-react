@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.44
+
+### Patch Changes
+
+- 8cd1c3d: Revert "add support in Dropdown for creating new options using allowCreateOptions prop (#1107)"This reverts commit 646d1543151dd84a30da641cc1cf2b08e24a0b2a.
+
 ## 0.3.43
 
 ### Patch Changes

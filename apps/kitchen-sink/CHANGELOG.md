@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.140
+
+### Patch Changes
+
+- 8cd1c3d: Revert "add support in Dropdown for creating new options using allowCreateOptions prop (#1107)"This reverts commit 646d1543151dd84a30da641cc1cf2b08e24a0b2a.
+- Updated dependencies [8cd1c3d]
+  - @ensembleui/react-runtime@0.3.44
+
 ## 0.0.139
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @ensembleui/react-preview
 
+## 0.0.139
+
+### Patch Changes
+
+- Updated dependencies [8cd1c3d]
+  - @ensembleui/react-runtime@0.3.44
+
 ## 0.0.138
 
 ### Patch Changes
