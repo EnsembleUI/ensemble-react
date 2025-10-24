@@ -13,7 +13,7 @@ import type {
   EnsembleAction,
   Expression,
 } from "@ensembleui/react-framework";
-import { get, isEmpty, isNull, isObject, isString } from "lodash-es";
+import { get, isArray, isEmpty, isNull, isObject, isString } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import type {
   EnsembleWidgetProps,
@@ -145,7 +145,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
   const options = useMemo(() => {
     let dropdownOptions: React.ReactNode[] | null = null;
 
-    if (values?.items) {
+    if (values?.items && isArray(values.items)) {
       const tempOptions = values.items.map((item) => {
         if (item.type === "group") {
           // Render a group item with sub-items
@@ -166,7 +166,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
         }
         return (
           <Select.Option
-            className={`${values.id || ""}_option`}
+            className={`${values?.id || ""}_option`}
             key={item.value}
             value={item.value}
           >

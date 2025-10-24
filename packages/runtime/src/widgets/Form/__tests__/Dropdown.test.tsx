@@ -198,5 +198,110 @@ describe("Dropdown Widget", () => {
       );
     });
   });
+
+  test("dropdown items update when ensemble storage changes", async () => {
+    render(
+      <Form
+        children={[
+          {
+            name: "Dropdown",
+            properties: {
+              id: "dynamicItems",
+              label: "Dynamic Items",
+              items: `\${ensemble.storage.get('dropdownItems')}`,
+            },
+          },
+          {
+            name: "Button",
+            properties: {
+              label: "Add Item",
+              onTap: {
+                executeCode: `
+                  const currentItems = ensemble.storage.get('dropdownItems') || [];
+                  ensemble.storage.set('dropdownItems', [
+                    ...currentItems,
+                    { label: 'New Item', value: 'newItem' }
+                  ]);
+                `,
+              },
+            },
+          },
+          {
+            name: "Button",
+            properties: {
+              label: "Remove Item",
+              onTap: {
+                executeCode: `
+                  const currentItems = ensemble.storage.get('dropdownItems') || [];
+                  const filteredItems = currentItems.filter(item => item.value !== 'newItem');
+                  ensemble.storage.set('dropdownItems', filteredItems);
+                `,
+              },
+            },
+          },
+          {
+            name: "Button",
+            properties: {
+              label: "Set Initial Items",
+              onTap: {
+                executeCode: `
+                  ensemble.storage.set('dropdownItems', [
+                    { label: 'Initial Item 1', value: 'initial1' },
+                    { label: 'Initial Item 2', value: 'initial2' }
+                  ]);
+                `,
+              },
+            },
+          },
+          ...defaultFormButton,
+        ]}
+        id="form"
+      />,
+      { wrapper: FormTestWrapper },
+    );
+
+    const dropdown = screen.getByRole("combobox");
+    const setInitialButton = screen.getByText("Set Initial Items");
+    const addItemButton = screen.getByText("Add Item");
+    const removeItemButton = screen.getByText("Remove Item");
+
+    // Set initial items
+    fireEvent.click(setInitialButton);
+
+    // Open dropdown to see initial items
+    userEvent.click(dropdown);
+    await waitFor(() => {
+      expect(screen.getByTitle("Initial Item 1")).toBeInTheDocument();
+      expect(screen.getByTitle("Initial Item 2")).toBeInTheDocument();
+    });
+
+    // Close dropdown
+    userEvent.click(dropdown);
+
+    // Add a new item
+    fireEvent.click(addItemButton);
+
+    // Open dropdown to verify new item was added
+    userEvent.click(dropdown);
+    await waitFor(() => {
+      expect(screen.getByTitle("Initial Item 1")).toBeInTheDocument();
+      expect(screen.getByTitle("Initial Item 2")).toBeInTheDocument();
+      expect(screen.getByTitle("New Item")).toBeInTheDocument();
+    });
+
+    // Close dropdown
+    userEvent.click(dropdown);
+
+    // Remove the new item
+    fireEvent.click(removeItemButton);
+
+    // Open dropdown to verify item was removed
+    userEvent.click(dropdown);
+    await waitFor(() => {
+      expect(screen.getByTitle("Initial Item 1")).toBeInTheDocument();
+      expect(screen.getByTitle("Initial Item 2")).toBeInTheDocument();
+      expect(screen.queryByText("New Item")).not.toBeInTheDocument();
+    });
+  });
 });
 /* eslint-enable react/no-children-prop */
