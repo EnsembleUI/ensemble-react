@@ -1,6 +1,7 @@
 Widget:
   inputs:
     - message
+    - searchKey
   onLoad:
     executeCode:
       body: |
@@ -42,7 +43,7 @@ Widget:
               template:
                 Text:
                   text: ${user.firstName + ' ' + user.lastName}
-            searchKey: id
+            searchKey: ${searchKey}
             onSearch:
               invokeAPI:
                 name: findUsers
