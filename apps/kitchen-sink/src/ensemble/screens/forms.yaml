@@ -175,20 +175,6 @@ View:
                         onChange:
                           executeCode: |
                             console.log('dropdown changed', value);
-                    - Dropdown:
-                        id: dropdownWithCreateOptions
-                        label: Dropdown with create options
-                        hintText: Try typing "New Option"
-                        allowCreateOptions: true
-                        value: option2
-                        items:
-                          - label: Option 1
-                            value: option1
-                          - label: Option 2
-                            value: option2
-                        onChange:
-                          executeCode: |
-                            console.log('dropdownWithCreateOptions changed', value);
                     # If you omit id, the form value key will be the label
                     - TextInput:
                         id: formTextInput
