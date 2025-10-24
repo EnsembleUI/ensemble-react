@@ -6,7 +6,7 @@ import {
 import { Form as AntForm } from "antd";
 import type { FormProps as AntFormProps } from "antd";
 import { useCallback, useState } from "react";
-import type { FormInstance, FormLayout } from "antd/es/form/Form";
+import type { FormLayout } from "antd/es/form/Form";
 import { set } from "lodash-es";
 import { WidgetRegistry } from "../../registry";
 import { EnsembleRuntime } from "../../runtime";
@@ -129,44 +129,3 @@ const getLayout = (labelPosition?: string): FormLayout => {
 };
 
 WidgetRegistry.register(widgetName, Form);
-
-/**
- * Programmatically update the value of a field and trigger Ant Design's `onFieldsChange`
- * (or Ensemble Form's `onChange` action).
- *
- * Normally, calling `form.setFieldValue` or `form.setFieldsValue` does not fire `onFieldsChange`.
- * This helper uses Ant Design's internal `dispatch` mechanism to register the update
- * as if it were user-driven, so that `onFieldsChange` fires consistently.
- *
- * This is especially useful for widgets that update values programmatically
- * (e.g. Dropdown with `allowCreateOptions`).
- *
- * Alternatively, one could use Ant Design's `Form.useWatch`, but this approach
- * is less performant for large forms.
- *
- * ⚠️ Relies on Ant Design's private API (`RC_FORM_INTERNAL_HOOKS`), which may change
- * in future versions.
- *
- * Reference: https://github.com/ant-design/ant-design/issues/23782#issuecomment-2114700558
- */
-export function updateFieldValue<Values>(
-  form: FormInstance<Values>,
-  name: string,
-  value: unknown,
-): void {
-  type InternalForm = FormInstance<Values> & {
-    getInternalHooks: (hook: string) => {
-      dispatch: (action: {
-        type: string;
-        namePath: string[];
-        value: unknown;
-      }) => void;
-    };
-  };
-
-  (form as InternalForm).getInternalHooks("RC_FORM_INTERNAL_HOOKS").dispatch({
-    type: "updateValue",
-    namePath: [name],
-    value,
-  });
-}

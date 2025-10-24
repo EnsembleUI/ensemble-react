@@ -199,20 +199,58 @@ describe("Dropdown Widget", () => {
     });
   });
 
-  test("allows creating new options when allowCreateOptions is enabled", async () => {
+  test("dropdown items update when ensemble storage changes", async () => {
     render(
       <Form
         children={[
           {
             name: "Dropdown",
             properties: {
-              id: "createOptions",
-              label: "Select or Create",
-              items: [
-                { label: "Option 1", value: "option1" },
-                { label: "Option 2", value: "option2" },
-              ],
-              allowCreateOptions: true,
+              id: "dynamicItems",
+              label: "Dynamic Items",
+              items: `\${ensemble.storage.get('dropdownItems')}`,
+            },
+          },
+          {
+            name: "Button",
+            properties: {
+              label: "Add Item",
+              onTap: {
+                executeCode: `
+                  const currentItems = ensemble.storage.get('dropdownItems') || [];
+                  ensemble.storage.set('dropdownItems', [
+                    ...currentItems,
+                    { label: 'New Item', value: 'newItem' }
+                  ]);
+                `,
+              },
+            },
+          },
+          {
+            name: "Button",
+            properties: {
+              label: "Remove Item",
+              onTap: {
+                executeCode: `
+                  const currentItems = ensemble.storage.get('dropdownItems') || [];
+                  const filteredItems = currentItems.filter(item => item.value !== 'newItem');
+                  ensemble.storage.set('dropdownItems', filteredItems);
+                `,
+              },
+            },
+          },
+          {
+            name: "Button",
+            properties: {
+              label: "Set Initial Items",
+              onTap: {
+                executeCode: `
+                  ensemble.storage.set('dropdownItems', [
+                    { label: 'Initial Item 1', value: 'initial1' },
+                    { label: 'Initial Item 2', value: 'initial2' }
+                  ]);
+                `,
+              },
             },
           },
           ...defaultFormButton,
@@ -223,86 +261,46 @@ describe("Dropdown Widget", () => {
     );
 
     const dropdown = screen.getByRole("combobox");
-    userEvent.click(dropdown);
+    const setInitialButton = screen.getByText("Set Initial Items");
+    const addItemButton = screen.getByText("Add Item");
+    const removeItemButton = screen.getByText("Remove Item");
 
-    // Type a new option
-    userEvent.type(dropdown, "New Option");
+    // Set initial items
+    fireEvent.click(setInitialButton);
 
-    // Check if the "Add" option appears
-    await waitFor(() => {
-      expect(screen.getByText('Add "New Option"')).toBeInTheDocument();
-    });
-
-    // Click on the "Add" button to create and select the option
-    const addButton = screen.getByText('Add "New Option"');
-    fireEvent.click(addButton);
-
-    // Check if the new option was selected (should show in the input)
-    await waitFor(() => {
-      expect(dropdown).toHaveValue("New Option");
-    });
-
-    // Close the dropdown and reopen it to verify the new option persists
+    // Open dropdown to see initial items
     userEvent.click(dropdown);
     await waitFor(() => {
-      expect(screen.getByText("New Option")).toBeInTheDocument();
+      expect(screen.getByTitle("Initial Item 1")).toBeInTheDocument();
+      expect(screen.getByTitle("Initial Item 2")).toBeInTheDocument();
     });
-  });
 
-  test("triggers Form onChange when creating new options", async () => {
-    render(
-      <Form
-        children={[
-          {
-            name: "Dropdown",
-            properties: {
-              id: "createOptions",
-              label: "Select or Create",
-              items: [
-                { label: "Option 1", value: "option1" },
-                { label: "Option 2", value: "option2" },
-              ],
-              allowCreateOptions: true,
-            },
-          },
-          ...defaultFormButton,
-        ]}
-        id="form"
-        onChange={{
-          executeCode: "console.log('Form onChange triggered', fields)",
-        }}
-      />,
-      { wrapper: FormTestWrapper },
-    );
-
-    const dropdown = screen.getByRole("combobox");
+    // Close dropdown
     userEvent.click(dropdown);
 
-    // Type a new option
-    userEvent.type(dropdown, "Custom Option");
+    // Add a new item
+    fireEvent.click(addItemButton);
 
-    // Check if the "Add" option appears
+    // Open dropdown to verify new item was added
+    userEvent.click(dropdown);
     await waitFor(() => {
-      expect(screen.getByText('Add "Custom Option"')).toBeInTheDocument();
+      expect(screen.getByTitle("Initial Item 1")).toBeInTheDocument();
+      expect(screen.getByTitle("Initial Item 2")).toBeInTheDocument();
+      expect(screen.getByTitle("New Item")).toBeInTheDocument();
     });
 
-    // Click on the "Add" button to create and select the option
-    const addButton = screen.getByText('Add "Custom Option"');
-    fireEvent.click(addButton);
+    // Close dropdown
+    userEvent.click(dropdown);
 
-    // Check if the new option was selected
-    await waitFor(() => {
-      expect(dropdown).toHaveValue("Custom Option");
-    });
+    // Remove the new item
+    fireEvent.click(removeItemButton);
 
-    // Verify that the Form's onChange was triggered
+    // Open dropdown to verify item was removed
+    userEvent.click(dropdown);
     await waitFor(() => {
-      expect(logSpy).toHaveBeenCalledWith(
-        "Form onChange triggered",
-        expect.objectContaining({
-          createOptions: "Custom Option",
-        }),
-      );
+      expect(screen.getByTitle("Initial Item 1")).toBeInTheDocument();
+      expect(screen.getByTitle("Initial Item 2")).toBeInTheDocument();
+      expect(screen.queryByText("New Item")).not.toBeInTheDocument();
     });
   });
 });
