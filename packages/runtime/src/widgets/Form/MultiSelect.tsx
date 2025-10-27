@@ -228,9 +228,8 @@ const MultiSelect: React.FC<MultiSelectProps> = (props) => {
       setSearchValue(value);
       return;
     }
-    const isOptionExist = options.find(
-      (option) =>
-        option.label.toString().toLowerCase().search(value.toLowerCase()) > -1,
+    const isOptionExist = options.some(
+      (option) => option.label.toString().toLowerCase() === value.toLowerCase(),
     );
 
     if (!isOptionExist && values?.allowCreateOptions) {
