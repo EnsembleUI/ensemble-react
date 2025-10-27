@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.45
+
+### Patch Changes
+
+- eecc1ca: fix: create new option incase of no exact match found
+
 ## 0.3.44
 
 ### Patch Changes
