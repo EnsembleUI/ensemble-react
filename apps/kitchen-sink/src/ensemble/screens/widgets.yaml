@@ -298,6 +298,7 @@ View:
                   selectionType: '${1===10 ? "checkbox" : "radio"}'
                   allowResizableColumns: true
                   defaultSelectedRowKeys: ["2"]
+                  pageSizeOptions: [1, 5, 10, 20, 30, 40, 50]
                   styles:
                     headerStyle:
                       backgroundColor: "white"
