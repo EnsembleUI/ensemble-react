@@ -1,5 +1,13 @@
 # @ensembleui/react-kitchen-sink
 
+## 0.0.142
+
+### Patch Changes
+
+- 7ac0f81: add pageSizeOptions prop to DataGrid for customizable pagination options
+- Updated dependencies [7ac0f81]
+  - @ensembleui/react-runtime@0.3.46
+
 ## 0.0.141
 
 ### Patch Changes
