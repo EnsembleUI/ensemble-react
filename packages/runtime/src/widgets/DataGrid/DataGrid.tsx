@@ -114,6 +114,7 @@ export type GridProps = {
   pageSize?: number;
   totalRows?: number;
   curPage?: number;
+  pageSizeOptions?: Expression<number[]>;
   virtual?: boolean;
 } & EnsembleWidgetProps<DataGridStyles>;
 
@@ -427,7 +428,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
 
   // pagination object
   const paginationObject = useMemo(() => {
-    const { hidePagination, totalRows } = values ?? {};
+    const { hidePagination, totalRows, pageSizeOptions } = values ?? {};
 
     if (hidePagination || !pageSize) {
       return false;
@@ -438,6 +439,7 @@ export const DataGrid: React.FC<GridProps> = (props) => {
       pageSize,
       total: totalRows,
       current: curPage,
+      pageSizeOptions: pageSizeOptions as number[] | undefined,
       showSizeChanger: true, // always show pagination options (otherwise it defaults to total > 50)
     };
   }, [values, pageSize, curPage, resolvedWidgetId]);
