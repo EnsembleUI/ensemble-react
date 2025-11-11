@@ -1,5 +1,11 @@
 # @ensembleui/react-runtime
 
+## 0.3.46
+
+### Patch Changes
+
+- 7ac0f81: add pageSizeOptions prop to DataGrid for customizable pagination options
+
 ## 0.3.45
 
 ### Patch Changes
