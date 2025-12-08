@@ -1,5 +1,11 @@
 # @ensembleui/js-commons
 
+## 0.0.23
+
+### Patch Changes
+
+- 9af76c7: resolved env & secrets not being pushed to firebase
+
 ## 0.0.22
 
 ### Patch Changes
