@@ -140,6 +140,7 @@ export const getFirestoreApplicationTransporter = (
       translations,
       theme,
       env,
+      secrets,
       assets,
       fonts,
     } = app;
@@ -217,20 +218,31 @@ export const getFirestoreApplicationTransporter = (
     });
 
     if (env) {
-      batch.set(
-        doc(artifactsRef, "appConfig"),
-        {
-          type: EnsembleDocumentType.Environment,
-          envVariables: env,
-          isRoot: true,
-          isArchived: false,
-          createdAt: timestamp,
-          updatedAt: timestamp,
-          createdBy: userRef,
-          updatedBy: userRef,
-        },
-        { merge: true },
-      );
+      batch.set(doc(artifactsRef, "appConfig"), {
+        type: EnsembleDocumentType.Environment,
+        envVariables: env.envVariables,
+        isRoot: true,
+        isArchived: false,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+        createdBy: userRef,
+        updatedBy: userRef,
+        baseUrl: env.baseUrl,
+        useBrowserUrl: env.useBrowserUrl,
+      });
+    }
+
+    if (secrets) {
+      batch.set(doc(artifactsRef, "secrets"), {
+        type: EnsembleDocumentType.Secrets,
+        secrets: secrets.secrets,
+        isRoot: true,
+        isArchived: false,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+        createdBy: userRef,
+        updatedBy: userRef,
+      });
     }
 
     await batch.commit();

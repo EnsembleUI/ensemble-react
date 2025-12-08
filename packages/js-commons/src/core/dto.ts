@@ -110,6 +110,8 @@ export type TranslationDTO = EnsembleDocument & {
 export interface EnvironmentDTO {
   readonly envVariables?: Record<string, unknown>;
   readonly secretVariables?: Record<string, unknown>;
+  readonly baseUrl?: string;
+  readonly useBrowserUrl?: boolean;
 }
 
 export interface SecretDTO {
