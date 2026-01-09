@@ -1,7 +1,8 @@
 import type { Expression } from "@ensembleui/react-framework";
 import { unwrapWidget, useRegisterBindings } from "@ensembleui/react-framework";
 import { cloneDeep, head, isEmpty, last } from "lodash-es";
-import { useMemo } from "react";
+import type { ReactNode } from "react";
+import { useMemo, useRef } from "react";
 import { WidgetRegistry } from "../registry";
 import { EnsembleRuntime } from "../runtime";
 import type { EnsembleWidgetProps } from "../shared/types";
@@ -26,6 +27,7 @@ export const Conditional: React.FC<ConditionalProps> = ({
   conditions,
   ...props
 }) => {
+  const matched = useRef<{ [key: string]: ReactNode[] }>({});
   const [isValid, errorMessage] = hasProperStructure(conditions);
   if (!isValid) throw Error(errorMessage);
 
@@ -55,18 +57,27 @@ export const Conditional: React.FC<ConditionalProps> = ({
     if (trueIndex === undefined || trueIndex < 0) {
       return null;
     }
+    const key = conditionStatements[trueIndex]?.toString();
+
+    if (key && matched.current[key]) {
+      return matched.current[key];
+    }
+
     const extractedWidget = extractWidget(conditions[trueIndex]);
-    return {
-      ...extractedWidget,
-      key: conditionStatements[trueIndex]?.toString(),
-    };
+
+    const renderWidget = EnsembleRuntime.render([{ ...extractedWidget, key }]);
+
+    if (key && !matched.current[key]) {
+      matched.current[key] = renderWidget;
+    }
+    return renderWidget;
   }, [conditionStatements, conditions, trueIndex]);
 
   if (!widget) {
     return null;
   }
 
-  return <>{EnsembleRuntime.render([widget])}</>;
+  return <>{widget}</>;
 };
 
 WidgetRegistry.register(widgetName, Conditional);
