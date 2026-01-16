@@ -56,6 +56,7 @@ export const useNavigateModalScreen: EnsembleActionHook<
         evaluatedInputs,
         title,
         ensembleAction?.callback,
+        context,
       );
     },
     { navigate },
