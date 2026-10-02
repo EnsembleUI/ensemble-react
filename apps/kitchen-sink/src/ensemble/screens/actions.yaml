@@ -11,6 +11,9 @@ View:
       ensemble.storage.set('dummyId', '1');
       ensemble.invokeAPI('getDummyProduct', {id: ensemble.storage.get('dummyId')});
       ensemble.storage.set('value',1);
+      const varr = ensemble.storage.get('var') ?? 0;
+      console.log("Actions onLoad", varr)
+      ensemble.storage.set('var', varr + 1);
 
   body:
     Column:
@@ -194,7 +197,7 @@ View:
                         Column:
                           children:
                             - Text:
-                                text: Modal Screen title
+                                text: Modal Screen title ${ensemble.storage.get('var')}
                             - Text:
                                 text: Modal Screen subtitle
                                 styles:
@@ -203,7 +206,7 @@ View:
                       onModalDismiss:
                         executeCode:
                           body: |
-                            console.log('Modal Screen Dismissed');
+                            console.log('Modal Screen Dismissed', ensemble.storage.get('var'));
                       styles:
                         height: 100%
                         width: 500px
@@ -308,35 +311,41 @@ View:
                       onDialogDismiss:
                         executeCode:
                           body: |
-                            console.log('Dialog 1 Dismissed');
+                            console.log('Dialog 1 Dismissed', ensemble.storage.get('var'));
                       body:
-                        Button:
-                          label: ${'Tap me to ' + showDialogText.text}
-                          onTap:
-                            showDialog:
-                              options:
-                                verticalOffset: 0.6
-                              onDialogDismiss:
-                                executeCode:
-                                  body: |
-                                    console.log('Dialog 2 Dismissed');
-                              widget:
-                                Button:
-                                  label: Tap me to open one more dialog
-                                  onTap:
-                                    showDialog:
-                                      options:
-                                        horizontalOffset: -0.8
-                                        height: 100%
-                                      widget:
-                                        Column:
-                                          styles:
-                                            margin: 100px
-                                          children:
-                                            - Button:
-                                                label: Click me to close all dialogs
-                                                onTap:
-                                                  closeAllDialogs:
+                        Column:
+                          children:
+                            - Button:
+                                label: increment var
+                                onTap: ensemble.storage.set('var', ensemble.storage.get('var')+1)
+                            - Button:
+                                label: ${'Tap me to ' + showDialogText.text}
+                                onTap:
+                                  showDialog:
+                                    options:
+                                      verticalOffset: 0.6
+                                    onDialogDismiss:
+                                      executeCode:
+                                        body: |
+                                          console.log('Dialog 2 Dismissed');
+                                    widget:
+                                      Button:
+                                        label: Tap me to open one more dialog
+                                        onTap:
+                                          showDialog:
+                                            options:
+                                              horizontalOffset: -0.8
+                                              height: 100%
+                                            widget:
+                                              Column:
+                                                styles:
+                                                  margin: 100px
+                                                children:
+                                                  - Button:
+                                                      label: Click me to close all dialogs
+                                                      onTap:
+                                                        closeAllDialogs:
+
               - Markdown:
                   text: You can still access the current screen's scope from a dialog.
               - Column:

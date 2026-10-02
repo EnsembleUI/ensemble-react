@@ -1,3 +1,4 @@
+import type { Getter } from "jotai";
 import { atom, useAtom } from "jotai";
 import { createJSONStorage, atomWithStorage } from "jotai/utils";
 import { assign, get as lodashGet, has, isObject, merge } from "lodash-es";
@@ -57,6 +58,7 @@ export const useEnsembleStorage = (): EnsembleStorage => {
 export const createStorageApi = (
   storage?: { [key: string]: unknown },
   setStorage?: (storage: { [key: string]: unknown }) => void,
+  get?: Getter,
 ): EnsembleStorage => {
   return {
     set: (key: string, value: unknown): void => {
@@ -68,6 +70,7 @@ export const createStorageApi = (
       setStorage?.(update);
     },
     get: (key: string): unknown => {
+      if (get) return get(screenStorageAtom)[key];
       return storage?.[key];
     },
     delete: (key: string): unknown => {

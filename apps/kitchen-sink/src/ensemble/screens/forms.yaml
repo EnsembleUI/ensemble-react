@@ -16,6 +16,9 @@ View:
           { value: "val 2", label: "lab 2" },
           { value: "val 3", label: "lab 3" },
         ]);
+        const varr = ensemble.storage.get('var') ?? 0;
+        console.log("Forms onLoad", varr)
+        ensemble.storage.set('var', varr + 1);
       onComplete:
         invokeAPI:
           name: getData

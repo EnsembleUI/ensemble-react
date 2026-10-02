@@ -116,6 +116,8 @@ export const createBindingAtom = <T = unknown>(
           rawJsExpression.includes("ensemble.storage")
             ? get(screenStorageAtom)
             : undefined,
+          undefined,
+          get,
         ),
         user: rawJsExpression.includes("ensemble.user")
           ? createUserApi(() => get(userAtom))

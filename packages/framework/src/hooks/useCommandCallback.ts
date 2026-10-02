@@ -66,8 +66,10 @@ export const useCommandCallback = <
         const device = get(deviceAtom);
         const theme = get(themeAtom);
 
-        const storageApi = createStorageApi(storage, (next) =>
-          set(screenStorageAtom, next),
+        const storageApi = createStorageApi(
+          storage,
+          (next) => set(screenStorageAtom, next),
+          get,
         );
 
         const userApi = createUserApi(
