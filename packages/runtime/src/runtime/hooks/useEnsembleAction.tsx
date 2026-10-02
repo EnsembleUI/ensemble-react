@@ -166,14 +166,15 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
   const screenModel = useScreenModel();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { values } = useRegisterBindings({ name: action?.name });
 
   const onInvokeAPIResponseAction = useEnsembleAction(action?.onResponse);
   const onInvokeAPIErrorAction = useEnsembleAction(action?.onError);
 
   const currentApi = useMemo(() => {
-    if (!action?.name) return null;
-    return apis?.find((api) => api.name === action.name);
-  }, [action?.name, apis]);
+    if (!values?.name) return null;
+    return apis?.find((api) => api.name === values.name);
+  }, [values?.name, apis]);
 
   const onAPIResponseAction = useEnsembleAction(currentApi?.onResponse);
   const onAPIErrorAction = useEnsembleAction(currentApi?.onError);
@@ -186,7 +187,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
         [key: string]: unknown;
       };
 
-      if (action.name !== currentApi.name) return;
+      if (values?.name !== currentApi.name) return;
 
       const evaluatedInputs = (
         action.inputs ? evaluateDeep(action.inputs, screenModel, context) : {}
@@ -285,7 +286,7 @@ export const useInvokeAPI: EnsembleActionHook<InvokeAPIAction> = (action) => {
       }
     },
     { navigate },
-    [action, currentApi, screenModel, appContext, queryClient],
+    [action, values, currentApi, screenModel, appContext, queryClient],
   );
 
   return { callback: invokeCommand };

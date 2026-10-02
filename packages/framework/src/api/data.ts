@@ -11,6 +11,7 @@ import type {
 import { screenDataAtom, type ScreenContextDefinition } from "../state";
 import { isUsingMockResponse } from "../appConfig";
 import { mockResponse } from "../evaluate/mock";
+import { evaluateDeep } from "../evaluate";
 
 export const invokeAPI = async (
   apiName: string,
@@ -21,8 +22,14 @@ export const invokeAPI = async (
   setter?: Setter,
   options?: InvokeAPIOptions,
 ): Promise<Response | undefined> => {
+  const evaluated = evaluateDeep(
+    { apiName },
+    screenContext.model,
+    screenContext,
+  );
+
   const api = screenContext.model?.apis?.find(
-    (model) => model.name === apiName,
+    (model) => model.name === evaluated.apiName,
   );
 
   const hash = generateAPIHash({
