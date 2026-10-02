@@ -66,7 +66,7 @@ export const Search: React.FC<SearchProps> = ({
   });
 
   const { id, rootRef, values } = useRegisterBindings(
-    { styles, value, ...rest, widgetName, initialValue },
+    { styles, value, ...rest, widgetName, initialValue, searchKey },
     rest.id,
     {
       setValue,
@@ -82,12 +82,12 @@ export const Search: React.FC<SearchProps> = ({
     (option: unknown): string | number => {
       return get(
         option,
-        searchKey
-          ? [itemTemplate?.name ?? "", searchKey]
-          : [(itemTemplate?.value || itemTemplate?.name) ?? ""],
+        values?.searchKey
+          ? [itemTemplate?.name ?? "", values.searchKey]
+          : itemTemplate?.value || itemTemplate?.name || "",
       ) as string | number;
     },
-    [itemTemplate?.name, itemTemplate?.value, searchKey],
+    [itemTemplate?.name, itemTemplate?.value, values?.searchKey],
   );
 
   const renderOptions = useMemo(() => {
@@ -96,21 +96,25 @@ export const Search: React.FC<SearchProps> = ({
     let dropdownOptions: JSX.Element[] = [];
 
     if (isObject(itemTemplate) && !isEmpty(namedData)) {
-      const tempOptions = namedData.map((item: unknown, index: number) => {
-        const optionValue = extractValue(item);
+      const tempOptions = namedData
+        .map((item: unknown, index: number) => {
+          const optionValue = extractValue(item);
 
-        return (
-          <SelectComponent.Option
-            className={`${values?.id || ""}_option`}
-            key={`${optionValue}_${index}`}
-            value={optionValue}
-          >
-            <CustomScopeProvider value={item as CustomScope}>
-              {EnsembleRuntime.render([itemTemplate.template])}
-            </CustomScopeProvider>
-          </SelectComponent.Option>
-        );
-      });
+          if (!optionValue) return null;
+
+          return (
+            <SelectComponent.Option
+              className={`${values?.id || ""}_option`}
+              key={`${optionValue}_${index}`}
+              value={optionValue}
+            >
+              <CustomScopeProvider value={item as CustomScope}>
+                {EnsembleRuntime.render([itemTemplate.template])}
+              </CustomScopeProvider>
+            </SelectComponent.Option>
+          );
+        })
+        .filter((option) => option !== null) as JSX.Element[];
 
       dropdownOptions = [...dropdownOptions, ...tempOptions];
     }
