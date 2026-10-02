@@ -40,407 +40,536 @@ const BrowserRouterWrapper = ({ children }: BrowserRouterProps) => (
 const logSpy = jest.spyOn(console, "log").mockImplementation(jest.fn());
 const errorSpy = jest.spyOn(console, "error").mockImplementation(jest.fn());
 
-beforeEach(() => {
-  jest.useFakeTimers();
-});
+describe("fetch API cache test", () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
 
-afterEach(() => {
-  logSpy.mockClear();
-  errorSpy.mockClear();
-  jest.clearAllMocks();
-  jest.useRealTimers();
-  queryClient.clear();
-});
+  afterEach(() => {
+    logSpy.mockClear();
+    errorSpy.mockClear();
+    jest.clearAllMocks();
+    jest.useRealTimers();
+    queryClient.clear();
+  });
 
-test("fetch API cache response for cache expiry", async () => {
-  fetchMock.mockResolvedValue({ body: { data: "foobar" } });
+  test("fetch API cache response for cache expiry", async () => {
+    fetchMock.mockResolvedValue({ body: { data: "foobar" } });
 
-  render(
-    <EnsembleScreen
-      screen={{
-        name: "test_cache",
-        id: "test_cache",
-        body: {
-          name: "Button",
-          properties: {
-            label: "Test Cache",
-            onTap: {
-              invokeAPI: {
-                name: "testCache",
-                onResponse: { executeCode: "console.log(response.body.data)" },
+    render(
+      <EnsembleScreen
+        screen={{
+          name: "test_cache",
+          id: "test_cache",
+          body: {
+            name: "Button",
+            properties: {
+              label: "Test Cache",
+              onTap: {
+                invokeAPI: {
+                  name: "testCache",
+                  onResponse: {
+                    executeCode: "console.log(response.body.data)",
+                  },
+                },
               },
             },
           },
-        },
-        apis: [{ name: "testCache", method: "GET", cacheExpirySeconds: 5 }],
-      }}
-    />,
-    { wrapper: BrowserRouterWrapper },
-  );
+          apis: [{ name: "testCache", method: "GET", cacheExpirySeconds: 5 }],
+        }}
+      />,
+      { wrapper: BrowserRouterWrapper },
+    );
 
-  const button = screen.getByText("Test Cache");
-  fireEvent.click(button);
+    const button = screen.getByText("Test Cache");
+    fireEvent.click(button);
 
-  await waitFor(() => {
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    jest.advanceTimersByTime(5000);
+
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(logSpy).toHaveBeenCalledWith("foobar");
+    });
   });
 
-  fireEvent.click(button);
+  test("fetch API cache response for unique inputs while cache expiry", async () => {
+    fetchMock.mockResolvedValue({ body: { data: "foobar" } });
 
-  await waitFor(() => {
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-  });
-
-  jest.advanceTimersByTime(5000);
-
-  fireEvent.click(button);
-
-  await waitFor(() => {
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(logSpy).toHaveBeenCalledWith("foobar");
-  });
-});
-
-test("fetch API cache response for unique inputs while cache expiry", async () => {
-  fetchMock.mockResolvedValue({ body: { data: "foobar" } });
-
-  render(
-    <EnsembleScreen
-      screen={{
-        name: "test_cache",
-        id: "test_cache",
-        body: {
-          name: "Column",
-          properties: {
-            children: [
-              {
-                name: "Button",
-                properties: {
-                  label: "Page 1",
-                  onTap: { invokeAPI: { name: "testCache", inputs: [1] } },
+    render(
+      <EnsembleScreen
+        screen={{
+          name: "test_cache",
+          id: "test_cache",
+          body: {
+            name: "Column",
+            properties: {
+              children: [
+                {
+                  name: "Button",
+                  properties: {
+                    label: "Page 1",
+                    onTap: { invokeAPI: { name: "testCache", inputs: [1] } },
+                  },
                 },
-              },
-              {
-                name: "Button",
-                properties: {
-                  label: "Page 2",
-                  onTap: { invokeAPI: { name: "testCache", inputs: [2] } },
+                {
+                  name: "Button",
+                  properties: {
+                    label: "Page 2",
+                    onTap: { invokeAPI: { name: "testCache", inputs: [2] } },
+                  },
                 },
-              },
-            ],
+              ],
+            },
           },
-        },
-        apis: [
-          {
-            name: "testCache",
-            method: "GET",
-            inputs: ["page"],
-            cacheExpirySeconds: 60,
-          },
-        ],
-      }}
-    />,
-    { wrapper: BrowserRouterWrapper },
-  );
+          apis: [
+            {
+              name: "testCache",
+              method: "GET",
+              inputs: ["page"],
+              cacheExpirySeconds: 60,
+            },
+          ],
+        }}
+      />,
+      { wrapper: BrowserRouterWrapper },
+    );
 
-  const button = screen.getByText("Page 1");
-  fireEvent.click(button);
+    const button = screen.getByText("Page 1");
+    fireEvent.click(button);
 
-  await waitFor(() => {
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    const button2 = screen.getByText("Page 2");
+    fireEvent.click(button2);
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
   });
 
-  fireEvent.click(button);
+  test("fetch API without cache", async () => {
+    fetchMock.mockResolvedValue({ body: { data: "foobar" } });
 
-  await waitFor(() => {
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-  });
-
-  const button2 = screen.getByText("Page 2");
-  fireEvent.click(button2);
-
-  await waitFor(() => {
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-  });
-});
-
-test("fetch API without cache", async () => {
-  fetchMock.mockResolvedValue({ body: { data: "foobar" } });
-
-  render(
-    <EnsembleScreen
-      screen={{
-        name: "test_cache",
-        id: "test_cache",
-        body: {
-          name: "Button",
-          properties: {
-            label: "Trigger API",
-            onTap: {
-              invokeAPI: {
-                name: "testCache",
-                onResponse: { executeCode: "console.log(response.body.data)" },
+    render(
+      <EnsembleScreen
+        screen={{
+          name: "test_cache",
+          id: "test_cache",
+          body: {
+            name: "Button",
+            properties: {
+              label: "Trigger API",
+              onTap: {
+                invokeAPI: {
+                  name: "testCache",
+                  onResponse: {
+                    executeCode: "console.log(response.body.data)",
+                  },
+                },
               },
             },
           },
-        },
-        apis: [{ name: "testCache", method: "GET" }],
-      }}
-    />,
-    { wrapper: BrowserRouterWrapper },
-  );
+          apis: [{ name: "testCache", method: "GET" }],
+        }}
+      />,
+      { wrapper: BrowserRouterWrapper },
+    );
 
-  const button = screen.getByText("Trigger API");
-  fireEvent.click(button);
+    const button = screen.getByText("Trigger API");
+    fireEvent.click(button);
 
-  await waitFor(() => {
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(logSpy).toHaveBeenCalledWith("foobar");
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(logSpy).toHaveBeenCalledWith("foobar");
+    });
+
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
   });
 
-  fireEvent.click(button);
+  test("after API response modal should close", async () => {
+    fetchMock.mockResolvedValue({ body: { data: "foobar" } });
 
-  await waitFor(() => {
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-  });
-});
-
-test("after API response modal should close", async () => {
-  fetchMock.mockResolvedValue({ body: { data: "foobar" } });
-
-  render(
-    <EnsembleScreen
-      screen={{
-        name: "test_cache",
-        id: "test_cache",
-        body: {
-          name: "Button",
-          properties: {
-            label: "Show Dialog",
-            onTap: {
-              showDialog: {
-                widget: {
-                  Column: {
-                    children: [
-                      {
-                        Text: {
-                          text: "This is modal",
+    render(
+      <EnsembleScreen
+        screen={{
+          name: "test_cache",
+          id: "test_cache",
+          body: {
+            name: "Button",
+            properties: {
+              label: "Show Dialog",
+              onTap: {
+                showDialog: {
+                  widget: {
+                    Column: {
+                      children: [
+                        {
+                          Text: {
+                            text: "This is modal",
+                          },
                         },
-                      },
-                      {
-                        Button: {
-                          label: "Trigger API",
-                          onTap: {
-                            invokeAPI: {
-                              name: "testCache",
-                              onResponse: {
-                                executeCode: "ensemble.closeAllDialogs()",
+                        {
+                          Button: {
+                            label: "Trigger API",
+                            onTap: {
+                              invokeAPI: {
+                                name: "testCache",
+                                onResponse: {
+                                  executeCode: "ensemble.closeAllDialogs()",
+                                },
                               },
                             },
                           },
-                        },
-                      },
-                    ],
-                  },
-                },
-              },
-            },
-          },
-        },
-        apis: [{ name: "testCache", method: "GET" }],
-      }}
-    />,
-    { wrapper: BrowserRouterWrapper },
-  );
-
-  const showDialogButton = screen.getByText("Show Dialog");
-  fireEvent.click(showDialogButton);
-
-  const modalTitle = screen.getByText("This is modal");
-  const triggerAPIButton = screen.getByText("Trigger API");
-
-  await waitFor(() => {
-    expect(modalTitle).toBeInTheDocument();
-    expect(triggerAPIButton).toBeInTheDocument();
-  });
-
-  fireEvent.click(triggerAPIButton);
-
-  await waitFor(() => {
-    expect(modalTitle).not.toBeInTheDocument();
-    expect(triggerAPIButton).not.toBeInTheDocument();
-  });
-});
-
-test("fetch API with force cache clear", async () => {
-  fetchMock.mockResolvedValue({ body: { data: "foobar" } });
-
-  render(
-    <EnsembleScreen
-      screen={{
-        name: "test_force_cache_clear",
-        id: "test_force_cache_clear",
-        body: {
-          name: "Column",
-          properties: {
-            children: [
-              {
-                name: "Button",
-                properties: {
-                  label: "Without Force",
-                  onTap: { invokeAPI: { name: "testForceCache" } },
-                },
-              },
-              {
-                name: "Button",
-                properties: {
-                  label: "With Force",
-                  onTap: {
-                    invokeAPI: {
-                      name: "testForceCache",
-                      bypassCache: true,
-                    },
-                  },
-                },
-              },
-            ],
-          },
-        },
-        apis: [
-          {
-            name: "testForceCache",
-            method: "GET",
-            cacheExpirySeconds: 60,
-          },
-        ],
-      }}
-    />,
-    { wrapper: BrowserRouterWrapper },
-  );
-
-  const withoutForce = screen.getByText("Without Force");
-  fireEvent.click(withoutForce);
-
-  await waitFor(() => {
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-  });
-
-  fireEvent.click(withoutForce);
-
-  await waitFor(() => {
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-  });
-
-  const withForce = screen.getByText("With Force");
-  fireEvent.click(withForce);
-
-  await waitFor(() => {
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-  });
-});
-
-test("after API fetching using toggle check states", async () => {
-  fetchMock.mockResolvedValueOnce({ body: { data: "foo" }, isLoading: false });
-  fetchMock.mockResolvedValueOnce({ body: { data: "bar" }, isLoading: false });
-
-  render(
-    <EnsembleScreen
-      screen={{
-        name: "test",
-        id: "test",
-        body: {
-          name: "Column",
-          properties: {
-            children: [
-              {
-                name: "ToggleButton",
-                properties: {
-                  id: "toggleButton",
-                  value: "foo",
-                  items: [
-                    { label: "Foo", value: "foo" },
-                    { label: "Bar", value: "bar" },
-                  ],
-                  onChange: {
-                    executeConditionalAction: {
-                      conditions: [
-                        {
-                          if: `\${value === 'bar'}`,
-                          action: { invokeAPI: { name: "fetchBar" } },
                         },
                       ],
                     },
                   },
                 },
               },
-              {
-                name: "Conditional",
-                properties: {
-                  conditions: [
-                    {
-                      if: `\${toggleButton.value === "foo"}`,
-                      Column: {
-                        children: [
+            },
+          },
+          apis: [{ name: "testCache", method: "GET" }],
+        }}
+      />,
+      { wrapper: BrowserRouterWrapper },
+    );
+
+    const showDialogButton = screen.getByText("Show Dialog");
+    fireEvent.click(showDialogButton);
+
+    const modalTitle = screen.getByText("This is modal");
+    const triggerAPIButton = screen.getByText("Trigger API");
+
+    await waitFor(() => {
+      expect(modalTitle).toBeInTheDocument();
+      expect(triggerAPIButton).toBeInTheDocument();
+    });
+
+    fireEvent.click(triggerAPIButton);
+
+    await waitFor(() => {
+      expect(modalTitle).not.toBeInTheDocument();
+      expect(triggerAPIButton).not.toBeInTheDocument();
+    });
+  });
+
+  test("fetch API with force cache clear", async () => {
+    fetchMock.mockResolvedValue({ body: { data: "foobar" } });
+
+    render(
+      <EnsembleScreen
+        screen={{
+          name: "test_force_cache_clear",
+          id: "test_force_cache_clear",
+          body: {
+            name: "Column",
+            properties: {
+              children: [
+                {
+                  name: "Button",
+                  properties: {
+                    label: "Without Force",
+                    onTap: { invokeAPI: { name: "testForceCache" } },
+                  },
+                },
+                {
+                  name: "Button",
+                  properties: {
+                    label: "With Force",
+                    onTap: {
+                      invokeAPI: {
+                        name: "testForceCache",
+                        bypassCache: true,
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+          },
+          apis: [
+            {
+              name: "testForceCache",
+              method: "GET",
+              cacheExpirySeconds: 60,
+            },
+          ],
+        }}
+      />,
+      { wrapper: BrowserRouterWrapper },
+    );
+
+    const withoutForce = screen.getByText("Without Force");
+    fireEvent.click(withoutForce);
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    fireEvent.click(withoutForce);
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    const withForce = screen.getByText("With Force");
+    fireEvent.click(withForce);
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  test("after API fetching using toggle check states", async () => {
+    fetchMock.mockResolvedValueOnce({
+      body: { data: "foo" },
+      isLoading: false,
+    });
+    fetchMock.mockResolvedValueOnce({
+      body: { data: "bar" },
+      isLoading: false,
+    });
+
+    render(
+      <EnsembleScreen
+        screen={{
+          name: "test",
+          id: "test",
+          body: {
+            name: "Column",
+            properties: {
+              children: [
+                {
+                  name: "ToggleButton",
+                  properties: {
+                    id: "toggleButton",
+                    value: "foo",
+                    items: [
+                      { label: "Foo", value: "foo" },
+                      { label: "Bar", value: "bar" },
+                    ],
+                    onChange: {
+                      executeConditionalAction: {
+                        conditions: [
                           {
-                            LoadingContainer: {
-                              isLoading: `\${fetchFoo.isLoading !== false}`,
-                              widget: {
-                                Text: { text: `\${fetchFoo.body.data}` },
-                              },
-                            },
+                            if: `\${value === 'bar'}`,
+                            action: { invokeAPI: { name: "fetchBar" } },
                           },
                         ],
                       },
                     },
-                    {
-                      elseif: `\${toggleButton.value === "bar"}`,
-                      Column: {
-                        children: [{ Text: { text: `\${fetchFoo.data}` } }],
+                  },
+                },
+                {
+                  name: "Conditional",
+                  properties: {
+                    conditions: [
+                      {
+                        if: `\${toggleButton.value === "foo"}`,
+                        Column: {
+                          children: [
+                            {
+                              LoadingContainer: {
+                                isLoading: `\${fetchFoo.isLoading !== false}`,
+                                widget: {
+                                  Text: { text: `\${fetchFoo.body.data}` },
+                                },
+                              },
+                            },
+                          ],
+                        },
+                      },
+                      {
+                        elseif: `\${toggleButton.value === "bar"}`,
+                        Column: {
+                          children: [{ Text: { text: `\${fetchFoo.data}` } }],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  name: "Button",
+                  properties: {
+                    label: "Verify States",
+                    onTap: { executeCode: "console.log(fetchFoo.isLoading)" },
+                  },
+                },
+              ],
+            },
+          },
+          apis: [
+            { name: "fetchFoo", method: "GET" },
+            { name: "fetchBar", method: "GET" },
+          ],
+          onLoad: { invokeAPI: { name: "fetchFoo" } },
+        }}
+      />,
+      {
+        wrapper: BrowserRouterWrapper,
+      },
+    );
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(screen.getByText("Foo")).toBeInTheDocument();
+      expect(screen.getByText("Bar")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByText("Bar"));
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+
+    fireEvent.click(screen.getByText("Foo"));
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+
+    fireEvent.click(screen.getByText("Verify States"));
+    await waitFor(() => {
+      expect(logSpy).toHaveBeenCalledWith(false);
+    });
+  });
+});
+
+describe("test action callback for ensemble.invokeAPI", () => {
+  afterEach(() => {
+    logSpy.mockClear();
+    errorSpy.mockClear();
+    jest.clearAllMocks();
+    jest.useRealTimers();
+    queryClient.clear();
+  });
+
+  test("test executeCode and ensemble.invokeAPI with onLoad", async () => {
+    render(
+      <EnsembleScreen
+        screen={{
+          name: "test_execute_code",
+          id: "test_execute_code",
+          body: {
+            name: "Row",
+            properties: {
+              children: [
+                {
+                  name: "Button",
+                  properties: {
+                    label: "Trigger Invoke API",
+                    onTap: {
+                      executeCode: "ensemble.invokeAPI('testInvokeAPI')",
+                    },
+                  },
+                },
+                {
+                  name: "Button",
+                  properties: {
+                    label: "Trigger API",
+                    onTap: {
+                      invokeAPI: {
+                        name: "testAPI",
+                        onResponse: "console.log('onResponse from inside')",
                       },
                     },
-                  ],
+                  },
                 },
-              },
-              {
-                name: "Button",
-                properties: {
-                  label: "Verify States",
-                  onTap: { executeCode: "console.log(fetchFoo.isLoading)" },
+                {
+                  name: "Button",
+                  properties: {
+                    label: "Trigger API Error",
+                    onTap: "ensemble.invokeAPI('testOnError')",
+                  },
                 },
-              },
-            ],
+              ],
+            },
           },
-        },
-        apis: [
-          { name: "fetchFoo", method: "GET" },
-          { name: "fetchBar", method: "GET" },
-        ],
-        onLoad: { invokeAPI: { name: "fetchFoo" } },
-      }}
-    />,
-    {
-      wrapper: BrowserRouterWrapper,
-    },
-  );
+          apis: [
+            {
+              method: "GET",
+              name: "testInvokeAPI",
+              uri: "https://dummyjson.com/products",
+              onResponse: `
+              console.log('onResponse from invokeAPI');
+              console.log({ response });
+              `,
+            },
+            {
+              method: "GET",
+              name: "testAPI",
+              uri: "https://dummyjson.com/products",
+              onResponse: "console.log('onResponse from API')",
+            },
+            {
+              method: "GET",
+              name: "testOnError",
+              uri: "https://dummyjson.com/products_error",
+              onError: `
+              console.log('onError from API');
+              console.log({ error: error.message });
+              `,
+            },
+          ],
+          onLoad: {
+            executeCode: "ensemble.invokeAPI('testAPI')",
+          },
+        }}
+      />,
+      { wrapper: BrowserRouterWrapper },
+    );
 
-  await waitFor(() => {
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(screen.getByText("Foo")).toBeInTheDocument();
-    expect(screen.getByText("Bar")).toBeInTheDocument();
-  });
+    await waitFor(() => {
+      expect(logSpy).toHaveBeenCalledWith("onResponse from API");
+    });
 
-  fireEvent.click(screen.getByText("Bar"));
-  await waitFor(() => {
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-  });
+    const button = screen.getByText("Trigger Invoke API");
+    fireEvent.click(button);
 
-  fireEvent.click(screen.getByText("Foo"));
-  await waitFor(() => {
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-  });
+    await waitFor(() => {
+      expect(logSpy).toHaveBeenCalledWith("onResponse from invokeAPI");
+    });
 
-  fireEvent.click(screen.getByText("Verify States"));
-  await waitFor(() => {
-    expect(logSpy).toHaveBeenCalledWith(false);
+    const triggerAPI = screen.getByText("Trigger API");
+    fireEvent.click(triggerAPI);
+
+    await waitFor(() => {
+      expect(logSpy).toHaveBeenCalledWith("onResponse from API");
+      expect(logSpy).toHaveBeenCalledWith("onResponse from inside");
+    });
+
+    const triggerAPIError = screen.getByText("Trigger API Error");
+    fireEvent.click(triggerAPIError);
+
+    await waitFor(() => {
+      expect(logSpy).toHaveBeenCalledWith("onError from API");
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          error: "Request failed with status code 404",
+        }),
+      );
+    });
   });
 });

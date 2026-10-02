@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import type { EnsembleAction } from "./actions";
+import type { EnsembleAction, EnsembleActionHookResult } from "./actions";
 import type { EnsembleConfigYAML } from "./dto";
 
 /**
@@ -75,6 +75,8 @@ export interface EnsembleAPIModel {
   body?: string | object;
   onResponse?: EnsembleAction;
   onError?: EnsembleAction;
+  onResponseAction?: EnsembleActionHookResult;
+  onErrorAction?: EnsembleActionHookResult;
   mockResponse?: EnsembleMockResponse | string;
 }
 
