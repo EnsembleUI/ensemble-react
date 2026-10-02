@@ -39,4 +39,7 @@ yarn-error.log*
 
 # schemas
 apps/preview/public/schema/react/*.json
-config.bat
+
+.env
+
+.env.local
